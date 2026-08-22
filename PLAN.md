@@ -286,18 +286,34 @@ hosted project is unverified.** F1a exists to close that gap first.
       recorded here.
       _Touches:_ nothing in-repo (dashboard), then this file.
 
-- [ ] **F1b. Split the blanket policies per operation.** Replace
-      `FOR ALL ... USING (true)` with per-operation policies. `edits` is already
-      treated as append-only last-write-wins by `HelpPanel`, so it wants
-      `SELECT USING (true)`, `INSERT WITH CHECK (auth.uid() = user_id)`, and
-      **no `UPDATE` or `DELETE` policy at all**. Apply the same shape to
-      `comments`. `reviews` and `pages` are shared state that reviewers
-      legitimately mutate (status, manager notes) — keep those writable, but
-      drop `DELETE`.
-      _Done when:_ a new migration lands and a signed-in user cannot delete
-      another user's edit.
-      _Touches:_ `supabase/migrations/` (new file), `supabase/seed.sql` if
-      affected.
+- [x] **F1b. Policies are per-operation; the migration is written and tested.**
+      `supabase/migrations/20260822030000_scope_rls_policies.sql`. Shape derived
+      from what the code actually does rather than from guesswork: `reviews`
+      SELECT only; `pages` SELECT + UPDATE (status and manager_notes are shared
+      state, and a decision is a property of the page rather than of whoever
+      recorded it), no INSERT/DELETE since pages are seeded; `edits` SELECT +
+      INSERT-as-self and **no UPDATE or DELETE policy at all**, matching the
+      append-only last-write-wins fold HelpPanel already performs; `comments`
+      scoped the same way despite no app code touching it, because any signed-in
+      user can reach it through the anon key.
+      `scripts/sync-checks.ts` is unaffected — it uses the service-role key,
+      which bypasses RLS.
+      `auth.uid()` is wrapped as `(select auth.uid())` so the initplan is
+      evaluated once per statement instead of once per row, and the columns the
+      policies and `loadReview()` filter on are indexed.
+      **Verified behaviorally, not just syntactically:** applied to a throwaway
+      Postgres 17 container with an `auth.uid()`/`authenticated` shim, then
+      exercised as two reviewers. Reviewer A could read both edits and write
+      their own; A's delete and update of B's edit affected zero rows, an insert
+      forged as B was rejected by the policy, page decisions stayed writable,
+      and deletes of pages and reviews affected nothing.
+      _Gap:_ validated against vanilla Postgres with a shim, not against
+      Supabase itself, and **not yet applied to the hosted project** — that is a
+      separate, approved step.
+      _Worth knowing:_ Supabase's own security advisor reports nothing about any
+      of this. Its linter checks whether RLS is enabled and whether policies
+      exist, not whether they are permissive; the old `USING (true)` policies
+      passed both checks.
 
 ### F2 — Move to stable field ids, now, while the table is empty
 
