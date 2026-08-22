@@ -22,26 +22,40 @@ reader can re-check rather than trust.
 
 ## Phase A — Gates that report green while doing nothing
 
-- [ ] **A1. `bun run ast:scan` is a no-op.** `.ast-grep/rules/` and
-      `.ast-grep/tests/` hold only `.gitkeep`, so the scan matches nothing and
-      exits `0`. The plan that introduced it never staged rule authoring, so
-      this is its end state, not a pending step. Either write rules worth
-      having — candidates: a bare `fetch('/api/ai/generate')` that bypasses
-      `requestGeneration()` and will 401, a `PUBLIC_`-prefixed env var that
-      silently won't reach `$env/static/public`, a `goto()` without
-      `resolve()` — or delete the script and its config. Do not leave it green
-      and empty.
-      _Done when:_ `ast-grep scan` reports on a seeded fixture, or the script,
-      `sgconfig.yml` and `.ast-grep/` are gone.
-      _Touches:_ `.ast-grep/**`, `sgconfig.yml`, `package.json`.
+- [x] **A1. `bun run ast:scan` was a no-op.** Resolved by writing rules rather
+      than deleting the scanner. Three rules, each encoding a gotcha CLAUDE.md
+      already documents:
+      `no-direct-ai-endpoint-fetch` (a bare `fetch('/api/ai/generate')` sends
+      no Authorization header and 401s at runtime; `src/lib/ai/generate.ts` is
+      excluded as the sanctioned caller), `no-public-prefix-env` (a
+      `PUBLIC_`-prefixed import from `$env/static/public` is silently undefined,
+      because `env.publicPrefix` is `SVELTE_PUBLIC_`), and
+      `no-private-env-in-client` (importing `$env/*/private` outside
+      `src/routes/api/**` would ship a server secret to the browser).
+      Each has a fixture in `.ast-grep/tests/` proving it matches.
+      _Dropped from the candidate list:_ `goto()` without `resolve()` — eslint's
+      `svelte/no-navigation-without-resolve` already covers it, and a second
+      implementation would drift.
+      **Found while doing this:** `sgconfig.yml` used `testDirs`, which is not a
+      recognised key. ast-grep ignored it silently and `ast-grep test`
+      discovered 0 tests while still exiting 0 — the same class of bug as the
+      empty rule directory. Corrected to `testConfigs[].testDir`.
 
-- [ ] **A2. `verify:tools` only proves installation.** It runs `--version` on
-      five binaries and asserts nothing about behavior — which is exactly why
-      it reports A1's empty scanner as healthy. Make each step assert an
-      observable outcome (ast-grep matches a known fixture; knip exits non-zero
-      on a deliberately unused export; repomix emits a file).
-      _Done when:_ reverting A1's fix makes `bun run verify:tools` fail.
-      _Touches:_ `scripts/verify-tooling.ts`.
+- [x] **A2. `verify:tools` now asserts behavior, not version strings.** Five
+      checks, each of which fails if the tool is misconfigured rather than
+      merely absent: ast-grep rules load and match, knip resolves the project
+      and emits a parseable report, repomix writes a non-trivial pack, the
+      lefthook pre-commit hook is installed, and the Danger predicates detect a
+      created test file.
+      **A trap found while writing it:** `ast-grep test` passes fixtures whose
+      rule id no longer exists, so with an empty rule directory it reports
+      "3 rule tests pass". An early version of this script printed that as a
+      green line — the exact lie it exists to remove. Rule presence, test
+      discovery and matching are therefore asserted in **one** check, so none of
+      them can report success alone.
+      _Verified:_ emptying `.ast-grep/rules` makes `bun run verify:tools` exit
+      `1` with `❌ ast-grep rules load and match`; restoring it returns all five
+      to green.
 
 ---
 

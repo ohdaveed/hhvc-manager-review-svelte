@@ -1,0 +1,17 @@
+id: no-public-prefix-env
+language: TypeScript
+severity: error
+message: This project's public env prefix is SVELTE_PUBLIC_, not PUBLIC_.
+note: |
+  vite.config.ts sets env.publicPrefix to 'SVELTE_PUBLIC_'. A PUBLIC_-prefixed
+  variable is therefore treated as PRIVATE and will not be exposed through
+  $env/static/public -- the import resolves to nothing rather than failing
+  loudly, so the value is silently undefined in the browser.
+files:
+  - 'src/**/*.ts'
+  - 'src/**/*.js'
+rule:
+  pattern: import { $NAME } from '$env/static/public'
+constraints:
+  NAME:
+    regex: '^PUBLIC_'

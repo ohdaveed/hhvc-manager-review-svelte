@@ -1,0 +1,8 @@
+id: no-direct-ai-endpoint-fetch
+snapshots:
+  'const res = await fetch(''/api/ai/generate'', { method: ''POST'' });':
+    labels:
+    - source: 'fetch(''/api/ai/generate'', { method: ''POST'' })'
+      style: primary
+      start: 18
+      end: 63

@@ -1,0 +1,6 @@
+id: no-private-env-in-client
+valid:
+  - "import { PUBLIC_THING } from '$env/static/public';"
+invalid:
+  - "import { env } from '$env/dynamic/private';"
+  - "import { RAILWAY_API_TOKEN } from '$env/static/private';"

@@ -2,10 +2,15 @@ pre-commit:
   parallel: true
   commands:
     format:
-      glob: "*.{js,ts,svelte,json,md}"
+      glob: '*.{js,ts,svelte,json,md}'
       run: bunx prettier --write {staged_files}
       stage_fixed: true
     verify:
       run: bun run verify
+    # Blocking, unlike knip below: these three rules encode runtime failures
+    # (a 401 from an unauthenticated fetch, a silently-undefined env var, a
+    # server secret in a client bundle) that no test or type check catches.
+    ast-grep:
+      run: bunx ast-grep scan
     knip:
       run: bunx knip --no-exit-code
