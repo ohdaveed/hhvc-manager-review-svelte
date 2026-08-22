@@ -38,7 +38,7 @@
 						<Button
 							href="/review/{page.path}"
 							variant="ghost"
-							class="w-full justify-start font-normal"
+							class="h-auto w-full justify-start py-1.5 text-left font-normal whitespace-normal"
 						>
 							<span class="mr-2 inline-block size-2 shrink-0 rounded-full {group.dot}"></span>
 							{titleFor(page.path)}
