@@ -7,6 +7,8 @@ export type ReviewPage = {
 	review_id: string;
 	path: string;
 	status: 'needs-review' | 'approved' | 'blocked' | 'revise';
+	manager_notes?: string;
+	page_checks?: any;
 	title: string; // denormalized for easy rendering
 };
 
@@ -68,16 +70,30 @@ export async function updatePageStatus(pageId: string, newStatus: ReviewPage['st
 	);
 
 	// 2. Background Sync
-	const { error } = await supabase
-		.from('pages')
-		.update({ status: newStatus })
-		.eq('id', pageId);
+	const { error } = await supabase.from('pages').update({ status: newStatus }).eq('id', pageId);
 
 	// 3. Rollback on failure
 	if (error) {
 		console.error('Failed to update status:', error);
 		pagesStore.set(previousPages);
 		// In a real app, trigger a toast notification here
+	}
+}
+
+/**
+ * Saves page decision notes optimistically
+ */
+export async function updatePageNotes(pageId: string, notes: string) {
+	let previousPages = get(pagesStore);
+	pagesStore.update((pages) =>
+		pages.map((p) => (p.id === pageId ? { ...p, manager_notes: notes } : p))
+	);
+
+	const { error } = await supabase.from('pages').update({ manager_notes: notes }).eq('id', pageId);
+
+	if (error) {
+		console.error('Failed to update notes:', error);
+		pagesStore.set(previousPages);
 	}
 }
 
@@ -113,8 +129,6 @@ export async function saveInlineEdit(pageId: string, fieldId: string, newContent
 		editsStore.set(previousEdits);
 	} else if (data) {
 		// Swap temporary ID with real database ID
-		editsStore.update((edits) =>
-			edits.map((e) => (e.id === optimisticEdit.id ? data : e))
-		);
+		editsStore.update((edits) => edits.map((e) => (e.id === optimisticEdit.id ? data : e)));
 	}
 }
