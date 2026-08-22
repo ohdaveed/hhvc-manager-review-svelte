@@ -11,7 +11,10 @@ export type ReviewPage = {
 	status: 'needs-review' | 'approved' | 'blocked' | 'revise';
 	manager_notes: string | null;
 	page_checks: Record<string, PageCheck> | null;
-	title: string; // denormalized for easy rendering
+	// NOTE: there is deliberately no `title` here. The pages table stores only
+	// id/review_id/path/created_at, so a title on this type would be a promise
+	// the database cannot keep. Callers resolve display titles from the static
+	// corpus in $lib/stores/pageData.svelte, keyed by `path`.
 };
 
 export type Edit = {
@@ -57,6 +60,23 @@ export async function loadReview(): Promise<() => void> {
 	}
 
 	pagesStore.set((pages as ReviewPage[]) ?? []);
+
+	// Hydrate saved edits too. initializeRealtime only observes future INSERTs,
+	// so without this a reload leaves editsStore empty and HelpPanel silently
+	// builds a Karl transcript with none of the reviewer's previous edits in it.
+	const pageIds = (pages ?? []).map((p) => p.id);
+	if (pageIds.length > 0) {
+		const { data: edits, error: editsError } = await supabase
+			.from('edits')
+			.select('*')
+			.in('page_id', pageIds);
+
+		if (editsError) {
+			console.error('Failed to load edits:', editsError);
+		} else {
+			editsStore.set((edits as Edit[]) ?? []);
+		}
+	}
 
 	return initializeRealtime(reviewId);
 }

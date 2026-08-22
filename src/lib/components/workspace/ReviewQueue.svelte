@@ -2,6 +2,11 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Separator } from '$lib/components/ui/separator/index.js';
 	import { pagesStore } from '$lib/stores/reviewState';
+	import { pageStore } from '$lib/stores/pageData.svelte';
+
+	// The pages table has no title column, so a hydrated row carries only `path`.
+	// Titles come from the static corpus, whose derived id is that same path.
+	const titleFor = (path: string) => pageStore.pages.find((p) => p.id === path)?.title ?? path;
 
 	// The store automatically updates via Supabase realtime subscriptions
 	const groups = [
@@ -36,7 +41,7 @@
 							class="w-full justify-start font-normal"
 						>
 							<span class="mr-2 inline-block size-2 shrink-0 rounded-full {group.dot}"></span>
-							{page.title}
+							{titleFor(page.path)}
 						</Button>
 					</li>
 				{/each}
