@@ -14,5 +14,26 @@ pre-commit:
     # server secret in a client bundle) that no test or type check catches.
     ast-grep:
       run: bunx ast-grep scan
+    # GitGuardian already scans pull requests as a GitHub App, so this is not a
+    # duplicate: it is the LOCAL half, which this repo has been missing. A
+    # repo-local core.hooksPath (needed so lefthook can install at all) bypasses
+    # the machine's global ggshield hooks, so nothing scanned a commit before it
+    # existed. A secret caught here needs no rotation; one caught in CI is
+    # already in history.
+    # --redact so a detected secret is never printed into a terminal or a log.
+    secrets:
+      run: bash scripts/local-tool.sh gitleaks git --staged --redact --no-banner
+    # The app exists to review copy, so a typo in src/lib/data/*.ts is a content
+    # defect that ships looking deliberate.
+    typos:
+      glob: '*.{js,ts,svelte,md,json,jsonc,yml,yaml,css}'
+      run: bash scripts/local-tool.sh typos {staged_files}
     knip:
       run: bunx knip --no-exit-code
+
+commit-msg:
+  commands:
+    conventional:
+      # The global CLAUDE.md mandates conventional commits; nothing enforced it
+      # until now, so the convention held only by memory.
+      run: bunx commitlint --edit {1}

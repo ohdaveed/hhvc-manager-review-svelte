@@ -75,7 +75,7 @@ export async function loadReview(): Promise<() => void> {
 
 	pagesStore.set((pages as ReviewPage[]) ?? []);
 
-	// Hydrate saved edits too. initializeRealtime only observes future INSERTs,
+	// Hydrate saved edits too. initializeRealtime only observes future inserts,
 	// so without this a reload leaves editsStore empty and HelpPanel silently
 	// builds a Karl transcript with none of the reviewer's previous edits in it.
 	const pageIds = (pages ?? []).map((p) => p.id);

@@ -1,0 +1,26 @@
+# typos configuration.
+#
+# The app exists to review copy, so a misspelling in src/lib/data/*.ts is a
+# content defect that ships looking deliberate. This file exists to keep that
+# signal trustworthy -- an allowlist entry needs a reason, or the check decays
+# into noise everyone skips.
+
+[files]
+extend-exclude = [
+	# The retained legacy port, ignored here for the same reason knip ignores
+	# it: it is reference material rather than live code, so a typo in one of
+	# its comments is not a defect worth blocking a commit over. Deleting the
+	# port is one decision, tracked as B5 in PLAN.md.
+	"src/css/**",
+	"src/legacy_main.js",
+
+	# Generated or vendored.
+	"bun.lock",
+	".tooling/**",
+]
+
+[default.extend-words]
+# Subject Matter Expert. Used throughout the editorNote fields to mark content
+# that still needs review by someone who knows the domain -- 12 occurrences,
+# all deliberate.
+SME = "SME"
