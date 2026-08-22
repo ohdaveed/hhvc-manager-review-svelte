@@ -38,42 +38,50 @@
 	{/if}
 
 	{#if section.bullets}
-		<ul class="pl-5 list-disc">
-			{#each section.bullets as b, i}
-				<li 
-					class="hover:ring-2 hover:ring-blue-400 cursor-pointer transition-all rounded p-1 -mx-1 my-1"
-					data-rewrite-field="sections.{index}.bullets.{i}"
-					onclick={selectField(`Section [${index+1}] Bullet`, b, (v) => section.bullets[i] = v)}
-					role="button"
-					tabindex="0"
-				>
-					{b}
-				</li>
-			{/each}
-		</ul>
+		{@render bulletsSnippet(section.bullets)}
 	{/if}
 
 	{#if section.callout}
-		<div class="callout bg-blue-50 border-l-4 border-blue-600 p-4 my-4">
-			{#if section.callout.title}
-				<h3 
-					class="font-bold text-lg mb-2 hover:ring-2 hover:ring-blue-400 cursor-pointer transition-all rounded p-1 -mx-1"
-					onclick={selectField(`Callout Title`, section.callout.title, (v) => section.callout.title = v)}
-					role="button"
-					tabindex="0"
-				>
-					{section.callout.title}
-				</h3>
-			{/if}
-			<p 
-				class="hover:ring-2 hover:ring-blue-400 cursor-pointer transition-all rounded p-1 -mx-1"
-				data-rewrite-field="sections.{index}.callout.text"
-				onclick={selectField(`Callout Text`, section.callout.text, (v) => section.callout.text = v)}
+		{@render calloutSnippet(section.callout)}
+	{/if}
+</div>
+
+{#snippet bulletsSnippet(bullets)}
+	<ul class="pl-5 list-disc">
+		{#each bullets as b, i}
+			<li 
+				class="hover:ring-2 hover:ring-blue-400 cursor-pointer transition-all rounded p-1 -mx-1 my-1"
+				data-rewrite-field="sections.{index}.bullets.{i}"
+				onclick={selectField(`Section [${index+1}] Bullet`, b, (v) => bullets[i] = v)}
 				role="button"
 				tabindex="0"
 			>
-				{section.callout.text}
-			</p>
-		</div>
-	{/if}
-</div>
+				{b}
+			</li>
+		{/each}
+	</ul>
+{/snippet}
+
+{#snippet calloutSnippet(callout)}
+	<div class="callout bg-blue-50 border-l-4 border-blue-600 p-4 my-4">
+		{#if callout.title}
+			<h3 
+				class="font-bold text-lg mb-2 hover:ring-2 hover:ring-blue-400 cursor-pointer transition-all rounded p-1 -mx-1"
+				onclick={selectField(`Callout Title`, callout.title, (v) => callout.title = v)}
+				role="button"
+				tabindex="0"
+			>
+				{callout.title}
+			</h3>
+		{/if}
+		<p 
+			class="hover:ring-2 hover:ring-blue-400 cursor-pointer transition-all rounded p-1 -mx-1"
+			data-rewrite-field="sections.{index}.callout.text"
+			onclick={selectField(`Callout Text`, callout.text, (v) => callout.text = v)}
+			role="button"
+			tabindex="0"
+		>
+			{callout.text}
+		</p>
+	</div>
+{/snippet}

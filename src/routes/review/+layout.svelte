@@ -29,7 +29,12 @@
 	</aside>
 	
 	<!-- Center Canvas: The Mockup -->
-	<main class="h-full flex flex-col relative bg-gray-100 overflow-hidden">
+	<!-- svelte-ignore a11y_click_events_have_key_events -->
+	<main 
+		class="h-full flex flex-col relative bg-gray-100 overflow-hidden cursor-default" 
+		onclick={() => pageStore.activeField = null}
+		role="presentation"
+	>
 		<!-- Toolbar (Top) -->
 		<nav class="flex items-center justify-between px-4 py-2 bg-white border-b border-gray-200 shadow-sm">
 			<div class="text-sm text-gray-600">https://sf.gov/</div>

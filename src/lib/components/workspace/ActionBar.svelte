@@ -64,9 +64,11 @@
 </script>
 
 {#if activeField}
-	<!-- Svelte transition could be added here for a slide-up effect -->
-	<div
+	<!-- Added stopPropagation to prevent the background click from dismissing the Action Bar -->
+	<div 
 		class="pointer-events-auto w-full max-w-3xl rounded-lg border border-gray-200 bg-white p-4 shadow-xl ring-1 ring-black/5"
+		onclick={(e) => e.stopPropagation()}
+		role="presentation"
 	>
 		<div class="mb-3 flex items-center justify-between">
 			<div class="flex items-center gap-2">
