@@ -138,7 +138,7 @@ export async function updatePageStatus(pageId: string, newStatus: ReviewPage['st
 /**
  * Saves page decision notes optimistically
  */
-export async function updatePageNotes(pageId: string, notes: string) {
+export async function updatePageNotes(pageId: string, notes: string): Promise<boolean> {
 	const previousPages = get(pagesStore);
 	pagesStore.update((pages) =>
 		pages.map((p) => (p.id === pageId ? { ...p, manager_notes: notes } : p))
@@ -149,7 +149,12 @@ export async function updatePageNotes(pageId: string, notes: string) {
 	if (error) {
 		console.error('Failed to update notes:', error);
 		pagesStore.set(previousPages);
+		// Reported so the caller can tell the reviewer. Rolling the store back on
+		// its own is invisible while the same page is open: the textarea keeps
+		// showing text that was never saved.
+		return false;
 	}
+	return true;
 }
 
 /**
