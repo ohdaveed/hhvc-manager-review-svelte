@@ -36,14 +36,46 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
 
-      - uses: oven-sh/setup-bun@v2
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
         with:
           bun-version: latest
 
       - name: Install
         run: bun install --frozen-lockfile
+
+      # Blocking, and deliberately inside this job rather than the non-blocking
+      # `review` one. Unlike prettier/eslint/svelte-check it has no baseline --
+      # it reported zero problems when added -- so there is nothing to ratchet
+      # down from. It also guards a failure mode nothing else here catches: a
+      # broken or renamed workflow silently stops reporting the status checks
+      # that ruleset `main: require CI` requires by job name, which removes the
+      # gate rather than failing it.
+      #
+      # Installed from the upstream release with its published checksum: the
+      # only actionlint GitHub Action is third-party (51 stars) and the npm
+      # package is published by an unaffiliated account, neither of which
+      # belongs in a workflow holding `pull-requests: write`.
+      #
+      # NOTE: actionlint shells out to shellcheck for `run:` blocks when it is
+      # on PATH. The runner has it; a dev machine usually does not, so a clean
+      # local `actionlint` is WEAKER than this step and does not prove it will
+      # pass. The first version of this step was clean locally and failed here
+      # on SC2086. Install shellcheck locally if you want the runs to match.
+      - name: Lint workflows (actionlint)
+        env:
+          ACTIONLINT_VERSION: 1.7.12
+        run: |
+          set -euo pipefail
+          base="https://github.com/rhysd/actionlint/releases/download/v${ACTIONLINT_VERSION}"
+          curl -sSLO "${base}/actionlint_${ACTIONLINT_VERSION}_linux_amd64.tar.gz"
+          curl -sSLO "${base}/actionlint_${ACTIONLINT_VERSION}_checksums.txt"
+          grep "actionlint_${ACTIONLINT_VERSION}_linux_amd64.tar.gz" \
+            "actionlint_${ACTIONLINT_VERSION}_checksums.txt" | sha256sum -c -
+          tar xzf "actionlint_${ACTIONLINT_VERSION}_linux_amd64.tar.gz" actionlint
+          ./actionlint -color
+          rm -f actionlint "actionlint_${ACTIONLINT_VERSION}_"*
 
       - name: Unit tests
         run: bun run test:unit -- --run
@@ -57,9 +89,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
 
-      - uses: oven-sh/setup-bun@v2
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
         with:
           bun-version: latest
 
@@ -75,7 +107,7 @@ jobs:
       - name: Run e2e
         run: bun run test:e2e
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: failure()
         with:
           name: playwright-report
@@ -92,9 +124,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
 
-      - uses: oven-sh/setup-bun@v2
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
         with:
           bun-version: latest
 
