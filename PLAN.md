@@ -1,113 +1,58 @@
-# PLAN — Replace generic divs/HTML with shadcn-svelte components
+# PLAN — Persist inline copy edits
 
-## Scope decision (assumption, stated up front)
+**Problem.** Reviewer copy edits never reach Supabase. `onSave` in
+`src/routes/review/+layout.svelte` calls `pageStore.activeField.update(val)`,
+which mutates the in-memory module object from `$lib/data` and stops there.
+`saveInlineEdit` (`src/lib/stores/reviewState.ts:202`) holds the only write to
+the `edits` table and had zero callers repo-wide. `loadReview` reads that table
+into `editsStore` and `HelpPanel` folds it into the Karl transcript — so the
+read path is complete and correct, but always reads an empty set. Net effect:
+the Karl/Wagtail handoff this tool exists to produce contains no copy edits.
+Decisions and manager notes were unaffected; they persist via
+`updatePageStatus` / `updatePageNotes`.
 
-The tree splits cleanly in two and only one half is in scope:
+**Why it went unnoticed.** `allPages` is a module-level singleton, so an edit
+survives navigation within a session and is lost only on reload.
 
-- **Chrome** (the review tool's own UI: sidebars, tab strip, panels, action bar) —
-  **in scope**, converts to shadcn-svelte.
-- **Mockup** (`src/lib/components/Page.svelte`, `Section.svelte`) — renders the
-  SF.gov page under review. **Out of scope.** Converting SF.gov page content into
-  Card/Alert would destroy the fidelity that is the entire point of this tool.
-  The one exception is the inline-edit hover affordance duplicated 8× across those
-  two files, which is chrome, not content.
+## Decisions
 
-## Pre-existing state found during orientation (findings, not fixes)
-
-- [x] `components.json` points at `tailwind.config.ts`, which does not exist — this
-      is a Tailwind v4 project. Must be corrected before the CLI will run.
-- [x] `src/app.css` defines **no shadcn theme tokens** (`--primary`, `--muted`,
-      `--border`, `--ring`, `--radius` …). The one already-installed component,
-      `ui/button/button.svelte`, references all of them, so it currently renders
-      unstyled. Nothing imports it, so nobody has noticed.
-- [x] `.page-title`, `.page-body`, `.page-section`, `.page-summary` etc. are
-      defined only in `src/css/styles.css`, which is imported only by
-      `src/legacy_main.js`, which is imported by nothing. **The mockup's own
-      styling is dead** in the Svelte app. Reported, not fixed — out of scope.
-- [x] The "Karl tags" checkbox in `routes/review/+layout.svelte` carries
-      `toggle toggle-primary toggle-sm` — DaisyUI classes, and DaisyUI is not
-      installed. Currently an unstyled native checkbox. A real fix, in scope.
-- [x] Baseline screenshot of `/review/report-garbage-filth-vegetation` captured to
-      `.playwright-mcp/baseline.png` before any edit, so the mockup region can be
-      proven unchanged afterwards.
+- **`field_id` is the existing `data-rewrite-field` path** (`title`,
+  `summary`, `sections.0.paragraphs.1`). It is already stable and per-instance,
+  and its `title`/`summary` values already match `HelpPanel`'s fold keys, so no
+  casing reconciliation is needed. The human-facing `name` (`Section [1]
+Paragraph`) stays display-only — it omits the paragraph index and would
+  collide across paragraphs in one section.
+- **Two edit targets had no `data-rewrite-field`** (section heading, callout
+  title). They get `sections.{index}.heading` and
+  `sections.{index}.callout.title`.
+- **Signed-out reviewers keep in-memory editing.** The in-memory update always
+  runs; persistence is attempted after. `saveInlineEdit` already logs, rolls
+  back its optimistic entry, and returns when there is no authenticated user,
+  so no guard is needed at the call site.
+- **Page identity** resolves via `$pagesStore.find((p) => p.path ===
+pageData.id)` — the same lookup `HelpPanel` uses. If there is no live record
+  (signed out, or page absent from the review), persistence is skipped and the
+  edit stays in memory.
 
 ## Tasks
 
-- [x] 1. Capture baseline screenshot + commit this plan.
-- [x] 2. Fix `components.json` for the Tailwind v4 / shadcn-svelte schema.
-- [x] 3. Add shadcn theme tokens to `src/app.css` — `:root` vars + `@theme inline`
-      mapping. **Deliberately omit** the stock `@layer base { *, body }` global
-      resets: they would override the existing `body` rule and bleed into the
-      sfds-rendered mockup. Done when the mockup region is pixel-identical to
-      baseline.
-- [x] 4. Install components: `card`, `tabs`, `textarea`, `label`, `badge`,
-      `separator`, `switch`, `alert`, `scroll-area`, `toggle-group`. Done when
-      each generated file matches the idiom of the existing `ui/button`
-      (tailwind-variants, `data-slot`, `WithElementRef`) and builds against the
-      installed `bits-ui@^2.19.0`.
-- [ ] 5. `ReviewWorkspace.svelte` → `Tabs`. Highest value: the hand-rolled tablist
-      has `role="tab"` and `aria-selected` but no `aria-controls`, no `tabpanel`
-      role, and no arrow-key handling. This is a correctness fix, not a reskin.
-- [ ] 6. `ActionBar.svelte` → `Card`, `Badge`, `Textarea`, `Button` ×4.
-- [ ] 7. `ReviewPanel.svelte` → `Label`, `Textarea`, `Separator`, `Card` + `Badge`
-      for check rows, decision buttons → `Button`.
-- [ ] 8. `ReviewQueue.svelte` → `Button variant="ghost"` links, `Badge` status
-      dots, `Separator` between groups.
-- [ ] 9. `HelpPanel.svelte` → `Card`, `Button`, `ScrollArea`.
-- [ ] 10. `routes/review/+layout.svelte` → `Button` for Export Data, `Separator`
-      for sidebar rules, `Switch` for the dead DaisyUI Karl-tags toggle.
-- [ ] 11. `routes/review/[slug]/+page.svelte` → not-found block to `Alert`.
-- [ ] 12. Consolidate the 8× duplicated inline-edit hover affordance out of
-      `Page.svelte` / `Section.svelte` into one shared class. Content markup
-      itself stays untouched.
-- [x] 13. Verify: `bun run verify` (unit + build), `bun run check` against the
-      **~55 error baseline** (not zero), `bun run format` (Prettier — this repo
-      gates on it; not Oxfmt), and a Playwright screenshot diffed against
-      baseline to prove the mockup region is unchanged.
+- [ ] 1. Add `fieldId` to the `ActiveField` type in
+      `src/lib/stores/pageData.svelte.ts`.
+- [ ] 2. Pass `fieldId` from every edit target in
+      `src/lib/components/Page.svelte` and `src/lib/components/Section.svelte`,
+      adding the two missing `data-rewrite-field` attributes.
+- [ ] 3. Wire `onSave` in `src/routes/review/+layout.svelte` to call
+      `saveInlineEdit(livePage.id, fieldId, val)` after the in-memory update.
+- [ ] 4. Add unit tests covering the field-id contract and the save wiring.
+- [ ] 5. Run `bun run verify`, open a PR, land it green.
 
-## Deliberately not done
+## Notes / not in scope
 
-- **Keyboard activation for inline-edit targets.** The elements in `Page.svelte` /
-  `Section.svelte` are `role="button" tabindex="0"` with **no `onkeydown`** — a
-  keyboard user can focus them and cannot activate them. Real a11y defect, seen
-  and reported, but fixing it is beyond "replace divs with shadcn components".
-- **The callout in `Section.svelte`** (`bg-blue-50 border-l-4 border-blue-600`) is
-  off-brand mockup content. Whether it becomes an SFDS callout or a shadcn `Alert`
-  is a product call, so it is left alone and raised in the final report.
-- **The dead mockup CSS** (`src/css/styles.css` unimported) — reported above.
-
-## Context for a cold resume
-
-The working tree already had uncommitted changes in `HelpPanel.svelte`,
-`ReviewPanel.svelte`, `ReviewWorkspace.svelte`, `stores/reviewState.ts`, plus
-untracked `scripts/sync-checks.ts` and a new Supabase migration, **before this
-work started**. Those are not mine; they were built on top of, never reverted.
-Work happens on branch `feat/shadcn-components`.
-
-## Blocker found at task 13 — needs a product decision
-
-`src/app.css` imports `@sfgov/design-system/dist/css/sfds.css`, which is a
-**Tailwind v3 build** shipping **7,717 `!important` utility overrides**, among
-them `.border{border-width:3px!important}` and `.rounded{border-radius:8px!important}`,
-plus `*{border-color:currentColor}`. Because those carry `!important`, they beat
-every Tailwind v4 utility no matter what — cascade layers cannot fix it, since
-`!important` reverses layer precedence.
-
-Effect: every shadcn component renders with a 3px near-black border. This is
-**pre-existing** — the baseline screenshot shows the same borders on the old
-hand-rolled textarea and the mockup frame — but it is what makes the newly
-converted chrome look wrong.
-
-Measured: dropping the single `sfds.css` import fixes the chrome completely. It
-also changes the mockup's typography, because sfds sets `*{font-family:Rubik…}`
-on every element, which overrides the `body` rule and falls back to a generic
-sans since Rubik is not loaded — whether that is better or worse for SF.gov
-fidelity is not a call this work can make. Dropping the import repaints **53% of
-the mockup region's pixels**. Evidence: `.playwright-mcp/final-1440.png` (with
-sfds) vs `.playwright-mcp/nosfds-1440.png` (without).
-
-Same cause: the "Copy Markdown" and "Export Data" buttons render as black bars,
-and the action bar's footer is pushed past the canvas edge. All three come from
-sfds inflating every bordered element by 3px, not from the component markup.
-
-Left **as-is**, sfds import intact. Removing it is the user's call, not mine.
+- `initializeRealtime` is **not** dead code — it is called at
+  `reviewState.ts:62`. knip flags it only because the `export` keyword is
+  redundant. Left alone.
+- `field_id` values are positional, so inserting a section renumbers later
+  paths and orphans edits saved against the old positions. Pre-existing in the
+  `data-rewrite-field` scheme; not addressed here.
+- RLS on `edits` is `FOR ALL TO authenticated USING (true)` and records no
+  author beyond `user_id`. Unchanged, still needs a product decision.
