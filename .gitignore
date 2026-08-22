@@ -26,3 +26,6 @@ test-results
 
 # playwright-mcp screenshots
 .playwright-mcp/
+
+# repomix context dumps
+repomix-output.xml
