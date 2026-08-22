@@ -88,6 +88,8 @@ Netlify, site `hhvc-manager-review`, **Git-connected and deploying automatically
 
 CI runs separately in `.github/workflows/pr.yml` — unit tests, build and e2e block, while prettier/eslint/svelte-check report without blocking. A green Netlify preview says the site built; it does not say the tests passed.
 
+Supabase auth URLs must include any new origin, or magic links redirect to a dead URL. The hosted allow-list covers production, `localhost:5173`, and Netlify preview hostnames; `supabase/config.toml` covers the local stack.
+
 ## Branch protection
 
 `main` is governed by repository ruleset **`main: require CI`** (id `21203092`), scoped to `~DEFAULT_BRANCH` so it follows a rename. It is `active` with **no bypass actors** — the repo owner is subject to it too, and `current_user_can_bypass` reads `never`.
@@ -106,8 +108,6 @@ Consequences worth knowing before working here:
 - A red PR cannot be merged, including by the owner, so the workflow is a gate rather than a report.
 - The escape hatch is editing or disabling the ruleset at `github.com/ohdaveed/hhvc-manager-review-svelte/rules` — a deliberate, visible act. Prefer fixing the build.
 - Stacked PRs targeting another branch are unaffected; the ruleset only covers the default branch. Note that GitHub requires the async merge endpoint (`PUT /repos/{owner}/{repo}/pulls/{n}/merge-async`) for a PR that is part of a stack — `gh pr merge` fails on those with a stack error.
-
-Supabase auth URLs must include any new origin, or magic links redirect to a dead URL. The hosted allow-list covers production, `localhost:5173`, and Netlify preview hostnames; `supabase/config.toml` covers the local stack.
 
 <!-- FABLIZE:BEGIN — run Opus like Fable (always-on router). Verified procedures only. Install/update: fablize setup.sh -->
 
