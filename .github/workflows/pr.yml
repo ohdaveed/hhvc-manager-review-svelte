@@ -1,0 +1,135 @@
+name: PR
+
+# Every pull request, whatever it targets. The repo has run on manual local
+# gates until now, so this mirrors `bun run verify` — but as discrete steps
+# rather than the script, because verify/ hides output in $TMPDIR and that log
+# does not survive the runner.
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# A second push to the same PR makes the first run irrelevant.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  # SVELTE_PUBLIC_* are $env/static/public: inlined at build time, so the build
+  # hard-fails without them (src/lib/supabase.ts calls createClient at module
+  # scope). These are deliberately placeholders, not secrets — CI is checking
+  # that the app builds, not that it can reach Supabase, and placeholders keep
+  # the workflow working on fork PRs where secrets are not injected.
+  # RAILWAY_API_TOKEN is $env/dynamic/private and is not needed to build.
+  SVELTE_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+  SVELTE_PUBLIC_SUPABASE_ANON_KEY: ci-placeholder-anon-key
+
+jobs:
+  # The blocking gate. Both steps were verified green before this file landed.
+  test:
+    name: test & build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install
+        run: bun install --frozen-lockfile
+
+      - name: Unit tests
+        run: bun run test:unit -- --run
+
+      - name: Production build
+        run: bun run build
+
+  # Separate job so a browser download never delays the unit-test signal.
+  e2e:
+    name: e2e
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install
+        run: bun install --frozen-lockfile
+
+      # The test:e2e script runs `playwright install` itself, but without the
+      # system libraries Chromium needs on a bare runner.
+      - name: Install Chromium + system deps
+        run: bunx playwright install --with-deps chromium
+
+      # playwright.config.ts webServer builds and previews on :4173 itself.
+      - name: Run e2e
+        run: bun run test:e2e
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
+
+  # Static review. NON-BLOCKING ON PURPOSE — see the summary each step writes.
+  # Both of these are red on main today, from code this workflow did not touch,
+  # so gating on them would make every PR red on day one for reasons unrelated
+  # to the PR. They report; they do not block. Fix the baselines, then flip the
+  # continue-on-error flags off.
+  review:
+    name: review (non-blocking)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install
+        run: bun install --frozen-lockfile
+
+      - name: Formatting (prettier)
+        id: prettier
+        continue-on-error: true
+        run: bunx prettier --check .
+
+      - name: Lint (eslint)
+        id: eslint
+        continue-on-error: true
+        run: bunx eslint .
+
+      # svelte-check carries a large documented baseline (~55 errors, almost
+      # all from src/legacy_main.js's unresolved imports). Informational only.
+      - name: Types (svelte-check)
+        id: svelte_check
+        continue-on-error: true
+        run: bun run check
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "### Static review"
+            echo
+            echo "| Check | Result |"
+            echo "| --- | --- |"
+            echo "| prettier | ${{ steps.prettier.outcome }} |"
+            echo "| eslint | ${{ steps.eslint.outcome }} |"
+            echo "| svelte-check | ${{ steps.svelte_check.outcome }} |"
+            echo
+            echo "Advisory only — these do not block the PR."
+            echo "All three had pre-existing failures on \`main\` when this workflow was added."
+          } >> "$GITHUB_STEP_SUMMARY"
