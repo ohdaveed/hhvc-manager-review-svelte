@@ -1,0 +1,7 @@
+[build]
+	command = "npm run build"
+	publish = "build"
+
+[build.environment]
+	# vite@8 requires ^20.19.0 || >=22.12.0; match the local toolchain.
+	NODE_VERSION = "24"
