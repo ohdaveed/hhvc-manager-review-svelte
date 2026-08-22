@@ -12,6 +12,9 @@
 
 	let { children } = $props();
 
+	// Karl tag display is not implemented — nothing reads this yet. The control
+	// stays disabled rather than animating over dead state; it was previously a
+	// bare checkbox carrying DaisyUI classes for a DaisyUI that is not installed.
 	let showKarlTags = $state(false);
 
 	// Dynamically pick the page data based on slug for the workspace
@@ -49,8 +52,13 @@
 		<nav class="bg-background flex items-center justify-between border-b px-4 py-2">
 			<div class="text-muted-foreground text-sm">https://sf.gov/</div>
 			<div class="flex items-center gap-2 text-sm">
-				<Label for="tagToggle" class="cursor-pointer">Karl tags</Label>
-				<Switch id="tagToggle" bind:checked={showKarlTags} />
+				<Label for="tagToggle" class="text-muted-foreground">Karl tags</Label>
+				<Switch
+					id="tagToggle"
+					bind:checked={showKarlTags}
+					disabled
+					title="Karl tag display is not implemented yet"
+				/>
 			</div>
 		</nav>
 

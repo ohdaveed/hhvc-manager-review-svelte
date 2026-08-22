@@ -69,6 +69,7 @@
 {#if activeField}
 	<!-- Added stopPropagation to prevent the background click from dismissing the Action Bar -->
 	<Card.Root
+		size="sm"
 		class="pointer-events-auto w-full max-w-3xl shadow-xl"
 		onclick={(e: MouseEvent) => e.stopPropagation()}
 	>

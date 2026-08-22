@@ -60,7 +60,7 @@ The tree splits cleanly in two and only one half is in scope:
 - [ ] 12. Consolidate the 8× duplicated inline-edit hover affordance out of
       `Page.svelte` / `Section.svelte` into one shared class. Content markup
       itself stays untouched.
-- [ ] 13. Verify: `bun run verify` (unit + build), `bun run check` against the
+- [x] 13. Verify: `bun run verify` (unit + build), `bun run check` against the
       **~55 error baseline** (not zero), `bun run format` (Prettier — this repo
       gates on it; not Oxfmt), and a Playwright screenshot diffed against
       baseline to prove the mockup region is unchanged.
@@ -98,11 +98,16 @@ Effect: every shadcn component renders with a 3px near-black border. This is
 hand-rolled textarea and the mockup frame — but it is what makes the newly
 converted chrome look wrong.
 
-Measured: dropping the single `sfds.css` import fixes the chrome completely, and
-also lets Roboto Flex through to the mockup (sfds forces `*{font-family:Rubik…}`
-on every element, and Rubik is not loaded). But it repaints **53% of the mockup
-region's pixels**, so it is not a free win — it changes the fidelity surface this
-tool exists to review. Evidence: `.playwright-mcp/final-1440.png` (with sfds) vs
-`.playwright-mcp/nosfds-1440.png` (without).
+Measured: dropping the single `sfds.css` import fixes the chrome completely. It
+also changes the mockup's typography, because sfds sets `*{font-family:Rubik…}`
+on every element, which overrides the `body` rule and falls back to a generic
+sans since Rubik is not loaded — whether that is better or worse for SF.gov
+fidelity is not a call this work can make. Dropping the import repaints **53% of
+the mockup region's pixels**. Evidence: `.playwright-mcp/final-1440.png` (with
+sfds) vs `.playwright-mcp/nosfds-1440.png` (without).
+
+Same cause: the "Copy Markdown" and "Export Data" buttons render as black bars,
+and the action bar's footer is pushed past the canvas edge. All three come from
+sfds inflating every bordered element by 3px, not from the component markup.
 
 Left **as-is**, sfds import intact. Removing it is the user's call, not mine.
