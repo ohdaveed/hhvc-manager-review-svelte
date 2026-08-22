@@ -25,9 +25,15 @@
 		const livePage = $pagesStore.find((p) => p.path === pageData.id);
 		const edits = $editsStore.filter((e) => e.page_id === livePage?.id);
 
+		const statusLabels: Record<string, string> = {
+			approved: 'Approved',
+			blocked: 'Blocked',
+			revise: 'Needs revision'
+		};
+
 		const reviewRecord: ReviewRecord = {
 			section_edits: {},
-			decision: livePage?.status === 'approved' ? 'Approved' : 'Needs review'
+			decision: statusLabels[livePage?.status ?? ''] ?? 'Needs review'
 		};
 
 		for (const edit of edits) {

@@ -5,7 +5,8 @@
 	import { Separator } from '$lib/components/ui/separator/index.js';
 	import * as ToggleGroup from '$lib/components/ui/toggle-group/index.js';
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
-	import { updatePageStatus, updatePageNotes, pagesStore } from '$lib/stores/reviewState';
+	import { onDestroy } from 'svelte';
+	import { updatePageStatus, updatePageNotes, pagesStore, type PageCheck } from '$lib/stores/reviewState';
 
 	let { pageData, showOnlyChecks = false } = $props();
 
@@ -13,18 +14,21 @@
 	let liveRecord = $derived($pagesStore.find((p) => p.path === pageData?.id));
 
 	let notesValue = $state('');
-	let debounceTimeout: ReturnType<typeof setTimeout>;
+	let debounceTimeout: ReturnType<typeof setTimeout> | undefined;
+	let lastRecordId = $state<string | undefined>(undefined);
 
-	// Sync local notesValue when the page changes
+	onDestroy(() => clearTimeout(debounceTimeout));
+
+	// Sync local notesValue unconditionally whenever the live record identity changes
 	$effect(() => {
-		if (liveRecord && notesValue === '' && liveRecord.manager_notes) {
-			notesValue = liveRecord.manager_notes;
+		const id = liveRecord?.id;
+		if (id !== lastRecordId) {
+			lastRecordId = id;
+			notesValue = liveRecord?.manager_notes ?? '';
 		}
 	});
 
 	type Decision = 'needs-review' | 'approved' | 'blocked' | 'revise';
-
-	type PageCheck = { status: string; message: string };
 
 	// `tone` keeps the traffic-light reading the hand-rolled pills had. Only the
 	// blocked end of it maps onto a shadcn token; the other two are tinted rings.
@@ -50,10 +54,14 @@
 		const target = e.target as HTMLTextAreaElement;
 		notesValue = target.value;
 
+		// Capture the page ID and note value now so the callback is bound to
+		// the current page even if navigation changes liveRecord before it fires.
+		const capturedId = liveRecord?.id;
+		const capturedValue = notesValue;
 		clearTimeout(debounceTimeout);
 		debounceTimeout = setTimeout(() => {
-			if (liveRecord) {
-				updatePageNotes(liveRecord.id, notesValue);
+			if (capturedId) {
+				updatePageNotes(capturedId, capturedValue);
 			}
 		}, 500);
 	};

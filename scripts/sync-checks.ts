@@ -3,25 +3,82 @@ import { allPages } from '../src/lib/data/index.js';
 
 // Load from process.env (Bun automatically loads .env and .env.local)
 const supabaseUrl = process.env.SVELTE_PUBLIC_SUPABASE_URL;
-const supabaseKey = process.env.SVELTE_PUBLIC_SUPABASE_ANON_KEY;
+// Use the service-role key so updates are not blocked by RLS
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl || !supabaseKey) {
-	console.error('Missing Supabase credentials in .env.local');
+	console.error('Missing SVELTE_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY in .env.local');
 	process.exit(1);
 }
 
-const supabase = createClient(supabaseUrl, supabaseKey);
+const supabase = createClient(supabaseUrl, supabaseKey, {
+	auth: { persistSession: false }
+});
 
 function computeReadingLevel(text: string) {
-	const words = text.split(/\s+/).length;
-	if (words > 200) {
-		return { status: 'check', message: 'Content is slightly wordy. Consider simplifying.' };
+	// Flesch-Kincaid Grade Level approximation
+	const sentences = text.split(/[.!?]+/).filter((s) => s.trim().length > 0);
+	const words = text.split(/\s+/).filter((w) => w.trim().length > 0);
+	const syllables = words.reduce((count, word) => count + countSyllables(word), 0);
+
+	if (sentences.length === 0 || words.length === 0) {
+		return { status: 'check', message: 'Could not compute reading level (no content).' };
 	}
-	return { status: 'pass', message: 'Content is within Grade 6-8 target.' };
+
+	const avgSentenceLength = words.length / sentences.length;
+	const avgSyllablesPerWord = syllables / words.length;
+	// Flesch-Kincaid Grade Level formula
+	const grade = 0.39 * avgSentenceLength + 11.8 * avgSyllablesPerWord - 15.59;
+
+	if (grade <= 8) {
+		return { status: 'pass', message: `Reading level is approximately Grade ${grade.toFixed(1)} (target: ≤8).` };
+	}
+	return { status: 'check', message: `Reading level is approximately Grade ${grade.toFixed(1)}, above the Grade 6–8 target.` };
 }
 
-function verifyLinks(sections: any[]) {
-	return { status: 'pass', message: 'All external links have appropriate targets.' };
+function countSyllables(word: string): number {
+	word = word.toLowerCase().replace(/[^a-z]/g, '');
+	if (word.length === 0) return 0;
+	// Count vowel groups as syllables
+	const matches = word.match(/[aeiouy]+/g);
+	let count = matches ? matches.length : 1;
+	// Subtract silent trailing 'e'
+	if (word.endsWith('e') && word.length > 2) count -= 1;
+	return Math.max(1, count);
+}
+
+// URL-like pattern: detects http/https links and sf.gov relative paths
+const URL_PATTERN = /https?:\/\/[^\s"'<>)]+|(?:^|\s)\/[a-z0-9/-]+/gi;
+// Placeholder patterns that indicate an unresolved link
+const PLACEHOLDER_PATTERN = /\[.*?\]|TODO|FIXME|placeholder|#$/i;
+
+function verifyLinks(sections: { paragraphs?: string[]; bullets?: string[] }[]): { status: string; message: string } {
+	const issues: string[] = [];
+
+	for (const section of sections) {
+		const texts: string[] = [
+			...(section.paragraphs ?? []),
+			...(section.bullets ?? [])
+		];
+
+		for (const text of texts) {
+			const urls = text.match(URL_PATTERN) ?? [];
+			for (const url of urls) {
+				const trimmed = url.trim();
+				if (PLACEHOLDER_PATTERN.test(trimmed)) {
+					issues.push(`Unresolved placeholder link: "${trimmed}"`);
+				} else if (/^https?:\/\//.test(trimmed) && !trimmed.startsWith('https://sf.gov')) {
+					// External links are noted for review
+					issues.push(`External link (verify target): "${trimmed.slice(0, 80)}"`);
+				}
+			}
+		}
+	}
+
+	if (issues.length === 0) {
+		return { status: 'pass', message: 'No unresolved or external link issues detected.' };
+	}
+	return { status: 'check', message: issues.join('; ') };
 }
 
 async function syncChecks() {
@@ -34,7 +91,7 @@ async function syncChecks() {
 
 		let fullText = page.title + ' ' + (page.summary || '');
 		if (page.sections) {
-			page.sections.forEach((s: any) => {
+			page.sections.forEach((s: { paragraphs?: string[] }) => {
 				fullText += ' ' + (s.paragraphs?.join(' ') || '');
 			});
 		}
@@ -44,10 +101,16 @@ async function syncChecks() {
 			linkTargets: verifyLinks(page.sections || [])
 		};
 
-		const { error } = await supabase.from('pages').update({ page_checks: checks }).eq('path', id);
+		const { error, count } = await supabase
+			.from('pages')
+			.update({ page_checks: checks })
+			.eq('path', id)
+			.select('id', { count: 'exact', head: true });
 
 		if (error) {
 			console.error(`Failed to update checks for ${id}:`, error);
+		} else if (!count || count === 0) {
+			console.warn(`No row matched for path "${id}" — checks not saved.`);
 		} else {
 			console.log(`Synced checks for ${id}`);
 		}

@@ -2,13 +2,15 @@ import { writable, get } from 'svelte/store';
 import { supabase } from '$lib/supabase';
 
 // Define the shape of our data
+export type PageCheck = { status: string; message: string };
+
 export type ReviewPage = {
 	id: string;
 	review_id: string;
 	path: string;
 	status: 'needs-review' | 'approved' | 'blocked' | 'revise';
-	manager_notes?: string;
-	page_checks?: any;
+	manager_notes: string | null;
+	page_checks: Record<string, PageCheck> | null;
 	title: string; // denormalized for easy rendering
 };
 
@@ -24,8 +26,42 @@ export const pagesStore = writable<ReviewPage[]>([]);
 export const editsStore = writable<Edit[]>([]);
 
 /**
- * Initializes the realtime subscriptions for a specific review session
+ * Loads all pages for the most recent review and initializes realtime.
+ * Call this once from the review layout's onMount.
+ * Returns the unsubscribe cleanup function.
  */
+export async function loadReview(): Promise<() => void> {
+	// Fetch the most recent review
+	const { data: reviews, error: reviewsError } = await supabase
+		.from('reviews')
+		.select('id')
+		.order('created_at', { ascending: false })
+		.limit(1);
+
+	if (reviewsError || !reviews || reviews.length === 0) {
+		console.error('No review found:', reviewsError);
+		return () => {};
+	}
+
+	const reviewId = reviews[0].id;
+
+	// Fetch all pages for that review
+	const { data: pages, error: pagesError } = await supabase
+		.from('pages')
+		.select('*')
+		.eq('review_id', reviewId);
+
+	if (pagesError) {
+		console.error('Failed to load pages:', pagesError);
+		return () => {};
+	}
+
+	pagesStore.set((pages as ReviewPage[]) ?? []);
+
+	return initializeRealtime(reviewId);
+}
+
+
 export function initializeRealtime(reviewId: string) {
 	const channel = supabase.channel(`review-${reviewId}`);
 
