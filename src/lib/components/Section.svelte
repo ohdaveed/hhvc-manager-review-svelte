@@ -1,55 +1,40 @@
 <script lang="ts">
-	import { pageStore } from '$lib/stores/pageData.svelte';
+	import EditTarget from './EditTarget.svelte';
+
 	let { section, index } = $props();
 
-	function selectField(
-		name: string,
-		fieldId: string,
-		content: string,
-		updateFn: (val: string) => void
-	) {
-		return (e: Event) => {
-			e.stopPropagation();
-			pageStore.activeField = { name, fieldId, content, update: updateFn };
-		};
-	}
+	// Assigned once from the pristine corpus in pageData.svelte.ts, so editing a
+	// heading cannot renumber its own section's edits. The fallback covers a
+	// section constructed outside the store, e.g. in a test fixture.
+	const key = $derived(section.fieldKey ?? `section-${index}`);
+
+	// Display only, and deliberately still positional: it is what a reviewer
+	// reads in the ActionBar ("Section [2] Paragraph"), never what identifies a
+	// field. `fieldId` below is the identity.
+	const label = $derived(`Section [${index + 1}]`);
 </script>
 
 <div class="page-section {section.kind || 'body'}">
 	{#if section.heading}
-		<h2
-			class="section-heading edit-target"
+		<EditTarget
+			as="h2"
+			class="section-heading"
 			id={section.heading.toLowerCase().replace(/\s+/g, '-')}
-			data-rewrite-field="sections.{index}.heading"
-			onclick={selectField(
-				`Section [${index + 1}] Heading`,
-				`sections.${index}.heading`,
-				section.heading,
-				(v) => (section.heading = v)
-			)}
-			role="button"
-			tabindex="0"
-		>
-			{section.heading}
-		</h2>
+			name={`${label} Heading`}
+			fieldId={`sections.${key}.heading`}
+			value={section.heading}
+			update={(v) => (section.heading = v)}
+		/>
 	{/if}
 
 	{#if section.paragraphs}
-		{#each section.paragraphs as p, i}
-			<p
-				class="edit-target"
-				data-rewrite-field="sections.{index}.paragraphs.{i}"
-				onclick={selectField(
-					`Section [${index + 1}] Paragraph`,
-					`sections.${index}.paragraphs.${i}`,
-					p,
-					(v) => (section.paragraphs[i] = v)
-				)}
-				role="button"
-				tabindex="0"
-			>
-				{p}
-			</p>
+		{#each section.paragraphs as p, i (i)}
+			<EditTarget
+				name={`${label} Paragraph`}
+				fieldId={`sections.${key}.paragraphs.${i}`}
+				value={p}
+				update={(v) => (section.paragraphs[i] = v)}
+			/>
 		{/each}
 	{/if}
 
@@ -64,21 +49,15 @@
 
 {#snippet bulletsSnippet(bullets)}
 	<ul class="list-disc pl-5">
-		{#each bullets as b, i}
-			<li
-				class="edit-target my-1"
-				data-rewrite-field="sections.{index}.bullets.{i}"
-				onclick={selectField(
-					`Section [${index + 1}] Bullet`,
-					`sections.${index}.bullets.${i}`,
-					b,
-					(v) => (bullets[i] = v)
-				)}
-				role="button"
-				tabindex="0"
-			>
-				{b}
-			</li>
+		{#each bullets as b, i (i)}
+			<EditTarget
+				as="li"
+				class="my-1"
+				name={`${label} Bullet`}
+				fieldId={`sections.${key}.bullets.${i}`}
+				value={b}
+				update={(v) => (bullets[i] = v)}
+			/>
 		{/each}
 	</ul>
 {/snippet}
@@ -86,34 +65,20 @@
 {#snippet calloutSnippet(callout)}
 	<div class="callout my-4 border-l-4 border-blue-600 bg-blue-50 p-4">
 		{#if callout.title}
-			<h3
-				class="edit-target mb-2 text-lg font-bold"
-				data-rewrite-field="sections.{index}.callout.title"
-				onclick={selectField(
-					`Callout Title`,
-					`sections.${index}.callout.title`,
-					callout.title,
-					(v) => (callout.title = v)
-				)}
-				role="button"
-				tabindex="0"
-			>
-				{callout.title}
-			</h3>
+			<EditTarget
+				as="h3"
+				class="mb-2 text-lg font-bold"
+				name="Callout Title"
+				fieldId={`sections.${key}.callout.title`}
+				value={callout.title}
+				update={(v) => (callout.title = v)}
+			/>
 		{/if}
-		<p
-			class="edit-target"
-			data-rewrite-field="sections.{index}.callout.text"
-			onclick={selectField(
-				`Callout Text`,
-				`sections.${index}.callout.text`,
-				callout.text,
-				(v) => (callout.text = v)
-			)}
-			role="button"
-			tabindex="0"
-		>
-			{callout.text}
-		</p>
+		<EditTarget
+			name="Callout Text"
+			fieldId={`sections.${key}.callout.text`}
+			value={callout.text}
+			update={(v) => (callout.text = v)}
+		/>
 	</div>
 {/snippet}
