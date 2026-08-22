@@ -44,7 +44,8 @@ pageData.id)` — the same lookup `HelpPanel` uses. If there is no live record
 - [x] 3. Wire `onSave` in `src/routes/review/+layout.svelte` to call
       `saveInlineEdit(livePage.id, fieldId, val)` after the in-memory update.
 - [x] 4. Add unit tests covering the field-id contract and the save wiring.
-- [ ] 5. Run `bun run verify`, open a PR, land it green.
+- [x] 5. Run `bun run verify`, open a PR, land it green. Landed in #17 as
+      `c7fadd6`; production verified serving it (HTTP 200).
 
 ## Notes / not in scope
 
