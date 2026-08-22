@@ -186,17 +186,24 @@ leaving 16 dependency findings that are a single product decision (B5).
       so it can quietly grow.
       _Touches:_ varies; `.github/workflows/pr.yml` if made blocking.
 
-- [ ] **D2. Accessibility on the edit targets.** `Section.svelte` and
-      `Page.svelte` put `role="button"` on `<p>`, `<li>`, `<h2>` and `<h3>`
-      with a click handler and no keyboard handler; Svelte warns on every
-      build. This is a Section 508 / WCAG 2.1 AA obligation for an SF.gov
-      property, and the edit targets are the app's primary interaction — **a
-      keyboard-only reviewer cannot edit anything today.** Pair the fix with
-      `@axe-core/playwright` (719★, Deque — the reference implementation) in
-      the existing `e2e` job, which already blocks merge, making a11y a gate
-      for roughly ten lines.
-      _Touches:_ `src/lib/components/Section.svelte`,
-      `src/lib/components/Page.svelte`, `tests/*.e2e.ts`, `package.json`.
+- [x] **D2. Edit targets are keyboard-operable, and axe now gates it.** They
+      were `<p role="button" tabindex="0">` with a click handler and no key
+      handler, so a keyboard-only reviewer could not edit anything on a page
+      whose entire purpose is editing. Each is now a real `<button>`, which
+      brings Enter/Space, focus order and the accessible role for free; the
+      `edit-target` utility resets the button's own typography so the copy still
+      renders as SF.gov copy. The ~10 Svelte a11y compiler warnings are gone.
+      `@axe-core/playwright` runs in the existing `e2e` job — already required
+      by the ruleset — so a regression blocks the merge.
+      **Two pre-existing serious violations had to be fixed to make it green,**
+      on the same no-baseline principle as actionlint: no page in the app set a
+      `<title>` (`document-title`), and the mockup scroll container could not be
+      focused (`scrollable-region-focusable`), so a keyboard user could not
+      scroll the mockup either. Both pages now report **zero** WCAG 2.1 AA
+      violations.
+      _Verified in a browser:_ focus ring on the title, Enter opens the
+      ActionBar with the text loaded, and the signed-in rendering is
+      typographically identical to before.
 
 ---
 
@@ -278,16 +285,21 @@ hosted project is unverified.** F1a exists to close that gap first.
 wrote to `edits` before #17 landed, so there is no data to migrate. This is the
 cheapest this decision will ever be; every edit saved from here raises the cost.
 
-- [ ] **F2a. Derive `field_id` from a stable id, not array position.** Give each
-      section, paragraph and bullet an explicit id in the `src/lib/data/`
-      modules and build `data-rewrite-field` from that, so inserting a section
-      no longer renumbers later paths and orphans their edits. Keep the
-      `data-rewrite-field` attribute as the single source of the id — the
-      contract `tests/inlineEditFieldId.test.ts` already guards.
-      _Done when:_ inserting a section ahead of an edited one leaves that
-      edit's `field_id` unchanged, covered by a test.
-      _Touches:_ `src/lib/data/**`, `src/lib/components/Section.svelte`,
-      `src/lib/components/Page.svelte`, `tests/inlineEditFieldId.test.ts`.
+- [x] **F2a. `field_id` is keyed by heading slug, not array position.**
+      `sections.who-we-are.paragraphs.1` rather than `sections.0.paragraphs.1`,
+      so inserting or reordering a section no longer renumbers the ones after it
+      and orphans their edits.
+      _Measured before choosing:_ all **136 sections across 29 pages have a
+      heading and none repeats within a page**, so this needed no change to the
+      30 data modules — the alternative was hand-editing ~3,900 lines.
+      **The subtle part:** the key is computed once in `pageData.svelte.ts` from
+      the pristine module data and never recomputed, because the heading is
+      itself an edit target — deriving it live would mean editing a heading
+      silently orphaned that section's other edits. There is a test for exactly
+      that.
+      _Known limit, deliberately left:_ paragraph and bullet positions within a
+      section are still indexes, so inserting a paragraph mid-section shifts the
+      ones after it. Much smaller blast radius, and free.
 
 ### F3 — Keep anonymous read, make it honest
 
@@ -304,15 +316,16 @@ vanish on reload with no signal, and since #17 it is quieter but worse —
 `livePage` is undefined, so `saveInlineEdit` is never called and there is not
 even a console error.
 
-- [ ] **F3a. Make the signed-out state visible and non-editable.** Show a
-      persistent "viewing signed out — edits won't be saved" banner, and make
-      edit targets non-interactive when there is no session (no `role="button"`,
-      no click handler, no affordance). Pairs naturally with D2, which is
-      reworking those same targets for keyboard access.
-      _Done when:_ a signed-out visitor can read every mockup and cannot open
-      the ActionBar.
-      _Touches:_ `src/routes/review/+layout.svelte`,
-      `src/lib/components/Section.svelte`, `src/lib/components/Page.svelte`.
+- [x] **F3a. Signed out is visible and inert.** A persistent banner says
+      editing is disabled and why, and `EditTarget` drops the button entirely —
+      no role, no tabindex, no pointer affordance — so the copy renders as plain
+      text. Anonymous reading still works, because the mockups come from static
+      modules, which is the use worth keeping.
+      Previously a signed-out visitor got a fully editable mockup whose edits
+      vanished on reload; after #17 it was quieter but worse, with
+      `saveInlineEdit` never called and no console error either.
+      The banner waits for the session check to resolve rather than flashing at
+      a reviewer who is in fact signed in.
 
 ### F4 — Closed, no work
 

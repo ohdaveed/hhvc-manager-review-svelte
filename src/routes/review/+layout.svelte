@@ -8,6 +8,7 @@
 	import { Switch } from '$lib/components/ui/switch/index.js';
 	import { pageStore } from '$lib/stores/pageData.svelte';
 	import { loadReview, pagesStore, saveInlineEdit } from '$lib/stores/reviewState';
+	import { sessionStore } from '$lib/stores/session.svelte';
 	import ReviewQueue from '$lib/components/workspace/ReviewQueue.svelte';
 	import ReviewWorkspace from '$lib/components/workspace/ReviewWorkspace.svelte';
 	import ActionBar from '$lib/components/workspace/ActionBar.svelte';
@@ -69,6 +70,22 @@
 		onclick={() => (pageStore.activeField = null)}
 		role="presentation"
 	>
+		{#if sessionStore.knownSignedOut}
+			<!-- Anonymous browsing is supported on purpose: the mockups come from
+			     static modules, so a stakeholder can read them without an account.
+			     What is not acceptable is doing it silently -- `edits.user_id` is
+			     NOT NULL, so nothing a signed-out visitor types can be saved, and
+			     before this banner the edit simply vanished on reload with no
+			     signal. EditTarget also drops the affordance entirely. -->
+			<div
+				class="border-b border-amber-300 bg-amber-50 px-4 py-2 text-sm text-amber-900"
+				role="status"
+			>
+				<strong class="font-semibold">Viewing signed out.</strong> You can read every mockup, but editing
+				is disabled because edits cannot be saved without an account.
+			</div>
+		{/if}
+
 		<!-- Toolbar (Top) -->
 		<nav class="bg-background flex items-center justify-between border-b px-4 py-2">
 			<div class="text-muted-foreground text-sm">https://sf.gov/</div>
@@ -83,8 +100,17 @@
 			</div>
 		</nav>
 
-		<!-- Scrollable Mockup Container -->
-		<div class="flex flex-1 justify-center overflow-y-auto p-8">
+		<!-- Scrollable Mockup Container.
+		     tabindex="0" is what axe's scrollable-region-focusable asks for: a
+		     region that scrolls but cannot be focused is unreachable by keyboard,
+		     so a keyboard-only reviewer could not scroll the mockup at all. The
+		     role and label give the focus stop a meaning once it exists. -->
+		<div
+			class="flex flex-1 justify-center overflow-y-auto p-8"
+			tabindex="0"
+			role="region"
+			aria-label="Mockup preview"
+		>
 			<figure class="min-h-full w-full max-w-4xl border border-gray-200 bg-white pb-32 shadow-md">
 				<!-- Legacy SF.gov Header -->
 				<header class="flex items-center justify-between bg-[#002f6c] p-4 text-white">
