@@ -58,33 +58,94 @@ const URL_PATTERN = /https?:\/\/[^\s"'<>)]+|(?:^|\s)\/[a-z0-9/-]+/gi;
 // Placeholder patterns that indicate an unresolved link
 const PLACEHOLDER_PATTERN = /\[.*?\]|TODO|FIXME|placeholder|#$/i;
 
-function verifyLinks(sections: { paragraphs?: string[]; bullets?: string[] }[]): {
-	status: string;
-	message: string;
-} {
+/**
+ * Keys that are review metadata or machine values rather than copy a resident
+ * reads. `karl` describes how a block maps onto Wagtail fields, `editorNote`
+ * and friends record the mockup's provenance, and urls are graded by
+ * `verifyLinks` instead.
+ */
+const NON_COPY_KEYS = new Set([
+	'karl',
+	'editorNote',
+	'editorStatus',
+	'unverified',
+	'unverifiedReason',
+	'slug',
+	'type',
+	'kind',
+	'url',
+	'buttonUrl',
+	'target',
+	'id'
+]);
+
+/**
+ * Every user-visible string on a page, wherever it lives. The corpus nests copy
+ * under `steps[]`, `cards[]`, `callout`, `button.label` and tagged text objects,
+ * so walking generically is what keeps this honest as the shape changes -- an
+ * explicit field list silently graded a fragment and passed the rest.
+ */
+function collectCopy(node: unknown, into: string[] = []): string[] {
+	if (typeof node === 'string') {
+		into.push(node);
+	} else if (Array.isArray(node)) {
+		for (const item of node) collectCopy(item, into);
+	} else if (node && typeof node === 'object') {
+		for (const [key, value] of Object.entries(node)) {
+			if (NON_COPY_KEYS.has(key)) continue;
+			collectCopy(value, into);
+		}
+	}
+	return into;
+}
+
+type FoundLink = { url: string; target?: string };
+
+/**
+ * Every link destination on a page: the structured `url`/`buttonUrl` fields the
+ * corpus actually uses (cards, buttons, steps), plus anything URL-shaped written
+ * inline in copy.
+ */
+function collectLinks(node: unknown, into: FoundLink[] = []): FoundLink[] {
+	if (typeof node === 'string') {
+		for (const match of node.match(URL_PATTERN) ?? []) into.push({ url: match.trim() });
+	} else if (Array.isArray(node)) {
+		for (const item of node) collectLinks(item, into);
+	} else if (node && typeof node === 'object') {
+		const record = node as Record<string, unknown>;
+		const target = typeof record.target === 'string' ? record.target : undefined;
+		for (const key of ['url', 'buttonUrl']) {
+			const value = record[key];
+			if (typeof value === 'string' && value.trim() !== '')
+				into.push({ url: value.trim(), target });
+		}
+		for (const [key, value] of Object.entries(record)) {
+			if (key === 'url' || key === 'buttonUrl' || key === 'target') continue;
+			collectLinks(value, into);
+		}
+	}
+	return into;
+}
+
+function verifyLinks(page: unknown): { status: string; message: string } {
+	const links = collectLinks(page);
+	if (links.length === 0) {
+		return { status: 'pass', message: 'No links on this page.' };
+	}
+
 	const issues: string[] = [];
-
-	for (const section of sections) {
-		const texts: string[] = [...(section.paragraphs ?? []), ...(section.bullets ?? [])];
-
-		for (const text of texts) {
-			const urls = text.match(URL_PATTERN) ?? [];
-			for (const url of urls) {
-				const trimmed = url.trim();
-				if (PLACEHOLDER_PATTERN.test(trimmed)) {
-					issues.push(`Unresolved placeholder link: "${trimmed}"`);
-				} else if (/^https?:\/\//.test(trimmed) && !trimmed.startsWith('https://sf.gov')) {
-					// External links are noted for review
-					issues.push(`External link (verify target): "${trimmed.slice(0, 80)}"`);
-				}
-			}
+	for (const { url } of links) {
+		if (PLACEHOLDER_PATTERN.test(url)) {
+			issues.push(`Unresolved placeholder link: "${url.slice(0, 80)}"`);
+		} else if (/^https?:\/\//.test(url) && !/^https?:\/\/(www\.)?sf\.gov/.test(url)) {
+			issues.push(`External link (verify target): "${url.slice(0, 80)}"`);
 		}
 	}
 
 	if (issues.length === 0) {
-		return { status: 'pass', message: 'No unresolved or external link issues detected.' };
+		return { status: 'pass', message: `${links.length} link(s) checked, all resolve to sf.gov.` };
 	}
-	return { status: 'check', message: issues.join('; ') };
+	return { status: 'check', message: `${links.length} link(s) checked. ` + issues.join('; ') };
 }
 
 async function syncChecks() {
@@ -95,16 +156,13 @@ async function syncChecks() {
 			? page.slug.replace('sf.gov/', '').replace(/\//g, '-')
 			: page.title.replace(/\s+/g, '-').toLowerCase();
 
-		let fullText = page.title + ' ' + (page.summary || '');
-		if (page.sections) {
-			page.sections.forEach((s: { paragraphs?: string[] }) => {
-				fullText += ' ' + (s.paragraphs?.join(' ') || '');
-			});
-		}
+		// Grade the whole page, not just title/summary/paragraphs: most of the
+		// instructional copy lives under steps[], cards[] and callouts.
+		const fullText = collectCopy(page).join(' ');
 
 		const checks = {
 			readingLevel: computeReadingLevel(fullText),
-			linkTargets: verifyLinks(page.sections || [])
+			linkTargets: verifyLinks(page)
 		};
 
 		const { error, count } = await supabase
