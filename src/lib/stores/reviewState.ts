@@ -2,21 +2,13 @@ import { writable, get } from 'svelte/store';
 import { supabase } from '$lib/supabase';
 
 // Define the shape of our data
-export type PageStatus = 'needs-review' | 'approved' | 'blocked' | 'revise';
-
-/** One automated check as written by scripts/sync-checks.ts. */
-export type PageCheck = {
-	status: 'pass' | 'check';
-	message: string;
-};
+export type PageCheck = { status: string; message: string };
 
 export type ReviewPage = {
 	id: string;
 	review_id: string;
 	path: string;
-	status: PageStatus;
-	// Supabase returns these keys as null rather than omitting them when unset,
-	// so they are nullable rather than optional.
+	status: 'needs-review' | 'approved' | 'blocked' | 'revise';
 	manager_notes: string | null;
 	page_checks: Record<string, PageCheck> | null;
 	title: string; // denormalized for easy rendering
@@ -34,8 +26,42 @@ export const pagesStore = writable<ReviewPage[]>([]);
 export const editsStore = writable<Edit[]>([]);
 
 /**
- * Initializes the realtime subscriptions for a specific review session
+ * Loads all pages for the most recent review and initializes realtime.
+ * Call this once from the review layout's onMount.
+ * Returns the unsubscribe cleanup function.
  */
+export async function loadReview(): Promise<() => void> {
+	// Fetch the most recent review
+	const { data: reviews, error: reviewsError } = await supabase
+		.from('reviews')
+		.select('id')
+		.order('created_at', { ascending: false })
+		.limit(1);
+
+	if (reviewsError || !reviews || reviews.length === 0) {
+		console.error('No review found:', reviewsError);
+		return () => {};
+	}
+
+	const reviewId = reviews[0].id;
+
+	// Fetch all pages for that review
+	const { data: pages, error: pagesError } = await supabase
+		.from('pages')
+		.select('*')
+		.eq('review_id', reviewId);
+
+	if (pagesError) {
+		console.error('Failed to load pages:', pagesError);
+		return () => {};
+	}
+
+	pagesStore.set((pages as ReviewPage[]) ?? []);
+
+	return initializeRealtime(reviewId);
+}
+
+
 export function initializeRealtime(reviewId: string) {
 	const channel = supabase.channel(`review-${reviewId}`);
 
@@ -74,7 +100,7 @@ export function initializeRealtime(reviewId: string) {
  */
 export async function updatePageStatus(pageId: string, newStatus: ReviewPage['status']) {
 	// 1. Optimistic Update (instant UI)
-	const previousPages = get(pagesStore);
+	let previousPages = get(pagesStore);
 	pagesStore.update((pages) =>
 		pages.map((p) => (p.id === pageId ? { ...p, status: newStatus } : p))
 	);
@@ -94,7 +120,7 @@ export async function updatePageStatus(pageId: string, newStatus: ReviewPage['st
  * Saves page decision notes optimistically
  */
 export async function updatePageNotes(pageId: string, notes: string) {
-	const previousPages = get(pagesStore);
+	let previousPages = get(pagesStore);
 	pagesStore.update((pages) =>
 		pages.map((p) => (p.id === pageId ? { ...p, manager_notes: notes } : p))
 	);
@@ -119,7 +145,7 @@ export async function saveInlineEdit(pageId: string, fieldId: string, newContent
 	};
 
 	// 1. Optimistic Update
-	const previousEdits = get(editsStore);
+	let previousEdits = get(editsStore);
 	editsStore.update((edits) => {
 		// Replace if editing the same field, otherwise append
 		const filtered = edits.filter((e) => e.field_id !== fieldId);

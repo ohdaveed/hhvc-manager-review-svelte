@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
@@ -6,6 +7,7 @@
 	import { Separator } from '$lib/components/ui/separator/index.js';
 	import { Switch } from '$lib/components/ui/switch/index.js';
 	import { pageStore } from '$lib/stores/pageData.svelte';
+	import { loadReview } from '$lib/stores/reviewState';
 	import ReviewQueue from '$lib/components/workspace/ReviewQueue.svelte';
 	import ReviewWorkspace from '$lib/components/workspace/ReviewWorkspace.svelte';
 	import ActionBar from '$lib/components/workspace/ActionBar.svelte';
@@ -19,6 +21,14 @@
 
 	// Dynamically pick the page data based on slug for the workspace
 	const pageData = $derived(pageStore.pages.find((p) => p.id === $page.params.slug));
+
+	onMount(() => {
+		let cleanup: (() => void) | undefined;
+		loadReview().then((fn) => {
+			cleanup = fn;
+		});
+		return () => cleanup?.();
+	});
 </script>
 
 <div class="bg-muted/40 grid h-screen w-full grid-cols-[250px_1fr_300px] overflow-hidden">
