@@ -21,6 +21,7 @@
 	let notesValue = $state('');
 	let debounceTimeout: ReturnType<typeof setTimeout> | undefined;
 	let lastRecordId = $state<string | undefined>(undefined);
+	let notesError = $state(false);
 
 	onDestroy(() => clearTimeout(debounceTimeout));
 
@@ -30,6 +31,7 @@
 		if (id !== lastRecordId) {
 			lastRecordId = id;
 			notesValue = liveRecord?.manager_notes ?? '';
+			notesError = false;
 		}
 	});
 
@@ -64,9 +66,14 @@
 		const capturedId = liveRecord?.id;
 		const capturedValue = notesValue;
 		clearTimeout(debounceTimeout);
-		debounceTimeout = setTimeout(() => {
-			if (capturedId) {
-				updatePageNotes(capturedId, capturedValue);
+		debounceTimeout = setTimeout(async () => {
+			if (!capturedId) return;
+			notesError = false;
+			const saved = await updatePageNotes(capturedId, capturedValue);
+			// Only surface the failure if this is still the page on screen and the
+			// reviewer has not typed since; otherwise a newer write owns the field.
+			if (!saved && lastRecordId === capturedId && notesValue === capturedValue) {
+				notesError = true;
 			}
 		}, 500);
 	};
@@ -102,12 +109,18 @@
 			</div>
 
 			<div class="space-y-2">
-				<Label for="notes">Decision Notes</Label>
+				<div class="flex items-baseline justify-between gap-2">
+					<Label for="notes">Decision Notes</Label>
+					{#if notesError}
+						<span class="text-destructive text-xs" role="status">Not saved — retry</span>
+					{/if}
+				</div>
 				<Textarea
 					id="notes"
 					rows={4}
 					placeholder="What needs to change before approval?"
 					value={notesValue}
+					aria-invalid={notesError}
 					oninput={onNotesInput}
 				/>
 			</div>
