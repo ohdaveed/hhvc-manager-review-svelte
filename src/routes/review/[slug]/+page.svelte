@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import Page from '$lib/components/Page.svelte';
-	import { aboutHhvcTeam } from '$lib/data/about-hhvc-team';
+	import { pageStore } from '$lib/stores/pageData.svelte';
 	
-	// Temporary mock router logic to pick the page data
-	const pageData = $derived($page.params.slug === 'about-hhvc-team' ? aboutHhvcTeam : null);
+	// Dynamically pick the page data based on slug
+	const pageData = $derived(pageStore.pages.find(p => p.id === $page.params.slug));
 </script>
 
 {#if pageData}

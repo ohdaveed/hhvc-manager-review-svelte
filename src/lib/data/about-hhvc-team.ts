@@ -1,4 +1,3 @@
-
 export const aboutHhvcTeam = {
   slug: 'sf.gov/topic-healthy-housing-and-vector-control--about',
   type: 'About us',

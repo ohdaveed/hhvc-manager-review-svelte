@@ -1,19 +1,15 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { page } from '$app/stores';
+	import { pageStore } from '$lib/stores/pageData.svelte';
 	import ReviewQueue from '$lib/components/workspace/ReviewQueue.svelte';
-	import ReviewPanel from '$lib/components/workspace/ReviewPanel.svelte';
+	import ReviewWorkspace from '$lib/components/workspace/ReviewWorkspace.svelte';
 	import ActionBar from '$lib/components/workspace/ActionBar.svelte';
+	
 	let { children } = $props();
 
-	// Mock state for the active editing field
-	let activeField = $state<any>(null);
-
-	// To simulate the interaction for the mockup, automatically select a field after 2 seconds
-	onMount(() => {
-		setTimeout(() => {
-			activeField = { name: 'Introduction', content: 'Healthy Housing and Vector Control is the Environmental Health team that inspects housing conditions and responds to pest and vector reports in San Francisco.' };
-		}, 2000);
-	});
+	// Dynamically pick the page data based on slug for the workspace
+	const pageData = $derived(pageStore.pages.find(p => p.id === $page.params.slug));
 </script>
 
 <div class="h-screen w-full bg-gray-50 overflow-hidden text-gray-900 grid grid-cols-[250px_1fr_300px]">
@@ -70,15 +66,18 @@
 		<!-- Action Bar (Sticky at bottom of center canvas) -->
 		<div id="actionBarContainer" class="absolute bottom-0 left-0 w-full p-4 pointer-events-none flex justify-center pb-6">
 			<ActionBar 
-				{activeField} 
-				onCancel={() => activeField = null} 
-				onSave={(val) => { console.log('Saved:', val); activeField = null; }} 
+				activeField={pageStore.activeField} 
+				onCancel={() => pageStore.activeField = null} 
+				onSave={(val: string) => { 
+					if (pageStore.activeField) pageStore.activeField.update(val);
+					pageStore.activeField = null; 
+				}} 
 			/>
 		</div>
 	</main>
 	
 	<!-- Right Sidebar: Contextual Manager Review & Checks -->
-	<section class="h-full border-l border-gray-200 bg-white flex flex-col overflow-y-auto">
-		<ReviewPanel />
+	<section class="h-full border-l border-gray-200 bg-white flex flex-col overflow-hidden">
+		<ReviewWorkspace {pageData} />
 	</section>
 </div>

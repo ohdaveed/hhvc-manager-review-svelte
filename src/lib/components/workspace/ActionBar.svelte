@@ -5,8 +5,14 @@
 	// Props to receive the currently selected field data (mocked for now)
 	let { activeField = null, onCancel, onSave } = $props();
 
-	let editValue = $state(activeField?.content || '');
+	let editValue = $state('');
 	let isAiLoading = $state(false);
+
+	$effect(() => {
+		if (activeField) {
+			editValue = activeField.content;
+		}
+	});
 
 	// Function to simulate AI rewrite
 	const handleAiRewrite = async () => {
@@ -51,14 +57,8 @@
 		}
 	};
 
-	const handleSave = async () => {
+	const handleSave = () => {
 		if (!activeField) return;
-
-		// Fire off the optimistic update to the store (which also hits Supabase)
-		// We use a mock 'page-123' since we don't have the actual page context here yet
-		await saveInlineEdit('page-123', activeField.name, editValue);
-
-		// Let the parent know we finished
 		onSave(editValue);
 	};
 </script>
