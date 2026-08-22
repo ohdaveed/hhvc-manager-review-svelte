@@ -1,13 +1,13 @@
 // src/lib/stores/pageData.svelte.ts
 import { allPages } from '$lib/data';
 
-export type Page = {
+type Page = {
 	id: string;
 	title: string;
 	[key: string]: any;
 };
 
-export type ActiveField = {
+type ActiveField = {
 	/** Human-facing label shown in the ActionBar, e.g. `Section [2] Paragraph`.
 	 *  Display only -- it omits the paragraph index, so several fields in one
 	 *  section share it. Never use it to identify a field. */
