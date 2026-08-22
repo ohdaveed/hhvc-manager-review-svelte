@@ -22,6 +22,9 @@ export type Edit = {
 	page_id: string;
 	field_id: string;
 	new_content: string;
+	// `edits` is append-only, so a field can have several rows. Consumers order
+	// by this to pick the newest rather than trusting row order.
+	created_at?: string;
 };
 
 // Our central stores
@@ -69,7 +72,8 @@ export async function loadReview(): Promise<() => void> {
 		const { data: edits, error: editsError } = await supabase
 			.from('edits')
 			.select('*')
-			.in('page_id', pageIds);
+			.in('page_id', pageIds)
+			.order('created_at', { ascending: true });
 
 		if (editsError) {
 			console.error('Failed to load edits:', editsError);
@@ -165,14 +169,16 @@ export async function saveInlineEdit(pageId: string, fieldId: string, newContent
 		id: 'temp-' + Date.now(),
 		page_id: pageId,
 		field_id: fieldId,
-		new_content: newContent
+		new_content: newContent,
+		created_at: new Date().toISOString()
 	};
 
 	// 1. Optimistic Update
 	const previousEdits = get(editsStore);
 	editsStore.update((edits) => {
-		// Replace if editing the same field, otherwise append
-		const filtered = edits.filter((e) => e.field_id !== fieldId);
+		// Replace if editing the same field ON THIS PAGE, otherwise append. Filtering
+		// on field_id alone dropped other pages' edits for the same field name.
+		const filtered = edits.filter((e) => !(e.page_id === pageId && e.field_id === fieldId));
 		return [...filtered, optimisticEdit];
 	});
 

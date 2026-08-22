@@ -149,7 +149,29 @@ function verifyLinks(page: unknown): { status: string; message: string } {
 }
 
 async function syncChecks() {
-	console.log(`Starting sync for ${allPages.length} pages...`);
+	// Scope every write to one review. This runs with the service-role key, which
+	// bypasses RLS, and `path` is not unique across reviews -- filtering on path
+	// alone rewrote page_checks in completed and historical reviews too.
+	// Pass a review id as the first argument, or omit it to target the newest.
+	const requestedReviewId = process.argv[2];
+	let reviewId = requestedReviewId;
+
+	if (!reviewId) {
+		const { data: reviews, error } = await supabase
+			.from('reviews')
+			.select('id')
+			.order('created_at', { ascending: false })
+			.limit(1);
+
+		if (error || !reviews || reviews.length === 0) {
+			console.error('Could not resolve a review to sync:', error?.message ?? 'no reviews found');
+			process.exit(1);
+		}
+		reviewId = reviews[0].id;
+		console.log(`No review id given; targeting the most recent review ${reviewId}.`);
+	}
+
+	console.log(`Starting sync for ${allPages.length} pages in review ${reviewId}...`);
 
 	for (const page of allPages) {
 		const id = page.slug
@@ -168,6 +190,7 @@ async function syncChecks() {
 		const { error, count } = await supabase
 			.from('pages')
 			.update({ page_checks: checks })
+			.eq('review_id', reviewId)
 			.eq('path', id)
 			.select('id', { count: 'exact', head: true });
 

@@ -23,7 +23,13 @@
 		if (!pageData) return null;
 
 		const livePage = $pagesStore.find((p) => p.path === pageData.id);
-		const edits = $editsStore.filter((e) => e.page_id === livePage?.id);
+		// Append-only table: a field can have several rows, and the fold below is
+		// last-write-wins, so order explicitly rather than trusting the row order
+		// PostgREST happened to return.
+		const edits = $editsStore
+			.filter((e) => e.page_id === livePage?.id)
+			.slice()
+			.sort((a, b) => (a.created_at ?? '').localeCompare(b.created_at ?? ''));
 
 		const statusLabels: Record<string, string> = {
 			approved: 'Approved',
