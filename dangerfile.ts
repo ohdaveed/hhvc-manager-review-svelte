@@ -1,4 +1,8 @@
 import { danger, warn, fail, message } from 'danger';
+// Plain JS on purpose -- see the note in that file. Danger rewrites a `.ts`
+// specifier to `.js` when it transpiles this Dangerfile, so a sibling
+// TypeScript module cannot be resolved here without a build step.
+import { hasSourceChanges, hasTestChanges, touchedFiles } from './scripts/danger-rules.js';
 
 // 1. Keep PRs small to prevent LLM/human reviewer fatigue
 const bigPRThreshold = 500;
@@ -10,9 +14,8 @@ if (totalChanges > bigPRThreshold) {
 }
 
 // 2. Ensure test changes when source changes
-const hasAppChanges = danger.git.modified_files.some((f) => f.startsWith('src/'));
-const hasTestChanges = danger.git.modified_files.some((f) => f.startsWith('tests/'));
-if (hasAppChanges && !hasTestChanges) {
+const touched = touchedFiles(danger.git);
+if (hasSourceChanges(touched) && !hasTestChanges(touched)) {
 	warn('⚠️ Code in `src/` was modified, but no test files were updated or added.');
 }
 
