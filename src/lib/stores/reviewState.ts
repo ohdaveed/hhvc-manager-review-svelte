@@ -99,7 +99,9 @@ export async function loadReview(): Promise<() => void> {
 	return () => channel.unsubscribe();
 }
 
-export function initializeRealtime(reviewId: string) {
+// Not exported: called only by loadReview above. It is live code -- knip
+// flagged the redundant `export`, not the function.
+function initializeRealtime(reviewId: string) {
 	const channel = supabase.channel(`review-${reviewId}`);
 
 	// Events that land between subscribing and the initial snapshot being applied
