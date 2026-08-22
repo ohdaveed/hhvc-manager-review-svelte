@@ -23,11 +23,22 @@
 	const pageData = $derived(pageStore.pages.find((p) => p.id === $page.params.slug));
 
 	onMount(() => {
+		// If the layout is torn down before loadReview resolves -- a slow Supabase
+		// round trip plus quick navigation -- the destroy callback fires while
+		// cleanup is still undefined, and the subscription then installs after
+		// teardown with nothing left to remove it. Remounting would stack channels.
+		let disposed = false;
 		let cleanup: (() => void) | undefined;
+
 		loadReview().then((fn) => {
-			cleanup = fn;
+			if (disposed) fn();
+			else cleanup = fn;
 		});
-		return () => cleanup?.();
+
+		return () => {
+			disposed = true;
+			cleanup?.();
+		};
 	});
 </script>
 

@@ -23,7 +23,14 @@
 	let lastRecordId = $state<string | undefined>(undefined);
 	let notesError = $state(false);
 
-	onDestroy(() => clearTimeout(debounceTimeout));
+	// Cancelling on teardown silently threw away whatever the reviewer had typed
+	// in the last 500ms before navigating. Flush it instead.
+	let pendingNote: { pageId: string; value: string } | null = null;
+
+	onDestroy(() => {
+		clearTimeout(debounceTimeout);
+		if (pendingNote) updatePageNotes(pendingNote.pageId, pendingNote.value);
+	});
 
 	// Sync local notesValue unconditionally whenever the live record identity changes
 	$effect(() => {
@@ -32,6 +39,7 @@
 			lastRecordId = id;
 			notesValue = liveRecord?.manager_notes ?? '';
 			notesError = false;
+			pendingNote = null;
 		}
 	});
 
@@ -65,9 +73,12 @@
 		// the current page even if navigation changes liveRecord before it fires.
 		const capturedId = liveRecord?.id;
 		const capturedValue = notesValue;
+		if (!capturedId) return;
 		clearTimeout(debounceTimeout);
+		pendingNote = { pageId: capturedId, value: capturedValue };
 		debounceTimeout = setTimeout(async () => {
 			if (!capturedId) return;
+			pendingNote = null;
 			notesError = false;
 			const saved = await updatePageNotes(capturedId, capturedValue);
 			// Only surface the failure if this is still the page on screen and the
