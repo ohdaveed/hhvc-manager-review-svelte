@@ -61,7 +61,6 @@ export async function loadReview(): Promise<() => void> {
 	return initializeRealtime(reviewId);
 }
 
-
 export function initializeRealtime(reviewId: string) {
 	const channel = supabase.channel(`review-${reviewId}`);
 
@@ -100,7 +99,7 @@ export function initializeRealtime(reviewId: string) {
  */
 export async function updatePageStatus(pageId: string, newStatus: ReviewPage['status']) {
 	// 1. Optimistic Update (instant UI)
-	let previousPages = get(pagesStore);
+	const previousPages = get(pagesStore);
 	pagesStore.update((pages) =>
 		pages.map((p) => (p.id === pageId ? { ...p, status: newStatus } : p))
 	);
@@ -120,7 +119,7 @@ export async function updatePageStatus(pageId: string, newStatus: ReviewPage['st
  * Saves page decision notes optimistically
  */
 export async function updatePageNotes(pageId: string, notes: string) {
-	let previousPages = get(pagesStore);
+	const previousPages = get(pagesStore);
 	pagesStore.update((pages) =>
 		pages.map((p) => (p.id === pageId ? { ...p, manager_notes: notes } : p))
 	);
@@ -145,7 +144,7 @@ export async function saveInlineEdit(pageId: string, fieldId: string, newContent
 	};
 
 	// 1. Optimistic Update
-	let previousEdits = get(editsStore);
+	const previousEdits = get(editsStore);
 	editsStore.update((edits) => {
 		// Replace if editing the same field, otherwise append
 		const filtered = edits.filter((e) => e.field_id !== fieldId);

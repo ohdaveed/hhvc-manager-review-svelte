@@ -31,9 +31,15 @@ function computeReadingLevel(text: string) {
 	const grade = 0.39 * avgSentenceLength + 11.8 * avgSyllablesPerWord - 15.59;
 
 	if (grade <= 8) {
-		return { status: 'pass', message: `Reading level is approximately Grade ${grade.toFixed(1)} (target: ≤8).` };
+		return {
+			status: 'pass',
+			message: `Reading level is approximately Grade ${grade.toFixed(1)} (target: ≤8).`
+		};
 	}
-	return { status: 'check', message: `Reading level is approximately Grade ${grade.toFixed(1)}, above the Grade 6–8 target.` };
+	return {
+		status: 'check',
+		message: `Reading level is approximately Grade ${grade.toFixed(1)}, above the Grade 6–8 target.`
+	};
 }
 
 function countSyllables(word: string): number {
@@ -52,14 +58,14 @@ const URL_PATTERN = /https?:\/\/[^\s"'<>)]+|(?:^|\s)\/[a-z0-9/-]+/gi;
 // Placeholder patterns that indicate an unresolved link
 const PLACEHOLDER_PATTERN = /\[.*?\]|TODO|FIXME|placeholder|#$/i;
 
-function verifyLinks(sections: { paragraphs?: string[]; bullets?: string[] }[]): { status: string; message: string } {
+function verifyLinks(sections: { paragraphs?: string[]; bullets?: string[] }[]): {
+	status: string;
+	message: string;
+} {
 	const issues: string[] = [];
 
 	for (const section of sections) {
-		const texts: string[] = [
-			...(section.paragraphs ?? []),
-			...(section.bullets ?? [])
-		];
+		const texts: string[] = [...(section.paragraphs ?? []), ...(section.bullets ?? [])];
 
 		for (const text of texts) {
 			const urls = text.match(URL_PATTERN) ?? [];

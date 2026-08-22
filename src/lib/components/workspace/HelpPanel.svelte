@@ -59,7 +59,7 @@
 				acc[p.id] = p;
 				return acc;
 			},
-			{} as Record<string, unknown>
+			{} as Record<string, object>
 		);
 
 		try {

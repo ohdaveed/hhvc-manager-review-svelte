@@ -6,7 +6,12 @@
 	import * as ToggleGroup from '$lib/components/ui/toggle-group/index.js';
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
 	import { onDestroy } from 'svelte';
-	import { updatePageStatus, updatePageNotes, pagesStore, type PageCheck } from '$lib/stores/reviewState';
+	import {
+		updatePageStatus,
+		updatePageNotes,
+		pagesStore,
+		type PageCheck
+	} from '$lib/stores/reviewState';
 
 	let { pageData, showOnlyChecks = false } = $props();
 

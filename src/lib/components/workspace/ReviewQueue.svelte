@@ -6,7 +6,6 @@
 	// The store automatically updates via Supabase realtime subscriptions
 	const groups = [
 		{ status: 'needs-review', heading: 'Needs Review', dot: 'bg-blue-500' },
-		{ status: 'revise', heading: 'Revise', dot: 'bg-amber-500' },
 		{ status: 'approved', heading: 'Approved', dot: 'bg-emerald-500' },
 		{ status: 'revise', heading: 'Needs Revision', dot: 'bg-amber-500' },
 		{ status: 'blocked', heading: 'Blocked', dot: 'bg-destructive' }
