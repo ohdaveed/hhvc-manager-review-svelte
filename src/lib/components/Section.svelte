@@ -12,10 +12,14 @@
 
 <div class="page-section {section.kind || 'body'}">
 	{#if section.heading}
-		<h2 
-			class="section-heading hover:ring-2 hover:ring-blue-400 cursor-pointer transition-all rounded p-1 -mx-1" 
+		<h2
+			class="section-heading edit-target"
 			id={section.heading.toLowerCase().replace(/\s+/g, '-')}
-			onclick={selectField(`Section [${index+1}] Heading`, section.heading, (v) => section.heading = v)}
+			onclick={selectField(
+				`Section [${index + 1}] Heading`,
+				section.heading,
+				(v) => (section.heading = v)
+			)}
 			role="button"
 			tabindex="0"
 		>
@@ -25,10 +29,14 @@
 
 	{#if section.paragraphs}
 		{#each section.paragraphs as p, i}
-			<p 
-				class="hover:ring-2 hover:ring-blue-400 cursor-pointer transition-all rounded p-1 -mx-1"
+			<p
+				class="edit-target"
 				data-rewrite-field="sections.{index}.paragraphs.{i}"
-				onclick={selectField(`Section [${index+1}] Paragraph`, p, (v) => section.paragraphs[i] = v)}
+				onclick={selectField(
+					`Section [${index + 1}] Paragraph`,
+					p,
+					(v) => (section.paragraphs[i] = v)
+				)}
 				role="button"
 				tabindex="0"
 			>
@@ -47,12 +55,12 @@
 </div>
 
 {#snippet bulletsSnippet(bullets)}
-	<ul class="pl-5 list-disc">
+	<ul class="list-disc pl-5">
 		{#each bullets as b, i}
-			<li 
-				class="hover:ring-2 hover:ring-blue-400 cursor-pointer transition-all rounded p-1 -mx-1 my-1"
+			<li
+				class="edit-target my-1"
 				data-rewrite-field="sections.{index}.bullets.{i}"
-				onclick={selectField(`Section [${index+1}] Bullet`, b, (v) => bullets[i] = v)}
+				onclick={selectField(`Section [${index + 1}] Bullet`, b, (v) => (bullets[i] = v))}
 				role="button"
 				tabindex="0"
 			>
@@ -63,21 +71,21 @@
 {/snippet}
 
 {#snippet calloutSnippet(callout)}
-	<div class="callout bg-blue-50 border-l-4 border-blue-600 p-4 my-4">
+	<div class="callout my-4 border-l-4 border-blue-600 bg-blue-50 p-4">
 		{#if callout.title}
-			<h3 
-				class="font-bold text-lg mb-2 hover:ring-2 hover:ring-blue-400 cursor-pointer transition-all rounded p-1 -mx-1"
-				onclick={selectField(`Callout Title`, callout.title, (v) => callout.title = v)}
+			<h3
+				class="edit-target mb-2 text-lg font-bold"
+				onclick={selectField(`Callout Title`, callout.title, (v) => (callout.title = v))}
 				role="button"
 				tabindex="0"
 			>
 				{callout.title}
 			</h3>
 		{/if}
-		<p 
-			class="hover:ring-2 hover:ring-blue-400 cursor-pointer transition-all rounded p-1 -mx-1"
+		<p
+			class="edit-target"
 			data-rewrite-field="sections.{index}.callout.text"
-			onclick={selectField(`Callout Text`, callout.text, (v) => callout.text = v)}
+			onclick={selectField(`Callout Text`, callout.text, (v) => (callout.text = v))}
 			role="button"
 			tabindex="0"
 		>
