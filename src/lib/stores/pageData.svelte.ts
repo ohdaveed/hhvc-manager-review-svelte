@@ -19,10 +19,14 @@ class PageStore {
 
     constructor() {
         // Map the legacy objects to include an 'id' (from their 'slug' or a generated one)
-        this.pages = allPages.map(p => ({
-            ...p,
-            id: p.slug || p.title.replace(/\s+/g, '-').toLowerCase()
-        }));
+        this.pages = allPages.map(p => {
+            // Remove 'sf.gov/' and replace any remaining slashes with dashes so it plays nice with SvelteKit's [slug] router
+            let cleanId = p.slug ? p.slug.replace('sf.gov/', '').replace(/\//g, '-') : p.title.replace(/\s+/g, '-').toLowerCase();
+            return {
+                ...p,
+                id: cleanId
+            };
+        });
     }
 
     addPage(page: Page) {
