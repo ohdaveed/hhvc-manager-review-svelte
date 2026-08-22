@@ -1,0 +1,35 @@
+{
+  "output": {
+    "filePath": "repomix-output.xml",
+    "style": "xml",
+    "removeComments": true,
+    "removeEmptyLines": true,
+    "showLineNumbers": true,
+    "topFilesLength": 10
+  },
+  "include": [
+    "src/**",
+    "tests/**",
+    "scripts/**",
+    "*.ts",
+    "*.json"
+  ],
+  "ignore": {
+    "useGitignore": true,
+    "useDefaultPatterns": true,
+    "customPatterns": [
+      ".svelte-kit/**",
+      ".netlify/**",
+      "build/**",
+      "test-results/**",
+      "playwright-report/**",
+      "*.png",
+      "*.jpg",
+      "*.svg",
+      "bun.lock"
+    ]
+  },
+  "security": {
+    "enableSecurityCheck": true
+  }
+}
