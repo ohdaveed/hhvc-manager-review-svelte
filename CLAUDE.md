@@ -28,6 +28,10 @@ bun run verify:live      # also probes the deployed site (root 200, proxy 401s, 
 
 `verify` writes full output to `$TMPDIR/hhvc-verify.log` and prints only a summary — read the log only when a line says FAIL. `SITE_URL=...` retargets the live probes.
 
+**`verify`'s result is trustworthy again as of `819d914`, and was not before.** Its `quiet()` helper ended the brace group with `echo`, so the group's status was always `0`: both gates printed PASS unconditionally and the script exited `0` whatever happened. It reported "all local gates green" over a failing unit test for as long as that test had been broken. If you are reading a `verify` result from a commit older than that fix, it means nothing. The one visible symptom was the count rendering as `(? passed)` — the regex expects `Tests N passed` and a failing run prints `Tests 1 failed | 12 passed`, so a `?` there is worth chasing.
+
+The same gates run in CI on every PR (`.github/workflows/pr.yml`), and `main` requires them — see Branch protection below. Running `verify` locally is the fast check; it is not what decides whether a PR can merge.
+
 ### Vitest project split
 
 `vite.config.ts` defines two projects, and the file's **location** decides which runs it:
@@ -75,6 +79,10 @@ RLS is enabled on all four tables, but every policy is `FOR ALL TO authenticated
 **There is no `svelte.config.js`.** SvelteKit config lives inside the `sveltekit({ ... })` plugin options in `vite.config.ts` — adapter, `compilerOptions`, and `env` together. Documentation and generated snippets will tell you to create `svelte.config.js`; doing so splits config across two files and orphans the settings below.
 
 **Public env vars use the `SVELTE_PUBLIC_` prefix**, set by `env.publicPrefix` in that same block. A `PUBLIC_`-prefixed variable is treated as _private_ and will not reach `$env/static/public`. These are inlined at build time, so they must exist before the build runs, not just at runtime.
+
+Locally they come from `.env.local` (untracked). **CI has no `.env.local`, so `pr.yml` sets placeholders** — `SVELTE_PUBLIC_SUPABASE_URL=https://placeholder.supabase.co` and `SVELTE_PUBLIC_SUPABASE_ANON_KEY=ci-placeholder-anon-key`. They are deliberately not secrets: the build fails without _some_ value because `src/lib/supabase.ts` calls `createClient` at module scope, but CI is checking that the app builds, not that it reaches Supabase, and placeholders keep the workflow working on fork PRs where secrets are not injected. `RAILWAY_API_TOKEN` is `$env/dynamic/private` and is not needed to build. A CI job that genuinely needs to talk to Supabase would need real values added as repo secrets first — no job does today.
+
+**`bun run lint` is red on the current tree**, both halves: `prettier --check .` on 98 files and `eslint .` on 11 errors (counts measured at `d2b1f5f`; the prettier figure drifts as files are touched) (legacy `@ts-nocheck`, an `any`, a `prefer-const`, a `goto()` without `resolve()`). Because the script is `prettier && eslint`, a prettier failure means eslint never runs. This is why CI reports lint without blocking on it. Do not "fix" it by reformatting the tree as a side effect of unrelated work.
 
 **`bun run check` has a large pre-existing error baseline** (~55), almost all from `src/legacy_main.js`'s unresolved imports. Compare against the baseline rather than expecting zero.
 
