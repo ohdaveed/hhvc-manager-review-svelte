@@ -1,5 +1,5 @@
 import { writable, get } from 'svelte/store';
-import { supabase } from '$lib/supabase';
+import { supabase, ensureDevSession } from '$lib/supabase';
 
 // Define the shape of our data
 export type PageCheck = { status: string; message: string };
@@ -37,6 +37,10 @@ export const editsStore = writable<Edit[]>([]);
  * Returns the unsubscribe cleanup function.
  */
 export async function loadReview(): Promise<() => void> {
+	// Every policy is `FOR ALL TO authenticated`, so without a session each query
+	// below returns nothing. No-op outside development.
+	await ensureDevSession();
+
 	// Fetch the most recent review
 	const { data: reviews, error: reviewsError } = await supabase
 		.from('reviews')
@@ -214,9 +218,21 @@ export async function saveInlineEdit(pageId: string, fieldId: string, newContent
 	});
 
 	// 2. Background Sync
+	// edits.user_id is `NOT NULL REFERENCES auth.users(id)` and was never being
+	// set, so every insert failed its NOT NULL constraint regardless of session.
+	const {
+		data: { user }
+	} = await supabase.auth.getUser();
+
+	if (!user) {
+		console.error('Cannot save edit: no authenticated user.');
+		editsStore.set(previousEdits);
+		return;
+	}
+
 	const { data, error } = await supabase
 		.from('edits')
-		.insert({ page_id: pageId, field_id: fieldId, new_content: newContent })
+		.insert({ page_id: pageId, field_id: fieldId, new_content: newContent, user_id: user.id })
 		.select()
 		.single();
 
