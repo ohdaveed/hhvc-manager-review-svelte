@@ -1,0 +1,15 @@
+@import "tailwindcss";
+@import "@sfgov/design-system/css/all.css";
+@import "@fontsource-variable/roboto-flex";
+@import "@fontsource/roboto-slab/700.css";
+
+:root {
+  --font-body: 'Roboto Flex Variable', sans-serif;
+  --font-heading: 'Roboto Slab', serif;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-gray-100, #f8f9fa);
+  color: var(--color-slate-900, #1e293b);
+}
