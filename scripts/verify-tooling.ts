@@ -16,8 +16,9 @@ for (const step of steps) {
 	try {
 		const output = execSync(step.cmd, { encoding: 'utf-8' }).trim();
 		console.log(`✅ ${step.name.padEnd(26)} : ${output}`);
-	} catch (err: any) {
-		console.error(`❌ ${step.name.padEnd(26)} : FAILED (${err.message})`);
+	} catch (err) {
+		const reason = err instanceof Error ? err.message : String(err);
+		console.error(`❌ ${step.name.padEnd(26)} : FAILED (${reason})`);
 		allPassed = false;
 	}
 }
