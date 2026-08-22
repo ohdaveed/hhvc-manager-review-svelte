@@ -5,11 +5,12 @@
 	import { Separator } from '$lib/components/ui/separator/index.js';
 	import * as ToggleGroup from '$lib/components/ui/toggle-group/index.js';
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
+	import { onDestroy } from 'svelte';
 	import {
 		updatePageStatus,
 		updatePageNotes,
 		pagesStore,
-		type PageStatus
+		type PageCheck
 	} from '$lib/stores/reviewState';
 
 	let { pageData, showOnlyChecks = false } = $props();
@@ -18,27 +19,21 @@
 	let liveRecord = $derived($pagesStore.find((p) => p.path === pageData?.id));
 
 	let notesValue = $state('');
-	let debounceTimeout: ReturnType<typeof setTimeout>;
-	// The id whose notes `notesValue` currently holds, so a pending write can be
-	// addressed to the page it was typed on rather than to whatever is open when
-	// the timer fires.
-	let notesPageId = $state<string | undefined>(undefined);
+	let debounceTimeout: ReturnType<typeof setTimeout> | undefined;
+	let lastRecordId = $state<string | undefined>(undefined);
 
-	// Re-sync whenever the live record's identity changes. The previous guard was
-	// `notesValue === ''`, which meant that once any page had a note, navigating to
-	// a second page kept showing the first page's text — and editing it wrote that
-	// text onto the second page.
+	onDestroy(() => clearTimeout(debounceTimeout));
+
+	// Sync local notesValue unconditionally whenever the live record identity changes
 	$effect(() => {
-		const record = liveRecord;
-		if (record?.id === notesPageId) return;
-		// Landing on a different page abandons any write still queued for the old
-		// one; it was already sent on a 500ms timer at the last keystroke.
-		clearTimeout(debounceTimeout);
-		notesPageId = record?.id;
-		notesValue = record?.manager_notes ?? '';
+		const id = liveRecord?.id;
+		if (id !== lastRecordId) {
+			lastRecordId = id;
+			notesValue = liveRecord?.manager_notes ?? '';
+		}
 	});
 
-	type Decision = PageStatus;
+	type Decision = 'needs-review' | 'approved' | 'blocked' | 'revise';
 
 	// `tone` keeps the traffic-light reading the hand-rolled pills had. Only the
 	// blocked end of it maps onto a shadcn token; the other two are tinted rings.
@@ -64,15 +59,16 @@
 		const target = e.target as HTMLTextAreaElement;
 		notesValue = target.value;
 
-		// Capture id and text at schedule time. Reading `liveRecord` inside the
-		// callback resolved it only when the timer fired, so navigating within the
-		// 500ms window wrote this page's note onto the next page.
-		const pageId = liveRecord?.id;
-		const pending = target.value;
-		if (!pageId) return;
-
+		// Capture the page ID and note value now so the callback is bound to
+		// the current page even if navigation changes liveRecord before it fires.
+		const capturedId = liveRecord?.id;
+		const capturedValue = notesValue;
 		clearTimeout(debounceTimeout);
-		debounceTimeout = setTimeout(() => updatePageNotes(pageId, pending), 500);
+		debounceTimeout = setTimeout(() => {
+			if (capturedId) {
+				updatePageNotes(capturedId, capturedValue);
+			}
+		}, 500);
 	};
 </script>
 
@@ -128,7 +124,8 @@
 
 		{#if liveRecord?.page_checks && Object.keys(liveRecord.page_checks).length > 0}
 			<div class="space-y-3">
-				{#each Object.entries(liveRecord.page_checks) as [checkId, check] (checkId)}
+				{#each Object.entries(liveRecord.page_checks) as [checkId, raw] (checkId)}
+					{@const check = raw as PageCheck}
 					<Card.Root size="sm">
 						<Card.Content class="flex items-start gap-3">
 							<Badge variant={check.status === 'pass' ? 'secondary' : 'outline'}>
