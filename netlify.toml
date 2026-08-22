@@ -1,5 +1,8 @@
 [build]
-	command = "npm run build"
+	# bun, matching the repo's package manager (bun.lock) and the site's own
+	# build settings, which said `bun run build` while this file quietly
+	# overrode them with npm.
+	command = "bun run build"
 	publish = "build"
 
 [build.environment]

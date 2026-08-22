@@ -82,11 +82,16 @@ RLS is enabled on all four tables, but every policy is `FOR ALL TO authenticated
 
 ## Deployment
 
-Netlify, site `hhvc-manager-review`, **not Git-connected** — deploys are manual (`netlify deploy --build --prod`) and build locally, so Netlify build minutes stay at zero and pushes to `main` do not redeploy. Env vars are set on the Netlify site; `RAILWAY_API_TOKEN` is marked secret.
+Netlify, site `hhvc-manager-review`, **Git-connected and deploying automatically**. Merging to `main` publishes production, and every PR gets a deploy preview at `deploy-preview-<n>--hhvc-manager-review.netlify.app` — both build on Netlify, so builds do consume Netlify minutes. Netlify's build settings are overridden by `netlify.toml` in this repo, which is where the command and publish directory actually come from. Env vars are set on the Netlify site; `RAILWAY_API_TOKEN` is marked secret.
+
+`netlify deploy --build --prod` still works and builds locally, but it is a manual override, not the normal path: the deploy it uploads carries no `commit_ref`, so it supersedes the commit-linked release and the published deploy can no longer be traced to a SHA. Reach for it only when Netlify's own build is unavailable.
+
+CI runs separately in `.github/workflows/pr.yml` — unit tests, build and e2e block, while prettier/eslint/svelte-check report without blocking. A green Netlify preview says the site built; it does not say the tests passed.
 
 Supabase auth URLs must include any new origin, or magic links redirect to a dead URL. The hosted allow-list covers production, `localhost:5173`, and Netlify preview hostnames; `supabase/config.toml` covers the local stack.
 
 <!-- FABLIZE:BEGIN — run Opus like Fable (always-on router). Verified procedures only. Install/update: fablize setup.sh -->
+
 ## Operating mode (always on — auto-route by task signal)
 
 Apply what the task signals; with no signal, baseline only. Read each pack only when needed. Routing: smallest matching discipline only, overlap only when genuinely multi-category, mimic observable behavior only.
@@ -96,4 +101,5 @@ Apply what the task signals; with no signal, baseline only. Read each pack only 
 - **[debugging / test failure / unknown cause / review]** Follow `/home/ohdaveed/.claude/plugins/cache/fablize/fablize/2.1.1/packs/investigation-protocol.txt`: reproduce first → 3+ competing hypotheses → evidence per hypothesis → full causal chain → verify before/after → report rejected hypotheses.
 - **[render/executable artifact: HTML, SVG, game, UI, chart]** Follow `/home/ohdaveed/.claude/plugins/cache/fablize/fablize/2.1.1/packs/verification-grounding-pack.txt` grounding loop: run it in the real renderer → observe the output → fix what you see → re-run. A static check is not observation.
 - **[hard or ambiguous task]** Adaptive thinking scales with difficulty automatically. To go higher, recommend `/effort xhigh` to the user. Depth (capability) cannot be raised: if stuck 2+ times or out-of-spec discovery is needed, report the limit honestly and escalate.
+
 <!-- FABLIZE:END -->
