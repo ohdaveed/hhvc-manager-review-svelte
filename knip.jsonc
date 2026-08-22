@@ -1,0 +1,18 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "entry": [
+    "src/routes/**/+{page,layout,server,error}.{js,ts,svelte}",
+    "src/hooks.{server,client}.{js,ts}",
+    "playwright.config.ts",
+    "vite.config.ts",
+    "scripts/*.ts"
+  ],
+  "project": ["src/**/*.{js,ts,svelte}", "scripts/**/*.ts"],
+  "ignore": [
+    "src/legacy_main.js"
+  ],
+  "ignoreDependencies": [
+    "@sveltejs/adapter-auto",
+    "@testing-library/jest-dom"
+  ]
+}
