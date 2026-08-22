@@ -29,3 +29,13 @@ test-results
 
 # repomix context dumps
 repomix-output.xml
+
+# MemPalace per-project files (issue #185)
+mempalace.yaml
+entities.json
+
+# Pinned developer binaries fetched by scripts/local-tool.sh
+.tooling/
+
+# vitest coverage output
+coverage/

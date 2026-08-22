@@ -211,25 +211,45 @@ leaving 16 dependency findings that are a single product decision (B5).
 
 From the audit's twelve, sequenced by value here rather than by stars.
 
-- [ ] **E1. `gitleaks`** (28,902★) — pre-commit secret scanning. Sharpened by
-      an audit finding: this repo sets a **repo-local `core.hooksPath`**, so
-      the machine's global ggshield hooks do **not** run here. There is no
-      commit-time secret scanning in this repo today.
-- [ ] **E2. `crate-ci/typos`** (4,104★) — the app exists to review copy; a typo
-      in `src/lib/data/*.ts` ships as if intentional.
-- [ ] **E3. `semgrep`** (16,353★) — the only proposed tool addressing F1 below.
-      Note `semgrep/mcp` is **archived**; use the CLI.
-- [ ] **E4. `commitlint`** (18,698★) — conventional commits are mandated by the
-      global CLAUDE.md and nothing enforces them; lefthook already owns the
-      hook surface.
-- [ ] **E5. `@vitest/coverage-v8`** (ships with the installed Vitest 4) — the
-      Danger rule demands tests but nothing measures whether they test
-      anything. Zero new dependencies.
-- [ ] **E6. `renovate`** (22,315★) — 40+ deps on `^` ranges at the bleeding
-      edge (Vite 8, TypeScript 6, ESLint 10, Vitest 4). **Do B2 first**, so it
-      isn't opening PRs for packages about to be deleted.
-- [ ] **E7. `oraios/serena`** (28,368★) — the remaining real token saver.
-      **Spike `.svelte` LSP coverage before adopting; that is unverified.**
+- [x] **E1. `gitleaks` runs on staged content, locally.** Scoped down once
+      measured: **GitGuardian already scans every PR as a GitHub App**, so CI is
+      covered and adding a second CI scanner would have been duplication. The
+      real gap was local — the repo-local `core.hooksPath` that lefthook needs
+      bypasses the machine's global ggshield hooks, so nothing scanned a commit
+      before it existed. A secret caught pre-commit needs no rotation; one
+      caught in CI is already in history. Runs with `--redact`, so a detection
+      never prints the secret.
+- [x] **E2. `typos` runs on staged files.** Repo-wide it found three things,
+      handled at source rather than blanket-ignored: `SME` (Subject Matter
+      Expert, 12 deliberate uses in editor notes) is allowlisted with the reason
+      recorded; the legacy port is excluded, matching how knip treats it; and
+      an all-caps SQL keyword with a lowercase plural suffix — a tokenizer
+      artifact rather than a typo — was reworded in the comment
+      so no allowlist entry was needed for a non-word.
+- [ ] **E3. `semgrep`** (16,353★) — **deprioritised, not dropped.** Its main
+      argument here was the RLS gap, and F1b now fixes that at the source with
+      per-operation policies; a linter that flags an already-fixed policy adds
+      little. It also needs Python tooling this bun repo otherwise has no use
+      for. Worth revisiting for general TS/security rules once F1b lands, but it
+      is no longer the security item that matters most.
+- [x] **E4. `commitlint` gates the commit message.** A `commit-msg` hook in
+      lefthook, which already owned that surface. Verified both directions: a
+      bare "made some changes" is rejected (`type-empty`), a conventional
+      subject passes. `body-max-line-length` is disabled deliberately — the
+      default 100 would reject this repo's own history, which explains _why_
+      changes were made and is the part worth keeping.
+- [x] **E5. Coverage is measurable.** `bun run test:coverage`. Baseline on the
+      41 tests: **84.64% statements, 85.71% lines, 66.25% branches**. Recorded
+      here so a later change can be compared against it rather than guessed at.
+      Not yet a gate — a threshold is a decision, and D1 is the open one about
+      whether this repo ratchets or blocks.
+- [ ] **E6. `renovate`** (22,315★) — **still blocked on B5**, correctly. It
+      would immediately open PRs for the 15 dependencies whose fate B5 decides.
+      Do B5 first.
+- [ ] **E7. `oraios/serena`** (28,368★) — unchanged, and out of scope for this
+      repo: it is an MCP server configured per developer, not a project
+      dependency, so it cannot land in a PR here. The `.svelte` LSP question is
+      still unverified and still the thing to spike before adopting it.
 
 ---
 
