@@ -1,0 +1,5 @@
+id: no-public-prefix-env
+valid:
+  - "import { SVELTE_PUBLIC_SUPABASE_URL } from '$env/static/public';"
+invalid:
+  - "import { PUBLIC_SUPABASE_URL } from '$env/static/public';"

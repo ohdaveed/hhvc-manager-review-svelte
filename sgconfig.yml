@@ -1,4 +1,7 @@
+# `testDirs` is not a recognised key -- ast-grep silently ignored it and
+# `ast-grep test` discovered 0 tests while still exiting 0. The correct shape
+# is testConfigs[].testDir.
 ruleDirs:
   - .ast-grep/rules
-testDirs:
-  - .ast-grep/tests
+testConfigs:
+  - testDir: .ast-grep/tests

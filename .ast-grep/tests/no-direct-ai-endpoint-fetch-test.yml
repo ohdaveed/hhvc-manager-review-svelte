@@ -1,0 +1,6 @@
+id: no-direct-ai-endpoint-fetch
+valid:
+  - "const res = await requestGeneration(payload);"
+  - "const res = await fetch('/api/other', { method: 'POST' });"
+invalid:
+  - "const res = await fetch('/api/ai/generate', { method: 'POST' });"

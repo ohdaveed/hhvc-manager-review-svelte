@@ -1,0 +1,14 @@
+id: no-private-env-in-client
+snapshots:
+  import { RAILWAY_API_TOKEN } from '$env/static/private';:
+    labels:
+    - source: import { RAILWAY_API_TOKEN } from '$env/static/private';
+      style: primary
+      start: 0
+      end: 56
+  import { env } from '$env/dynamic/private';:
+    labels:
+    - source: import { env } from '$env/dynamic/private';
+      style: primary
+      start: 0
+      end: 43

@@ -1,0 +1,17 @@
+id: no-private-env-in-client
+language: TypeScript
+severity: error
+message: Private env is server-only; importing it here would ship a secret to the browser.
+note: |
+  This app has no hooks.server.ts and no event.locals -- the only server
+  surface is src/routes/api/**. RAILWAY_API_TOKEN is read there via
+  $env/dynamic/private and must never reach a client bundle.
+files:
+  - 'src/**/*.ts'
+  - 'src/**/*.js'
+ignores:
+  - 'src/routes/api/**'
+rule:
+  any:
+    - pattern: import { $$$ } from '$env/dynamic/private'
+    - pattern: import { $$$ } from '$env/static/private'
