@@ -88,6 +88,25 @@ Netlify, site `hhvc-manager-review`, **Git-connected and deploying automatically
 
 CI runs separately in `.github/workflows/pr.yml` — unit tests, build and e2e block, while prettier/eslint/svelte-check report without blocking. A green Netlify preview says the site built; it does not say the tests passed.
 
+## Branch protection
+
+`main` is governed by repository ruleset **`main: require CI`** (id `21203092`), scoped to `~DEFAULT_BRANCH` so it follows a rename. It is `active` with **no bypass actors** — the repo owner is subject to it too, and `current_user_can_bypass` reads `never`.
+
+| Rule                     | Effect                                                                                       |
+| ------------------------ | -------------------------------------------------------------------------------------------- |
+| `required_status_checks` | `test & build` and `e2e` must pass; `strict`, so the branch must also be current with `main` |
+| `pull_request`           | changes must arrive via a PR (0 approvals — it gates the path, not review)                   |
+| `non_fast_forward`       | force-pushes to `main` are refused                                                           |
+
+The contexts are matched against the **job names** in `pr.yml`. Renaming a job there without updating the ruleset silently drops that gate — the check simply stops being reported under the required name.
+
+Consequences worth knowing before working here:
+
+- There is no direct push to `main`, for anyone. A `git push origin main` is rejected with `GH013: Repository rule violations found`.
+- A red PR cannot be merged, including by the owner, so the workflow is a gate rather than a report.
+- The escape hatch is editing or disabling the ruleset at `github.com/ohdaveed/hhvc-manager-review-svelte/rules` — a deliberate, visible act. Prefer fixing the build.
+- Stacked PRs targeting another branch are unaffected; the ruleset only covers the default branch. Note that GitHub requires the async merge endpoint (`PUT /repos/{owner}/{repo}/pulls/{n}/merge-async`) for a PR that is part of a stack — `gh pr merge` fails on those with a stack error.
+
 Supabase auth URLs must include any new origin, or magic links redirect to a dead URL. The hosted allow-list covers production, `localhost:5173`, and Netlify preview hostnames; `supabase/config.toml` covers the local stack.
 
 <!-- FABLIZE:BEGIN — run Opus like Fable (always-on router). Verified procedures only. Install/update: fablize setup.sh -->
