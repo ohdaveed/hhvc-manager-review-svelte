@@ -20,20 +20,6 @@ function sh(cmd: string): string {
 	return execSync(cmd, { encoding: 'utf-8', stdio: ['ignore', 'pipe', 'pipe'] });
 }
 
-/** Runs a command that is expected to fail, returning its combined output. */
-function shExpectFailure(cmd: string): { failed: boolean; output: string } {
-	try {
-		const output = execSync(cmd, { encoding: 'utf-8', stdio: ['ignore', 'pipe', 'pipe'] });
-		return { failed: false, output };
-	} catch (err) {
-		const e = /** @type {{ stdout?: string; stderr?: string }} */ err as {
-			stdout?: string;
-			stderr?: string;
-		};
-		return { failed: true, output: `${e.stdout ?? ''}${e.stderr ?? ''}` };
-	}
-}
-
 function assert(condition: boolean, detail: string): void {
 	if (!condition) throw new Error(detail);
 }
