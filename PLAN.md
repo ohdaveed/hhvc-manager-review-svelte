@@ -125,6 +125,14 @@ leaving 16 dependency findings that are a single product decision (B5).
       because those modules are partly live and pruning them is riskier than it
       looks.
 
+- [ ] **F5. The hosted database has no data.** `edits`, `pages` and `reviews`
+      are all **0 rows** — `supabase/seed.sql` was never applied to the hosted
+      project. This is why production logs `No review found: null`: it is not
+      only the signed-out path, there is genuinely no review row to find, for
+      anyone. The deployed app can render the static mockups and nothing else —
+      no queue, no decisions, no notes, no Karl transcript. Decide whether the
+      hosted project is meant to hold real review data, and if so seed it.
+
 - [ ] **B5. One decision: keep the legacy port, or delete it?** B2, B3 and the
       dead CSS tree all reduce to this. The legacy vanilla-JS app is retained as
       porting reference — `src/legacy_main.js`, `src/css/**`,
@@ -307,9 +315,13 @@ hosted project is unverified.** F1a exists to close that gap first.
       their own; A's delete and update of B's edit affected zero rows, an insert
       forged as B was rejected by the policy, page decisions stayed writable,
       and deletes of pages and reviews affected nothing.
-      _Gap:_ validated against vanilla Postgres with a shim, not against
-      Supabase itself, and **not yet applied to the hosted project** — that is a
-      separate, approved step.
+      **Applied to the hosted project** and read back from `pg_policies`: 9
+      policies, **0 blanket `ALL` policies**, all 5 indexes created, and
+      `(select auth.uid())` preserved as an initplan subquery.
+      _Gap:_ the behavioral proof was against vanilla Postgres with a shim; on
+      the hosted project only the structure was verified, because all three
+      tables are empty and testing behavior would have meant writing rows to
+      production.
       _Worth knowing:_ Supabase's own security advisor reports nothing about any
       of this. Its linter checks whether RLS is enabled and whether policies
       exist, not whether they are permissive; the old `USING (true)` policies
