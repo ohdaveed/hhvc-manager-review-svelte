@@ -1,0 +1,952 @@
+/* Design tokens for the HHVC manager-review tool.
+   (StyleSeed / SF.gov internal tool)
+
+   Three layers, in order:
+
+     1. LEGACY PRIMITIVES     — `--legacy-*`, defined in css/styles.css. The
+        hand-authored palette this tool shipped before adopting SFDS. Every
+        one of these is scheduled for migration; a grep for `--legacy-`
+        reports how much of the adoption is left. Never referenced directly
+        by component CSS.
+     2. SEMANTIC TOKENS       — this file. What a thing IS (`--surface-panel`,
+        `--status-blocked-fg`), not what colour it happens to be.
+     3. COMPONENT CSS         — css/styles.css, css/ux-improvements.css,
+        css/dashboard.css, css/ai-assist.css.
+
+   Retheming should mean editing this file only. Every token carries a
+   `var(fallback)` so the file still renders sensibly if the primitives
+   ever fail to load.
+
+   NOTE ON CASCADE LAYERS: Web Awesome ships all of its styles inside
+   `@layer` blocks. Unlayered CSS beats layered CSS in the cascade
+   regardless of specificity, so everything in this repo's own stylesheets
+   automatically wins over Web Awesome's defaults. That is deliberate — it
+   is what lets us adopt Web Awesome's components and reset without it
+   fighting the existing hand-authored styles. */
+
+:root {
+  /* ===================================================================
+     Brand ramp
+     ===================================================================
+     SFDS ships three brand blues (action, hover, accent-light) — enough
+     for links and buttons, not enough for a dashboard that needs fills,
+     borders, hovers and chart marks in the same family. This interpolates
+     the full scale in OKLCH and pins two of them to the real SFDS hexes so
+     the brand colour stays literally SF.gov's rather than an approximation:
+
+         step 40 = --sfds-color-blue-bright  #495ed4  (the action blue)
+         step 10 = --sfds-color-blue-dark    #0c1464  (hover, and the footer)
+
+     The interpolation is NOT uniform across the whole ladder, and the old
+     version of this comment claiming it was ("so the steps are perceptually
+     even") stopped being true when the pins moved. Steps 10→40 are even
+     thirds in OKLCH and step 05 is half a step below 10, so the dark half
+     is evenly spaced. Above step 40 each step's `t` toward white is solved
+     for a CONTRAST target instead, because SFDS's action blue is lighter
+     than the one this ramp was originally pinned to (5.48:1 on white where
+     #2a60af gave 6.19:1) — which leaves step 50, whose whole role is "the
+     lightest step still safe for text", squeezed into the narrow band
+     between 4.5:1 and step 40 itself. Even lightness spacing would have
+     dropped it to about 4.0:1 and quietly cost the ramp that role. The
+     lightness delta from 40 to 50 is therefore 0.029 against 0.088 from 50
+     to 60; that is deliberate, not drift.
+
+     Contrast is measured against #ffffff and against #16181d, the two
+     surfaces these actually land on: the light panel (--surface-panel,
+     SFDS white) and the dark panel. Note the second one is NOT
+     --sfds-color-black (#212123) — that is the body TEXT colour, not a
+     surface anything is drawn on, and measuring against it would restate
+     the same class of error this re-derivation exists to fix.
+
+     Steps 50 and darker clear 4.5:1 on white, so they are safe for text;
+     step 50 is the lightest that does. Steps 60 and up are for fills and
+     borders only — 60 clears the 3:1 non-text bar (WCAG 1.4.11) but NOT
+     the 4.5:1 text bar, so never put body copy on it. The old step 60
+     missed even that, at 2.97:1, while this comment claimed it cleared;
+     tests/theme-contrast.test.js computes the figure now rather than
+     trusting the line above it.
+
+     The 05..95 numbering deliberately matches Web Awesome's brand scale.
+     Nothing depends on that today — Web Awesome's stylesheets are not
+     imported, because pulling in its theme costs ~66 kB of CSS to define
+     tokens no component here consumes yet. When a Web Awesome component
+     does land, aliasing --wa-color-brand-NN to --brand-NN is a one-line
+     mapping and its components inherit SF.gov's blue automatically. */
+  --brand-95: #ecf1fd; /* on white  1.13:1 | on dark panel 15.70:1 */
+  --brand-90: #dee5fa; /* on white  1.26:1 | on dark panel 14.12:1 */
+  --brand-80: #bbc9f4; /* on white  1.64:1 | on dark panel 10.80:1 */
+  --brand-70: #99aced; /* on white  2.22:1 | on dark panel  8.02:1 */
+  --brand-60: #7188e2; /* on white  3.32:1 | on dark panel  5.35:1 */
+  --brand-50: #566cd9; /* on white  4.62:1 | on dark panel  3.84:1 */
+  --brand-40: #495ed4; /* on white  5.48:1 | on dark panel  3.24:1  <- SFDS action blue */
+  --brand-30: #3245ad; /* on white  8.11:1 | on dark panel  2.19:1 */
+  --brand-20: #1e2d88; /* on white 11.76:1 | on dark panel  1.51:1 */
+  --brand-10: #0c1464; /* on white 16.16:1 | on dark panel  1.10:1  <- SFDS hover/footer */
+  --brand-05: #060653; /* on white 18.12:1 | on dark panel  1.02:1 */
+
+  /* Brand (SFDS action blue family) */
+  --brand-primary: var(--sfds-color-action);
+  --brand-primary-hover: var(--sfds-color-blue-dark);
+  --brand-on-primary: var(--sfds-color-white);
+
+  /* Typography — real SF.gov typefaces, self-hosted via @fontsource (see
+     js/main.js's font imports). Confirmed against 7 live sf.gov pages: body
+     copy renders in Roboto Flex, headings in Roboto Slab (a serif face) —
+     this was previously a generic system-font stack under a comment
+     claiming it was already "the SF.gov system stack", which measurement
+     against the live site showed was not true. The system-font fallback
+     chain stays after the web font in case a build ever ships without the
+     @fontsource CSS loaded.
+
+     The body face is named 'Roboto Flex Variable', not 'Roboto Flex' — see
+     js/main.js's font-import comment. @fontsource-variable/roboto-flex
+     registers under that different family name so it can coexist with a
+     static @fontsource/roboto-flex install; this repo carries only the
+     variable package (it replaced the static 400-weight-only package, since
+     the design's weight-700 heading ladder and bold body copy both need a
+     real 700 instance, and the static package could never ship one). Naming
+     the old family here would silently fall back to the system sans with
+     nothing visibly broken — get this wrong and every other check in the
+     suite still passes, because none of them assert the ACTUAL rendered
+     font the way tests/e2e/mockup-tokens.spec.js's
+     `document.fonts.check()` calls do. */
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-display: 'Roboto Slab', ui-serif, Georgia, 'Times New Roman', serif;
+  --font-body: 'Roboto Flex Variable', var(--font-sans);
+  --font-caption: 'Roboto Flex Variable', var(--font-sans);
+
+  /* ===================================================================
+     Spacing scale — SFDS's ladder, in rem
+     ===================================================================
+     The two ladders agreed through 16px and diverged above it: this repo
+     doubled (24/32/48/64) where SFDS steps 20/28/40/60/80/96. Steps 5-8
+     therefore MOVE, which is a visible change to every panel that uses
+     them, not a renaming. Expressed in rem so they scale with the user's
+     browser font size — a WCAG 1.4.4 requirement fixed px quietly breaks,
+     and the reason these are not simply SFDS's px values. */
+  --ds-space-1: var(--sfds-space-4); /*  4px */
+  --ds-space-2: var(--sfds-space-8); /*  8px */
+  --ds-space-3: var(--sfds-space-12); /* 12px */
+  --ds-space-4: var(--sfds-space-16); /* 16px */
+  --ds-space-5: var(--sfds-space-20); /* 20px, was 24 */
+  --ds-space-6: var(--sfds-space-28); /* 28px, was 32 */
+  --ds-space-7: var(--sfds-space-40); /* 40px, was 48 */
+  --ds-space-8: var(--sfds-space-60); /* 60px, was 64 */
+
+  /* ===================================================================
+     Type scale for tool chrome
+     ===================================================================
+     There was a --ds-space-* scale but no type scale, and the result was
+     predictable: four separate sessions each invented their own heading
+     and hint sizes for what is visually the same pair. The dashboard
+     section header, the insights card head, the ops subhead and the ops
+     finding title were 1.05 / 0.82 / 0.95 / 0.88rem — all weight 800, all
+     paired with a --text-secondary hint at 0.82 / 0.72 / — / 0.8rem.
+
+     Three steps, because tool chrome only has three jobs: name a panel,
+     name a card inside it, and label a control or a figure. Anything
+     needing a fourth size is probably a card that should be a panel.
+
+     In rem, not px, so they scale with the user's browser font size —
+     the same WCAG 1.4.4 requirement the spacing scale is built for. */
+  --ds-text-panel: var(--sfds-text-title-xs); /* 20px — a panel's own heading */
+  --ds-text-card: var(--sfds-text-body); /* 16px — a card inside a panel */
+  --ds-text-label: var(--sfds-text-small); /* 14px — hints, captions, labels */
+
+  /* An EXTENSION: SFDS's smallest step is `small` at 14px, and an uppercase
+     eyebrow at 14px is visually louder than the card heading beneath it.
+     Legibility here comes from letter-spacing and weight rather than size,
+     which is why one step may sit below a floor that 49 other declarations
+     were raised to. It is for uppercase eyebrow labels and nothing else —
+     tests/e2e/chrome-tokens.spec.js asserts that, so the restriction is
+     enforced rather than merely written down. */
+  --ext-text-2xs: 0.6875rem; /* 11px */
+  --ds-text-micro: var(--ext-text-2xs);
+
+  /* Two outliers OUTSIDE the four-step scale above — not a fifth and sixth
+     rung on it, just a place for two call sites to stay layer-compliant.
+     A diagnostics stat figure and a KPI headline number both need to read
+     louder than --ds-text-panel, a heading, and the four-step scale has no
+     rung above panel. NOT a raw --sfds-text-title-sm/-md reference inlined
+     at the two call sites: tests/sfds-tokens.test.js enforces that only
+     css/theme.css and css/styles.css may consume the `--sfds-*` namespace
+     directly, so every other component file reaches for a semantic name
+     here instead — these two exist so css/dashboard.css and
+     css/review-ops.css can stay layer-compliant without duplicating that
+     rule two more times. Named after the SFDS step they alias, not
+     `--ext-*`: unlike --ext-text-2xs these ARE published SFDS values, just
+     consumed one layer removed. */
+  --ds-text-title-sm: var(--sfds-text-title-sm);
+  --ds-text-title-md: var(--sfds-text-title-md);
+
+  /* ===================================================================
+     Radius — an EXTENSION, because SFDS publishes no radius scale
+     ===================================================================
+     Derived rather than invented: design-system.sf.gov's own utility
+     classes use `rounded-4`, i.e. radius is drawn off the shared step
+     ladder, so these are that ladder's first four steps plus a pill.
+     The `--ext-` prefix is load-bearing — a grep for it answers "what did
+     we add that SFDS does not publish?", which nothing could answer about
+     the layer this replaced. */
+  --ext-radius-2: 2px;
+  --ext-radius-4: 4px;
+  --ext-radius-8: 8px;
+  --ext-radius-12: 12px;
+  --ext-radius-pill: 999px;
+
+  /* The previous names, kept as aliases so this task moves no pixel. Phase
+     3 repoints their consumers onto the steps above and deletes them. */
+  --ds-radius-sm: var(--ext-radius-4);
+  --ds-radius-md: var(--ext-radius-8);
+  /* Deliberately still a literal, not var(--ext-radius-12): 14 is not on
+     the SFDS step ladder (2/4/8/12), so aliasing it to the 12px step would
+     move a real 2px, not just rename it. This task's whole criterion is
+     that nothing moves — repointing this one belongs to a later phase that
+     can own that visual change on purpose, not slip it in under a rename. */
+  --ds-radius-lg: 14px;
+  --ds-radius-pill: var(--ext-radius-pill);
+
+  /* ===================================================================
+     Elevation
+     ===================================================================
+     Three steps, not five: this is a dense review tool, and more depth
+     levels than a reviewer can distinguish is just noise. Tinted with the
+     brand navy rather than neutral black so shadows read as part of the
+     palette instead of dirtying it — so the tint is step 10 of the ramp
+     above, #0c1464, written out as an rgb() triple because a shadow needs
+     an alpha and a custom property cannot be interpolated into one. It
+     moved with the ramp: this was rgb(0, 29, 78), the OLD step 10, which
+     would have left every shadow in the tool tinted with a blue the
+     palette no longer contains. */
+  --ds-shadow-1: 0 1px 2px rgba(12, 20, 100, 0.06), 0 1px 3px rgba(12, 20, 100, 0.08);
+  --ds-shadow-2: 0 2px 4px rgba(12, 20, 100, 0.06), 0 4px 12px rgba(12, 20, 100, 0.1);
+  --ds-shadow-3: 0 8px 16px rgba(12, 20, 100, 0.08), 0 16px 32px rgba(12, 20, 100, 0.12);
+
+  /* Two chrome dimensions that are shared rather than component-local, and so
+     belong here rather than as literals in the component sheet that happens to
+     use them first.
+
+     --ds-size-affordance is the diameter of a small circular control that sits
+     in a line of text — the Karl guide's expand dot today. It doubles as the
+     ordinal gutter for that guide's step list, which is deliberate: the number
+     column and the dot above it line up because they are the same measure.
+
+     --ds-size-popover is the natural width of a floating panel opened from
+     inline chrome. It is a MAX rather than a fixed width; every caller pairs it
+     with `min(…, calc(100vw - 2rem))` so a narrow viewport wins. */
+  --ds-size-affordance: 1.35rem;
+  --ds-size-popover: 31rem;
+
+  /* Semantic surfaces */
+  --surface-page: var(--sfds-color-grey-l1);
+  --surface-panel: var(--sfds-color-white);
+  --surface-sunken: var(--sfds-color-slate-l1);
+  --surface-raised: var(--sfds-color-white);
+  /* A tinted fill INSIDE a panel — toolbar strips, KPI wells, the tab bar.
+     Same value as --surface-page, deliberately: a soft area reads as the page
+     showing through the panel. It exists as its own name so those rules do not
+     have to claim they are painting the page background, and so the two can be
+     tuned apart later without hunting for which is which.
+
+     This replaced `--ux-soft-bg`, one of seven `--ux-*` aliases that used to be
+     declared in css/ux-improvements.css. Those were a second vocabulary for
+     tokens that already had names here — `--ux-panel-bg` and `--surface-panel`
+     were the same thing — and having both is how `.status-chip` ended up
+     declared twice under two different token families. */
+  --surface-soft: var(--sfds-color-grey-l1);
+  --text-primary: var(--sfds-color-black);
+  /* JUDGEMENT, not a lookup: the brief's table said slate-3 -> slate-l2, but
+     --text-secondary lands on several real chrome surfaces, not just white --
+     --surface-panel (4.53:1), --surface-page/-soft (4.19:1) and
+     --surface-sunken (4.06:1, measured live on the inactive workspace-tab
+     background, #eff3f4). slate-l2 (#5a7a92) only clears the 4.5:1 text
+     floor on the first of those three, so every secondary-text node NOT
+     sitting on a pure white panel failed WCAG 1.4.3 -- confirmed by running
+     tests/e2e/accessibility.spec.js, which is what caught it: 24
+     .compliance-detail/.compliance-citation nodes plus both inactive
+     workspace tabs. slate-l3 (#1d4d70) is the next step in the same SFDS
+     slate family and clears the floor everywhere --text-secondary is
+     actually used (8.01-8.94:1 across the three surfaces above), so it
+     keeps the intended blue-grey hue rather than falling back to a neutral
+     grey. */
+  --text-secondary: var(--sfds-color-slate-l3);
+  --border-default: var(--sfds-color-grey-l2);
+  --border-strong: var(--sfds-color-grey-l3);
+
+  /* Sampled directly from the healthy-housing-conditions reference
+     screenshot's "TOPIC" eyebrow pixel data (darkest/most-saturated pixel
+     in its bounding box): #A84B00. WCAG AA text floor is 4.5:1 against
+     --surface-panel; verify with the accessibility.spec.js axe scan below
+     and adjust if flagged. */
+  --eyebrow-agency: #a84b00;
+
+  /* ===================================================================
+     Notification chrome — the one family that must NOT follow the ramp
+     ===================================================================
+     Toasts and the fatal-error banner are the only surfaces in the tool
+     painted as a SOLID saturated fill with light text on top. Everything
+     else uses a tinted `-bg` with a matching dark `-text`, which inverts
+     safely because both halves of the pair move together.
+
+     These do not, and pointing them at the neutral ramp was a real bug.
+     `.toast` used `--legacy-slate-1` as its BACKGROUND — a token whose role
+     is body text, so in dark mode it inverted end-for-end to #f0f1f2 and
+     the toast became a near-white slab still carrying white-alpha
+     controls. The close button measured 1.06:1 and simply disappeared.
+     The toast container lives outside `.browser-shell`, so the
+     light-pinned mockup region did not rescue it either.
+
+     So these are declared as literals and pinned across both themes. A
+     notification is a transient overlay, not part of the page surface —
+     dark chrome reads correctly on a light or a dark page, and pinning it
+     is what keeps its foreground pairing true in both. Contrast below is
+     against --toast-fg (#fcfcfc).
+
+     The banner is the exception that DOES get a dark override: it spans
+     the full viewport width, and a bright #d92d20 band that is merely
+     accessible is still a glare source against a dark page. */
+  --toast-fg: #fcfcfc;
+  --toast-bg: #1f2229; /* 15.52:1 */
+  --toast-success-bg: #026800; /*  6.86:1 */
+  /* The one brand-coloured member of this pinned set, so it moved with the
+     ramp: SFDS's action blue, not the old #2a60af. Still a literal rather
+     than var(--brand-40) — the whole point of this block is that these
+     survive a theme flip unchanged, and a token is exactly the thing that
+     might not.
+
+     This is the LIGHTEST of the three toast backgrounds, which makes it the
+     one that governs every control derived from --toast-fg: the dismiss
+     button's opacity and the action button's currentColor tint both composite
+     toward the background, so they are worst here even though the base label
+     clears 4.5:1 comfortably. Moving this token a step lighter is what took
+     both of those under AA once already. tests/theme-contrast.test.js checks
+     the derived pairs, not just the 5.34 below. */
+  --toast-info-bg: #495ed4; /*  5.34:1 */
+  --banner-danger-fg: #fcfcfc;
+  --banner-danger-bg: #d92d20; /*  4.71:1 */
+
+  /* ===================================================================
+     Decision status colours
+     ===================================================================
+     One triplet per value of the review `decision` enum.
+
+     This exists because getStatusChipClass() in js/core/utils.js collapses five
+     decisions into three CSS classes (pass / warn / fail), which renders
+     "Blocked" and "Revise and resubmit" identically — the two states a
+     manager most needs to tell apart, since one is waiting on someone else
+     and the other is waiting on the author. Naming all five here lets the
+     UI distinguish them without inventing colours at each call site.
+
+     Every `-fg` value clears 4.5:1 against its own `-bg` (WCAG 1.4.3).
+
+     In LIGHT MODE, the `-border` tokens do NOT all clear 3:1 (WCAG 1.4.11),
+     and this is a known, deferred finding rather than an oversight — do not
+     "fix" the text below without re-picking the colours, which is a
+     chip-visual-system decision belonging to whoever owns this token family
+     next (see below). The old hand-authored palette's `-border` steps were
+     mid-tones; SFDS's `l2`/`l3` steps at this position in each family are
+     pale tints instead, and four of the five land under the floor when
+     measured against WHITE (light mode's panel colour):
+     `--status-approved-border` 1.41:1, `--status-edits-border` 1.64:1,
+     `--status-revise-border` 1.56:1, `--status-pending-border` 1.78:1. Only
+     `--status-blocked-border` (red-l3) clears, at 4.53:1. The DARK-mode
+     `-border` steps below are unaffected — they are separately chosen
+     literals (not SFDS `l2`/`l3` steps) and each already clears 3:1 against
+     the dark panel (3.02–3.08:1, see their own inline comments); this
+     finding is a light-mode-only regression from the SFDS remap. Not
+     axe-flagged —
+     axe's `color-contrast` rule checks text, not border colour — so this
+     will not show up again in a routine accessibility-suite run; it was
+     found by hand computation during the SFDS migration (Task 6) and is
+     recorded in `.superpowers/sdd/task-6-report.md` under "What could not be
+     completed" for the fix to land against.
+
+     **It stays open because SFDS does not publish a value that would fix
+     it.** No step of its yellow ramp clears 3:1 against white — `yellow-l4`
+     (#e0a81a) is the best at 2.15:1 — so "Needs edits" cannot be repaired by
+     moving to another published step the way approved (green-l3, 4.55:1) and
+     revise (purple-l3, 4.96:1) could. Fixing two families of four leaves two
+     chips outlined in a mid-tone and two in a pale tint, which is a worse
+     system than the consistent one that is currently wrong. The real fix is
+     either an invented `--ext-*` amber or a decision that a chip's border is
+     decorative given the chip carries its own text label — a
+     chip-visual-system judgement, and it belongs to whoever owns that next.
+
+     This comment previously gave a different reason: that the fix was
+     deferred because it fanned out into dark mode and the `--viz-decision-*`
+     palette below, both of which the brand re-derivation (Task 11) was going
+     to touch anyway. Measured there, neither fans out — the dark `-border`
+     steps are separately chosen literals that still clear 3:1 on the dark
+     panel, and the decision fills are green/amber/purple/red/neutral and owe
+     nothing to the brand blue. Both were re-measured and neither moved, so
+     this is an isolated light-mode finding rather than a coupled one.
+     An asserted contrast ratio nobody re-measures after the surface moves is
+     worse than none, which is exactly the state the old unconditional claim
+     here left this comment in. */
+  --status-approved-bg: var(--sfds-color-green-l1);
+  --status-approved-border: var(--sfds-color-green-l2);
+  --status-approved-fg: var(--sfds-color-green-l4);
+
+  --status-edits-bg: var(--sfds-color-yellow-l1);
+  --status-edits-border: var(--sfds-color-yellow-l3);
+  /* JUDGEMENT, not a lookup: the brief's table said warning-text -> yellow-l4,
+     following the same "-l4 is the dark, text-safe step" pattern that holds
+     for green/purple/red (each family's l4 is a genuinely dark colour). SFDS
+     publishes no dark yellow -- yellow-l4 (#e0a81a) is a mid-tone gold, and
+     no step in the yellow ramp clears 4.5:1 against yellow-l1 (l4 itself
+     measures 1.90:1, confirmed both by hand and by
+     tests/e2e/accessibility.spec.js, which is where this was actually
+     caught: 810 .status-chip.warn nodes plus .mockup-banner and
+     .editor-qa-status in the mockup itself). grey-dark clears it at 8.9:1 --
+     the same neutral --status-pending-fg already uses for the same reason
+     (a neutral SFDS's colour ramps don't otherwise provide). */
+  --status-edits-fg: var(--sfds-color-grey-dark);
+
+  /* Revise = the author's move. Purple, so it reads as "action needed
+     here" without the alarm of the danger red used for Blocked. */
+  --status-revise-bg: var(--sfds-color-purple-l1);
+  --status-revise-border: var(--sfds-color-purple-l2);
+  --status-revise-fg: var(--sfds-color-purple-l4);
+
+  /* Blocked = waiting on someone outside the review. Danger red. */
+  --status-blocked-bg: var(--sfds-color-red-l1);
+  --status-blocked-border: var(--sfds-color-red-l3);
+  --status-blocked-fg: var(--sfds-color-red-l4);
+
+  --status-pending-bg: var(--sfds-color-grey-l1);
+  --status-pending-border: var(--sfds-color-grey-l3);
+  /* JUDGEMENT, not a lookup: the legacy value here (#383939) is a neutral
+     grey, and SFDS's slate family is blue-tinted rather than neutral — using
+     a slate would introduce a hue "Needs review" never had. grey-dark is the
+     nearest neutral SFDS actually publishes. */
+  --status-pending-fg: var(--sfds-color-grey-dark);
+
+  /* ===================================================================
+     Categorical data-visualisation palette
+     ===================================================================
+     The Okabe-Ito colourblind-safe qualitative palette, narrowed to the
+     four entries that clear the WCAG 1.4.11 3:1 non-text bar against
+     BOTH themes' panel surfaces. Okabe-Ito's orange, sky blue and yellow
+     all fail 3:1 on a light surface, and its black fails on a dark one,
+     so the full eight-colour set cannot be used as-is by a themed UI.
+
+     Four is not a compromise here — the review `decision` enum has five
+     values and one of them ("Needs review") is the neutral default, so
+     four saturated colours plus a neutral is exactly the requirement.
+
+     The purple is nudged 0.5% darker than Okabe-Ito's #CC79A7, and the
+     reason has since expired without the nudge becoming wrong. It was
+     added because the original measures 3.06:1 against pure white but only
+     2.98:1 against the --legacy-white (#fcfcfc) this tool's panels used at
+     the time — failing on the surface it was actually drawn on. Task 6
+     repointed --surface-panel onto --sfds-color-white, so that surface IS
+     pure white now and the unnudged colour would clear. It is kept anyway:
+     3.06:1 is a six-thousandth of margin over the floor, and the nudged
+     value holds 3.14:1 for no cost anyone can see. The figures below were
+     re-measured against #ffffff for the same reason — the light column
+     used to read 3.33/5.05/3.77/3.06, measured against a panel colour this
+     tool no longer has.
+
+     A caution that matters when these sit side by side: no two
+     Okabe-Ito colours reach 3:1 against EACH OTHER (the best pair is
+     ~2.3:1). Abutting marks — stacked bar segments, adjacent strip
+     cells — therefore need a 1-2px separator in the surface colour, so
+     each segment contrasts against the separator rather than against its
+     neighbour. --viz-separator exists for exactly that. */
+  --viz-1: #009e73; /* bluish green   — light 3.42:1 | dark 5.19:1 */
+  --viz-2: #0072b2; /* blue           — light 5.19:1 | dark 3.42:1 */
+  --viz-3: #d55e00; /* vermillion     — light 3.87:1 | dark 4.59:1 */
+  --viz-4: #ca77a5; /* reddish purple — light 3.14:1 | dark 5.66:1 */
+  /* Deliberately carries no contrast figure, unlike the four above: at
+     1.78:1 on the light panel it would fail the 3:1 a data mark needs, and
+     its one consumer is not one. It paints `.review-queue-kpi::before`, a
+     4px decorative accent rail beside a tile whose meaning is carried
+     entirely by the label and number inside it — decorative, and so exempt
+     from WCAG 1.4.11. If it is ever used as an actual series colour it
+     needs re-picking first; the name promises more than the value can
+     currently deliver. */
+  --viz-neutral: var(--sfds-color-grey-l3);
+  --viz-separator: var(--surface-panel);
+
+  /* Fills for the five review decisions in the Overview charts.
+     ==========================================================
+     These are NOT the --status-*-border tokens the chips use, and the
+     difference is measured rather than stylistic. Those tokens are tuned to
+     be 1px strokes beside a tinted background, which is a different job from
+     a large fill — and the borrow fails on a different count now than it
+     did, so both are recorded:
+
+       BEFORE the SFDS remap, the borders collided with each other.
+       #a6d8a8 (approved) vs #c9caca (pending) → ΔE 8.4 under NORMAL
+       vision, against a floor of 15. Approved and Needs review are the two
+       most common states and sit next to each other in the stacked bar, so
+       that pair failing is the whole chart failing.
+
+       AFTER it, that particular pair separates fine — SFDS's green-l2
+       (#c0e2c5) against grey-l3 (#c2c2c2) measures ΔE 21.4 — but the
+       borders now fail the OTHER floor instead: green-l2 measures 1.41:1
+       against the white panel, where a fill has to clear 3:1 (WCAG 1.4.11).
+       So the conclusion is unchanged and its reason is not. Do not "notice"
+       the ΔE has recovered and repoint these at the chip tokens.
+
+     The steps below were picked against a CVD/ΔE validator and clear every
+     check — lightness band, chroma floor, colourblind separation,
+     normal-vision separation, and 3:1 against the surface — per mode. Dark
+     is a separately chosen set, not an automatic lightening: the light green
+     lands at 2.96:1 on the dark panel, under the 3:1 floor.
+
+     Task 11 re-measured these rather than re-deriving them, and the
+     distinction is worth stating because the plan called for a re-derivation.
+     ΔE and colourblind separation are properties of the PAIRS, and no pair
+     changed — the fills are green/amber/purple/red/neutral and owe nothing to
+     the brand blue that moved. What genuinely needed re-running was the
+     surface contrast, since the light panel went #fcfcfc → #ffffff: worst
+     light pair ΔE 37.2, worst dark pair ΔE 45.9, and every fill clears 3:1 on
+     its own panel. Nothing moved, and tests/theme-contrast.test.js now
+     recomputes all of it per mode instead of leaving it here to rot.
+
+     --viz-decision-pending is a deliberate exception to the chroma floor (and,
+     in dark mode, the lightness band): it is a true neutral, and a neutral
+     cannot carry chroma by definition. That is the point — "Needs review" is
+     the ABSENCE of a decision and should read as uncoloured rather than
+     compete with the four real outcomes for attention. It is NOT exempt from
+     the separation floors, which is the check that actually matters: each
+     mode's neutral is picked so it clears the adjacent green by ΔE 15 under
+     normal vision. Validate both modes WITH the neutral included when
+     changing any of this — validating the four coloured steps alone hides the
+     one pair most likely to collide.
+
+     Colour is never the only encoding regardless: the decision-mix card
+     carries a visible legend with per-segment counts, and every chart has an
+     equivalent data table. */
+  --viz-decision-pending: #8a8d8d;
+  --viz-decision-approved: #00734f;
+  --viz-decision-edits: #c07000;
+  --viz-decision-revise: #8f57b3;
+  --viz-decision-blocked: #c0392b;
+  /* Minimum stroke width for chart lines. 1px hairlines are the most
+     common 1.4.11 failure in charting libraries' defaults. */
+  --viz-stroke: 2px;
+}
+
+/* =====================================================================
+   Dark mode
+   =====================================================================
+   Scoped to the TOOL CHROME only — deliberately.
+
+   `.browser-shell` and everything inside it is a simulation of the real,
+   public SF.gov page. That page is light. Rendering the mockup dark would
+   show the reviewer something that does not exist and cannot be approved,
+   which defeats the entire purpose of the tool. So the sidebar, toolbar,
+   review workspace and dashboard follow the reviewer's system preference,
+   and the mockup keeps its own light tokens (re-asserted below).
+
+   Only the semantic layer is overridden here; no component stylesheet
+   needs to know dark mode exists. */
+@media (prefers-color-scheme: dark) {
+  /* The override happens at the PRIMITIVE layer, not the semantic one.
+
+     Every stylesheet in this repo already reads `--legacy-*` directly —
+     hundreds of declarations across styles.css, ux-improvements.css and
+     ai-assist.css. Inverting the primitives here means all of
+     them become theme-aware without a single component rule changing,
+     which is exactly the "retheme by touching tokens only" property this
+     layer is supposed to have. Overriding only the semantic tokens would
+     have left every one of those declarations stubbornly light.
+
+     The neutral ramp inverts end-for-end: slate-1 is the darkest value in
+     light mode and is used as body text, so in dark mode it becomes the
+     lightest. slate-5 is the page background and becomes the darkest.
+     Because components use them by role rather than by literal colour,
+     the inversion is transparent to them. */
+  :root {
+    color-scheme: dark;
+
+    /* ===================================================================
+       The dark palette itself — --ext-dark-*
+       ===================================================================
+       SFDS publishes no dark palette. Not "an incomplete one": zero
+       `prefers-color-scheme` rules in either shipped bundle, and no
+       `-dark` variant of any colour token. So every value in this block is
+       this repo's own invention, derived from SFDS hues rather than picked
+       freehand, and it carries the `--ext-` prefix for exactly the reason
+       the radius scale does — a grep has to be able to separate what SFDS
+       specifies from what we made up, or the next reader assumes the whole
+       file is vendored.
+
+       They are declared once here and referenced below rather than being
+       written out at each use, because they were previously written out
+       TWICE: once for the `--legacy-*` primitive a component reads directly
+       and again for the semantic token that carries the same role. Twelve
+       hexes appeared in both halves of this block, free to drift apart, in
+       the one place where a drift shows up as unreadable text rather than
+       as a visual oddity.
+
+       Contrast figures below are against --ext-dark-panel (#16181d), which
+       is the surface these actually land on. tests/theme-contrast.test.js
+       recomputes them from these declarations. */
+
+    /* Neutrals — the inverted ramp the block header above describes, named
+       by the role each end actually plays rather than by the light-mode
+       step number it inverts from. */
+    --ext-dark-ink-1: #f0f1f2; /* body text        — 15.70:1 */
+    --ext-dark-ink-2: #c3c7ce; /* strong secondary — 10.47:1 */
+    --ext-dark-ink-3: #a9adb4; /* secondary text   —  7.88:1 */
+    --ext-dark-line-strong: #606670; /* strong border —  3.07:1 */
+    --ext-dark-line: #2b2f37; /* hairline separator */
+    --ext-dark-page: #101216;
+    --ext-dark-panel: #16181d;
+    --ext-dark-raised: #1d2027;
+    --ext-dark-sunken: #0c0e11;
+
+    /* Brand tints. Every one of these is a dark, desaturated blue that was
+       mixed from the OLD brand hue (OKLCH h ≈ -101.8°); re-derived here onto
+       SFDS's (h ≈ -88.8°) by holding each value's own lightness and chroma
+       and moving only its hue, so the tint keeps its weight and only its
+       family changes. Left alone they would have been the one part of the
+       chrome still quietly wearing the pre-SFDS blue, and at these
+       lightnesses that is invisible in isolation and obvious beside a link. */
+    --ext-dark-brand-tint-1: #161b2b; /* --brand-95's dark role: tab fills */
+    --ext-dark-brand-tint-2: #1c233a; /* --brand-90's dark role: hover wash */
+    --ext-dark-brand-wash: #212944;
+    --ext-dark-brand-soft: #161926;
+    --ext-dark-brand-deep: #0c1020;
+    --ext-dark-brand-line: #32384b; /* body text on it — 10.30:1 */
+
+    /* Status families. Each `-bg` is a near-black wash, each `-fg` is tuned
+       against that wash (all clear 8:1 there), and each `-line` is tuned
+       against the panel to clear the 3:1 a state-bearing border needs. */
+    --ext-dark-success-bg: #0e2a12;
+    --ext-dark-success-line: #35713a; /* 3.02:1 on panel */
+    --ext-dark-success-fg: #8fd694; /* 8.99:1 on its bg */
+    --ext-dark-warning-bg: #2e2410;
+    --ext-dark-warning-line: #7d6220; /* 3.08:1 on panel */
+    --ext-dark-warning-fg: #f0cd72; /* 9.94:1 on its bg */
+    --ext-dark-danger-bg: #351416;
+    --ext-dark-danger-line: #a84641; /* 3.06:1 on panel */
+    --ext-dark-danger-fg: #f5a8a2; /* 8.71:1 on its bg */
+    --ext-dark-purple-bg: #241a33;
+    --ext-dark-purple-line: #725a98; /* 3.07:1 on panel */
+    --ext-dark-purple-fg: #cbb0ef; /* 8.65:1 on its bg */
+
+    /* Neutrals, inverted. */
+    --legacy-slate-1: var(--ext-dark-ink-1);
+    --legacy-slate-2: var(--ext-dark-ink-2);
+    --legacy-slate-3: var(--ext-dark-ink-3);
+    --legacy-slate-4: var(--ext-dark-line-strong);
+    --legacy-slate-5: var(--ext-dark-page);
+    --legacy-slate-6: var(--ext-dark-raised);
+    --legacy-white: var(--ext-dark-panel);
+    --legacy-border: var(--ext-dark-line);
+
+    /* Lightened from the light-mode #a84b00 for contrast against the dark
+       panel surface — verify with the accessibility.spec.js axe scan (dark
+       mode) and adjust if flagged; this is a starting value, not a measured
+       final one. Note this value never actually reaches the mockup: the
+       `.browser-shell` re-pin below overrides it back to the light-mode
+       #a84b00, since the eyebrow only renders inside the always-light
+       mockup preview (see that block's header comment). It's kept here for
+       correctness/completeness of the token's own dark-mode definition, and
+       so it does the right thing if some future tool-chrome (non-mockup)
+       consumer ever adopts --eyebrow-agency outside `.browser-shell`. */
+    --eyebrow-agency: #d97d3d;
+
+    /* Brand lightens. SFDS's action blue (#495ed4) manages only 3.2:1 on
+       the dark panel — over the 3:1 a border needs and under the 4.5:1 a
+       link needs — so links take step 70 of the ramp and hover goes lighter
+       still, preserving the "hover gets more prominent" direction that step
+       10 gave in light mode. */
+    --legacy-action-blue: var(--brand-70); /*  8.02:1 on panel */
+    --legacy-action-blue-hover: var(--brand-80); /* 10.80:1 on panel */
+
+    /* Only the two lightest steps are re-pointed. They are the ones used as
+       background TINTS (the active workspace tab, hover washes), and at
+       #ecf1fd / #dee5fa they would render as near-white slabs on a dark
+       panel. Steps 80 and darker are used as foreground and accent colours
+       — links take step 70 above — so they must stay light to keep their
+       contrast against the dark surface, and are deliberately left alone.
+       In other words the ramp is not inverted wholesale; only its role as
+       "tint" flips. */
+    --brand-95: var(--ext-dark-brand-tint-1);
+    --brand-90: var(--ext-dark-brand-tint-2);
+    --legacy-accent-light: var(--ext-dark-brand-wash);
+    --legacy-blue-soft-bg: var(--ext-dark-brand-soft);
+    --legacy-footer-bg: var(--ext-dark-brand-deep);
+    /* Step 70 at 45% — the same colour links take, so a focused control
+       reads as brand rather than as a fifth accent. Written as a triple
+       because a custom property cannot be interpolated into an rgba(). */
+    --legacy-focus-ring: rgba(153, 172, 237, 0.45);
+
+    /* Status families invert the same way: tinted light fills become dark
+       washes, and each family's dark text becomes its light foreground —
+       so the hue association (green = approved, red = blocked) survives
+       the theme change. Every `-text` clears 4.5:1 on its own `-bg`. */
+    --legacy-success-bg: var(--ext-dark-success-bg);
+    --legacy-success-border: var(--ext-dark-success-line);
+    --legacy-success-text: var(--ext-dark-success-fg);
+    --legacy-green: var(--ext-dark-success-fg);
+    --legacy-warning-bg: var(--ext-dark-warning-bg);
+    --legacy-warning-border: var(--ext-dark-warning-line);
+    --legacy-warning-text: var(--ext-dark-warning-fg);
+    --legacy-danger-bg: var(--ext-dark-danger-bg);
+    --legacy-danger-border: var(--ext-dark-danger-line);
+    --legacy-danger-text: var(--ext-dark-danger-fg);
+    --legacy-purple-bg: var(--ext-dark-purple-bg);
+    --legacy-purple-border: var(--ext-dark-purple-line);
+    --legacy-purple-text: var(--ext-dark-purple-fg);
+    --legacy-info-dark: var(--brand-70);
+    --legacy-info-light: var(--ext-dark-brand-soft);
+    --legacy-info-border: var(--ext-dark-brand-line);
+
+    /* Status borders are lighter than the container hairline on purpose.
+       A decorative container edge is exempt from WCAG 1.4.11 — the change
+       of surface already delineates it, and a 3:1 hairline everywhere
+       reads as harsh in dark mode. A status border is not decorative: it
+       carries which state a chip is in, so each one is tuned to clear 3:1
+       against the panel above. */
+    --status-pending-border: var(--ext-dark-line-strong);
+
+    /* Task 6 pointed the SEMANTIC layer's light-mode definitions straight at
+       `--sfds-color-*` instead of through `--legacy-*` (see the top of this
+       file), because SFDS is a single, fixed palette with no dark variant of
+       its own — there is no `--sfds-color-*-dark` to invert into. That is
+       correct for `#mockPage`, which must stay light regardless of theme
+       (see `.browser-shell` below), but every one of these semantic tokens
+       ALSO feeds tool chrome that legitimately follows dark mode
+       (`css/ux-improvements.css`, `css/dashboard.css`, `css/ai-assist.css`,
+       `css/ai-rewrite.css`, `css/inline-content-edit.css`, `css/review-insights.css`,
+       `css/review-ops.css`). Before this block existed those reads silently
+       stayed light-pinned in dark mode too — not a hypothetical: it read
+       white-on-white and pale-on-pale across the workspace tabs, the sticky
+       bar and the review queue until `tests/e2e/accessibility.spec.js`'s
+       dark-mode scans caught it.
+
+       The fix is NOT to make `--sfds-color-*` theme-aware (that would betray
+       what "the raw SFDS palette, pinned to its capture" means in
+       css/sfds.css's own header, and this file's own primitive-vs-semantic
+       split says the override belongs at whichever layer the value is free
+       to vary at). Instead, each semantic token gets its OWN dark value here,
+       carrying forward the exact literal this repo's dark palette already
+       used for the equivalent role before Task 6 — the same numbers that
+       used to arrive indirectly through `--legacy-*`, now declared directly.
+       Nothing about dark mode's appearance changes; only which layer defines
+       it does. */
+    --brand-primary: var(--brand-70); /*  8.02:1 on panel */
+    --brand-primary-hover: var(--brand-80); /* 10.80:1 on panel */
+    --surface-page: var(--ext-dark-page);
+    --surface-panel: var(--ext-dark-panel);
+    --surface-soft: var(--ext-dark-page);
+    --text-primary: var(--ext-dark-ink-1);
+    --text-secondary: var(--ext-dark-ink-3);
+    --border-default: var(--ext-dark-line);
+    --border-strong: var(--ext-dark-line-strong);
+    --status-approved-bg: var(--ext-dark-success-bg);
+    --status-approved-border: var(--ext-dark-success-line);
+    --status-approved-fg: var(--ext-dark-success-fg);
+    --status-edits-bg: var(--ext-dark-warning-bg);
+    --status-edits-border: var(--ext-dark-warning-line);
+    --status-edits-fg: var(--ext-dark-warning-fg);
+    --status-revise-bg: var(--ext-dark-purple-bg);
+    --status-revise-border: var(--ext-dark-purple-line);
+    --status-revise-fg: var(--ext-dark-purple-fg);
+    --status-blocked-bg: var(--ext-dark-danger-bg);
+    --status-blocked-border: var(--ext-dark-danger-line);
+    --status-blocked-fg: var(--ext-dark-danger-fg);
+    --status-pending-bg: var(--ext-dark-page);
+    --status-pending-fg: var(--ext-dark-ink-2); /* 10.47:1 on panel */
+    --viz-neutral: var(--ext-dark-line-strong);
+
+    /* Depth on dark surfaces comes from lighter fills, not darker shadow —
+       a light-mode shadow over a dark panel just produces a muddy halo.
+       Kept subtle so elevation still separates without dirtying. */
+    --ds-shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --ds-shadow-2: 0 2px 8px rgba(0, 0, 0, 0.45);
+    --ds-shadow-3: 0 8px 24px rgba(0, 0, 0, 0.5);
+
+    --surface-sunken: var(--ext-dark-sunken);
+    --surface-raised: var(--ext-dark-raised);
+    /* Label text on the primary button, which in dark mode is step 70 —
+       so this is the ramp's own darkest step rather than the near-black
+       #001033 it used to restate, which was the OLD ramp's step 05 and
+       therefore the old blue. 8.18:1 on --brand-primary. */
+    --brand-on-primary: var(--brand-05);
+
+    /* The one piece of notification chrome that is re-tuned rather than
+       pinned. The toast palette above stays as declared — a small dark
+       overlay reads correctly on either page — but this banner is a
+       full-width band, and #d92d20 across the top of a #101216 page is a
+       glare source even though it clears 4.5:1. Deepened to 9.79:1 on
+       --banner-danger-fg, which is both softer and more legible. */
+    --banner-danger-bg: #7f1d18;
+
+    /* Dark steps for the decision fills — chosen against the dark panel, not
+       lightened from the light set. The light green clears 3:1 on white and
+       only 2.96:1 here, which is exactly the trap an automatic flip falls
+       into.
+
+       The neutral is LIGHTER here than the light-mode one, which looks
+       backwards until you measure it. It has to clear the green by ΔE 15
+       under normal vision, and on a dark panel the green sits mid-lightness,
+       so the grey has to move away from it — upward. Dimming it to "recede"
+       the way it does in light mode was tried and drops the pair to ΔE 11.9,
+       reintroducing exactly the failure these tokens exist to fix. */
+    --viz-decision-pending: #adb3b3;
+    --viz-decision-approved: #34a06f;
+    --viz-decision-edits: #c08400;
+    --viz-decision-revise: #a273cc;
+    --viz-decision-blocked: #d4544a;
+  }
+
+  /* The mockup is a preview of a light PUBLIC page. Pin the primitives
+     back to their light values inside the browser shell so the simulation
+     stays faithful — a reviewer approving a dark page would be approving
+     something that does not exist. */
+  .browser-shell {
+    color-scheme: light;
+
+    /* Re-declaring the primitives is NOT enough on its own, and this line is
+       the whole reason why. A custom property only takes effect where a var()
+       is actually evaluated; `color` is INHERITED, and inheritance passes the
+       computed value, not the reference. `body` resolves
+       `color: var(--text-primary)` (css/styles.css) against the dark :root
+       above and computes #f0f1f2, and every element in here with no colour
+       rule of its own — most body copy — inherited that straight past the
+       light tokens below onto this shell's own light background
+       (`--sfds-color-white`, #ffffff — see `.browser-shell` in
+       css/styles.css).
+
+       Measured: #f0f1f2 on #ffffff is 1.13:1. Not "low contrast" — invisible.
+       Nine nodes per page of unreadable body text on a reviewer's machine set
+       to dark, on the one surface that is supposed to be immune to the theme.
+       Re-stating `color` here evaluates the light token at the boundary and
+       gives the subtree something correct to inherit.
+
+       This MUST read `--text-primary`, not `--legacy-slate-1`. Task 6
+       repointed `body`'s own `color` at the semantic `--text-primary` token
+       (aliased to `--sfds-color-black`, #212123) rather than the legacy
+       primitive `--legacy-slate-1` (#0b0c0c, the old pre-migration black) —
+       the two used to be the same value and are not anymore. A restatement
+       here that keeps reading the legacy primitive silently re-diverges from
+       what light mode actually renders: a reviewer on a light-OS machine saw
+       #212123 body text while a reviewer on a dark-OS machine saw #0b0c0c
+       through this exact re-pin, on the one surface that's supposed to be
+       identical for both. Confirmed live with Playwright, emulating both
+       color schemes and reading `#mockPage`'s computed `color`/
+       `background-color` plus a `<p>` inside it: before this fix, dark mode
+       reported `rgb(11, 12, 12)` where light mode reported `rgb(33, 33, 35)`;
+       after, both report `rgb(33, 33, 35)` on `rgb(255, 255, 255)`,
+       identically. */
+    color: var(--text-primary);
+
+    --legacy-slate-1: #0b0c0c;
+    --legacy-slate-2: #383939;
+    --legacy-slate-3: #6e7070;
+    --legacy-slate-4: #c9caca;
+    --legacy-slate-5: #f0f0f0;
+    --legacy-slate-6: #f8fafc;
+    --legacy-white: #fcfcfc;
+    --legacy-border: #e9eaea;
+
+    --legacy-action-blue: #2a60af;
+    --legacy-action-blue-hover: #001d4e;
+    --legacy-accent-light: #e9eef9;
+    --legacy-blue-soft-bg: #f1f4ff;
+    --legacy-footer-bg: #001d4e;
+    --legacy-focus-ring: rgba(42, 96, 175, 0.25);
+
+    --legacy-success-bg: #ecf8ed;
+    --legacy-success-border: #a6d8a8;
+    --legacy-success-text: #075e0a;
+    --legacy-green: #026800;
+    --legacy-warning-bg: #fff7e6;
+    --legacy-warning-border: #f2c94c;
+    --legacy-warning-text: #6f4a00;
+    --legacy-danger-bg: #fff1f0;
+    --legacy-danger-border: #d92d20;
+    --legacy-danger-text: #8f1d15;
+    --legacy-purple-bg: #f5efff;
+    --legacy-purple-border: #decdf6;
+    --legacy-purple-text: #4a2a7a;
+    --legacy-info-dark: #0046c2;
+    --legacy-info-light: #e5f1ff;
+    --legacy-info-border: #c7dae5;
+
+    /* The two brand tint steps and the pending status border are overridden
+       in the dark :root block above, so they have to be restored here too.
+       Nothing inside the mockup consumes them TODAY — --brand-95 is used only
+       by the workspace tab, and --brand-90 and --status-pending-border have no
+       consumer yet — so this is closing a latent hole rather than fixing a
+       visible bug. It still belongs here: the whole point of this block is
+       that a reader can trust the mockup renders light, and a guarantee with
+       three silent exceptions is not one. The next person to use a pending
+       chip inside the mockup should not have to rediscover this. */
+    --brand-95: #ecf1fd;
+    --brand-90: #dee5fa;
+    --status-pending-border: var(--sfds-color-grey-l3);
+
+    /* Task 6's counterpart to the dark :root block above. The semantic
+       tokens repointed onto `--sfds-color-*` are a single fixed palette with
+       no theme of its own, so `#mockPage` gets its always-light behaviour
+       "for free" UNLESS something inside `.browser-shell` reads a semantic
+       token whose dark override above has just made theme-aware — and one
+       real consumer does: `css/inline-content-edit.css`, the click-to-edit
+       widgets that render in place inside the mockup, reads
+       `--text-primary`, `--surface-panel`, `--surface-soft`, `--brand-primary`,
+       `--status-edits-*` and `--status-blocked-*` directly. Without this
+       block a reviewer editing a page's copy in dark mode would see the
+       editing chrome go dark while the mockup around it stayed light — the
+       same "page that does not exist" failure this whole re-pin exists to
+       prevent, just for a widget instead of the page. Values mirror the
+       light-mode :root definitions above exactly. */
+    --brand-primary: var(--sfds-color-action);
+    --brand-primary-hover: var(--sfds-color-blue-dark);
+    --surface-page: var(--sfds-color-grey-l1);
+    --surface-panel: var(--sfds-color-white);
+    --surface-soft: var(--sfds-color-grey-l1);
+    --text-primary: var(--sfds-color-black);
+    --text-secondary: var(--sfds-color-slate-l3);
+    --border-default: var(--sfds-color-grey-l2);
+    --border-strong: var(--sfds-color-grey-l3);
+    --status-approved-bg: var(--sfds-color-green-l1);
+    --status-approved-border: var(--sfds-color-green-l2);
+    --status-approved-fg: var(--sfds-color-green-l4);
+    --status-edits-bg: var(--sfds-color-yellow-l1);
+    --status-edits-border: var(--sfds-color-yellow-l3);
+    --status-edits-fg: var(--sfds-color-grey-dark);
+    --status-revise-bg: var(--sfds-color-purple-l1);
+    --status-revise-border: var(--sfds-color-purple-l2);
+    --status-revise-fg: var(--sfds-color-purple-l4);
+    --status-blocked-bg: var(--sfds-color-red-l1);
+    --status-blocked-border: var(--sfds-color-red-l3);
+    --status-blocked-fg: var(--sfds-color-red-l4);
+    --status-pending-bg: var(--sfds-color-grey-l1);
+    --status-pending-fg: var(--sfds-color-grey-dark);
+    --viz-neutral: var(--sfds-color-grey-l3);
+
+    /* Same reasoning as the trio above: --eyebrow-agency is overridden in
+       the dark :root block, so it has to be restored here too, or the
+       Agency eyebrow — which only ever renders inside this always-light
+       mockup — would inherit the dark-mode-tuned #d97d3d instead. That
+       value was chosen for contrast against the dark PANEL surface
+       (--legacy-white above, #16181d); against this shell's light background
+       it reads at roughly 2.3:1, failing the same 4.5:1 AA floor the
+       light-mode value was sampled to clear. The eyebrow has exactly one
+       correct color regardless of OS theme, because the page it previews
+       has exactly one (light) rendering. */
+    --eyebrow-agency: #a84b00;
+
+    /* These three used to restate the pre-Task-6 literals (#f8fafc, #fcfcfc,
+       #fcfcfc) — the old --legacy-slate-6/-white values. Task 6 moved their
+       light-mode source of truth to --sfds-color-slate-l1/-white (#eff3f4 /
+       #ffffff, see the :root block at the top of this file), so a re-pin
+       still quoting the old numbers would have pinned the mockup to a colour
+       that is no longer this token's actual light value anywhere else. */
+    --surface-sunken: var(--sfds-color-slate-l1);
+    --surface-raised: var(--sfds-color-white);
+    --brand-on-primary: var(--sfds-color-white);
+    --ds-shadow-1: 0 1px 2px rgba(12, 20, 100, 0.06), 0 1px 3px rgba(12, 20, 100, 0.08);
+    --ds-shadow-2: 0 2px 4px rgba(12, 20, 100, 0.06), 0 4px 12px rgba(12, 20, 100, 0.1);
+    --ds-shadow-3: 0 8px 16px rgba(12, 20, 100, 0.08), 0 16px 32px rgba(12, 20, 100, 0.12);
+  }
+}

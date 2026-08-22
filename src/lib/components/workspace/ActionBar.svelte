@@ -1,0 +1,128 @@
+<script lang="ts">
+	import { saveInlineEdit } from '$lib/stores/reviewState';
+
+	// Props to receive the currently selected field data (mocked for now)
+	let { activeField = null, onCancel, onSave } = $props();
+
+	let editValue = $state(activeField?.content || '');
+	let isAiLoading = $state(false);
+
+	// Function to simulate AI rewrite
+	const handleAiRewrite = async () => {
+		if (!editValue.trim()) return;
+		isAiLoading = true;
+		try {
+			const res = await fetch('/api/ai/generate', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ 
+					task: 'rewrite-field', 
+					provider: 'gemini',
+					fieldText: editValue 
+				})
+			});
+			if (!res.ok) throw new Error('API Error');
+			const data = await res.json();
+			if (data.result && data.result.rewrittenText) {
+				editValue = data.result.rewrittenText;
+			}
+		} catch (e) {
+			console.error('Rewrite failed', e);
+			alert('AI Rewrite failed.');
+		} finally {
+			isAiLoading = false;
+		}
+	};
+
+	// Function to simulate Plain Language check/rewrite
+	const handlePlainLanguage = async () => {
+		if (!editValue.trim()) return;
+		isAiLoading = true;
+		try {
+			const res = await fetch('/api/ai/generate', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ 
+					task: 'rewrite-field', 
+					provider: 'gemini',
+					fieldText: editValue,
+					instruction: 'Rewrite this text into simple plain language at a 6th-grade reading level.' 
+				})
+			});
+			if (!res.ok) throw new Error('API Error');
+			const data = await res.json();
+			if (data.result && data.result.rewrittenText) {
+				editValue = data.result.rewrittenText;
+			}
+		} catch (e) {
+			console.error('Plain language rewrite failed', e);
+			alert('Plain language rewrite failed.');
+		} finally {
+			isAiLoading = false;
+		}
+	};
+
+	const handleSave = async () => {
+		if (!activeField) return;
+		
+		// Fire off the optimistic update to the store (which also hits Supabase)
+		// We use a mock 'page-123' since we don't have the actual page context here yet
+		await saveInlineEdit('page-123', activeField.name, editValue);
+		
+		// Let the parent know we finished
+		onSave(editValue);
+	};
+</script>
+
+{#if activeField}
+	<!-- Svelte transition could be added here for a slide-up effect -->
+	<div class="pointer-events-auto w-full max-w-3xl rounded-lg border border-gray-200 bg-white p-4 shadow-xl ring-1 ring-black/5">
+		<div class="mb-3 flex items-center justify-between">
+			<div class="flex items-center gap-2">
+				<span class="rounded bg-blue-100 px-2 py-1 text-xs font-semibold text-blue-800">
+					Editing: {activeField.name || 'Paragraph'}
+				</span>
+				<span class="text-xs text-gray-500">Original text preserved until saved.</span>
+			</div>
+			
+			<div class="flex gap-2">
+				<button 
+					onclick={handlePlainLanguage}
+					disabled={isAiLoading}
+					class="flex items-center gap-1 rounded border border-gray-200 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+				>
+					✨ Plain Language
+				</button>
+				<button 
+					onclick={handleAiRewrite}
+					disabled={isAiLoading}
+					class="flex items-center gap-1 rounded bg-purple-50 px-3 py-1.5 text-sm font-medium text-purple-700 hover:bg-purple-100 disabled:opacity-50"
+				>
+					🪄 AI Rewrite
+				</button>
+			</div>
+		</div>
+
+		<textarea
+			bind:value={editValue}
+			rows="3"
+			class="mb-3 w-full rounded border border-gray-300 p-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+			placeholder="Edit the content here..."
+		></textarea>
+
+		<div class="flex justify-end gap-2 border-t border-gray-100 pt-3">
+			<button 
+				onclick={onCancel}
+				class="rounded px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100"
+			>
+				Cancel
+			</button>
+			<button 
+				onclick={handleSave}
+				class="rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+			>
+				Save Edit
+			</button>
+		</div>
+	</div>
+{/if}

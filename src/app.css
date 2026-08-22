@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import "@sfgov/design-system/css/all.css";
+@import "@sfgov/design-system/dist/css/sfds.css";
 @import "@fontsource-variable/roboto-flex";
 @import "@fontsource/roboto-slab/700.css";
 

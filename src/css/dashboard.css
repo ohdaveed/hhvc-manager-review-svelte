@@ -1,0 +1,692 @@
+/* Dashboard primitives for the manager-review workspace.
+
+   Loads after css/ux-improvements.css and before css/theme.css. Everything
+   here is expressed in the semantic tokens declared by css/theme.css
+   (--ds-space-*, --ds-shadow-*, --status-*), never in raw --legacy-* values, so
+   the whole surface follows the theme — including dark mode — without any of
+   these rules knowing a theme exists.
+
+   Two kinds of rule live here, deliberately kept apart:
+
+     1. NEW reusable primitives (.ds-*) for surfaces built from here on.
+     2. Targeted upgrades to the review workspace's existing classes, which
+        predate any design system and were styled ad-hoc.
+
+   The upgrades restyle rather than restructure: no markup changes, so the
+   Playwright specs and the axe scans keep addressing the same selectors. */
+
+/* =====================================================================
+   Accessibility utilities
+   ===================================================================== */
+
+/* Visually hidden but available to screen readers. Mirrors USWDS's
+   `usa-sr-only`, and exists for the data tables that must accompany any
+   chart: USWDS's data-visualisation guidance is explicit that a graphic
+   needs an equivalent table, and that the graphic itself should then be
+   aria-hidden. Uses the clip-path + 1px technique rather than
+   `display:none` or `visibility:hidden`, both of which remove content from
+   the accessibility tree entirely. */
+.hhvc-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* =====================================================================
+   Card / panel
+   =====================================================================
+   ONE card recipe. `.ds-card` sets the shared surface — border, radius,
+   fill, elevation — and the specific card classes below attach to it via
+   a selector list rather than restating those four properties.
+
+   It did not start out being used. It was introduced here as a "reusable
+   primitive for surfaces built from here on", and then the two sessions
+   that came next each wrote their own from scratch (`.insights-card`,
+   `.ops-stat`) — leaving the primitive as dead code, three different
+   radii in play, and `.ops-stat` missing its box-shadow, so the Tool
+   status tiles sat flat while the visually identical Overview tiles were
+   elevated. Two tabs of one workspace disagreeing about what a tile
+   looks like is the thing a design system exists to prevent. */
+
+.ds-card,
+.insights-card,
+.ops-stat,
+.review-queue-kpi {
+  border: 1px solid var(--border-default);
+  border-radius: var(--ds-radius-md);
+  background: var(--surface-panel);
+  box-shadow: var(--ds-shadow-1);
+}
+
+/* The workspace-level card is the one that carries the larger radius: it is
+   the outermost surface, and its corners read against the page rather than
+   against a sibling tile. */
+.ds-card {
+  padding: var(--ds-space-4);
+  border-radius: var(--ds-radius-lg);
+}
+
+.ds-card-quiet {
+  box-shadow: none;
+  background: var(--surface-sunken);
+}
+
+.ds-section-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--ds-space-2);
+  margin-bottom: var(--ds-space-3);
+}
+
+.ds-section-title {
+  margin: 0;
+  font-size: var(--ds-text-panel);
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.ds-section-hint {
+  margin: 0;
+  font-size: var(--ds-text-label);
+  color: var(--text-secondary);
+}
+
+/* Empty state — a dashboard that filters down to nothing should say so
+   rather than rendering a blank rectangle the reviewer has to interpret. */
+.ds-empty {
+  padding: var(--ds-space-6) var(--ds-space-4);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--ds-radius-md);
+  background: var(--surface-sunken);
+  color: var(--text-secondary);
+  text-align: center;
+  font-size: var(--ds-text-card);
+}
+
+/* =====================================================================
+   Review workspace shell
+   =====================================================================
+   The workspace is the manager's actual dashboard. It was a flat bordered
+   box flush against the mockup above it; giving it a real surface, radius
+   and elevation is what separates "tool chrome" from "the page being
+   reviewed" at a glance.
+
+   EVERY RULE IN THIS SECTION IS COMPLETE. These selectors used to be
+   declared in BOTH this file and css/ux-improvements.css — this one
+   listed only the properties it wanted to change and relied on the other
+   for the rest. Since this file imports later, the rendered result was a
+   merge of the two, and neither block described it. Concretely: the
+   workspace got a border nobody here declared, the KPI value's
+   `font-weight: 800` came from the other file so deleting the
+   apparently-superseded block would have silently regressed it, and the
+   tabs ended up with hover and focus styled from different files. If you
+   are changing one of these, this is the only place to look. */
+
+/* =====================================================================
+   The docked review workspace
+   =====================================================================
+   This panel used to be the last child of .canvas, below the mockup. The
+   mockup runs to about 8,800px, so the workspace began around y=9,400 in a
+   10,300px document — more than nine screenfuls down. A reviewer could never
+   see the page and the instruments judging it at the same time, which was
+   sharpest on the Page checks tab: it scores THE PAGE CURRENTLY IN THE MOCKUP
+   and rendered that score nine screens away from it.
+
+   It is now a third grid column in .app, sticky to the viewport, so the page
+   and the panel are side by side. Almost every redundancy this redesign
+   removed existed because information had to be repeated in the places a
+   reviewer could actually see; co-visibility is what makes one copy enough. */
+.review-workspace {
+  border-left: 1px solid var(--border-default);
+  background: var(--surface-panel);
+  /* Sticky rather than fixed so it participates in the grid and cannot overlap
+     the canvas. Its own scroll container, because the mockup beside it is far
+     taller than the viewport and the two must scroll independently. */
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* `display: flex` above is a class selector and therefore beats the UA
+   stylesheet's `[hidden] { display: none }`, which is where the attribute's
+   whole effect lives. Without this the panel stayed on screen after
+   setWorkspaceOpen(false) set the attribute — "Hide workspace" and the `w`
+   shortcut both appeared to do nothing. Any element that both carries `hidden`
+   and declares its own `display` needs this pairing. */
+.review-workspace[hidden] {
+  display: none;
+}
+
+/* The grid only grows a third column while the workspace is actually open;
+   js/review/ux-improvements-workspace.js toggles this class alongside the panel's
+   hidden attribute. minmax() rather than a fixed width so the panel gives room
+   back to the mockup on a smaller screen instead of squeezing it. */
+.app.workspace-docked {
+  grid-template-columns: 370px minmax(0, 1fr) minmax(340px, 30vw);
+}
+
+.app.sidebar-collapsed.workspace-docked {
+  grid-template-columns: 0px minmax(0, 1fr) minmax(340px, 30vw);
+}
+
+/* Below this the three columns stop fitting: the mockup is a fixed-ish page
+   design and squeezing it to make room misrepresents the thing under review.
+   The workspace returns to its old position under the canvas, spanning the
+   full width — the original layout, kept as the narrow-screen fallback rather
+   than as the default.
+
+   1700px, not 1400px. The intent was always "dock only where three columns
+   fit"; 1400 was simply the wrong number for it, and between 1401px and the
+   crossing point the two columns collided. The arithmetic: .browser-shell
+   will not shrink past its min-content floor, so it ends at a fixed x no
+   matter how narrow the column gets, while this panel starts at
+   `100vw - 30vw` = 0.7 x viewport, and the two cross at that x divided by 0.7.
+
+   Re-measured on 2026-08-15, after the SFDS type and spacing work changed
+   both the mockup's copy metrics and the chrome's padding chain: the floor is
+   765px (it was 780px), so the shell ends at 370 + 20 + 765 = x=1155 and the
+   crossing moved DOWN to 1155/0.7 = 1650px. Below that the mockup runs
+   underneath the sticky workspace — 147px of overlap at 1440px, 80px at
+   1536px, 35px at 1600px.
+
+   1700 stays, and staying is the measured result rather than a no-op. It was
+   already a round-up over the old 1671 crossing, and the re-measurement widened
+   that margin instead of eating it. Lowering the breakpoint onto 1650 would buy
+   docking only between 1650 and 1700 — no real display sits there, since 1512,
+   1536 and 1470 are all far below it — while spending the margin that covers
+   the widths the 40px test sweep never visits, browser zoom, and the next
+   change to the mockup's copy. tests/e2e/workspace-panels.spec.js measures the
+   crossing from the live layout and fails if it ever rises past this number.
+
+   That band is not exotic; it is where laptops live. A 14-inch MacBook Pro is
+   1512 CSS px, a 13-inch Air 1470, and any 1920px screen at the 125% scaling
+   Windows ships by default is 1536. The regression hid because the one test
+   that measures the docked geometry (tests/e2e/workspace-panels.spec.js) sets
+   1800x1000 — above the band — and every other spec runs at Playwright's
+   1280 default, below it. The bug lived entirely in the gap between the two
+   widths anyone had thought to check.
+
+   Raising the breakpoint trades docking away on those laptops rather than
+   rendering it broken there. Making the mockup shrink instead is the other
+   way out and is deliberately not taken: it would misrepresent the page under
+   review, which is the whole reason the shell refuses to shrink. */
+@media (max-width: 1700px) {
+  .app.workspace-docked,
+  .app.sidebar-collapsed.workspace-docked {
+    grid-template-columns: 370px minmax(0, 1fr);
+  }
+
+  .app.sidebar-collapsed.workspace-docked {
+    grid-template-columns: 0px minmax(0, 1fr);
+  }
+
+  /* Column 2, NOT `1 / -1`. Spanning both columns puts the panel underneath
+     the sidebar, which is `position: sticky; height: 100vh` — so scrolling
+     slid the sidebar over the queue's left edge and covered the row titles.
+     Axe caught it before a human did: 57 queue-row cells came back as
+     "background could not be determined, partially obscured by another
+     element". Column 2 is where the panel used to sit as the last child of
+     .canvas, which is the layout this fallback is restoring. */
+  .review-workspace {
+    grid-column: 2;
+    position: static;
+    height: auto;
+    max-height: none;
+    border-left: 0;
+    border-top: 1px solid var(--border-default);
+  }
+}
+
+/* The stacked workspace fallback above still retains the sidebar/canvas
+   two-column grid, which is useful down to a tablet width. Below that, its
+   more-specific `.workspace-docked` selector would otherwise beat
+   css/styles.css's plain `.app` mobile rule and leave just 20px for the
+   canvas. Reset both workspace variants to one track so the mockup can
+   reflow within the viewport instead of widening the document. */
+@media (max-width: 980px) {
+  .app.workspace-docked,
+  .app.sidebar-collapsed.workspace-docked {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .review-workspace {
+    grid-column: 1;
+  }
+}
+
+.review-workspace-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  padding: 0 var(--ds-space-2);
+  border-bottom: 1px solid var(--border-default);
+  background: var(--surface-sunken);
+}
+
+.review-workspace-tab {
+  /* Holds the 44px-ish touch target that the padding alone does not reach
+     at this font size. */
+  min-height: 2.5rem;
+  padding: var(--ds-space-3) var(--ds-space-4);
+  border: 0;
+  border-bottom: 3px solid transparent;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  /* `font: inherit` first — a <button> does not inherit the page font, and
+     the shorthand resets size and weight, so it has to precede them. */
+  font: inherit;
+  font-size: var(--ds-text-card);
+  font-weight: 700;
+}
+
+/* Hover and focus are deliberately on DIFFERENT channels: hover brightens the
+   label toward the primary text colour, focus draws the ring below. They used
+   to fight — one file coloured hover and focus identically (blue), the other
+   re-coloured only hover (near-black), so the merged result was a tab that
+   turned near-black on hover and blue on focus. Neither author chose that. */
+.review-workspace-tab:hover {
+  color: var(--text-primary);
+  background: var(--surface-panel);
+}
+
+.review-workspace-tab[aria-selected='true'] {
+  color: var(--brand-primary);
+  border-bottom-color: var(--brand-primary);
+  background: var(--surface-panel);
+}
+
+/* Hairline tint above the selected tab, from the lightest brand step. Gives
+   the active tab a sense of being connected to the panel below it without
+   another border. */
+.review-workspace-tab[aria-selected='true']:not(:hover) {
+  background: linear-gradient(to bottom, var(--brand-95), var(--surface-panel) 60%);
+}
+
+/* The tabs are a roving-tabindex group, so the focus ring is the only cue a
+   keyboard user gets when arrowing between them. Keep it thick and offset
+   rather than inheriting a hairline outline. */
+.review-workspace-tab:focus-visible {
+  outline: 3px solid var(--brand-primary);
+  outline-offset: -3px;
+}
+
+.review-workspace-panel {
+  padding: var(--ds-space-4);
+  max-height: min(52vh, 560px);
+  overflow: auto;
+}
+
+/* =====================================================================
+   KPI tiles
+   =====================================================================
+   Previously four flat grey boxes with a 1rem number. A KPI row is the
+   first thing scanned on a dashboard, so the value gets real typographic
+   weight and each tile gets a left accent keyed to what it measures —
+   giving "Blocked: 3" a different visual charge from "Visible: 19"
+   without relying on colour alone to convey it (the label always states
+   which is which). */
+
+.review-queue-kpis {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--ds-space-3);
+}
+
+/* Surface comes from the shared `.ds-card` recipe above, which this class is
+   listed on. `overflow: hidden` is what clips the accent rail below to the
+   card's rounded corners. */
+.review-queue-kpi {
+  position: relative;
+  padding: var(--ds-space-3) var(--ds-space-4);
+  overflow: hidden;
+}
+
+/* Accent rail. A pseudo-element rather than border-left so the tile's own
+   border stays a continuous rounded rectangle. */
+.review-queue-kpi::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 4px;
+  background: var(--viz-neutral);
+}
+
+.review-queue-kpi:nth-child(2)::before {
+  background: var(--status-blocked-border);
+}
+.review-queue-kpi:nth-child(3)::before {
+  background: var(--status-edits-border);
+}
+.review-queue-kpi:nth-child(4)::before {
+  background: var(--status-revise-border);
+}
+
+.review-queue-kpi-label {
+  display: block;
+  margin-bottom: var(--ds-space-1);
+  color: var(--text-secondary);
+  font-size: var(--ds-text-micro);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.review-queue-kpi-value {
+  display: block;
+  color: var(--text-primary);
+  /* An outlier the four-step chrome scale has no rung for: a KPI tile's
+     headline number is the first thing a reviewer scans on the Overview tab,
+     and needs to sit visibly above --ds-text-panel (a heading).
+     --ds-text-title-md (css/theme.css) is a pass-through alias onto SFDS's
+     own title-md step, not a direct reference to that namespace here:
+     tests/sfds-tokens.test.js only allows css/theme.css and css/styles.css
+     to consume that namespace's names directly, so every other component
+     file goes through the alias. It grows further still on wider viewports,
+     since SFDS doubles title-md to 32px at its own 768px breakpoint. */
+  font-size: var(--ds-text-title-md);
+  line-height: 1.1;
+  font-weight: 800;
+  /* Tabular figures so the numbers do not shuffle horizontally as counts
+     change during triage. */
+  font-variant-numeric: tabular-nums;
+}
+
+/* =====================================================================
+   Progress
+   ===================================================================== */
+
+.review-queue-progress-bar {
+  height: 0.6rem;
+  border-radius: var(--ds-radius-pill);
+  background: var(--surface-sunken);
+  border: 1px solid var(--border-default);
+  overflow: hidden;
+}
+
+.review-queue-progress-fill {
+  display: block;
+  height: 100%;
+  border-radius: var(--ds-radius-pill);
+  background: linear-gradient(90deg, var(--viz-1), var(--brand-primary));
+  transition: width 0.2s ease;
+}
+
+.review-queue-progress-label {
+  display: block;
+  margin-top: var(--ds-space-1);
+  color: var(--text-secondary);
+  font-size: var(--ds-text-label);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* =====================================================================
+   Status chips
+   =====================================================================
+   Two different jobs share the .status-chip shape, and they are styled
+   from two different class families on purpose:
+
+     .pass / .warn / .fail    — a JUDGEMENT about something measured:
+                                check results, record age, "Blockers
+                                logged", "Needs owner". Three levels is
+                                the right number here.
+     .decision-*              — WHICH of the five review decisions a page
+                                is in. Not a severity scale; five distinct
+                                states.
+
+   Collapsing the second onto the first is what this layer used to do, and
+   it cost real information: `Blocked` and `Revise and resubmit` both drew
+   as `fail`, and `Needs review` and `Approved with edits` both as `warn`,
+   so a queue of five states rendered as three colours. See
+   getDecisionChipClass() in js/core/utils.js for why those two pairs are the
+   ones that matter. */
+
+.status-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.75rem;
+  padding: var(--ds-space-1) var(--ds-space-3);
+  border: 1px solid var(--border-default);
+  border-radius: var(--ds-radius-pill);
+  background: var(--surface-panel);
+  /* slate-2 ("strong secondary"), not --text-secondary, which is slate-3.
+     A chip's default text sits a step darker than body secondary because it
+     is a label, not prose. */
+  color: var(--legacy-slate-2);
+  font-size: var(--ds-text-label);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.status-chip.pass {
+  border-color: var(--status-approved-border);
+  background: var(--status-approved-bg);
+  color: var(--status-approved-fg);
+}
+
+.status-chip.warn {
+  border-color: var(--status-edits-border);
+  background: var(--status-edits-bg);
+  color: var(--status-edits-fg);
+}
+
+.status-chip.fail {
+  border-color: var(--status-blocked-border);
+  background: var(--status-blocked-bg);
+  color: var(--status-blocked-fg);
+}
+
+/* One per decision. The token triplets for all five already existed —
+   --status-revise-* and --status-pending-* simply had no consumer, because
+   nothing could emit a class that used them.
+
+   Each triplet is a border/background/foreground set already tuned for a
+   chip, so the text keeps its contrast against its own tinted background
+   rather than against the panel. Colour is never the only cue: the chip
+   always renders the decision text inside it. */
+
+.status-chip.decision-approved {
+  border-color: var(--status-approved-border);
+  background: var(--status-approved-bg);
+  color: var(--status-approved-fg);
+}
+
+.status-chip.decision-edits {
+  border-color: var(--status-edits-border);
+  background: var(--status-edits-bg);
+  color: var(--status-edits-fg);
+}
+
+.status-chip.decision-revise {
+  border-color: var(--status-revise-border);
+  background: var(--status-revise-bg);
+  color: var(--status-revise-fg);
+}
+
+.status-chip.decision-blocked {
+  border-color: var(--status-blocked-border);
+  background: var(--status-blocked-bg);
+  color: var(--status-blocked-fg);
+}
+
+.status-chip.decision-pending {
+  border-color: var(--status-pending-border);
+  background: var(--status-pending-bg);
+  color: var(--status-pending-fg);
+}
+
+/* Motion for this layer is handled in css/ux-improvements.css's
+   prefers-reduced-motion block, alongside the existing progress-fill and
+   button rules. That file is the repo's designated `!important` override
+   layer; keeping the reduced-motion overrides together there avoids a second
+   source of truth for the same media query. */
+
+/* =====================================================================
+   Mockup PNG export controls
+   =====================================================================
+   Injected into .canvas-toolbar by js/mockup/mockup-image-export.js. They carry
+   data-export-exclude so a capture never includes the buttons that
+   triggered it. */
+
+.mockup-export-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ds-space-2);
+}
+
+.mockup-export-actions button[disabled] {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+/* =====================================================================
+   Advanced sections inside Help
+   =====================================================================
+   AI assist and the stored-data diagnostics used to be tabs. Both depend on
+   server.ts, which the static Netlify deploy live at the time had no runtime
+   for, so on the build managers actually opened they were two permanently-empty
+   panels holding two of six top-level slots. Railway runs server.ts now, but
+   each still reports nothing until its own optional backend is configured. They are collapsed <details> at the end of Help
+   now — present and reachable, but not competing with the two panels a
+   reviewer uses to do the work. */
+
+.review-advanced {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-2);
+  margin-top: var(--ds-space-5);
+  padding-top: var(--ds-space-4);
+  border-top: 1px solid var(--border-default);
+}
+
+.review-advanced-group {
+  border: 1px solid var(--border-default);
+  border-radius: var(--ds-radius-2, 4px);
+  background: var(--surface-sunken);
+}
+
+.review-advanced-group > summary {
+  padding: var(--ds-space-3);
+  font-weight: 700;
+  font-size: var(--ds-text-card);
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.review-advanced-group > summary:hover {
+  color: var(--text-primary);
+}
+
+.review-advanced-group[open] > summary {
+  border-bottom: 1px solid var(--border-default);
+  color: var(--text-primary);
+}
+
+/* The panels inside render their own padded surfaces, so this only supplies
+   the gutter between the disclosure edge and their content. */
+.review-advanced-group > div {
+  padding: var(--ds-space-3);
+  background: var(--surface-panel);
+}
+
+/* -------------------------------------------------------------------------
+   "Pages added and deleted" (js/core/page-registry-ui.js)
+   -------------------------------------------------------------------------
+   The Help-tab half of the add/delete-page feature. Its sidebar half is styled
+   in css/ux-improvements.css; the split is by surface rather than by feature,
+   so each selector is declared in exactly one file.
+
+   Built from the primitives already here — .ds-section-header, .ds-section-title
+   and .ds-empty — plus .review-queue-action for the row buttons, which is the
+   pill this panel's siblings already use for a row-level action. */
+
+.page-admin-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-2);
+  margin: 0 0 var(--ds-space-4);
+  padding: 0;
+  list-style: none;
+}
+
+.page-admin-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--ds-space-3);
+  padding: var(--ds-space-3);
+  border: 1px solid var(--border-default);
+  border-radius: var(--ds-radius-md);
+  background: var(--surface-panel);
+  font-size: var(--ds-text-card);
+}
+
+/* The page key, shown beside the title because it is what appears in the URL,
+   in every CSV export and in the confirm dialog — a reviewer comparing a backup
+   against what is on screen needs it, and it is not derivable from the title. */
+.page-admin-key {
+  margin-left: var(--ds-space-2);
+  font-family: var(--font-caption);
+  font-size: var(--ds-text-label);
+  color: var(--text-secondary);
+}
+
+.page-admin-row .field-help {
+  margin: var(--ds-space-1) 0 0;
+}
+
+.page-admin-row-actions {
+  display: flex;
+  flex-shrink: 0;
+  gap: var(--ds-space-1);
+}
+
+/* Karl transcript panel — the three controls and the preview.
+   Shares the mockup-export button row's shape rather than inventing a second
+   one; only the preview needs rules of its own. */
+.karl-transcript-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ds-space-2);
+}
+
+/* The preview is a paste source, so it must keep the transcript's own line
+   breaks and never reflow them — `pre-wrap` rather than `pre` so a long field
+   value still wraps inside the panel instead of forcing the docked column to
+   scroll sideways. The height cap keeps a Transaction page (several hundred
+   lines) from pushing the rest of Help off screen; the box scrolls instead. */
+.karl-transcript-preview {
+  margin-top: var(--ds-space-3);
+  max-height: 22rem;
+  overflow: auto;
+  padding: var(--ds-space-3);
+  border: 1px solid var(--border-default);
+  border-radius: var(--ds-radius-sm);
+  background: var(--surface-sunken);
+  color: var(--text-primary);
+  /* No semantic mono token exists — the tool chrome has sans and serif only —
+     so this names the system stack directly rather than inventing a token for
+     one rule. A transcript is read as literal text an editor copies, and a
+     proportional face makes an indented field value harder to scan. */
+  font-family: ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, Consolas, monospace;
+  /* --ds-text-label (14px), not --ds-text-micro (11px): the chrome floor is
+     14px and the 11px step is scoped to uppercase eyebrow labels, where
+     letter-spacing and weight carry the legibility. This is body text an
+     editor reads while typing into another window. */
+  font-size: var(--ds-text-label);
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
