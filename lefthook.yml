@@ -2,7 +2,9 @@ pre-commit:
   parallel: true
   commands:
     format:
-      glob: '*.{js,ts,svelte,json,md}'
+      # yml/yaml included: without them the workflow files and this file were
+      # never auto-formatted and drifted from what `prettier --check .` expects.
+      glob: '*.{js,ts,svelte,json,jsonc,md,yml,yaml,css}'
       run: bunx prettier --write {staged_files}
       stage_fixed: true
     verify:

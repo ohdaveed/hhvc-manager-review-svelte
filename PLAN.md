@@ -140,24 +140,39 @@ leaving 16 dependency findings that are a single product decision (B5).
 
 ## Phase C — CI and supply chain
 
-- [ ] **C1. Pin the remaining floating actions.** `actions/checkout@v5`,
-      `oven-sh/setup-bun@v2` and `reviewdog/action-eslint@v1` still track moving
-      tags across `pr.yml` and `ai-quality-gates.yml`; `pr-agent` is already
-      SHA-pinned (#16). `suzuki-shunsuke/pinact` (1,174★) automates it.
-      **Constraint:** do not rename the `test & build` or `e2e` jobs — ruleset
-      `21203092` matches required checks by job name and silently stops gating
-      if they change.
-      _Touches:_ `.github/workflows/*.yml`.
+- [x] **C1. All 14 action references are SHA-pinned.** `actions/checkout@v5`,
+      `oven-sh/setup-bun@v2` and `reviewdog/action-eslint@v1` across both
+      workflows, each pinned to the SHA its tag pointed at with the version kept
+      in a trailing comment. Done with `gh api` rather than adding `pinact`, for
+      four one-off pins.
+      **A fourth floating ref turned up that the audit missed:**
+      `actions/upload-artifact@v4` in `pr.yml` — found by grepping for what
+      remained after the first pass, not by reading the audit list again.
+      _Deliberately not upgraded:_ `actions/checkout` is on `v5` while `v7.0.1`
+      is current. Pinning freezes what already runs; version bumps are E6's job
+      (Renovate), and folding an upgrade into a supply-chain change would hide
+      it.
+      Job names untouched, so ruleset `21203092` still matches `test & build`
+      and `e2e`.
 
-- [ ] **C2. Add `actionlint`** (`rhysd/actionlint`, 4,162★). Two workflows,
-      ~240 lines of CI, and nothing validates them. Catches the C1 class of
-      problem plus expression and permissions errors before a red PR does.
-      _Touches:_ `.github/workflows/`.
+- [x] **C2. actionlint added, and it blocks.** Put in the **`test & build`**
+      job, not the non-blocking `review` one, on purpose: unlike
+      prettier/eslint/svelte-check it has **no baseline** — it reported zero
+      problems on the existing workflows — so there is nothing to ratchet down
+      from, and `test & build` is already a required check, so it gates without
+      touching the ruleset. It also guards a failure mode nothing else catches:
+      a broken or renamed workflow silently stops reporting the checks the
+      ruleset requires by name, which removes the gate rather than failing it.
+      _Installed from the upstream release with its published checksum._ The
+      only actionlint GitHub Action is third-party (51★) and the npm package is
+      published by an unaffiliated account (`hops-release`, no repository URL) —
+      neither belongs in a workflow holding `pull-requests: write`, least of all
+      in the same change that pins everything else.
 
-- [ ] **C3. lefthook's format glob skips YAML.** `*.{js,ts,svelte,json,md}`
-      excludes `.yml`/`.yaml`, so workflow files never get auto-formatted and
-      drift from Prettier.
-      _Touches:_ `lefthook.yml`.
+- [x] **C3. lefthook's format glob covers YAML.** Widened to
+      `*.{js,ts,svelte,json,jsonc,md,yml,yaml,css}`, so workflow files, this
+      repo's own config YAML, `knip.jsonc` and stylesheets are auto-formatted on
+      commit instead of drifting from `prettier --check .`.
 
 ---
 
