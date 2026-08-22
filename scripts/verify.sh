@@ -25,14 +25,22 @@ fail() {
 }
 
 # Runs a command quietly. On failure the log keeps the detail.
+#
+# The status has to be captured before the trailing blank-line echo, or the
+# brace group returns that echo's status instead — always 0, which made every
+# gate below report PASS unconditionally. The group is not a subshell, so the
+# assignment survives it.
 quiet() {
 	local label="$1"
 	shift
+	local rc
 	{
 		echo "=== $label ==="
 		"$@" 2>&1
+		rc=$?
 		echo
 	} >>"$LOG"
+	return $rc
 }
 
 echo "local"
