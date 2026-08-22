@@ -4,10 +4,15 @@
 
 	let { page } = $props();
 
-	function selectField(name: string, content: string, updateFn: (val: string) => void) {
+	function selectField(
+		name: string,
+		fieldId: string,
+		content: string,
+		updateFn: (val: string) => void
+	) {
 		return (e: Event) => {
 			e.stopPropagation();
-			pageStore.activeField = { name, content, update: updateFn };
+			pageStore.activeField = { name, fieldId, content, update: updateFn };
 		};
 	}
 </script>
@@ -20,7 +25,7 @@
 	<h1
 		class="page-title edit-target"
 		data-rewrite-field="title"
-		onclick={selectField('Title', page.title, (v) => (page.title = v))}
+		onclick={selectField('Title', 'title', page.title, (v) => (page.title = v))}
 		role="button"
 		tabindex="0"
 	>
@@ -31,7 +36,7 @@
 		<div
 			class="page-summary edit-target"
 			data-rewrite-field="summary"
-			onclick={selectField('Summary', page.summary, (v) => (page.summary = v))}
+			onclick={selectField('Summary', 'summary', page.summary, (v) => (page.summary = v))}
 			role="button"
 			tabindex="0"
 		>
@@ -45,7 +50,12 @@
 				<p
 					class="edit-target"
 					data-rewrite-field="audience.{i}"
-					onclick={selectField(`Audience [${i + 1}]`, a, (v) => (page.audience[i] = v))}
+					onclick={selectField(
+						`Audience [${i + 1}]`,
+						`audience.${i}`,
+						a,
+						(v) => (page.audience[i] = v)
+					)}
 					role="button"
 					tabindex="0"
 				>
