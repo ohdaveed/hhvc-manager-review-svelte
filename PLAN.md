@@ -36,14 +36,14 @@ pageData.id)` — the same lookup `HelpPanel` uses. If there is no live record
 
 ## Tasks
 
-- [ ] 1. Add `fieldId` to the `ActiveField` type in
+- [x] 1. Add `fieldId` to the `ActiveField` type in
       `src/lib/stores/pageData.svelte.ts`.
-- [ ] 2. Pass `fieldId` from every edit target in
+- [x] 2. Pass `fieldId` from every edit target in
       `src/lib/components/Page.svelte` and `src/lib/components/Section.svelte`,
       adding the two missing `data-rewrite-field` attributes.
-- [ ] 3. Wire `onSave` in `src/routes/review/+layout.svelte` to call
+- [x] 3. Wire `onSave` in `src/routes/review/+layout.svelte` to call
       `saveInlineEdit(livePage.id, fieldId, val)` after the in-memory update.
-- [ ] 4. Add unit tests covering the field-id contract and the save wiring.
+- [x] 4. Add unit tests covering the field-id contract and the save wiring.
 - [ ] 5. Run `bun run verify`, open a PR, land it green.
 
 ## Notes / not in scope

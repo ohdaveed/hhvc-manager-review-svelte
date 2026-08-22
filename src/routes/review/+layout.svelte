@@ -7,7 +7,7 @@
 	import { Separator } from '$lib/components/ui/separator/index.js';
 	import { Switch } from '$lib/components/ui/switch/index.js';
 	import { pageStore } from '$lib/stores/pageData.svelte';
-	import { loadReview } from '$lib/stores/reviewState';
+	import { loadReview, pagesStore, saveInlineEdit } from '$lib/stores/reviewState';
 	import ReviewQueue from '$lib/components/workspace/ReviewQueue.svelte';
 	import ReviewWorkspace from '$lib/components/workspace/ReviewWorkspace.svelte';
 	import ActionBar from '$lib/components/workspace/ActionBar.svelte';
@@ -116,7 +116,21 @@
 				activeField={pageStore.activeField}
 				onCancel={() => (pageStore.activeField = null)}
 				onSave={(val: string) => {
-					if (pageStore.activeField) pageStore.activeField.update(val);
+					const field = pageStore.activeField;
+					if (!field) return;
+
+					// The in-memory update always runs, so the mockup stays editable for a
+					// signed-out reader. Persistence is attempted after and is allowed to
+					// fail: saveInlineEdit logs, rolls its optimistic entry back and returns
+					// when there is no authenticated user.
+					field.update(val);
+
+					// pagesStore is keyed by the routable id, the same lookup HelpPanel uses.
+					// No live record means this page is not part of the loaded review (or
+					// nothing loaded at all), so there is no row to attach the edit to.
+					const livePage = $pagesStore.find((p) => p.path === pageData?.id);
+					if (livePage) saveInlineEdit(livePage.id, field.fieldId, val);
+
 					pageStore.activeField = null;
 				}}
 			/>

@@ -2,10 +2,15 @@
 	import { pageStore } from '$lib/stores/pageData.svelte';
 	let { section, index } = $props();
 
-	function selectField(name: string, content: string, updateFn: (val: string) => void) {
+	function selectField(
+		name: string,
+		fieldId: string,
+		content: string,
+		updateFn: (val: string) => void
+	) {
 		return (e: Event) => {
 			e.stopPropagation();
-			pageStore.activeField = { name, content, update: updateFn };
+			pageStore.activeField = { name, fieldId, content, update: updateFn };
 		};
 	}
 </script>
@@ -15,8 +20,10 @@
 		<h2
 			class="section-heading edit-target"
 			id={section.heading.toLowerCase().replace(/\s+/g, '-')}
+			data-rewrite-field="sections.{index}.heading"
 			onclick={selectField(
 				`Section [${index + 1}] Heading`,
+				`sections.${index}.heading`,
 				section.heading,
 				(v) => (section.heading = v)
 			)}
@@ -34,6 +41,7 @@
 				data-rewrite-field="sections.{index}.paragraphs.{i}"
 				onclick={selectField(
 					`Section [${index + 1}] Paragraph`,
+					`sections.${index}.paragraphs.${i}`,
 					p,
 					(v) => (section.paragraphs[i] = v)
 				)}
@@ -60,7 +68,12 @@
 			<li
 				class="edit-target my-1"
 				data-rewrite-field="sections.{index}.bullets.{i}"
-				onclick={selectField(`Section [${index + 1}] Bullet`, b, (v) => (bullets[i] = v))}
+				onclick={selectField(
+					`Section [${index + 1}] Bullet`,
+					`sections.${index}.bullets.${i}`,
+					b,
+					(v) => (bullets[i] = v)
+				)}
 				role="button"
 				tabindex="0"
 			>
@@ -75,7 +88,13 @@
 		{#if callout.title}
 			<h3
 				class="edit-target mb-2 text-lg font-bold"
-				onclick={selectField(`Callout Title`, callout.title, (v) => (callout.title = v))}
+				data-rewrite-field="sections.{index}.callout.title"
+				onclick={selectField(
+					`Callout Title`,
+					`sections.${index}.callout.title`,
+					callout.title,
+					(v) => (callout.title = v)
+				)}
 				role="button"
 				tabindex="0"
 			>
@@ -85,7 +104,12 @@
 		<p
 			class="edit-target"
 			data-rewrite-field="sections.{index}.callout.text"
-			onclick={selectField(`Callout Text`, callout.text, (v) => (callout.text = v))}
+			onclick={selectField(
+				`Callout Text`,
+				`sections.${index}.callout.text`,
+				callout.text,
+				(v) => (callout.text = v)
+			)}
 			role="button"
 			tabindex="0"
 		>
