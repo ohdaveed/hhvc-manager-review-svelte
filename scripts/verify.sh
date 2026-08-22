@@ -80,7 +80,7 @@ leak=$(
 	curl -s --max-time 30 "$SITE_URL/" |
 		grep -oE '\./_app/immutable/[^"]+\.js' |
 		while read -r chunk; do curl -s --max-time 30 "$SITE_URL/${chunk#./}"; done |
-		grep -coE 'RAILWAY_API_TOKEN|web-production-9bb3b'
+		grep -coE 'RAILWAY_API_TOKEN|web-production-9bb3b|arrizon\.david|dev-local-only'
 )
 [ "$leak" = "0" ] && pass "no server-only values in client bundle" ||
 	fail "$leak server-only reference(s) in client bundle"
