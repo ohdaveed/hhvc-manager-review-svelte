@@ -1,5 +1,4 @@
 @import 'tailwindcss';
-@import '@sfgov/design-system/dist/css/sfds.css';
 @import '@fontsource-variable/roboto-flex';
 @import '@fontsource/roboto-slab/700.css';
 @import 'tw-animate-css';
@@ -142,10 +141,210 @@ body {
 	}
 }
 
+/* ---------------------------------------------------------------------------
+   SFDS tokens, translated to Tailwind v4.
+
+   This replaces `@import '@sfgov/design-system/dist/css/sfds.css'`. That file
+   is a Tailwind v3 build: 401KB of it (99%) is `utilities.css`, generated from
+   the package's own theme.js with `important: true` in the preset. All 7,714
+   of its `!important` declarations beat every v4 utility regardless of
+   specificity or cascade layer, which is why every shadcn component rendered
+   with a 3px near-black border. There is nothing to port there — v4
+   regenerates those utilities from the tokens below, correctly layered and
+   JIT, so only what is used ships.
+
+   Values come from the package's css/src/tokens/*.js. Everything is prefixed
+   `sfds-` on purpose: SFDS redefines `borderWidth.DEFAULT` as 3px,
+   `borderRadius.DEFAULT` as 8px, a pixel `spacing` scale where 2 means 2px,
+   and breakpoints where md is 420px. Dropping those into the default
+   namespaces would silently rewrite `border`, `rounded`, `p-2` and every `md:`
+   inside the shadcn components — the same bug again, minus the black borders
+   that made it findable. These tokens ADD to the default theme; they must
+   never clear it, since the mockup frame and the callout use `gray-*`/`blue-*`
+   and the decision toggles use `emerald-*`/`amber-*`.
+   --------------------------------------------------------------------------- */
+@theme {
+	--color-sfds-action: #495ed4;
+	--color-sfds-blue-dark: #0c1464;
+	--color-sfds-blue-l1: #edf4f7;
+	--color-sfds-blue-l2: #a9d6ea;
+	--color-sfds-black: #212123;
+	--color-sfds-slate-l2: #5a7a92;
+	--color-sfds-slate-l3: #1d4d70;
+	--color-sfds-grey-l2: #e2e2e2;
+
+	/* SFDS's `title` ladder, mobile step. The desktop step is applied in the
+	   scoped block below, because @theme cannot carry a media query. */
+	--text-sfds-title-xl: 2rem;
+	--text-sfds-title-xl--line-height: 2.25rem;
+	--text-sfds-title-xl--letter-spacing: -1px;
+	--text-sfds-title-lg: 1.75rem;
+	--text-sfds-title-lg--line-height: 2rem;
+	--text-sfds-title-lg--letter-spacing: -1px;
+	--text-sfds-title-xs: 1.25rem;
+	--text-sfds-title-xs--line-height: 1.5rem;
+	--text-sfds-big-desc: 1.25rem;
+	--text-sfds-big-desc--line-height: 1.75rem;
+	--text-sfds-body: 1rem;
+	--text-sfds-body--line-height: 1.5rem;
+	--text-sfds-small: 0.875rem;
+	--text-sfds-small--line-height: 1.125rem;
+}
+
 /* The inline-edit affordance on mockup fields. This is review-tool chrome laid
    over SF.gov content, not part of the page being reviewed, so it lives here as
    one utility rather than being repeated across Page.svelte and Section.svelte. */
 @utility edit-target {
 	@apply -mx-1 cursor-pointer rounded p-1 transition-all;
 	@apply hover:ring-ring focus-visible:ring-ring hover:ring-2 focus-visible:ring-2 focus-visible:outline-none;
+}
+
+/* ---------------------------------------------------------------------------
+   The mockup surface.
+
+   Scoped to #mockPage so SFDS never reaches the review tool's own chrome —
+   the two surfaces want opposite things, which is exactly why the global
+   import could not serve both.
+
+   These class names (`page-title`, `page-body`, `page-section`, …) are used by
+   Page.svelte and Section.svelte and were, until now, defined nowhere: not in
+   sfds.css, and not in the legacy src/css/styles.css either. The mockup has
+   never had SFDS styling in this Svelte port — it had `*{font-family:Rubik…}`
+   with Rubik not loaded, so a generic sans, and nothing else. This adds
+   fidelity rather than preserving it.
+
+   Headings follow SFDS's `title` ladder rather than its `display` ladder, and
+   use Roboto Slab rather than SFDS's Rubik. Both are decisions the vanilla app
+   made deliberately and documented in css/styles.css; they are carried over
+   rather than re-litigated here.
+   --------------------------------------------------------------------------- */
+#mockPage {
+	container: mockup / inline-size;
+	color: var(--color-sfds-black);
+	font-size: var(--text-sfds-body);
+	line-height: var(--text-sfds-body--line-height);
+
+	& a {
+		color: var(--color-sfds-action);
+		text-decoration: underline;
+		text-underline-offset: 3px;
+	}
+	& a:hover {
+		color: var(--color-sfds-blue-dark);
+	}
+
+	& h1,
+	& h2 {
+		margin-top: 0;
+		font-family: var(--font-heading);
+		font-weight: 700;
+		letter-spacing: -1px;
+	}
+	& h3 {
+		margin-top: 0;
+		font-family: var(--font-body);
+		font-weight: 700;
+	}
+	& h1 {
+		margin-bottom: 1rem;
+		font-size: var(--text-sfds-title-xl);
+		line-height: var(--text-sfds-title-xl--line-height);
+	}
+	& h2 {
+		margin-bottom: 0.75rem;
+		font-size: var(--text-sfds-title-lg);
+		line-height: var(--text-sfds-title-lg--line-height);
+	}
+	& h3 {
+		margin-bottom: 0.5rem;
+		font-size: var(--text-sfds-title-xs);
+		line-height: var(--text-sfds-title-xs--line-height);
+	}
+
+	& p {
+		margin-block: 0 1rem;
+	}
+	& ul,
+	& ol {
+		margin-top: 0.35rem;
+		margin-bottom: 1rem;
+		padding-left: 1.45rem;
+	}
+	& li {
+		margin-bottom: 0.35rem;
+	}
+
+	/* 760px is the vanilla app's --content-max: a reading measure, not an
+	   SFDS token. The mockup frame supplies its own padding. */
+	& .page-body {
+		max-width: 760px;
+		margin: 0 auto;
+	}
+
+	& .page-type-eyebrow {
+		margin-bottom: 0.5rem;
+		color: var(--color-sfds-slate-l2);
+		font-size: var(--text-sfds-small);
+		font-weight: 600;
+		line-height: var(--text-sfds-small--line-height);
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+	}
+
+	& .page-summary {
+		margin-bottom: 1.75rem;
+		color: var(--color-sfds-slate-l3);
+		font-size: var(--text-sfds-big-desc);
+		line-height: var(--text-sfds-big-desc--line-height);
+	}
+	& .page-summary p {
+		margin-block: 0;
+	}
+
+	& .page-audience {
+		margin-bottom: 1.75rem;
+		padding-left: 1rem;
+		border-left: 3px solid var(--color-sfds-grey-l2);
+		color: var(--color-sfds-slate-l3);
+	}
+	& .page-audience p {
+		margin-block: 0 0.35rem;
+	}
+
+	& .page-section {
+		margin-bottom: 2.5rem;
+	}
+	& .page-section:last-child {
+		margin-bottom: 0;
+	}
+}
+
+/* SFDS steps its type up at 768px. Keyed to the mockup's OWN width, not the
+   browser viewport: #mockPage is a preview canvas inside a three-column
+   workspace, so the viewport is not the page.
+
+   This is not cosmetic. Measured at a 1440px viewport, the canvas content box
+   is 745px — below SFDS's own 768px step. A viewport media query sees 1440,
+   matches, and renders the desktop ladder (h1 at 60px) inside a 745px column;
+   the container query reports what the reviewer is actually looking at and
+   holds the mobile step. Container queries evaluate the content box, which is
+   why the canvas's 809px border box is under the threshold once its 32px
+   padding comes off. */
+@container mockup (min-width: 768px) {
+	#mockPage h1 {
+		font-size: 3.75rem;
+		line-height: 4rem;
+	}
+	#mockPage h2 {
+		font-size: 2.75rem;
+		line-height: 3.25rem;
+	}
+	#mockPage h3 {
+		font-size: 1.25rem;
+		line-height: 1.5rem;
+	}
+	#mockPage .page-summary {
+		font-size: 1.5rem;
+		line-height: 2rem;
+	}
 }
