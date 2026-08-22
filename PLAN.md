@@ -34,13 +34,13 @@ The tree splits cleanly in two and only one half is in scope:
 ## Tasks
 
 - [x] 1. Capture baseline screenshot + commit this plan.
-- [ ] 2. Fix `components.json` for the Tailwind v4 / shadcn-svelte schema.
-- [ ] 3. Add shadcn theme tokens to `src/app.css` — `:root` vars + `@theme inline`
+- [x] 2. Fix `components.json` for the Tailwind v4 / shadcn-svelte schema.
+- [x] 3. Add shadcn theme tokens to `src/app.css` — `:root` vars + `@theme inline`
       mapping. **Deliberately omit** the stock `@layer base { *, body }` global
       resets: they would override the existing `body` rule and bleed into the
       sfds-rendered mockup. Done when the mockup region is pixel-identical to
       baseline.
-- [ ] 4. Install components: `card`, `tabs`, `textarea`, `label`, `badge`,
+- [x] 4. Install components: `card`, `tabs`, `textarea`, `label`, `badge`,
       `separator`, `switch`, `alert`, `scroll-area`, `toggle-group`. Done when
       each generated file matches the idiom of the existing `ui/button`
       (tailwind-variants, `data-slot`, `WithElementRef`) and builds against the
