@@ -64,12 +64,16 @@ const PLACEHOLDER_PATTERN = /\[.*?\]|TODO|FIXME|placeholder|#$/i;
  * and friends record the mockup's provenance, and urls are graded by
  * `verifyLinks` instead.
  */
-const NON_COPY_KEYS = new Set([
+const METADATA_KEYS = new Set([
 	'karl',
 	'editorNote',
 	'editorStatus',
 	'unverified',
-	'unverifiedReason',
+	'unverifiedReason'
+]);
+
+const NON_COPY_KEYS = new Set([
+	...METADATA_KEYS,
 	'slug',
 	'type',
 	'kind',
@@ -113,6 +117,8 @@ function collectLinks(node: unknown, into: FoundLink[] = []): FoundLink[] {
 		for (const item of node) collectLinks(item, into);
 	} else if (node && typeof node === 'object') {
 		const record = node as Record<string, unknown>;
+		// Skip review metadata. editorNote quoting the same URL a button points at
+		// otherwise double-counts the link and repeats its warning.
 		const target = typeof record.target === 'string' ? record.target : undefined;
 		for (const key of ['url', 'buttonUrl']) {
 			const value = record[key];
@@ -121,6 +127,7 @@ function collectLinks(node: unknown, into: FoundLink[] = []): FoundLink[] {
 		}
 		for (const [key, value] of Object.entries(record)) {
 			if (key === 'url' || key === 'buttonUrl' || key === 'target') continue;
+			if (METADATA_KEYS.has(key)) continue;
 			collectLinks(value, into);
 		}
 	}
@@ -172,6 +179,7 @@ async function syncChecks() {
 	}
 
 	console.log(`Starting sync for ${allPages.length} pages in review ${reviewId}...`);
+	let failed = 0;
 
 	for (const page of allPages) {
 		const id = page.slug
@@ -195,12 +203,21 @@ async function syncChecks() {
 			.select('id', { count: 'exact', head: true });
 
 		if (error) {
-			console.error(`Failed to update checks for ${id}:`, error);
+			console.error(`Failed to update checks for ${id}:`, error.message);
+			failed++;
 		} else if (!count || count === 0) {
 			console.warn(`No row matched for path "${id}" — checks not saved.`);
+			failed++;
 		} else {
 			console.log(`Synced checks for ${id}`);
 		}
+	}
+
+	// Exit non-zero on any failure. Logging alone let CI and operators read a run
+	// that wrote nothing as a successful sync.
+	if (failed > 0) {
+		console.error(`Sync finished with ${failed} of ${allPages.length} page(s) not written.`);
+		process.exit(1);
 	}
 	console.log('Sync complete.');
 }

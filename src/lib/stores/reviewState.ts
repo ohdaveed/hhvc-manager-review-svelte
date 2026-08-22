@@ -51,6 +51,12 @@ export async function loadReview(): Promise<() => void> {
 
 	const reviewId = reviews[0].id;
 
+	// Subscribe first, then hydrate. Doing it the other way round left a window --
+	// the pages query plus the whole edits fetch -- in which another reviewer's
+	// change had no subscriber and no place in the snapshot, so the queue and
+	// decision stayed stale until the next update or a reload.
+	const channel = initializeRealtime(reviewId);
+
 	// Fetch all pages for that review
 	const { data: pages, error: pagesError } = await supabase
 		.from('pages')
@@ -59,6 +65,7 @@ export async function loadReview(): Promise<() => void> {
 
 	if (pagesError) {
 		console.error('Failed to load pages:', pagesError);
+		channel.unsubscribe();
 		return () => {};
 	}
 
@@ -82,19 +89,33 @@ export async function loadReview(): Promise<() => void> {
 		}
 	}
 
-	return initializeRealtime(reviewId);
+	// Snapshot is in; replay anything that arrived while it was in flight.
+	channel.applyHydration();
+
+	return () => channel.unsubscribe();
 }
 
 export function initializeRealtime(reviewId: string) {
 	const channel = supabase.channel(`review-${reviewId}`);
+
+	// Events that land between subscribing and the initial snapshot being applied
+	// have nowhere to go: the store is still empty, so a page UPDATE would match
+	// no row and be dropped, and a snapshot applied afterwards would overwrite it
+	// anyway. They are buffered here and replayed by `applyHydration` once the
+	// snapshot is in, which is what closes the query-to-subscribe gap.
+	let hydrated = false;
+	const buffered: (() => void)[] = [];
+	const runOrBuffer = (apply: () => void) => (hydrated ? apply() : buffered.push(apply));
 
 	// Listen for page status changes
 	channel.on(
 		'postgres_changes',
 		{ event: 'UPDATE', schema: 'public', table: 'pages', filter: `review_id=eq.${reviewId}` },
 		(payload) => {
-			pagesStore.update((pages) =>
-				pages.map((p) => (p.id === payload.new.id ? { ...p, ...payload.new } : p))
+			runOrBuffer(() =>
+				pagesStore.update((pages) =>
+					pages.map((p) => (p.id === payload.new.id ? { ...p, ...payload.new } : p))
+				)
 			);
 		}
 	);
@@ -104,17 +125,27 @@ export function initializeRealtime(reviewId: string) {
 		'postgres_changes',
 		{ event: 'INSERT', schema: 'public', table: 'edits' },
 		(payload) => {
-			editsStore.update((edits) => {
-				// Don't add if we already have it (optimistic UI guard)
-				if (edits.find((e) => e.id === payload.new.id)) return edits;
-				return [...edits, payload.new as Edit];
-			});
+			runOrBuffer(() =>
+				editsStore.update((edits) => {
+					// Don't add if we already have it (optimistic UI guard)
+					if (edits.find((e) => e.id === payload.new.id)) return edits;
+					return [...edits, payload.new as Edit];
+				})
+			);
 		}
 	);
 
 	channel.subscribe();
-	return () => {
-		supabase.removeChannel(channel);
+
+	return {
+		/** Replay anything that arrived while the snapshot was being fetched. */
+		applyHydration() {
+			hydrated = true;
+			for (const apply of buffered.splice(0)) apply();
+		},
+		unsubscribe() {
+			supabase.removeChannel(channel);
+		}
 	};
 }
 
