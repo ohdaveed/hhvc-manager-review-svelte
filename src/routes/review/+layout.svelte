@@ -1,88 +1,101 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
+	import { Button } from '$lib/components/ui/button/index.js';
+	import { Label } from '$lib/components/ui/label/index.js';
+	import { ScrollArea } from '$lib/components/ui/scroll-area/index.js';
+	import { Separator } from '$lib/components/ui/separator/index.js';
+	import { Switch } from '$lib/components/ui/switch/index.js';
 	import { pageStore } from '$lib/stores/pageData.svelte';
 	import ReviewQueue from '$lib/components/workspace/ReviewQueue.svelte';
 	import ReviewWorkspace from '$lib/components/workspace/ReviewWorkspace.svelte';
 	import ActionBar from '$lib/components/workspace/ActionBar.svelte';
-	
+
 	let { children } = $props();
 
+	let showKarlTags = $state(false);
+
 	// Dynamically pick the page data based on slug for the workspace
-	const pageData = $derived(pageStore.pages.find(p => p.id === $page.params.slug));
+	const pageData = $derived(pageStore.pages.find((p) => p.id === $page.params.slug));
 </script>
 
-<div class="h-screen w-full bg-gray-50 overflow-hidden text-gray-900 grid grid-cols-[250px_1fr_300px]">
-	
+<div class="bg-muted/40 grid h-screen w-full grid-cols-[250px_1fr_300px] overflow-hidden">
 	<!-- Left Sidebar: Global Navigation & Review Queue -->
-	<aside class="h-full border-r border-gray-200 bg-white flex flex-col">
-		<div class="p-4 border-b border-gray-200">
-			<div class="text-xs font-semibold uppercase text-gray-500 tracking-wider">SFDS rebuild</div>
-			<h2 class="text-lg font-bold mt-1">HHVC mockup review</h2>
+	<aside class="bg-background flex h-full flex-col border-r">
+		<div class="p-4">
+			<div class="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
+				SFDS rebuild
+			</div>
+			<h2 class="font-heading mt-1 text-lg font-bold">HHVC mockup review</h2>
 		</div>
-		<div class="flex-1 overflow-y-auto p-4">
-			<ReviewQueue />
-		</div>
-		<div class="p-4 border-t border-gray-200 text-sm text-gray-600">
-			<button class="w-full text-left hover:text-blue-600">Export Data &rarr;</button>
+		<Separator />
+		<ScrollArea class="min-h-0 flex-1">
+			<div class="p-4">
+				<ReviewQueue />
+			</div>
+		</ScrollArea>
+		<Separator />
+		<div class="p-4">
+			<Button variant="ghost" class="w-full justify-start font-normal">Export Data &rarr;</Button>
 		</div>
 	</aside>
-	
+
 	<!-- Center Canvas: The Mockup -->
-	<!-- svelte-ignore a11y_click_events_have_key_events -->
-	<main 
-		class="h-full flex flex-col relative bg-gray-100 overflow-hidden cursor-default" 
-		onclick={() => pageStore.activeField = null}
+	<main
+		class="bg-muted relative flex h-full cursor-default flex-col overflow-hidden"
+		onclick={() => (pageStore.activeField = null)}
 		role="presentation"
 	>
 		<!-- Toolbar (Top) -->
-		<nav class="flex items-center justify-between px-4 py-2 bg-white border-b border-gray-200 shadow-sm">
-			<div class="text-sm text-gray-600">https://sf.gov/</div>
+		<nav class="bg-background flex items-center justify-between border-b px-4 py-2">
+			<div class="text-muted-foreground text-sm">https://sf.gov/</div>
 			<div class="flex items-center gap-2 text-sm">
-				<label for="tagToggle" class="cursor-pointer font-medium">Karl tags</label>
-				<input id="tagToggle" type="checkbox" class="toggle toggle-primary toggle-sm" />
+				<Label for="tagToggle" class="cursor-pointer">Karl tags</Label>
+				<Switch id="tagToggle" bind:checked={showKarlTags} />
 			</div>
 		</nav>
-		
+
 		<!-- Scrollable Mockup Container -->
-		<div class="flex-1 overflow-y-auto p-8 flex justify-center">
-			<figure class="w-full max-w-4xl bg-white shadow-md border border-gray-200 min-h-full pb-32">
+		<div class="flex flex-1 justify-center overflow-y-auto p-8">
+			<figure class="min-h-full w-full max-w-4xl border border-gray-200 bg-white pb-32 shadow-md">
 				<!-- Legacy SF.gov Header -->
-				<header class="bg-[#002f6c] text-white p-4 flex items-center justify-between">
-					<div class="font-bold text-xl">SF.gov</div>
-					<div class="text-sm flex gap-4">
+				<header class="flex items-center justify-between bg-[#002f6c] p-4 text-white">
+					<div class="text-xl font-bold">SF.gov</div>
+					<div class="flex gap-4 text-sm">
 						<span>Services</span>
 						<span>Departments</span>
 					</div>
 				</header>
-				
+
 				<!-- Page specific content -->
 				<div id="mockPage" class="p-8">
 					{@render children()}
 				</div>
-				
+
 				<!-- Legacy SF.gov Footer -->
-				<footer class="bg-gray-100 p-8 border-t border-gray-200 mt-12">
+				<footer class="mt-12 border-t border-gray-200 bg-gray-100 p-8">
 					<div class="font-bold">City and County of San Francisco</div>
 				</footer>
 			</figure>
 		</div>
 
 		<!-- Action Bar (Sticky at bottom of center canvas) -->
-		<div id="actionBarContainer" class="absolute bottom-0 left-0 w-full p-4 pointer-events-none flex justify-center pb-6">
-			<ActionBar 
-				activeField={pageStore.activeField} 
-				onCancel={() => pageStore.activeField = null} 
-				onSave={(val: string) => { 
+		<div
+			id="actionBarContainer"
+			class="pointer-events-none absolute bottom-0 left-0 flex w-full justify-center p-4 pb-6"
+		>
+			<ActionBar
+				activeField={pageStore.activeField}
+				onCancel={() => (pageStore.activeField = null)}
+				onSave={(val: string) => {
 					if (pageStore.activeField) pageStore.activeField.update(val);
-					pageStore.activeField = null; 
-				}} 
+					pageStore.activeField = null;
+				}}
 			/>
 		</div>
 	</main>
-	
+
 	<!-- Right Sidebar: Contextual Manager Review & Checks -->
-	<section class="h-full border-l border-gray-200 bg-white flex flex-col overflow-hidden">
+	<section class="bg-background flex h-full flex-col overflow-hidden border-l">
 		<ReviewWorkspace {pageData} />
 	</section>
 </div>

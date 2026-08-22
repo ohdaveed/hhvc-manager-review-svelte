@@ -1,54 +1,45 @@
 <script lang="ts">
+	import { Button } from '$lib/components/ui/button/index.js';
+	import { Separator } from '$lib/components/ui/separator/index.js';
 	import { pagesStore } from '$lib/stores/reviewState';
-	
+
 	// The store automatically updates via Supabase realtime subscriptions
+	const groups = [
+		{ status: 'needs-review', heading: 'Needs Review', dot: 'bg-blue-500' },
+		{ status: 'approved', heading: 'Approved', dot: 'bg-emerald-500' },
+		{ status: 'blocked', heading: 'Blocked', dot: 'bg-destructive' }
+	];
 </script>
 
-<div class="space-y-6">
+<nav class="space-y-6" aria-label="Review queue">
 	<!-- If empty (e.g. testing without DB), show a fallback message -->
 	{#if $pagesStore.length === 0}
-		<p class="text-sm text-gray-500 italic">No pages loaded. (Waiting for Supabase data)</p>
+		<p class="text-muted-foreground text-sm italic">No pages loaded. (Waiting for Supabase data)</p>
 	{/if}
 
-	<div>
-		<h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Needs Review</h3>
-		<ul class="space-y-1">
-			{#each $pagesStore.filter(p => p.status === 'needs-review') as page}
-				<li>
-					<a href="/review/{page.path}" class="block px-3 py-2 text-sm rounded bg-blue-50 text-blue-700 font-medium">
-						<span class="inline-block w-2 h-2 rounded-full bg-blue-500 mr-2"></span>
-						{page.title}
-					</a>
-				</li>
-			{/each}
-		</ul>
-	</div>
-
-	<div>
-		<h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Approved</h3>
-		<ul class="space-y-1">
-			{#each $pagesStore.filter(p => p.status === 'approved') as page}
-				<li>
-					<a href="/review/{page.path}" class="block px-3 py-2 text-sm rounded hover:bg-gray-50 text-gray-700">
-						<span class="inline-block w-2 h-2 rounded-full bg-green-500 mr-2"></span>
-						{page.title}
-					</a>
-				</li>
-			{/each}
-		</ul>
-	</div>
-
-	<div>
-		<h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Blocked</h3>
-		<ul class="space-y-1">
-			{#each $pagesStore.filter(p => p.status === 'blocked') as page}
-				<li>
-					<a href="/review/{page.path}" class="block px-3 py-2 text-sm rounded hover:bg-gray-50 text-gray-700">
-						<span class="inline-block w-2 h-2 rounded-full bg-red-500 mr-2"></span>
-						{page.title}
-					</a>
-				</li>
-			{/each}
-		</ul>
-	</div>
-</div>
+	{#each groups as group, i (group.status)}
+		{@const pages = $pagesStore.filter((p) => p.status === group.status)}
+		{#if i > 0}
+			<Separator />
+		{/if}
+		<section>
+			<h3 class="text-muted-foreground mb-3 text-xs font-semibold tracking-wider uppercase">
+				{group.heading}
+			</h3>
+			<ul class="space-y-1">
+				{#each pages as page (page.path)}
+					<li>
+						<Button
+							href="/review/{page.path}"
+							variant="ghost"
+							class="w-full justify-start font-normal"
+						>
+							<span class="mr-2 inline-block size-2 shrink-0 rounded-full {group.dot}"></span>
+							{page.title}
+						</Button>
+					</li>
+				{/each}
+			</ul>
+		</section>
+	{/each}
+</nav>

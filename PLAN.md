@@ -83,3 +83,26 @@ The working tree already had uncommitted changes in `HelpPanel.svelte`,
 untracked `scripts/sync-checks.ts` and a new Supabase migration, **before this
 work started**. Those are not mine; they were built on top of, never reverted.
 Work happens on branch `feat/shadcn-components`.
+
+## Blocker found at task 13 — needs a product decision
+
+`src/app.css` imports `@sfgov/design-system/dist/css/sfds.css`, which is a
+**Tailwind v3 build** shipping **7,717 `!important` utility overrides**, among
+them `.border{border-width:3px!important}` and `.rounded{border-radius:8px!important}`,
+plus `*{border-color:currentColor}`. Because those carry `!important`, they beat
+every Tailwind v4 utility no matter what — cascade layers cannot fix it, since
+`!important` reverses layer precedence.
+
+Effect: every shadcn component renders with a 3px near-black border. This is
+**pre-existing** — the baseline screenshot shows the same borders on the old
+hand-rolled textarea and the mockup frame — but it is what makes the newly
+converted chrome look wrong.
+
+Measured: dropping the single `sfds.css` import fixes the chrome completely, and
+also lets Roboto Flex through to the mockup (sfds forces `*{font-family:Rubik…}`
+on every element, and Rubik is not loaded). But it repaints **53% of the mockup
+region's pixels**, so it is not a free win — it changes the fidelity surface this
+tool exists to review. Evidence: `.playwright-mcp/final-1440.png` (with sfds) vs
+`.playwright-mcp/nosfds-1440.png` (without).
+
+Left **as-is**, sfds import intact. Removing it is the user's call, not mine.

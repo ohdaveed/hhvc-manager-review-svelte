@@ -1,51 +1,32 @@
 <script lang="ts">
-	import { writable } from 'svelte/store';
+	import * as Tabs from '$lib/components/ui/tabs/index.js';
 	import ReviewPanel from './ReviewPanel.svelte';
 	import HelpPanel from './HelpPanel.svelte';
 
 	let { pageData } = $props();
 
-	// Store for active tab: 'overview', 'checks', or 'help'
-	let activeTab = writable('overview');
+	let activeTab = $state('overview');
 </script>
 
-<section id="reviewWorkspace" class="review-workspace h-full flex flex-col" aria-label="Review workspace">
-	<nav class="flex border-b border-gray-200 bg-gray-50" role="tablist">
-		<button
-			class="px-4 py-3 text-sm font-medium border-b-2 transition-colors { $activeTab === 'overview' ? 'border-blue-600 text-blue-600 bg-white' : 'border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-100' }"
-			aria-selected={$activeTab === 'overview'}
-			onclick={() => ($activeTab = 'overview')}
-			role="tab"
-		>
-			Overview
-		</button>
-		<button
-			class="px-4 py-3 text-sm font-medium border-b-2 transition-colors { $activeTab === 'checks' ? 'border-blue-600 text-blue-600 bg-white' : 'border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-100' }"
-			aria-selected={$activeTab === 'checks'}
-			onclick={() => ($activeTab = 'checks')}
-			role="tab"
-		>
-			Page checks
-		</button>
-		<button
-			class="px-4 py-3 text-sm font-medium border-b-2 transition-colors { $activeTab === 'help' ? 'border-blue-600 text-blue-600 bg-white' : 'border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-100' }"
-			aria-selected={$activeTab === 'help'}
-			onclick={() => ($activeTab = 'help')}
-			role="tab"
-		>
-			Help
-		</button>
-	</nav>
+<Tabs.Root
+	bind:value={activeTab}
+	id="reviewWorkspace"
+	class="review-workspace flex h-full flex-col gap-0"
+	aria-label="Review workspace"
+>
+	<Tabs.List variant="line" class="bg-muted/40 w-full justify-start gap-0 border-b px-2">
+		<Tabs.Trigger value="overview" class="flex-none px-4 py-3">Overview</Tabs.Trigger>
+		<Tabs.Trigger value="checks" class="flex-none px-4 py-3">Page checks</Tabs.Trigger>
+		<Tabs.Trigger value="help" class="flex-none px-4 py-3">Help</Tabs.Trigger>
+	</Tabs.List>
 
-	<div class="flex-1 overflow-y-auto bg-white">
-		{#if $activeTab === 'overview'}
-			<ReviewPanel />
-		{:else if $activeTab === 'checks'}
-			<div class="p-4 text-center text-gray-500 mt-8">
-				<p>Page checks logic to be ported.</p>
-			</div>
-		{:else if $activeTab === 'help'}
-			<HelpPanel {pageData} />
-		{/if}
-	</div>
-</section>
+	<Tabs.Content value="overview" class="bg-background min-h-0 flex-1 overflow-y-auto">
+		<ReviewPanel {pageData} />
+	</Tabs.Content>
+	<Tabs.Content value="checks" class="bg-background min-h-0 flex-1 overflow-y-auto">
+		<ReviewPanel {pageData} showOnlyChecks={true} />
+	</Tabs.Content>
+	<Tabs.Content value="help" class="bg-background min-h-0 flex-1 overflow-y-auto">
+		<HelpPanel {pageData} />
+	</Tabs.Content>
+</Tabs.Root>
