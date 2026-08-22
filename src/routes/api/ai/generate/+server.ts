@@ -24,13 +24,31 @@ async function requireUser(request: Request) {
 	if (authError || !user) throw error(401, 'Unauthorized');
 }
 
+/** Caps on what a single caller can push through to the metered AI backend. */
+const MAX_BODY_BYTES = 64 * 1024;
+const MAX_FIELD_TEXT_CHARS = 20_000;
+
 export async function POST({ request, fetch }) {
 	// Outside the try: a thrown HttpError is not an Error instance, so the
 	// catch below would otherwise flatten this 401 into a 500.
 	await requireUser(request);
 
 	try {
-		const payload = await request.json();
+		const raw = await request.text();
+		if (new TextEncoder().encode(raw).length > MAX_BODY_BYTES) {
+			throw error(413, 'Request body too large');
+		}
+
+		let payload: Record<string, unknown>;
+		try {
+			payload = JSON.parse(raw);
+		} catch {
+			throw error(400, 'Invalid JSON body');
+		}
+
+		if (typeof payload.fieldText === 'string' && payload.fieldText.length > MAX_FIELD_TEXT_CHARS) {
+			throw error(400, 'Field text too long');
+		}
 
 		const apiUrl = env.RAILWAY_API_URL || 'https://web-production-9bb3b.up.railway.app';
 		const apiToken = env.RAILWAY_API_TOKEN;

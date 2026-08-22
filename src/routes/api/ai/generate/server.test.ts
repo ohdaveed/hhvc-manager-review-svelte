@@ -9,7 +9,10 @@ vi.mock('@supabase/supabase-js', () => ({
 const { POST } = await import('./+server');
 
 /** Builds a POST event whose `fetch` records calls to the upstream backend. */
-function buildEvent(headers: Record<string, string> = {}) {
+function buildEvent(
+	headers: Record<string, string> = {},
+	payload: unknown = { task: 'rewrite-field', fieldText: 'hello' }
+) {
 	const upstream = vi.fn(
 		async () =>
 			new Response(JSON.stringify({ result: { rewrittenText: 'ok' } }), {
@@ -21,7 +24,7 @@ function buildEvent(headers: Record<string, string> = {}) {
 	const request = new Request('http://localhost/api/ai/generate', {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json', ...headers },
-		body: JSON.stringify({ task: 'rewrite-field', fieldText: 'hello' })
+		body: JSON.stringify(payload)
 	});
 
 	return { event: { request, fetch: upstream }, upstream };
@@ -55,6 +58,34 @@ describe('POST /api/ai/generate', () => {
 
 		expect(await response.json()).toEqual({ result: { rewrittenText: 'ok' } });
 		expect(upstream).toHaveBeenCalledOnce();
+	});
+
+	it('rejects a body larger than the size cap without forwarding it', async () => {
+		getUser.mockResolvedValue({ data: { user: { id: 'user-1' } }, error: null });
+		const { event, upstream } = buildEvent(
+			{ Authorization: 'Bearer good-token' },
+			{
+				task: 'rewrite-field',
+				fieldText: 'x'.repeat(70 * 1024)
+			}
+		);
+
+		await expect(POST(event as never)).rejects.toMatchObject({ status: 413 });
+		expect(upstream).not.toHaveBeenCalled();
+	});
+
+	it('rejects field text longer than the cap without forwarding it', async () => {
+		getUser.mockResolvedValue({ data: { user: { id: 'user-1' } }, error: null });
+		const { event, upstream } = buildEvent(
+			{ Authorization: 'Bearer good-token' },
+			{
+				task: 'rewrite-field',
+				fieldText: 'y'.repeat(25_000)
+			}
+		);
+
+		await expect(POST(event as never)).rejects.toMatchObject({ status: 400 });
+		expect(upstream).not.toHaveBeenCalled();
 	});
 
 	it('does not leak the upstream failure reason to the caller', async () => {

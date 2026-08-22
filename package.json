@@ -15,7 +15,9 @@
 		"format": "prettier --write .",
 		"test:e2e": "playwright install && playwright test",
 		"test": "npm run test:unit -- --run && npm run test:e2e",
-		"test:unit": "vitest"
+		"test:unit": "vitest",
+		"verify": "bash scripts/verify.sh",
+		"verify:live": "bash scripts/verify.sh --live"
 	},
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",
