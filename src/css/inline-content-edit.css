@@ -1,0 +1,258 @@
+/* ==========================================================================
+   Inline content editing
+   ==========================================================================
+   Styling for the click-to-edit widgets (js/editing/inline-content-edit.js /
+   js/editing/inline-content-edit-render.js): the swapped-in @editorjs/editorjs
+   holder, the "Edited" badge for title/summary/heading/CTA (fields with no `unverified`
+   schema slot to reuse the existing Unverified-pill mechanism), and the
+   add/remove/reset controls for section paragraphs and bullets.
+
+   Design-token-first, matching every other stylesheet in this tool: no raw
+   --legacy-* values in these rules, no !important (reserved for
+   css/ux-improvements.css's override layer).
+   ========================================================================== */
+
+.inline-edit-input {
+  display: block;
+  width: 100%;
+  font: inherit;
+  color: var(--text-primary);
+  background: var(--surface-panel);
+  border: 1px solid var(--brand-primary);
+  border-radius: 4px;
+  padding: var(--ds-space-1) var(--ds-space-2);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--brand-primary) 20%, transparent);
+}
+
+.inline-edit-input:focus {
+  outline: 2px solid var(--brand-primary);
+  outline-offset: 1px;
+}
+
+/* The "Edited" badge — CSS-only signal for fields with no `unverified`
+   schema slot (title, summary, heading, CTA). Visually related to but
+   distinct from .unverified-pill (css/styles.css): that pill means "this
+   claim needs SME confirmation" and ships with the page; this badge means
+   "a reviewer changed this from what was authored" and is a review-time-only
+   annotation, so the two use different tokens and never render on the same
+   element (paragraphs/bullets get the pill, never this badge — see
+   decorateEditedFields()'s explicit exclusion in js/editing/inline-content-edit.js). */
+.inline-edit-badge {
+  display: inline-flex;
+  align-items: center;
+  margin-left: var(--ds-space-2);
+  padding: var(--ds-space-1) var(--ds-space-2);
+  border-radius: 999px;
+  background: var(--status-edits-bg);
+  color: var(--status-edits-fg);
+  border: 1px solid var(--status-edits-border);
+  /* NOT --ds-text-micro: that extension is for uppercase eyebrow labels only
+     (tests/e2e/chrome-tokens.spec.js asserts it), and this badge reads
+     "Edited" in sentence case, so it takes the 14px floor like every other
+     non-eyebrow label the sweep raised. */
+  font-size: var(--ds-text-label);
+  font-weight: 700;
+  vertical-align: middle;
+}
+
+.inline-edit-reset {
+  margin-left: var(--ds-space-2);
+  padding: var(--ds-space-1) var(--ds-space-2);
+  font-size: var(--ds-text-label);
+  font-weight: 600;
+  color: var(--brand-primary);
+  background: transparent;
+  border: 1px solid var(--brand-primary);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.inline-edit-reset:hover {
+  background: var(--surface-soft);
+}
+
+.inline-edit-add {
+  display: inline-flex;
+  align-items: center;
+  margin-top: var(--ds-space-2);
+  padding: var(--ds-space-1) var(--ds-space-3);
+  font-size: var(--ds-text-label);
+  font-weight: 600;
+  color: var(--brand-primary);
+  background: var(--surface-panel);
+  border: 1px dashed var(--brand-primary);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.inline-edit-add:hover {
+  background: var(--surface-soft);
+}
+
+.inline-edit-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: var(--ds-space-1);
+  width: 1.4rem;
+  height: 1.4rem;
+  line-height: 1;
+  font-size: var(--ds-text-card);
+  font-weight: 700;
+  color: var(--status-blocked-fg);
+  background: transparent;
+  border: 1px solid var(--status-blocked-border);
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.inline-edit-remove:hover {
+  background: var(--status-blocked-bg);
+}
+
+.inline-edit-undo-action {
+  margin-left: var(--ds-space-2);
+  font-weight: 700;
+  text-decoration: underline;
+  color: inherit;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+/* The @editorjs/editorjs holder (js/editing/inline-content-edit-render.js's
+   editorJsHolderHtml, mounted by js/editing/inline-content-edit.js's
+   openEditorJsEditor — the rollout-toggle-gated Phase 2 path). It already
+   carries .inline-edit-input for the shared border/background/focus rules
+   above; these rules reset Editor.js's own default block padding/margins so
+   the mounted editor visually converges on the same look as the plain
+   <input>/<textarea> widget it replaces, and hide the block-level "+"/
+   settings/drag-handle chrome every instance this feature opens has no use
+   for — every field here is constrained to a single block (see
+   openEditorJsEditor's onChange guard), so Editor.js's multi-block
+   affordances would offer a control that does nothing useful. */
+.inline-edit-editorjs-holder .codex-editor {
+  font: inherit;
+  color: inherit;
+}
+
+.inline-edit-editorjs-holder .ce-block__content,
+.inline-edit-editorjs-holder .ce-toolbar__content {
+  max-width: none;
+  margin: 0;
+}
+
+.inline-edit-editorjs-holder .ce-paragraph {
+  padding: 0;
+  font: inherit;
+  color: var(--text-primary);
+}
+
+.inline-edit-editorjs-holder .ce-toolbar__plus,
+.inline-edit-editorjs-holder .ce-toolbar__settings-btn {
+  display: none;
+}
+
+.inline-edit-editorjs-holder .ce-inline-toolbar {
+  background: var(--surface-panel);
+  border: 1px solid var(--brand-primary);
+  color: var(--text-primary);
+}
+
+/* Wraps the "+ Add" control when it's appended inside a <ul> (a list's only
+   valid children are <li> — see js/editing/inline-content-edit.js's
+   decorateListControls()). This <li> exists purely for valid list
+   structure, not to be a visible list item, so it gets no bullet marker. */
+.inline-edit-add-li {
+  list-style: none;
+}
+
+/* js/editing/inline-content-edit-link-tool.js's custom inline Link tool — the
+   toolbar button and its target-entry input (renderActions()). Text rather
+   than an icon, matching this button against Editor.js's own default Bold
+   button (also unstyled text/glyph at this size) with the least risk of a
+   malformed hand-drawn SVG. */
+.inline-edit-editorjs-holder .ce-inline-tool.inline-edit-link-button {
+  width: auto;
+  padding: 0 var(--ds-space-2);
+  font-size: var(--ds-text-label);
+  font-weight: 600;
+}
+
+.inline-edit-editorjs-holder .inline-edit-link-actions {
+  padding: var(--ds-space-2);
+}
+
+.inline-edit-editorjs-holder .inline-edit-link-input {
+  display: block;
+  width: 100%;
+  font: inherit;
+  color: var(--text-primary);
+  background: var(--surface-panel);
+  border: 1px solid var(--brand-primary);
+  border-radius: 4px;
+  padding: var(--ds-space-1) var(--ds-space-2);
+}
+
+/* ---------------------------------------------------------------------------
+   Refused link targets
+   ---------------------------------------------------------------------------
+   Two surfaces, one condition: the target-entry input when a reviewer TYPES a
+   target that points nowhere, and the whole editor holder when a PASTED link
+   does. Both take --status-blocked-*, the same tokens the Blocked decision
+   chip uses, so "this is wrong" reads the same everywhere in the tool. Those
+   tokens resolve through --legacy-danger-*, which css/theme.css redefines under
+   prefers-color-scheme: dark, so neither rule needs a dark-mode counterpart.
+
+   Colour is never the only signal in either case: the input carries
+   aria-invalid and a standing description naming the rule, and the holder
+   carries aria-invalid plus a described-by notice that states the problem in
+   words and offers the way out. */
+.inline-edit-editorjs-holder .inline-edit-link-input.is-invalid {
+  border-color: var(--status-blocked-border);
+  /* A second ring rather than a thicker border: changing border-width would
+     reflow the input inside an already-cramped inline toolbar, shifting the
+     text under the reviewer's caret at the exact moment they are correcting
+     it. */
+  box-shadow: 0 0 0 2px var(--status-blocked-bg);
+}
+
+.inline-edit-editorjs-holder.has-broken-links {
+  outline: 2px solid var(--status-blocked-border);
+  outline-offset: 2px;
+}
+
+.inline-edit-broken-links {
+  margin-top: var(--ds-space-2);
+  padding: var(--ds-space-2);
+  background: var(--status-blocked-bg);
+  border: 1px solid var(--status-blocked-border);
+  border-radius: 4px;
+}
+
+.inline-edit-broken-links-message {
+  margin: 0 0 var(--ds-space-2);
+  color: var(--status-blocked-fg);
+  font-size: var(--ds-text-label);
+  line-height: 1.4;
+}
+
+.inline-edit-broken-links-remove {
+  font: inherit;
+  font-size: var(--ds-text-label);
+  color: var(--status-blocked-fg);
+  background: var(--surface-panel);
+  border: 1px solid var(--status-blocked-border);
+  border-radius: 4px;
+  /* 44px min target: this is the only control that resolves the refusal, and
+     the refusal holds the reviewer in the field until it is pressed or the
+     link is fixed — the same reasoning that sized the accordion chevron once
+     it became the only way to expand a panel. */
+  min-height: 44px;
+  padding: var(--ds-space-1) var(--ds-space-3);
+  cursor: pointer;
+}
+
+.inline-edit-broken-links-remove:hover {
+  background: var(--status-blocked-bg);
+}
