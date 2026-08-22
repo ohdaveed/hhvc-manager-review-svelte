@@ -1,0 +1,10 @@
+pre-commit:
+  parallel: true
+  commands:
+    lint-format:
+      glob: "*.{js,ts,svelte,json,md}"
+      run: bunx prettier --check {staged_files}
+    typecheck:
+      run: bun run check
+    knip:
+      run: bunx knip --no-exit-code
