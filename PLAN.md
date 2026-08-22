@@ -6,8 +6,14 @@ audit surfaced and left open. The previous plan (persist inline copy edits)
 completed — its record is in git history and #17.
 
 **Ordering principle:** tooling that reports green while doing nothing comes
-first. A gate that lies is worse than no gate, because it spends trust. Items
-needing a product decision are last, and are questions rather than tasks.
+first. A gate that lies is worse than no gate, because it spends trust.
+
+**One exception overrides that order: F1a.** It is a dashboard check with no
+in-repo change, and it is the only item here with a plausible path to data
+loss. Do it before anything else.
+
+Phase F held the open product questions. They are now **decided** — each records
+the decision and the evidence it turned on, and F1–F3 have become tasks.
 
 Every claim below was measured; the measuring command is named so a later
 reader can re-check rather than trust.
@@ -162,34 +168,100 @@ From the audit's twelve, sequenced by value here rather than by stars.
 
 ---
 
-## Phase F — Questions, not tasks
+## Phase F — Decided
 
-These need a decision before any code is written.
+These were open questions; they are now decisions, recorded with the evidence
+each turned on. F4 is closed — no work. F1–F3 are tasks below.
 
-- [ ] **F1. RLS is effectively open.** Every policy on all four tables is
-      `FOR ALL TO authenticated USING (true)`, so any signed-in user can read,
-      modify and delete any row, and `edits` records no author beyond
-      `user_id`. Already documented as known and unresolved. **What is the
-      trust model — is every reviewer trusted with every other reviewer's
-      work?** That answer decides whether this is fine or a defect.
+**Correction carried in from the audit:** `edits.user_id` and `comments.user_id`
+are both `NOT NULL REFERENCES auth.users(id)` — authorship **is** recorded.
+CLAUDE.md's "edits records no author" is stale and should be fixed when that
+file is next touched. The gap is not missing attribution; it is that
+attribution is captured and then ignored by authorization.
 
-- [ ] **F2. `field_id` paths are positional.** `sections.0.paragraphs.1` means
-      inserting a section renumbers later paths and orphans edits saved against
-      the old ones. Pre-existing in the `data-rewrite-field` scheme, not
-      introduced by #17. Worth fixing only if the mockup corpus is expected to
-      change shape after review begins.
+### F1 — Reviewers may read everything, write only their own rows
 
-- [ ] **F3. Signed-out reviewers see a console error.** Production logs
-      `No review found: null` for an unauthenticated visitor, because policies
-      are `TO authenticated` and the query returns zero rows without erroring.
-      The app then renders an editable mockup that silently cannot persist.
-      **Is anonymous browsing intended?** If yes it needs a visible "not signed
-      in — edits won't save" state; if no, it should redirect.
+**Decision.** Blanket delete is not a trust model, it is an oversight. Reviewers
+should see each other's work — that is the point of a shared review tool — but
+should not be able to modify or delete it.
 
-- [ ] **F4. `.vscode/mcp.json` does nothing for Claude Code.** Correct for
-      VS Code per its own plan, but Claude Code reads `.mcp.json` at the repo
-      root, and it duplicates a github MCP already connected. Keep it
-      VS Code-only, or add a root config?
+**What makes this urgent rather than tidy:** `supabase/config.toml` sets
+`[auth] enable_signup = true`, `[auth.email] enable_signup = true` and
+`enable_confirmations = false`. With `FOR ALL TO authenticated USING (true)` on
+all four tables, anyone who can receive email could sign up and then read,
+modify or delete every row. **That file governs the local stack only — the
+hosted project is unverified.** F1a exists to close that gap first.
+
+- [ ] **F1a. Verify hosted Supabase signup settings.** Check the dashboard for
+      the hosted project. If signup is open, restrict to invited users or an
+      `@sfgov.org` email allow-list. Highest leverage item in this plan: no
+      schema change, and it is the only step that closes the sign-up-and-delete
+      path. Do this before F1b.
+      _Done when:_ the hosted setting is confirmed closed, and the value is
+      recorded here.
+      _Touches:_ nothing in-repo (dashboard), then this file.
+
+- [ ] **F1b. Split the blanket policies per operation.** Replace
+      `FOR ALL ... USING (true)` with per-operation policies. `edits` is already
+      treated as append-only last-write-wins by `HelpPanel`, so it wants
+      `SELECT USING (true)`, `INSERT WITH CHECK (auth.uid() = user_id)`, and
+      **no `UPDATE` or `DELETE` policy at all**. Apply the same shape to
+      `comments`. `reviews` and `pages` are shared state that reviewers
+      legitimately mutate (status, manager notes) — keep those writable, but
+      drop `DELETE`.
+      _Done when:_ a new migration lands and a signed-in user cannot delete
+      another user's edit.
+      _Touches:_ `supabase/migrations/` (new file), `supabase/seed.sql` if
+      affected.
+
+### F2 — Move to stable field ids, now, while the table is empty
+
+**Decision.** Fix it, and the reason is timing rather than severity. Nothing
+wrote to `edits` before #17 landed, so there is no data to migrate. This is the
+cheapest this decision will ever be; every edit saved from here raises the cost.
+
+- [ ] **F2a. Derive `field_id` from a stable id, not array position.** Give each
+      section, paragraph and bullet an explicit id in the `src/lib/data/`
+      modules and build `data-rewrite-field` from that, so inserting a section
+      no longer renumbers later paths and orphans their edits. Keep the
+      `data-rewrite-field` attribute as the single source of the id — the
+      contract `tests/inlineEditFieldId.test.ts` already guards.
+      _Done when:_ inserting a section ahead of an edited one leaves that
+      edit's `field_id` unchanged, covered by a test.
+      _Touches:_ `src/lib/data/**`, `src/lib/components/Section.svelte`,
+      `src/lib/components/Page.svelte`, `tests/inlineEditFieldId.test.ts`.
+
+### F3 — Keep anonymous read, make it honest
+
+**Decision.** Anonymous browsing was never actually decided — **there is no
+route guard on `/review` at all**: no `+layout.server.ts`, no session check, no
+redirect. So this is a gap, not a feature.
+
+Keep it anyway. Anonymous visitors do see the mockups, because that content
+comes from the static `$lib/data` modules rather than Supabase; only the queue,
+decisions and edits are empty. Sharing a mockup with a stakeholder who should
+not need an account is worth preserving. What is not acceptable is doing it
+silently: today a signed-out visitor gets a fully editable mockup whose edits
+vanish on reload with no signal, and since #17 it is quieter but worse —
+`livePage` is undefined, so `saveInlineEdit` is never called and there is not
+even a console error.
+
+- [ ] **F3a. Make the signed-out state visible and non-editable.** Show a
+      persistent "viewing signed out — edits won't be saved" banner, and make
+      edit targets non-interactive when there is no session (no `role="button"`,
+      no click handler, no affordance). Pairs naturally with D2, which is
+      reworking those same targets for keyboard access.
+      _Done when:_ a signed-out visitor can read every mockup and cannot open
+      the ActionBar.
+      _Touches:_ `src/routes/review/+layout.svelte`,
+      `src/lib/components/Section.svelte`, `src/lib/components/Page.svelte`.
+
+### F4 — Closed, no work
+
+`.vscode/mcp.json` stays VS Code-only; **no root `.mcp.json`.** The github MCP
+is already connected at user scope, so a root config would duplicate it and
+prompt every collaborator for approval, and the filesystem MCP is redundant
+with native file tools. Low value, nonzero friction.
 
 ---
 
@@ -209,19 +281,39 @@ These need a decision before any code is written.
 
 ## Suggested sequencing
 
-A and B1 first — they cost little and make everything downstream readable.
-B2/B3 and F1–F4 are the decision points; nothing in C, D or E is blocked by
-them except E6, which should wait for B2.
+**F1a first, ahead of everything.** It is a dashboard check, it is the only
+item on this plan with a plausible path to data loss, and it does not depend on
+any other task.
+
+Then A and B1 — cheap, and they make everything downstream readable. B2/B3 are
+the remaining decision points. Nothing in C, D or E is blocked except E6, which
+should wait for B2 so Renovate is not opening PRs for packages about to be
+deleted.
+
+**F2a is time-sensitive in a way the others are not.** Its cost rises with
+every edit saved to the `edits` table, so it should land before the tool sees
+real review traffic.
 
 **Parallel-safe groups** (no shared files, per the orchestration rules in the
 global CLAUDE.md):
 
-| Group | Tasks      | Files                                                      |
-| ----- | ---------- | ---------------------------------------------------------- |
-| 1     | A1, A2     | `.ast-grep/**`, `sgconfig.yml`, `scripts/`, `package.json` |
-| 2     | B1, B4     | `knip.jsonc`, `src/lib/stores/reviewState.ts`              |
-| 3     | C1, C2, C3 | `.github/workflows/**`, `lefthook.yml`                     |
-| 4     | D2         | `src/lib/components/*.svelte`, `tests/`                    |
+| Group | Tasks        | Files                                                      |
+| ----- | ------------ | ---------------------------------------------------------- |
+| 1     | A1, A2       | `.ast-grep/**`, `sgconfig.yml`, `scripts/`, `package.json` |
+| 2     | B1, B4       | `knip.jsonc`, `src/lib/stores/reviewState.ts`              |
+| 3     | C1, C2, C3   | `.github/workflows/**`, `lefthook.yml`                     |
+| 4     | F1b          | `supabase/migrations/**`, `supabase/seed.sql`              |
+| 5     | D2, F2a, F3a | `src/lib/components/*.svelte`, `src/lib/data/**`, `tests/` |
+
+**Group 5 is one group on purpose, not three.** D2 (keyboard access), F2a
+(stable ids) and F3a (signed-out state) all rewrite the same edit-target markup
+in `Section.svelte` and `Page.svelte`. Splitting them across worktrees
+guarantees conflicts; doing them as one pass over those components is both
+cheaper and more coherent, since all three change what an edit target _is_.
+
+`package.json` remains the hub file: A1, B2, D2 and every Phase E item touch
+it, so they cannot run concurrently. Sequence anything that adds or removes a
+dependency.
 
 `package.json` is the hub file: A1, B2, D2 and every Phase E item touch it, so
 they cannot run concurrently. Sequence anything that adds or removes a
