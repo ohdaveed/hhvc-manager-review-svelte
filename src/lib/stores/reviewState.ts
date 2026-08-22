@@ -2,13 +2,23 @@ import { writable, get } from 'svelte/store';
 import { supabase } from '$lib/supabase';
 
 // Define the shape of our data
+export type PageStatus = 'needs-review' | 'approved' | 'blocked' | 'revise';
+
+/** One automated check as written by scripts/sync-checks.ts. */
+export type PageCheck = {
+	status: 'pass' | 'check';
+	message: string;
+};
+
 export type ReviewPage = {
 	id: string;
 	review_id: string;
 	path: string;
-	status: 'needs-review' | 'approved' | 'blocked' | 'revise';
-	manager_notes?: string;
-	page_checks?: any;
+	status: PageStatus;
+	// Supabase returns these keys as null rather than omitting them when unset,
+	// so they are nullable rather than optional.
+	manager_notes: string | null;
+	page_checks: Record<string, PageCheck> | null;
 	title: string; // denormalized for easy rendering
 };
 
@@ -64,7 +74,7 @@ export function initializeRealtime(reviewId: string) {
  */
 export async function updatePageStatus(pageId: string, newStatus: ReviewPage['status']) {
 	// 1. Optimistic Update (instant UI)
-	let previousPages = get(pagesStore);
+	const previousPages = get(pagesStore);
 	pagesStore.update((pages) =>
 		pages.map((p) => (p.id === pageId ? { ...p, status: newStatus } : p))
 	);
@@ -84,7 +94,7 @@ export async function updatePageStatus(pageId: string, newStatus: ReviewPage['st
  * Saves page decision notes optimistically
  */
 export async function updatePageNotes(pageId: string, notes: string) {
-	let previousPages = get(pagesStore);
+	const previousPages = get(pagesStore);
 	pagesStore.update((pages) =>
 		pages.map((p) => (p.id === pageId ? { ...p, manager_notes: notes } : p))
 	);
@@ -109,7 +119,7 @@ export async function saveInlineEdit(pageId: string, fieldId: string, newContent
 	};
 
 	// 1. Optimistic Update
-	let previousEdits = get(editsStore);
+	const previousEdits = get(editsStore);
 	editsStore.update((edits) => {
 		// Replace if editing the same field, otherwise append
 		const filtered = edits.filter((e) => e.field_id !== fieldId);

@@ -8,6 +8,15 @@
 
 	let { pageData } = $props();
 
+	// The transcript previously read `status === 'approved' ? 'Approved' : 'Needs
+	// review'`, which reported a blocked or revised page as merely needing review.
+	const DECISION_LABELS: Record<string, string> = {
+		'needs-review': 'Needs review',
+		revise: 'Needs revision',
+		approved: 'Approved',
+		blocked: 'Blocked'
+	};
+
 	// `buildTranscript` is untyped legacy JS; these describe the shapes it expects
 	// rather than opting the whole call site out of type checking.
 	type ReviewRecord = {
@@ -27,7 +36,7 @@
 
 		const reviewRecord: ReviewRecord = {
 			section_edits: {},
-			decision: livePage?.status === 'approved' ? 'Approved' : 'Needs review'
+			decision: DECISION_LABELS[livePage?.status ?? 'needs-review'] ?? 'Needs review'
 		};
 
 		for (const edit of edits) {
@@ -53,7 +62,7 @@
 				acc[p.id] = p;
 				return acc;
 			},
-			{} as Record<string, unknown>
+			{} as Record<string, object>
 		);
 
 		try {
