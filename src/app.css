@@ -262,7 +262,7 @@ body {
 	}
 
 	& p {
-		margin: 0 0 1rem;
+		margin-block: 0 1rem;
 	}
 	& ul,
 	& ol {
@@ -298,7 +298,7 @@ body {
 		line-height: var(--text-sfds-big-desc--line-height);
 	}
 	& .page-summary p {
-		margin: 0;
+		margin-block: 0;
 	}
 
 	& .page-audience {
@@ -308,7 +308,7 @@ body {
 		color: var(--color-sfds-slate-l3);
 	}
 	& .page-audience p {
-		margin: 0 0 0.35rem;
+		margin-block: 0 0.35rem;
 	}
 
 	& .page-section {
