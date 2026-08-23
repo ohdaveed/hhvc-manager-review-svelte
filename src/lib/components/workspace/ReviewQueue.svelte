@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page as routePage } from '$app/stores';
 	import { resolve } from '$app/paths';
-	import { pagesStore, editsStore } from '$lib/stores/reviewState';
+	import { pagesStore, editsStore, QUEUE_STATUS_ORDER } from '$lib/stores/reviewState';
 	import { pageStore } from '$lib/stores/pageData.svelte';
 
 	// The pages table has no title column, so a hydrated row carries only `path`.
@@ -10,17 +10,18 @@
 	const titleFor = (path: string) => corpusFor(path)?.title ?? path;
 
 	// The store automatically updates via Supabase realtime subscriptions.
-	const groups = [
-		{
-			status: 'needs-review',
-			heading: 'Needs review',
-			dot: 'bg-sfds-action',
-			bar: 'bg-sfds-grey-l2'
-		},
-		{ status: 'approved', heading: 'Approved', dot: 'bg-sfds-green', bar: 'bg-sfds-green' },
-		{ status: 'revise', heading: 'Needs revision', dot: 'bg-sfds-amber', bar: 'bg-sfds-amber' },
-		{ status: 'blocked', heading: 'Blocked', dot: 'bg-sfds-red', bar: 'bg-sfds-red' }
-	];
+	//
+	// Presentation only. The ORDER comes from `QUEUE_STATUS_ORDER`, so this and
+	// anything that needs to name the queue's first page cannot disagree about
+	// which row that is.
+	const PRESENTATION = {
+		'needs-review': { heading: 'Needs review', dot: 'bg-sfds-action', bar: 'bg-sfds-grey-l2' },
+		approved: { heading: 'Approved', dot: 'bg-sfds-green', bar: 'bg-sfds-green' },
+		revise: { heading: 'Needs revision', dot: 'bg-sfds-amber', bar: 'bg-sfds-amber' },
+		blocked: { heading: 'Blocked', dot: 'bg-sfds-red', bar: 'bg-sfds-red' }
+	};
+
+	const groups = QUEUE_STATUS_ORDER.map((status) => ({ status, ...PRESENTATION[status] }));
 
 	// Decided = anything a reviewer has ruled on. `needs-review` is the initial
 	// status every seeded row carries, so it is the only one that is not a
