@@ -83,6 +83,39 @@ Six from design, five from adversarial review.
 | 15  | Render while an edit is expired             | The **new base copy**, with a banner offering re-confirm                             |
 | 16  | Credential for production writes            | Project-scoped **service-role key** in 1Password, not the account-wide PAT           |
 
+## Decision 17 — two hashes, two jobs
+
+Slice 1's first implementation derived `content_hash` from the same field map that
+produces `field_hashes`, and that map covers only the fields the UI exposes as
+`data-rewrite-field` edit targets. Measured against the real corpus, that left a
+lot of copy unhashed: `cards` ×54 declarations, `button`/`buttonUrl` ×18,
+`whatToKnow` ×15, `steps` ×12, `partnerAgencies` ×10, `table` ×7, `facts` ×4.
+
+The failure that exposes is not under-coverage, it is silence. A re-port that
+rewrites only card copy leaves `content_hash` — and therefore `corpus_hash` —
+unchanged, so `corpus:import` conflicts on the `UNIQUE` constraint and writes **no
+`corpus_versions` row at all**. Not even `page_versions.content`, whose stated job
+is preserving what the hash excludes, gets written for that state. The re-port
+becomes invisible to version history.
+
+The two hashes answer different questions and must be derived differently:
+
+|          | `content_hash`              | `field_hashes`                            |
+| -------- | --------------------------- | ----------------------------------------- |
+| Question | did the mockup change?      | did _this field's_ copy move?             |
+| Covers   | **all** reader-visible copy | only addressable edit targets             |
+| Keyed by | nothing — one hash per page | `field_id`, matching `data-rewrite-field` |
+| Drives   | whether a version is minted | whether an accepted edit expires          |
+
+Deriving both from the edit-target map conflated them. Expanding the map instead
+would have been the wrong repair: it would mint `field_id`s for content the UI
+never advertises as editable, breaking the guarantee that a `field_id` names a
+real edit target — the guarantee `tests/inlineEditFieldId.test.ts` exists to hold.
+
+**This must be settled before any `corpus_versions` rows exist.** Once the hosted
+project holds versions, changing what `content_hash` covers is a data migration
+rather than an edit.
+
 ## The layer model
 
 Three layers, each with its own history, none folding into another:
