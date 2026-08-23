@@ -72,6 +72,17 @@ Note the error handling: `HttpError`s are rethrown so upstream status codes surv
 
 Client-side only. There is no `hooks.server.ts` and no `event.locals` — sessions live in the browser, and the API route verifies bearer tokens itself with a per-request client (`persistSession: false`). Schema is `supabase/migrations/`: `reviews`, `pages`, `comments`, `edits`.
 
+The local stack is usable from a clean `supabase start` + `supabase db reset`
+with no hand-patching. Two things had to be fixed for that and are worth knowing
+if either regresses: the seed writes `''` into the eight `auth.users` token
+columns GoTrue scans as Go `string` rather than `*string` (a NULL there is a 500
+`Database error querying schema`, not "no token"), and
+`20260823140000_grant_table_privileges.sql` states the table privileges instead
+of inheriting them. The hosted project gets those grants from Supabase's own
+`ALTER DEFAULT PRIVILEGES`; a local Postgres does not, so before that migration
+the app worked against the hosted database and could not work against a local
+one.
+
 RLS is enabled on all four tables, but every policy is `FOR ALL TO authenticated USING (true)` — any signed-in user can read and delete any row, and `edits` records no author. Known, unresolved, needs a product decision before it matters.
 
 ### Legacy port
