@@ -1,9 +1,9 @@
 {
   "version": 1,
-  "corpusHash": "6057dee96db1406cc86123639e6f6a10d3365fb463e00b59e8f52f11f43d6527",
+  "corpusHash": "c85c4141413c75d25d82ed4fc994f84d6eb03467e657c21669aba8938ca7fcfa",
   "pages": {
     "find-complaints-and-inspection-records": {
-      "contentHash": "2c25e5ab8f118f6763d94bd512a24956d5bd5873b78b1ccadbb48a00eec1dc8a",
+      "contentHash": "8147c2a5687d035b35d07129ac07bc5ac141e766ed0296299c5bb86e9a205f0d",
       "fieldHashes": {
         "audience.0": "8c45f400fec451a1bc9ce0a215542bf74947a9b23be9e651035f29a263c01863",
         "audience.1": "07ba42a6b34abe0fd539727850b606f53fd580304a22ebcaa7d3e9e49871fbee",
@@ -25,7 +25,7 @@
       }
     },
     "find-healthy-housing-inspector-by-neighborhood": {
-      "contentHash": "77fdcc3c498634a3b29b030e6becb9aa7f6855242ac895f70c08aa2f1ec27e34",
+      "contentHash": "4fa8fa94db75836cb5ceae7634d2f37cbc1ff8487df6269e7d03807ea0f0899f",
       "fieldHashes": {
         "audience.0": "ee7046d054b604ab75e1a35f8a7bd272abf99c5a0329763a505884c19c1b92b6",
         "audience.1": "ca0260de12cc094fc5a5ea58688f66afb546343ec84ec50175c9b64f76868362",
@@ -42,7 +42,7 @@
       }
     },
     "find-residential-hotel-and-shelter-records": {
-      "contentHash": "6d3efb90cf91e210f07a230c3888b252a09e6a09875e0fcf1261434dc838b23b",
+      "contentHash": "05e09d857aa82d815ee46b7f045e5b4be8550a87b356d3e42c118969c11d9e36",
       "fieldHashes": {
         "audience.0": "be987c8fc9c24db154ad4666479a0684b915936d69c743e47f983827727ca69e",
         "audience.1": "ca102fe69416dfaa221c07d585c085d12eaba2b060cbc4b2fd69bc54a8bbb9f6",
@@ -60,7 +60,7 @@
       }
     },
     "information--article-11-compliance-for-property-owners": {
-      "contentHash": "0816354f330dfc34760c6dc517cc1f1d26ec1013e7f6e87c116d8ef83b938452",
+      "contentHash": "e2765345f045de6b2558003d00395c7f21d60ea8b06d894cfa1767b1c882628c",
       "fieldHashes": {
         "audience.0": "62e56b32840a5718e35e8663134f9f0b53b9b8fbc05f65c186bc3a3edaf2704e",
         "sections.if-you-get-a-report-or-notice.bullets.0": "b25f9e5229b107892e9ef22c70bbe78dee0d14c421b7c30a01907056d69e1644",
@@ -98,7 +98,7 @@
       }
     },
     "information-integrated-pest-management-for-property-owners-and-managers": {
-      "contentHash": "0d1fd2df131d32866d51d716dd903e1d7f7cd5785fc0475a4d803db45f3b5a0e",
+      "contentHash": "df06e206e624f37aaa931a5bf5ac1649561b22650c7633c7fb1ad1f5a3e0a6c9",
       "fieldHashes": {
         "audience.0": "df8c6f354b558e7728a8939b82309f3818a804f3820e5eb1b5fc16828c00f64c",
         "sections.1-follow-san-francisco-owner-responsibilities.bullets.0": "6131955502c90e30e44194c2418e3542681223fb7af718c2276ee9b6150bde9c",
@@ -167,7 +167,7 @@
       }
     },
     "information-learn-what-hhvc-can-inspect": {
-      "contentHash": "c0e6791330b6c5882fe3183103b16800d387dd55a696cd7af16644591eaabff0",
+      "contentHash": "0d384ab9ed9c4b9731780e984a8c26a69a65d58eec840ddb6673873c42862c42",
       "fieldHashes": {
         "audience.0": "1ef84115f8e2b0d700a51ccd2042154c64a2df7737f7d3d2fc132d0a1efd7cdb",
         "sections.have-this-ready-when-you-report.bullets.0": "e69ea26f7a991067a2a35e601065fe3b8460745193848d323e9088e0492e922f",
@@ -213,7 +213,7 @@
       }
     },
     "information-tenant-rights-and-reporting-housing-conditions": {
-      "contentHash": "e4419b30f899b5ba276b8d3183c57bd92bce012f81a8cb7058aa18c262cacc2f",
+      "contentHash": "51f4e876f159dede526dd5b1cdb93987e05d33150423e78dad6c5c4b7330a26d",
       "fieldHashes": {
         "audience.0": "44f32531ea430898aad4f047ba18afd3c01b783986d35275239b2b4a916e431e",
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",
@@ -250,7 +250,7 @@
       }
     },
     "information-what-happens-after-you-report-housing-pest-problem": {
-      "contentHash": "0cd12a32b939f99df5293d5eed45a8bbb8c3bcda61b3bdaf041b736b91bcee89",
+      "contentHash": "4a50007626c9c9425d5627ae0cf199faf6e03a05676c7f3e8e8cebe75276f9a0",
       "fieldHashes": {
         "audience.0": "566070e7dedff30095cb1907be16198886e91b189fbcf1615f2a8362fef3a670",
         "sections.how-a-report-moves-through-the-city.heading": "3cc3a9df7c21b4e31184b297456da9056a3d154a27b16e6c582322658b55a28e",
@@ -281,7 +281,7 @@
       }
     },
     "integrated-pest-management-education": {
-      "contentHash": "64b831a89b0bf4713eeb94b7eb491daaf7390d868c2e985fd01e8cec1546e72b",
+      "contentHash": "f5fe9de4297e893768ca49258003830fd350eddc5cba722730fa1afe0958c8c9",
       "fieldHashes": {
         "audience.0": "8dda76902c5f3ee819c772c8f7ca26457a43a7e9ae857679ead5911e7e2edac0",
         "sections.grounded-in-san-francisco-health-code-and-uc-ipm-guidance.bullets.0": "62917ac28bf9593c2157e7377604ea83f2ac6ce563a8042f1da991eb7da123b7",
@@ -317,7 +317,7 @@
       }
     },
     "look-up-building-records": {
-      "contentHash": "9d469790939915f9205b878156034cda96ed095f7bda658e4afa452b6a5d964e",
+      "contentHash": "2c60940cf6d79262295fa257451a63f455613286d2a56f78309005fd4058b49e",
       "fieldHashes": {
         "audience.0": "8e138cfd892fc1bab528353fab9dc44ae94f54c485f83c52c0af203ea4f55af0",
         "sections.about-this-collection.heading": "d5e79b327c74ac6408b5964cc746e5749aab478be3df3699b879302b5383080c",
@@ -331,7 +331,7 @@
       }
     },
     "lookup-residential-health-code-violations": {
-      "contentHash": "13fc117c94ce1d1e8df95d8c51e9c086e032a4bd3865ec2a5fb570babc7e00d2",
+      "contentHash": "2bd99423f5b52aafa34f302e6d64e74bb7cc9add8076fc9ee309da752d00772e",
       "fieldHashes": {
         "audience.0": "c4fe24e8e98f5d60c42f058358c4d48f0783185d3e2a3f90a208e1d2b6e2e299",
         "audience.1": "d1ee85320c165e28580beb6a57cae62015330071459303720fbe80219074929b",
@@ -347,7 +347,7 @@
       }
     },
     "make-a-public-records-request-environmental-health": {
-      "contentHash": "8da6dff2cfc9e8fc1122fe311fd9fb83e0f8a286f9a38ab9bd074314795dadc4",
+      "contentHash": "cf4a432f7df951eebbe34597ac76533c41a3093d4bd3f64c1325bc357362c7f9",
       "fieldHashes": {
         "audience.0": "c6d195a594aac25a783e75cc7acd9cefe47547fa5732a423f1b583bb11989895",
         "audience.1": "a3c6e3a9ab0cf23f84aeb13420043c85824610a5dee332aca9a6f502af521080",
@@ -366,7 +366,7 @@
       }
     },
     "mosquito-control-program": {
-      "contentHash": "c3f6ad5d01f51d5034bc6bdc62d7d511e240eb60bc1fe2a26ee941ae3d8bcb51",
+      "contentHash": "b215fe644598edbf309362c0b2c4a89d07f84f92fe39d8e203dbae61fdd3abc9",
       "fieldHashes": {
         "audience.0": "ea41891a331ae81ed81a6ee162d132db12bc134301b40676c6fbc59110c4dcf0",
         "sections.more-mosquito-resources.heading": "ac31cbee0208a508219874fbe7233bd59c9e0e0064695b12f43f884390c2314f",
@@ -383,7 +383,7 @@
       }
     },
     "mosquito-education-workshop": {
-      "contentHash": "992efffc5f230c14357be03a400d8f469a5c240ea858776415ba947423c8dee9",
+      "contentHash": "bd08479f348497d0709544cd368942ea3bfd5742eceb12a43b55021b92a11b1c",
       "fieldHashes": {
         "audience.0": "4ad224ac97b9c42e1f4d1772eb011f9b9c717cb9cc67e61905aa741972fd964a",
         "sections.aligned-with-california-education-standards.bullets.0": "96c484416a37bb9ffe2c03febc6a78685d1e3b3124626728bfdf3f897cf82a97",
@@ -421,7 +421,7 @@
       }
     },
     "pay-your-annual-healthy-housing-fee-apartment-buildings": {
-      "contentHash": "f24991105ee4cbcf200e61a8555211ad37825b2ae910f166794bf1328e97ab5d",
+      "contentHash": "d40bb19654a6aea678be8dd2dce14fe057ed226400cfda5f26e462b66051f411",
       "fieldHashes": {
         "audience.0": "ce954ee632623499a80aa7e89585abd482eac785efdba7bbb521095bdffd6776",
         "audience.1": "03e8b05d2a9089953d76ab77c1851840c9296a818085a09ee8058e2c6c9eb2a5",
@@ -432,7 +432,7 @@
       }
     },
     "property-owner-responsibilities-hhvc": {
-      "contentHash": "8a13f5718ae7461aaf013eb00848ab01eeebdbcfc5294bd4cba8061835bee052",
+      "contentHash": "72c5c8f19300ae10d536760f76e39f5ecddda0d9c808b5450a985a7cd36d162c",
       "fieldHashes": {
         "audience.0": "dbb8fad6db8d241066c2a689256e50778d7607a16097917a4c289e4a4caaa19d",
         "sections.about-this-collection.heading": "d5e79b327c74ac6408b5964cc746e5749aab478be3df3699b879302b5383080c",
@@ -446,7 +446,7 @@
       }
     },
     "report-cockroaches-mosquitoes-insects": {
-      "contentHash": "b2dc3c19fe23641f1317760cf2d59dc081c934b7296995a0f9532e64b9206d27",
+      "contentHash": "ef7abf3775e38e09edf5b35b13a0e187fba0e87e6c658ffb067e8c7eac5d538a",
       "fieldHashes": {
         "audience.0": "ccd19a6cb7d9ab3acebcabbd48b7a9834d7412a0195eba101a0370b74c1c4e3f",
         "audience.1": "7ea11dfb70cfa49f0c3effee3965434ea835da01b69ddfff911ff6b4b9851d7a",
@@ -479,7 +479,7 @@
       }
     },
     "report-garbage-filth-vegetation": {
-      "contentHash": "92a583c83821d1c5cb194c94339093f8f818e568ce254b8a07af8e58c8dbeaf7",
+      "contentHash": "04e381d7404bc547192e8150dae782ff082e0db00518ec23240ea3f5f9e7119d",
       "fieldHashes": {
         "audience.0": "0141f1792023db799338c596092991d8c6b8fdd26cfad661752f4c75ecae3941",
         "audience.1": "7ea11dfb70cfa49f0c3effee3965434ea835da01b69ddfff911ff6b4b9851d7a",
@@ -515,7 +515,7 @@
       }
     },
     "report-health-code-article-11-plain-language": {
-      "contentHash": "0f261ab73b38b4cb5303d04e2492c5300d36f1a995cb1895a63677bade505c80",
+      "contentHash": "1463e2054a4eab77b27527518a0e4d0984afa7b44d9efd0fc0760f471ee36cdf",
       "fieldHashes": {
         "audience.0": "8ef0320f7265039ef939ba6670edfb33aef4c26f8e5925624723a4c89e449397",
         "sections.animals-clutter-and-other-health-threats.heading": "62fb5ffe07e7caa1b200888205994b3495e6e4f1838c94901c33ece0e1e0b2eb",
@@ -541,7 +541,7 @@
       }
     },
     "report-problem-sro-hotel": {
-      "contentHash": "4429e860ba6c2f7c72acfe5adb2736d92a72e285b7b80f31a5ab811626aac963",
+      "contentHash": "fe5825ee374eb1d50d3985428b3bccc75ce74fc7d726951e63db843a92e4af7c",
       "fieldHashes": {
         "audience.0": "be987c8fc9c24db154ad4666479a0684b915936d69c743e47f983827727ca69e",
         "audience.1": "ca102fe69416dfaa221c07d585c085d12eaba2b060cbc4b2fd69bc54a8bbb9f6",
@@ -555,7 +555,7 @@
       }
     },
     "report-rats-mice-four-legged-problems": {
-      "contentHash": "1a9de0137e7ea5268c5d7df717597e19f056f76c0f1e0bbf0f875ea065d9fd2d",
+      "contentHash": "3da102003ef7f2a9ee48c5d216580b345adbae4d067a139ee9c95fc425ef911c",
       "fieldHashes": {
         "audience.0": "46b8f713b30af842c8b3fbb13a3d880bd06d78b8c0e61ad9cecfc6f94c59ef8d",
         "audience.1": "7ea11dfb70cfa49f0c3effee3965434ea835da01b69ddfff911ff6b4b9851d7a",
@@ -588,7 +588,7 @@
       }
     },
     "resource--healthy-housing-and-vermin-information": {
-      "contentHash": "fc5c2591db550b727c0639d9a143e6c5c027e883b9568a50345a0a3160146ffa",
+      "contentHash": "28410cf602a1696038876ea43f09544479532b8debaa64b4e02b4a961b6ac2a3",
       "fieldHashes": {
         "audience.0": "c6d6281f9bda09203c33b8b44f260b9c022d40154d0ca5d1caef5ffb8f45c842",
         "sections.find-forms-records-and-rules.heading": "e52607138746eba8ff41209c5f076f17ed93789390108056f811dd300ca7e328",
@@ -605,7 +605,7 @@
       }
     },
     "step-by-step--fix-healthy-housing-and-vector-control-violation": {
-      "contentHash": "b99dd05b83d2fd5b54e4c981c63976dae92a50d8059e04dc51d9d2f67db2e520",
+      "contentHash": "28b1f8afc55479f4d0de67f9ff9477e53a8193b03125d661c921760672dac6df",
       "fieldHashes": {
         "audience.0": "d9b855b5d44c9c8bfe79e4d4202ac84ded93178af5b43fa69066d4c16c19687f",
         "audience.1": "b0ed964a408f3306f5c3a69c42d64aa3cf0f8c21f9024a107d01b0a730484d87",
@@ -617,7 +617,7 @@
       }
     },
     "step-by-step--get-ready-for-a-follow-up-inspection": {
-      "contentHash": "33a39b57ade3cb36ac581a1a3002c30346a912955d3a709ef24cd6e04c10717a",
+      "contentHash": "0276cdb7b3a7601c0ee8dbc04d2d141f4d2bc5ef935339dbb34e570b7fd80c67",
       "fieldHashes": {
         "audience.0": "d9b855b5d44c9c8bfe79e4d4202ac84ded93178af5b43fa69066d4c16c19687f",
         "audience.1": "b0ed964a408f3306f5c3a69c42d64aa3cf0f8c21f9024a107d01b0a730484d87",
@@ -631,7 +631,7 @@
       }
     },
     "step-by-step--get-ready-for-a-housing-inspection": {
-      "contentHash": "c4aedca2909bcdc59825026062974ec952bba398317023ca4f9f1cde9255413b",
+      "contentHash": "53a15f7a869b697510cf8e7ee41274ca46e1fd018d1d98206261972c28ee7aab",
       "fieldHashes": {
         "audience.0": "8833e75a61873a1a1741939f7d56ab39fd4b492b1528bede9e4a699bd3e9ae48",
         "audience.1": "56846a949e799eef0c313788379b2f7025fc31ba7cf13fdbc616971d4fe4737b",
@@ -645,7 +645,7 @@
       }
     },
     "step-by-step--tenant-steps-after-notice-of-violation": {
-      "contentHash": "ff326208366f580701c2f3f9edd4c86b12387cedd65ceaffd6b4271344b0b5bf",
+      "contentHash": "d9b45ac2c45bf1366cd8545bcaa87bb539f767a0b3be2762587f49864bfc5efe",
       "fieldHashes": {
         "audience.0": "b0ed964a408f3306f5c3a69c42d64aa3cf0f8c21f9024a107d01b0a730484d87",
         "audience.1": "662cf13bca3db9797fa563150e6a55e0a131b9b67354639955373d994b731172",
@@ -663,7 +663,7 @@
       }
     },
     "topic-healthy-housing-and-vector-control": {
-      "contentHash": "dd3773d76b7cf4fa8bd393a8b80e9074891cc5023b3b0b9b15e8481d3f29dfdf",
+      "contentHash": "234045b6cf53d5b028a6a19d1c70a8cfbdbe0421d28859aa5222d7f9847578a4",
       "fieldHashes": {
         "audience.0": "1b5edf6795c2de3a86d15170ff8fa258e537de07a9f9dc905e38c22bdfb59b47",
         "sections.about-healthy-housing-and-vector-control.heading": "b3a0da0297589220c360c0576541a7e4a1134dcf8060626c73f7264df3778cda",
@@ -682,7 +682,7 @@
       }
     },
     "topic-healthy-housing-and-vector-control--about": {
-      "contentHash": "55efd80f7eeb6f30abc01aa5f8926790e786261a2a9b63233df7c7b0966bd819",
+      "contentHash": "2b18384260606e67af23e2ba10665fa7c3e6f5b4e473d6b954710ce85900e335",
       "fieldHashes": {
         "audience.0": "86ef690f3676c5c6e6198614e16c94424d0cf778db2af03764fcc84b46b30124",
         "sections.how-the-team-is-organized.bullets.0": "e9db4d36f817f3ba050f4840db47832038679f57873b87a911e6b745ef99d553",
@@ -705,7 +705,7 @@
       }
     },
     "topics--healthy-housing-conditions": {
-      "contentHash": "7b5a2cac16b865d2d7aff85a896769b54ea5d971581b5391383a60973179e8b4",
+      "contentHash": "6a2c6b2f65ce5c8885f4adf71e3dd817d70924c7d3bb8edf229e2985c1e658bb",
       "fieldHashes": {
         "audience.0": "2515acba7f28f2c65b06ae4a6e4066558162cc09e682029364c6a60bdbb6e559",
         "sections.general-housing-issues.heading": "fef3b59552fe45dd2c867d1d286caec4982e91b462b78eabc15e06c17557f7ad",
