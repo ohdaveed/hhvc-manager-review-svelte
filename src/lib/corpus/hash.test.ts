@@ -39,4 +39,14 @@ describe('hashFields', () => {
 		expect(fieldHashes['title']).toBe(hashText('same'));
 		expect(fieldHashes['summary']).toBe(hashText('same'));
 	});
+
+	it('prevents collisions from crafted field ids', () => {
+		// The page-hash construction must be injective: two different field maps
+		// cannot produce the same pageHash, even if one has a crafted id.
+		// This test uses the reviewer's counterexample shape.
+		const mapA = hashFields({ a: 'hello', b: 'world' });
+		const craftedId = `a‖${hashText('hello')}‖b`;
+		const mapB = hashFields({ [craftedId]: 'world' });
+		expect(mapB.pageHash).not.toBe(mapA.pageHash);
+	});
 });

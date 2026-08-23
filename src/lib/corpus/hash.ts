@@ -14,6 +14,12 @@ export function hashText(text: string): string {
  * digest, so renaming a field changes the page hash even when the text does
  * not.
  *
+ * The page digest is constructed with length-prefixed field ids (`{id.length}:{id}`)
+ * followed by their 64-character hashes, with no separator between them. This makes
+ * the byte stream unambiguous: if an attacker crafted a field id containing the
+ * separator character, it could not consume part of the next field's hash, because
+ * each hash is exactly 64 hex chars and the id length is explicit.
+ *
  * Per-field hashes are what let a later slice expire only the accepted edits
  * whose own copy moved. A single page hash would expire every accepted edit on
  * the page whenever any part of it changed.
@@ -29,8 +35,8 @@ export function hashFields(fields: FieldMap): {
 
 	const digest = createHash('sha256');
 	for (const id of Object.keys(fieldHashes)) {
-		digest.update(id, 'utf8').update('‖', 'utf8');
-		digest.update(fieldHashes[id], 'utf8').update('‖', 'utf8');
+		digest.update(`${id.length}:${id}`, 'utf8');
+		digest.update(fieldHashes[id], 'utf8');
 	}
 
 	return { pageHash: digest.digest('hex'), fieldHashes };
