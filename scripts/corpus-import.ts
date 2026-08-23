@@ -81,7 +81,7 @@ if (existing) {
 	process.exit(1);
 }
 
-let gitSha: string | null = null;
+let gitSha: string | null;
 try {
 	gitSha = execSync('git rev-parse HEAD', { encoding: 'utf8' }).trim();
 } catch {
