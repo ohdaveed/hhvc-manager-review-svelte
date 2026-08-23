@@ -467,6 +467,7 @@
 									variant="ghost"
 									size="sm"
 									class="h-7 px-2 text-[12px]"
+									disabled={saving}
 									onclick={() => decideAll('pending')}>Undo all</Button
 								>
 							{/if}
@@ -475,12 +476,14 @@
 									variant="ghost"
 									size="sm"
 									class="h-7 px-2 text-[12px]"
+									disabled={saving}
 									onclick={() => decideAll('rejected')}>Reject all</Button
 								>
 								<Button
 									variant="ghost"
 									size="sm"
 									class="text-sfds-action h-7 px-2 text-[12px]"
+									disabled={saving}
 									onclick={() => decideAll('accepted')}>Accept all</Button
 								>
 							{/if}
@@ -556,6 +559,7 @@
 											aria-label="Undo {suggestion.status === 'accepted'
 												? 'accepting'
 												: 'rejecting'} this rewrite"
+											disabled={saving}
 											onclick={() => decide(fieldId, 'pending')}>Undo</Button
 										>
 									</div>
