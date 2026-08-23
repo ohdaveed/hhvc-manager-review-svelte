@@ -546,10 +546,23 @@ called it since task 1.
 the eslint fix does not surface it. Pre-existing, and inventing a destination is
 a product decision. Flagged on the thread, left open.
 
-**Accept is irreversible.** `decide` renders its buttons only while a suggestion
-is `pending`, and `decideAll` only touches pending, so an accidental Accept
-cannot be walked back short of `Clear`. No bot raised it; found in the browser.
-Not in these threads' scope.
+**Accept is irreversible.** ~~`decide` renders its buttons only while a
+suggestion is `pending`~~ — fixed as a follow-up: `decide`/`decideAll` take
+`'pending'` as a third state, so a decision reverses right up until `Save`
+commits it. `original` is captured with the rewrite, so the text to go back to
+always exists. `error` cards are excluded — they have no `suggested` text.
+
+**Post-save revert is NOT built, and the reason is a constraint, not effort.**
+The suggestion was to revert through the `edits` history: it is append-only and
+ordered by `created_at`, so the original is an INSERT rather than a DELETE, which
+fits the table. The rows are there. **The client cannot see them.**
+`saveInlineEdit` filters `(page_id, field_id)` out of `editsStore` before
+appending, so the store holds exactly one edit per field — the latest — and a
+revert built on it would find nothing to revert to. This is the dedup already
+recorded above as known and unresolved. Post-save revert needs either a targeted
+query for one field's history or dropping that dedup, and the dedup is a product
+decision about whether the review keeps history at all. Blocked on that, not on
+the UI.
 
 **Suggestion cards render in completion order, not badge order.** The map is
 keyed by field id and populated as requests land, so a slow field sorts last.

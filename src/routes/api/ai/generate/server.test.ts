@@ -74,13 +74,46 @@ describe('POST /api/ai/generate', () => {
 		expect(upstream).not.toHaveBeenCalled();
 	});
 
-	it('rejects field text longer than the cap without forwarding it', async () => {
+	// The two boundaries below are the BACKEND's schema, mirrored. Pinned AT the
+	// edge rather than well past it: the route allowed 20,000 for `fieldText` and
+	// nothing at all for `instruction`, and a test at 25,000 passed either way --
+	// it could not tell the two limits apart, so it never caught the drift.
+	it('rejects field text one over the cap without forwarding it', async () => {
 		getUser.mockResolvedValue({ data: { user: { id: 'user-1' } }, error: null });
 		const { event, upstream } = buildEvent(
 			{ Authorization: 'Bearer good-token' },
 			{
 				task: 'rewrite-field',
-				fieldText: 'y'.repeat(25_000)
+				fieldText: 'y'.repeat(8_001)
+			}
+		);
+
+		await expect(POST(event as never)).rejects.toMatchObject({ status: 400 });
+		expect(upstream).not.toHaveBeenCalled();
+	});
+
+	it('forwards field text exactly at the cap', async () => {
+		getUser.mockResolvedValue({ data: { user: { id: 'user-1' } }, error: null });
+		const { event, upstream } = buildEvent(
+			{ Authorization: 'Bearer good-token' },
+			{
+				task: 'rewrite-field',
+				fieldText: 'y'.repeat(8_000)
+			}
+		);
+
+		await POST(event as never);
+		expect(upstream).toHaveBeenCalledOnce();
+	});
+
+	it('rejects an instruction one over the cap without forwarding it', async () => {
+		getUser.mockResolvedValue({ data: { user: { id: 'user-1' } }, error: null });
+		const { event, upstream } = buildEvent(
+			{ Authorization: 'Bearer good-token' },
+			{
+				task: 'rewrite-field',
+				fieldText: 'short',
+				instruction: 'z'.repeat(2_001)
 			}
 		);
 
