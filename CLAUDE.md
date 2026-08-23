@@ -111,6 +111,14 @@ Netlify, site `hhvc-manager-review`, **Git-connected and deploying automatically
 
 CI runs separately in `.github/workflows/pr.yml` — unit tests, build and e2e block, while prettier/eslint/svelte-check report without blocking. A green Netlify preview says the site built; it does not say the tests passed.
 
+`supabase/.temp/` is CLI scratch state and is **not tracked** — that is the
+CLI's own `supabase/.gitignore` template, added because `supabase start` writes
+`start-secrets/.../env/docker.env` (service-role key, DB URL, JWT secret) into
+that directory. The consequence: a fresh clone has no `project-ref`, so
+hosted-project commands need `supabase link --project-ref <ref>` first. Local
+development (`supabase start`, `db reset`) needs no link — `config.toml` is
+enough.
+
 Supabase auth URLs must include any new origin, or magic links redirect to a dead URL. The hosted allow-list covers production, `localhost:5173`, and Netlify preview hostnames; `supabase/config.toml` covers the local stack.
 
 ## Branch protection
