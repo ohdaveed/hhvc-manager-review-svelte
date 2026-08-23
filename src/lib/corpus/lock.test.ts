@@ -39,6 +39,41 @@ describe('buildLock', () => {
 		expect(buildLock(changed).corpusHash).not.toBe(buildLock(pages).corpusHash);
 	});
 
+	it('changes when only a copy-only field (e.g. cards) changes -- decision 17 regression', () => {
+		// The motivating bug: content_hash used to come from the same field map
+		// as field_hashes, which never reads `cards`. A re-port touching only
+		// card copy left contentHash/corpusHash unchanged, so `corpus:import`
+		// would hit its UNIQUE constraint and write no version row at all.
+		const withCards = [
+			{
+				slug: 'sf.gov/topic-c--resources',
+				title: 'Resources',
+				sections: [
+					{
+						heading: 'Related links',
+						cards: [{ title: 'A resource', text: 'Original card text.' }]
+					}
+				]
+			}
+		];
+		const changed = structuredClone(withCards);
+		changed[0].sections[0].cards[0].text = 'Rewritten card text.';
+
+		const before = buildLock(withCards);
+		const after = buildLock(changed);
+
+		expect(after.pages['topic-c--resources'].contentHash).not.toBe(
+			before.pages['topic-c--resources'].contentHash
+		);
+		expect(after.corpusHash).not.toBe(before.corpusHash);
+
+		// field_hashes is unaffected -- cards is not an edit target, so
+		// per-field expiry must not fire off a card-only rewrite either.
+		expect(after.pages['topic-c--resources'].fieldHashes).toEqual(
+			before.pages['topic-c--resources'].fieldHashes
+		);
+	});
+
 	it('does not change when only an annotation changes', () => {
 		const annotated = structuredClone(pages) as Record<string, unknown>[];
 		annotated[0].editorNote = 'a note that must not count';

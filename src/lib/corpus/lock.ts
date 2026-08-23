@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { extractFields, type CorpusPage } from './fields.js';
+import { extractCopy, extractFields, type CorpusPage } from './fields.js';
 import { hashFields, hashFieldMap } from './hash.js';
 
 export type CorpusLock = {
@@ -84,12 +84,24 @@ export function hashLockPages(pages: CorpusLock['pages']): string {
 	return digest.digest('hex');
 }
 
-/** One hash over the whole corpus, plus a per-page manifest keyed by path. */
+/**
+ * One hash over the whole corpus, plus a per-page manifest keyed by path.
+ *
+ * `contentHash` and `fieldHashes` are deliberately derived from two different
+ * extractions (decision 17): `contentHash` from `extractCopy` (all
+ * reader-visible copy, so any copy change mints a new corpus version) and
+ * `fieldHashes` from `extractFields` (only addressable edit targets, so it
+ * can drive edit expiry without expiring on copy it does not cover). Both
+ * reuse `hashFields`'s length-prefixed digest unchanged -- `CopyMap` and
+ * `FieldMap` are the same `Record<string, string>` shape, so no new digest
+ * construction is needed, only a different map fed into the existing one.
+ */
 export function buildLock(pages: CorpusPage[]): CorpusLock {
 	const entries = pages
 		.map((page) => {
-			const { pageHash, fieldHashes } = hashFields(extractFields(page));
-			return { path: derivePagePath(page), contentHash: pageHash, fieldHashes };
+			const { pageHash: contentHash } = hashFields(extractCopy(page));
+			const { fieldHashes } = hashFields(extractFields(page));
+			return { path: derivePagePath(page), contentHash, fieldHashes };
 		})
 		.sort((a, b) => (a.path < b.path ? -1 : a.path > b.path ? 1 : 0));
 
