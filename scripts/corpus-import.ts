@@ -6,9 +6,12 @@
  * Run this after re-porting mockups from the vanilla app. It is idempotent:
  * a pre-insert lookup on corpus_versions.corpus_hash short-circuits a re-run
  * against an unchanged corpus and reports "unchanged" rather than minting a
- * duplicate version. The corpus_hash UNIQUE constraint is a backstop, not
- * the mechanism -- the lookup finds the existing row before the constraint
- * would ever be reached.
+ * duplicate version. That lookup and the RPC call below are separate,
+ * non-locking requests, so two concurrent runs can both pass the lookup and
+ * both call the RPC -- the corpus_hash UNIQUE constraint then rejects the
+ * loser with a 23505 (unique_violation), which is caught below and treated
+ * as the same idempotent "already imported" outcome, just discovered later
+ * and by a different mechanism than the pre-insert lookup.
  *
  * Uses the service-role key, which bypasses RLS -- the same pattern as
  * scripts/sync-checks.ts. Bun loads .env.local automatically.
@@ -112,6 +115,36 @@ const { data: versionId, error: rpcError } = await supabase.rpc('import_corpus_v
 	p_note: process.env.CORPUS_NOTE ?? null,
 	p_pages: rows
 });
+
+// A concurrent run can win the race between the pre-insert lookup above and
+// this RPC call: both see "no row" and both call import_corpus_version, and
+// the corpus_versions.corpus_hash UNIQUE constraint (20260823060000) rejects
+// whichever insert lands second with a 23505 (unique_violation). That is not
+// a failed import -- the version this run wanted now exists, just inserted
+// by the other run instead. Treat it as "already imported", distinctly from
+// the pre-insert-lookup "unchanged" message above so a reader can tell "I
+// lost a race" from "there was nothing to do" -- but keep it fatal for any
+// other RPC error (e.g. the page_versions (corpus_version_id, path) UNIQUE
+// constraint, a NOT NULL failure, or an RLS/permission error), which are
+// real failures.
+//
+// No completeness re-check is needed here the way there is on the pre-insert
+// lookup path above: import_corpus_version is transactional, so the winner's
+// insert into corpus_versions is only visible -- and only able to conflict on
+// the corpus_hash unique index -- once it has committed, at which point its
+// page_versions rows are already committed alongside it. The loser's insert
+// blocks on that index until the winner commits or rolls back; a rollback
+// leaves no row for it to conflict with, so a 23505 here can only mean a
+// complete, committed import already exists.
+const isConcurrentImportConflict =
+	rpcError?.code === '23505' && /corpus_hash/i.test(rpcError.message ?? '');
+
+if (isConcurrentImportConflict) {
+	console.log(
+		`Corpus version already imported by a concurrent run — hash ${lock.corpusHash.slice(0, 12)} lost the race. Nothing to do.`
+	);
+	process.exit(0);
+}
 
 if (rpcError || !versionId) {
 	console.error('Could not import corpus version:', rpcError?.message);
