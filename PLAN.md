@@ -282,17 +282,35 @@ should not be able to modify or delete it.
 `[auth] enable_signup = true`, `[auth.email] enable_signup = true` and
 `enable_confirmations = false`. With `FOR ALL TO authenticated USING (true)` on
 all four tables, anyone who can receive email could sign up and then read,
-modify or delete every row. **That file governs the local stack only — the
-hosted project is unverified.** F1a exists to close that gap first.
+modify or delete every row. **That file governs the local stack only.** F1a has
+since verified the hosted project separately and found signup already disabled
+there, so this described a local-stack exposure rather than a live one — but the
+local defaults still stand, and a `supabase db reset` reproduces them.
 
-- [ ] **F1a. Verify hosted Supabase signup settings.** Check the dashboard for
-      the hosted project. If signup is open, restrict to invited users or an
-      `@sfgov.org` email allow-list. Highest leverage item in this plan: no
-      schema change, and it is the only step that closes the sign-up-and-delete
-      path. Do this before F1b.
-      _Done when:_ the hosted setting is confirmed closed, and the value is
-      recorded here.
-      _Touches:_ nothing in-repo (dashboard), then this file.
+- [x] **F1a. Hosted signup is already closed — verified, no change needed.**
+      Confirmed twice on project `kiynekyzqxneepjipqhg`: first via the public
+      `GET /auth/v1/settings` (anon key, no admin credentials), then against the
+      authoritative `GET /v1/projects/{ref}/config/auth` on the Management API.
+      Both agree — `disable_signup` `true` (self-registration off),
+      `mailer_autoconfirm` `false` (email must be verified),
+      `external_anonymous_users_enabled` `false`, and `email` the only enabled
+      provider, matching the app's magic-link flow. The admin view adds
+      `security_captcha_enabled` `true` and `site_url`
+      `https://hhvc-manager-review.netlify.app`.
+      So the sign-up-and-delete path this item existed to close was never open
+      on the hosted project, and the `@sfgov.org` allow-list is unnecessary
+      while `disable_signup` stays `true` — new reviewers must be invited from
+      the dashboard. **Re-check this value if anyone ever reports being unable
+      to be added**, because opening signup is the obvious wrong fix.
+      _Method note, and a trap worth recording:_ the Management API 403s with
+      **Cloudflare error 1010** ("access denied based on your browser's
+      signature") when called from python-urllib, whatever token is used. That
+      is a client-signature block, **not** an auth failure, and it is easy to
+      misread as an expired credential — an earlier revision of this item did
+      exactly that. The same request through `curl` returns `200`. Both
+      `~/.supabase/access-token` and the 1Password `SUPABASE PAT` item are
+      valid. The Supabase CLI is not installed.
+      _Touches:_ nothing in-repo (verified against the hosted project).
 
 - [x] **F1b. Policies are per-operation; the migration is written and tested.**
       `supabase/migrations/20260822030000_scope_rls_policies.sql`. Shape derived
