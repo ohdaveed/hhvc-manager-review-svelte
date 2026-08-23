@@ -16,7 +16,10 @@ CREATE TABLE IF NOT EXISTS corpus_versions (
     imported_at timestamptz NOT NULL DEFAULT now(),
     note text,
     page_count integer NOT NULL,
-    corpus_hash text NOT NULL UNIQUE
+    corpus_hash text NOT NULL UNIQUE,
+    -- Imports run with service_role and therefore have no auth.uid(); NULL
+    -- denotes the shared, immutable corpus rather than a user's private data.
+    created_by uuid REFERENCES auth.users (id)
 );
 
 COMMENT ON COLUMN corpus_versions.corpus_hash IS
@@ -50,7 +53,16 @@ DROP POLICY IF EXISTS "corpus_versions_select" ON corpus_versions;
 DROP POLICY IF EXISTS "page_versions_select" ON page_versions;
 
 CREATE POLICY "corpus_versions_select" ON corpus_versions
-    FOR SELECT TO authenticated USING (true);
+    FOR SELECT TO authenticated
+    USING (created_by IS NULL OR created_by = (SELECT auth.uid()));
 
 CREATE POLICY "page_versions_select" ON page_versions
-    FOR SELECT TO authenticated USING (true);
+    FOR SELECT TO authenticated
+    USING (
+        EXISTS (
+            SELECT 1 FROM corpus_versions
+            WHERE corpus_versions.id = page_versions.corpus_version_id
+              AND (corpus_versions.created_by IS NULL
+                   OR corpus_versions.created_by = (SELECT auth.uid()))
+        )
+    );
