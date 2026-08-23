@@ -1,0 +1,13 @@
+# corpus.lock is generated. A hand-merged hash manifest can agree with neither
+# side of the merge, so conflicts are resolved by regenerating:
+#
+#     bun run corpus:lock
+#
+# `-merge` stops git from attempting a line-wise textual merge and producing a
+# file that looks plausible and hashes to nothing -- a conflict here must be
+# resolved by regenerating, not by picking a side. `-text` leaves the
+# generator's own line endings (LF) alone rather than letting git's normal
+# conversion touch them. Neither attribute hides the file from diffs: unlike
+# `binary` (which implies both plus `-diff`), this still shows a corpus change
+# in the diff, which is the whole reason the lockfile exists.
+corpus.lock -merge -text

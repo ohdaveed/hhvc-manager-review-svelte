@@ -1,5 +1,6 @@
 // src/lib/stores/pageData.svelte.ts
 import { allPages } from '$lib/data';
+import { deriveFieldKey } from '$lib/corpus/fieldKey.js';
 
 type Page = {
 	id: string;
@@ -40,14 +41,7 @@ type ActiveField = {
  * 30 data modules.
  */
 function withFieldKey(section: Record<string, unknown>, index: number) {
-	const heading = typeof section.heading === 'string' ? section.heading : '';
-	const slug = heading
-		.toLowerCase()
-		.trim()
-		.replace(/[^a-z0-9]+/g, '-')
-		.replace(/^-+|-+$/g, '');
-
-	return { ...section, fieldKey: slug || `section-${index}` };
+	return { ...section, fieldKey: deriveFieldKey(section, index) };
 }
 
 class PageStore {

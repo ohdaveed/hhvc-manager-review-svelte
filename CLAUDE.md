@@ -38,6 +38,10 @@ The same gates run in CI on every PR (`.github/workflows/pr.yml`), and `main` re
 
 - `src/**/*.{test,spec}.{js,ts}` → **server** project, node environment
 - `tests/**/*.test.ts` → **client** project, jsdom with browser resolve conditions
+- `tests/**/*.spec.ts` → **server** project, node environment. The server project's
+  `include` covers `tests/**` too and excludes only `tests/**/*.test.ts`, so the
+  extension — not just the directory — decides. A node-only test that needs `fs`
+  belongs here (`tests/seedHosted.spec.ts`); a `.test.ts` alongside it gets jsdom.
 
 A test placed in the wrong directory gets the wrong environment. E2E is separate: `**/*.e2e.{ts,js}`, matched by `playwright.config.ts`.
 

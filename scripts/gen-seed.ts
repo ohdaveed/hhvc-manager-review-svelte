@@ -1,5 +1,7 @@
 /**
- * Regenerates `supabase/seed.sql` from the static page corpus.
+ * Regenerates `supabase/seed.sql` and `supabase/seed.hosted.sql` from the
+ * static page corpus. `seed.sql` is for the local Supabase stack only;
+ * `seed.hosted.sql` targets the **production** Supabase project.
  *
  *   bun run scripts/gen-seed.ts
  *
@@ -23,22 +25,31 @@ const sqlString = (value: string) => `'${value.replace(/'/g, "''")}'`;
 
 const pageValues = allPages.map((page) => `      (${sqlString(derivePageId(page))})`).join(',\n');
 
-const sql = `-- GENERATED FILE — edit scripts/gen-seed.ts and rerun \`bun run seed:gen\`.
---
--- Local development seed. Runs automatically on \`supabase db reset\` against the
--- LOCAL stack only; it is never applied to the hosted project.
---
--- Why this exists: the app had no way to reach its own data. The Supabase client
--- carries the anon key, every RLS policy is \`FOR ALL TO authenticated\`, and the
--- root route skips the magic link, so \`loadReview()\` returned nothing and the
--- queue, decisions, notes and checks were all inert. This seeds an identity to
--- sign in as, plus a review and its pages, so the local loop works end to end.
---
--- The password below is not a secret. It exists only inside a local Postgres
--- that never leaves this machine, and the auto-login path that uses it is
--- compiled out of production builds. Never reuse it against the hosted project.
+const REVIEW_ID = '22222222-2222-2222-2222-222222222222';
 
+const reviewAndPages = `-- ---------------------------------------------------------------------------
+-- One review, and a page row per corpus page
 -- ---------------------------------------------------------------------------
+INSERT INTO reviews (id, title, status)
+VALUES ('${REVIEW_ID}', 'HHVC mockup review', 'draft')
+ON CONFLICT (id) DO NOTHING;
+
+-- \`path\` is the id derived in pageData.svelte.ts (slug minus 'sf.gov/', slashes
+-- to dashes), which is what the router and ReviewPanel both match on.
+INSERT INTO pages (review_id, path)
+SELECT '${REVIEW_ID}', path
+FROM (
+    VALUES
+${pageValues}
+) AS corpus(path)
+WHERE NOT EXISTS (
+    SELECT 1 FROM pages p
+    WHERE p.review_id = '${REVIEW_ID}'
+      AND p.path = corpus.path
+);
+`;
+
+const localAuth = `-- ---------------------------------------------------------------------------
 -- Default development user
 -- ---------------------------------------------------------------------------
 -- GoTrue needs more than a users row: without a matching auth.identities row
@@ -93,28 +104,44 @@ VALUES (
     now()
 )
 ON CONFLICT (provider, provider_id) DO NOTHING;
-
--- ---------------------------------------------------------------------------
--- One review, and a page row per corpus page
--- ---------------------------------------------------------------------------
-INSERT INTO reviews (id, title, status)
-VALUES ('22222222-2222-2222-2222-222222222222', 'HHVC mockup review', 'draft')
-ON CONFLICT (id) DO NOTHING;
-
--- \`path\` is the id derived in pageData.svelte.ts (slug minus 'sf.gov/', slashes
--- to dashes), which is what the router and ReviewPanel both match on.
-INSERT INTO pages (review_id, path)
-SELECT '22222222-2222-2222-2222-222222222222', path
-FROM (
-    VALUES
-${pageValues}
-) AS corpus(path)
-WHERE NOT EXISTS (
-    SELECT 1 FROM pages p
-    WHERE p.review_id = '22222222-2222-2222-2222-222222222222'
-      AND p.path = corpus.path
-);
 `;
 
-writeFileSync(new URL('../supabase/seed.sql', import.meta.url), sql);
-console.log(`Wrote supabase/seed.sql with ${allPages.length} page rows.`);
+const localSql = `-- GENERATED FILE — edit scripts/gen-seed.ts and rerun \`bun run seed:gen\`.
+--
+-- Local development seed. Runs automatically on \`supabase db reset\` against the
+-- LOCAL stack only; it is never applied to the hosted project.
+--
+-- Why this exists: the app had no way to reach its own data. The Supabase client
+-- carries the anon key, every RLS policy is \`FOR ALL TO authenticated\`, and the
+-- root route skips the magic link, so \`loadReview()\` returned nothing and the
+-- queue, decisions, notes and checks were all inert. This seeds an identity to
+-- sign in as, plus a review and its pages, so the local loop works end to end.
+--
+-- The password below is not a secret. It exists only inside a local Postgres
+-- that never leaves this machine, and the auto-login path that uses it is
+-- compiled out of production builds. Never reuse it against the hosted project.
+
+${localAuth}
+${reviewAndPages}`;
+
+const hostedSql = `-- GENERATED FILE — edit scripts/gen-seed.ts and rerun \`bun run seed:gen\`.
+--
+-- HOSTED seed. Safe to apply to the hosted Supabase project: it writes only
+-- \`reviews\` and \`pages\`, and creates no identity.
+--
+-- The local seed (\`seed.sql\`) deliberately creates a local sign-in identity
+-- with a hardcoded development-only password. Applying that file to the
+-- hosted project would plant a known-password account, which is why this
+-- second file exists rather than a flag on the first. \`tests/seedHosted.spec.ts\`
+-- guards the difference.
+--
+-- Reviewers are invited from the Supabase dashboard; hosted signup is disabled
+-- (\`disable_signup = true\`), so this file must not try to create users.
+
+${reviewAndPages}`;
+
+writeFileSync(new URL('../supabase/seed.sql', import.meta.url), localSql);
+writeFileSync(new URL('../supabase/seed.hosted.sql', import.meta.url), hostedSql);
+console.log(
+	`Wrote supabase/seed.sql and supabase/seed.hosted.sql with ${allPages.length} page rows.`
+);
