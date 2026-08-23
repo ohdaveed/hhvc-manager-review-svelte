@@ -39,6 +39,23 @@ const str = (value: unknown): string | null => (typeof value === 'string' ? valu
 const list = (value: unknown): unknown[] => (Array.isArray(value) ? value : []);
 
 /**
+ * Reader-visible text from a `paragraphs`/`bullets` (or `steps[].text`/
+ * `steps[].bullets`) entry, which can be either a bare string or the
+ * `{ text, unverified, unverifiedReason }` wrapper used throughout the corpus
+ * for a sourced claim -- only `.text` is reader-visible; `unverified` and
+ * `unverifiedReason` are annotations, not copy. Shared by `extractFields` and
+ * `extractCopy` so the two extractors agree on what a wrapped entry means.
+ */
+const entryText = (entry: unknown): string | null => {
+	const direct = str(entry);
+	if (direct !== null) return direct;
+	if (entry && typeof entry === 'object' && !Array.isArray(entry)) {
+		return str((entry as { text?: unknown }).text);
+	}
+	return null;
+};
+
+/**
  * Reader-visible copy only, keyed by the same ids the edit targets advertise as
  * `data-rewrite-field`. Annotations (`karl`, `editorNote`, `editorStatus`) and
  * metadata (`slug`, `type`, `reading`) are deliberately absent: they travel in
@@ -67,12 +84,12 @@ export function extractFields(page: CorpusPage): FieldMap {
 		if (heading !== null) fields[`sections.${key}.heading`] = heading;
 
 		list(section.paragraphs).forEach((entry, i) => {
-			const text = str(entry);
+			const text = entryText(entry);
 			if (text !== null) fields[`sections.${key}.paragraphs.${i}`] = text;
 		});
 
 		list(section.bullets).forEach((entry, i) => {
-			const text = str(entry);
+			const text = entryText(entry);
 			if (text !== null) fields[`sections.${key}.bullets.${i}`] = text;
 		});
 
@@ -128,37 +145,21 @@ export function extractCopy(page: CorpusPage): CopyMap {
 		if (text !== null) copy[key] = text;
 	};
 
-	// An entry that is either a bare string, or the `{ text, unverified,
-	// unverifiedReason }` wrapper used throughout the corpus for a sourced
-	// claim -- only `.text` is reader-visible.
+	// `entryText` (shared with `extractFields`, defined above) handles the
+	// bare-string-or-`{ text, ... }`-wrapper shape; `setEntryText` just writes
+	// the result into `copy` under `key`.
 	const setEntryText = (key: string, entry: unknown) => {
-		const direct = str(entry);
-		if (direct !== null) {
-			copy[key] = direct;
-			return;
-		}
-		if (entry && typeof entry === 'object' && !Array.isArray(entry)) {
-			set(key, (entry as { text?: unknown }).text);
-		}
+		const text = entryText(entry);
+		if (text !== null) copy[key] = text;
 	};
 
 	list(page.sections).forEach((raw, index) => {
 		const section = (raw ?? {}) as Section;
 		const key = deriveFieldKey(section, index);
 
-		// extractFields only reads a paragraphs/bullets entry when it is a bare
-		// string, so a `{ text, unverified, unverifiedReason }` entry never
-		// makes it into the field map above. Fill in exactly those gaps here --
-		// same ids `extractFields` would have used, only where it produced
-		// nothing at all, so there is no collision with its output.
-		list(section.paragraphs).forEach((entry, i) => {
-			if (str(entry) !== null) return;
-			setEntryText(`sections.${key}.paragraphs.${i}`, entry);
-		});
-		list(section.bullets).forEach((entry, i) => {
-			if (str(entry) !== null) return;
-			setEntryText(`sections.${key}.bullets.${i}`, entry);
-		});
+		// section.paragraphs/section.bullets need no handling here: they are
+		// edit targets, so `extractFields` already reads them -- wrapped
+		// entries included -- and its output is spread into `copy` above.
 
 		set(`sections.${key}.button`, section.button);
 		set(`sections.${key}.buttonUrl`, section.buttonUrl);

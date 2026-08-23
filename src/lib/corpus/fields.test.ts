@@ -67,6 +67,43 @@ describe('extractFields', () => {
 		const bare = { title: 'T', sections: [{ heading: 'H' }] };
 		expect(Object.keys(extractFields(bare)).sort()).toEqual(['sections.h.heading', 'title']);
 	});
+
+	it('extracts text from object-wrapped paragraph and bullet entries, under the same id a bare string would use, excluding the annotation properties', () => {
+		const wrapped = {
+			title: 'T',
+			sections: [
+				{
+					heading: 'H',
+					paragraphs: [
+						'A bare paragraph.',
+						{
+							text: 'A sourced paragraph.',
+							unverified: true,
+							unverifiedReason: 'No tier-1 source yet. Confirm with HHVC before publication.'
+						}
+					],
+					bullets: [
+						{
+							text: 'A sourced bullet.',
+							unverified: true,
+							unverifiedReason: 'No tier-1 source yet. Confirm with HHVC before publication.'
+						}
+					]
+				}
+			]
+		};
+
+		const fields = extractFields(wrapped);
+		expect(fields['sections.h.paragraphs.0']).toBe('A bare paragraph.');
+		expect(fields['sections.h.paragraphs.1']).toBe('A sourced paragraph.');
+		expect(fields['sections.h.bullets.0']).toBe('A sourced bullet.');
+
+		const values = Object.values(fields);
+		for (const value of values) {
+			expect(value).not.toMatch(/Confirm with HHVC before publication/);
+		}
+		expect(values).not.toContain(true);
+	});
 });
 
 // A fixture exercising every UNHANDLED_COPY_* key from the coverage-guard
@@ -232,16 +269,25 @@ describe('extractCopy', () => {
 		expect(copy['whatToKnow.thingsToKnow.1.text']).toBe('You can report anonymously.');
 	});
 
-	it('fills the gap extractFields leaves in wrapped paragraph/bullet entries', () => {
-		// extractFields's `str(entry)` drops a `{ text, unverified, ... }` entry
-		// silently -- confirm it really is absent from extractFields's own
-		// output before asserting extractCopy fills the same id.
-		expect(extractFields(richPage)['sections.how-to-report.paragraphs.1']).toBeUndefined();
-		expect(extractFields(richPage)['sections.how-to-report.bullets.1']).toBeUndefined();
+	it('carries the wrapped paragraph/bullet text extractFields now extracts directly, and still fills the gap for step text/bullets extractFields never covers', () => {
+		// extractFields now extracts a wrapped `{ text, unverified, ... }`
+		// paragraph/bullet entry directly (see the extractFields test above),
+		// and extractCopy spreads extractFields's output in -- so both agree.
+		expect(extractFields(richPage)['sections.how-to-report.paragraphs.1']).toBe(
+			'A sourced paragraph.'
+		);
+		expect(extractFields(richPage)['sections.how-to-report.bullets.1']).toBe('A sourced bullet.');
 
 		const copy = extractCopy(richPage);
 		expect(copy['sections.how-to-report.paragraphs.1']).toBe('A sourced paragraph.');
 		expect(copy['sections.how-to-report.bullets.1']).toBe('A sourced bullet.');
+
+		// extractFields never reads `steps` at all, so extractCopy's own
+		// wrapped-entry handling is still the only source for these ids.
+		expect(extractFields(richPage)['sections.how-to-report.steps.0.text.1']).toBeUndefined();
+		expect(copy['sections.how-to-report.steps.0.text.1']).toBe('A sourced step paragraph.');
+		expect(extractFields(richPage)['sections.how-to-report.steps.0.bullets.1']).toBeUndefined();
+		expect(copy['sections.how-to-report.steps.0.bullets.1']).toBe('A sourced step bullet.');
 	});
 
 	it('excludes annotations and structural/enum keys, including nested ones', () => {
