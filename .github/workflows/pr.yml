@@ -77,6 +77,9 @@ jobs:
           ./actionlint -color
           rm -f actionlint "actionlint_${ACTIONLINT_VERSION}_"*
 
+      - name: Check corpus lock
+        run: bun run corpus:check
+
       - name: Unit tests
         run: bun run test:unit -- --run
 

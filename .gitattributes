@@ -1,0 +1,8 @@
+# corpus.lock is generated. A hand-merged hash manifest can agree with neither
+# side of the merge, so conflicts are resolved by regenerating:
+#
+#     bun run corpus:lock
+#
+# `binary` stops git from attempting a line-wise textual merge and producing a
+# file that looks plausible and hashes to nothing.
+corpus.lock binary

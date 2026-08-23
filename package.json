@@ -18,6 +18,7 @@
 		"format": "prettier --write .",
 		"seed:gen": "bun run scripts/gen-seed.ts",
 		"corpus:lock": "bun run scripts/corpus-lock.ts",
+		"corpus:check": "bun run scripts/check-corpus-lock.ts",
 		"test:e2e": "playwright install && playwright test",
 		"test": "npm run test:unit -- --run && npm run test:e2e",
 		"test:unit": "vitest",
