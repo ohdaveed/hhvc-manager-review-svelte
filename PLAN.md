@@ -288,26 +288,29 @@ there, so this described a local-stack exposure rather than a live one — but t
 local defaults still stand, and a `supabase db reset` reproduces them.
 
 - [x] **F1a. Hosted signup is already closed — verified, no change needed.**
-      Read from the project's public `GET /auth/v1/settings` endpoint (anon key,
-      no admin credentials required), project `kiynekyzqxneepjipqhg`:
-
-      | Setting                    | Value   | Meaning                             |
-                  | -------------------------- | ------- | ----------------------------------- |
-                  | `disable_signup`           | `true`  | self-registration is off            |
-                  | `mailer_autoconfirm`       | `false` | email must be verified              |
-                  | `external.anonymous_users` | `false` | no anonymous auth                   |
-                  | providers enabled          | `email` | magic link only, matching the app    |
-
-                  So the sign-up-and-delete path this item existed to close was never open
-                  on the hosted project, and the `@sfgov.org` allow-list is unnecessary
-                  while `disable_signup` stays `true` — new reviewers must be invited from
-                  the dashboard. **Re-check this value if anyone ever reports being unable
-                  to be added**, because opening signup is the obvious wrong fix.
-                  _Method note:_ `~/.supabase/access-token` is **expired** — it 403s on
-                  `GET /v1/projects`, so the Management API is unavailable until a new PAT
-                  is minted. The public settings endpoint above is what confirmed this, and
-                  it needs no token. The Supabase CLI is not installed.
-                  _Touches:_ nothing in-repo (verified against the hosted project).
+      Confirmed twice on project `kiynekyzqxneepjipqhg`: first via the public
+      `GET /auth/v1/settings` (anon key, no admin credentials), then against the
+      authoritative `GET /v1/projects/{ref}/config/auth` on the Management API.
+      Both agree — `disable_signup` `true` (self-registration off),
+      `mailer_autoconfirm` `false` (email must be verified),
+      `external_anonymous_users_enabled` `false`, and `email` the only enabled
+      provider, matching the app's magic-link flow. The admin view adds
+      `security_captcha_enabled` `true` and `site_url`
+      `https://hhvc-manager-review.netlify.app`.
+      So the sign-up-and-delete path this item existed to close was never open
+      on the hosted project, and the `@sfgov.org` allow-list is unnecessary
+      while `disable_signup` stays `true` — new reviewers must be invited from
+      the dashboard. **Re-check this value if anyone ever reports being unable
+      to be added**, because opening signup is the obvious wrong fix.
+      _Method note, and a trap worth recording:_ the Management API 403s with
+      **Cloudflare error 1010** ("access denied based on your browser's
+      signature") when called from python-urllib, whatever token is used. That
+      is a client-signature block, **not** an auth failure, and it is easy to
+      misread as an expired credential — an earlier revision of this item did
+      exactly that. The same request through `curl` returns `200`. Both
+      `~/.supabase/access-token` and the 1Password `SUPABASE PAT` item are
+      valid. The Supabase CLI is not installed.
+      _Touches:_ nothing in-repo (verified against the hosted project).
 
 - [x] **F1b. Policies are per-operation; the migration is written and tested.**
       `supabase/migrations/20260822030000_scope_rls_policies.sql`. Shape derived
