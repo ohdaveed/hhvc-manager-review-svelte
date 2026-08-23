@@ -12,7 +12,14 @@
  */
 import { readFileSync } from 'node:fs';
 import { allPages } from '../src/lib/data/index.js';
-import { buildLock, hashLockPages, type CorpusLock } from '../src/lib/corpus/lock.js';
+import {
+	buildLock,
+	hashLockPages,
+	isValidFieldHashMap,
+	type CorpusLock
+} from '../src/lib/corpus/lock.js';
+
+const CONTENT_HASH_PATTERN = /^[0-9a-f]{64}$/;
 
 const expected = buildLock(allPages);
 
@@ -50,13 +57,12 @@ if (
 			entry === null ||
 			typeof entry !== 'object' ||
 			typeof entry.contentHash !== 'string' ||
-			entry.fieldHashes === null ||
-			typeof entry.fieldHashes !== 'object' ||
-			Array.isArray(entry.fieldHashes)
+			!CONTENT_HASH_PATTERN.test(entry.contentHash) ||
+			!isValidFieldHashMap(entry.fieldHashes)
 	)
 ) {
 	console.error(
-		'corpus.lock is malformed: "pages" is missing entries, content hashes, or field hashes.'
+		'corpus.lock is malformed: "pages" is missing entries, content hashes, or has field hash values that are not 64-character hex.'
 	);
 	console.error('Investigate the file — this is not ordinary drift. Run: bun run corpus:lock');
 	process.exit(1);

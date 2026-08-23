@@ -8,6 +8,28 @@ export type CorpusLock = {
 	pages: Record<string, { contentHash: string; fieldHashes: Record<string, string> }>;
 };
 
+const HEX64 = /^[0-9a-f]{64}$/;
+
+/**
+ * True when every value of a parsed `fieldHashes` map is a 64-character hex
+ * digest. `hashFieldMap` length-prefixes field *ids* but not their hashed
+ * values, so its injectivity depends on every value already being exactly 64
+ * hex characters -- guaranteed when the map is built fresh via `hashFields`,
+ * but not for one parsed back out of a hand-edited (or badly merged)
+ * `corpus.lock`. A map with a shorter or differently-shaped value can be
+ * crafted to collide with a structurally different map under `hashFieldMap`.
+ * Used by `scripts/check-corpus-lock.ts`'s shape guard to reject that before
+ * `hashLockPages` ever runs over untrusted values.
+ */
+export function isValidFieldHashMap(fieldHashes: unknown): fieldHashes is Record<string, string> {
+	return (
+		fieldHashes !== null &&
+		typeof fieldHashes === 'object' &&
+		!Array.isArray(fieldHashes) &&
+		Object.values(fieldHashes).every((value) => typeof value === 'string' && HEX64.test(value))
+	);
+}
+
 /** Mirrors the derivation in `pageData.svelte.ts` and `scripts/gen-seed.ts`. */
 export function derivePagePath(page: { slug?: unknown; title?: unknown }): string {
 	if (typeof page.slug === 'string') {

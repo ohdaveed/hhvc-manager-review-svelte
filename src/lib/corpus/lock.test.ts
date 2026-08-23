@@ -1,6 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { buildLock, derivePagePath, hashLockPages, type CorpusLock } from './lock.js';
-import { hashText } from './hash.js';
+import {
+	buildLock,
+	derivePagePath,
+	hashLockPages,
+	isValidFieldHashMap,
+	type CorpusLock
+} from './lock.js';
+import { hashFieldMap, hashFields, hashText } from './hash.js';
 
 const pages = [
 	{ slug: 'sf.gov/topic-b--about', title: 'B', sections: [{ heading: 'H', paragraphs: ['p'] }] },
@@ -74,5 +80,25 @@ describe('hashLockPages', () => {
 		tamperedPages[anyPath].contentHash = 'd'.repeat(64);
 
 		expect(hashLockPages(tamperedPages)).not.toBe(lock.corpusHash);
+	});
+});
+
+describe('isValidFieldHashMap', () => {
+	it('rejects a fieldHashes map whose values are not 64-hex, closing the hashFieldMap collision', () => {
+		// hashFieldMap only length-prefixes field ids, not values, so it treats
+		// { a: '1:bVALUE' } and { a: '', b: 'VALUE' } as the same byte stream --
+		// a real collision (see hash.ts). The checker must never let either
+		// shape reach hashFieldMap in the first place: both have a value that
+		// is not a 64-character hex digest, so this guard has to reject them
+		// on its own, independent of whether the two ever actually collide.
+		expect(hashFieldMap({ a: '1:bVALUE' })).toBe(hashFieldMap({ a: '', b: 'VALUE' }));
+		expect(isValidFieldHashMap({ a: '1:bVALUE' })).toBe(false);
+		expect(isValidFieldHashMap({ a: '', b: 'VALUE' })).toBe(false);
+	});
+
+	it('accepts a well-formed fieldHashes map', () => {
+		const { fieldHashes } = hashFields({ title: 'T', summary: 'S' });
+		expect(isValidFieldHashMap(fieldHashes)).toBe(true);
+		expect(isValidFieldHashMap({})).toBe(true);
 	});
 });
