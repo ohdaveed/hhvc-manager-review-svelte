@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { buildLock, derivePagePath } from './lock.js';
+import { buildLock, derivePagePath, hashLockPages, type CorpusLock } from './lock.js';
+import { hashText } from './hash.js';
 
 const pages = [
 	{ slug: 'sf.gov/topic-b--about', title: 'B', sections: [{ heading: 'H', paragraphs: ['p'] }] },
@@ -36,5 +37,42 @@ describe('buildLock', () => {
 		const annotated = structuredClone(pages) as Record<string, unknown>[];
 		annotated[0].editorNote = 'a note that must not count';
 		expect(buildLock(annotated).corpusHash).toBe(buildLock(pages).corpusHash);
+	});
+});
+
+describe('hashLockPages', () => {
+	it('prevents collisions from crafted paths', () => {
+		// The corpus digest construction must be injective: two structurally
+		// different page manifests cannot produce the same digest, even if one
+		// page's path is crafted to look like a separator-joined pair of the
+		// other manifest's entries. If this ever reverts to a plain
+		// separator-joined string (e.g. `${path}|${contentHash}`), pagesB below
+		// collapses onto pagesA's digest and this test catches it.
+		const hashA = hashText('hello');
+		const hashB = hashText('world');
+		const pagesA: CorpusLock['pages'] = {
+			a: { contentHash: hashA, fieldHashes: {} },
+			b: { contentHash: hashB, fieldHashes: {} }
+		};
+		const craftedPath = `a|${hashA}|b`;
+		const pagesB: CorpusLock['pages'] = {
+			[craftedPath]: { contentHash: hashB, fieldHashes: {} }
+		};
+		expect(hashLockPages(pagesB)).not.toBe(hashLockPages(pagesA));
+	});
+
+	it('detects a pages map tampered independently of corpusHash', () => {
+		// This is the reviewer's exploit for Finding 1: edit a page's
+		// contentHash in a parsed corpus.lock while leaving corpusHash alone.
+		// Re-deriving the digest from the (now tampered) pages map must no
+		// longer match the untouched corpusHash, which is what lets the
+		// checker tell an internally-inconsistent lockfile from a merely
+		// stale one.
+		const lock = buildLock(pages);
+		const tamperedPages = structuredClone(lock.pages);
+		const anyPath = Object.keys(tamperedPages)[0];
+		tamperedPages[anyPath].contentHash = 'd'.repeat(64);
+
+		expect(hashLockPages(tamperedPages)).not.toBe(lock.corpusHash);
 	});
 });
