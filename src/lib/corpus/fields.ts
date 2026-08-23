@@ -67,12 +67,16 @@ export function extractFields(page: CorpusPage): FieldMap {
 		if (heading !== null) fields[`sections.${key}.heading`] = heading;
 
 		list(section.paragraphs).forEach((entry, i) => {
-			const text = str(entry);
+			const text = str(entry) ?? (entry && typeof entry === 'object' && !Array.isArray(entry)
+				? str((entry as { text?: unknown }).text)
+				: null);
 			if (text !== null) fields[`sections.${key}.paragraphs.${i}`] = text;
 		});
 
 		list(section.bullets).forEach((entry, i) => {
-			const text = str(entry);
+			const text = str(entry) ?? (entry && typeof entry === 'object' && !Array.isArray(entry)
+				? str((entry as { text?: unknown }).text)
+				: null);
 			if (text !== null) fields[`sections.${key}.bullets.${i}`] = text;
 		});
 

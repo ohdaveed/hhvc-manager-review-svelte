@@ -232,12 +232,11 @@ describe('extractCopy', () => {
 		expect(copy['whatToKnow.thingsToKnow.1.text']).toBe('You can report anonymously.');
 	});
 
-	it('fills the gap extractFields leaves in wrapped paragraph/bullet entries', () => {
-		// extractFields's `str(entry)` drops a `{ text, unverified, ... }` entry
-		// silently -- confirm it really is absent from extractFields's own
-		// output before asserting extractCopy fills the same id.
-		expect(extractFields(richPage)['sections.how-to-report.paragraphs.1']).toBeUndefined();
-		expect(extractFields(richPage)['sections.how-to-report.bullets.1']).toBeUndefined();
+	it('extracts reader-visible text from wrapped paragraph/bullet entries', () => {
+		expect(extractFields(richPage)['sections.how-to-report.paragraphs.1']).toBe(
+			'A sourced paragraph.'
+		);
+		expect(extractFields(richPage)['sections.how-to-report.bullets.1']).toBe('A sourced bullet.');
 
 		const copy = extractCopy(richPage);
 		expect(copy['sections.how-to-report.paragraphs.1']).toBe('A sourced paragraph.');
