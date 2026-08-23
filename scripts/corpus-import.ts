@@ -42,10 +42,13 @@ if (lookupError) {
 }
 
 if (existing) {
-	// A matching corpus_hash alone doesn't prove this version is complete -- a
-	// prior run can leave an orphaned corpus_versions row with zero (or partial)
-	// page_versions if the second insert below failed. Verify before declaring
-	// "unchanged", or a partial import silently and permanently loses its page
+	// A matching corpus_hash alone doesn't prove this version is complete. The
+	// import below now runs as a single transaction (import_corpus_version,
+	// supabase/migrations/20260823120000_import_corpus_version_fn.sql), so a
+	// *new* run can no longer leave an orphaned corpus_versions row with zero
+	// (or partial) page_versions -- but a row from a run that predates that
+	// function still could. Verify before declaring "unchanged", or a
+	// pre-existing partial import silently and permanently loses its page
 	// snapshots on the very next run.
 	const { count: pageCount, error: countError } = await supabase
 		.from('page_versions')
@@ -82,27 +85,10 @@ try {
 	gitSha = null;
 }
 
-const { data: version, error: versionError } = await supabase
-	.from('corpus_versions')
-	.insert({
-		git_sha: gitSha,
-		page_count: allPages.length,
-		corpus_hash: lock.corpusHash,
-		note: process.env.CORPUS_NOTE ?? null
-	})
-	.select('id')
-	.single();
-
-if (versionError || !version) {
-	console.error('Could not insert corpus_versions:', versionError?.message);
-	process.exit(1);
-}
-
 const rows = allPages.map((page) => {
 	const path = derivePagePath(page);
 	const entry = lock.pages[path];
 	return {
-		corpus_version_id: version.id,
 		path,
 		content: page,
 		content_hash: entry.contentHash,
@@ -110,21 +96,28 @@ const rows = allPages.map((page) => {
 	};
 });
 
-const { error: pagesError } = await supabase.from('page_versions').insert(rows);
+// Both inserts happen inside import_corpus_version's own PL/pgSQL body
+// (supabase/migrations/20260823120000_import_corpus_version_fn.sql), which
+// Postgres runs as a single transaction. A failure partway through --
+// including the same "row exists but is incomplete" shape the guard above
+// was written for -- rolls back the corpus_versions insert along with it, so
+// this failure mode is no longer possible for new imports: there is no
+// window in which a corpus_versions row can exist without its page_versions.
+// The completeness guard above stays, because it can still catch an orphan
+// left by a run that predates this function.
+const { data: versionId, error: rpcError } = await supabase.rpc('import_corpus_version', {
+	p_git_sha: gitSha,
+	p_page_count: allPages.length,
+	p_corpus_hash: lock.corpusHash,
+	p_note: process.env.CORPUS_NOTE ?? null,
+	p_pages: rows
+});
 
-if (pagesError) {
-	console.error('Could not insert page_versions:', pagesError.message);
-	console.error(
-		`ORPHAN ROW WARNING: corpus_versions row ${version.id} was created but its page_versions ` +
-			`did not write. This needs manual cleanup: delete that row before running corpus:import ` +
-			`again. A re-run WILL be caught by the completeness check above -- it will find this ` +
-			`same-hash row, see its page_versions count doesn't match, and exit non-zero instead of ` +
-			`silently reporting "Corpus unchanged". Delete row ${version.id} from corpus_versions ` +
-			`first so a clean re-import can proceed.`
-	);
+if (rpcError || !versionId) {
+	console.error('Could not import corpus version:', rpcError?.message);
 	process.exit(1);
 }
 
 console.log(
-	`Imported corpus version ${version.id} — ${rows.length} pages, hash ${lock.corpusHash.slice(0, 12)}, git ${gitSha?.slice(0, 12) ?? 'unknown'}.`
+	`Imported corpus version ${versionId} — ${rows.length} pages, hash ${lock.corpusHash.slice(0, 12)}, git ${gitSha?.slice(0, 12) ?? 'unknown'}.`
 );
