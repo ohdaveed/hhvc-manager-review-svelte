@@ -525,6 +525,20 @@ with a backtick — `join('\n\n\`)`— so the branch does not parse. Its`saveInl
       one scoped disable, matching `src/lib/utils.ts`. Links go through
       `resolve()`.
 
+## Outcome
+
+`dccf3b4`. All 18 threads closed; Qodo's re-review returns Bugs (0), rule
+violations (0), cross-repo conflicts (0), and reviewdog re-posted nothing. Every
+gate green. Four tests added, 137 passing. The cross-page save was verified end
+to end against a local Supabase stack, not just in unit tests: accept on
+`mosquito-control-program`, navigate away, return, save — the row lands under
+`mosquito-control-program`.
+
+Also removed: `EditTarget`'s `update` prop and the `setEntry` export that existed
+only to feed it. Every caller built a closure over `section.paragraphs[i]` for
+it, which is the stale closure `fieldResolver` exists to avoid, and nothing had
+called it since task 1.
+
 ## Deliberately not fixed here
 
 **`/review` has no `+page.svelte`, so "Export review data" and "Site map" 404.**
@@ -540,3 +554,8 @@ Not in these threads' scope.
 **Suggestion cards render in completion order, not badge order.** The map is
 keyed by field id and populated as requests land, so a slow field sorts last.
 Cosmetic until it isn't — the badge is the only thing tying a card to the copy.
+
+**The proxy's own cap is still 20,000** (`src/routes/api/ai/generate/+server.ts`).
+Nothing reaches it now that the client sends at most 8,000, but the proxy will
+still forward 8,001-20,000 to a backend that rejects it. Reconciling the two is a
+change to a shared route, not to this panel.
