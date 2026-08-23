@@ -6,7 +6,7 @@
 
 **Architecture:** A generator emits two seed files from `allPages` — the existing local one (which creates a dev password user) and a new hosted-safe one that writes only `reviews` and `pages`. A shared field-extraction module turns each page into a `field_id → text` map using the same id shapes the UI already advertises, which is then hashed per field and per page. `corpus:import` writes one `corpus_versions` row plus a `page_versions` row per page, and regenerates a committed `corpus.lock` so CI can detect an un-imported corpus with no database access.
 
-**Tech Stack:** Bun, TypeScript, Vitest, Supabase (PostgREST + `@supabase/supabase-js` with a service-role key), Postgres 15, SvelteKit 2.
+**Tech Stack:** Bun, TypeScript, Vitest, Supabase CLI 2.115.0 (devDependency, Docker-backed local stack), Supabase (PostgREST + `@supabase/supabase-js` with a service-role key), Postgres 15, SvelteKit 2.
 
 **Spec:** `docs/superpowers/specs/2026-08-23-mockup-version-history-design.md`
 
@@ -17,7 +17,10 @@
 - Public env vars use the **`SVELTE_PUBLIC_`** prefix, not `PUBLIC_`.
 - Vitest project split is decided by file **location**: `src/**/*.{test,spec}.{js,ts}` and `tests/**/*.spec.ts` run in the **server** project (node); `tests/**/*.test.ts` runs in the **client** project (jsdom). New node-side tests in this plan go in `tests/*.spec.ts` or `src/**/*.test.ts`.
 - **Never apply `supabase/seed.sql` to the hosted project.** It inserts an `auth.users` row with the hardcoded password `dev-local-only`.
-- The Supabase CLI is **not installed**. Hosted DDL and data writes go through the Management API `POST /v1/projects/{ref}/database/query` or through `@supabase/supabase-js` with `SUPABASE_SERVICE_ROLE_KEY`.
+- The Supabase CLI is a **devDependency** (`supabase@2.115.0`); invoke it as `bunx supabase`. Docker is running, so `supabase start` / `db reset` work locally.
+- **Schema changes go through `supabase db push --linked`** so they are recorded in `supabase_migrations.schema_migrations`. The Management API `POST /v1/projects/{ref}/database/query` executes raw SQL and does **not** record migration history — use it for data only.
+- **Never run `supabase db push --linked --include-seed` or `supabase db reset --linked`.** `config.toml` points `[db.seed] sql_paths` at `./seed.sql`, the local seed that creates an `auth.users` row with the password `dev-local-only`; either command would plant that account in production.
+- Data writes use `@supabase/supabase-js` with `SUPABASE_SERVICE_ROLE_KEY`, or the Management API.
 - Hosted project ref: **`kiynekyzqxneepjipqhg`**.
 - `SUPABASE_SERVICE_ROLE_KEY` and `SVELTE_PUBLIC_SUPABASE_URL` come from `.env.local`, which Bun loads automatically — the pattern `scripts/sync-checks.ts` already uses.
 - Existing `field_id` shapes are **authoritative and must not change**: `title`, `summary`, `audience.<i>`, `sections.<key>.heading`, `sections.<key>.paragraphs.<i>`, `sections.<key>.bullets.<i>`, `sections.<key>.callout.title`, `sections.<key>.callout.text`.
@@ -759,18 +762,63 @@ CREATE POLICY "page_versions_select" ON page_versions
     FOR SELECT TO authenticated USING (true);
 ```
 
-- [ ] **Step 2: Verify the SQL parses without applying it**
+- [ ] **Step 2: Apply it against the local stack**
+
+The Supabase CLI is a devDependency (`supabase@2.115.0`) and Docker is running, so
+the migration is exercised locally before it goes anywhere near production.
+`db reset` re-applies every migration from scratch and then runs the seed, which
+tests both this migration and Task 4's `seed.sql` in one command.
 
 Run:
 
 ```bash
-bun run test:unit -- --run 2>/dev/null; \
-grep -c "CREATE TABLE IF NOT EXISTS" supabase/migrations/20260823060000_corpus_versions.sql
+bunx supabase start
+bunx supabase db reset
 ```
 
-Expected: `2`. (The migration is applied to the hosted project in Task 8; local application needs the Supabase CLI, which is not installed.)
+Expected: `Applying migration 20260823060000_corpus_versions.sql...` followed by
+`Seeding data from supabase/seed.sql...` and `Finished supabase db reset.` A
+syntax error surfaces here rather than in production.
 
-- [ ] **Step 3: Commit**
+- [ ] **Step 3: Verify the tables and policies exist locally**
+
+Run:
+
+```bash
+bunx supabase db reset >/dev/null 2>&1
+psql "$(bunx supabase status -o env | grep '^DB_URL=' | cut -d= -f2- | tr -d '"')" -Atc "
+select c.relname, c.relrowsecurity, count(p.polname)
+from pg_class c
+join pg_namespace n on n.oid = c.relnamespace
+left join pg_policy p on p.polrelid = c.oid
+where n.nspname = 'public' and c.relname in ('corpus_versions','page_versions')
+group by 1,2 order by 1"
+```
+
+Expected two rows, each with RLS enabled and one policy:
+
+```
+corpus_versions|t|1
+page_versions|t|1
+```
+
+- [ ] **Step 4: Confirm the local seed loaded**
+
+Run:
+
+```bash
+psql "$(bunx supabase status -o env | grep '^DB_URL=' | cut -d= -f2- | tr -d '"')" -Atc \
+  "select (select count(*) from reviews), (select count(*) from pages)"
+```
+
+Expected: `1|29`. This is the local-seed verification the plan could not perform
+before the CLI was installed.
+
+- [ ] **Step 5: Stop the local stack**
+
+Run: `bunx supabase stop`
+
+- [ ] **Step 6: Commit**
 
 ```bash
 git add supabase/migrations/20260823060000_corpus_versions.sql
@@ -1217,33 +1265,85 @@ Expected: `1`. If `0`, stop — the key must be added from 1Password before cont
 
 - Modify: `PLAN.md` (tick F5, record what was applied)
 
-- [ ] **Step 1: Apply the migration**
+> ### Two commands that must never be run against `--linked`
+>
+> `supabase/config.toml` sets `[db.seed] sql_paths = ["./seed.sql"]` — the **local**
+> seed, which creates an `auth.users` row with the password `dev-local-only`.
+> Therefore:
+>
+> - **Never `supabase db push --linked --include-seed`.** It would apply that file
+>   to production and plant a known-password account.
+> - **Never `supabase db reset --linked`.** It wipes the linked project and reseeds
+>   it from the same file.
+>
+> The hosted seed is applied explicitly in Step 4 instead. Schema goes through the
+> CLI so migration history is recorded; data does not, because data is not a
+> migration.
 
-The Supabase CLI is not installed, so apply the DDL through the Management API. Read the PAT from 1Password at use time and never print it:
+- [ ] **Step 1: Repair the migration history, or push will refuse**
+
+The remote history contains `20260822221937_scope_rls_policies`, which has no
+local file — `scope_rls_policies` was recorded twice under different versions.
+`supabase db push --dry-run` fails on it today with
+`LegacyDbPushMissingLocalError: Remote migration versions not found in local
+migrations directory`, so this is a prerequisite rather than tidying.
+
+Mark the orphan reverted, which edits only the history table and touches no schema:
+
+```bash
+export SUPABASE_ACCESS_TOKEN=$(op item get 4m2bhv2xsnaeorliyxml2xeqc4 --fields credential --reveal)
+bunx supabase migration repair --status reverted 20260822221937 --linked
+```
+
+Then confirm local and remote agree:
+
+```bash
+bunx supabase migration list --linked
+```
+
+Expected: three rows whose `local` and `remote` both read `20260822010000`,
+`20260822020000`, `20260822030000`, and **no** row with an empty `local`.
+
+- [ ] **Step 2: Dry-run the push**
+
+```bash
+bunx supabase db push --linked --dry-run
+```
+
+Expected: it names `20260823060000_corpus_versions.sql` as the migration that
+would be applied, and no error. If `LegacyDbPushMissingLocalError` still appears,
+Step 1 did not take — stop and re-check.
+
+- [ ] **Step 3: Push the migration**
+
+```bash
+bunx supabase db push --linked
+```
+
+Note the absence of `--include-seed`; see the warning above.
+
+Expected: `Applying migration 20260823060000_corpus_versions.sql...` then
+`Finished supabase db push.` Verify it was recorded in history, which is the
+thing the Management API route could not do:
+
+```bash
+bunx supabase migration list --linked
+```
+
+Expected: a fourth row with `local` and `remote` both `20260823060000`.
+
+- [ ] **Step 4: Apply the hosted seed**
+
+Data, not schema — so it does not belong in migration history. Apply
+`seed.hosted.sql` through the Management API, which needs no local Postgres:
 
 ```bash
 TOK=$(op item get 4m2bhv2xsnaeorliyxml2xeqc4 --fields credential --reveal)
-SQL=$(python3 -c "import json,sys;print(json.dumps(open('supabase/migrations/20260823060000_corpus_versions.sql').read()))")
+SQL=$(python3 -c "import json;print(json.dumps(open('supabase/seed.hosted.sql').read()))")
 printf 'header = "Authorization: Bearer %s"\nheader = "Content-Type: application/json"\nurl = "https://api.supabase.com/v1/projects/kiynekyzqxneepjipqhg/database/query"\ndata = "{\\"query\\": %s}"\nsilent\n' "$TOK" "$SQL" | curl --config -
 ```
 
-Expected: `[]` or a success payload, not an error object.
-
-- [ ] **Step 2: Verify the tables exist**
-
-Run the same request shape with:
-
-```sql
-select table_name from information_schema.tables where table_schema='public' order by 1
-```
-
-Expected: the list now includes `corpus_versions` and `page_versions` alongside `comments`, `documents`, `edits`, `pages`, `reviews`.
-
-- [ ] **Step 3: Apply the hosted seed**
-
-Same request shape, with the contents of `supabase/seed.hosted.sql` as the query.
-
-Expected: success. Then verify:
+Then verify with the same request shape and this query:
 
 ```sql
 select (select count(*) from reviews) as reviews, (select count(*) from pages) as pages
@@ -1251,12 +1351,12 @@ select (select count(*) from reviews) as reviews, (select count(*) from pages) a
 
 Expected: `[{"reviews":1,"pages":29}]`.
 
-- [ ] **Step 4: Import the first corpus version**
+- [ ] **Step 5: Import the first corpus version**
 
 Run: `bun run corpus:import`
 Expected: `Imported corpus version <uuid> — 29 pages, hash <12 hex>, git <12 hex>.`
 
-- [ ] **Step 5: Prove idempotency against the real database**
+- [ ] **Step 6: Prove idempotency against the real database**
 
 Run: `bun run corpus:import`
 Expected: `Corpus unchanged — already imported at <timestamp>. Nothing to do.`
@@ -1269,11 +1369,11 @@ select count(*) as versions, (select count(*) from page_versions) as page_versio
 
 Expected: `[{"versions":1,"page_versions":29}]`.
 
-- [ ] **Step 6: Verify the deployed app now loads a review**
+- [ ] **Step 7: Verify the deployed app now loads a review**
 
 Sign in at `https://hhvc-manager-review.netlify.app` with a magic link and confirm the queue renders 29 pages and the console no longer logs `No review found: null`. A signed-out visitor still sees nothing — that is correct, and the signed-out empty state is explicitly out of scope for this slice.
 
-- [ ] **Step 7: Update PLAN.md and commit**
+- [ ] **Step 8: Update PLAN.md and commit**
 
 Tick F5, recording the review id, the page count, and the corpus version hash. Then:
 
@@ -1293,5 +1393,9 @@ git commit -m "docs(plan): close F5 — hosted project seeded and first corpus v
 **Deferred to later slices, deliberately:** `edit_decisions`, `page_notes`, `materialized_in_version_id`, overlay resolution, expiry UI and the diff UI. Slice 1 records versions; nothing consumes them yet. That is the intended shape — it delivers F5 and lays the foundation without half-building slice 3.
 
 **Type consistency.** `CorpusPage` and `FieldMap` are defined in `fields.ts` (Task 2) and imported by `hash.ts` (Task 3) and `lock.ts` (Task 6). `buildLock` and `derivePagePath` are defined in `lock.ts` and consumed by `scripts/corpus-lock.ts`, `scripts/check-corpus-lock.ts` and `scripts/corpus-import.ts` under those exact names. `deriveFieldKey` is defined in Task 1 and consumed in Task 2.
+
+**A prerequisite found while revising Tasks 5 and 9.** The remote migration history contains `20260822221937_scope_rls_policies` with no local file — `scope_rls_policies` is recorded twice under different versions. This is not cosmetic: `supabase db push --linked --dry-run` fails on it today with `LegacyDbPushMissingLocalError`, so Task 9 cannot push the new migration until the history is repaired. Step 1 of Task 9 does that with `migration repair --status reverted`, which edits only the history table.
+
+**A footgun the plan now forbids explicitly.** `config.toml` sets `[db.seed] sql_paths = ["./seed.sql"]`, which is the seed that creates an `auth.users` row with the password `dev-local-only`. So `supabase db push --linked --include-seed` and `supabase db reset --linked` would both plant a known-password account in production. Both are named and prohibited in Global Constraints and again in Task 9.
 
 **One risk worth naming.** Task 8 inserts `corpus_versions` and then `page_versions` in two statements without a transaction, because PostgREST has no cross-request transaction. A failure between them leaves an orphan version row, which the script reports with its id so it can be deleted. Making this atomic needs a Postgres function; that is worth doing if imports ever run unattended, and is not worth it while a human runs the command and reads the output.
