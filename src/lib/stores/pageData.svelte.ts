@@ -5,22 +5,43 @@ import { deriveFieldKey } from '$lib/corpus/fieldKey.js';
 type Page = {
 	id: string;
 	title: string;
+	/** The corpus modules carry no shared declaration; see `fieldResolver.ts`. */
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	[key: string]: any;
 };
 
-type ActiveField = {
-	/** Human-facing label shown in the ActionBar, e.g. `Section [2] Paragraph`.
-	 *  Display only -- it omits the paragraph index, so several fields in one
-	 *  section share it. Never use it to identify a field. */
-	name: string;
-	/** Stable path used as `edits.field_id`, e.g.
-	 *  `sections.who-we-are.paragraphs.1`. Mirrors the element's
-	 *  `data-rewrite-field`, and its `title`/`summary` values are the keys
-	 *  HelpPanel folds on. */
-	fieldId: string;
-	content: string;
-	update: (newContent: string) => void;
-} | null;
+/**
+ * One AI rewrite awaiting a decision, keyed by the field it belongs to.
+ *
+ * `original` is captured when the rewrite is requested, so the diff still shows
+ * what the copy said even after the reviewer accepts it and the page changes
+ * underneath.
+ */
+export type Suggestion = {
+	/**
+	 * The routable id of the page this rewrite was produced for.
+	 *
+	 * Field ids are page-relative -- `title` and `summary` name a live field on
+	 * every one of the 29 pages -- so an id alone cannot say which page a
+	 * suggestion belongs to. Accepted suggestions deliberately survive
+	 * navigation, being unsaved work, and without this they resolved against
+	 * whatever page was on screen when `Save` was pressed: an edit approved for
+	 * page A was written to page B and persisted under B's row.
+	 */
+	pageId: string;
+	original: string;
+	suggested: string;
+	status: 'pending' | 'accepted' | 'rejected' | 'error';
+	/** Present only on `error`; shown on the card rather than in an alert. */
+	message?: string;
+};
+
+export type AgentRec = {
+	state: 'idle' | 'loading' | 'done' | 'error';
+	text: string;
+};
+
+const RAIL_KEY = 'hhvc:railCollapsed';
 
 /**
  * Gives a section a stable key for `edits.field_id`.
@@ -46,7 +67,39 @@ function withFieldKey(section: Record<string, unknown>, index: number) {
 
 class PageStore {
 	pages = $state<Page[]>([]);
-	activeField = $state<ActiveField>(null);
+
+	/**
+	 * The selected edit targets, in the order they were picked.
+	 *
+	 * Replaces the old single `activeField`. The index of an id here plus one is
+	 * the number on its badge on the mockup and on its suggestion card, which is
+	 * what ties the two together for the reviewer — so this is ordered, not a Set.
+	 *
+	 * Ids only. Values and setters come from `$lib/corpus/fieldResolver` on
+	 * demand, because a captured value goes stale the moment an edit lands and a
+	 * captured setter can close over a detached object after a re-render.
+	 */
+	selectedFieldIds = $state<string[]>([]);
+
+	/** Pending/decided rewrites, keyed by field id. */
+	suggestions = $state<Record<string, Suggestion>>({});
+
+	/**
+	 * The routable id of the page on screen, as `enterPage` last set it.
+	 *
+	 * The review layout stays mounted across slug navigation, so nothing was
+	 * observing the page change and the selection simply carried over: clicking
+	 * a title on one page left the badge sitting on the next page's title.
+	 */
+	activePageId = $state<string | undefined>(undefined);
+
+	/** The free-text batch instruction, applied to every selected field. */
+	rewriteInstruction = $state('');
+
+	agentRec = $state<AgentRec>({ state: 'idle', text: '' });
+
+	/** Per-user, per-device chrome. Not review data, so it never leaves the browser. */
+	railCollapsed = $state<{ queue: boolean; panel: boolean }>({ queue: false, panel: false });
 
 	constructor() {
 		// Map the legacy objects to include an 'id' (from their 'slug' or a generated one)
@@ -65,6 +118,152 @@ class PageStore {
 
 	addPage(page: Page) {
 		this.pages.push(page);
+	}
+
+	// ---- selection -------------------------------------------------------
+	// Single selection is `selectedFieldIds.length === 1`, deliberately, rather
+	// than a second code path beside a multi-select one. Two paths here is how
+	// the badge number and the suggestion card drift apart.
+
+	isSelected(fieldId: string): boolean {
+		return this.selectedFieldIds.includes(fieldId);
+	}
+
+	/** 1-based position, or 0 when not selected. This is the badge number. */
+	badgeNumber(fieldId: string): number {
+		return this.selectedFieldIds.indexOf(fieldId) + 1;
+	}
+
+	/**
+	 * Plain click replaces the selection; shift-click adds, or removes if the
+	 * field was already in it. A plain click never deselects -- clearing is
+	 * `clearSelection`, which the panel header exposes, so that clicking again on
+	 * the field a reviewer is already working on does not throw the tab away.
+	 *
+	 * Replacing drops the *undecided* suggestions with it: they are keyed by
+	 * field id and a pending card for a field no longer on screen has no badge
+	 * to point at.
+	 */
+	select(fieldId: string, additive = false) {
+		if (!additive) {
+			this.selectedFieldIds = [fieldId];
+			this.suggestions = this.pruneSuggestions([fieldId]);
+			return;
+		}
+
+		if (this.isSelected(fieldId)) {
+			const next = this.selectedFieldIds.filter((id) => id !== fieldId);
+			this.selectedFieldIds = next;
+			this.suggestions = this.pruneSuggestions(next);
+		} else {
+			this.selectedFieldIds = [...this.selectedFieldIds, fieldId];
+		}
+	}
+
+	clearSelection() {
+		this.selectedFieldIds = [];
+		this.suggestions = this.pruneSuggestions([]);
+		this.rewriteInstruction = '';
+	}
+
+	// ---- page identity ---------------------------------------------------
+
+	/**
+	 * Called when the route's page changes. Idempotent, so a re-render that
+	 * names the same page does not throw a live selection away.
+	 *
+	 * Everything scoped to a selection goes with it -- the ids, the instruction,
+	 * the assistant's reading of copy that is no longer on screen. Accepted
+	 * suggestions stay, by the same rule `pruneSuggestions` already follows:
+	 * they are unsaved work, not selection chrome, and they now carry the page
+	 * they belong to so they can only be saved back to it.
+	 */
+	enterPage(pageId: string | undefined) {
+		if (pageId === this.activePageId) return;
+		this.activePageId = pageId;
+		this.selectedFieldIds = [];
+		this.rewriteInstruction = '';
+		this.agentRec = { state: 'idle', text: '' };
+		this.suggestions = this.pruneSuggestions([]);
+	}
+
+	/** The suggestions belonging to `pageId`, which are the only ones it may show. */
+	suggestionsFor(pageId: string | undefined): [string, Suggestion][] {
+		return Object.entries(this.suggestions).filter(([, s]) => s.pageId === pageId);
+	}
+
+	/** Accepted-but-unsaved edits for `pageId`. What `Save N edits` commits. */
+	acceptedFor(pageId: string | undefined): number {
+		return this.suggestionsFor(pageId).filter(([, s]) => s.status === 'accepted').length;
+	}
+
+	/**
+	 * Accepted-but-unsaved edits parked on OTHER pages.
+	 *
+	 * Surfaced rather than summed into the count above: they are real work, and
+	 * a reviewer who navigates away with edits approved should be told they are
+	 * still there rather than watching the number silently drop to zero.
+	 */
+	acceptedElsewhere(pageId: string | undefined): number {
+		return Object.values(this.suggestions).filter(
+			(s) => s.status === 'accepted' && s.pageId !== pageId
+		).length;
+	}
+
+	/** Drops one suggestion, once its edit is known to have persisted. */
+	forgetSuggestion(fieldId: string) {
+		const rest = { ...this.suggestions };
+		delete rest[fieldId];
+		this.suggestions = rest;
+	}
+
+	/**
+	 * Keeps the suggestions for `keep`, plus every `accepted` one anywhere.
+	 *
+	 * An accepted suggestion is an unsaved edit, not a piece of selection
+	 * chrome: it is what the toolbar pill counts and what `Save N edits`
+	 * commits. Dropping it on the next click would retract work the reviewer
+	 * had already approved, silently and with no undo. Pending, rejected and
+	 * errored cards carry no such commitment, so they go.
+	 */
+	private pruneSuggestions(keep: string[]): Record<string, Suggestion> {
+		const next: Record<string, Suggestion> = {};
+		for (const [id, s] of Object.entries(this.suggestions)) {
+			if (s.status === 'accepted' || keep.includes(id)) next[id] = s;
+		}
+		return next;
+	}
+
+	// ---- rail collapse ---------------------------------------------------
+
+	/**
+	 * Reads the persisted rail state. Called from the layout's `onMount` rather
+	 * than the constructor: this module is imported during SSR, where
+	 * `localStorage` does not exist, and a store that throws on import takes the
+	 * whole route with it.
+	 */
+	loadRailState() {
+		try {
+			const raw = localStorage.getItem(RAIL_KEY);
+			if (!raw) return;
+			const parsed = JSON.parse(raw);
+			this.railCollapsed = {
+				queue: parsed?.queue === true,
+				panel: parsed?.panel === true
+			};
+		} catch {
+			// Private mode, disabled storage, or a value someone hand-edited.
+			// Chrome preferences are not worth failing a page load over.
+		}
+	}
+
+	toggleRail(which: 'queue' | 'panel') {
+		this.railCollapsed = { ...this.railCollapsed, [which]: !this.railCollapsed[which] };
+		try {
+			localStorage.setItem(RAIL_KEY, JSON.stringify(this.railCollapsed));
+		} catch {
+			// As above: the toggle still works for this session.
+		}
 	}
 }
 

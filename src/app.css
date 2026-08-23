@@ -193,6 +193,19 @@ body {
 	--color-sfds-slate-l3: #1d4d70;
 	--color-sfds-grey-l2: #e2e2e2;
 
+	/* Review-status triplets. The queue needs a dot, a tint and readable text
+	   per status, and `bg-emerald-500`/`bg-amber-500` were Tailwind defaults
+	   standing in for an SFDS palette that exists. `#a84b00` is SFDS's own
+	   caution colour -- the softer ambers fail 4.5:1 on white, and this queue
+	   uses colour plus a label rather than colour alone precisely because the
+	   contrast has to hold either way. */
+	--color-sfds-green: #0b7a3e;
+	--color-sfds-green-l1: #e7f4ec;
+	--color-sfds-amber: #a84b00;
+	--color-sfds-amber-l1: #fdf1e7;
+	--color-sfds-red: #b7202e;
+	--color-sfds-red-l1: #fcecee;
+
 	/* SFDS's `title` ladder, mobile step. The desktop step is applied in the
 	   scoped block below, because @theme cannot carry a media query. */
 	--text-sfds-title-xl: 2rem;
@@ -222,11 +235,39 @@ body {
    reset every edit target would render in the UA button font, centred, at
    button size. */
 @utility edit-target {
-	@apply m-0 block w-full appearance-none border-0 bg-transparent p-0;
+	@apply m-0 block w-full appearance-none border-0 bg-transparent;
 	@apply text-left font-[inherit] text-[length:inherit] text-inherit;
 
-	@apply -mx-1 cursor-pointer rounded p-1 transition-all;
-	@apply hover:ring-ring focus-visible:ring-ring hover:ring-2 focus-visible:ring-2 focus-visible:outline-none;
+	/* Padding, never a negative horizontal margin. The previous `-mx-1` pulled
+	   the target outside the mockup column, which is exactly the horizontal
+	   overflow design 1b warns about — and it gets worse with a selection ring,
+	   because the ring is drawn at the widened edge. Vertical rhythm is kept by
+	   the padding rather than by pulling the box outward. */
+	@apply relative cursor-pointer rounded-[4px] px-[10px] py-2 transition-all;
+	@apply hover:bg-sfds-blue-l1/60;
+	@apply focus-visible:outline-none;
+
+	/* `inset` matters. An outer ring is drawn outside the border box and shifts
+	   the copy under it, so the mockup twitches as the reviewer moves focus. */
+	@apply focus-visible:shadow-[inset_0_0_0_2px_var(--color-sfds-action)];
+}
+
+/* Selected: the tint and the inset ring the panel's suggestion card matches. */
+@utility edit-target-selected {
+	@apply bg-sfds-blue-l1 shadow-[inset_0_0_0_2px_var(--color-sfds-action)];
+}
+
+/* The badge sits above the top edge, so its host needs room. Applied to the
+   WRAPPER (`h2`, `p`, `li`), not the button, so a bullet's marker stays put. */
+@utility edit-target-host {
+	@apply mt-4;
+}
+
+@utility edit-target-badge {
+	@apply absolute -top-[11px] left-2 z-10 inline-flex h-5 items-center;
+	@apply rounded-[3px] px-2;
+	@apply bg-sfds-action text-[11px] leading-none font-bold tracking-[0.06em] text-white uppercase;
+	@apply whitespace-nowrap;
 }
 
 /* ---------------------------------------------------------------------------
