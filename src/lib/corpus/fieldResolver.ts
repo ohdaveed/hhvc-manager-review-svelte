@@ -33,6 +33,15 @@ export type ResolvedField = {
 	unverifiedReason?: string;
 };
 
+/**
+ * The corpus modules in `$lib/data` are plain untyped TS objects with no shared
+ * declaration, so this is the boundary where untyped data enters. Narrowing it
+ * to `unknown` would only push a cast onto every property read below and say
+ * nothing more true, so the `any` is scoped here and named -- the same call the
+ * repo already makes in `$lib/utils.ts`. `readEntry` is where individual values
+ * are actually checked.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyPage = Record<string, any>;
 
 /**
@@ -79,17 +88,8 @@ export function entryUnverified(entry: unknown): boolean {
 	return readEntry(entry)?.unverified === true;
 }
 
-/**
- * Writes back in the same shape the entry already has.
- *
- * Exported as `setEntry` for `Section.svelte`, for the same reason `entryText`
- * is: the component holds the list, not the page. Both write paths must agree.
- */
-export function setEntry(list: any[], i: number, next: string): void {
-	writeEntry(list, i, next);
-}
-
-function writeEntry(list: any[], i: number, next: string): void {
+/** Writes back in the same shape the entry already has. */
+function writeEntry(list: unknown[], i: number, next: string): void {
 	const current = list[i];
 	if (current && typeof current === 'object' && !Array.isArray(current)) {
 		// Keep `unverified`/`unverifiedReason`: a reviewer rewriting the copy has

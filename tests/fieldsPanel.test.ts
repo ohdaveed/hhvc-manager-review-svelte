@@ -44,9 +44,17 @@ const fixture = () => ({
 describe('FieldsPanel', () => {
 	beforeEach(() => {
 		pageStore.clearSelection();
+		// `clearSelection` deliberately KEEPS accepted suggestions -- they are
+		// unsaved work, not selection chrome -- so it is not a reset. Without this
+		// an accepted card from one test is still in the store for the next.
+		pageStore.suggestions = {};
 		pageStore.agentRec = { state: 'idle', text: '' };
 		requestGeneration.mockReset();
 		saveInlineEdit.mockReset();
+		// The success path. `saveInlineEdit` returns whether the row reached the
+		// database, and a bare `vi.fn()` returns undefined -- which the panel now
+		// correctly reads as a failed save.
+		saveInlineEdit.mockResolvedValue(true);
 	});
 
 	it('says what to do when nothing is selected', () => {
@@ -76,8 +84,8 @@ describe('FieldsPanel', () => {
 	it('counts accepted suggestions in the footer, not selected fields', async () => {
 		pageStore.selectedFieldIds = ['title', 'summary'];
 		pageStore.suggestions = {
-			title: { original: 'a', suggested: 'b', status: 'pending' },
-			summary: { original: 'c', suggested: 'd', status: 'pending' }
+			title: { pageId: 'topic-x--about', original: 'a', suggested: 'b', status: 'pending' },
+			summary: { pageId: 'topic-x--about', original: 'c', suggested: 'd', status: 'pending' }
 		};
 		render(FieldsPanel, { props: { pageData: fixture() } });
 
@@ -95,6 +103,7 @@ describe('FieldsPanel', () => {
 		pageStore.selectedFieldIds = ['title'];
 		pageStore.suggestions = {
 			title: {
+				pageId: 'topic-x--about',
 				original: 'About vector control',
 				suggested: 'About pest control',
 				status: 'pending'
@@ -113,6 +122,7 @@ describe('FieldsPanel', () => {
 		pageStore.selectedFieldIds = ['sections.how-to-report.paragraphs.0'];
 		pageStore.suggestions = {
 			'sections.how-to-report.paragraphs.0': {
+				pageId: 'topic-x--about',
 				original: 'First paragraph.',
 				suggested: 'Rewritten paragraph.',
 				status: 'accepted'
@@ -137,7 +147,12 @@ describe('FieldsPanel', () => {
 		const fieldId = 'sections.how-to-report.paragraphs.1';
 		pageStore.selectedFieldIds = [fieldId];
 		pageStore.suggestions = {
-			[fieldId]: { original: 'Unsourced claim.', suggested: 'Clearer claim.', status: 'accepted' }
+			[fieldId]: {
+				pageId: 'topic-x--about',
+				original: 'Unsourced claim.',
+				suggested: 'Clearer claim.',
+				status: 'accepted'
+			}
 		};
 		render(FieldsPanel, { props: { pageData: page, livePageId: 'live-1' } });
 
@@ -180,5 +195,51 @@ describe('FieldsPanel', () => {
 			status: 'pending',
 			suggested: 'Rewritten.'
 		});
+	});
+
+	it('keeps an accepted suggestion whose edit did not persist', async () => {
+		const page = fixture();
+		const fieldId = 'sections.how-to-report.paragraphs.0';
+		pageStore.selectedFieldIds = [fieldId];
+		pageStore.suggestions = {
+			[fieldId]: {
+				pageId: 'topic-x--about',
+				original: 'First paragraph.',
+				suggested: 'Rewritten paragraph.',
+				status: 'accepted'
+			}
+		};
+		saveInlineEdit.mockResolvedValue(false);
+		render(FieldsPanel, { props: { pageData: page, livePageId: 'live-1' } });
+
+		await fireEvent.click(screen.getByRole('button', { name: 'Save 1 edit' }));
+
+		// The corpus is not touched and the card is still there to retry. Before
+		// `saveInlineEdit` returned a boolean this dropped the card and wrote the
+		// rewrite in anyway, so the panel showed a save the database never had.
+		await screen.findByText(/still here to retry/);
+		expect(page.sections[0].paragraphs[0]).toBe('First paragraph.');
+		expect(pageStore.suggestions[fieldId]?.status).toBe('accepted');
+	});
+
+	it('will not save a suggestion accepted for a different page', async () => {
+		const page = fixture();
+		pageStore.selectedFieldIds = [];
+		pageStore.suggestions = {
+			// `title` names a live field on every page in the corpus, so an id alone
+			// cannot say which page it belongs to.
+			title: {
+				pageId: 'some-other-page',
+				original: 'Elsewhere.',
+				suggested: 'Rewritten elsewhere.',
+				status: 'accepted'
+			}
+		};
+		render(FieldsPanel, { props: { pageData: page, livePageId: 'live-1' } });
+
+		expect(screen.getByRole('button', { name: 'Save 0 edits' })).toHaveProperty('disabled', true);
+		await screen.findByText(/on other pages/);
+		expect(saveInlineEdit).not.toHaveBeenCalled();
+		expect(page.title).toBe('About vector control');
 	});
 });

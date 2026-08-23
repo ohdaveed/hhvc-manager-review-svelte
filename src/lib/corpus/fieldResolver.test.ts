@@ -11,10 +11,17 @@ import { allPages } from '$lib/data';
  */
 
 /** Mirrors what `pageData.svelte.ts` does when it builds `pageStore.pages`. */
-function withKeys(page: Record<string, any>) {
+/**
+ * Same boundary as `fieldResolver.ts`'s `AnyPage`: these helpers walk the real
+ * corpus modules, which carry no shared type.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type CorpusShape = Record<string, any>;
+
+function withKeys(page: CorpusShape) {
 	return {
 		...page,
-		sections: (page.sections ?? []).map((s: Record<string, any>, i: number) => ({
+		sections: (page.sections ?? []).map((s: CorpusShape, i: number) => ({
 			...s,
 			fieldKey: deriveFieldKey(s, i)
 		}))
@@ -22,7 +29,7 @@ function withKeys(page: Record<string, any>) {
 }
 
 /** Every id `Page.svelte` and `Section.svelte` emit, for one page. */
-function expectedIds(page: Record<string, any>): string[] {
+function expectedIds(page: CorpusShape): string[] {
 	const ids: string[] = ['title'];
 	if (page.summary) ids.push('summary');
 	(page.audience ?? []).forEach((_: unknown, i: number) => ids.push(`audience.${i}`));
@@ -78,7 +85,9 @@ describe('resolveField', () => {
 
 	it('unwraps object entries and surfaces their unverified flag', () => {
 		const page = pages.find((p) => p.slug.includes('find-healthy-housing-inspector'))!;
-		const key = page.sections.find((s: any) => s.heading === 'What this tool covers')!.fieldKey;
+		const key = page.sections.find(
+			(s: CorpusShape) => s.heading === 'What this tool covers'
+		)!.fieldKey;
 
 		const f = resolveField(page, `sections.${key}.paragraphs.0`)!;
 		expect(f.value).toMatch(/assigns inspectors by neighborhood/);
@@ -88,7 +97,7 @@ describe('resolveField', () => {
 
 	it('a rewrite keeps the unverified flag — editing is not verifying', () => {
 		const page = pages.find((p) => p.slug.includes('find-healthy-housing-inspector'))!;
-		const section = page.sections.find((s: any) => s.heading === 'What this tool covers')!;
+		const section = page.sections.find((s: CorpusShape) => s.heading === 'What this tool covers')!;
 		const id = `sections.${section.fieldKey}.paragraphs.0`;
 
 		resolveField(page, id)!.set('Plainer wording.');

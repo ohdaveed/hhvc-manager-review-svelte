@@ -12,14 +12,23 @@
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
 	import { requestGeneration } from '$lib/ai/generate';
 	import { resolveFields } from '$lib/corpus/fieldResolver';
-	import { pageStore } from '$lib/stores/pageData.svelte';
+	import { pageStore, type Suggestion } from '$lib/stores/pageData.svelte';
 	import { saveInlineEdit } from '$lib/stores/reviewState';
 
 	let { pageData, livePageId }: { pageData: unknown; livePageId?: string } = $props();
 
-	/** The proxy's own cap. Checked here because `requestGeneration` throws a
-	 *  bare `API Error` and would report a 400 "Field text too long" as that. */
-	const MAX_FIELD_TEXT_CHARS = 20_000;
+	/**
+	 * The BACKEND's caps, not the proxy's.
+	 *
+	 * `build_scripts/ai/schemas.js` in HHVC_manager_review_current_tool_package
+	 * declares `fieldText: z.string().min(1).max(8000)` and
+	 * `instruction: z.string().max(2000).optional()`. This file previously read
+	 * 20,000 -- the proxy's own limit -- so anything between the two was waved
+	 * through to a 400 that `requestGeneration` flattens to a bare `API Error`.
+	 * Checked here so the reviewer gets a number instead.
+	 */
+	const MAX_FIELD_TEXT_CHARS = 8_000;
+	const MAX_INSTRUCTION_CHARS = 2_000;
 
 	const PRESETS = [
 		{
@@ -46,16 +55,23 @@
 
 	const unverified = $derived(selected.filter((s) => s.field.unverified));
 
-	const acceptedCount = $derived(
-		Object.values(pageStore.suggestions).filter((s) => s.status === 'accepted').length
-	);
-	const pendingCount = $derived(
-		Object.values(pageStore.suggestions).filter((s) => s.status === 'pending').length
-	);
+	/** This page's routable id -- the identity every suggestion is scoped by. */
+	const pageId = $derived((pageData as { id?: string } | undefined)?.id);
+
+	/** Only this page's cards. A card for another page has no badge to point at. */
+	const cards = $derived(pageStore.suggestionsFor(pageId));
+
+	const acceptedCount = $derived(pageStore.acceptedFor(pageId));
+	const pendingCount = $derived(cards.filter(([, s]) => s.status === 'pending').length);
+
+	/** Approved work sitting on pages the reviewer has navigated away from. */
+	const acceptedElsewhere = $derived(pageStore.acceptedElsewhere(pageId));
 
 	let rewriting = $state(false);
 	let saving = $state(false);
 	let saveError = $state('');
+	/** Local, pre-flight: the instruction is over the backend's 2,000-char cap. */
+	let instructionError = $state('');
 
 	/**
 	 * One request per selected field, not one for the whole batch.
@@ -67,19 +83,46 @@
 	 */
 	async function rewrite(instruction: string) {
 		if (rewriting || selected.length === 0) return;
+		if (instruction.length > MAX_INSTRUCTION_CHARS) {
+			instructionError = `That instruction is ${instruction.length.toLocaleString()} characters; the limit is ${MAX_INSTRUCTION_CHARS.toLocaleString()}.`;
+			return;
+		}
+		instructionError = '';
 		rewriting = true;
 
-		const next = { ...pageStore.suggestions };
+		const requestPageId = pageId;
+		const requested = selected.map(({ fieldId, field }) => ({ fieldId, field }));
+
+		/**
+		 * Merges ONE result into the live map.
+		 *
+		 * The whole map used to be snapshotted before the requests went out and
+		 * written back after they returned, which made every in-flight rewrite a
+		 * lost update: navigating or changing the selection prunes cards, and the
+		 * snapshot put them straight back -- along with the pre-request status of
+		 * anything the reviewer had accepted or rejected in the meantime.
+		 *
+		 * A result is also dropped outright if its field is no longer selected or
+		 * its page is no longer on screen. It has nothing to point at.
+		 */
+		const commit = (fieldId: string, suggestion: Omit<Suggestion, 'pageId'>) => {
+			if (pageId !== requestPageId) return;
+			if (!pageStore.isSelected(fieldId)) return;
+			pageStore.suggestions = {
+				...pageStore.suggestions,
+				[fieldId]: { ...suggestion, pageId: requestPageId as string }
+			};
+		};
 
 		await Promise.allSettled(
-			selected.map(async ({ fieldId, field }) => {
+			requested.map(async ({ fieldId, field }) => {
 				if (field.value.length > MAX_FIELD_TEXT_CHARS) {
-					next[fieldId] = {
+					commit(fieldId, {
 						original: field.value,
 						suggested: '',
 						status: 'error',
 						message: `Too long to rewrite (${field.value.length.toLocaleString()} characters; the limit is ${MAX_FIELD_TEXT_CHARS.toLocaleString()}).`
-					};
+					});
 					return;
 				}
 
@@ -94,19 +137,18 @@
 					if (typeof suggested !== 'string' || suggested.trim() === '') {
 						throw new Error('The backend returned no rewritten text.');
 					}
-					next[fieldId] = { original: field.value, suggested, status: 'pending' };
+					commit(fieldId, { original: field.value, suggested, status: 'pending' });
 				} catch (e) {
-					next[fieldId] = {
+					commit(fieldId, {
 						original: field.value,
 						suggested: '',
 						status: 'error',
 						message: e instanceof Error ? e.message : 'Rewrite failed.'
-					};
+					});
 				}
 			})
 		);
 
-		pageStore.suggestions = next;
 		rewriting = false;
 	}
 
@@ -117,23 +159,46 @@
 	 */
 	async function recommend() {
 		if (selected.length === 0) return;
+
+		// One payload for every selected field, so the cap applies to the JOIN,
+		// not to each part. Several individually valid selections add up past
+		// 8,000 easily, and the rewrite path's guard never covered this one.
+		const fieldText = selected.map(({ field }) => `${field.name}: ${field.value}`).join('\n\n');
+		if (fieldText.length > MAX_FIELD_TEXT_CHARS) {
+			pageStore.agentRec = {
+				state: 'error',
+				text: `That selection is ${fieldText.length.toLocaleString()} characters together; the assistant reads at most ${MAX_FIELD_TEXT_CHARS.toLocaleString()}. Select fewer fields.`
+			};
+			return;
+		}
+
+		// The reading belongs to the page and selection that asked for it. A
+		// single global `agentRec` meant a slow answer landed on whatever was on
+		// screen when it arrived -- advice about copy the reviewer had left.
+		const requestPageId = pageId;
+		const requestSelection = pageStore.selectedFieldIds.join('|');
+		const current = () =>
+			pageId === requestPageId && pageStore.selectedFieldIds.join('|') === requestSelection;
+
 		pageStore.agentRec = { state: 'loading', text: '' };
 		try {
 			const data = await requestGeneration({
 				task: 'rewrite-field',
 				provider: 'gemini',
-				fieldText: selected.map(({ field }) => `${field.name}: ${field.value}`).join('\n\n'),
+				fieldText,
 				instruction:
 					'Do not rewrite this text. In two or three sentences, say what a plain-language editor would change about it and why.'
 			});
 			const text = data?.result?.rewrittenText;
 			if (typeof text !== 'string' || text.trim() === '') throw new Error('No recommendation.');
-			pageStore.agentRec = { state: 'done', text };
+			if (current()) pageStore.agentRec = { state: 'done', text };
 		} catch (e) {
-			pageStore.agentRec = {
-				state: 'error',
-				text: e instanceof Error ? e.message : 'Could not reach the assistant.'
-			};
+			if (current()) {
+				pageStore.agentRec = {
+					state: 'error',
+					text: e instanceof Error ? e.message : 'Could not reach the assistant.'
+				};
+			}
 		}
 	}
 
@@ -152,47 +217,66 @@
 	}
 
 	/**
-	 * Writes every accepted suggestion into the corpus and persists it.
+	 * Writes this page's accepted suggestions into the corpus and persists them.
 	 *
 	 * The in-memory write always runs, so the mockup reflects the decision even
-	 * with no live review row; `saveInlineEdit` is what needs one, and it rolls
-	 * its own optimistic entry back when there is no authenticated user.
+	 * with no live review row; `saveInlineEdit` is what needs one.
+	 *
+	 * Two things this loop must not do, both of which it used to.
+	 *
+	 * It must not save a suggestion approved for another page. Field ids are
+	 * page-relative, so `title` resolves on all 29 of them: an edit accepted on
+	 * page A, left unsaved, then saved from page B overwrote B's title and was
+	 * persisted under B's row. `pageId` is the guard, and the page is captured
+	 * before the loop so navigating mid-save cannot move the target either.
+	 *
+	 * And it must not forget a suggestion whose edit did not persist.
+	 * `saveInlineEdit` rolls its optimistic entry back and, until it returned a
+	 * boolean, resolved exactly as it does on success -- so the card was dropped,
+	 * the corpus said the rewrite had landed, and the database held nothing. The
+	 * suggestion now survives a failure, still accepted, still retryable.
 	 */
 	async function saveAccepted() {
 		if (saving) return;
 		saving = true;
 		saveError = '';
 
-		const accepted = Object.entries(pageStore.suggestions).filter(
-			([, s]) => s.status === 'accepted'
-		);
+		const savePageData = pageData;
+		const savePageId = livePageId;
+		const accepted = pageStore
+			.suggestionsFor(pageId)
+			.filter(([, suggestion]) => suggestion.status === 'accepted');
+
 		const missing: string[] = [];
-		const saved: string[] = [];
+		const failed: string[] = [];
 
 		for (const [fieldId, suggestion] of accepted) {
-			const resolved = resolveFields(pageData as never, [fieldId])[0];
+			const resolved = resolveFields(savePageData as never, [fieldId])[0];
 			if (!resolved) {
 				missing.push(fieldId);
 				continue;
 			}
+
+			// Persist first, mutate second. The corpus write is what the reviewer
+			// sees; doing it before the insert is known to have landed is how a
+			// failed save still looked like a successful one.
+			if (savePageId) {
+				const persisted = await saveInlineEdit(savePageId, fieldId, suggestion.suggested);
+				if (!persisted) {
+					failed.push(fieldId);
+					continue;
+				}
+			}
+
 			resolved.field.set(suggestion.suggested);
-			if (livePageId) await saveInlineEdit(livePageId, fieldId, suggestion.suggested);
-			saved.push(fieldId);
+			pageStore.forgetSuggestion(fieldId);
 		}
 
-		// One reassignment after the loop, not one per iteration. Clearing inside
-		// the loop would spread the map as it stands each time, and there is an
-		// `await` between iterations -- a realtime update or a second click landing
-		// in that gap would resurrect a key this loop had already cleared.
-		if (saved.length > 0) {
-			const remaining = { ...pageStore.suggestions };
-			for (const fieldId of saved) delete remaining[fieldId];
-			pageStore.suggestions = remaining;
-		}
-
-		if (missing.length > 0) {
+		if (failed.length > 0) {
+			saveError = `${failed.length} ${failed.length === 1 ? 'edit' : 'edits'} could not be saved and ${failed.length === 1 ? 'is' : 'are'} still here to retry.`;
+		} else if (missing.length > 0) {
 			saveError = `${missing.length} ${missing.length === 1 ? 'edit' : 'edits'} could not be applied: the field is no longer on this page.`;
-		} else if (!livePageId) {
+		} else if (!savePageId) {
 			saveError = 'Applied to the mockup only — this page is not part of a loaded review.';
 		}
 
@@ -322,9 +406,15 @@
 					bind:value={pageStore.rewriteInstruction}
 					rows={2}
 					class="mt-2 text-[13px]"
+					maxlength={MAX_INSTRUCTION_CHARS}
 					aria-label="Rewrite instruction"
 					placeholder="Or describe the change in your own words…"
 				/>
+				{#if instructionError}
+					<p class="text-sfds-red mt-1.5 text-[12px] leading-[17px]" role="alert">
+						{instructionError}
+					</p>
+				{/if}
 				<Button
 					size="sm"
 					class="mt-2 h-8 w-full text-[12px]"
@@ -338,7 +428,7 @@
 			</section>
 
 			<!-- Suggestions -->
-			{#if Object.keys(pageStore.suggestions).length > 0}
+			{#if cards.length > 0}
 				<section class="mt-5" aria-label="Suggestions">
 					<div class="flex items-center justify-between px-5">
 						<span class="text-sfds-black text-[12px] font-bold tracking-[0.06em] uppercase">
@@ -363,7 +453,7 @@
 					</div>
 
 					<ul class="mt-2 space-y-2 px-5 pb-4">
-						{#each Object.entries(pageStore.suggestions) as [fieldId, suggestion] (fieldId)}
+						{#each cards as [fieldId, suggestion] (fieldId)}
 							{@const badge = pageStore.badgeNumber(fieldId)}
 							<li class="rounded-[4px] border p-3">
 								<div class="flex items-center gap-2">
@@ -430,6 +520,18 @@
 	<!-- Footer. `Save N edits` counts ACCEPTED suggestions, not selected fields:
 	     they look alike and are routinely different numbers. -->
 	<div class="flex-none border-t px-5 py-3">
+		<!-- Accepted work does not follow the reviewer, and the count above is
+		     scoped to this page, so without this line it simply vanishes when they
+		     navigate. Named here rather than added to the count: the button below
+		     cannot save it, and a number the button disagrees with is worse than
+		     no number. -->
+		{#if acceptedElsewhere > 0}
+			<p class="text-sfds-amber mb-2 text-[12px] leading-[17px]" role="status">
+				{acceptedElsewhere} accepted {acceptedElsewhere === 1 ? 'edit' : 'edits'} on other pages
+				{acceptedElsewhere === 1 ? 'is' : 'are'} still unsaved. Open that page to save
+				{acceptedElsewhere === 1 ? 'it' : 'them'}.
+			</p>
+		{/if}
 		{#if saveError}
 			<p class="text-sfds-amber mb-2 text-[12px] leading-[17px]" role="status">{saveError}</p>
 		{/if}

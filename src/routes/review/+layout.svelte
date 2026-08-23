@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
+	import { resolve } from '$app/paths';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { ScrollArea } from '$lib/components/ui/scroll-area/index.js';
@@ -30,12 +31,19 @@
 	// places further down.
 	const livePageId = $derived($pagesStore.find((p) => p.path === pageData?.id)?.id);
 
-	// Unsaved = accepted suggestions not yet committed. Deliberately NOT the
-	// selected-field count: the footer's "Save N edits" counts the same thing,
-	// and two numbers that look alike but differ is worse than one.
-	const unsavedCount = $derived(
-		Object.values(pageStore.suggestions).filter((s) => s.status === 'accepted').length
-	);
+	// The layout stays mounted across slug navigation, so the page change has to
+	// be announced -- nothing else observes it, and the selection used to carry
+	// over onto the next page's fields. `pre`, so the store is scoped to the new
+	// page before its edit targets render and read `isSelected`.
+	$effect.pre(() => {
+		pageStore.enterPage(pageData?.id);
+	});
+
+	// Unsaved = accepted suggestions not yet committed, FOR THIS PAGE. Deliberately
+	// NOT the selected-field count: the footer's "Save N edits" counts the same
+	// thing, and two numbers that look alike but differ is worse than one. Work
+	// parked on other pages is the panel's line to make, not a number here.
+	const unsavedCount = $derived(pageStore.acceptedFor(pageData?.id));
 
 	onMount(() => {
 		// Rail state is per-device chrome in `localStorage`, read here rather than
@@ -113,14 +121,20 @@
 				<ReviewQueue />
 			</ScrollArea>
 			<Separator />
+			<!-- Both go through `resolve()`, which is what the lint rule asks for and
+			     what survives a `paths.base`. Note it does NOT make them work: there
+			     is no `+page.svelte` under `/review`, so a layout-only route id
+			     typechecks and then 404s. Pre-existing, and where these should point
+			     is a product decision -- flagged on the PR rather than guessed at. -->
 			<div class="flex items-center justify-between px-5 py-3.5">
 				<a
-					href="/review"
+					href={resolve('/review')}
 					class="text-sfds-action text-[13px] font-semibold hover:underline"
 					data-testid="export-review-data">Export review data</a
 				>
-				<a href="/review" class="text-sfds-action text-[13px] font-semibold hover:underline"
-					>Site map</a
+				<a
+					href={resolve('/review')}
+					class="text-sfds-action text-[13px] font-semibold hover:underline">Site map</a
 				>
 			</div>
 		{/if}

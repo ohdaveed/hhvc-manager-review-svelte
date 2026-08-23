@@ -21,13 +21,17 @@
 	 * 4. Selection is now a SET, not one field (design 1b). The badge number is
 	 *    the field's position in `selectedFieldIds`, which is what ties a
 	 *    highlight on the page to its suggestion card in the panel.
+	 * 5. There is no `update` prop. Every caller used to hand one down, closing
+	 *    over `section.paragraphs[i]` -- which is a stale closure after a
+	 *    re-render, and the reason `fieldResolver` walks the live corpus by id
+	 *    instead. The panel writes through the resolver; nothing wrote through
+	 *    this, and a required prop nobody calls is a trap for the next caller.
 	 */
 	let {
 		as = 'p',
 		fieldId,
 		name,
 		value,
-		update,
 		unverified = false,
 		class: className = '',
 		id = undefined
@@ -38,7 +42,6 @@
 		/** Human-facing label for the panel. Display only. */
 		name: string;
 		value: string;
-		update: (next: string) => void;
 		/** Corpus copy HHVC has not confirmed; drives the panel's callout. */
 		unverified?: boolean;
 		class?: string;

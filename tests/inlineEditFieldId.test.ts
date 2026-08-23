@@ -183,8 +183,9 @@ describe('edit targets', () => {
 
 			await click(container, 'title');
 			pageStore.suggestions = {
-				title: { original: 'a', suggested: 'b', status: 'accepted' },
+				title: { pageId: 'topic-x--about', original: 'a', suggested: 'b', status: 'accepted' },
 				'sections.how-to-report.paragraphs.0': {
+					pageId: 'topic-x--about',
 					original: 'c',
 					suggested: 'd',
 					status: 'pending'
@@ -198,6 +199,43 @@ describe('edit targets', () => {
 			// carries no such commitment.
 			expect(pageStore.suggestions.title?.status).toBe('accepted');
 			expect(pageStore.suggestions['sections.how-to-report.paragraphs.0']).toBeUndefined();
+		});
+
+		it('drops the selection when the page changes', async () => {
+			const { container } = renderPage();
+
+			await click(container, 'title');
+			pageStore.rewriteInstruction = 'make it plainer';
+			pageStore.agentRec = { state: 'done', text: 'advice about this page' };
+			pageStore.suggestions = {
+				title: { pageId: 'topic-x--about', original: 'a', suggested: 'b', status: 'accepted' },
+				summary: { pageId: 'topic-x--about', original: 'c', suggested: 'd', status: 'pending' }
+			};
+
+			pageStore.enterPage('some-other-page');
+
+			// The review layout stays mounted across navigation, so nothing used to
+			// observe the page change: the badge stayed on `title` and landed on the
+			// NEXT page's title, which is a live field on all 29 of them.
+			expect(pageStore.selectedFieldIds).toEqual([]);
+			expect(pageStore.rewriteInstruction).toBe('');
+			expect(pageStore.agentRec.state).toBe('idle');
+			// Accepted work still survives -- it just cannot be saved from here.
+			expect(pageStore.suggestions.title?.status).toBe('accepted');
+			expect(pageStore.suggestions.summary).toBeUndefined();
+			expect(pageStore.acceptedFor('some-other-page')).toBe(0);
+			expect(pageStore.acceptedElsewhere('some-other-page')).toBe(1);
+		});
+
+		it('leaves a live selection alone when the page id has not moved', async () => {
+			const { container } = renderPage();
+
+			pageStore.enterPage('topic-x--about');
+			await click(container, 'title');
+			pageStore.enterPage('topic-x--about');
+
+			// `enterPage` runs on every render of the layout, not only on navigation.
+			expect(pageStore.selectedFieldIds).toEqual(['title']);
 		});
 	});
 

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page as routePage } from '$app/stores';
+	import { resolve } from '$app/paths';
 	import { pagesStore, editsStore } from '$lib/stores/reviewState';
 	import { pageStore } from '$lib/stores/pageData.svelte';
 
@@ -87,7 +88,7 @@
 							     with the selected-field highlight in the canvas, and there are
 							     two selections on screen at once. -->
 							<a
-								href="/review/{p.path}"
+								href={resolve('/review/[slug]', { slug: p.path })}
 								aria-current={isCurrent ? 'page' : undefined}
 								class="hover:bg-sfds-blue-l1/60 block rounded-[3px] border-l-2 py-1.5 pr-2 pl-2.5 transition-colors {isCurrent
 									? 'border-sfds-action bg-sfds-blue-l1'

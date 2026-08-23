@@ -199,9 +199,19 @@ export async function updatePageNotes(pageId: string, notes: string): Promise<bo
 }
 
 /**
- * Saves an inline text edit optimistically
+ * Saves an inline text edit optimistically.
+ *
+ * Returns whether the row actually reached the database. Both failure paths
+ * below roll the optimistic entry back, and before this returned a boolean they
+ * did so silently: `saveAccepted` treated the resolved promise as a save, wrote
+ * the rewrite into the corpus and dropped the suggestion, so a reviewer was told
+ * an edit was saved that no longer existed anywhere and had no retry path.
  */
-export async function saveInlineEdit(pageId: string, fieldId: string, newContent: string) {
+export async function saveInlineEdit(
+	pageId: string,
+	fieldId: string,
+	newContent: string
+): Promise<boolean> {
 	const optimisticEdit: Edit = {
 		id: 'temp-' + Date.now(),
 		page_id: pageId,
@@ -229,7 +239,7 @@ export async function saveInlineEdit(pageId: string, fieldId: string, newContent
 	if (!user) {
 		console.error('Cannot save edit: no authenticated user.');
 		editsStore.set(previousEdits);
-		return;
+		return false;
 	}
 
 	const { data, error } = await supabase
@@ -242,8 +252,12 @@ export async function saveInlineEdit(pageId: string, fieldId: string, newContent
 	if (error) {
 		console.error('Failed to save edit:', error);
 		editsStore.set(previousEdits);
-	} else if (data) {
+		return false;
+	}
+
+	if (data) {
 		// Swap temporary ID with real database ID
 		editsStore.update((edits) => edits.map((e) => (e.id === optimisticEdit.id ? data : e)));
 	}
+	return true;
 }

@@ -13,35 +13,18 @@
 	<!-- `title` and `summary` are the exact keys HelpPanel folds on
 	     (src/lib/components/workspace/HelpPanel.svelte) -- anything else lands in
 	     the generic section_edits bucket instead of edited_title/edited_summary. -->
-	<EditTarget
-		as="h1"
-		class="page-title"
-		name="Title"
-		fieldId="title"
-		value={page.title}
-		update={(v) => (page.title = v)}
-	/>
+	<EditTarget as="h1" class="page-title" name="Title" fieldId="title" value={page.title} />
 
 	{#if page.summary}
 		<div class="page-summary">
-			<EditTarget
-				name="Summary"
-				fieldId="summary"
-				value={page.summary}
-				update={(v) => (page.summary = v)}
-			/>
+			<EditTarget name="Summary" fieldId="summary" value={page.summary} />
 		</div>
 	{/if}
 
 	{#if page.audience && page.audience.length > 0}
 		<div class="page-audience">
 			{#each page.audience as a, i (i)}
-				<EditTarget
-					name={`Audience [${i + 1}]`}
-					fieldId={`audience.${i}`}
-					value={a}
-					update={(v) => (page.audience[i] = v)}
-				/>
+				<EditTarget name={`Audience [${i + 1}]`} fieldId={`audience.${i}`} value={a} />
 			{/each}
 		</div>
 	{/if}

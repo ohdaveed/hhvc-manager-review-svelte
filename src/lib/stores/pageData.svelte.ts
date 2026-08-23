@@ -5,6 +5,8 @@ import { deriveFieldKey } from '$lib/corpus/fieldKey.js';
 type Page = {
 	id: string;
 	title: string;
+	/** The corpus modules carry no shared declaration; see `fieldResolver.ts`. */
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	[key: string]: any;
 };
 
@@ -16,6 +18,17 @@ type Page = {
  * underneath.
  */
 export type Suggestion = {
+	/**
+	 * The routable id of the page this rewrite was produced for.
+	 *
+	 * Field ids are page-relative -- `title` and `summary` name a live field on
+	 * every one of the 29 pages -- so an id alone cannot say which page a
+	 * suggestion belongs to. Accepted suggestions deliberately survive
+	 * navigation, being unsaved work, and without this they resolved against
+	 * whatever page was on screen when `Save` was pressed: an edit approved for
+	 * page A was written to page B and persisted under B's row.
+	 */
+	pageId: string;
 	original: string;
 	suggested: string;
 	status: 'pending' | 'accepted' | 'rejected' | 'error';
@@ -70,6 +83,15 @@ class PageStore {
 
 	/** Pending/decided rewrites, keyed by field id. */
 	suggestions = $state<Record<string, Suggestion>>({});
+
+	/**
+	 * The routable id of the page on screen, as `enterPage` last set it.
+	 *
+	 * The review layout stays mounted across slug navigation, so nothing was
+	 * observing the page change and the selection simply carried over: clicking
+	 * a title on one page left the badge sitting on the next page's title.
+	 */
+	activePageId = $state<string | undefined>(undefined);
 
 	/** The free-text batch instruction, applied to every selected field. */
 	rewriteInstruction = $state('');
@@ -142,6 +164,57 @@ class PageStore {
 		this.selectedFieldIds = [];
 		this.suggestions = this.pruneSuggestions([]);
 		this.rewriteInstruction = '';
+	}
+
+	// ---- page identity ---------------------------------------------------
+
+	/**
+	 * Called when the route's page changes. Idempotent, so a re-render that
+	 * names the same page does not throw a live selection away.
+	 *
+	 * Everything scoped to a selection goes with it -- the ids, the instruction,
+	 * the assistant's reading of copy that is no longer on screen. Accepted
+	 * suggestions stay, by the same rule `pruneSuggestions` already follows:
+	 * they are unsaved work, not selection chrome, and they now carry the page
+	 * they belong to so they can only be saved back to it.
+	 */
+	enterPage(pageId: string | undefined) {
+		if (pageId === this.activePageId) return;
+		this.activePageId = pageId;
+		this.selectedFieldIds = [];
+		this.rewriteInstruction = '';
+		this.agentRec = { state: 'idle', text: '' };
+		this.suggestions = this.pruneSuggestions([]);
+	}
+
+	/** The suggestions belonging to `pageId`, which are the only ones it may show. */
+	suggestionsFor(pageId: string | undefined): [string, Suggestion][] {
+		return Object.entries(this.suggestions).filter(([, s]) => s.pageId === pageId);
+	}
+
+	/** Accepted-but-unsaved edits for `pageId`. What `Save N edits` commits. */
+	acceptedFor(pageId: string | undefined): number {
+		return this.suggestionsFor(pageId).filter(([, s]) => s.status === 'accepted').length;
+	}
+
+	/**
+	 * Accepted-but-unsaved edits parked on OTHER pages.
+	 *
+	 * Surfaced rather than summed into the count above: they are real work, and
+	 * a reviewer who navigates away with edits approved should be told they are
+	 * still there rather than watching the number silently drop to zero.
+	 */
+	acceptedElsewhere(pageId: string | undefined): number {
+		return Object.values(this.suggestions).filter(
+			(s) => s.status === 'accepted' && s.pageId !== pageId
+		).length;
+	}
+
+	/** Drops one suggestion, once its edit is known to have persisted. */
+	forgetSuggestion(fieldId: string) {
+		const rest = { ...this.suggestions };
+		delete rest[fieldId];
+		this.suggestions = rest;
 	}
 
 	/**

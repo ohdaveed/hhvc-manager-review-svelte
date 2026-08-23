@@ -1,6 +1,6 @@
 <script lang="ts">
 	import EditTarget from './EditTarget.svelte';
-	import { entryText, entryUnverified, setEntry } from '$lib/corpus/fieldResolver';
+	import { entryText, entryUnverified } from '$lib/corpus/fieldResolver';
 
 	let { section, index } = $props();
 
@@ -39,7 +39,6 @@
 			name={`${label} Heading`}
 			fieldId={`sections.${key}.heading`}
 			value={section.heading}
-			update={(v) => (section.heading = v)}
 		/>
 	{/if}
 
@@ -50,7 +49,6 @@
 				fieldId={`sections.${key}.paragraphs.${i}`}
 				value={entryText(p)}
 				unverified={entryUnverified(p)}
-				update={(v) => setEntry(section.paragraphs, i, v)}
 			/>
 		{/each}
 	{/if}
@@ -77,7 +75,6 @@
 				fieldId={`sections.${key}.bullets.${i}`}
 				value={entryText(b)}
 				unverified={entryUnverified(b)}
-				update={(v) => setEntry(bullets, i, v)}
 			/>
 		{/each}
 	</ul>
@@ -92,14 +89,8 @@
 				name="Callout Title"
 				fieldId={`sections.${key}.callout.title`}
 				value={callout.title}
-				update={(v) => (callout.title = v)}
 			/>
 		{/if}
-		<EditTarget
-			name="Callout Text"
-			fieldId={`sections.${key}.callout.text`}
-			value={callout.text}
-			update={(v) => (callout.text = v)}
-		/>
+		<EditTarget name="Callout Text" fieldId={`sections.${key}.callout.text`} value={callout.text} />
 	</div>
 {/snippet}
