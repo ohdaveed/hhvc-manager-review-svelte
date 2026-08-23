@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 import { extractFields, type CorpusPage } from './fields.js';
-import { hashFields } from './hash.js';
+import { hashFields, hashFieldMap } from './hash.js';
 
 export type CorpusLock = {
 	version: 1;
@@ -24,22 +24,40 @@ export function derivePagePath(page: { slug?: unknown; title?: unknown }): strin
  * again over a *parsed* `corpus.lock` to confirm that file's `pages` map is
  * internally consistent with its own `corpusHash` before trusting either.
  *
- * The digest is constructed with a length-prefixed path (`{path.length}:{path}`)
- * followed by the page's 64-character content hash, with no separator between them.
- * `path` is a variable-length, unconstrained string -- if it were joined to the next
- * field with an ordinary separator character, a crafted path could absorb a
- * neighbouring entry's `path + separator + hash` and collapse two structurally
- * different corpora onto the same digest. The content hash needs no separator of its
- * own because it is always exactly 64 hex chars, so the length prefix on `path` alone
- * makes the byte stream unambiguous. This is the same technique `hashFields` in
- * `hash.ts` uses for field ids, for the same reason -- do not revert either one to a
- * separator-joined string.
+ * Each page entry contributes three unambiguous pieces to the running digest:
+ * a length-prefixed path (`{path.length}:{path}`), the page's 64-character
+ * content hash, and a 64-character digest of that page's *entire*
+ * `fieldHashes` map (via `hashFieldMap`, shared with `hashFields` in
+ * `hash.ts`). `path` is a variable-length, unconstrained string -- if it were
+ * joined to the next field with an ordinary separator character, a crafted
+ * path could absorb a neighbouring entry's `path + separator + hash` and
+ * collapse two structurally different corpora onto the same digest. Folding
+ * `fieldHashes` in as a fixed-length sub-digest, rather than appending its
+ * variable number of id/hash pairs directly into this stream, matters for the
+ * same reason: a variable-count list has no boundary marker, so two pages'
+ * worth of entries could be repartitioned into a different-but-colliding
+ * split. Because both the content hash and the fields sub-digest are always
+ * exactly 64 hex chars, the length prefix on `path` alone makes the whole
+ * byte stream unambiguous -- no separator, and no count, needed anywhere.
+ *
+ * `fieldHashes` is covered here, not left out: without it, only `path` and
+ * `contentHash` were protected, and a lockfile could have its `fieldHashes`
+ * map hollowed out (e.g. to `{}`) while `contentHash` and `corpusHash` stayed
+ * untouched and `corpus:check` still passed. `contentHash` alone did not
+ * imply anything about the separately-stored `fieldHashes` map, because the
+ * checker never recomputed one from the other -- it only ever compared the
+ * file's own claimed values against each other and against a freshly built
+ * corpus. Folding `fieldHashes` into this digest makes tampering it, without
+ * also correctly recomputing the enclosing `corpusHash` from the real corpus,
+ * detectable the same way tampering `path` or `contentHash` already was.
  */
 export function hashLockPages(pages: CorpusLock['pages']): string {
 	const digest = createHash('sha256');
 	for (const path of Object.keys(pages).sort()) {
+		const entry = pages[path];
 		digest.update(`${path.length}:${path}`, 'utf8');
-		digest.update(pages[path].contentHash, 'utf8');
+		digest.update(entry.contentHash, 'utf8');
+		digest.update(hashFieldMap(entry.fieldHashes), 'utf8');
 	}
 	return digest.digest('hex');
 }

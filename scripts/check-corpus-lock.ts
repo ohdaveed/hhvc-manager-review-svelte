@@ -31,11 +31,20 @@ try {
 if (
 	actual.pages === null ||
 	typeof actual.pages !== 'object' ||
+	Array.isArray(actual.pages) ||
 	Object.values(actual.pages).some(
-		(entry) => entry === null || typeof entry !== 'object' || typeof entry.contentHash !== 'string'
+		(entry) =>
+			entry === null ||
+			typeof entry !== 'object' ||
+			typeof entry.contentHash !== 'string' ||
+			entry.fieldHashes === null ||
+			typeof entry.fieldHashes !== 'object' ||
+			Array.isArray(entry.fieldHashes)
 	)
 ) {
-	console.error('corpus.lock is malformed: "pages" is missing entries or content hashes.');
+	console.error(
+		'corpus.lock is malformed: "pages" is missing entries, content hashes, or field hashes.'
+	);
 	console.error('Investigate the file — this is not ordinary drift. Run: bun run corpus:lock');
 	process.exit(1);
 }
