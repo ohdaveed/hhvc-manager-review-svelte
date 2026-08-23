@@ -197,6 +197,61 @@ describe('FieldsPanel', () => {
 		});
 	});
 
+	it('reverses a decision until save commits it', async () => {
+		const page = fixture();
+		pageStore.selectedFieldIds = ['title', 'summary'];
+		requestGeneration.mockResolvedValue({ result: { rewrittenText: 'Rewritten.' } });
+		render(FieldsPanel, { props: { pageData: page, livePageId: 'live-1' } });
+
+		await fireEvent.click(screen.getByRole('button', { name: 'Plain language' }));
+		await screen.findByRole('button', { name: 'Accept all' });
+
+		await fireEvent.click(screen.getByRole('button', { name: 'Accept all' }));
+		await screen.findByRole('button', { name: 'Save 2 edits' });
+
+		// `Accept all` decides every card at once, so it is the easiest way to
+		// reach a state there used to be no way out of: with nothing pending, the
+		// per-card buttons were gone and `decideAll` only ever touched pending.
+		await fireEvent.click(screen.getByRole('button', { name: 'Undo all' }));
+		console.log(
+			'DBG footer',
+			screen
+				.getAllByRole('button')
+				.map((b) => b.textContent?.trim())
+				.filter((t) => t?.startsWith('Save'))
+		);
+
+		expect(await screen.findByRole('button', { name: 'Save 0 edits' })).toHaveProperty(
+			'disabled',
+			true
+		);
+		expect(Object.values(pageStore.suggestions).every((s) => s.status === 'pending')).toBe(true);
+		// Nothing was written on the way through.
+		expect(page.title).toBe('About vector control');
+		expect(saveInlineEdit).not.toHaveBeenCalled();
+
+		// And one card on its own.
+		await fireEvent.click(screen.getAllByRole('button', { name: 'Accept' })[0]);
+		await screen.findByRole('button', { name: 'Save 1 edit' });
+		await fireEvent.click(screen.getByRole('button', { name: 'Undo accepting this rewrite' }));
+		expect(await screen.findByRole('button', { name: 'Save 0 edits' })).toHaveProperty(
+			'disabled',
+			true
+		);
+	});
+
+	it('offers no undo on an errored card, which has nothing to go back to', async () => {
+		const page = fixture();
+		page.title = 'x'.repeat(20_001);
+		pageStore.selectedFieldIds = ['title'];
+		render(FieldsPanel, { props: { pageData: page } });
+
+		await fireEvent.click(screen.getByRole('button', { name: 'Plain language' }));
+		await screen.findByRole('alert');
+
+		expect(screen.queryByRole('button', { name: /^Undo/ })).toBeNull();
+	});
+
 	it('keeps an accepted suggestion whose edit did not persist', async () => {
 		const page = fixture();
 		const fieldId = 'sections.how-to-report.paragraphs.0';

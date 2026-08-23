@@ -63,6 +63,10 @@
 
 	const acceptedCount = $derived(pageStore.acceptedFor(pageId));
 	const pendingCount = $derived(cards.filter(([, s]) => s.status === 'pending').length);
+	/** Decided but not yet committed -- exactly the set `Undo all` can reverse. */
+	const decidedCount = $derived(
+		cards.filter(([, s]) => s.status === 'accepted' || s.status === 'rejected').length
+	);
 
 	/** Approved work sitting on pages the reviewer has navigated away from. */
 	const acceptedElsewhere = $derived(pageStore.acceptedElsewhere(pageId));
@@ -202,16 +206,35 @@
 		}
 	}
 
-	function decide(fieldId: string, status: 'accepted' | 'rejected') {
+	/**
+	 * `'pending'` is the undo. A decision stands only until `Save` commits it,
+	 * and `original` was captured when the rewrite was requested, so the card is
+	 * never missing the text to go back to.
+	 *
+	 * `error` stays excluded: an errored card has no `suggested` text, and
+	 * letting it become pending would render an empty green paragraph above an
+	 * Accept button that writes nothing.
+	 */
+	function decide(fieldId: string, status: 'accepted' | 'rejected' | 'pending') {
 		const current = pageStore.suggestions[fieldId];
 		if (!current || current.status === 'error') return;
 		pageStore.suggestions = { ...pageStore.suggestions, [fieldId]: { ...current, status } };
 	}
 
-	function decideAll(status: 'accepted' | 'rejected') {
+	/**
+	 * The bulk path reverses too, or `Accept all` is the same one-way trap at a
+	 * coarser grain -- and the easier one to hit, being a single click that
+	 * decides every card at once.
+	 *
+	 * Scoped to this page's cards. `pageStore.suggestions` also holds accepted
+	 * work parked on other pages, and a bulk control in this panel has no
+	 * business reaching copy the reviewer cannot see.
+	 */
+	function decideAll(status: 'accepted' | 'rejected' | 'pending') {
+		const from = status === 'pending' ? ['accepted', 'rejected'] : ['pending'];
 		const next = { ...pageStore.suggestions };
-		for (const [id, s] of Object.entries(next)) {
-			if (s.status === 'pending') next[id] = { ...s, status };
+		for (const [id, s] of cards) {
+			if (from.includes(s.status)) next[id] = { ...s, status };
 		}
 		pageStore.suggestions = next;
 	}
@@ -434,8 +457,20 @@
 						<span class="text-sfds-black text-[12px] font-bold tracking-[0.06em] uppercase">
 							Suggestions
 						</span>
-						{#if pendingCount > 0}
-							<span class="flex gap-1">
+						<span class="flex gap-1">
+							<!-- Shown whenever anything is decided, including when NOTHING is
+							     pending: `Accept all` is one click that decides every card, and
+							     leaving it one-way is the same trap as a one-way Accept, just
+							     easier to trigger by accident. -->
+							{#if decidedCount > 0}
+								<Button
+									variant="ghost"
+									size="sm"
+									class="h-7 px-2 text-[12px]"
+									onclick={() => decideAll('pending')}>Undo all</Button
+								>
+							{/if}
+							{#if pendingCount > 0}
 								<Button
 									variant="ghost"
 									size="sm"
@@ -448,8 +483,8 @@
 									class="text-sfds-action h-7 px-2 text-[12px]"
 									onclick={() => decideAll('accepted')}>Accept all</Button
 								>
-							</span>
-						{/if}
+							{/if}
+						</span>
 					</div>
 
 					<ul class="mt-2 space-y-2 px-5 pb-4">
@@ -506,6 +541,22 @@
 											size="sm"
 											class="h-7 px-2 text-[12px]"
 											onclick={() => decide(fieldId, 'accepted')}>Accept</Button
+										>
+									</div>
+								{:else if suggestion.status !== 'error'}
+									<!-- The decision stands until `Save` commits it, and `original`
+									     was captured with the rewrite, so there is always something
+									     to go back to. Without this an accidental Accept could only
+									     be undone by `Clear`, which throws the whole batch away. -->
+									<div class="mt-2 flex justify-end">
+										<Button
+											variant="ghost"
+											size="sm"
+											class="h-7 px-2 text-[12px]"
+											aria-label="Undo {suggestion.status === 'accepted'
+												? 'accepting'
+												: 'rejecting'} this rewrite"
+											onclick={() => decide(fieldId, 'pending')}>Undo</Button
 										>
 									</div>
 								{/if}

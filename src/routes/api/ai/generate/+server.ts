@@ -24,9 +24,23 @@ async function requireUser(request: Request) {
 	if (authError || !user) throw error(401, 'Unauthorized');
 }
 
-/** Caps on what a single caller can push through to the metered AI backend. */
+/**
+ * Caps on what a single caller can push through to the metered AI backend.
+ *
+ * The two character limits are the BACKEND's, mirrored here rather than chosen:
+ * `build_scripts/ai/schemas.js` in HHVC_manager_review_current_tool_package
+ * declares `fieldText: z.string().min(1).max(8000)` and
+ * `instruction: z.string().max(2000).optional()`. This route used to allow
+ * 20,000 and no instruction check at all, so it forwarded payloads the backend
+ * answers with a 400 "Invalid request" -- which reaches the reviewer as a bare
+ * `API Error`. Rejecting them here costs a round trip and names the field.
+ *
+ * `MAX_BODY_BYTES` is this route's own: it bounds the request before parsing,
+ * which is the only cap that can apply to a body it has not read yet.
+ */
 const MAX_BODY_BYTES = 64 * 1024;
-const MAX_FIELD_TEXT_CHARS = 20_000;
+const MAX_FIELD_TEXT_CHARS = 8_000;
+const MAX_INSTRUCTION_CHARS = 2_000;
 
 export async function POST({ request, fetch }) {
 	// Outside the try: a thrown HttpError is not an Error instance, so the
@@ -48,6 +62,13 @@ export async function POST({ request, fetch }) {
 
 		if (typeof payload.fieldText === 'string' && payload.fieldText.length > MAX_FIELD_TEXT_CHARS) {
 			throw error(400, 'Field text too long');
+		}
+
+		if (
+			typeof payload.instruction === 'string' &&
+			payload.instruction.length > MAX_INSTRUCTION_CHARS
+		) {
+			throw error(400, 'Instruction too long');
 		}
 
 		const apiUrl = env.RAILWAY_API_URL || 'https://web-production-9bb3b.up.railway.app';
