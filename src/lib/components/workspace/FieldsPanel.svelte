@@ -19,7 +19,7 @@
 
 	/** The proxy's own cap. Checked here because `requestGeneration` throws a
 	 *  bare `API Error` and would report a 400 "Field text too long" as that. */
-	const MAX_FIELD_TEXT_CHARS = 20_000;
+	const MAX_FIELD_TEXT_CHARS = 8_000;
 
 	const PRESETS = [
 		{
@@ -69,17 +69,16 @@
 		if (rewriting || selected.length === 0) return;
 		rewriting = true;
 
-		const next = { ...pageStore.suggestions };
+		const requestPageId = (pageData as { id?: string })?.id;
+		const requestFields = selected.map(({ fieldId, field }) => ({ fieldId, field }));
 
 		await Promise.allSettled(
-			selected.map(async ({ fieldId, field }) => {
+			requestFields.map(async ({ fieldId, field }) => {
 				if (field.value.length > MAX_FIELD_TEXT_CHARS) {
-					next[fieldId] = {
-						original: field.value,
-						suggested: '',
-						status: 'error',
+					pageStore.suggestions = { ...pageStore.suggestions, [fieldId]: {
+						pageId: requestPageId, original: field.value, suggested: '', status: 'error',
 						message: `Too long to rewrite (${field.value.length.toLocaleString()} characters; the limit is ${MAX_FIELD_TEXT_CHARS.toLocaleString()}).`
-					};
+					} };
 					return;
 				}
 
@@ -94,19 +93,18 @@
 					if (typeof suggested !== 'string' || suggested.trim() === '') {
 						throw new Error('The backend returned no rewritten text.');
 					}
-					next[fieldId] = { original: field.value, suggested, status: 'pending' };
+					pageStore.suggestions = { ...pageStore.suggestions, [fieldId]: {
+						pageId: requestPageId, original: field.value, suggested, status: 'pending'
+					} };
 				} catch (e) {
-					next[fieldId] = {
-						original: field.value,
-						suggested: '',
-						status: 'error',
+					pageStore.suggestions = { ...pageStore.suggestions, [fieldId]: {
+						pageId: requestPageId, original: field.value, suggested: '', status: 'error',
 						message: e instanceof Error ? e.message : 'Rewrite failed.'
-					};
+					} };
 				}
 			})
 		);
 
-		pageStore.suggestions = next;
 		rewriting = false;
 	}
 
@@ -118,11 +116,16 @@
 	async function recommend() {
 		if (selected.length === 0) return;
 		pageStore.agentRec = { state: 'loading', text: '' };
+		const fieldText = selected.map(({ field }) => `${field.name}: ${field.value}`).join('\n\n`);
+		if (fieldText.length > MAX_FIELD_TEXT_CHARS) {
+			pageStore.agentRec = { state: 'error', text: `Too long to recommend (the limit is ${MAX_FIELD_TEXT_CHARS.toLocaleString()} characters).` };
+			return;
+		}
 		try {
 			const data = await requestGeneration({
 				task: 'rewrite-field',
 				provider: 'gemini',
-				fieldText: selected.map(({ field }) => `${field.name}: ${field.value}`).join('\n\n'),
+				fieldText,
 				instruction:
 					'Do not rewrite this text. In two or three sentences, say what a plain-language editor would change about it and why.'
 			});
@@ -163,31 +166,28 @@
 		saving = true;
 		saveError = '';
 
+		const savePageData = pageData;
+		const savePageId = livePageId;
 		const accepted = Object.entries(pageStore.suggestions).filter(
-			([, s]) => s.status === 'accepted'
+			([, s]) => s.status === 'accepted' && (!s.pageId || s.pageId === (savePageData as { id?: string })?.id)
 		);
 		const missing: string[] = [];
-		const saved: string[] = [];
 
 		for (const [fieldId, suggestion] of accepted) {
-			const resolved = resolveFields(pageData as never, [fieldId])[0];
+			const resolved = resolveFields(savePageData as never, [fieldId])[0];
 			if (!resolved) {
 				missing.push(fieldId);
 				continue;
 			}
 			resolved.field.set(suggestion.suggested);
-			if (livePageId) await saveInlineEdit(livePageId, fieldId, suggestion.suggested);
-			saved.push(fieldId);
-		}
-
-		// One reassignment after the loop, not one per iteration. Clearing inside
-		// the loop would spread the map as it stands each time, and there is an
-		// `await` between iterations -- a realtime update or a second click landing
-		// in that gap would resurrect a key this loop had already cleared.
-		if (saved.length > 0) {
-			const remaining = { ...pageStore.suggestions };
-			for (const fieldId of saved) delete remaining[fieldId];
-			pageStore.suggestions = remaining;
+			if (savePageId) {
+				const persisted = await saveInlineEdit(savePageId, fieldId, suggestion.suggested);
+				if (!persisted) {
+					saveError = 'Some edits could not be saved; they remain available to retry.';
+					continue;
+				}
+			}
+			pageStore.forgetSuggestion(fieldId);
 		}
 
 		if (missing.length > 0) {

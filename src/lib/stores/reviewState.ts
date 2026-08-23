@@ -201,7 +201,7 @@ export async function updatePageNotes(pageId: string, notes: string): Promise<bo
 /**
  * Saves an inline text edit optimistically
  */
-export async function saveInlineEdit(pageId: string, fieldId: string, newContent: string) {
+export async function saveInlineEdit(pageId: string, fieldId: string, newContent: string): Promise<boolean> {
 	const optimisticEdit: Edit = {
 		id: 'temp-' + Date.now(),
 		page_id: pageId,
@@ -229,7 +229,7 @@ export async function saveInlineEdit(pageId: string, fieldId: string, newContent
 	if (!user) {
 		console.error('Cannot save edit: no authenticated user.');
 		editsStore.set(previousEdits);
-		return;
+		return false;
 	}
 
 	const { data, error } = await supabase
@@ -242,8 +242,10 @@ export async function saveInlineEdit(pageId: string, fieldId: string, newContent
 	if (error) {
 		console.error('Failed to save edit:', error);
 		editsStore.set(previousEdits);
+		return false;
 	} else if (data) {
 		// Swap temporary ID with real database ID
 		editsStore.update((edits) => edits.map((e) => (e.id === optimisticEdit.id ? data : e)));
 	}
+	return true;
 }

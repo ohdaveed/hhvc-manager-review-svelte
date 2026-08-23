@@ -16,6 +16,8 @@ type Page = {
  * underneath.
  */
 export type Suggestion = {
+	/** Routable page identity; prevents a field id being reused on another page. */
+	pageId?: string;
 	original: string;
 	suggested: string;
 	status: 'pending' | 'accepted' | 'rejected' | 'error';
@@ -142,6 +144,12 @@ class PageStore {
 		this.selectedFieldIds = [];
 		this.suggestions = this.pruneSuggestions([]);
 		this.rewriteInstruction = '';
+	}
+
+	/** Drops every suggestion this field's edit was saved from. */
+	forgetSuggestion(fieldId: string) {
+		const { [fieldId]: _gone, ...rest } = this.suggestions;
+		this.suggestions = rest;
 	}
 
 	/**
