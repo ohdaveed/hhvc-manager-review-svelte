@@ -193,6 +193,19 @@ body {
 	--color-sfds-slate-l3: #1d4d70;
 	--color-sfds-grey-l2: #e2e2e2;
 
+	/* Review-status triplets. The queue needs a dot, a tint and readable text
+	   per status, and `bg-emerald-500`/`bg-amber-500` were Tailwind defaults
+	   standing in for an SFDS palette that exists. `#a84b00` is SFDS's own
+	   caution colour -- the softer ambers fail 4.5:1 on white, and this queue
+	   uses colour plus a label rather than colour alone precisely because the
+	   contrast has to hold either way. */
+	--color-sfds-green: #0b7a3e;
+	--color-sfds-green-l1: #e7f4ec;
+	--color-sfds-amber: #a84b00;
+	--color-sfds-amber-l1: #fdf1e7;
+	--color-sfds-red: #b7202e;
+	--color-sfds-red-l1: #fcecee;
+
 	/* SFDS's `title` ladder, mobile step. The desktop step is applied in the
 	   scoped block below, because @theme cannot carry a media query. */
 	--text-sfds-title-xl: 2rem;

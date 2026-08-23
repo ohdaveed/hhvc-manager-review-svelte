@@ -92,12 +92,12 @@ Record<fieldId, {original, suggested, status}>`, `rewriteInstruction`,
       `ActionBar` is removed — its rewrite calls move into the Fields tab.
       Collapse buttons in both side headers, with accessible names (icon-only).
 
-- [ ] **5. `ReviewQueue`.** Progress block (`N of 29 decided`, percentage, the
+- [x] **5. `ReviewQueue`.** Progress block (`N of 29 decided`, percentage, the
       three-segment bar), per-group count pills, selected item with the
       `border-left` treatment, optional sub-line carrying page type and edit
       count.
 
-- [ ] **6. `FieldsPanel` + third tab.** Selection header, agent recommendation
+- [x] **6. `FieldsPanel` + third tab.** Selection header, agent recommendation
       card (idle/loading/done/error), batch rewrite (two presets + free text),
       per-field suggestion cards with deleted and inserted text as **separate
       paragraphs** — never inline, they are different sentences — accept/reject
@@ -105,8 +105,15 @@ Record<fieldId, {original, suggested, status}>`, `rewriteInstruction`,
       **`Save N edits` counts accepted suggestions, not selected fields**.
       Selecting a field on the mockup switches the panel to this tab.
 
-- [ ] **7. Verify.** `bun run verify`, `bun run test:e2e`, Playwright
+- [x] **7. Verify.** `bun run verify`, `bun run test:e2e`, Playwright
       screenshot with a clean console.
+      _Signed-in verification is live-blocked:_ the dev auto sign-in uses a
+      password grant against the hosted project, which now answers
+      `400 captcha protection: request disallowed`, and the local Supabase
+      stack is not running. The shell, both rail collapses and their
+      `localStorage` round-trip were checked in the browser; the selection and
+      panel flow is covered by `tests/fieldsPanel.test.ts` and the multi-select
+      block in `tests/inlineEditFieldId.test.ts` instead.
 
 ---
 
