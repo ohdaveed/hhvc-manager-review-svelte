@@ -28,6 +28,38 @@ export type Edit = {
 };
 
 // Our central stores
+/**
+ * The order the queue groups pages in, and therefore the order a reviewer reads
+ * them. `needs-review` first because it is the work; the decided groups follow.
+ *
+ * Exported so `ReviewQueue` and anything that needs to name the queue's FIRST
+ * page read the same list. Two copies of this drift the moment a status is
+ * added, and the symptom would be a link that lands somewhere other than the
+ * row it points at.
+ */
+export const QUEUE_STATUS_ORDER = [
+	'needs-review',
+	'approved',
+	'revise',
+	'blocked'
+] as const satisfies readonly ReviewPage['status'][];
+
+/**
+ * The path of the first page as the queue renders it: earliest group first,
+ * store order within a group.
+ *
+ * Returns `undefined` when no review is loaded -- signed out, or Supabase
+ * unreachable -- which is a real state, not an error. Callers pick their own
+ * fallback rather than being handed a path to a page that is not in the queue.
+ */
+export function firstQueuePath(pages: ReviewPage[]): string | undefined {
+	for (const status of QUEUE_STATUS_ORDER) {
+		const first = pages.find((p) => p.status === status);
+		if (first) return first.path;
+	}
+	return undefined;
+}
+
 export const pagesStore = writable<ReviewPage[]>([]);
 export const editsStore = writable<Edit[]>([]);
 

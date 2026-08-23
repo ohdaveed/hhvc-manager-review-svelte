@@ -14,6 +14,7 @@ import { readable } from 'svelte/store';
 import { render, screen } from '@testing-library/svelte';
 import ReviewQueue from '../src/lib/components/workspace/ReviewQueue.svelte';
 import { pageStore } from '../src/lib/stores/pageData.svelte.js';
+import { firstQueuePath, QUEUE_STATUS_ORDER, type ReviewPage } from '../src/lib/stores/reviewState';
 
 vi.mock('$lib/supabase', () => ({
 	supabase: {
@@ -122,5 +123,41 @@ describe('ReviewQueue', () => {
 		expect(screen.queryByText('Blocked')).toBeNull();
 		// The count pill sits beside the heading it belongs to.
 		expect(screen.getByText('Approved').parentElement?.textContent).toContain('2');
+	});
+});
+
+describe('firstQueuePath', () => {
+	const row = (path: string, status: ReviewPage['status']): ReviewPage => ({
+		id: `id-${path}`,
+		review_id: 'r1',
+		path,
+		status,
+		manager_notes: null,
+		page_checks: null
+	});
+
+	it('names the row the queue renders first, not the row the store holds first', () => {
+		// Store order is decided-first here; the queue renders `needs-review`
+		// first, so the two disagree. This is exactly the case a second copy of
+		// the ordering would get wrong.
+		const pages = [row('approved-page', 'approved'), row('todo-page', 'needs-review')];
+
+		expect(firstQueuePath(pages)).toBe('todo-page');
+	});
+
+	it('falls through the group order when earlier groups are empty', () => {
+		const pages = [row('blocked-page', 'blocked'), row('revise-page', 'revise')];
+
+		// `revise` precedes `blocked`, and neither `needs-review` nor `approved`
+		// has a row.
+		expect(firstQueuePath(pages)).toBe('revise-page');
+	});
+
+	it('returns undefined with no review loaded, rather than inventing a page', () => {
+		expect(firstQueuePath([])).toBeUndefined();
+	});
+
+	it('orders the rendered groups by the same constant', () => {
+		expect([...QUEUE_STATUS_ORDER]).toEqual(['needs-review', 'approved', 'revise', 'blocked']);
 	});
 });

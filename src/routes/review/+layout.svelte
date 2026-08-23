@@ -8,7 +8,7 @@
 	import { Separator } from '$lib/components/ui/separator/index.js';
 	import { Switch } from '$lib/components/ui/switch/index.js';
 	import { pageStore } from '$lib/stores/pageData.svelte';
-	import { loadReview, pagesStore } from '$lib/stores/reviewState';
+	import { firstQueuePath, loadReview, pagesStore } from '$lib/stores/reviewState';
 	import { sessionStore } from '$lib/stores/session.svelte';
 	import { ChevronsLeft, ChevronsRight } from 'lucide-svelte';
 	import ReviewQueue from '$lib/components/workspace/ReviewQueue.svelte';
@@ -44,6 +44,18 @@
 	// thing, and two numbers that look alike but differ is worse than one. Work
 	// parked on other pages is the panel's line to make, not a number here.
 	const unsavedCount = $derived(pageStore.acceptedFor(pageData?.id));
+
+	// Where `Export review data` points until export exists: the queue's first
+	// row, by the same order `ReviewQueue` renders.
+	//
+	// The chain ends at `$page.params.slug` rather than a literal, because that
+	// is the one value guaranteed routable here -- the router matched it to get
+	// this layout on screen. An earlier version ended in `?? ''`, which resolves
+	// to `/review/`, and `/review` has no `+page.svelte`: the fallback for "no
+	// page to point at" was itself the 404 this link exists to avoid.
+	const exportTarget = $derived(
+		firstQueuePath($pagesStore) ?? pageStore.pages[0]?.id ?? $page.params.slug
+	);
 
 	onMount(() => {
 		// Rail state is per-device chrome in `localStorage`, read here rather than
@@ -121,17 +133,19 @@
 				<ReviewQueue />
 			</ScrollArea>
 			<Separator />
-			<!-- Both go through `resolve()`, which is what the lint rule asks for and
-			     what survives a `paths.base`. Note it does NOT make them work: there
-			     is no `+page.svelte` under `/review`, so a layout-only route id
-			     typechecks and then 404s. Pre-existing, and where these should point
-			     is a product decision -- flagged on the PR rather than guessed at. -->
 			<div class="flex items-center justify-between px-5 py-3.5">
+				<!-- Export has no page of its own yet, so it goes where the queue
+				     starts rather than to `/review`, which has no `+page.svelte` and
+				     404s. A placeholder destination that lands somewhere real. -->
 				<a
-					href={resolve('/review')}
+					href={resolve('/review/[slug]', { slug: exportTarget })}
 					class="text-sfds-action text-[13px] font-semibold hover:underline"
 					data-testid="export-review-data">Export review data</a
 				>
+				<!-- Site map is still dead, deliberately. It has no spec anywhere in
+				     the repo -- the only two references are this link and the flag in
+				     PLAN.md -- so there is nothing to point it at that would not be a
+				     guess. Left visibly broken rather than quietly aimed somewhere. -->
 				<a
 					href={resolve('/review')}
 					class="text-sfds-action text-[13px] font-semibold hover:underline">Site map</a
@@ -141,9 +155,18 @@
 	</aside>
 
 	<!-- Center Canvas: The Mockup -->
+	<!-- This carried `onclick={() => (pageStore.activeField = null)}` to deselect
+	     on a background click. `activeField` became `selectedFieldIds` in 1b and
+	     the handler was not updated, so it has been assigning a property nothing
+	     reads -- a no-op, and svelte-check's only error in this file. Removed
+	     rather than repointed at `clearSelection()`: that would ALSO drop pending
+	     cards and the typed instruction, so a stray click on the canvas would
+	     discard work. Restoring the affordance is a design call, not a rename.
+	     `role="presentation"` is left as-is for the same reason -- it suppresses
+	     the `main` landmark and was there for the handler, but changing landmark
+	     semantics is its own decision. -->
 	<main
 		class="bg-muted relative flex h-full cursor-default flex-col overflow-hidden"
-		onclick={() => (pageStore.activeField = null)}
 		role="presentation"
 	>
 		{#if sessionStore.knownSignedOut}

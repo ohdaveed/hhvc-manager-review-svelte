@@ -1,13 +1,21 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import { pageStore } from '$lib/stores/pageData.svelte';
 
 	onMount(() => {
-		// Bypass Magic Link auth during development
-		// Auto-redirect to the first available mockup page (e.g. pestsTopic -> agency-service-grouping)
-		const defaultPage = pageStore.pages.length > 0 ? pageStore.pages[0].id : 'agency-service-grouping';
-		goto(`/review/${defaultPage}`);
+		// There is no landing page yet: the root sends you to the first mockup.
+		//
+		// This used to fall back to the literal `'agency-service-grouping'`, which
+		// is a FILENAME in `$lib/data`, not a routable id -- that module's page
+		// derives `topic-healthy-housing-and-vector-control` from its `slug`, so
+		// the fallback redirected to a 404. There is nothing to fall back to
+		// anyway: `pageStore.pages` is built at construction from the 29 compiled
+		// corpus modules, so an empty one means the corpus itself failed to load
+		// and no slug would help. Redirecting nowhere beats redirecting to a 404.
+		const first = pageStore.pages[0]?.id;
+		if (first) goto(resolve('/review/[slug]', { slug: first }));
 	});
 </script>
 

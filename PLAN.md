@@ -543,8 +543,16 @@ called it since task 1.
 
 **`/review` has no `+page.svelte`, so "Export review data" and "Site map" 404.**
 `resolve('/review')` typechecks — a layout-only route is still a route id — so
-the eslint fix does not surface it. Pre-existing, and inventing a destination is
-a product decision. Flagged on the thread, left open.
+the eslint fix does not surface it.
+
+**Export is resolved:** it points at the queue's first row until an export page
+exists. The order comes from `QUEUE_STATUS_ORDER` in `reviewState.ts`, which
+`ReviewQueue` also renders by, so the link and the row it names cannot drift.
+
+**Site map is still open, and deliberately still dead.** It has no spec anywhere
+in the repo — the only two references are the link itself and this flag — so
+there is nothing to aim it at that would not be a guess. Left visibly broken
+rather than quietly pointed somewhere plausible.
 
 **Accept is irreversible.** ~~`decide` renders its buttons only while a
 suggestion is `pending`~~ — fixed as a follow-up: `decide`/`decideAll` take
