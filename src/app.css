@@ -4,6 +4,26 @@
 @import 'tw-animate-css';
 @import 'shadcn-svelte/tailwind.css';
 
+/* The SFDS token layer, revived 2026-08-23.
+
+   These two files existed but were imported by NOTHING: their only importer
+   was `src/routes/layout.css`, itself imported by nothing, so the whole
+   `src/css/` subtree was dead and knip ignored it as such. The design handoff
+   specifies `src/css/theme.css` as the token layer to build on, which is only
+   true once it is actually loaded — hence these lines.
+
+   Order matters: `sfds.css` declares the ~94 `--sfds-*` PRIMITIVES that
+   `theme.css` composes into semantic and component tokens. Primitives first.
+
+   Both files are `:root` custom properties only — no selectors, no
+   `!important`, so nothing here can outrank a Tailwind utility. Deliberately
+   NOT importing the rest of `src/css/`: those are the legacy component
+   stylesheets, and `layout.css` additionally pulls `@sfgov/design-system`,
+   whose Tailwind v3 build carries 7,714 `!important` declarations that beat
+   every v4 utility (see `src/app.css` note below and PLAN.md B3). */
+@import './css/sfds.css';
+@import './css/theme.css';
+
 @custom-variant dark (&:is(.dark *));
 
 :root {
