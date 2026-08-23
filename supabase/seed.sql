@@ -30,7 +30,26 @@ INSERT INTO auth.users (
     raw_app_meta_data,
     raw_user_meta_data,
     created_at,
-    updated_at
+    updated_at,
+    -- GoTrue scans these eight as Go string, not *string
+    -- (internal/models/user.go), so a NULL is not "no token" but an
+    -- unmarshalable row: signInWithPassword answers 500
+    -- "Database error querying schema" and the auth container logs
+    --
+    --     Scan error on column index 3, name "confirmation_token":
+    --     converting NULL to string is unsupported
+    --
+    -- The column defaults are NULL, so omitting them from this INSERT is
+    -- what produced a seeded user nobody could sign in as. Empty string is
+    -- the value GoTrue itself writes for "no token outstanding".
+    confirmation_token,
+    recovery_token,
+    email_change_token_current,
+    email_change_token_new,
+    email_change,
+    phone_change_token,
+    phone_change,
+    reauthentication_token
 )
 VALUES (
     '00000000-0000-0000-0000-000000000000',
@@ -43,7 +62,8 @@ VALUES (
     '{"provider":"email","providers":["email"]}',
     '{}',
     now(),
-    now()
+    now(),
+    '', '', '', '', '', '', '', ''
 )
 ON CONFLICT (id) DO NOTHING;
 
