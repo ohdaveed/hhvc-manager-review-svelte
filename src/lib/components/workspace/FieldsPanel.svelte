@@ -167,6 +167,7 @@
 			([, s]) => s.status === 'accepted'
 		);
 		const missing: string[] = [];
+		const saved: string[] = [];
 
 		for (const [fieldId, suggestion] of accepted) {
 			const resolved = resolveFields(pageData as never, [fieldId])[0];
@@ -176,7 +177,17 @@
 			}
 			resolved.field.set(suggestion.suggested);
 			if (livePageId) await saveInlineEdit(livePageId, fieldId, suggestion.suggested);
-			pageStore.forgetSuggestion(fieldId);
+			saved.push(fieldId);
+		}
+
+		// One reassignment after the loop, not one per iteration. Clearing inside
+		// the loop would spread the map as it stands each time, and there is an
+		// `await` between iterations -- a realtime update or a second click landing
+		// in that gap would resurrect a key this loop had already cleared.
+		if (saved.length > 0) {
+			const remaining = { ...pageStore.suggestions };
+			for (const fieldId of saved) delete remaining[fieldId];
+			pageStore.suggestions = remaining;
 		}
 
 		if (missing.length > 0) {

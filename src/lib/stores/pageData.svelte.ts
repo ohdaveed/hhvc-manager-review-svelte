@@ -144,12 +144,6 @@ class PageStore {
 		this.rewriteInstruction = '';
 	}
 
-	/** Drops every suggestion this field's edit was saved from. */
-	forgetSuggestion(fieldId: string) {
-		const { [fieldId]: _gone, ...rest } = this.suggestions;
-		this.suggestions = rest;
-	}
-
 	/**
 	 * Keeps the suggestions for `keep`, plus every `accepted` one anywhere.
 	 *
