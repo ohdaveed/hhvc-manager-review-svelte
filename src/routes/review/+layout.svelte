@@ -46,11 +46,15 @@
 	const unsavedCount = $derived(pageStore.acceptedFor(pageData?.id));
 
 	// Where `Export review data` points until export exists: the queue's first
-	// row, by the same order `ReviewQueue` renders. With no review loaded there
-	// is no queue, so it falls back to the corpus's first page -- the same place
-	// the root route sends people, and never a slug the router cannot match.
+	// row, by the same order `ReviewQueue` renders.
+	//
+	// The chain ends at `$page.params.slug` rather than a literal, because that
+	// is the one value guaranteed routable here -- the router matched it to get
+	// this layout on screen. An earlier version ended in `?? ''`, which resolves
+	// to `/review/`, and `/review` has no `+page.svelte`: the fallback for "no
+	// page to point at" was itself the 404 this link exists to avoid.
 	const exportTarget = $derived(
-		firstQueuePath($pagesStore) ?? pageStore.pages[0]?.id ?? pageData?.id ?? ''
+		firstQueuePath($pagesStore) ?? pageStore.pages[0]?.id ?? $page.params.slug
 	);
 
 	onMount(() => {
