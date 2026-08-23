@@ -1,6 +1,6 @@
 # Mockup version history, accepted-edit overlay, and durable notes
 
-**Status:** design approved, not yet planned
+**Status:** design approved after adversarial review, not yet planned
 **Date:** 2026-08-23
 **Supersedes:** PLAN.md item **F5** ("The hosted database has no data"), which becomes slice 1 of this work.
 
@@ -41,32 +41,47 @@ new_content, created_at)`, one row per save, never updated. Per-field copy
    records no author". That doc line needs correcting.
 6. **`pages.manager_notes` is destructive.** `reviewState.ts:188` does
    `.update({ manager_notes })`; each save overwrites the last with no history.
-   Same for `page_checks`. This is the one place reviewer reasoning can vanish
-   silently.
+   Same for `page_checks`.
 7. **The `comments` table is dead code.** It exists with 4 RLS policies, but
-   nothing in `src/` reads or writes it — `grep "from('comments')"` returns zero
-   hits.
-8. **`field_id` is structural, not positional.** It is
+   nothing in `src/` reads or writes it.
+8. **`field_id` is structural, not positional** —
    `sections.<heading-slug>.paragraphs.<n>`, derived from the heading rather than
-   the array index and computed once from pristine module data — specifically so
-   reordering sections does not orphan later edits, and so a reviewer editing a
-   heading does not orphan its own section. Documented limit: paragraph and bullet
-   indexes _within_ a section still shift when one is inserted mid-section.
-9. **`public.documents` is an orphan** — a pgvector table
-   (`id/content/metadata/embedding`) absent from `supabase/migrations/`, 0 rows,
-   RLS enabled with 0 policies (therefore deny-all, not exposed). Out of scope
-   here; flagged for a separate decision.
+   the array index and computed once from pristine module data, so reordering
+   sections does not orphan later edits. Documented limit: paragraph and bullet
+   indexes _within_ a section still shift.
+9. **`title` and `summary` are already field ids** (`Page.svelte:20,29`), folded by
+   `HelpPanel.svelte:46-47`. Page-level addressing partly exists. `audience[]`
+   does not have one.
+10. **CI has no Supabase credentials** — `pr.yml` sets placeholder values only, so
+    fork PRs keep working. Any check requiring DB access is therefore unbuildable
+    as specified.
+11. **Realtime subscribes to `INSERT` on `edits`, not `UPDATE`.** Any design that
+    signals acceptance by updating a column would silently fail to propagate.
+12. **`public.documents` is an orphan** — a pgvector table absent from
+    `supabase/migrations/`, 0 rows, RLS enabled with 0 policies (deny-all).
 
 ## Decisions
 
-| Question                                    | Decision                          | Rationale                                                                                                                                  |
-| ------------------------------------------- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| Is the hosted DB for real work?             | **Real review work**              | Drives minimal scaffolding, no fabricated content                                                                                          |
-| How are mockup versions created?            | **Explicit `corpus:import`**      | Keeps writes out of the app; a version exists exactly when you re-port                                                                     |
-| What can a reviewer do with history?        | **Compare versions side by side** | Provenance plus a field-level diff                                                                                                         |
-| Do AI rewrites create a corpus version?     | **No**                            | They write one `edits` row, as today. Otherwise version diffs fill with per-reviewer noise and stop answering "what changed in the mockup" |
-| How does an accepted edit reach the mockup? | **DB overlay at render**          | The only option delivering "automatic" without surrendering git; a static build cannot rewrite its own TypeScript source                   |
-| Reviewer notes                              | **Append-only `page_notes`**      | Closes finding 6                                                                                                                           |
+Six from design, five from adversarial review.
+
+| #   | Question                                    | Decision                                                                             |
+| --- | ------------------------------------------- | ------------------------------------------------------------------------------------ |
+| 1   | Is the hosted DB for real work?             | Real review work — minimal scaffolding, no fabricated content                        |
+| 2   | How are versions created?                   | Explicit `corpus:import`; a version exists exactly when you re-port                  |
+| 3   | What can a reviewer do with history?        | Compare two versions side by side, field level                                       |
+| 4   | Do AI rewrites create a version?            | **No** — they write one `edits` row, as today                                        |
+| 5   | How does an accepted edit reach the mockup? | DB overlay at render; a static build cannot rewrite its own source                   |
+| 6   | Reviewer notes                              | Append-only `page_notes`                                                             |
+| 7   | Accepted edit when its base copy changes    | **Expires on field-hash change**, surfaced for re-confirmation                       |
+| 8   | Is acceptance itself mutable?               | **No** — append-only `edit_decisions` log; accept and revoke are both rows           |
+| 9   | After `materialize`                         | Edit records `materialized_in_version_id`; the overlay skips it                      |
+| 10  | Enforcing import                            | **`corpus.lock` in git**, compared offline in CI — no DB access                      |
+| 11  | Who may accept                              | Deferred; any authenticated reviewer for now, **explicit gate on slice 3**           |
+| 12  | What counts as a version change             | Reader-visible copy only; `karl`/`editorNote` snapshotted but excluded from the hash |
+| 13  | Reader-visible copy without a field id      | `audience.<n>` becomes an addressable edit target                                    |
+| 14  | Where field hashes live                     | `page_versions.field_hashes jsonb`, a `field_id → hash` map                          |
+| 15  | Render while an edit is expired             | The **new base copy**, with a banner offering re-confirm                             |
+| 16  | Credential for production writes            | Project-scoped **service-role key** in 1Password, not the account-wide PAT           |
 
 ## The layer model
 
@@ -82,9 +97,7 @@ Three layers, each with its own history, none folding into another:
 `corpus:import` snapshots **what is in git only** — deliberately not the overlay.
 Folding the overlay into the snapshot would make each version depend on review
 state, and the diff would stop meaning "the mockup changed".
-`corpus:materialize` is the explicit inverse: fold accepted edits back into the TS
-modules when git should catch up, after which the next import includes them
-naturally.
+`corpus:materialize` is the explicit inverse.
 
 ## Data model
 
@@ -98,91 +111,133 @@ corpus_versions (
 page_versions (
   id uuid pk,
   corpus_version_id uuid references corpus_versions,
-  path text, content jsonb, content_hash text,
+  path text,
+  content jsonb,          -- full snapshot, including karl/editorNote
+  content_hash text,      -- reader-visible copy only (decision 12)
+  field_hashes jsonb,     -- field_id -> hash, drives expiry (decision 14)
   unique (corpus_version_id, path)
 )
 
-page_notes (            -- append-only replacement for pages.manager_notes
+page_notes (              -- append-only replacement for pages.manager_notes
   id uuid pk, page_id uuid references pages, corpus_version_id uuid,
   user_id uuid, content text, created_at timestamptz
 )
+
+edit_decisions (          -- append-only; accept AND revoke are both rows
+  id uuid pk, edit_id uuid references edits,
+  decision text check (decision in ('accept','revoke')),
+  decided_by uuid, decided_at timestamptz,
+  corpus_version_id uuid  -- the version accepted against
+)
 ```
 
-A full 30-page snapshot is written per import. No content-addressed dedup join
-table: 30 rows × even 100 imports is ~3k rows, and dedup would buy nothing but
-complexity (YAGNI).
+A full 30-page snapshot is written per import. No content-addressed dedup: 30 rows
+× even 100 imports is ~3k rows, and dedup would buy nothing but complexity.
 
 Changed:
 
-- `edits.accepted_at`, `edits.accepted_by` — **accepting is setting these.** A
-  partial unique index enforces at most one accepted edit per `(page_id, field_id)`.
-  The accepted edits _are_ the overlay; it needs no table of its own.
+- `edits.materialized_in_version_id` — set by `corpus:materialize`; the overlay
+  skips any edit already folded into the base (decision 9).
 - `edits.corpus_version_id`, `comments.corpus_version_id` — provenance, so a stale
-  edit is visibly stale ("written against v2, page is now v4").
+  edit is visibly stale.
+- `pages.manager_notes` read-migrated into `page_notes`, then dropped. Hosted has
+  0 rows, so the migration is free.
 
-`pages.manager_notes` is read-migrated into `page_notes` and then dropped. Hosted
-has 0 rows, so the migration is free.
+Current acceptance state is **derived**: the latest `edit_decisions` row per
+`edit_id`. There is no mutable `accepted_at` flag — decision 8 exists precisely
+because the action deciding what the mockup says must not be the one action with
+no history. It also makes acceptance an `INSERT`, which the existing realtime
+subscription shape handles; an `UPDATE` would not (finding 11). The new table
+needs its own subscription.
 
 RLS: every new table follows the per-operation shape established by
-`20260822030000_scope_rls_policies.sql` rather than the old blanket
-`FOR ALL USING (true)`.
+`20260822030000_scope_rls_policies.sql`, not the old blanket `FOR ALL USING (true)`.
+
+## Overlay resolution
+
+For a given page at the current corpus version, a field renders as:
+
+1. the base copy from the corpus, unless
+2. an `edits` row for that `field_id` has a latest decision of `accept`, and
+3. it is not `materialized_in_version_id`-retired, and
+4. the field's hash in the current `page_versions.field_hashes` still equals the
+   hash it was accepted against.
+
+If (4) fails the acceptance is **expired**: render the new base copy and surface a
+re-confirm affordance showing the old base, the accepted text, and the new base
+(decisions 7 and 15). Expiry is per field, which is why decision 14 exists — a
+single per-page hash would expire every accepted edit on a page whenever any part
+of it changed.
 
 ## Flows
 
-**`bun run corpus:import`** — normalize `allPages`, hash each page, write one
-`corpus_versions` row plus 30 `page_versions`, recording the git SHA. Idempotent:
-a no-op when the hash set already matches the newest version.
+**`bun run corpus:import`** — normalize `allPages`, hash each page and each field,
+write one `corpus_versions` row plus 30 `page_versions`, recording the git SHA.
+Idempotent: a no-op when the hash set matches the newest version. Authenticates
+with a project-scoped service-role key read from 1Password at use time
+(decision 16).
 
-**CI guard** — fail the build when the built corpus's hash set is not the newest
-`corpus_versions` row. This is what stops "forgot to import" from becoming silent
-drift; without it the import step is only as reliable as memory.
+**`corpus.lock`** — a committed, sorted `path → field-hashes` map plus a top-level
+corpus hash, regenerated by `corpus:import`. CI compares the built corpus to the
+lockfile with **no DB access**, which is what makes the check possible at all
+given finding 10. Merge conflicts are resolved by **regenerating, never by hand**;
+a `.gitattributes` merge driver enforces this.
 
-**Render** — the static corpus as bundled today, plus the accepted overlay applied
-at render. The live page takes **no** runtime dependency on `page_versions`;
-versions serve history and diff only.
+**Render** — the static corpus as bundled today, plus the overlay resolution
+above. The live page takes no runtime dependency on `page_versions`.
 
-**`bun run corpus:materialize`** — rewrite the TS modules from accepted edits, so
-git catches up on demand.
+**`bun run corpus:materialize`** — rewrite the TS modules from accepted edits and
+stamp `materialized_in_version_id`, so git catches up on demand without the
+overlay double-applying.
 
 ## Diff UI
 
 A version picker per page: choose two corpus versions, render a field-level diff
-keyed on the existing `field_id` derivation, so diffs align exactly with where
-notes and edits are anchored. Reusing that key is what makes "this note was
-written against the paragraph that changed" expressible.
+keyed on `field_id`, so diffs align exactly with where notes and edits are
+anchored. `audience.<n>` becomes addressable (decision 13) so audience copy is
+diffable and editable like any paragraph. `karl` and `editorNote` are present in
+the snapshot and viewable, but changing them does not mint a version.
 
 ## Slices
 
-1. **F5 + versioning foundation** — seed the hosted project (a hosted-safe seed
-   with no `auth.*` writes, generated alongside the local one), add
-   `corpus_versions` / `page_versions`, add `corpus:import`.
+1. **F5 + versioning foundation** — hosted-safe seed (no `auth.*` writes),
+   `corpus_versions` / `page_versions` with `field_hashes`, `corpus:import`,
+   `corpus.lock` and its CI check.
 2. **Durable notes** — `manager_notes` → append-only `page_notes`.
-3. **Accept + overlay** — `edits.accepted_at`, overlay at render, accept UI.
-4. **Diff UI** — version picker and field-level diff.
-5. **Materialize** — `corpus:materialize`.
+3. **Accept + overlay** — `edit_decisions`, overlay resolution, expiry and
+   re-confirm UI, realtime subscription for decisions.
+   **Gate: decision 11 (who may accept) must be settled before this ships to
+   anyone but you.**
+4. **Diff UI** — version picker, field-level diff, `audience.<n>` addressing.
+5. **Materialize** — `corpus:materialize` and `materialized_in_version_id`.
 
 Slice 1 alone delivers what F5 asked for.
 
 ## Testing
 
-- Content hashing is stable under object-key reordering (otherwise every import
-  looks like a change).
+- Content hashing is stable under object-key reordering — otherwise every import
+  looks like a change.
+- Changing only `karl` or `editorNote` does **not** mint a version (decision 12);
+  changing a paragraph does.
 - `field_id` derivation is unchanged by this work — regression test, since notes,
   edits and diffs all key on it.
 - Overlay substitutes the correct field and only that field.
+- An accepted edit whose base field changed renders the **new base**, not the
+  accepted text (decision 15).
+- `materialize` then re-import does not double-apply the folded edit.
+- Revoking after accepting leaves both rows and resolves to the base copy.
 - Double `corpus:import` yields one version, not two.
+- `corpus.lock` disagreeing with the built corpus fails CI without any DB access.
 - The generated hosted seed contains no `auth.` writes and exactly one
-  `INSERT INTO reviews` — this guard matters because the failure mode is leaking
-  the dev-password user into production.
+  `INSERT INTO reviews` — the failure mode is leaking the dev-password user into
+  production.
 
 ## Out of scope
 
-- **`public.documents`** (finding 9) — orphan pgvector table; separate decision.
-- **The `comments` table** (finding 7) — dead schema. Slice 3 or 4 may revive it or
-  it may be dropped; either way it is a decision, not part of this design.
+- **`public.documents`** (finding 12) — orphan pgvector table; separate decision.
+- **The `comments` table** (finding 7) — dead schema. Revive in slice 3/4 or drop
+  it; either way a decision, not part of this design.
 - **Signed-out empty state.** RLS requires `authenticated`, so signed-out visitors
-  correctly see nothing, but the `No review found: null` console error remains
-  until handled separately.
-- **Inviting reviewers.** With `disable_signup=true` on the hosted project, other
-  reviewers must be invited from the Supabase dashboard before they can use a
-  seeded review.
+  correctly see nothing, but the `No review found: null` console error remains.
+- **Inviting reviewers.** `disable_signup=true`, so reviewers must be invited from
+  the Supabase dashboard. Interacts with decision 11.
