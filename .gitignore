@@ -40,5 +40,5 @@ entities.json
 # vitest coverage output
 coverage/
 
-# Supabase CLI local branch state (created by `supabase db reset`)
-supabase/.branches/
+# Supabase CLI scratch state lives in `supabase/.gitignore`, which is the
+# CLI's own template -- `.branches` and `.temp` both belong to it.

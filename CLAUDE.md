@@ -72,6 +72,17 @@ Note the error handling: `HttpError`s are rethrown so upstream status codes surv
 
 Client-side only. There is no `hooks.server.ts` and no `event.locals` — sessions live in the browser, and the API route verifies bearer tokens itself with a per-request client (`persistSession: false`). Schema is `supabase/migrations/`: `reviews`, `pages`, `comments`, `edits`.
 
+The local stack is usable from a clean `supabase start` + `supabase db reset`
+with no hand-patching. Two things had to be fixed for that and are worth knowing
+if either regresses: the seed writes `''` into the eight `auth.users` token
+columns GoTrue scans as Go `string` rather than `*string` (a NULL there is a 500
+`Database error querying schema`, not "no token"), and
+`20260823140000_grant_table_privileges.sql` states the table privileges instead
+of inheriting them. The hosted project gets those grants from Supabase's own
+`ALTER DEFAULT PRIVILEGES`; a local Postgres does not, so before that migration
+the app worked against the hosted database and could not work against a local
+one.
+
 RLS is enabled on all four tables, but every policy is `FOR ALL TO authenticated USING (true)` — any signed-in user can read and delete any row, and `edits` records no author. Known, unresolved, needs a product decision before it matters.
 
 ### Legacy port
@@ -99,6 +110,14 @@ Netlify, site `hhvc-manager-review`, **Git-connected and deploying automatically
 `netlify deploy --build --prod` still works and builds locally, but it is a manual override, not the normal path: the deploy it uploads carries no `commit_ref`, so it supersedes the commit-linked release and the published deploy can no longer be traced to a SHA. Reach for it only when Netlify's own build is unavailable.
 
 CI runs separately in `.github/workflows/pr.yml` — unit tests, build and e2e block, while prettier/eslint/svelte-check report without blocking. A green Netlify preview says the site built; it does not say the tests passed.
+
+`supabase/.temp/` is CLI scratch state and is **not tracked** — that is the
+CLI's own `supabase/.gitignore` template, added because `supabase start` writes
+`start-secrets/.../env/docker.env` (service-role key, DB URL, JWT secret) into
+that directory. The consequence: a fresh clone has no `project-ref`, so
+hosted-project commands need `supabase link --project-ref <ref>` first. Local
+development (`supabase start`, `db reset`) needs no link — `config.toml` is
+enough.
 
 Supabase auth URLs must include any new origin, or magic links redirect to a dead URL. The hosted allow-list covers production, `localhost:5173`, and Netlify preview hostnames; `supabase/config.toml` covers the local stack.
 
