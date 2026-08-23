@@ -282,17 +282,32 @@ should not be able to modify or delete it.
 `[auth] enable_signup = true`, `[auth.email] enable_signup = true` and
 `enable_confirmations = false`. With `FOR ALL TO authenticated USING (true)` on
 all four tables, anyone who can receive email could sign up and then read,
-modify or delete every row. **That file governs the local stack only — the
-hosted project is unverified.** F1a exists to close that gap first.
+modify or delete every row. **That file governs the local stack only.** F1a has
+since verified the hosted project separately and found signup already disabled
+there, so this described a local-stack exposure rather than a live one — but the
+local defaults still stand, and a `supabase db reset` reproduces them.
 
-- [ ] **F1a. Verify hosted Supabase signup settings.** Check the dashboard for
-      the hosted project. If signup is open, restrict to invited users or an
-      `@sfgov.org` email allow-list. Highest leverage item in this plan: no
-      schema change, and it is the only step that closes the sign-up-and-delete
-      path. Do this before F1b.
-      _Done when:_ the hosted setting is confirmed closed, and the value is
-      recorded here.
-      _Touches:_ nothing in-repo (dashboard), then this file.
+- [x] **F1a. Hosted signup is already closed — verified, no change needed.**
+      Read from the project's public `GET /auth/v1/settings` endpoint (anon key,
+      no admin credentials required), project `kiynekyzqxneepjipqhg`:
+
+      | Setting                    | Value   | Meaning                             |
+                  | -------------------------- | ------- | ----------------------------------- |
+                  | `disable_signup`           | `true`  | self-registration is off            |
+                  | `mailer_autoconfirm`       | `false` | email must be verified              |
+                  | `external.anonymous_users` | `false` | no anonymous auth                   |
+                  | providers enabled          | `email` | magic link only, matching the app    |
+
+                  So the sign-up-and-delete path this item existed to close was never open
+                  on the hosted project, and the `@sfgov.org` allow-list is unnecessary
+                  while `disable_signup` stays `true` — new reviewers must be invited from
+                  the dashboard. **Re-check this value if anyone ever reports being unable
+                  to be added**, because opening signup is the obvious wrong fix.
+                  _Method note:_ `~/.supabase/access-token` is **expired** — it 403s on
+                  `GET /v1/projects`, so the Management API is unavailable until a new PAT
+                  is minted. The public settings endpoint above is what confirmed this, and
+                  it needs no token. The Supabase CLI is not installed.
+                  _Touches:_ nothing in-repo (verified against the hosted project).
 
 - [x] **F1b. Policies are per-operation; the migration is written and tested.**
       `supabase/migrations/20260822030000_scope_rls_policies.sql`. Shape derived
