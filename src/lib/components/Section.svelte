@@ -1,7 +1,23 @@
 <script lang="ts">
 	import EditTarget from './EditTarget.svelte';
+	import { entryText, entryUnverified, setEntry } from '$lib/corpus/fieldResolver';
 
 	let { section, index } = $props();
+
+	/**
+	 * Ten paragraph/bullet entries across the corpus are
+	 * `{text, unverified, unverifiedReason}` rather than plain strings — copy
+	 * with no tier-1 source, flagged for HHVC to confirm before publication.
+	 *
+	 * They were passed straight to `EditTarget`, so seven pages of a
+	 * copy-review tool rendered the literal string `[object Object]` where
+	 * SF.gov copy belongs. `extractCopy` in `$lib/corpus/fields` already
+	 * unwrapped them for hashing; the renderer never did, which is why the
+	 * corpus hash was right while the page a reviewer read was wrong.
+	 *
+	 * Writes go back through the same helper pair in `$lib/corpus/fieldResolver`
+	 * so the panel and the page cannot disagree about what a field says.
+	 */
 
 	// Assigned once from the pristine corpus in pageData.svelte.ts, so editing a
 	// heading cannot renumber its own section's edits. The fallback covers a
@@ -32,8 +48,9 @@
 			<EditTarget
 				name={`${label} Paragraph`}
 				fieldId={`sections.${key}.paragraphs.${i}`}
-				value={p}
-				update={(v) => (section.paragraphs[i] = v)}
+				value={entryText(p)}
+				unverified={entryUnverified(p)}
+				update={(v) => setEntry(section.paragraphs, i, v)}
 			/>
 		{/each}
 	{/if}
@@ -48,6 +65,9 @@
 </div>
 
 {#snippet bulletsSnippet(bullets)}
+	<!-- `list-style-position: outside` is the default and must stay: the badge on
+	     a selected bullet is absolutely positioned, and `inside` pulls the marker
+	     into the tinted highlight box with it. -->
 	<ul class="list-disc pl-5">
 		{#each bullets as b, i (i)}
 			<EditTarget
@@ -55,8 +75,9 @@
 				class="my-1"
 				name={`${label} Bullet`}
 				fieldId={`sections.${key}.bullets.${i}`}
-				value={b}
-				update={(v) => (bullets[i] = v)}
+				value={entryText(b)}
+				unverified={entryUnverified(b)}
+				update={(v) => setEntry(bullets, i, v)}
 			/>
 		{/each}
 	</ul>

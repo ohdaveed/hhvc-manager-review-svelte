@@ -4,15 +4,21 @@
  * Guards the three things that make an edit target work.
  *
  * `edits.field_id` is the value each target advertises as `data-rewrite-field`.
- * If the id handed to `pageStore.activeField` ever drifts from that attribute,
- * edits still save but land under a key nothing reads, and `HelpPanel` folds
- * them into the wrong slot -- the failure that let copy edits go unpersisted
- * without anything looking broken.
+ * If the id pushed onto `pageStore.selectedFieldIds` ever drifts from that
+ * attribute, edits still save but land under a key nothing reads, and
+ * `HelpPanel` folds them into the wrong slot -- the failure that let copy edits
+ * go unpersisted without anything looking broken.
+ *
+ * Selection became a list in design 1b, so the id is asserted through
+ * `selectedFieldIds` and the value through `resolveField`. Nothing is captured
+ * at click time any more, which is the point: a captured setter can write to a
+ * detached object after a re-render and appear to have worked.
  */
 import { describe, it, expect, beforeEach } from 'vitest';
 import { render, fireEvent } from '@testing-library/svelte';
 import Page from '../src/lib/components/Page.svelte';
 import { pageStore } from '../src/lib/stores/pageData.svelte.js';
+import { resolveField } from '../src/lib/corpus/fieldResolver.js';
 import { sessionStore } from '../src/lib/stores/session.svelte.js';
 
 // `fieldKey` is what pageData.svelte.ts assigns from the pristine corpus. The
@@ -43,25 +49,25 @@ const renderPage = () => render(Page, { props: { page: structuredClone(fixture) 
 
 describe('edit targets', () => {
 	beforeEach(() => {
-		pageStore.activeField = null;
+		pageStore.clearSelection();
 		// Deterministic: the store resolves getSession() asynchronously, so
 		// without this the component can flip branches mid-test.
 		sessionStore.signedIn = true;
 	});
 
 	describe('field identity', () => {
-		it('hands activeField the same id the element advertises', async () => {
+		it('selects the same id the element advertises', async () => {
 			const { container } = renderPage();
 			const targets = container.querySelectorAll<HTMLElement>('[data-rewrite-field]');
 
 			expect(targets.length).toBeGreaterThan(0);
 
 			for (const el of targets) {
-				pageStore.activeField = null;
+				pageStore.clearSelection();
 				await fireEvent.click(el);
 
-				expect(pageStore.activeField).not.toBeNull();
-				expect(pageStore.activeField?.fieldId).toBe(el.dataset.rewriteField);
+				// A plain click replaces, so exactly one id and it is this one.
+				expect(pageStore.selectedFieldIds).toEqual([el.dataset.rewriteField]);
 			}
 		});
 
@@ -76,10 +82,10 @@ describe('edit targets', () => {
 			const { container } = renderPage();
 
 			await fireEvent.click(container.querySelector<HTMLElement>('.page-title .edit-target')!);
-			expect(pageStore.activeField?.fieldId).toBe('title');
+			expect(pageStore.selectedFieldIds).toEqual(['title']);
 
 			await fireEvent.click(container.querySelector<HTMLElement>('.page-summary .edit-target')!);
-			expect(pageStore.activeField?.fieldId).toBe('summary');
+			expect(pageStore.selectedFieldIds).toEqual(['summary']);
 		});
 
 		it('gives each paragraph in a section its own id', async () => {
@@ -93,7 +99,7 @@ describe('edit targets', () => {
 			const ids = new Set<string>();
 			for (const el of paragraphs) {
 				await fireEvent.click(el);
-				ids.add(pageStore.activeField!.fieldId);
+				ids.add(pageStore.selectedFieldIds[0]);
 			}
 
 			// Both share the display name `Section [1] Paragraph`; the ids must not.
@@ -112,9 +118,86 @@ describe('edit targets', () => {
 					'[data-rewrite-field="sections.how-to-report.paragraphs.1"]'
 				)!
 			);
-			pageStore.activeField!.update('Rewritten.');
+
+			// The write goes through the resolver, not through anything the click
+			// captured -- that is the whole reason the resolver exists.
+			resolveField(page, pageStore.selectedFieldIds[0])!.set('Rewritten.');
 
 			expect(page.sections[0].paragraphs[1]).toBe('Rewritten.');
+		});
+	});
+
+	describe('multi-select', () => {
+		const click = (container: HTMLElement, fieldId: string, shiftKey = false) =>
+			fireEvent.click(container.querySelector<HTMLElement>(`[data-rewrite-field="${fieldId}"]`)!, {
+				shiftKey
+			});
+
+		it('shift-click adds, in the order picked', async () => {
+			const { container } = renderPage();
+
+			await click(container, 'summary');
+			await click(container, 'title', true);
+
+			expect(pageStore.selectedFieldIds).toEqual(['summary', 'title']);
+			// Index + 1 is the badge, and the badge is what ties a highlight on
+			// the mockup to its suggestion card.
+			expect(pageStore.badgeNumber('summary')).toBe(1);
+			expect(pageStore.badgeNumber('title')).toBe(2);
+		});
+
+		it('shift-click removes a field already in the selection', async () => {
+			const { container } = renderPage();
+
+			await click(container, 'title');
+			await click(container, 'summary', true);
+			await click(container, 'title', true);
+
+			expect(pageStore.selectedFieldIds).toEqual(['summary']);
+		});
+
+		it('marks selected targets with aria-pressed, so it is not colour-only', async () => {
+			const { container } = renderPage();
+
+			await click(container, 'title');
+
+			expect(
+				container.querySelector('[data-rewrite-field="title"]')?.getAttribute('aria-pressed')
+			).toBe('true');
+			expect(
+				container.querySelector('[data-rewrite-field="summary"]')?.getAttribute('aria-pressed')
+			).toBe('false');
+		});
+
+		it('a plain click replaces rather than deselects', async () => {
+			const { container } = renderPage();
+
+			await click(container, 'title');
+			await click(container, 'title');
+
+			expect(pageStore.selectedFieldIds).toEqual(['title']);
+		});
+
+		it('keeps accepted suggestions when the selection moves on', async () => {
+			const { container } = renderPage();
+
+			await click(container, 'title');
+			pageStore.suggestions = {
+				title: { original: 'a', suggested: 'b', status: 'accepted' },
+				'sections.how-to-report.paragraphs.0': {
+					original: 'c',
+					suggested: 'd',
+					status: 'pending'
+				}
+			};
+
+			await click(container, 'summary');
+
+			// An accepted suggestion is an unsaved edit the reviewer approved --
+			// dropping it here would retract work with no undo. A pending one
+			// carries no such commitment.
+			expect(pageStore.suggestions.title?.status).toBe('accepted');
+			expect(pageStore.suggestions['sections.how-to-report.paragraphs.0']).toBeUndefined();
 		});
 	});
 
@@ -171,13 +254,13 @@ describe('edit targets', () => {
 			expect(container.querySelectorAll('button').length).toBe(0);
 		});
 
-		it('does not open the ActionBar on click', async () => {
+		it('selects nothing on click', async () => {
 			const { container } = renderPage();
 			const target = container.querySelector<HTMLElement>('[data-rewrite-field="title"]')!;
 
 			await fireEvent.click(target);
 
-			expect(pageStore.activeField).toBeNull();
+			expect(pageStore.selectedFieldIds).toEqual([]);
 		});
 	});
 

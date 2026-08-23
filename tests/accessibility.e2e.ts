@@ -53,6 +53,9 @@ test('every edit target is reachable and operable by keyboard', async ({ page })
 	await expect(first).toBeFocused();
 
 	// A real <button> activates on Enter and Space. The old markup did neither.
+	// Activation selects the field: `aria-pressed` is asserted rather than the
+	// highlight, because a selection conveyed only by colour is the violation
+	// this file exists to catch.
 	await page.keyboard.press('Enter');
-	await expect(page.locator('#actionBarContainer textarea')).toBeVisible();
+	await expect(first).toHaveAttribute('aria-pressed', 'true');
 });

@@ -5,7 +5,7 @@
 	/**
 	 * One editable piece of mockup copy.
 	 *
-	 * Every edit target went through three separate problems, and they are one
+	 * Every edit target went through four separate problems, and they are one
 	 * problem: what an edit target *is*.
 	 *
 	 * 1. Keyboard. These were `<p role="button" tabindex="0" onclick>` with no
@@ -18,6 +18,9 @@
 	 * 3. Signed-out. With no session `saveInlineEdit` rolls back and returns,
 	 *    so an editable-looking mockup silently discards work. Signed out, the
 	 *    copy renders as plain text with no affordance.
+	 * 4. Selection is now a SET, not one field (design 1b). The badge number is
+	 *    the field's position in `selectedFieldIds`, which is what ties a
+	 *    highlight on the page to its suggestion card in the panel.
 	 */
 	let {
 		as = 'p',
@@ -25,16 +28,19 @@
 		name,
 		value,
 		update,
+		unverified = false,
 		class: className = '',
 		id = undefined
 	}: {
 		/** Semantic wrapper element -- `h1`, `h2`, `p`, `li`, `div`. */
 		as?: string;
 		fieldId: string;
-		/** Human-facing label for the ActionBar. Display only. */
+		/** Human-facing label for the panel. Display only. */
 		name: string;
 		value: string;
 		update: (next: string) => void;
+		/** Corpus copy HHVC has not confirmed; drives the panel's callout. */
+		unverified?: boolean;
 		class?: string;
 		/** Anchor id, kept on the wrapper so in-page links still resolve. */
 		id?: string | undefined;
@@ -44,22 +50,47 @@
 	// signed-in reviewer never sees the controls flicker out and back.
 	const editable = $derived(!sessionStore.knownSignedOut);
 
-	function select(event: Event) {
+	const selected = $derived(pageStore.isSelected(fieldId));
+	const badge = $derived(pageStore.badgeNumber(fieldId));
+
+	function select(event: MouseEvent | KeyboardEvent) {
 		event.stopPropagation();
-		pageStore.activeField = { name, fieldId, content: value, update };
+		// Shift extends the selection. `metaKey`/`ctrlKey` too, because that is
+		// what every list in every OS does and a reviewer will try it.
+		const additive = event.shiftKey || event.metaKey || event.ctrlKey;
+		pageStore.select(fieldId, additive);
 	}
 </script>
 
 {#if editable}
-	<svelte:element this={as} {id} class={className}>
-		<button type="button" class="edit-target" data-rewrite-field={fieldId} onclick={select}>
+	<svelte:element this={as} {id} class="{className} {selected ? 'edit-target-host' : ''}">
+		<button
+			type="button"
+			class="edit-target {selected ? 'edit-target-selected' : ''}"
+			data-rewrite-field={fieldId}
+			aria-pressed={selected}
+			aria-label={selected ? `${name}, selected, field ${badge}` : name}
+			onclick={select}
+		>
+			{#if selected}
+				<!-- Absolutely positioned, and never with a negative horizontal
+				     margin: that overflows the mockup sideways. Vertical room is
+				     made by the host element instead. -->
+				<span class="edit-target-badge" aria-hidden="true">{badge} · {name}</span>
+			{/if}
 			{value}
 		</button>
 	</svelte:element>
 {:else}
 	<!-- No button, no tabindex, no pointer affordance: signed out, this is
 	     just copy. The mockups are static, so reading still works. -->
-	<svelte:element this={as} {id} class={className} data-rewrite-field={fieldId}>
+	<svelte:element
+		this={as}
+		{id}
+		class={className}
+		data-rewrite-field={fieldId}
+		data-unverified={unverified || undefined}
+	>
 		{value}
 	</svelte:element>
 {/if}
