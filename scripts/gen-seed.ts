@@ -1,5 +1,7 @@
 /**
- * Regenerates `supabase/seed.sql` from the static page corpus.
+ * Regenerates `supabase/seed.sql` and `supabase/seed.hosted.sql` from the
+ * static page corpus. `seed.sql` is for the local Supabase stack only;
+ * `seed.hosted.sql` targets the **production** Supabase project.
  *
  *   bun run scripts/gen-seed.ts
  *

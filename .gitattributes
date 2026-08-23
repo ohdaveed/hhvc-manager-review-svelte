@@ -3,6 +3,11 @@
 #
 #     bun run corpus:lock
 #
-# `binary` stops git from attempting a line-wise textual merge and producing a
-# file that looks plausible and hashes to nothing.
-corpus.lock binary
+# `-merge` stops git from attempting a line-wise textual merge and producing a
+# file that looks plausible and hashes to nothing -- a conflict here must be
+# resolved by regenerating, not by picking a side. `-text` leaves the
+# generator's own line endings (LF) alone rather than letting git's normal
+# conversion touch them. Neither attribute hides the file from diffs: unlike
+# `binary` (which implies both plus `-diff`), this still shows a corpus change
+# in the diff, which is the whole reason the lockfile exists.
+corpus.lock -merge -text

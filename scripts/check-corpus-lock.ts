@@ -4,8 +4,11 @@
  *   bun run corpus:check
  *
  * Runs in CI with no database access. A mismatch means someone changed
- * src/lib/data without running `bun run corpus:lock`, which would leave the
- * hosted version history missing the change.
+ * src/lib/data without running `bun run corpus:lock` -- that is: the
+ * committed lockfile no longer matches the corpus in the tree. This check
+ * enforces only that; it does not itself do anything to a hosted version
+ * history (no import script consumes this lockfile yet, and running
+ * `bun run corpus:lock` silences this check without importing anything).
  */
 import { readFileSync } from 'node:fs';
 import { allPages } from '../src/lib/data/index.js';
@@ -18,6 +21,16 @@ try {
 	actual = JSON.parse(readFileSync(new URL('../corpus.lock', import.meta.url), 'utf8'));
 } catch {
 	console.error('corpus.lock is missing or unreadable. Run: bun run corpus:lock');
+	process.exit(1);
+}
+
+// Check the file's format version before anything about its shape: a future
+// v2 lockfile is free to change what "pages" looks like, so validating shape
+// first would report a v2 file as malformed under v1 rules instead of naming
+// the real problem.
+if (actual.version !== 1) {
+	console.error(`corpus.lock has version ${JSON.stringify(actual.version)}, expected 1.`);
+	console.error('This checker only understands v1 lockfile semantics — investigate the file.');
 	process.exit(1);
 }
 

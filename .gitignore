@@ -39,3 +39,6 @@ entities.json
 
 # vitest coverage output
 coverage/
+
+# Supabase CLI local branch state (created by `supabase db reset`)
+supabase/.branches/
