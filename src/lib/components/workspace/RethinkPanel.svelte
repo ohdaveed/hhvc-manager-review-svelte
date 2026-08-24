@@ -38,6 +38,14 @@
 		// Read (not used) purely to register as a dependency: the cleanup below
 		// must re-run whenever the selection changes, not just on unmount.
 		void sectionKey;
+
+		// The instruction is guidance for ONE section -- "lead with what a
+		// tenant does first" means nothing transplanted onto the next one. It
+		// lives in component state, so without this it survived the switch and
+		// went out with the following section's request, unseen unless the
+		// reviewer thought to scroll back up to the textarea.
+		instruction = '';
+
 		return () => controller?.abort();
 	});
 

@@ -89,6 +89,34 @@ describe('RethinkPanel', () => {
 		});
 	});
 
+	it('clears the instruction when the reviewer moves to another section', async () => {
+		// Guidance is written about the section in front of the reviewer.
+		// Carrying it to the next one submits it invisibly -- the textarea is
+		// above the fold of a panel they have just scrolled through.
+		requestRethink.mockResolvedValue(result);
+		pageStore.selectSection('what-we-do');
+		render(RethinkPanel, { props: { pageData } });
+
+		const box = screen.getByLabelText(/what should this section accomplish/i);
+		await fireEvent.input(box, { target: { value: 'Lead with what a tenant does.' } });
+
+		pageStore.selectSection('who-we-are');
+		await tick();
+
+		expect(
+			(screen.getByLabelText(/what should this section accomplish/i) as HTMLTextAreaElement).value
+		).toBe('');
+
+		await fireEvent.click(screen.getByRole('button', { name: /rethink this section/i }));
+		// Empty normalizes to `undefined` at the call site (line 106), so the
+		// next section is rethought with no instruction at all rather than an
+		// empty one.
+		expect(requestRethink.mock.calls[0][0]).toMatchObject({
+			sectionKey: 'who-we-are',
+			instruction: undefined
+		});
+	});
+
 	it('renders one toggle per op, with a drop unchecked by default', async () => {
 		requestRethink.mockResolvedValue(result);
 		pageStore.selectSection('what-we-do');

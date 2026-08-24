@@ -28,6 +28,55 @@ describe('section selection and rethink state', () => {
 		expect(pageStore.selectedFieldIds).toEqual([]);
 	});
 
+	it('re-selecting the section already selected leaves a request in flight alone', () => {
+		// The reset used to be unconditional, so a second click on the same
+		// section dropped `rethink` to idle and re-enabled submit -- while
+		// RethinkPanel's abort effect, keyed on the section, saw no change and
+		// aborted nothing. That bought a second metered call whose response
+		// raced the first.
+		pageStore.selectSection('what-we-do');
+		pageStore.rethink = { state: 'loading', pageId: 'page-a', sectionKey: 'what-we-do' };
+
+		pageStore.selectSection('what-we-do');
+
+		expect(pageStore.rethink.state).toBe('loading');
+	});
+
+	it('re-selecting the section already selected keeps a ready proposal and its decisions', () => {
+		pageStore.selectSection('what-we-do');
+		pageStore.rethink = {
+			state: 'ready',
+			pageId: 'page-a',
+			sectionKey: 'what-we-do',
+			result: {
+				rationale: '',
+				ops: [],
+				otherSections: [],
+				karlBefore: '',
+				karlAfter: '',
+				karlChanged: false,
+				structureChanged: false,
+				model: '',
+				disclosure: ''
+			},
+			decisions: { 'drop:bullet:2': true }
+		};
+
+		pageStore.selectSection('what-we-do');
+
+		expect(pageStore.rethink.state).toBe('ready');
+		expect(pageStore.rethink).toMatchObject({ decisions: { 'drop:bullet:2': true } });
+	});
+
+	it('but moving to a different section does drop the previous proposal', () => {
+		pageStore.selectSection('what-we-do');
+		pageStore.rethink = { state: 'loading', pageId: 'page-a', sectionKey: 'what-we-do' };
+
+		pageStore.selectSection('who-we-are');
+
+		expect(pageStore.rethink.state).toBe('idle');
+	});
+
 	it('and picking a field clears the section selection', () => {
 		pageStore.selectSection('what-we-do');
 		pageStore.select('title');

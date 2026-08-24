@@ -197,8 +197,22 @@ class PageStore {
 	selectSection(sectionKey: string) {
 		this.selectedFieldIds = [];
 		this.suggestions = this.pruneSuggestions([]);
+
+		// Only reset the rethink when the selection actually MOVES. Re-clicking
+		// the section already selected used to drop it back to `idle`, which
+		// re-enabled the submit button while the first request was still in
+		// flight -- and `RethinkPanel`'s abort effect depends on the section
+		// key, which had not changed, so nothing aborted. Two metered calls,
+		// last response wins, despite a one-in-flight guarantee.
+		//
+		// The same guard protects a `ready` proposal: a stray second click on
+		// the section a reviewer is already working through no longer discards
+		// the ops and every accept/reject decision made against them.
+		if (sectionKey !== this.selectedSectionKey) {
+			this.rethink = { state: 'idle' };
+		}
+
 		this.selectedSectionKey = sectionKey;
-		this.rethink = { state: 'idle' };
 	}
 
 	clearSectionSelection() {
