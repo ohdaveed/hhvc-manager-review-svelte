@@ -1,0 +1,289 @@
+<!-- src/lib/components/workspace/RethinkPanel.svelte -->
+<script lang="ts">
+	/**
+	 * The Rethink tab: reconsider a whole section, block by block.
+	 *
+	 * Slice 1 is READ-ONLY. There is deliberately no Apply control here: the
+	 * structural half of a proposal cannot survive a reload until the
+	 * accepted-edit overlay exists, and a button that silently loses added
+	 * copy is worse than no button.
+	 */
+	import { Button } from '$lib/components/ui/button/index.js';
+	import { Textarea } from '$lib/components/ui/textarea/index.js';
+	import { pageStore } from '$lib/stores/pageData.svelte';
+	import { requestRethink } from '$lib/rethink/request';
+	import type { Op } from '$lib/rethink/diff';
+
+	let { pageData }: { pageData: unknown } = $props();
+
+	const pageId = $derived((pageData as { id?: string } | undefined)?.id);
+	const sectionKey = $derived(pageStore.selectedSectionKey);
+
+	const heading = $derived.by(() => {
+		const sections = (pageData as { sections?: { fieldKey?: string; heading?: string }[] })
+			?.sections;
+		return (sections ?? []).find((s) => s.fieldKey === sectionKey)?.heading ?? sectionKey;
+	});
+
+	let instruction = $state('');
+	let controller: AbortController | undefined;
+
+	// `pageStore.selectSection` resets `rethink` to idle without touching an
+	// AbortController -- the store holds none today, deliberately, so this is
+	// the panel's job. Without it, a slow request for the section the
+	// reviewer just left would run to completion unseen, and worse: it would
+	// still own `controller` until its own `finally` runs, so switching to a
+	// new section and clicking ITS Cancel could abort nothing.
+	$effect(() => {
+		// Read (not used) purely to register as a dependency: the cleanup below
+		// must re-run whenever the selection changes, not just on unmount.
+		void sectionKey;
+
+		// The instruction is guidance for ONE section -- "lead with what a
+		// tenant does first" means nothing transplanted onto the next one. It
+		// lives in component state, so without this it survived the switch and
+		// went out with the following section's request, unseen unless the
+		// reviewer thought to scroll back up to the textarea.
+		instruction = '';
+
+		return () => controller?.abort();
+	});
+
+	const KIND_LABEL: Record<string, string> = {
+		heading: 'heading',
+		paragraph: 'paragraph',
+		bullet: 'bullet',
+		calloutTitle: 'callout title',
+		calloutText: 'callout text'
+	};
+
+	const opLabel = (op: Op) => `${op.type} ${KIND_LABEL[op.kind] ?? op.kind}`;
+
+	/**
+	 * The accessible name for an op's checkbox needs to be more than `opLabel`:
+	 * two `add` bullets, or two `rewrite` paragraphs, in one section are an
+	 * ordinary result, and `aria-label` overrides the wrapping `<label>`'s text
+	 * rather than supplementing it -- so an unqualified label makes two
+	 * checkboxes indistinguishable to a screen reader. Append a snippet of the
+	 * op's own copy so each name is unique.
+	 *
+	 * `rewrite` carries its new text as `to`, not `text`; every other type that
+	 * reaches this list (`add`, `move`, `drop` -- `keep` is filtered out before
+	 * rendering) carries `text`. Narrowed explicitly rather than cast.
+	 */
+	const opText = (op: Op) => (op.type === 'rewrite' ? op.to : op.text);
+
+	const opName = (op: Op) => {
+		const text = opText(op);
+		const snippet = text.length > 60 ? `${text.slice(0, 60)}…` : text;
+		return snippet ? `${opLabel(op)}: ${snippet}` : opLabel(op);
+	};
+
+	async function run() {
+		if (!sectionKey || !pageId) return;
+		if (pageStore.rethink.state === 'loading') return;
+
+		// Captured before the request. A slow answer must not land on a section
+		// the reviewer has since left -- the guard `recommend()` already uses.
+		const requestPageId = pageId;
+		const requestSectionKey = sectionKey;
+		const current = () =>
+			pageStore.selectedSectionKey === requestSectionKey &&
+			(pageData as { id?: string } | undefined)?.id === requestPageId;
+
+		// Captured locally so the `finally` below can tell whether it still owns
+		// `controller` -- a slow request for a section the reviewer has since
+		// left must not clear the controller a newer request just set.
+		const mine = new AbortController();
+		controller = mine;
+		pageStore.rethink = { state: 'loading', pageId: requestPageId, sectionKey: requestSectionKey };
+
+		try {
+			const result = await requestRethink({
+				page: pageData,
+				pageId: requestPageId,
+				sectionKey: requestSectionKey,
+				instruction: instruction.trim() || undefined,
+				// `pageData` is the in-memory corpus object for this page, already
+				// mutated in place by THIS session's own edits -- `Section.svelte`
+				// and `EditTarget` write through the same `$lib/corpus/fieldResolver`
+				// helpers that this object holds. So the grounding the assistant sees
+				// reflects what this reviewer changed this session, but NOT a
+				// persisted `edits` row saved by an earlier session or another
+				// reviewer: there is no overlay of the `edits` table onto the
+				// pristine corpus here. That overlay is decision 8's full answer, and
+				// it is slice 3's work -- building it now would be scope creep on a
+				// read-only slice.
+				signal: mine.signal
+			});
+			if (!current()) return;
+			pageStore.rethink = {
+				state: 'ready',
+				pageId: requestPageId,
+				sectionKey: requestSectionKey,
+				result,
+				decisions: {}
+			};
+		} catch (e) {
+			if (!current()) return;
+			const message =
+				e instanceof Error && e.name === 'AbortError'
+					? 'Cancelled.'
+					: e instanceof Error
+						? e.message
+						: 'Could not reach the assistant.';
+			pageStore.rethink = { state: 'error', message };
+		} finally {
+			if (controller === mine) controller = undefined;
+		}
+	}
+
+	function cancel() {
+		controller?.abort();
+	}
+</script>
+
+<div class="flex h-full min-h-0 flex-col">
+	<div class="min-h-0 flex-1 overflow-y-auto">
+		{#if !sectionKey}
+			<div class="px-5 py-6 text-sm">
+				<p class="font-semibold">No section selected</p>
+				<p class="mt-1.5 leading-[20px]">
+					Choose <strong>Rethink section</strong> on any section of the mockup. The assistant will reconsider
+					how it is written and structured, and say what it thinks is missing.
+				</p>
+			</div>
+		{:else}
+			<div class="border-b px-5 py-3">
+				<span class="text-[13px] font-semibold">{heading}</span>
+			</div>
+
+			<section class="mx-5 mt-4" aria-label="Rethink">
+				<Textarea
+					bind:value={instruction}
+					rows={2}
+					class="text-[13px]"
+					aria-label="What should this section accomplish?"
+					placeholder="Optional: what should this section accomplish?"
+				/>
+				<div class="mt-2 flex gap-2">
+					<Button
+						size="sm"
+						class="h-8 flex-1 text-[12px]"
+						disabled={pageStore.rethink.state === 'loading'}
+						onclick={run}
+					>
+						{pageStore.rethink.state === 'loading' ? 'Rethinking…' : 'Rethink this section'}
+					</Button>
+					{#if pageStore.rethink.state === 'loading'}
+						<Button variant="outline" size="sm" class="h-8 text-[12px]" onclick={cancel}>
+							Cancel
+						</Button>
+					{/if}
+				</div>
+				{#if pageStore.rethink.state === 'loading'}
+					<p class="mt-2 text-[12px]" role="status">
+						Reading the whole section. This usually takes about 30 seconds.
+					</p>
+				{/if}
+			</section>
+
+			{#if pageStore.rethink.state === 'error'}
+				{@const cancelled = pageStore.rethink.message === 'Cancelled.'}
+				<p class="mx-5 mt-4 text-[12px] leading-[17px]" role={cancelled ? 'status' : 'alert'}>
+					{pageStore.rethink.message}
+				</p>
+			{/if}
+
+			{#if pageStore.rethink.state === 'ready'}
+				{@const result = pageStore.rethink.result}
+				{#if result.rationale}
+					<section class="mx-5 mt-4 rounded-[4px] border p-3" aria-label="Why">
+						<span class="text-[12px] font-bold tracking-[0.06em] uppercase">Why</span>
+						<p class="mt-1.5 text-[13px] leading-[19px]">{result.rationale}</p>
+					</section>
+				{/if}
+
+				{#if result.karlChanged}
+					<!-- decision 9: a proposal that changes the section's Karl mapping
+					     changes what someone must build in Wagtail, so it goes above the
+					     ops list rather than being one more line inside it. Gated on the
+					     normalized `karlChanged` flag, not a raw string compare here --
+					     see request.ts's `normalizeKarl` for why. -->
+					<section class="mx-5 mt-4 rounded-[4px] border-2 p-3" aria-label="Karl mapping changed">
+						<span class="text-[12px] font-bold tracking-[0.06em] uppercase"
+							>Karl mapping changed</span
+						>
+						<p class="mt-1.5 text-[13px] leading-[19px] line-through">{result.karlBefore}</p>
+						<p class="mt-1.5 text-[13px] leading-[19px]">{result.karlAfter}</p>
+					</section>
+				{/if}
+
+				{#if result.structureChanged}
+					<!-- decision 16: the diff covers heading, paragraphs, bullets and
+					     callout only, so a proposal that also reworked this section's
+					     steps or cards has changes with no op to accept or reject. Saying
+					     so beats a rationale describing edits the list below cannot show. -->
+					<section
+						class="mx-5 mt-4 rounded-[4px] border-2 p-3"
+						aria-label="Steps and cards not shown"
+					>
+						<span class="text-[12px] font-bold tracking-[0.06em] uppercase"
+							>Steps and cards not shown</span
+						>
+						<p class="mt-1.5 text-[13px] leading-[19px]">
+							The assistant also changed this section's steps or cards. This tool cannot review
+							those yet, so they are not in the list below and will not be applied.
+						</p>
+					</section>
+				{/if}
+
+				<ul class="mt-4 space-y-2 px-5 pb-4" aria-label="Proposed changes">
+					{#each result.ops.filter((op) => op.type !== 'keep') as op (op.id)}
+						<li class="rounded-[4px] border p-3">
+							<label class="flex items-start gap-2 text-[12px]">
+								<input
+									type="checkbox"
+									class="mt-0.5"
+									aria-label={opName(op)}
+									checked={pageStore.isOpAccepted(op)}
+									onchange={(event) => pageStore.setOpAccepted(op.id, event.currentTarget.checked)}
+								/>
+								<span class="font-bold tracking-[0.06em] uppercase">{opLabel(op)}</span>
+							</label>
+
+							{#if op.type === 'rewrite'}
+								<p class="mt-2 rounded-[3px] px-2 py-1.5 text-[13px] leading-[19px] line-through">
+									{op.from}
+								</p>
+								<p class="mt-1.5 rounded-[3px] px-2 py-1.5 text-[13px] leading-[19px]">{op.to}</p>
+								{#if op.moved}
+									<p class="mt-1 text-[12px]">Also moves position.</p>
+								{/if}
+							{:else if op.type === 'add'}
+								<p class="mt-2 rounded-[3px] px-2 py-1.5 text-[13px] leading-[19px]">{op.text}</p>
+								<p class="mt-1 text-[12px]">
+									Unverified — proposed by the assistant, with no confirmed source.
+								</p>
+							{:else}
+								<p class="mt-2 rounded-[3px] px-2 py-1.5 text-[13px] leading-[19px]">{op.text}</p>
+							{/if}
+						</li>
+					{/each}
+				</ul>
+
+				{#if result.otherSections.length > 0}
+					<p class="mx-5 mb-4 text-[12px] leading-[17px]" role="status">
+						The assistant also proposed changes to {result.otherSections.join(', ')}. Those are not
+						applied here — rethink that section to see them.
+					</p>
+				{/if}
+
+				<p class="mx-5 mb-4 text-[12px] leading-[17px]">
+					{result.disclosure}
+					{result.model ? ` (${result.model})` : ''}
+				</p>
+			{/if}
+		{/if}
+	</div>
+</div>

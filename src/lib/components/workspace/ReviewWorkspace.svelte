@@ -5,6 +5,7 @@
 	import ReviewPanel from './ReviewPanel.svelte';
 	import HelpPanel from './HelpPanel.svelte';
 	import FieldsPanel from './FieldsPanel.svelte';
+	import RethinkPanel from './RethinkPanel.svelte';
 	import { pageStore } from '$lib/stores/pageData.svelte';
 
 	let {
@@ -24,6 +25,18 @@
 		if (key !== lastSelection) {
 			lastSelection = key;
 			if (key !== '') activeTab = 'fields';
+		}
+	});
+
+	// Selecting a section is a request to work on it, so the panel follows.
+	// One-way, like the field effect above: a reviewer who then opens another
+	// tab stays there.
+	let lastSection = $state<string | undefined>(undefined);
+	$effect(() => {
+		const key = pageStore.selectedSectionKey;
+		if (key !== lastSection) {
+			lastSection = key;
+			if (key) activeTab = 'rethink';
 		}
 	});
 </script>
@@ -49,6 +62,7 @@
 					</span>
 				{/if}
 			</Tabs.Trigger>
+			<Tabs.Trigger value="rethink" class="flex-none px-3 py-3">Rethink</Tabs.Trigger>
 			<Tabs.Trigger value="overview" class="flex-none px-3 py-3">Overview</Tabs.Trigger>
 			<Tabs.Trigger value="checks" class="flex-none px-3 py-3">Checks</Tabs.Trigger>
 			<Tabs.Trigger value="help" class="flex-none px-3 py-3">Help</Tabs.Trigger>
@@ -70,6 +84,9 @@
 
 	<Tabs.Content value="fields" class="bg-background min-h-0 flex-1 overflow-hidden">
 		<FieldsPanel {pageData} {livePageId} />
+	</Tabs.Content>
+	<Tabs.Content value="rethink" class="bg-background min-h-0 flex-1 overflow-hidden">
+		<RethinkPanel {pageData} />
 	</Tabs.Content>
 	<Tabs.Content value="overview" class="bg-background min-h-0 flex-1 overflow-y-auto">
 		<ReviewPanel {pageData} />
