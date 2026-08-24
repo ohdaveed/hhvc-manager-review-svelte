@@ -1,6 +1,8 @@
 // src/lib/stores/pageData.svelte.ts
 import { allPages } from '$lib/data';
 import { deriveFieldKey } from '$lib/corpus/fieldKey.js';
+import type { Op } from '$lib/rethink/diff';
+import type { RethinkResult } from '$lib/rethink/request';
 
 type Page = {
 	id: string;
@@ -41,6 +43,19 @@ export type AgentRec = {
 	text: string;
 };
 
+export type RethinkState =
+	| { state: 'idle' }
+	| { state: 'loading'; pageId: string; sectionKey: string }
+	| { state: 'error'; message: string }
+	| {
+			state: 'ready';
+			pageId: string;
+			sectionKey: string;
+			result: RethinkResult;
+			/** Explicit reviewer decisions. Absent means the op's default. */
+			decisions: Record<string, boolean>;
+	  };
+
 const RAIL_KEY = 'hhvc:railCollapsed';
 
 /**
@@ -80,6 +95,17 @@ class PageStore {
 	 * captured setter can close over a detached object after a re-render.
 	 */
 	selectedFieldIds = $state<string[]>([]);
+
+	/**
+	 * The section a Rethink is about.
+	 *
+	 * A selection KIND distinct from `selectedFieldIds`, not another entry in
+	 * it: the badge numbering on the mockup belongs to the field selection and
+	 * cannot mean two things at once. Choosing one clears the other.
+	 */
+	selectedSectionKey = $state<string | undefined>(undefined);
+
+	rethink = $state<RethinkState>({ state: 'idle' });
 
 	/** Pending/decided rewrites, keyed by field id. */
 	suggestions = $state<Record<string, Suggestion>>({});
@@ -145,6 +171,8 @@ class PageStore {
 	 * to point at.
 	 */
 	select(fieldId: string, additive = false) {
+		// Two selection kinds cannot both be live; see `selectedSectionKey`.
+		this.selectedSectionKey = undefined;
 		if (!additive) {
 			this.selectedFieldIds = [fieldId];
 			this.suggestions = this.pruneSuggestions([fieldId]);
@@ -166,6 +194,44 @@ class PageStore {
 		this.rewriteInstruction = '';
 	}
 
+	selectSection(sectionKey: string) {
+		this.selectedFieldIds = [];
+		this.suggestions = this.pruneSuggestions([]);
+		this.selectedSectionKey = sectionKey;
+		this.rethink = { state: 'idle' };
+	}
+
+	clearSectionSelection() {
+		this.selectedSectionKey = undefined;
+		this.rethink = { state: 'idle' };
+	}
+
+	/**
+	 * A drop starts REJECTED and everything else starts accepted. Deletion is
+	 * opted into: a proposal that removes a paragraph should need a deliberate
+	 * click, not a deliberate un-click.
+	 */
+	isOpAccepted(op: Op): boolean {
+		const explicit = this.rethink.state === 'ready' ? this.rethink.decisions[op.id] : undefined;
+		if (typeof explicit === 'boolean') return explicit;
+		return op.type !== 'drop';
+	}
+
+	setOpAccepted(opId: string, accepted: boolean) {
+		if (this.rethink.state !== 'ready') return;
+		this.rethink = {
+			...this.rethink,
+			decisions: { ...this.rethink.decisions, [opId]: accepted }
+		};
+	}
+
+	/** Accepted ops that would actually change something. `keep` never counts. */
+	acceptedOpCount(): number {
+		if (this.rethink.state !== 'ready') return 0;
+		return this.rethink.result.ops.filter((op) => op.type !== 'keep' && this.isOpAccepted(op))
+			.length;
+	}
+
 	// ---- page identity ---------------------------------------------------
 
 	/**
@@ -185,6 +251,8 @@ class PageStore {
 		this.rewriteInstruction = '';
 		this.agentRec = { state: 'idle', text: '' };
 		this.suggestions = this.pruneSuggestions([]);
+		this.selectedSectionKey = undefined;
+		this.rethink = { state: 'idle' };
 	}
 
 	/** The suggestions belonging to `pageId`, which are the only ones it may show. */
