@@ -39,6 +39,15 @@ describe('Section rethink control', () => {
 		expect(screen.queryByRole('button', { name: /rethink what we do/i })).toBeNull();
 	});
 
+	it('falls through to the positional label for an empty-string heading, not just a missing one', () => {
+		// `section.heading ?? label` only falls through for `null`/`undefined`,
+		// so a section whose heading is literally `''` produced the accessible
+		// name "Rethink " -- `||` is needed to catch the empty string too.
+		const blank = { ...section, fieldKey: 'section-3', heading: '' };
+		render(Section, { props: { section: blank, index: 2 } });
+		expect(screen.getByRole('button', { name: 'Rethink Section [3]' })).toBeTruthy();
+	});
+
 	it('has a differentiated aria-label using the section heading for accessibility', () => {
 		const section1 = { ...section, fieldKey: 'section-1', heading: 'What we do' };
 		const section2 = { ...section, fieldKey: 'section-2', heading: 'How to report' };
