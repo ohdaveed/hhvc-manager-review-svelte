@@ -81,9 +81,14 @@ describe('diffSection', () => {
 			]
 		};
 		const ops = diffSection(current, proposed, 'what-we-do');
-		const moved = ops.filter((op) => op.type === 'move');
-		expect(moved.map((op) => op.text)).toContain('Answering questions');
-		expect(moved.every((op) => op.fieldId !== null)).toBe(true);
+		const bulletOps = ops.filter((op) => op.kind === 'bullet');
+		const moved = bulletOps.filter((op) => op.type === 'move');
+		expect(moved).toHaveLength(1);
+		expect(moved[0]).toMatchObject({ type: 'move', text: 'Answering questions' });
+		expect(bulletOps.filter((op) => op.type === 'keep').map((op) => op.text)).toEqual([
+			'Investigating reports of rats and mice',
+			'Inspecting apartments'
+		]);
 	});
 
 	it('does not mark surviving blocks as moved just because an earlier one was dropped', () => {

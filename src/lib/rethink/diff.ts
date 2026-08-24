@@ -97,6 +97,48 @@ function matchKind(currentBlocks: Block[], proposedBlocks_: Block[]): Pair[] {
 const KINDS: BlockKind[] = ['heading', 'paragraph', 'bullet', 'calloutTitle', 'calloutText'];
 
 /**
+ * The indices of `seq` that belong to its longest increasing subsequence.
+ *
+ * Used below to decide which matched blocks "moved". Rank equality (does
+ * this block's absolute position among matched pairs differ between current
+ * and proposed?) is the wrong test: on a reorder it flags every block whose
+ * rank shifted, which cascades to the whole list even though only one block
+ * actually changed position relative to the others. The right test is
+ * "did this block keep its relative order against the rest?" — the blocks
+ * that did are exactly the longest run that is already sorted, i.e. the
+ * LIS; everything outside it is what moved. Do not replace this with a
+ * rank-equality check to "simplify" it — that reintroduces the over-marking
+ * bug this function exists to avoid.
+ *
+ * Plain O(n^2) DP: block counts here are single digits, so clarity beats the
+ * O(n log n) patience-sorting version. On a tie for longest, prefers the
+ * earliest-starting run — dp is only updated on strict improvement, so the
+ * first (smallest-index) predecessor achieving a given length wins, and the
+ * first endpoint achieving the overall best length wins too. That keeps the
+ * result, and therefore which blocks land as `move`, identical run to run.
+ */
+function longestIncreasingSubsequenceIndices(seq: number[]): Set<number> {
+	const n = seq.length;
+	const dp = new Array<number>(n).fill(1);
+	const parent = new Array<number>(n).fill(-1);
+	for (let i = 0; i < n; i++) {
+		for (let j = 0; j < i; j++) {
+			if (seq[j] < seq[i] && dp[j] + 1 > dp[i]) {
+				dp[i] = dp[j] + 1;
+				parent[i] = j;
+			}
+		}
+	}
+	let bestEnd = -1;
+	for (let i = 0; i < n; i++) {
+		if (bestEnd === -1 || dp[i] > dp[bestEnd]) bestEnd = i;
+	}
+	const indices = new Set<number>();
+	for (let i = bestEnd; i !== -1; i = parent[i]) indices.add(i);
+	return indices;
+}
+
+/**
  * The differences between the section as it stands and the section as proposed.
  *
  * Ops come back in proposed reading order, with drops appended: a dropped block
@@ -123,13 +165,26 @@ export function diffSection(current: unknown, proposed: unknown, sectionKey: str
 		matchedCurrent.add(pair.current);
 	}
 
-	// Ranks among MATCHED blocks only, per kind. Using positions in the full
-	// list would mark every block after a drop as moved.
-	const rankOf = (blocks: Block[], kind: BlockKind, block: Block): number =>
-		blocks.filter((b) => b.kind === kind).indexOf(block);
+	// Which matched pairs "moved", among MATCHED blocks only, per kind. Using
+	// positions in the full list would mark every block after a drop as
+	// moved; using rank equality instead of LIS would cascade a single
+	// reorder into marking every displaced block as moved (see the doc above
+	// longestIncreasingSubsequenceIndices).
+	const movedByProposed = new Map<Block, boolean>();
+	for (const kind of KINDS) {
+		const currentRank = new Map<Block, number>();
+		currentBlocks
+			.filter((b) => b.kind === kind && matchedCurrent.has(b))
+			.forEach((b, i) => currentRank.set(b, i));
 
-	const matchedCurrentByKind = currentBlocks.filter((b) => matchedCurrent.has(b));
-	const matchedProposedByKind = nextBlocks.filter((b) => pairByProposed.has(b));
+		const proposedOfKind = nextBlocks.filter((b) => b.kind === kind && pairByProposed.has(b));
+		const seq = proposedOfKind.map(
+			(p) => currentRank.get(pairByProposed.get(p) as Block) as number
+		);
+		const kept = longestIncreasingSubsequenceIndices(seq);
+
+		proposedOfKind.forEach((p, i) => movedByProposed.set(p, !kept.has(i)));
+	}
 
 	let counter = 0;
 	const nextId = (type: string, kind: BlockKind) => `${type}:${kind}:${counter++}`;
@@ -155,9 +210,7 @@ export function diffSection(current: unknown, proposed: unknown, sectionKey: str
 			continue;
 		}
 
-		const moved =
-			rankOf(matchedCurrentByKind, block.kind, match) !==
-			rankOf(matchedProposedByKind, block.kind, block);
+		const moved = movedByProposed.get(block) ?? false;
 
 		if (match.text !== block.text) {
 			ops.push({
