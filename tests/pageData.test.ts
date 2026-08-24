@@ -48,6 +48,7 @@ describe('section selection and rethink state', () => {
 				karlBefore: '',
 				karlAfter: '',
 				karlChanged: false,
+				structureChanged: false,
 				model: '',
 				disclosure: ''
 			},

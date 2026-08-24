@@ -116,6 +116,76 @@ describe('requestRethink', () => {
 		expect(result.otherSections).toEqual(['Who we are']);
 	});
 
+	describe('steps and cards, which the diff cannot show (decision 16)', () => {
+		const step = {
+			title: 'Report the problem',
+			text: ['Call 311.'],
+			bullets: ['Have the address ready'],
+			callout: { text: 'Emergencies go to 911.', karl: 'Callout.' },
+			karl: 'Step block.'
+		};
+		const withSteps = {
+			...page,
+			sections: [{ ...page.sections[0], steps: [step] }, page.sections[1]]
+		};
+		const respond = (steps: unknown[]) =>
+			envelope([
+				{ ...withoutFieldKey(page.sections[0]), steps },
+				withoutFieldKey(page.sections[1])
+			]);
+
+		it('does not flag a step the assistant returned unchanged', async () => {
+			// The response adds backend-only fields in a different key order --
+			// the asymmetry that made the first `otherSections` implementation
+			// fire on every run. A projected comparison has to survive it.
+			requestGeneration.mockResolvedValue(
+				respond([{ karl: 'Step block.', component: 'what-to-do', ...step }])
+			);
+
+			const result = await requestRethink({
+				page: withSteps,
+				pageId: page.id,
+				sectionKey: 'what-we-do'
+			});
+
+			expect(result.structureChanged).toBe(false);
+		});
+
+		it('flags a step the assistant rewrote, which produces no op', async () => {
+			requestGeneration.mockResolvedValue(respond([{ ...step, title: 'Report it to 311 first' }]));
+
+			const result = await requestRethink({
+				page: withSteps,
+				pageId: page.id,
+				sectionKey: 'what-we-do'
+			});
+
+			expect(result.structureChanged).toBe(true);
+			// The point of the notice: nothing in the ops list mentions it.
+			expect(result.ops.some((op) => JSON.stringify(op).includes('311'))).toBe(false);
+		});
+
+		it('flags a step dropped from the section', async () => {
+			requestGeneration.mockResolvedValue(respond([]));
+
+			const result = await requestRethink({
+				page: withSteps,
+				pageId: page.id,
+				sectionKey: 'what-we-do'
+			});
+
+			expect(result.structureChanged).toBe(true);
+		});
+
+		it('stays false for a section that has neither', async () => {
+			requestGeneration.mockResolvedValue(envelope(unchangedResponseSections));
+
+			const result = await requestRethink({ page, pageId: page.id, sectionKey: 'what-we-do' });
+
+			expect(result.structureChanged).toBe(false);
+		});
+	});
+
 	it('carries the model and disclosure through for the record', async () => {
 		requestGeneration.mockResolvedValue(envelope(unchangedResponseSections));
 		const result = await requestRethink({ page, pageId: page.id, sectionKey: 'what-we-do' });

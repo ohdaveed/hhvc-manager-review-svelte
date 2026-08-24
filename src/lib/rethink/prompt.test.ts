@@ -39,6 +39,23 @@ describe('buildRethinkPrompt', () => {
 		expect(prompt).toMatch(/change only section 2/i);
 	});
 
+	it('tells the model to leave steps and cards alone when the section has them', () => {
+		const withSteps = {
+			...page,
+			sections: [page.sections[0], { ...page.sections[1], steps: [{ title: 'Call 311' }] }]
+		};
+
+		expect(buildRethinkPrompt({ ...args, page: withSteps })).toMatch(
+			/"steps" and\/or "cards"[\s\S]*exactly as given/i
+		);
+	});
+
+	it('says nothing about steps or cards for a section that has neither', () => {
+		// Naming absent fields invites the model to invent them; 70 of the
+		// corpus's 136 sections have none.
+		expect(buildRethinkPrompt(args)).not.toMatch(/steps/i);
+	});
+
 	it('tells the model to put its reasoning in the page-level editorNote field', () => {
 		const prompt = buildRethinkPrompt(args);
 		expect(prompt).toMatch(/page-level "editorNote" field/i);

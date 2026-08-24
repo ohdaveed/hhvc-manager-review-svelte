@@ -33,6 +33,12 @@ const RUBRIC = [
 	'At most two paragraphs before switching to bullets.'
 ].join('\n');
 
+/** Whether a section carries structure `blocks.ts` does not extract (decision 16). */
+const hasNestedStructure = (section: { steps?: unknown; cards?: unknown } | undefined): boolean => {
+	const nonEmpty = (value: unknown): boolean => Array.isArray(value) && value.length > 0;
+	return nonEmpty(section?.steps) || nonEmpty(section?.cards);
+};
+
 export function buildRethinkPrompt({
 	page,
 	sectionKey,
@@ -44,7 +50,8 @@ export function buildRethinkPrompt({
 	const targetIndex = sectionList.findIndex(
 		(s) => (s as { fieldKey?: unknown }).fieldKey === sectionKey
 	);
-	const section = sectionList[targetIndex] as { heading?: unknown; karl?: unknown } | undefined;
+	const section = sectionList[targetIndex] as
+		{ heading?: unknown; karl?: unknown; steps?: unknown; cards?: unknown } | undefined;
 
 	// A key that does not resolve means the corpus moved under the selection.
 	// Rethinking whatever section happens to be first would be worse than failing.
@@ -82,6 +89,12 @@ export function buildRethinkPrompt({
 		corpusIndex,
 		'',
 		`Return exactly ${total} section${total === 1 ? '' : 's'}, in the same order given. Change only section ${ordinal}; leave every other section exactly as given.`,
+		// Only when the section actually has them: 70 of the corpus's 136
+		// sections do not, and a constraint naming fields that are not there
+		// invites the model to add them.
+		hasNestedStructure(section)
+			? `Section ${ordinal} contains "steps" and/or "cards". Return those exactly as given -- this tool can only show changes to a section's heading, paragraphs, bullets and callout, so a change to a step or card would reach the reviewer as an unexplained gap. Rethink the prose around them instead.`
+			: '',
 		`Put your reasoning for why section ${ordinal} should change in the page-level "editorNote" field -- not inside the section itself.`
 	]
 		.filter((line) => line !== '')

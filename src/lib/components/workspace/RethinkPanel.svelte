@@ -211,6 +211,25 @@
 					</section>
 				{/if}
 
+				{#if result.structureChanged}
+					<!-- decision 16: the diff covers heading, paragraphs, bullets and
+					     callout only, so a proposal that also reworked this section's
+					     steps or cards has changes with no op to accept or reject. Saying
+					     so beats a rationale describing edits the list below cannot show. -->
+					<section
+						class="mx-5 mt-4 rounded-[4px] border-2 p-3"
+						aria-label="Steps and cards not shown"
+					>
+						<span class="text-[12px] font-bold tracking-[0.06em] uppercase"
+							>Steps and cards not shown</span
+						>
+						<p class="mt-1.5 text-[13px] leading-[19px]">
+							The assistant also changed this section's steps or cards. This tool cannot review
+							those yet, so they are not in the list below and will not be applied.
+						</p>
+					</section>
+				{/if}
+
 				<ul class="mt-4 space-y-2 px-5 pb-4" aria-label="Proposed changes">
 					{#each result.ops.filter((op) => op.type !== 'keep') as op (op.id)}
 						<li class="rounded-[4px] border p-3">

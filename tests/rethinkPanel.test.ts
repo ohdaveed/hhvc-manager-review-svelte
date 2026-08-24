@@ -32,6 +32,7 @@ const result = {
 	karlBefore: 'Information block.',
 	karlAfter: 'Information block.',
 	karlChanged: false,
+	structureChanged: false,
 	ops: [
 		{
 			id: 'rewrite:heading:0',
@@ -194,6 +195,31 @@ describe('RethinkPanel', () => {
 		await screen.findByRole('checkbox', { name: /rewrite heading/i });
 
 		expect(screen.queryByText(/karl mapping changed/i)).toBeNull();
+	});
+
+	it('says nothing about steps or cards when the proposal left them alone', async () => {
+		requestRethink.mockResolvedValue({ ...result, structureChanged: false });
+		pageStore.selectSection('what-we-do');
+		render(RethinkPanel, { props: { pageData } });
+		await fireEvent.click(screen.getByRole('button', { name: /rethink this section/i }));
+		await screen.findByRole('list', { name: /proposed changes/i });
+
+		expect(screen.queryByText(/steps and cards not shown/i)).toBeNull();
+	});
+
+	it('warns above the ops list when the proposal changed steps or cards, which produce no op', async () => {
+		// decision 16: `blocks.ts` does not extract steps or cards, so a change
+		// to one is invisible in the list below. The notice is the only thing
+		// standing between the reviewer and a rationale describing edits they
+		// cannot see.
+		requestRethink.mockResolvedValue({ ...result, structureChanged: true });
+		pageStore.selectSection('what-we-do');
+		render(RethinkPanel, { props: { pageData } });
+		await fireEvent.click(screen.getByRole('button', { name: /rethink this section/i }));
+
+		const notice = await screen.findByText(/steps and cards not shown/i);
+		const ops = screen.getByRole('list', { name: /proposed changes/i });
+		expect(notice.compareDocumentPosition(ops) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
 	});
 
 	it('shows both Karl mappings prominently, above the ops list, when karlChanged is true, and displays the RAW strings rather than a normalized rendering', async () => {

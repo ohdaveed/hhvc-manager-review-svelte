@@ -28,6 +28,14 @@ export type RethinkResult = {
 	 * either.
 	 */
 	karlChanged: boolean;
+	/**
+	 * Whether the proposal changed the target section's `steps` or `cards` --
+	 * the nested structures slice 1 cannot diff (decision 16). True means the
+	 * assistant proposed something the ops list below cannot show, so the
+	 * panel says so rather than letting the rationale describe a change with
+	 * no visible counterpart. See `structureSignature`.
+	 */
+	structureChanged: boolean;
 	model: string;
 	disclosure: string;
 };
@@ -70,6 +78,62 @@ const contentSignature = (section: unknown): string => {
 	const projected: Record<string, unknown> = {};
 	for (const key of CONTENT_KEYS) projected[key] = s[key] ?? null;
 	return JSON.stringify(projected);
+};
+
+/**
+ * The nested structures slice 1 cannot diff (decision 16), projected for
+ * comparison so a change to one can at least be REPORTED.
+ *
+ * `blocks.ts` ignores `steps` and `cards`, so a proposal that reorganises a
+ * step list produces no op at all -- while the rationale happily describes
+ * the change. 66 of the corpus's 136 sections carry one of these alongside
+ * the prose the diff does cover, so refusing to rethink them is not the
+ * trade: the section stays rethinkable and the untouchable part gets a
+ * notice, the same shape decision 9 gave the Karl mapping.
+ *
+ * Projected onto fixed key lists rather than compared with a raw
+ * `JSON.stringify`, for the reason `contentSignature` documents above: the
+ * response adds backend-only fields in a different key order, and comparing
+ * that directly reports a change on every single run. `CONTENT_KEYS` is
+ * deliberately left alone -- widening it would make `otherSections` flag
+ * steps/cards in NON-target sections too, which is the false-positive noise
+ * `bce30cb` removed.
+ */
+const CALLOUT_KEYS = ['title', 'text', 'variant', 'karl'] as const;
+const STEP_KEYS = [
+	'title',
+	'text',
+	'bullets',
+	'button',
+	'buttonTarget',
+	'buttonUrl',
+	'callout',
+	'karl'
+] as const;
+const CARD_KEYS = ['title', 'text', 'target', 'url', 'karl'] as const;
+
+const project = (value: unknown, keys: readonly string[]): Record<string, unknown> => {
+	const source = (value ?? {}) as Record<string, unknown>;
+	const projected: Record<string, unknown> = {};
+	for (const key of keys) projected[key] = source[key] ?? null;
+	return projected;
+};
+
+const structureSignature = (section: unknown): string => {
+	const s = (section ?? {}) as { steps?: unknown; cards?: unknown };
+	const list = (value: unknown): unknown[] => (Array.isArray(value) ? value : []);
+
+	return JSON.stringify({
+		steps: list(s.steps).map((step) => {
+			const projected = project(step, STEP_KEYS);
+			// One level deeper: a step's callout is an object, so it carries the
+			// same key-order asymmetry as the step around it.
+			projected.callout =
+				projected.callout === null ? null : project(projected.callout, CALLOUT_KEYS);
+			return projected;
+		}),
+		cards: list(s.cards).map((card) => project(card, CARD_KEYS))
+	});
 };
 
 /**
@@ -215,6 +279,7 @@ export async function requestRethink({
 		karlBefore: text(current.karl),
 		karlAfter: text(proposed.karl),
 		karlChanged: normalizeKarl(text(current.karl)) !== normalizeKarl(text(proposed.karl)),
+		structureChanged: structureSignature(current) !== structureSignature(proposed),
 		model: text(data?.model),
 		disclosure: text(data?.disclosure)
 	};
