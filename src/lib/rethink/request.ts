@@ -13,12 +13,21 @@ export type RethinkResult = {
 	/**
 	 * The section's Karl mapping before and after (decision 9). Always
 	 * populated -- `karl` is required on every section by the backend schema
-	 * -- and equal when the proposal did not change it. The panel renders a
-	 * notice only when they differ, so a change to what someone must build in
-	 * Wagtail cannot pass unnoticed below the ops list.
+	 * -- and equal when the proposal did not change it. These are the RAW
+	 * strings, for display; the panel gates its notice on `karlChanged`
+	 * below, not on comparing these directly.
 	 */
 	karlBefore: string;
 	karlAfter: string;
+	/**
+	 * Whether `karlBefore` and `karlAfter` differ after normalizing away
+	 * cosmetic re-rendering (see `normalizeKarl`). The panel renders its
+	 * "Karl mapping changed" notice only when this is true, so a change to
+	 * what someone must build in Wagtail cannot pass unnoticed below the ops
+	 * list -- and so a cosmetic re-emission of the same note cannot fire it
+	 * either.
+	 */
+	karlChanged: boolean;
 	model: string;
 	disclosure: string;
 };
@@ -62,6 +71,35 @@ const contentSignature = (section: unknown): string => {
 	for (const key of CONTENT_KEYS) projected[key] = s[key] ?? null;
 	return JSON.stringify(projected);
 };
+
+/**
+ * Fold away cosmetic re-rendering before comparing a Karl mapping note
+ * (decision 9).
+ *
+ * Observed live, against the real backend: the model re-emitted an unchanged
+ * Karl note verbatim except for the quote marks around one phrase, changing
+ * from the corpus's own typographic double quotes to straight single quotes
+ * -- "...its own "What we do" block." became "...its own 'What we do'
+ * block." -- which made the raw `karlBefore !== karlAfter` comparison fire on
+ * a run where the CMS mapping had not changed at all. A notice that fires on
+ * nearly every run is one nobody reads, defeating decision 9's purpose. Since
+ * the observed swap crossed quote FAMILIES (double to single) as well as
+ * style (curly to straight), every quote-like character -- both families,
+ * both styles -- folds to one canonical mark; a model re-quoting the same
+ * phrase differently is not a content change.
+ *
+ * Only quote characters and whitespace are folded. Deliberately NOT
+ * lowercased and no punctuation beyond quotes is touched -- a genuine
+ * mapping change that differs only in case or in real punctuation must still
+ * be reported. This normalizes the COMPARISON only; `karlBefore`/`karlAfter`
+ * on `RethinkResult` stay the raw strings so the panel can display what the
+ * assistant actually said.
+ */
+const normalizeKarl = (value: string): string =>
+	value
+		.replace(/[“”„‘’‚"']/g, "'")
+		.replace(/\s+/g, ' ')
+		.trim();
 
 /**
  * Ask the assistant to rethink one section, and return the differences.
@@ -170,6 +208,7 @@ export async function requestRethink({
 		otherSections,
 		karlBefore: text(current.karl),
 		karlAfter: text(proposed.karl),
+		karlChanged: normalizeKarl(text(current.karl)) !== normalizeKarl(text(proposed.karl)),
 		model: text(data?.model),
 		disclosure: text(data?.disclosure)
 	};

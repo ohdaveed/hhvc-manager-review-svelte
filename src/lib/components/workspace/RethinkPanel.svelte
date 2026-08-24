@@ -196,10 +196,12 @@
 					</section>
 				{/if}
 
-				{#if result.karlBefore !== result.karlAfter}
+				{#if result.karlChanged}
 					<!-- decision 9: a proposal that changes the section's Karl mapping
 					     changes what someone must build in Wagtail, so it goes above the
-					     ops list rather than being one more line inside it. -->
+					     ops list rather than being one more line inside it. Gated on the
+					     normalized `karlChanged` flag, not a raw string compare here --
+					     see request.ts's `normalizeKarl` for why. -->
 					<section class="mx-5 mt-4 rounded-[4px] border-2 p-3" aria-label="Karl mapping changed">
 						<span class="text-[12px] font-bold tracking-[0.06em] uppercase"
 							>Karl mapping changed</span

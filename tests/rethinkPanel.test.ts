@@ -31,6 +31,7 @@ const result = {
 	otherSections: ['Who we are'],
 	karlBefore: 'Information block.',
 	karlAfter: 'Information block.',
+	karlChanged: false,
 	ops: [
 		{
 			id: 'rewrite:heading:0',
@@ -176,11 +177,35 @@ describe('RethinkPanel', () => {
 		expect(screen.queryByText(/karl mapping changed/i)).toBeNull();
 	});
 
-	it('shows both Karl mappings prominently, above the ops list, when the proposal changes them', async () => {
+	it('gates the notice on karlChanged, not a raw string compare -- a cosmetic quote-only difference does not flag', async () => {
+		// The panel does not re-derive this decision itself; request.ts already
+		// normalized quote-only noise out of `karlChanged` (regression: the
+		// live model re-emitting the same note with straight single quotes
+		// instead of the corpus's typographic double quotes).
+		requestRethink.mockResolvedValue({
+			...result,
+			karlBefore: '...its own “What we do” block.',
+			karlAfter: "...its own 'What we do' block.",
+			karlChanged: false
+		});
+		pageStore.selectSection('what-we-do');
+		render(RethinkPanel, { props: { pageData } });
+		await fireEvent.click(screen.getByRole('button', { name: /rethink this section/i }));
+		await screen.findByRole('checkbox', { name: /rewrite heading/i });
+
+		expect(screen.queryByText(/karl mapping changed/i)).toBeNull();
+	});
+
+	it('shows both Karl mappings prominently, above the ops list, when karlChanged is true, and displays the RAW strings rather than a normalized rendering', async () => {
+		// karlAfter carries a typographic quote that `normalizeKarl` would fold
+		// for comparison -- the panel must still render it verbatim, so this
+		// would fail if the display path were ever switched to the normalized
+		// value.
 		requestRethink.mockResolvedValue({
 			...result,
 			karlBefore: 'Information block.',
-			karlAfter: 'Rich text, restructured as steps.'
+			karlAfter: 'Rich text, restructured as “steps”.',
+			karlChanged: true
 		});
 		pageStore.selectSection('what-we-do');
 		render(RethinkPanel, { props: { pageData } });
@@ -188,7 +213,8 @@ describe('RethinkPanel', () => {
 
 		const notice = await screen.findByText(/karl mapping changed/i);
 		expect(screen.getByText('Information block.')).toBeTruthy();
-		expect(screen.getByText('Rich text, restructured as steps.')).toBeTruthy();
+		expect(screen.getByText('Rich text, restructured as “steps”.')).toBeTruthy();
+		expect(screen.queryByText("Rich text, restructured as 'steps'.")).toBeNull();
 
 		const ops = screen.getByRole('list', { name: /proposed changes/i });
 		expect(notice.compareDocumentPosition(ops) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();

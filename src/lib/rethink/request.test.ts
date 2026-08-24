@@ -145,6 +145,70 @@ describe('requestRethink', () => {
 		expect(result.karlAfter).toBe('Rich text, restructured as steps.');
 	});
 
+	describe('karlChanged (decision 9, normalized comparison)', () => {
+		// Local page/response builders, never mutating the shared `page`
+		// fixture other tests in this file depend on.
+		const pageWithKarl = (karl: string) => ({
+			...page,
+			sections: [{ ...page.sections[0], karl }, page.sections[1]]
+		});
+		const responseWithKarl = (karl: string) =>
+			envelope([withoutFieldKey({ ...page.sections[0], karl }), unchangedResponseSections[1]]);
+
+		it('is false for identical strings', async () => {
+			const karl =
+				'Information block, styled after the pattern the reference page itself uses for its own “What we do” block.';
+			requestGeneration.mockResolvedValue(responseWithKarl(karl));
+			const result = await requestRethink({
+				page: pageWithKarl(karl),
+				pageId: page.id,
+				sectionKey: 'what-we-do'
+			});
+			expect(result.karlChanged).toBe(false);
+		});
+
+		it('is false when the only difference is typographic vs. straight quotes (observed regression)', async () => {
+			// Observed live: the model re-emitted the note with straight single
+			// quotes instead of the typographic double quotes the corpus uses --
+			// nothing about the CMS mapping changed. This is the exact pair
+			// observed in a real browser against the real backend.
+			const before =
+				'...the pattern the reference page itself uses for its own “What we do” block.';
+			const after = "...the pattern the reference page itself uses for its own 'What we do' block.";
+			requestGeneration.mockResolvedValue(responseWithKarl(after));
+			const result = await requestRethink({
+				page: pageWithKarl(before),
+				pageId: page.id,
+				sectionKey: 'what-we-do'
+			});
+			expect(result.karlChanged).toBe(false);
+		});
+
+		it('is false when the only difference is whitespace, including a trailing newline', async () => {
+			const before = 'Information block.';
+			const after = '  Information   block.\n';
+			requestGeneration.mockResolvedValue(responseWithKarl(after));
+			const result = await requestRethink({
+				page: pageWithKarl(before),
+				pageId: page.id,
+				sectionKey: 'what-we-do'
+			});
+			expect(result.karlChanged).toBe(false);
+		});
+
+		it('is true for a genuine mapping change', async () => {
+			const before = 'Information block.';
+			const after = 'Resources block.';
+			requestGeneration.mockResolvedValue(responseWithKarl(after));
+			const result = await requestRethink({
+				page: pageWithKarl(before),
+				pageId: page.id,
+				sectionKey: 'what-we-do'
+			});
+			expect(result.karlChanged).toBe(true);
+		});
+	});
+
 	it('reports no other sections when the model left them unchanged, in the real backend response shape', async () => {
 		// The real backend response never carries `fieldKey`, adds `component`
 		// and `kind` to every section, and its keys come back in a different
