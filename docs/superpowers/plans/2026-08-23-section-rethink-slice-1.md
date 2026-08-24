@@ -529,7 +529,7 @@ describe('diffSection', () => {
 		const proposed = {
 			...current,
 			bullets: [
-				'Answering every question we get',
+				'Answering questions from tenants',
 				'Investigating reports of rats and mice',
 				'Inspecting apartments'
 			]
@@ -1229,13 +1229,14 @@ export async function requestRethink({
 		throw new Error('The assistant did not return that section.');
 	}
 
+	const before = new Map(sectionsOf(page).map((s) => [s.fieldKey, s]));
 	const otherSections = sectionsOf(proposedPage)
 		.filter((s) => s.fieldKey !== sectionKey)
-		.filter((s, i) => {
-			const before = sectionsOf(page)[i];
-			return before ? JSON.stringify(before) !== JSON.stringify(s) : true;
-		})
-		.map((s) => text(sectionsOf(page).find((o) => o.fieldKey === s.fieldKey)?.heading))
+		// Compared by KEY, never by array position: the model may return the
+		// sections in a different order, and an index comparison would then report
+		// every section as changed.
+		.filter((s) => JSON.stringify(before.get(s.fieldKey)) !== JSON.stringify(s))
+		.map((s) => text(before.get(s.fieldKey)?.heading))
 		.filter(Boolean);
 
 	return {
