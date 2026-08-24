@@ -42,6 +42,29 @@ const MAX_BODY_BYTES = 64 * 1024;
 const MAX_FIELD_TEXT_CHARS = 8_000;
 const MAX_INSTRUCTION_CHARS = 2_000;
 
+/**
+ * Pulls a human-readable message out of the backend's error body, when it has
+ * one. Without this, every upstream failure reached the reviewer as the same
+ * generic sentence -- including the exact provider-usage-cap text that made
+ * this worth fixing ("You have reached your specified API usage limits...").
+ * The shape isn't pinned to one schema on purpose: an Anthropic-style
+ * envelope nests it under `error.message`, other backends may just say
+ * `message`. Falls back to the previous generic text when neither is present
+ * or the body isn't JSON at all.
+ */
+function extractBackendMessage(errorData: unknown): string {
+	const GENERIC = 'Error communicating with the backend API';
+	if (!errorData || typeof errorData !== 'object') return GENERIC;
+	const data = errorData as Record<string, unknown>;
+	if (typeof data.message === 'string' && data.message) return data.message;
+	if (data.error && typeof data.error === 'object') {
+		const nested = (data.error as Record<string, unknown>).message;
+		if (typeof nested === 'string' && nested) return nested;
+	}
+	if (typeof data.error === 'string' && data.error) return data.error;
+	return GENERIC;
+}
+
 // `fetch` is deliberately NOT destructured from the event here. SvelteKit's
 // `event.fetch` forwards the inbound browser request's headers -- including
 // `Origin` -- onto requests it makes, which is what you want for same-origin
@@ -97,9 +120,9 @@ export async function POST({ request }) {
 		});
 
 		if (!railwayResponse.ok) {
-			const errorData = await railwayResponse.json().catch(() => ({}));
+			const errorData: unknown = await railwayResponse.json().catch(() => ({}));
 			console.error('Railway API error:', errorData);
-			throw error(railwayResponse.status, 'Error communicating with the backend API');
+			throw error(railwayResponse.status, extractBackendMessage(errorData));
 		}
 
 		// Return the JSON response directly to the client

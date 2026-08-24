@@ -136,6 +136,50 @@ describe('POST /api/ai/generate', () => {
 		expect(upstream).not.toHaveBeenCalled();
 	});
 
+	it("forwards the backend's own error message when the upstream responds with a JSON error body", async () => {
+		getUser.mockResolvedValue({ data: { user: { id: 'user-1' } }, error: null });
+		const { event } = buildEvent({ Authorization: 'Bearer good-token' });
+		vi.stubGlobal(
+			'fetch',
+			vi.fn(
+				async () =>
+					new Response(
+						JSON.stringify({
+							error: 'invalid_request_error',
+							message:
+								'You have reached your specified API usage limits. You will regain access on 2026-09-01.'
+						}),
+						{ status: 400, headers: { 'Content-Type': 'application/json' } }
+					)
+			)
+		);
+
+		await expect(POST(event as never)).rejects.toMatchObject({
+			status: 400,
+			body: {
+				message:
+					'You have reached your specified API usage limits. You will regain access on 2026-09-01.'
+			}
+		});
+	});
+
+	it('falls back to the generic message when the upstream error body has none', async () => {
+		getUser.mockResolvedValue({ data: { user: { id: 'user-1' } }, error: null });
+		const { event } = buildEvent({ Authorization: 'Bearer good-token' });
+		vi.stubGlobal(
+			'fetch',
+			vi.fn(
+				async () =>
+					new Response('{}', { status: 503, headers: { 'Content-Type': 'application/json' } })
+			)
+		);
+
+		await expect(POST(event as never)).rejects.toMatchObject({
+			status: 503,
+			body: { message: 'Error communicating with the backend API' }
+		});
+	});
+
 	it('does not leak the upstream failure reason to the caller', async () => {
 		getUser.mockResolvedValue({ data: { user: { id: 'user-1' } }, error: null });
 		const { event } = buildEvent({ Authorization: 'Bearer good-token' });
