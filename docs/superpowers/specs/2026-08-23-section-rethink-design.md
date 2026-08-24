@@ -99,7 +99,7 @@ for it than a retrofit would be. (Decision 6.)
 | --- | ----------------------------------- | -------------------------------------------------------------------------------------------------------- |
 | 1   | Scope of authority                  | **Applied and persisted**, not advisory. Proposals change the mockup and the record                      |
 | 2   | Decision unit                       | **The block.** One proposal, per-block accept/reject, composed on apply                                  |
-| 3   | Grounding                           | Section + page + **29-page corpus index**. RAG deferral **REOPENED** — its basis (finding 5) is gone     |
+| 3   | Grounding                           | Section + page + **29-page corpus index** for slices 1–4; **RAG scheduled as slice 5**                   |
 | 4   | Transport                           | `task: 'content'` with the live page as grounding; diff the target section, discard the rest             |
 | 5   | Record unit                         | **Decompose on apply.** Rewrites become ordinary field edits; only the structural delta is new           |
 | 6   | Sequencing                          | **After slice 3.** Structural ops are meaningless without the overlay                                    |
@@ -111,7 +111,7 @@ for it than a retrofit would be. (Decision 6.)
 | 12  | Added-block lifetime                | **Bound to its shape row.** Exempt from hash expiry                                                      |
 | 13  | Rationale                           | Stored as a **note anchored to the section**, attributed to the assistant                                |
 | 14  | AI disclosure                       | **On the note**, naming the model. No schema change to `edits`                                           |
-| 15  | Provider                            | **REOPENED** — chosen on a Pro-tier premise that finding 7 disproves                                     |
+| 15  | Provider                            | **Claude** (`claude-opus-5`), named explicitly rather than following the server default                  |
 | 16  | Block types in scope                | **heading, paragraphs, bullets, callout.** `steps`, `cards`, `component`, `kind` deferred                |
 | 17  | Non-target sections in the response | **Discarded, but named** — one line noting the assistant also wanted to change sections N and M          |
 | 18  | Who may Rethink                     | Any signed-in reviewer, matching decision 11 of the version-history design, **plus** a one-in-flight cap |
@@ -139,7 +139,7 @@ for it than a retrofit would be. (Decision 6.)
 
 ## Request
 
-`task: 'content'`, `provider: 'gemini'`, with:
+`task: 'content'`, `provider: 'claude'` (decision 15), with:
 
 - **`page`** — the overlay-resolved page (decision 8). Rethinking copy the
   reviewer already fixed, and proposing to fix it again, is the obvious way to
@@ -340,6 +340,10 @@ that already happened here:
    blocks.
 4. **Rationale note and disclosure** — the note, its attribution, transcript
    rendering.
+5. **RAG-grounded findings** — a `compliance-audit` request alongside the
+   Rethink, findings filtered from page scope down to the selected section, and
+   citation UI showing the source each finding rests on. **Verify the production
+   ingest's composition before starting** (see Open risks).
 
 Slice 1 is useful alone: it is a section-level critique with a real diff, which
 is most of the value of the advisory version of this feature.
@@ -349,10 +353,6 @@ is most of the value of the advisory version of this feature.
 - **Cross-section moves and whole new sections.** The assistant will propose
   them; decision 17 names them and stops there.
 - **Page-level rethink.**
-- **RAG-grounded findings.** Deferred on finding 5, and worth revisiting the
-  moment `capabilities` confirms a ready production knowledge base — it is the
-  only grounding that can say "this omits a legal requirement" and cite the
-  source.
 - **Editing proposed text before applying.** Accept blocks, then use the
   existing per-field tools.
 - **Clearing the unverified flag.** A subject-matter judgement, not a
@@ -367,6 +367,16 @@ is most of the value of the advisory version of this feature.
 - ~~The production knowledge base state is unknown.~~ **Closed 2026-08-23**: it
   is ready with 816 chunks (finding 5). Decisions 3 and 15 are reopened on the
   strength of that.
+- **What production's knowledge base actually contains is unverified.** It holds
+  816 chunks against the local store's 1,230 — a different, smaller ingest.
+  Enumerating its categories needs database credentials the probe does not
+  carry. If the missing chunks are `hhvc-policy`, slice 5's "this omits a legal
+  requirement" capability is materially weaker than the local store suggests.
+- **Claude's structured-output path is unconfirmed on the deployed build.** The
+  vendored package marks `PAGE_OUTPUT_SCHEMA` Anthropic-grammar-incompatible and
+  documents a prompt-schema-plus-validation fallback, but that package is behind
+  what is deployed (finding 6). One probe request in slice 1 settles it before
+  anything is built on it.
 - **This design is blocked on slice 3** and should not start before it.
 - **`bun run lint` is red tree-wide** on prettier and eslint both. Do not
   reformat as a side effect of this work.
