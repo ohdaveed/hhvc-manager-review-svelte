@@ -28,34 +28,45 @@ import { payFee } from './pay-healthy-housing-fee';
 import { ipmEducation } from './integrated-pest-management-education';
 import { scopeInfo } from './hhvc-inspection-scope';
 
-export const allPages = [
-  filthReport,
-  inspectionPrepFollowup,
-  recordsHub,
-  noticeOfViolation,
-  inspectorLookup,
-  inspectionPrepInitial,
-  article11Guide,
-  sroHotelReport,
-  aboutHhvcTeam,
-  afterReport,
-  ownerHub,
-  publicRecords,
-  findHotelRecords,
-  verminResources,
-  pestsTopic,
-  rodentsReport,
-  tenantNoticeSteps,
-  insectsReport,
-  tenantRights,
-  findViolations,
-  findRecords,
-  mosquitoWorkshop,
-  healthyHousingTopic,
-  article11Compliance,
-  mosquitoControl,
-  ownerGuidance,
-  payFee,
-  ipmEducation,
-  scopeInfo,
-];
+/**
+ * The corpus, keyed by the name `cards[].target` uses to point at a page.
+ *
+ * Those keys are the AI backend's link vocabulary: its card schema requires
+ * `target` to name "an EXISTING page key from the list of available page keys
+ * in the prompt. Never invent one." An array of pages cannot supply them, so
+ * this object is the definition and `allPages` is derived from it -- two lists
+ * would drift the first time a page is added to one and not the other.
+ */
+export const pagesByKey = {
+	filthReport,
+	inspectionPrepFollowup,
+	recordsHub,
+	noticeOfViolation,
+	inspectorLookup,
+	inspectionPrepInitial,
+	article11Guide,
+	sroHotelReport,
+	aboutHhvcTeam,
+	afterReport,
+	ownerHub,
+	publicRecords,
+	findHotelRecords,
+	verminResources,
+	pestsTopic,
+	rodentsReport,
+	tenantNoticeSteps,
+	insectsReport,
+	tenantRights,
+	findViolations,
+	findRecords,
+	mosquitoWorkshop,
+	healthyHousingTopic,
+	article11Compliance,
+	mosquitoControl,
+	ownerGuidance,
+	payFee,
+	ipmEducation,
+	scopeInfo
+};
+
+export const allPages = Object.values(pagesByKey);
