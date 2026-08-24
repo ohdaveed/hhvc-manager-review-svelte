@@ -169,6 +169,19 @@
 					</section>
 				{/if}
 
+				{#if result.karlBefore !== result.karlAfter}
+					<!-- decision 9: a proposal that changes the section's Karl mapping
+					     changes what someone must build in Wagtail, so it goes above the
+					     ops list rather than being one more line inside it. -->
+					<section class="mx-5 mt-4 rounded-[4px] border-2 p-3" aria-label="Karl mapping changed">
+						<span class="text-[12px] font-bold tracking-[0.06em] uppercase"
+							>Karl mapping changed</span
+						>
+						<p class="mt-1.5 text-[13px] leading-[19px] line-through">{result.karlBefore}</p>
+						<p class="mt-1.5 text-[13px] leading-[19px]">{result.karlAfter}</p>
+					</section>
+				{/if}
+
 				<ul class="mt-4 space-y-2 px-5 pb-4" aria-label="Proposed changes">
 					{#each result.ops.filter((op) => op.type !== 'keep') as op (op.id)}
 						<li class="rounded-[4px] border p-3">

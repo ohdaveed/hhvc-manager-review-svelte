@@ -25,6 +25,8 @@ const result = {
 	model: 'claude-opus-5',
 	disclosure: 'Drafted with generative AI.',
 	otherSections: ['Who we are'],
+	karlBefore: 'Information block.',
+	karlAfter: 'Information block.',
 	ops: [
 		{
 			id: 'rewrite:heading:0',
@@ -158,5 +160,33 @@ describe('RethinkPanel', () => {
 
 		expect(screen.queryByRole('button', { name: /^apply/i })).toBeNull();
 		expect(pageData.sections[0].heading).toBe('What we do');
+	});
+
+	it('does not flag a Karl-mapping change when the mapping did not change (decision 9)', async () => {
+		requestRethink.mockResolvedValue(result);
+		pageStore.selectSection('what-we-do');
+		render(RethinkPanel, { props: { pageData } });
+		await fireEvent.click(screen.getByRole('button', { name: /rethink this section/i }));
+		await screen.findByRole('checkbox', { name: /rewrite heading/i });
+
+		expect(screen.queryByText(/karl mapping changed/i)).toBeNull();
+	});
+
+	it('shows both Karl mappings prominently, above the ops list, when the proposal changes them', async () => {
+		requestRethink.mockResolvedValue({
+			...result,
+			karlBefore: 'Information block.',
+			karlAfter: 'Rich text, restructured as steps.'
+		});
+		pageStore.selectSection('what-we-do');
+		render(RethinkPanel, { props: { pageData } });
+		await fireEvent.click(screen.getByRole('button', { name: /rethink this section/i }));
+
+		const notice = await screen.findByText(/karl mapping changed/i);
+		expect(screen.getByText('Information block.')).toBeTruthy();
+		expect(screen.getByText('Rich text, restructured as steps.')).toBeTruthy();
+
+		const ops = screen.getByRole('list', { name: /proposed changes/i });
+		expect(notice.compareDocumentPosition(ops) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
 	});
 });

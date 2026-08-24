@@ -41,7 +41,15 @@ describe('section selection and rethink state', () => {
 			state: 'ready',
 			pageId: 'page-a',
 			sectionKey: 'what-we-do',
-			result: { rationale: '', ops: [], otherSections: [], model: '', disclosure: '' },
+			result: {
+				rationale: '',
+				ops: [],
+				otherSections: [],
+				karlBefore: '',
+				karlAfter: '',
+				model: '',
+				disclosure: ''
+			},
 			decisions: {}
 		};
 

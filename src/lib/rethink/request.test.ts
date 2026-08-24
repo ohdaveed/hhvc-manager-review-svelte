@@ -111,6 +111,18 @@ describe('requestRethink', () => {
 		expect(result.rationale).toBe('Leads with staff process, not tenant need.');
 	});
 
+	it('carries the section Karl mapping through, before and after (decision 9)', async () => {
+		requestGeneration.mockResolvedValue(
+			envelope([
+				withoutFieldKey({ ...page.sections[0], karl: 'Rich text, restructured as steps.' }),
+				unchangedResponseSections[1]
+			])
+		);
+		const result = await requestRethink({ page, pageId: page.id, sectionKey: 'what-we-do' });
+		expect(result.karlBefore).toBe('Information block.');
+		expect(result.karlAfter).toBe('Rich text, restructured as steps.');
+	});
+
 	it('throws, naming both counts, when the response has a different number of sections than the page', async () => {
 		requestGeneration.mockResolvedValue(envelope([unchangedResponseSections[0]]));
 		await expect(

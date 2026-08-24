@@ -10,6 +10,15 @@ export type RethinkResult = {
 	ops: Op[];
 	/** Headings of sections the assistant also wanted to change (decision 17). */
 	otherSections: string[];
+	/**
+	 * The section's Karl mapping before and after (decision 9). Always
+	 * populated -- `karl` is required on every section by the backend schema
+	 * -- and equal when the proposal did not change it. The panel renders a
+	 * notice only when they differ, so a change to what someone must build in
+	 * Wagtail cannot pass unnoticed below the ops list.
+	 */
+	karlBefore: string;
+	karlAfter: string;
 	model: string;
 	disclosure: string;
 };
@@ -22,7 +31,7 @@ type RethinkInput = {
 	signal?: AbortSignal;
 };
 
-type Section = { fieldKey?: unknown; heading?: unknown };
+type Section = { fieldKey?: unknown; heading?: unknown; karl?: unknown };
 
 const sectionsOf = (page: unknown): Section[] => {
 	const list = ((page ?? {}) as { sections?: unknown }).sections;
@@ -114,6 +123,8 @@ export async function requestRethink({
 		rationale: text((proposedPage as { editorNote?: unknown } | undefined)?.editorNote),
 		ops: diffSection(current, proposed, sectionKey),
 		otherSections,
+		karlBefore: text(current.karl),
+		karlAfter: text(proposed.karl),
 		model: text(data?.model),
 		disclosure: text(data?.disclosure)
 	};
