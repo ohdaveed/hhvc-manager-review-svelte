@@ -109,4 +109,42 @@ describe('requestRethink', () => {
 		});
 		expect(requestGeneration.mock.calls[0][1]).toBe(controller.signal);
 	});
+
+	it('refuses a page that does not match the pageId the rethink was for', async () => {
+		requestGeneration.mockResolvedValue(envelope(page.sections));
+		await expect(
+			requestRethink({ page, pageId: 'some-other-page', sectionKey: 'what-we-do' })
+		).rejects.toThrow(/not the one this rethink was for/i);
+		expect(requestGeneration).not.toHaveBeenCalled();
+	});
+
+	it('still works against a page fixture with no id at all', async () => {
+		const { id: _id, ...pageWithoutId } = page;
+		void _id;
+		requestGeneration.mockResolvedValue({
+			...envelope(pageWithoutId.sections),
+			result: { ...pageWithoutId, sections: pageWithoutId.sections }
+		});
+
+		const result = await requestRethink({
+			page: pageWithoutId,
+			pageId: 'topic-x--about',
+			sectionKey: 'what-we-do'
+		});
+
+		expect(result.model).toBe('claude-opus-5');
+	});
+
+	it('surfaces an invented section by its own heading, not silently dropped', async () => {
+		requestGeneration.mockResolvedValue(
+			envelope([
+				...page.sections,
+				{ fieldKey: 'brand-new-section', heading: 'A section that did not exist before' }
+			])
+		);
+
+		const result = await requestRethink({ page, pageId: page.id, sectionKey: 'what-we-do' });
+
+		expect(result.otherSections).toContain('A section that did not exist before');
+	});
 });

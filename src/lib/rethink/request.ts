@@ -46,6 +46,15 @@ export async function requestRethink({
 	instruction,
 	signal
 }: RethinkInput): Promise<RethinkResult> {
+	// Field ids are page-relative — `title` resolves on all 29 pages — so a
+	// proposal produced for page A must be structurally unable to reach page B.
+	// Guarded on `typeof === 'string'` deliberately: a page object without an
+	// `id` is not an error, it is a fixture.
+	const actualPageId = ((page ?? {}) as { id?: unknown }).id;
+	if (typeof actualPageId === 'string' && actualPageId !== pageId) {
+		throw new Error(`That page is not the one this rethink was for (${pageId}).`);
+	}
+
 	const current = sectionsOf(page).find((s) => s.fieldKey === sectionKey);
 	if (!current) throw new Error(`That section is not on this page (${sectionKey}).`);
 
@@ -82,7 +91,12 @@ export async function requestRethink({
 		// sections in a different order, and an index comparison would then report
 		// every section as changed.
 		.filter((s) => JSON.stringify(before.get(s.fieldKey)) !== JSON.stringify(s))
-		.map((s) => text(before.get(s.fieldKey)?.heading))
+		// Fall back to the proposed section's own heading when there is no
+		// match in the original: an invented section (a fieldKey not on the
+		// original page) is the one case most worth telling the reviewer
+		// about, and must not vanish just because there is nothing to look
+		// its old heading up against.
+		.map((s) => text(before.get(s.fieldKey)?.heading) || text(s.heading))
 		.filter(Boolean);
 
 	return {
