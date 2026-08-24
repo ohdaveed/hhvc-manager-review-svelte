@@ -137,8 +137,26 @@ export async function requestRethink({
 		corpusIndex: buildCorpusIndex(pagesByKey)
 	});
 
+	// `fieldKey` is client-derived metadata and is not accepted by the backend
+	// section schema. Keep the original page for local lookup and diffing.
+	const requestPage = (() => {
+		if (!page || typeof page !== 'object') return page;
+		const pageRecord = page as Record<string, unknown>;
+		const sections = pageRecord.sections;
+		if (!Array.isArray(sections)) return page;
+		return {
+			...pageRecord,
+			sections: sections.map((section) => {
+				if (!section || typeof section !== 'object') return section;
+				const backendSection = { ...(section as Record<string, unknown>) };
+				delete backendSection.fieldKey;
+				return backendSection;
+			})
+		};
+	})();
+
 	const ask = (provider: 'claude' | 'gemini') =>
-		requestGeneration({ task: 'content', provider, prompt, page }, signal);
+		requestGeneration({ task: 'content', provider, prompt, page: requestPage }, signal);
 
 	// Provider fallback (decision 15, plus the ruling that followed it once
 	// the backend's Anthropic key hit its usage cap): try Claude, and on a
