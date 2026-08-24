@@ -45,6 +45,7 @@
 				type="button"
 				class="rethink-section"
 				data-rethink-section={key}
+				aria-label={`Rethink ${section.heading ?? label}`}
 				aria-pressed={sectionSelected}
 				onclick={(event) => {
 					event.stopPropagation();
