@@ -1,4 +1,4 @@
-import { describe, expect, it, vi, beforeEach } from 'vitest';
+import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 
 const getUser = vi.fn();
 
@@ -8,7 +8,15 @@ vi.mock('@supabase/supabase-js', () => ({
 
 const { POST } = await import('./+server');
 
-/** Builds a POST event whose `fetch` records calls to the upstream backend. */
+/**
+ * Builds a POST event and stubs the platform's global `fetch` to record the
+ * upstream call the handler makes.
+ *
+ * The handler must use the global `fetch`, not SvelteKit's `event.fetch`
+ * (see the regression test below), so that is what these tests stub. An
+ * `event.fetch` mock is attached too, purely so the regression test can
+ * prove the handler never reaches for it.
+ */
 function buildEvent(
 	headers: Record<string, string> = {},
 	payload: unknown = { task: 'rewrite-field', fieldText: 'hello' }
@@ -20,6 +28,9 @@ function buildEvent(
 				headers: { 'Content-Type': 'application/json' }
 			})
 	);
+	vi.stubGlobal('fetch', upstream);
+
+	const eventFetch = vi.fn();
 
 	const request = new Request('http://localhost/api/ai/generate', {
 		method: 'POST',
@@ -27,12 +38,16 @@ function buildEvent(
 		body: JSON.stringify(payload)
 	});
 
-	return { event: { request, fetch: upstream }, upstream };
+	return { event: { request, fetch: eventFetch }, upstream, eventFetch };
 }
 
 describe('POST /api/ai/generate', () => {
 	beforeEach(() => {
 		getUser.mockReset();
+	});
+
+	afterEach(() => {
+		vi.unstubAllGlobals();
 	});
 
 	it('rejects a request with no Authorization header', async () => {
@@ -124,13 +139,38 @@ describe('POST /api/ai/generate', () => {
 	it('does not leak the upstream failure reason to the caller', async () => {
 		getUser.mockResolvedValue({ data: { user: { id: 'user-1' } }, error: null });
 		const { event } = buildEvent({ Authorization: 'Bearer good-token' });
-		event.fetch = vi.fn(async () => {
-			throw new Error('connect ECONNREFUSED 10.0.0.4:8080');
-		});
+		vi.stubGlobal(
+			'fetch',
+			vi.fn(async () => {
+				throw new Error('connect ECONNREFUSED 10.0.0.4:8080');
+			})
+		);
 
 		await expect(POST(event as never)).rejects.toMatchObject({
 			status: 500,
 			body: { message: 'Internal Server Error' }
 		});
+	});
+
+	// Regression guard: the upstream hop is server-to-server. It must go
+	// through the platform's global `fetch`, not SvelteKit's `event.fetch` --
+	// `event.fetch` forwards the inbound browser request's headers (including
+	// `Origin`) to the outgoing call, and the Railway backend's origin
+	// allow-list answers a forwarded browser origin with 403. A request with
+	// no `Origin` at all is explicitly permitted by that allow-list.
+	it('sends the upstream request via the global fetch, not event.fetch, so no Origin is forwarded', async () => {
+		getUser.mockResolvedValue({ data: { user: { id: 'user-1' } }, error: null });
+		const { event, upstream, eventFetch } = buildEvent({
+			Authorization: 'Bearer good-token',
+			Origin: 'http://localhost:5173'
+		});
+
+		await POST(event as never);
+
+		expect(upstream).toHaveBeenCalledOnce();
+		expect(eventFetch).not.toHaveBeenCalled();
+
+		const [, init] = upstream.mock.calls[0] as [string, RequestInit];
+		expect(new Headers(init.headers).has('origin')).toBe(false);
 	});
 });

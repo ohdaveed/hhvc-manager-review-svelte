@@ -42,7 +42,19 @@ const MAX_BODY_BYTES = 64 * 1024;
 const MAX_FIELD_TEXT_CHARS = 8_000;
 const MAX_INSTRUCTION_CHARS = 2_000;
 
-export async function POST({ request, fetch }) {
+// `fetch` is deliberately NOT destructured from the event here. SvelteKit's
+// `event.fetch` forwards the inbound browser request's headers -- including
+// `Origin` -- onto requests it makes, which is what you want for same-origin
+// calls made on a visitor's behalf. This call is different: it is a
+// server-to-server hop to the Railway backend, made with a server-held
+// token the browser never sees. The backend's origin allow-list answers a
+// forwarded browser `Origin` with 403 `{"error":"Origin is not allowed."}`,
+// but explicitly permits a request with no `Origin` header at all (its own
+// docs: "requests without Origin are non-browser or same-origin clients").
+// Using the platform's global `fetch` instead of `event.fetch` sends no
+// `Origin`, so the backend accepts it. Do not "tidy" this back to
+// `{ request, fetch }` -- that reintroduces the 403.
+export async function POST({ request }) {
 	// Outside the try: a thrown HttpError is not an Error instance, so the
 	// catch below would otherwise flatten this 401 into a 500.
 	await requireUser(request);
