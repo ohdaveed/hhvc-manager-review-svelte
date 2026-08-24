@@ -116,7 +116,8 @@ export async function POST({ request }) {
 				'Content-Type': 'application/json',
 				...(apiToken ? { Authorization: `Bearer ${apiToken}` } : {})
 			},
-			body: JSON.stringify(payload)
+			body: JSON.stringify(payload),
+			signal: request.signal
 		});
 
 		if (!railwayResponse.ok) {
