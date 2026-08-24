@@ -1,11 +1,33 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 
 const requestGeneration = vi.fn();
-vi.mock('$lib/ai/generate', () => ({
-	requestGeneration: (payload: unknown, signal?: AbortSignal) => requestGeneration(payload, signal)
-}));
+
+// A local `GenerationError`, not the real one: the real module imports
+// `$lib/supabase`, which does `createClient(...)` at module scope, so
+// `importOriginal` here would drag that into every run. `request.ts` imports
+// `GenerationError` from `$lib/ai/generate` too, and that import resolves to
+// THIS mock in tests, so the `instanceof` check on the fallback path lines up
+// against the same class reference.
+vi.mock('$lib/ai/generate', () => {
+	class GenerationError extends Error {
+		status: number;
+		constructor(status: number, message: string) {
+			super(message);
+			this.name = 'GenerationError';
+			this.status = status;
+		}
+	}
+	return {
+		GenerationError,
+		requestGeneration: (payload: unknown, signal?: AbortSignal) =>
+			requestGeneration(payload, signal)
+	};
+});
 
 const { requestRethink } = await import('./request');
+const { GenerationError } = (await import('$lib/ai/generate')) as unknown as {
+	GenerationError: new (status: number, message: string) => Error & { status: number };
+};
 
 const page = {
 	id: 'topic-x--about',
@@ -178,5 +200,85 @@ describe('requestRethink', () => {
 		});
 
 		expect(result.model).toBe('claude-opus-5');
+	});
+
+	describe('provider fallback (Claude first, Gemini once on a provider failure)', () => {
+		it('does not call Gemini when Claude succeeds', async () => {
+			requestGeneration.mockResolvedValue(envelope(unchangedResponseSections));
+			await requestRethink({ page, pageId: page.id, sectionKey: 'what-we-do' });
+			expect(requestGeneration).toHaveBeenCalledTimes(1);
+			expect(requestGeneration.mock.calls[0][0].provider).toBe('claude');
+		});
+
+		it('retries once with Gemini when Claude fails with a provider-level 400, and reports the model that actually answered', async () => {
+			requestGeneration
+				.mockRejectedValueOnce(
+					new GenerationError(
+						400,
+						'You have reached your specified API usage limits. You will regain access on 2026-09-01.'
+					)
+				)
+				.mockResolvedValueOnce({
+					...envelope(unchangedResponseSections),
+					provider: 'gemini',
+					model: 'gemini-3.7-flash'
+				});
+
+			const result = await requestRethink({ page, pageId: page.id, sectionKey: 'what-we-do' });
+
+			expect(requestGeneration).toHaveBeenCalledTimes(2);
+			expect(requestGeneration.mock.calls[1][0].provider).toBe('gemini');
+			expect(result.model).toBe('gemini-3.7-flash');
+		});
+
+		it('retries once with Gemini when Claude fails at the provider level with a 5xx', async () => {
+			requestGeneration
+				.mockRejectedValueOnce(new GenerationError(503, 'Service unavailable'))
+				.mockResolvedValueOnce(envelope(unchangedResponseSections));
+
+			await requestRethink({ page, pageId: page.id, sectionKey: 'what-we-do' });
+
+			expect(requestGeneration).toHaveBeenCalledTimes(2);
+			expect(requestGeneration.mock.calls[1][0].provider).toBe('gemini');
+		});
+
+		it('does not fall back on a 422 content refusal -- the error surfaces as-is', async () => {
+			requestGeneration.mockRejectedValueOnce(
+				new GenerationError(422, 'Refused on content grounds')
+			);
+
+			await expect(
+				requestRethink({ page, pageId: page.id, sectionKey: 'what-we-do' })
+			).rejects.toThrow(/refused on content grounds/i);
+			expect(requestGeneration).toHaveBeenCalledTimes(1);
+		});
+
+		it('does not fall back on a proxy 413 -- the payload is wrong regardless of provider', async () => {
+			requestGeneration.mockRejectedValueOnce(new GenerationError(413, 'Request body too large'));
+
+			await expect(
+				requestRethink({ page, pageId: page.id, sectionKey: 'what-we-do' })
+			).rejects.toThrow(/request body too large/i);
+			expect(requestGeneration).toHaveBeenCalledTimes(1);
+		});
+
+		it('does not fall back on a 401 -- the caller is not signed in', async () => {
+			requestGeneration.mockRejectedValueOnce(new GenerationError(401, 'Unauthorized'));
+
+			await expect(
+				requestRethink({ page, pageId: page.id, sectionKey: 'what-we-do' })
+			).rejects.toThrow(/unauthorized/i);
+			expect(requestGeneration).toHaveBeenCalledTimes(1);
+		});
+
+		it('does not fall back, and rethrows as-is, when Claude fails with a non-GenerationError (e.g. Cancel)', async () => {
+			const abortError = Object.assign(new Error('Aborted'), { name: 'AbortError' });
+			requestGeneration.mockRejectedValueOnce(abortError);
+
+			await expect(
+				requestRethink({ page, pageId: page.id, sectionKey: 'what-we-do' })
+			).rejects.toBe(abortError);
+			expect(requestGeneration).toHaveBeenCalledTimes(1);
+		});
 	});
 });

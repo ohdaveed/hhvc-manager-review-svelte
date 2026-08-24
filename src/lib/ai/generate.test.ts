@@ -6,7 +6,7 @@ vi.mock('$lib/supabase', () => ({
 	supabase: { auth: { getSession } }
 }));
 
-const { requestGeneration } = await import('./generate');
+const { requestGeneration, GenerationError } = await import('./generate');
 
 describe('requestGeneration', () => {
 	beforeEach(() => {
@@ -49,5 +49,51 @@ describe('requestGeneration', () => {
 
 		const [, init] = fetchSpy.mock.calls[0] as [string, RequestInit];
 		expect(init.signal).toBe(controller.signal);
+	});
+
+	it('throws a GenerationError carrying the status and the backend message on a non-OK response', async () => {
+		getSession.mockResolvedValue({ data: { session: { access_token: 'token-abc' } } });
+		const fetchSpy = vi.fn(
+			async () =>
+				new Response(
+					JSON.stringify({
+						message:
+							'You have reached your specified API usage limits. You will regain access on 2026-09-01.'
+					}),
+					{ status: 400 }
+				)
+		);
+		vi.stubGlobal('fetch', fetchSpy);
+
+		const err = await requestGeneration({ task: 'content', provider: 'claude' }).catch((e) => e);
+
+		expect(err).toBeInstanceOf(GenerationError);
+		expect(err.status).toBe(400);
+		expect(err.message).toBe(
+			'You have reached your specified API usage limits. You will regain access on 2026-09-01.'
+		);
+	});
+
+	it('falls back to a generic message naming the status when the response body has none', async () => {
+		getSession.mockResolvedValue({ data: { session: { access_token: 'token-abc' } } });
+		const fetchSpy = vi.fn(async () => new Response('{}', { status: 503 }));
+		vi.stubGlobal('fetch', fetchSpy);
+
+		const err = await requestGeneration({ task: 'content', provider: 'claude' }).catch((e) => e);
+
+		expect(err).toBeInstanceOf(GenerationError);
+		expect(err.status).toBe(503);
+		expect(err.message).toMatch(/503/);
+	});
+
+	it('falls back to a generic message when the response body is not JSON at all', async () => {
+		getSession.mockResolvedValue({ data: { session: { access_token: 'token-abc' } } });
+		const fetchSpy = vi.fn(async () => new Response('not json', { status: 500 }));
+		vi.stubGlobal('fetch', fetchSpy);
+
+		const err = await requestGeneration({ task: 'content', provider: 'claude' }).catch((e) => e);
+
+		expect(err).toBeInstanceOf(GenerationError);
+		expect(err.status).toBe(500);
 	});
 });
