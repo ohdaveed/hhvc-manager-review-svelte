@@ -120,6 +120,35 @@ describe('RethinkPanel', () => {
 		expect(await screen.findByText(/9,001 characters/)).toBeTruthy();
 	});
 
+	it('gives two ops of the same type and kind distinct accessible names', async () => {
+		requestRethink.mockResolvedValue({
+			...result,
+			ops: [
+				{
+					id: 'add:bullet:1',
+					type: 'add',
+					kind: 'bullet',
+					text: 'Call 311 if you have no heat.',
+					afterFieldId: null
+				},
+				{
+					id: 'add:bullet:2',
+					type: 'add',
+					kind: 'bullet',
+					text: 'Report a rodent sighting online.',
+					afterFieldId: null
+				}
+			]
+		});
+		pageStore.selectSection('what-we-do');
+		render(RethinkPanel, { props: { pageData } });
+		await fireEvent.click(screen.getByRole('button', { name: /rethink this section/i }));
+
+		const heat = await screen.findByRole('checkbox', { name: /call 311 if you have no heat/i });
+		const rodent = screen.getByRole('checkbox', { name: /report a rodent sighting online/i });
+		expect(heat).not.toBe(rodent);
+	});
+
 	it('applies nothing -- slice 1 is read-only', async () => {
 		requestRethink.mockResolvedValue(result);
 		pageStore.selectSection('what-we-do');

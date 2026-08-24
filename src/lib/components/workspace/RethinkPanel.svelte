@@ -38,6 +38,26 @@
 
 	const opLabel = (op: Op) => `${op.type} ${KIND_LABEL[op.kind] ?? op.kind}`;
 
+	/**
+	 * The accessible name for an op's checkbox needs to be more than `opLabel`:
+	 * two `add` bullets, or two `rewrite` paragraphs, in one section are an
+	 * ordinary result, and `aria-label` overrides the wrapping `<label>`'s text
+	 * rather than supplementing it -- so an unqualified label makes two
+	 * checkboxes indistinguishable to a screen reader. Append a snippet of the
+	 * op's own copy so each name is unique.
+	 *
+	 * `rewrite` carries its new text as `to`, not `text`; every other type that
+	 * reaches this list (`add`, `move`, `drop` -- `keep` is filtered out before
+	 * rendering) carries `text`. Narrowed explicitly rather than cast.
+	 */
+	const opText = (op: Op) => (op.type === 'rewrite' ? op.to : op.text);
+
+	const opName = (op: Op) => {
+		const text = opText(op);
+		const snippet = text.length > 60 ? `${text.slice(0, 60)}…` : text;
+		return snippet ? `${opLabel(op)}: ${snippet}` : opLabel(op);
+	};
+
 	async function run() {
 		if (!sectionKey || !pageId) return;
 		if (pageStore.rethink.state === 'loading') return;
@@ -134,7 +154,8 @@
 			</section>
 
 			{#if pageStore.rethink.state === 'error'}
-				<p class="mx-5 mt-4 text-[12px] leading-[17px]" role="alert">
+				{@const cancelled = pageStore.rethink.message === 'Cancelled.'}
+				<p class="mx-5 mt-4 text-[12px] leading-[17px]" role={cancelled ? 'status' : 'alert'}>
 					{pageStore.rethink.message}
 				</p>
 			{/if}
@@ -155,7 +176,7 @@
 								<input
 									type="checkbox"
 									class="mt-0.5"
-									aria-label={opLabel(op)}
+									aria-label={opName(op)}
 									checked={pageStore.isOpAccepted(op)}
 									onchange={(event) => pageStore.setOpAccepted(op.id, event.currentTarget.checked)}
 								/>
