@@ -41,6 +41,29 @@ const sectionsOf = (page: unknown): Section[] => {
 const text = (value: unknown): string => (typeof value === 'string' ? value : '');
 
 /**
+ * Fields significant to "did this OTHER section change" (decision 17).
+ * Deliberately the same surface the diff itself covers (`blocks.ts`'s
+ * `walk`), which already excludes `steps`/`cards` for slice 1 (decision 16).
+ *
+ * A raw `JSON.stringify(section)` comparison looked right but is not: the
+ * LOCAL section carries `fieldKey` (stamped by `deriveFieldKey`) and the
+ * RESPONSE section never does and adds backend-only `component`/`kind`
+ * fields in a different key order -- confirmed against a live request. That
+ * asymmetry made every section register as "changed" on every real request,
+ * regardless of what the model actually did. Projecting both sides onto the
+ * same fixed field list, in a fixed order, is what makes the comparison mean
+ * anything.
+ */
+const CONTENT_KEYS = ['heading', 'karl', 'paragraphs', 'bullets', 'callout'] as const;
+
+const contentSignature = (section: unknown): string => {
+	const s = (section ?? {}) as Record<string, unknown>;
+	const projected: Record<string, unknown> = {};
+	for (const key of CONTENT_KEYS) projected[key] = s[key] ?? null;
+	return JSON.stringify(projected);
+};
+
+/**
  * Ask the assistant to rethink one section, and return the differences.
  *
  * The `content` task answers with a whole page. Only the target section is
@@ -135,7 +158,7 @@ export async function requestRethink({
 	const otherSections = proposedSections
 		.map((s, i) => ({ s, i }))
 		.filter(({ i }) => i !== targetIndex)
-		.filter(({ s, i }) => JSON.stringify(currentSections[i]) !== JSON.stringify(s))
+		.filter(({ s, i }) => contentSignature(currentSections[i]) !== contentSignature(s))
 		.map(({ s, i }) => text(currentSections[i]?.heading) || text(s.heading))
 		.filter(Boolean);
 

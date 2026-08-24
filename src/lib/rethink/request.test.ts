@@ -145,6 +145,30 @@ describe('requestRethink', () => {
 		expect(result.karlAfter).toBe('Rich text, restructured as steps.');
 	});
 
+	it('reports no other sections when the model left them unchanged, in the real backend response shape', async () => {
+		// The real backend response never carries `fieldKey`, adds `component`
+		// and `kind` to every section, and its keys come back in a different
+		// order than the local corpus object's -- confirmed against a live
+		// request. `otherSections` must not mistake any of that for a change.
+		requestGeneration.mockResolvedValue(
+			envelope([
+				{
+					bullets: ['Rats', 'Garbage'],
+					component: 'text',
+					heading: 'What we do',
+					karl: 'Information block.',
+					kind: 'body',
+					paragraphs: ['Our work covers:']
+				},
+				{ component: 'text', heading: 'Who we are', karl: 'Information block.', kind: 'body' }
+			])
+		);
+
+		const result = await requestRethink({ page, pageId: page.id, sectionKey: 'what-we-do' });
+
+		expect(result.otherSections).toEqual([]);
+	});
+
 	it('throws, naming both counts, when the response has a different number of sections than the page', async () => {
 		requestGeneration.mockResolvedValue(envelope([unchangedResponseSections[0]]));
 		await expect(
