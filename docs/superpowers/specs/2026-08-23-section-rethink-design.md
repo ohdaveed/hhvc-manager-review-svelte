@@ -59,20 +59,26 @@ for it than a retrofit would be. (Decision 6.)
    section 971 bytes (max 7,449); a compact 29-page index of
    `slug|type|title|summary` is 6,040 bytes. Everything fits the caps with room
    to spare.
-5. **The knowledge base is real but its production state is unknown.** The local
-   store holds 1,230 chunks, all embedded with `gemini-embedding-001`
-   (hhvc-policy 714, mockup-draft 233, karl 102, hhvc-standards 75, sfgov-live
-   52, karl-gitbook 28, sfgov-style 24, sfds 2), over 33MB of source under
-   `docs/source/`.
-   Railway runs Postgres behind `build_scripts/storage.js`, a different store
-   needing its own ingest; `knowledge-retrieval.js`'s header documents this
-   exact trap. RAG grounding is deferred on that basis (decision 3).
-6. **`GET /api/ai/capabilities` reports `knowledgeBaseReady`, `chunkCount` and
-   the task list**, gated on the `aiGenerate` role. One authenticated call
-   settles both open production questions.
-7. **`PAGE_OUTPUT_SCHEMA` is Anthropic-grammar-incompatible**, marked as such in
-   the schema module. Claude falls back to a prompt-stated schema plus Zod
-   validation; Gemini compiles it natively.
+5. **The knowledge base is ready in production**, verified by probe on
+   2026-08-23: `knowledgeBase: {ready: true, chunkCount: 816}`. The local store
+   holds a different, larger ingest — 1,230 chunks embedded with
+   `gemini-embedding-001` (hhvc-policy 714, mockup-draft 233, karl 102,
+   hhvc-standards 75, sfgov-live 52, karl-gitbook 28, sfgov-style 24, sfds 2)
+   over 33MB of source under `docs/source/`. The two stores are not in sync.
+6. **The deployed backend serves all three tasks**, verified by the same probe:
+   `tasks: ["content","compliance-audit","rewrite-field"]`, both providers
+   configured, `disclosureRequired: true`, `pageCount: 29`. The response also
+   carries `groundedBy`, `pageCount` and `disclosureRequired`, which the local
+   package's `getCapabilities()` does not return — so the **deployed build is
+   ahead of the local package**, not behind it. Read the local package as
+   indicative, not authoritative.
+7. **Deployed models are not what the local defaults suggest.** The probe
+   reports `claude: claude-opus-5` and `gemini: gemini-3.7-flash`, with
+   `defaultProvider: claude` — a deployed `GEMINI_MODEL` override, not the
+   package's `gemini-pro-latest` default. The local package marks
+   `PAGE_OUTPUT_SCHEMA` Anthropic-grammar-incompatible (Claude falls back to a
+   prompt-stated schema plus Zod validation; Gemini compiles it natively),
+   but per finding 6 that may no longer hold on the deployed build.
 8. **The backend attaches a `disclosure` string to every response**, because
    SF.gov's AI guidelines require generative-AI use to be disclosed and the HHVC
    standards manual §1.11 forbids automated approval. The client currently
@@ -93,7 +99,7 @@ for it than a retrofit would be. (Decision 6.)
 | --- | ----------------------------------- | -------------------------------------------------------------------------------------------------------- |
 | 1   | Scope of authority                  | **Applied and persisted**, not advisory. Proposals change the mockup and the record                      |
 | 2   | Decision unit                       | **The block.** One proposal, per-block accept/reject, composed on apply                                  |
-| 3   | Grounding                           | Section + page + **29-page corpus index**. RAG deferred pending finding 5                                |
+| 3   | Grounding                           | Section + page + **29-page corpus index**. RAG deferral **REOPENED** — its basis (finding 5) is gone     |
 | 4   | Transport                           | `task: 'content'` with the live page as grounding; diff the target section, discard the rest             |
 | 5   | Record unit                         | **Decompose on apply.** Rewrites become ordinary field edits; only the structural delta is new           |
 | 6   | Sequencing                          | **After slice 3.** Structural ops are meaningless without the overlay                                    |
@@ -105,7 +111,7 @@ for it than a retrofit would be. (Decision 6.)
 | 12  | Added-block lifetime                | **Bound to its shape row.** Exempt from hash expiry                                                      |
 | 13  | Rationale                           | Stored as a **note anchored to the section**, attributed to the assistant                                |
 | 14  | AI disclosure                       | **On the note**, naming the model. No schema change to `edits`                                           |
-| 15  | Provider                            | **Gemini** for v1, for native schema compilation (finding 7)                                             |
+| 15  | Provider                            | **REOPENED** — chosen on a Pro-tier premise that finding 7 disproves                                     |
 | 16  | Block types in scope                | **heading, paragraphs, bullets, callout.** `steps`, `cards`, `component`, `kind` deferred                |
 | 17  | Non-target sections in the response | **Discarded, but named** — one line noting the assistant also wanted to change sections N and M          |
 | 18  | Who may Rethink                     | Any signed-in reviewer, matching decision 11 of the version-history design, **plus** a one-in-flight cap |
@@ -356,11 +362,11 @@ is most of the value of the advisory version of this feature.
 
 ## Open risks
 
-- **The `content` task on the deployed backend is unverified.** The local
-  package may be ahead of what Railway runs. One authenticated
-  `GET /api/ai/capabilities` settles it (finding 6). If the deployed build lacks
-  it, deploy the backend — do not degrade to parsing structured data out of a
-  prose response, which `REWRITE_OUTPUT_SCHEMA` actively fights.
+- ~~The `content` task on the deployed backend is unverified.~~ **Closed
+  2026-08-23**: the deployed build serves it (finding 6).
+- ~~The production knowledge base state is unknown.~~ **Closed 2026-08-23**: it
+  is ready with 816 chunks (finding 5). Decisions 3 and 15 are reopened on the
+  strength of that.
 - **This design is blocked on slice 3** and should not start before it.
 - **`bun run lint` is red tree-wide** on prettier and eslint both. Do not
   reformat as a side effect of this work.
