@@ -154,6 +154,12 @@ export async function requestRethink({
 	// indiscriminate to retry -- but this caller only ever sends `prompt` and
 	// `page`, never the `fieldText`/`instruction` fields the proxy's own 400
 	// checks inspect, so a 400 reaching this catch can only be the backend's.
+	//
+	// A backend 400 is itself ambiguous, though: it can be the model provider
+	// rejecting the call, or the backend's own Zod validation failing on the
+	// grounding page passed in `prompt`. The second case wastes one Gemini
+	// call before failing identically -- not revisited, since distinguishing
+	// the two would need message-sniffing that is not worth building.
 	let data;
 	try {
 		data = await ask('claude');

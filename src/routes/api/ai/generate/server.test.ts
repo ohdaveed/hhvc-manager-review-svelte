@@ -202,7 +202,7 @@ describe('POST /api/ai/generate', () => {
 	// `Origin`) to the outgoing call, and the Railway backend's origin
 	// allow-list answers a forwarded browser origin with 403. A request with
 	// no `Origin` at all is explicitly permitted by that allow-list.
-	it('sends the upstream request via the global fetch, not event.fetch, so no Origin is forwarded', async () => {
+	it('calls the global fetch, not event.fetch -- a future revert to event.fetch is what would forward the browser Origin', async () => {
 		getUser.mockResolvedValue({ data: { user: { id: 'user-1' } }, error: null });
 		const { event, upstream, eventFetch } = buildEvent({
 			Authorization: 'Bearer good-token',
@@ -212,8 +212,17 @@ describe('POST /api/ai/generate', () => {
 		await POST(event as never);
 
 		expect(upstream).toHaveBeenCalledOnce();
+		// Load-bearing: this is what actually proves no Origin was forwarded,
+		// and what a revert to event.fetch would trip.
 		expect(eventFetch).not.toHaveBeenCalled();
 
+		// NOT load-bearing on its own: the handler always builds an explicit
+		// headers literal (Content-Type, Authorization only), so this passes
+		// under any such implementation regardless of eventFetch. SvelteKit's
+		// Origin injection happens on the Request object event.fetch builds
+		// internally, not on the init.headers a caller passes -- this
+		// assertion documents that shape, it doesn't independently prove
+		// Origin-forwarding didn't happen.
 		const [, init] = upstream.mock.calls[0];
 		expect(new Headers(init?.headers).has('origin')).toBe(false);
 	});
