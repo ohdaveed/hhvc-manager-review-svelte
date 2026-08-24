@@ -149,15 +149,19 @@ EXISTS`), so a re-run is safe.
       decision on them.
 
 - [ ] **B5. One decision: keep the legacy port, or delete it?** B2, B3 and the
-      dead CSS tree all reduce to this. The legacy vanilla-JS app is retained as
-      porting reference — `src/legacy_main.js`, `src/css/**`,
-      `src/routes/layout.css` — and it is the sole referent of
-      `@sfgov/design-system`. Deleting the port would remove ~12 files and let
-      that dependency go with them; keeping it means all of the above stay
+      dead CSS tree all reduce to this. **Half answered:** `src/legacy_main.js`
+      is deleted — it was imported by nothing, and its unresolved
+      `./review/*.js` imports were 52 of the 76 `bun run check` errors, so
+      removing it took the baseline to 24. Its `knip.jsonc` and `_typos.toml`
+      ignores went with it.
+      **Still open:** the CSS half — `src/css/**` and `src/routes/layout.css`,
+      which are the sole referent of `@sfgov/design-system` (the Tailwind v3
+      bundle whose 7,714 `!important` declarations beat every v4 utility, B3).
+      Deleting those lets that dependency go too; keeping them means they stay
       ignored in `knip.jsonc`, which is the current state and is fine.
       **This is your call, and it does not block anything else.**
-      _Touches:_ `src/legacy_main.js`, `src/css/**`, `src/routes/layout.css`,
-      `knip.jsonc`, `package.json`.
+      _Touches:_ `src/css/**`, `src/routes/layout.css`, `knip.jsonc`,
+      `package.json`.
 
 ---
 
