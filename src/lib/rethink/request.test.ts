@@ -24,7 +24,23 @@ const page = {
 	]
 };
 
-const envelope = (sections: unknown[], extra: object = {}) => ({
+/**
+ * The backend's own schema declares `additionalProperties: false` on a
+ * section and does not list `fieldKey` -- it is client-derived, stamped on
+ * after the corpus loads (`deriveFieldKey` in `pageData.svelte.ts`), and the
+ * model has never heard of it. Response fixtures must never carry one; this
+ * strips it from the input fixture so there is one source of truth for "same
+ * section, no fieldKey" rather than two copies that could drift apart.
+ */
+const withoutFieldKey = (section: (typeof page.sections)[number]) => {
+	const { fieldKey: _fieldKey, ...rest } = section;
+	void _fieldKey;
+	return rest;
+};
+
+const unchangedResponseSections = page.sections.map(withoutFieldKey);
+
+const envelope = (sections: unknown[], resultExtra: object = {}, extra: object = {}) => ({
 	task: 'content',
 	provider: 'claude',
 	model: 'claude-opus-5',
@@ -32,7 +48,14 @@ const envelope = (sections: unknown[], extra: object = {}) => ({
 	valid: true,
 	issues: [],
 	disclosure: 'Drafted with generative AI.',
-	result: { ...page, sections },
+	result: {
+		id: page.id,
+		title: page.title,
+		type: page.type,
+		reading: page.reading,
+		sections,
+		...resultExtra
+	},
 	...extra
 });
 
@@ -40,7 +63,7 @@ describe('requestRethink', () => {
 	beforeEach(() => requestGeneration.mockReset());
 
 	it('asks for the content task from Claude, grounded on the live page', async () => {
-		requestGeneration.mockResolvedValue(envelope(page.sections));
+		requestGeneration.mockResolvedValue(envelope(unchangedResponseSections));
 
 		await requestRethink({ page, pageId: page.id, sectionKey: 'what-we-do' });
 
@@ -48,20 +71,14 @@ describe('requestRethink', () => {
 		expect(payload.task).toBe('content');
 		expect(payload.provider).toBe('claude');
 		expect(payload.page).toBe(page);
-		expect(payload.prompt).toContain('what-we-do');
+		expect(payload.prompt).toContain('What we do');
 	});
 
-	it('diffs only the target section and reports the rest by heading', async () => {
+	it('diffs only the target section and reports the rest by heading, matched by position', async () => {
 		requestGeneration.mockResolvedValue(
 			envelope([
-				{
-					fieldKey: 'what-we-do',
-					heading: 'What we can inspect',
-					karl: 'Information block.',
-					paragraphs: ['Our work covers:'],
-					bullets: ['Rats', 'Garbage']
-				},
-				{ fieldKey: 'who-we-are', heading: 'Who we are, rewritten', karl: 'Information block.' }
+				withoutFieldKey({ ...page.sections[0], heading: 'What we can inspect' }),
+				withoutFieldKey({ ...page.sections[1], heading: 'Who we are, rewritten' })
 			])
 		);
 
@@ -71,27 +88,39 @@ describe('requestRethink', () => {
 			type: 'rewrite',
 			to: 'What we can inspect'
 		});
-		expect(result.ops.some((op) => op.text === 'Who we are, rewritten')).toBe(false);
+		expect(result.ops.some((op) => 'text' in op && op.text === 'Who we are, rewritten')).toBe(
+			false
+		);
 		expect(result.otherSections).toEqual(['Who we are']);
 	});
 
 	it('carries the model and disclosure through for the record', async () => {
-		requestGeneration.mockResolvedValue(envelope(page.sections));
+		requestGeneration.mockResolvedValue(envelope(unchangedResponseSections));
 		const result = await requestRethink({ page, pageId: page.id, sectionKey: 'what-we-do' });
 		expect(result.model).toBe('claude-opus-5');
 		expect(result.disclosure).toBe('Drafted with generative AI.');
 	});
 
-	it('fails when the proposal does not contain the section that was asked about', async () => {
-		requestGeneration.mockResolvedValue(envelope([{ fieldKey: 'who-we-are', heading: 'Who' }]));
+	it('reads the rationale from the page-level editorNote, not the section', async () => {
+		requestGeneration.mockResolvedValue(
+			envelope(unchangedResponseSections, {
+				editorNote: 'Leads with staff process, not tenant need.'
+			})
+		);
+		const result = await requestRethink({ page, pageId: page.id, sectionKey: 'what-we-do' });
+		expect(result.rationale).toBe('Leads with staff process, not tenant need.');
+	});
+
+	it('throws, naming both counts, when the response has a different number of sections than the page', async () => {
+		requestGeneration.mockResolvedValue(envelope([unchangedResponseSections[0]]));
 		await expect(
 			requestRethink({ page, pageId: page.id, sectionKey: 'what-we-do' })
-		).rejects.toThrow(/did not return that section/i);
+		).rejects.toThrow(/returned 1 section.*page has 2/i);
 	});
 
 	it('fails loudly when the backend could not validate its own draft', async () => {
 		requestGeneration.mockResolvedValue(
-			envelope(page.sections, { valid: false, issues: ['heading missing'] })
+			envelope(unchangedResponseSections, {}, { valid: false, issues: ['heading missing'] })
 		);
 		await expect(
 			requestRethink({ page, pageId: page.id, sectionKey: 'what-we-do' })
@@ -99,7 +128,7 @@ describe('requestRethink', () => {
 	});
 
 	it('passes the abort signal through so Cancel actually cancels', async () => {
-		requestGeneration.mockResolvedValue(envelope(page.sections));
+		requestGeneration.mockResolvedValue(envelope(unchangedResponseSections));
 		const controller = new AbortController();
 		await requestRethink({
 			page,
@@ -111,7 +140,7 @@ describe('requestRethink', () => {
 	});
 
 	it('refuses a page that does not match the pageId the rethink was for', async () => {
-		requestGeneration.mockResolvedValue(envelope(page.sections));
+		requestGeneration.mockResolvedValue(envelope(unchangedResponseSections));
 		await expect(
 			requestRethink({ page, pageId: 'some-other-page', sectionKey: 'what-we-do' })
 		).rejects.toThrow(/not the one this rethink was for/i);
@@ -121,10 +150,14 @@ describe('requestRethink', () => {
 	it('still works against a page fixture with no id at all', async () => {
 		const { id: _id, ...pageWithoutId } = page;
 		void _id;
-		requestGeneration.mockResolvedValue({
-			...envelope(pageWithoutId.sections),
-			result: { ...pageWithoutId, sections: pageWithoutId.sections }
-		});
+		requestGeneration.mockResolvedValue(
+			envelope(pageWithoutId.sections.map(withoutFieldKey), {
+				id: undefined,
+				title: pageWithoutId.title,
+				type: pageWithoutId.type,
+				reading: pageWithoutId.reading
+			})
+		);
 
 		const result = await requestRethink({
 			page: pageWithoutId,
@@ -133,18 +166,5 @@ describe('requestRethink', () => {
 		});
 
 		expect(result.model).toBe('claude-opus-5');
-	});
-
-	it('surfaces an invented section by its own heading, not silently dropped', async () => {
-		requestGeneration.mockResolvedValue(
-			envelope([
-				...page.sections,
-				{ fieldKey: 'brand-new-section', heading: 'A section that did not exist before' }
-			])
-		);
-
-		const result = await requestRethink({ page, pageId: page.id, sectionKey: 'what-we-do' });
-
-		expect(result.otherSections).toContain('A section that did not exist before');
 	});
 });

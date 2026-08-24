@@ -22,7 +22,7 @@ type RethinkInput = {
 	signal?: AbortSignal;
 };
 
-type Section = { fieldKey?: unknown; heading?: unknown; editorNote?: unknown };
+type Section = { fieldKey?: unknown; heading?: unknown };
 
 const sectionsOf = (page: unknown): Section[] => {
 	const list = ((page ?? {}) as { sections?: unknown }).sections;
@@ -55,8 +55,10 @@ export async function requestRethink({
 		throw new Error(`That page is not the one this rethink was for (${pageId}).`);
 	}
 
-	const current = sectionsOf(page).find((s) => s.fieldKey === sectionKey);
-	if (!current) throw new Error(`That section is not on this page (${sectionKey}).`);
+	const currentSections = sectionsOf(page);
+	const targetIndex = currentSections.findIndex((s) => s.fieldKey === sectionKey);
+	if (targetIndex === -1) throw new Error(`That section is not on this page (${sectionKey}).`);
+	const current = currentSections[targetIndex];
 
 	const prompt = buildRethinkPrompt({
 		page,
@@ -79,28 +81,37 @@ export async function requestRethink({
 	}
 
 	const proposedPage = data?.result;
-	const proposed = sectionsOf(proposedPage).find((s) => s.fieldKey === sectionKey);
+	const proposedSections = sectionsOf(proposedPage);
+
+	// Failing loudly beats diffing the wrong section. `fieldKey` cannot
+	// round-trip through the backend (see prompt.ts), so the target is
+	// matched by ORDINAL position -- sound only because both sides are
+	// verified to be the same length first.
+	if (proposedSections.length !== currentSections.length) {
+		throw new Error(
+			`The assistant returned ${proposedSections.length} sections; the page has ${currentSections.length}.`
+		);
+	}
+
+	const proposed = proposedSections[targetIndex];
 	if (!proposed) {
 		throw new Error('The assistant did not return that section.');
 	}
 
-	const before = new Map(sectionsOf(page).map((s) => [s.fieldKey, s]));
-	const otherSections = sectionsOf(proposedPage)
-		.filter((s) => s.fieldKey !== sectionKey)
-		// Compared by KEY, never by array position: the model may return the
-		// sections in a different order, and an index comparison would then report
-		// every section as changed.
-		.filter((s) => JSON.stringify(before.get(s.fieldKey)) !== JSON.stringify(s))
-		// Fall back to the proposed section's own heading when there is no
-		// match in the original: an invented section (a fieldKey not on the
-		// original page) is the one case most worth telling the reviewer
-		// about, and must not vanish just because there is nothing to look
-		// its old heading up against.
-		.map((s) => text(before.get(s.fieldKey)?.heading) || text(s.heading))
+	// Compared by INDEX, never by key: the response carries no `fieldKey` to
+	// match on. Sound because of the length guard above -- without it, an
+	// index comparison would not be.
+	const otherSections = proposedSections
+		.map((s, i) => ({ s, i }))
+		.filter(({ i }) => i !== targetIndex)
+		.filter(({ s, i }) => JSON.stringify(currentSections[i]) !== JSON.stringify(s))
+		.map(({ s, i }) => text(currentSections[i]?.heading) || text(s.heading))
 		.filter(Boolean);
 
 	return {
-		rationale: text((proposed as { editorNote?: unknown }).editorNote),
+		// Page-level, not section-level: `editorNote` is not on `sectionSchema`
+		// at all -- see prompt.ts.
+		rationale: text((proposedPage as { editorNote?: unknown } | undefined)?.editorNote),
 		ops: diffSection(current, proposed, sectionKey),
 		otherSections,
 		model: text(data?.model),

@@ -21,10 +21,27 @@ const page = {
 const args = { page, sectionKey: 'what-we-do', corpusIndex: 'scopeInfo | Information | Scope' };
 
 describe('buildRethinkPrompt', () => {
-	it('names the target section and quotes its Karl mapping', () => {
+	it('identifies the target section by ordinal position and heading, never by fieldKey', () => {
+		// `fieldKey` is client-derived (`deriveFieldKey` in pageData.svelte.ts);
+		// the backend has never heard of it, so it must not be how the model is
+		// told which section to change.
 		const prompt = buildRethinkPrompt(args);
-		expect(prompt).toContain('what-we-do');
+		expect(prompt).toContain('section 2 of 2');
+		expect(prompt).toContain('What we do');
 		expect(prompt).toContain('Information block 2, rich text plus bullets.');
+		expect(prompt).not.toContain('what-we-do');
+	});
+
+	it('tells the model exactly how many sections to return, in what order, and to change only the target', () => {
+		const prompt = buildRethinkPrompt(args);
+		expect(prompt).toMatch(/return exactly 2 sections/i);
+		expect(prompt).toMatch(/same order/i);
+		expect(prompt).toMatch(/change only section 2/i);
+	});
+
+	it('tells the model to put its reasoning in the page-level editorNote field', () => {
+		const prompt = buildRethinkPrompt(args);
+		expect(prompt).toMatch(/page-level "editorNote" field/i);
 	});
 
 	it('carries the rubric constraints that keep the proposal publishable', () => {
