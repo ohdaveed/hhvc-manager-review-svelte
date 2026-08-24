@@ -22,7 +22,7 @@ function buildEvent(
 	payload: unknown = { task: 'rewrite-field', fieldText: 'hello' }
 ) {
 	const upstream = vi.fn(
-		async () =>
+		async (_url: string, _init?: RequestInit) =>
 			new Response(JSON.stringify({ result: { rewrittenText: 'ok' } }), {
 				status: 200,
 				headers: { 'Content-Type': 'application/json' }
@@ -170,7 +170,7 @@ describe('POST /api/ai/generate', () => {
 		expect(upstream).toHaveBeenCalledOnce();
 		expect(eventFetch).not.toHaveBeenCalled();
 
-		const [, init] = upstream.mock.calls[0] as [string, RequestInit];
-		expect(new Headers(init.headers).has('origin')).toBe(false);
+		const [, init] = upstream.mock.calls[0];
+		expect(new Headers(init?.headers).has('origin')).toBe(false);
 	});
 });
