@@ -1,6 +1,8 @@
 <script lang="ts">
 	import EditTarget from './EditTarget.svelte';
 	import { entryText, entryUnverified } from '$lib/corpus/fieldResolver';
+	import { pageStore } from '$lib/stores/pageData.svelte';
+	import { sessionStore } from '$lib/stores/session.svelte';
 
 	let { section, index } = $props();
 
@@ -28,9 +30,32 @@
 	// reads in the ActionBar ("Section [2] Paragraph"), never what identifies a
 	// field. `fieldId` below is the identity.
 	const label = $derived(`Section [${index + 1}]`);
+
+	// Undefined while the session check is in flight: treat as editable, so the
+	// control does not flicker out and back for a signed-in reviewer. Same rule
+	// `EditTarget` follows.
+	const editable = $derived(!sessionStore.knownSignedOut);
+	const sectionSelected = $derived(pageStore.selectedSectionKey === key);
 </script>
 
 <div class="page-section {section.kind || 'body'}">
+	{#if editable}
+		<div class="page-section-chrome">
+			<button
+				type="button"
+				class="rethink-section"
+				data-rethink-section={key}
+				aria-pressed={sectionSelected}
+				onclick={(event) => {
+					event.stopPropagation();
+					pageStore.selectSection(key);
+				}}
+			>
+				Rethink section
+			</button>
+		</div>
+	{/if}
+
 	{#if section.heading}
 		<EditTarget
 			as="h2"
@@ -94,3 +119,20 @@
 		<EditTarget name="Callout Text" fieldId={`sections.${key}.callout.text`} value={callout.text} />
 	</div>
 {/snippet}
+
+<style>
+	.page-section-chrome {
+		display: flex;
+		justify-content: flex-end;
+	}
+
+	.rethink-section {
+		font-size: 12px;
+		line-height: 1;
+		padding: 4px 8px;
+		border: 1px solid currentColor;
+		border-radius: 3px;
+		background: transparent;
+		cursor: pointer;
+	}
+</style>
