@@ -67,18 +67,21 @@ for it than a retrofit would be. (Decision 6.)
    over 33MB of source under `docs/source/`. The two stores are not in sync.
 6. **The deployed backend serves all three tasks**, verified by the same probe:
    `tasks: ["content","compliance-audit","rewrite-field"]`, both providers
-   configured, `disclosureRequired: true`, `pageCount: 29`. The response also
-   carries `groundedBy`, `pageCount` and `disclosureRequired`, which the local
-   package's `getCapabilities()` does not return — so the **deployed build is
-   ahead of the local package**, not behind it. Read the local package as
-   indicative, not authoritative.
-7. **Deployed models are not what the local defaults suggest.** The probe
+   configured, `disclosureRequired: true`, `pageCount: 29`. **The deployed build
+   is the backend's `origin/main`** — its `getCapabilities()` there returns
+   exactly the probe's shape, `knowledgeBase: {ready, chunkCount}`,
+   `groundedBy: corpus.files` and `disclosureRequired`. The vendored checkout at
+   `~/HHVC_manager_review_current_tool_package` sits on a feature branch
+   (`feat/karl-tag-field-inspection`) that is behind `main` in that file. **Read
+   that package on `origin/main`, not on whatever branch is checked out.**
+7. **Deployed models are not what the package defaults suggest.** The probe
    reports `claude: claude-opus-5` and `gemini: gemini-3.7-flash`, with
    `defaultProvider: claude` — a deployed `GEMINI_MODEL` override, not the
-   package's `gemini-pro-latest` default. The local package marks
-   `PAGE_OUTPUT_SCHEMA` Anthropic-grammar-incompatible (Claude falls back to a
-   prompt-stated schema plus Zod validation; Gemini compiles it natively),
-   but per finding 6 that may no longer hold on the deployed build.
+   package's `gemini-pro-latest` default. `PAGE_OUTPUT_SCHEMA` is still marked
+   Anthropic-grammar-incompatible on `origin/main`, so Claude reaches this
+   schema through the prompt-stated-schema-plus-Zod-validation path, with one
+   retry naming the specific errors. That path is documented as measured
+   working; it is not a guess, and per finding 6 it is current.
 8. **The backend attaches a `disclosure` string to every response**, because
    SF.gov's AI guidelines require generative-AI use to be disclosed and the HHVC
    standards manual §1.11 forbids automated approval. The client currently
@@ -367,16 +370,24 @@ is most of the value of the advisory version of this feature.
 - ~~The production knowledge base state is unknown.~~ **Closed 2026-08-23**: it
   is ready with 816 chunks (finding 5). Decisions 3 and 15 are reopened on the
   strength of that.
-- **What production's knowledge base actually contains is unverified.** It holds
-  816 chunks against the local store's 1,230 — a different, smaller ingest.
-  Enumerating its categories needs database credentials the probe does not
-  carry. If the missing chunks are `hhvc-policy`, slice 5's "this omits a legal
-  requirement" capability is materially weaker than the local store suggests.
-- **Claude's structured-output path is unconfirmed on the deployed build.** The
-  vendored package marks `PAGE_OUTPUT_SCHEMA` Anthropic-grammar-incompatible and
-  documents a prompt-schema-plus-validation fallback, but that package is behind
-  what is deployed (finding 6). One probe request in slice 1 settles it before
-  anything is built on it.
+- **What production's knowledge base contains is inferred, not censused.** It
+  holds 816 chunks against the local store's 1,230. The gap is very likely the
+  three categories added late to `build_scripts/knowledge-sources.js` —
+  `hhvc-standards` (75 chunks locally, added in `ea87abf`), the `karl` field map
+  (102, `32d3471`) and the `mockup-draft` projections of the mockup pages (233).
+  Those three total 410 against a 414-chunk gap, and the five file-backed
+  categories total 820 against production's 816 — both within a few chunks of a
+  slightly different source revision. **On that reading `hhvc-policy`, 714
+  chunks and the bulk of the corpus, is present in production**, so slice 5's
+  "this omits a legal requirement" capability is not the thing at risk; what
+  production would be missing is the standards manual and the Karl field map.
+  Confirm by census before building slice 5 — one `railway run` against the
+  Postgres service, or an audit sample whose citations carry each chunk's
+  category.
+- **Claude reaches `PAGE_OUTPUT_SCHEMA` through the validation fallback**, not a
+  compiled grammar (finding 7). Documented as measured working, but slice 1
+  should still confirm it with one real request before the diff engine is built
+  on the shape of what comes back.
 - **This design is blocked on slice 3** and should not start before it.
 - **`bun run lint` is red tree-wide** on prettier and eslint both. Do not
   reformat as a side effect of this work.
