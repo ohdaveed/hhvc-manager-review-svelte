@@ -109,14 +109,23 @@ export async function POST({ request }) {
 		const apiUrl = env.RAILWAY_API_URL || 'https://web-production-9bb3b.up.railway.app';
 		const apiToken = env.RAILWAY_API_TOKEN;
 
-		// Forward the request to the Railway backend
+		// Forward the request to the Railway backend.
+		//
+		// `signal` carries the caller's cancellation across the hop. Without
+		// it a Cancel aborted the browser-to-proxy leg only and the backend
+		// generated on regardless -- and that backend budgets its own work on
+		// `req.signal` (`AbortSignal.any([req.signal, timeout])`), so the
+		// abort has to actually arrive for any of that to engage. Whether the
+		// hosting platform propagates a client disconnect into `request.signal`
+		// is its business, not this handler's; forwarding is what this side owes.
 		const railwayResponse = await fetch(`${apiUrl}/api/ai/generate`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
 				...(apiToken ? { Authorization: `Bearer ${apiToken}` } : {})
 			},
-			body: JSON.stringify(payload)
+			body: JSON.stringify(payload),
+			signal: request.signal
 		});
 
 		if (!railwayResponse.ok) {
@@ -131,6 +140,16 @@ export async function POST({ request }) {
 	} catch (err) {
 		// Rethrow deliberate HTTP errors so upstream status codes survive.
 		if (typeof err === 'object' && err !== null && 'status' in err) throw err;
+
+		// A cancelled request is not a fault. An AbortError carries no `status`,
+		// so without this it fell straight through to the 500 below: every
+		// Cancel logged as an internal error and answered with a status that
+		// says the server broke. Checked after the HttpError rethrow so it
+		// cannot shadow a real upstream status from extractBackendMessage.
+		if (typeof err === 'object' && err !== null && (err as Error).name === 'AbortError') {
+			throw error(499, 'Request cancelled');
+		}
+
 		console.error('AI generate API error:', err);
 		throw error(500, 'Internal Server Error');
 	}

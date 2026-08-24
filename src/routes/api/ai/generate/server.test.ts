@@ -19,10 +19,14 @@ const { POST } = await import('./+server');
  */
 function buildEvent(
 	headers: Record<string, string> = {},
-	payload: unknown = { task: 'rewrite-field', fieldText: 'hello' }
+	payload: unknown = { task: 'rewrite-field', fieldText: 'hello' },
+	signal?: AbortSignal
 ) {
-	const upstream = vi.fn(
-		async (_url: string, _init?: RequestInit) =>
+	// Typed through the generic rather than by naming parameters the body does
+	// not use: the call sites below read `upstream.mock.calls[0]`, which needs
+	// the signature, and unused-but-declared parameters are an eslint error.
+	const upstream = vi.fn<(url: string, init?: RequestInit) => Promise<Response>>(
+		async () =>
 			new Response(JSON.stringify({ result: { rewrittenText: 'ok' } }), {
 				status: 200,
 				headers: { 'Content-Type': 'application/json' }
@@ -35,7 +39,8 @@ function buildEvent(
 	const request = new Request('http://localhost/api/ai/generate', {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json', ...headers },
-		body: JSON.stringify(payload)
+		body: JSON.stringify(payload),
+		signal
 	});
 
 	return { event: { request, fetch: eventFetch }, upstream, eventFetch };
@@ -225,5 +230,36 @@ describe('POST /api/ai/generate', () => {
 		// Origin-forwarding didn't happen.
 		const [, init] = upstream.mock.calls[0];
 		expect(new Headers(init?.headers).has('origin')).toBe(false);
+	});
+
+	it("forwards the caller's abort signal to the backend so a Cancel can stop generation", async () => {
+		// The Railway backend budgets generation on `req.signal`
+		// (`AbortSignal.any([req.signal, timeout])`), so a Cancel that stops at
+		// this proxy leaves the provider running and spending quota.
+		getUser.mockResolvedValue({ data: { user: { id: 'user-1' } }, error: null });
+		const controller = new AbortController();
+		const { event, upstream } = buildEvent(
+			{ Authorization: 'Bearer good-token' },
+			{ task: 'rewrite-field', fieldText: 'hello' },
+			controller.signal
+		);
+
+		await POST(event as never);
+
+		const [, init] = upstream.mock.calls[0];
+		expect(init?.signal).toBeInstanceOf(AbortSignal);
+		expect(init?.signal?.aborted).toBe(false);
+	});
+
+	it('answers a cancelled request with 499, not the catch-all 500', async () => {
+		// An AbortError carries no `status`, so it used to fall through to the
+		// generic 500 -- logging every Cancel as an internal error.
+		getUser.mockResolvedValue({ data: { user: { id: 'user-1' } }, error: null });
+		const { event, upstream } = buildEvent({ Authorization: 'Bearer good-token' });
+		upstream.mockRejectedValue(
+			Object.assign(new Error('The operation was aborted.'), { name: 'AbortError' })
+		);
+
+		await expect(POST(event as never)).rejects.toMatchObject({ status: 499 });
 	});
 });
