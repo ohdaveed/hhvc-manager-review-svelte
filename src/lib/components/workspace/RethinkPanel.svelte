@@ -28,6 +28,19 @@
 	let instruction = $state('');
 	let controller: AbortController | undefined;
 
+	// `pageStore.selectSection` resets `rethink` to idle without touching an
+	// AbortController -- the store holds none today, deliberately, so this is
+	// the panel's job. Without it, a slow request for the section the
+	// reviewer just left would run to completion unseen, and worse: it would
+	// still own `controller` until its own `finally` runs, so switching to a
+	// new section and clicking ITS Cancel could abort nothing.
+	$effect(() => {
+		// Read (not used) purely to register as a dependency: the cleanup below
+		// must re-run whenever the selection changes, not just on unmount.
+		void sectionKey;
+		return () => controller?.abort();
+	});
+
 	const KIND_LABEL: Record<string, string> = {
 		heading: 'heading',
 		paragraph: 'paragraph',
@@ -70,7 +83,11 @@
 			pageStore.selectedSectionKey === requestSectionKey &&
 			(pageData as { id?: string } | undefined)?.id === requestPageId;
 
-		controller = new AbortController();
+		// Captured locally so the `finally` below can tell whether it still owns
+		// `controller` -- a slow request for a section the reviewer has since
+		// left must not clear the controller a newer request just set.
+		const mine = new AbortController();
+		controller = mine;
 		pageStore.rethink = { state: 'loading', pageId: requestPageId, sectionKey: requestSectionKey };
 
 		try {
@@ -79,7 +96,17 @@
 				pageId: requestPageId,
 				sectionKey: requestSectionKey,
 				instruction: instruction.trim() || undefined,
-				signal: controller.signal
+				// `pageData` is the in-memory corpus object for this page, already
+				// mutated in place by THIS session's own edits -- `Section.svelte`
+				// and `EditTarget` write through the same `$lib/corpus/fieldResolver`
+				// helpers that this object holds. So the grounding the assistant sees
+				// reflects what this reviewer changed this session, but NOT a
+				// persisted `edits` row saved by an earlier session or another
+				// reviewer: there is no overlay of the `edits` table onto the
+				// pristine corpus here. That overlay is decision 8's full answer, and
+				// it is slice 3's work -- building it now would be scope creep on a
+				// read-only slice.
+				signal: mine.signal
 			});
 			if (!current()) return;
 			pageStore.rethink = {
@@ -99,7 +126,7 @@
 						: 'Could not reach the assistant.';
 			pageStore.rethink = { state: 'error', message };
 		} finally {
-			controller = undefined;
+			if (controller === mine) controller = undefined;
 		}
 	}
 

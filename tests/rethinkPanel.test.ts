@@ -6,6 +6,7 @@
  */
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, fireEvent, screen } from '@testing-library/svelte';
+import { tick } from 'svelte';
 import RethinkPanel from '../src/lib/components/workspace/RethinkPanel.svelte';
 import { pageStore } from '../src/lib/stores/pageData.svelte.js';
 
@@ -17,7 +18,10 @@ vi.mock('$lib/rethink/request', () => ({
 const pageData = {
 	id: 'topic-x--about',
 	title: 'About vector control',
-	sections: [{ fieldKey: 'what-we-do', heading: 'What we do', paragraphs: ['Our work covers:'] }]
+	sections: [
+		{ fieldKey: 'what-we-do', heading: 'What we do', paragraphs: ['Our work covers:'] },
+		{ fieldKey: 'who-we-are', heading: 'Who we are', paragraphs: ['Our staff...'] }
+	]
 };
 
 const result = {
@@ -188,5 +192,61 @@ describe('RethinkPanel', () => {
 
 		const ops = screen.getByRole('list', { name: /proposed changes/i });
 		expect(notice.compareDocumentPosition(ops) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+	});
+
+	it('will not start a second Rethink while one is loading', async () => {
+		let resolveFirst: (value: unknown) => void = () => {};
+		requestRethink.mockImplementationOnce(
+			() =>
+				new Promise((resolve) => {
+					resolveFirst = resolve;
+				})
+		);
+		pageStore.selectSection('what-we-do');
+		render(RethinkPanel, { props: { pageData } });
+
+		const button = screen.getByRole('button', { name: /rethink this section/i });
+		fireEvent.click(button);
+		fireEvent.click(button);
+		await tick();
+
+		expect(requestRethink).toHaveBeenCalledTimes(1);
+		resolveFirst(result);
+	});
+
+	it('aborts the in-flight request when the reviewer switches sections, so a stale Cancel is never a no-op', async () => {
+		const pending: { reject: (e: unknown) => void }[] = [];
+		requestRethink.mockImplementation(
+			(input: { signal?: AbortSignal }) =>
+				new Promise((_resolve, reject) => {
+					pending.push({ reject });
+					input.signal?.addEventListener('abort', () => {
+						reject(Object.assign(new Error('Aborted'), { name: 'AbortError' }));
+					});
+				})
+		);
+
+		pageStore.selectSection('what-we-do');
+		render(RethinkPanel, { props: { pageData } });
+		await fireEvent.click(screen.getByRole('button', { name: /rethink this section/i }));
+
+		const aSignal = requestRethink.mock.calls[0][0].signal as AbortSignal;
+		expect(aSignal.aborted).toBe(false);
+
+		// The store resets `rethink` to idle without touching any
+		// AbortController -- the panel itself must abort section A's request.
+		pageStore.selectSection('who-we-are');
+		await tick();
+
+		expect(aSignal.aborted).toBe(true);
+
+		// Section B's own Cancel must still work -- this is the bug: A's
+		// `finally` used to clear the controller unconditionally, so it
+		// clobbered B's reference and B's Cancel became a silent no-op.
+		await fireEvent.click(screen.getByRole('button', { name: /rethink this section/i }));
+		const bSignal = requestRethink.mock.calls[1][0].signal as AbortSignal;
+
+		await fireEvent.click(screen.getByRole('button', { name: /cancel/i }));
+		expect(bSignal.aborted).toBe(true);
 	});
 });
