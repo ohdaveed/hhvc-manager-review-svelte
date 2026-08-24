@@ -6,7 +6,7 @@ import { supabase } from '$lib/supabase';
  * The proxy attaches the backend token server-side and rejects callers without
  * a valid Supabase session, so the access token has to travel with the request.
  */
-export async function requestGeneration(payload: Record<string, unknown>) {
+export async function requestGeneration(payload: Record<string, unknown>, signal?: AbortSignal) {
 	const {
 		data: { session }
 	} = await supabase.auth.getSession();
@@ -18,7 +18,10 @@ export async function requestGeneration(payload: Record<string, unknown>) {
 			'Content-Type': 'application/json',
 			Authorization: `Bearer ${session.access_token}`
 		},
-		body: JSON.stringify(payload)
+		body: JSON.stringify(payload),
+		// Optional, so every existing caller is unaffected. A Rethink runs an
+		// order of magnitude longer than a field rewrite and offers Cancel.
+		signal
 	});
 
 	if (!res.ok) throw new Error('API Error');

@@ -38,4 +38,16 @@ describe('requestGeneration', () => {
 		await expect(requestGeneration({ task: 'rewrite-field' })).rejects.toThrow(/signed in/i);
 		expect(fetchSpy).not.toHaveBeenCalled();
 	});
+
+	it('passes an abort signal to fetch when one is given', async () => {
+		getSession.mockResolvedValue({ data: { session: { access_token: 'token-abc' } } });
+		const fetchSpy = vi.fn(async () => new Response('{}', { status: 200 }));
+		vi.stubGlobal('fetch', fetchSpy);
+		const controller = new AbortController();
+
+		await requestGeneration({ task: 'rewrite-field', fieldText: 'hi' }, controller.signal);
+
+		const [, init] = fetchSpy.mock.calls[0] as [string, RequestInit];
+		expect(init.signal).toBe(controller.signal);
+	});
 });
