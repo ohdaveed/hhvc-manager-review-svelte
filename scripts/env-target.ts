@@ -172,9 +172,10 @@ function describeCredential(key: string): { kind: 'local' | 'hosted'; ref: strin
  *   a split. Guessing "local" wrongly reports agreement while a script writes
  *   to production; guessing "hosted" wrongly is loud and harmless.
  * - **A missing project ref is not treated as a disagreement.** A null ref
- *   carries no information -- the newer non-JWT `sb_secret_` keys have none --
- *   and flagging every one of them would make the script cry wolf on a correct
- *   setup. Refs are compared only when both sides have one.
+ *   carries no information -- the newer non-JWT `sb_secret_` keys have none,
+ *   and a custom API domain hides the URL's -- so flagging every one would make
+ *   the script cry wolf on a correct setup. Refs that ARE known are compared
+ *   against every other known ref, the URL's included when it has one.
  */
 export function credentialsAgree(values: Record<string, string>): {
 	verdict: 'agree' | 'split' | 'unknown';
@@ -197,6 +198,13 @@ export function credentialsAgree(values: Record<string, string>): {
 	const place = (kind: 'local' | 'hosted') =>
 		kind === 'local' ? 'the local stack' : 'a hosted project';
 
+	// Every ref that is known, compared pairwise. Against the URL's ref where
+	// there is one -- and against each other where there is not, because a
+	// custom API domain leaves `target.ref` null while the two keys can still
+	// name two different projects outright.
+	const known: { name: string; ref: string }[] = [];
+	if (target.ref) known.push({ name: 'the URL', ref: target.ref });
+
 	for (const [key, label] of CREDENTIALS) {
 		if (!values[key]) continue;
 		const credential = describeCredential(values[key]);
@@ -206,12 +214,15 @@ export function credentialsAgree(values: Record<string, string>): {
 				reason: `the ${label} names ${place(credential.kind)}, the URL names ${place(target.kind)}`
 			};
 		}
-		if (target.ref && credential.ref && credential.ref !== target.ref) {
+		if (!credential.ref) continue;
+		const disagrees = known.find((other) => other.ref !== credential.ref);
+		if (disagrees) {
 			return {
 				verdict: 'split',
-				reason: `the ${label} belongs to hosted project ${credential.ref}, not ${target.ref}`
+				reason: `the ${label} belongs to hosted project ${credential.ref}, ${disagrees.name} names ${disagrees.ref}`
 			};
 		}
+		known.push({ name: `the ${label}`, ref: credential.ref });
 	}
 
 	if (unknownReason) return { verdict: 'unknown', reason: unknownReason };

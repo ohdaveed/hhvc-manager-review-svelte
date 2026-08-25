@@ -152,6 +152,20 @@ describe('credentialsAgree', () => {
 		expect(reason).toContain('nopqrstuvwxyz');
 	});
 
+	it('catches two hosted projects behind a custom API domain', () => {
+		// Supabase supports custom API domains, so `describeTarget` cannot read a
+		// ref off the URL. The two keys still name two projects outright, and
+		// comparing them only against the URL's ref missed that entirely.
+		const { verdict, reason } = credentialsAgree({
+			SVELTE_PUBLIC_SUPABASE_URL: 'https://api.example.gov',
+			SVELTE_PUBLIC_SUPABASE_ANON_KEY: hostedKey(PROJECT),
+			SUPABASE_SERVICE_ROLE_KEY: hostedKey('nopqrstuvwxyz')
+		});
+		expect(verdict).toBe('split');
+		expect(reason).toContain('nopqrstuvwxyz');
+		expect(reason).toContain(PROJECT);
+	});
+
 	it('does not call a missing project ref a disagreement', () => {
 		// The opposite resolution to the undecodable-key case below, and
 		// deliberately so: a null ref carries no information, and the newer
