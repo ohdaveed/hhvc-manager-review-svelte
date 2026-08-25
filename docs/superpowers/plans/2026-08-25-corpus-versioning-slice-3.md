@@ -1025,15 +1025,22 @@ Bullets, callout title and callout text follow the same shape with their own fie
 
 - [ ] **Step 7: Remove the corpus mutation**
 
-In `src/lib/components/workspace/FieldsPanel.svelte`, delete the `resolved.field.set(suggestion.suggested);` line (~295) and replace the comment above it:
+In `src/lib/components/workspace/FieldsPanel.svelte`, import `acceptEdit`, then replace the save block so the persisted edit is accepted before forgetting the suggestion:
 
 ```ts
+const editId = await saveInlineEdit(savePageId, fieldId, suggestion.suggested);
+if (!editId || !(await acceptEdit(editId, resolved.field.value))) {
+	failed.push(fieldId);
+	continue;
+}
+
 // Persist only. The corpus stays pristine: the overlay is what puts the
 // rewrite on the page, and it needs the live base copy to compare an
-// acceptance against. Writing through the resolver here would destroy
-// that base in memory and, before the overlay existed, was also why a
-// rewrite vanished on reload.
+// acceptance against.
+pageStore.forgetSuggestion(fieldId);
 ```
+
+`saveInlineEdit` must return the persisted edit id (or `null` on failure), so the suggestion is forgotten only after both the edit and its acceptance are persisted. Pass the resolved pristine field value as `base_text`; do not call `resolved.field.set(...)`.
 
 `resolved` is still needed — it is what proves the field is live and supplies the base text — so keep the `resolveFields` call and the `missing` branch.
 
@@ -1173,6 +1180,7 @@ Expected: FAIL — cannot resolve `ReconfirmPanel.svelte`.
 	import { overlayFor } from '$lib/stores/overlayStore';
 	import { acceptEdit, revokeEdit } from '$lib/stores/reviewState';
 	import type { OverlayField } from '$lib/corpus/overlay';
+	import { fieldIdsOf } from '$lib/corpus/fieldResolver';
 	import { pageStore } from '$lib/stores/pageData.svelte';
 
 	/**

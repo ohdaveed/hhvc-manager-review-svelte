@@ -243,7 +243,7 @@ export async function saveInlineEdit(
 	pageId: string,
 	fieldId: string,
 	newContent: string
-): Promise<boolean> {
+): Promise<string | null> {
 	const optimisticEdit: Edit = {
 		id: 'temp-' + Date.now(),
 		page_id: pageId,
@@ -271,7 +271,7 @@ export async function saveInlineEdit(
 	if (!user) {
 		console.error('Cannot save edit: no authenticated user.');
 		editsStore.set(previousEdits);
-		return false;
+		return null;
 	}
 
 	const { data, error } = await supabase
@@ -284,12 +284,13 @@ export async function saveInlineEdit(
 	if (error) {
 		console.error('Failed to save edit:', error);
 		editsStore.set(previousEdits);
-		return false;
+		return null;
 	}
 
 	if (data) {
 		// Swap temporary ID with real database ID
 		editsStore.update((edits) => edits.map((e) => (e.id === optimisticEdit.id ? data : e)));
+		return data.id;
 	}
-	return true;
+	return null;
 }

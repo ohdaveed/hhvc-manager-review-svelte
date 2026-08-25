@@ -13,7 +13,7 @@
 	import { requestGeneration } from '$lib/ai/generate';
 	import { resolveFields } from '$lib/corpus/fieldResolver';
 	import { pageStore, type Suggestion } from '$lib/stores/pageData.svelte';
-	import { saveInlineEdit } from '$lib/stores/reviewState';
+	import { acceptEdit, saveInlineEdit } from '$lib/stores/reviewState';
 
 	let { pageData, livePageId }: { pageData: unknown; livePageId?: string } = $props();
 
@@ -284,14 +284,14 @@
 			// sees; doing it before the insert is known to have landed is how a
 			// failed save still looked like a successful one.
 			if (savePageId) {
-				const persisted = await saveInlineEdit(savePageId, fieldId, suggestion.suggested);
-				if (!persisted) {
+				const editId = await saveInlineEdit(savePageId, fieldId, suggestion.suggested);
+				if (!editId || !(await acceptEdit(editId, resolved.field.value))) {
 					failed.push(fieldId);
 					continue;
 				}
 			}
 
-			resolved.field.set(suggestion.suggested);
+			// Persist only. The corpus stays pristine: the overlay is what puts the rewrite on the page.
 			pageStore.forgetSuggestion(fieldId);
 		}
 
