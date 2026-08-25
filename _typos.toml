@@ -7,12 +7,11 @@
 
 [files]
 extend-exclude = [
-	# The retained legacy port, ignored here for the same reason knip ignores
-	# it: it is reference material rather than live code, so a typo in one of
-	# its comments is not a defect worth blocking a commit over. Deleting the
-	# port is one decision, tracked as B5 in PLAN.md.
+	# The CSS half of the retained legacy port, ignored here for the same reason
+	# knip ignores it: it is reference material rather than live code, so a typo
+	# in one of its comments is not a defect worth blocking a commit over. The
+	# JS entry point is gone; what remains of that decision is B5 in PLAN.md.
 	"src/css/**",
-	"src/legacy_main.js",
 
 	# Generated or vendored.
 	"bun.lock",

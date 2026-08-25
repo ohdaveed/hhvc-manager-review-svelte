@@ -100,7 +100,7 @@ Authorship is recorded and enforced: `edits.user_id` and `comments.user_id` are 
 
 ### Legacy port
 
-`src/lib/legacy-core/` holds ported vanilla-JS modules still in use (`karl-transcript.js` drives `HelpPanel`, `karl-blocks.js` the Karl field mapping). `src/legacy_main.js` is the old entry point, imported by nothing — kept as reference. Its `./review/*.js` imports don't resolve.
+`src/lib/legacy-core/` holds ported vanilla-JS modules still in use (`karl-transcript.js` drives `HelpPanel`, `karl-blocks.js` the Karl field mapping). The old entry point `src/legacy_main.js` is **gone** — it was imported by nothing and its unresolved `./review/*.js` imports were 52 of the 76 `bun run check` errors. The CSS half of that port (`src/css/**`, `src/routes/layout.css`, and the `@sfgov/design-system` dependency they pull) is still retained as reference; see PLAN.md B5.
 
 ## Configuration gotchas
 
@@ -112,7 +112,7 @@ Locally they come from `.env.local` (untracked). **CI has no `.env.local`, so `p
 
 **`bun run lint` is red on the current tree**, both halves: `prettier --check .` on 98 files and `eslint .` on 11 errors (counts measured at `d2b1f5f`; the prettier figure drifts as files are touched) (legacy `@ts-nocheck`, an `any`, a `prefer-const`, a `goto()` without `resolve()`). Because the script is `prettier && eslint`, a prettier failure means eslint never runs. This is why CI reports lint without blocking on it. Do not "fix" it by reformatting the tree as a side effect of unrelated work.
 
-**`bun run check` has a large pre-existing error baseline** (~55), almost all from `src/legacy_main.js`'s unresolved imports. Compare against the baseline rather than expecting zero.
+**`bun run check` has a pre-existing error baseline of 24** (measured after `legacy_main.js` was removed, which took it from 76). What remains is loose fixture typing in test files, not app code — `tests/reviewQueue.test.ts` alone accounts for 12, all the same `status: string` vs. the `ReviewPage` union. Compare against the baseline rather than expecting zero, and note it is now small enough to be worth driving to zero.
 
 **A green test suite does not mean the build passes.** Unit tests don't import the legacy modules, so a broken one there (e.g. duplicate `export { ... }` blocks in `karl-blocks.js`, which rolldown rejects) fails only at build. Run `bun run verify` before claiming a change is good.
 
