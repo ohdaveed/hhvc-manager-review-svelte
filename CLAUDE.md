@@ -24,7 +24,25 @@ bun run test:e2e                                # playwright (builds + previews 
 
 bun run verify           # unit tests + production build, one PASS/FAIL line each
 bun run verify:live      # also probes the deployed site (root 200, proxy 401s, bundle leak scan)
+
+bun run env:status       # which Supabase target local development points at
+bun run env:local        # point it at the local stack (values read from `supabase status`)
+bun run env:hosted       # point it at the hosted project (values from `.env.hosted`)
 ```
+
+### Choosing a Supabase target
+
+`scripts/env-target.ts` rewrites the three target variables in `.env.local` and reports what is active. Run `env:status` before assuming which database you are developing against — the failure it exists for is silent.
+
+Pointed at the hosted project, `ensureDevSession()` signs in with the local seed's password, the hosted project rejects it (`captcha protection: request disallowed`), and with no session every `TO authenticated` policy denies every read. `loadReview()` then finds nothing, so the queue, decisions, notes and checks are all inert **while the mockups still render from the static corpus** — the app looks like it is working. The only symptom is `No review found: null` in the console.
+
+Three properties worth keeping if this script is ever changed:
+
+- **Local values come from `supabase status` at switch time, never stored.** They change when the stack is recreated, and a stored copy goes stale silently.
+- **`SUPABASE_SERVICE_ROLE_KEY` switches with the two `SVELTE_PUBLIC_*` vars.** It is what `corpus:import` and `scripts/sync-checks.ts` authenticate with, and it bypasses RLS. Moving only the public vars leaves the app reading local while those scripts write to production — `env:status` reports that state as `SPLIT TARGET`, and it is the state this repo was in before the script existed.
+- **No key is printed.** Targets are named by URL and project ref.
+
+`SVELTE_PUBLIC_*` are `$env/static/public` and inlined at build time, so **a running dev server keeps serving the old target until restarted**. The script says so when it sees something on :5173.
 
 `verify` writes full output to `$TMPDIR/hhvc-verify.log` and prints only a summary — read the log only when a line says FAIL. `SITE_URL=...` retargets the live probes.
 
