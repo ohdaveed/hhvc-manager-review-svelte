@@ -87,12 +87,22 @@ code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 "$SITE_URL/")
 # Read from `/_app/version.json`, which vite.config.ts stamps with the build's
 # commit, rather than from Netlify's API: the API needs auth, and its
 # deploy-level `state: ready` is the very field that was misleading.
-expected="${EXPECT_COMMIT:-$(git rev-parse origin/main 2>/dev/null)}"
+if [ -n "${EXPECT_COMMIT:-}" ]; then
+	expected="$EXPECT_COMMIT"
+else
+	# Ask the REMOTE, not the local tracking ref. `git rev-parse origin/main`
+	# returns whatever the last fetch left behind, so a clone that is itself
+	# behind can match a stale published deploy and report PASS — reproducing
+	# the false green this gate exists to remove. `ls-remote` reads the remote
+	# without mutating any local ref.
+	expected=$(git ls-remote origin refs/heads/main 2>/dev/null | cut -f1)
+fi
+
 served=$(curl -s --max-time 30 "$SITE_URL/_app/version.json" |
 	sed -n 's/.*"version":"\([^"]*\)".*/\1/p')
 
 if [ -z "$expected" ]; then
-	fail "published commit — cannot resolve origin/main; set EXPECT_COMMIT=<sha>"
+	fail "published commit — could not reach origin to resolve main; set EXPECT_COMMIT=<sha>"
 elif [ -z "$served" ]; then
 	fail "published commit — $SITE_URL/_app/version.json served no version"
 elif [ "$served" = "$expected" ]; then
