@@ -544,6 +544,7 @@ git commit -m "feat(corpus): fold edits and decisions into a render overlay"
   - `export type Decision = OverlayDecision`
   - `export async function acceptEdit(editId: string, baseText: string): Promise<boolean>`
   - `export async function revokeEdit(editId: string): Promise<boolean>`
+  - `export const corpusVersionStore: Writable<string | null>`
   - `Edit` gains `materialized_in_version_id?: string | null`
 
 **Two shapes to match, not invent:**
@@ -695,15 +696,18 @@ async function insertDecision(args: {
 		return false;
 	}
 
+	// Unique per call, not per millisecond: two decisions recorded in the same
+	// tick would otherwise share an id, and the rollback below would remove the
+	// wrong one.
+	const optimisticId = `temp-${crypto.randomUUID()}`;
 	const optimistic: Decision = {
-		id: 'temp-' + Date.now(),
+		id: optimisticId,
 		edit_id: args.editId,
 		decision: args.decision,
 		base_text: args.baseText,
 		decided_at: new Date().toISOString()
 	};
 
-	const previous = get(decisionsStore);
 	decisionsStore.update((rows) => [...rows, optimistic]);
 
 	const { data, error } = await supabase
@@ -712,22 +716,46 @@ async function insertDecision(args: {
 			edit_id: args.editId,
 			decision: args.decision,
 			base_text: args.baseText,
-			decided_by: user.id
+			decided_by: user.id,
+			corpus_version_id: get(corpusVersionStore)
 		})
 		.select()
 		.single();
 
 	if (error) {
 		console.error('Failed to record decision:', error);
-		decisionsStore.set(previous);
+		// Remove only this call's optimistic row.
+		//
+		// `updatePageStatus` and `saveInlineEdit` above roll back by restoring a
+		// whole-store snapshot taken before the write, and this deliberately does
+		// not copy that. `decisionsStore` is written concurrently by the realtime
+		// handler and by any other accept or revoke in flight, so restoring a
+		// snapshot taken earlier discards every row that landed in between --
+		// silently un-applying another reviewer's accepted edit because *this*
+		// request failed. Those two functions have the same flaw; fixing them is
+		// not in this slice's scope, but repeating it in new code would be.
+		decisionsStore.update((rows) => rows.filter((r) => r.id !== optimisticId));
 		return false;
 	}
 
 	if (data) {
-		decisionsStore.update((rows) => rows.map((r) => (r.id === optimistic.id ? data : r)));
+		decisionsStore.update((rows) => rows.map((r) => (r.id === optimisticId ? data : r)));
 	}
 	return true;
 }
+```
+
+`corpusVersionStore` holds the id of the newest imported corpus version, so every acceptance records which version of the mockup it was made against — the provenance the design's data model asks `edit_decisions.corpus_version_id` for. Without it the column is permanently NULL and the schema states something untrue. Add it beside `decisionsStore`:
+
+```ts
+/**
+ * The newest `corpus_versions` row, or null before the first `corpus:import`.
+ *
+ * Provenance only. Expiry is decided by comparing `base_text` against the live
+ * corpus, not by comparing version ids -- a re-import that did not touch a
+ * given field must not expire an acceptance on it.
+ */
+export const corpusVersionStore = writable<string | null>(null);
 ```
 
 - [ ] **Step 4: Run the tests to verify they pass**
@@ -740,12 +768,38 @@ Expected: PASS, 5 tests.
 In `loadReview`, alongside the existing `edits` query (~line 116), add — and make sure `materialized_in_version_id` comes back on the edits select:
 
 ```ts
-const { data: decisionData } = await supabase
+const { data: decisionData, error: decisionsError } = await supabase
 	.from('edit_decisions')
 	.select('id, edit_id, decision, base_text, decided_at');
 
-decisionsStore.set(decisionData ?? []);
+// Checked, not swallowed, and matching how the edits query above handles its
+// own error. `?? []` on a failed query is not "no acceptances yet" -- it is
+// an unknown acceptance history rendered as an empty one, which silently
+// un-applies every accepted edit on every page and looks exactly like a
+// reviewer's work having been thrown away.
+if (decisionsError) {
+	console.error('Failed to load decisions:', decisionsError);
+} else {
+	decisionsStore.set((decisionData as Decision[]) ?? []);
+}
+
+// Provenance for any decision recorded this session. A failure here is not
+// fatal -- the column is nullable and expiry does not depend on it -- so it
+// is logged and left null rather than blocking hydration.
+const { data: versionData, error: versionError } = await supabase
+	.from('corpus_versions')
+	.select('id')
+	.order('imported_at', { ascending: false })
+	.limit(1);
+
+if (versionError) {
+	console.error('Failed to load the current corpus version:', versionError);
+} else {
+	corpusVersionStore.set(versionData?.[0]?.id ?? null);
+}
 ```
+
+Both sit **before** `channel.applyHydration()`, like the queries above them — the buffer must not be replayed until the whole snapshot is in.
 
 - [ ] **Step 6: Subscribe to decision inserts, through `runOrBuffer`**
 
@@ -793,13 +847,18 @@ git commit -m "feat(review): record accept and revoke as an append-only log"
 
 - Create: `src/lib/stores/overlayStore.ts`
 - Modify: `src/lib/components/EditTarget.svelte` (the `$props()` block ~line 30 and both render branches)
-- Modify: `src/lib/components/workspace/FieldsPanel.svelte:295` (remove `resolved.field.set(...)`)
-- Test: `tests/overlayRender.test.ts` (**jsdom**)
+- Modify: `src/lib/components/Page.svelte`, `src/lib/components/Section.svelte` (thread the overlay lookup down)
+- Modify: `src/lib/stores/reviewState.ts:242-295` (`saveInlineEdit` returns the persisted row)
+- Modify: `src/lib/components/workspace/FieldsPanel.svelte:262-296` (record the acceptance; remove `resolved.field.set(...)`)
+- Test: `tests/overlayRender.test.ts` (**jsdom**), plus one case appended to `tests/reviewDecisions.test.ts`
 
 **Interfaces:**
 
-- Consumes: `resolveOverlay` (Task 2); `editsStore`, `decisionsStore`, `pagesStore` (Task 3).
-- Produces: `export const overlayFor: Readable<(path: string, fieldId: string) => OverlayField | undefined>`
+- Consumes: `resolveOverlay` (Task 2); `editsStore`, `decisionsStore`, `pagesStore`, `acceptEdit` (Task 3).
+- Produces:
+  - `export const overlayFor: Readable<(path: string, fieldId: string) => OverlayField | undefined>`
+  - `saveInlineEdit` changes signature: `Promise<boolean>` → `Promise<Edit | null>`
+  - `EditTarget` gains an `overlay?: OverlayField` prop and a `data-overlay-state` attribute
 
 **This is where D-B lands.** `FieldsPanel.saveAccepted()` currently calls `resolved.field.set(suggestion.suggested)`, mutating `pageStore.pages` in place. That mutation must go, because the overlay needs the live base copy to compare against `base_text`. Removing it is not a regression in what the reviewer sees — the overlay renders the accepted text instead, and unlike the mutation it survives a reload.
 
@@ -1023,31 +1082,109 @@ In `src/lib/components/Section.svelte`, accept the id and use it at each of the 
 
 Bullets, callout title and callout text follow the same shape with their own field ids — `sections.${key}.bullets.${i}`, `sections.${key}.callout.title`, `sections.${key}.callout.text`. Keep the existing `name`, `as` and `unverified` props exactly as they are; only `overlay` is new.
 
-- [ ] **Step 7: Remove the corpus mutation**
+- [ ] **Step 7: Make `saveInlineEdit` return the row it saved**
 
-In `src/lib/components/workspace/FieldsPanel.svelte`, delete the `resolved.field.set(suggestion.suggested);` line (~295) and replace the comment above it:
+Accepting an edit needs the edit's id, and today `saveInlineEdit` returns only a boolean — so on its own, removing the corpus mutation in Step 8 would leave the save path with nothing to accept, no `edit_decisions` row, and a rewrite that vanishes _immediately_ as well as on reload. These two steps only make sense together.
+
+In `src/lib/stores/reviewState.ts`, widen the return type. The boolean contract stays intact at the call sites (`null` is falsy, and the reason it returns anything at all — `saveAccepted` used to treat a resolved promise as a save — is unchanged):
 
 ```ts
-// Persist only. The corpus stays pristine: the overlay is what puts the
-// rewrite on the page, and it needs the live base copy to compare an
-// acceptance against. Writing through the resolver here would destroy
-// that base in memory and, before the overlay existed, was also why a
-// rewrite vanished on reload.
+/**
+ * Saves an inline text edit optimistically.
+ *
+ * Returns the persisted row, or null if it never reached the database. It
+ * returns the ROW rather than a boolean because the caller has to record an
+ * acceptance against it, and an acceptance needs the edit's id -- `edits` is
+ * append-only, so there is no later query that identifies "the row I just
+ * wrote" unambiguously.
+ */
+export async function saveInlineEdit(
+	pageId: string,
+	fieldId: string,
+	newContent: string
+): Promise<Edit | null> {
 ```
 
-`resolved` is still needed — it is what proves the field is live and supplies the base text — so keep the `resolveFields` call and the `missing` branch.
+Then change the three `return false;` statements in its body to `return null;`, the trailing `return true;` to `return data as Edit;`, and confirm the optimistic-rollback branches are otherwise untouched.
 
-- [ ] **Step 8: Verify no other writer mutates the pristine corpus**
+- [ ] **Step 8: Record the acceptance, and remove the corpus mutation**
+
+In `src/lib/components/workspace/FieldsPanel.svelte`, replace the persist-then-mutate block inside `saveAccepted`'s loop:
+
+```ts
+// The base copy, read BEFORE anything is written. With the corpus now
+// pristine this is the text the mockup is showing, which is exactly
+// what the acceptance has to be recorded against -- passing the
+// rewrite here instead would make the acceptance permanently fresh and
+// it would never expire when the mockup is re-ported.
+const baseText = resolved.field.value;
+
+if (savePageId) {
+	const saved = await saveInlineEdit(savePageId, fieldId, suggestion.suggested);
+	if (!saved?.id) {
+		failed.push(fieldId);
+		continue;
+	}
+
+	// Two writes, and the edit alone is not enough: `resolveOverlay`
+	// ignores an edit with no accept decision, so without this the
+	// rewrite is stored and never rendered. Forgetting the suggestion
+	// below is what removes the reviewer's retry path, so it must not
+	// happen until both writes have landed.
+	const accepted = await acceptEdit(saved.id, baseText);
+	if (!accepted) {
+		failed.push(fieldId);
+		continue;
+	}
+}
+
+// No corpus write. The overlay is what puts the rewrite on the page,
+// and it needs the live base copy to compare an acceptance against;
+// writing through the resolver here would destroy that base in memory.
+// It is also, before the overlay existed, why a rewrite vanished on
+// reload -- an in-memory mutation is not persistence.
+pageStore.forgetSuggestion(fieldId);
+```
+
+and add `acceptEdit` to the existing `reviewState` import.
+
+`resolved` is still needed — it proves the field is live and supplies `baseText` — so keep the `resolveFields` call and the `missing` branch.
+
+**Known gap, and deliberately not closed here:** the edit and its acceptance are two round trips with no transaction, so a failure between them leaves an unaccepted edit row. That is harmless — an unaccepted edit is invisible to the overlay, exactly like the state before this slice — and the field lands in `failed`, so the reviewer keeps the suggestion and can retry. Making it atomic needs an RPC, which is worth doing when something other than this one path writes decisions.
+
+- [ ] **Step 9: Test that a saved suggestion is actually accepted**
+
+Add to `tests/reviewDecisions.test.ts`:
+
+```ts
+it('records an accept against the base copy, not the rewrite', async () => {
+	// Guards the failure this step exists for: the edit persists, no decision is
+	// written, and the overlay ignores the edit -- so the rewrite is stored and
+	// never shown.
+	const { saveInlineEdit, acceptEdit } = await load();
+	const saved = await saveInlineEdit('p1', 'title', 'Rewritten title');
+	expect(saved?.id).toBeTruthy();
+	await acceptEdit(saved!.id as string, 'Original title');
+	expect(insert).toHaveBeenLastCalledWith(
+		expect.objectContaining({ decision: 'accept', base_text: 'Original title' })
+	);
+});
+```
+
+Run: `bun run test:unit -- --run tests/reviewDecisions.test.ts`
+Expected: PASS.
+
+- [ ] **Step 10: Verify no other writer mutates the pristine corpus**
 
 Run: `grep -rn '\.field\.set(\|\.set(' src/lib/components src/lib/stores --include='*.svelte' --include='*.ts' | grep -v 'Store\.set\|\.set(previous'`
 Expected: no `ResolvedField.set` callers remain outside `fieldResolver.ts` itself. If one appears, it is a second writer to a store that is now write-once — fix it here rather than leaving it.
 
-- [ ] **Step 9: Run the full gate**
+- [ ] **Step 11: Run the full gate**
 
 Run: `bun run verify`
 Expected: two PASS lines, and a test count with no `?` in it. A `(? passed)` means a test failed — read `$TMPDIR/hhvc-verify.log`.
 
-- [ ] **Step 10: Commit**
+- [ ] **Step 12: Commit**
 
 ```bash
 git add src/lib/stores/overlayStore.ts src/lib/components tests/overlayRender.test.ts
@@ -1173,6 +1310,7 @@ Expected: FAIL — cannot resolve `ReconfirmPanel.svelte`.
 	import { overlayFor } from '$lib/stores/overlayStore';
 	import { acceptEdit, revokeEdit } from '$lib/stores/reviewState';
 	import type { OverlayField } from '$lib/corpus/overlay';
+	import { fieldIdsOf } from '$lib/corpus/fieldResolver';
 	import { pageStore } from '$lib/stores/pageData.svelte';
 
 	/**
@@ -1374,6 +1512,9 @@ Each item maps to a task. Ticked when its test is green, not when its code is wr
 - [ ] `materialize` then re-import does not double-apply the folded edit — Task 2 (`materialized_in_version_id` skip; the script itself is slice 5)
 - [ ] `field_id` derivation is unchanged by this work — existing `tests/inlineEditFieldId.test.ts` must stay green
 - [ ] Decisions arriving in the hydration window are not dropped — Task 3
+- [ ] Accepting a suggestion writes **both** the edit and its accept decision, against the base copy — Task 4
+- [ ] A failed decision insert removes only its own optimistic row, not concurrent ones — Task 3
+- [ ] A failed decision snapshot query is reported, not rendered as an empty acceptance history — Task 3
 - [ ] The pristine corpus has exactly one writer — Task 4 Step 8
 
 Not covered here, and deliberately: content hashing stability, `karl`/`editorNote` not minting a version, double `corpus:import`, `corpus.lock` vs CI, and the hosted seed's `auth.` writes are all **slice 1**, already landed and already tested.
