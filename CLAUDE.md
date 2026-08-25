@@ -83,7 +83,20 @@ of inheriting them. The hosted project gets those grants from Supabase's own
 the app worked against the hosted database and could not work against a local
 one.
 
-RLS is enabled on all four tables, but every policy is `FOR ALL TO authenticated USING (true)` — any signed-in user can read and delete any row, and `edits` records no author. Known, unresolved, needs a product decision before it matters.
+RLS is enabled on all four tables and the policies are **scoped per operation**, not blanket. `20260822030000_scope_rls_policies.sql` replaced the original `FOR ALL TO authenticated USING (true)` set; the model is read-everything, write-only-your-own:
+
+| Table      | SELECT | INSERT | UPDATE | DELETE |
+| ---------- | ------ | ------ | ------ | ------ |
+| `reviews`  | all    | —      | —      | —      |
+| `pages`    | all    | —      | any    | —      |
+| `edits`    | all    | own    | —      | —      |
+| `comments` | all    | own    | own    | own    |
+
+Two shapes there are deliberate rather than oversights. `edits` has no UPDATE or DELETE policy at all — the table is append-only, last-write-wins, which is how `HelpPanel` folds it, so an UPDATE path would contradict the reader. `pages.status`/`manager_notes` are writable by any reviewer because a decision is a property of the page, not of whoever recorded it.
+
+Authorship is recorded and enforced: `edits.user_id` and `comments.user_id` are both `NOT NULL REFERENCES auth.users`, and the own-row policies compare against `(select auth.uid())` — wrapped in a subquery so the initplan runs once per statement rather than once per row.
+
+**Supabase's security advisor reports nothing about any of this.** Its linter checks whether RLS is on and whether policies exist, not whether they are permissive — the old blanket policies passed both tests. Don't read a clean advisor as evidence the policies are scoped; read the migration.
 
 ### Legacy port
 
