@@ -125,20 +125,31 @@ export function serviceKeyAgrees(values: Record<string, string>): boolean | null
 	if (publicKind === 'unset') return null;
 
 	// The local stack's keys are the Supabase CLI's fixed demo JWTs, whose
-	// payload carries `"iss":"supabase-demo"`. That is what distinguishes a
-	// local service-role key from a hosted one without needing the stack to be
-	// running or the key to be decoded properly.
-	let isLocalKey = false;
-	try {
-		const payload = JSON.parse(Buffer.from(key.split('.')[1] ?? '', 'base64').toString('utf8'));
-		isLocalKey = payload?.iss === 'supabase-demo';
-	} catch {
-		// A key shaped like anything else is treated as hosted: the safe
-		// assumption, because the consequence of guessing "local" wrongly is a
-		// script writing to production while the tool reports agreement.
-		isLocalKey = false;
+	// payload carries `"iss":"supabase-demo"`. Decode both keys: the browser
+	// client uses the anon key, so checking only the service key can report a
+	// healthy target while authentication is actually pointed elsewhere.
+	const anonKey = values.SVELTE_PUBLIC_SUPABASE_ANON_KEY;
+	const decodeIssuer = (value: string): string | null => {
+		try {
+			const payload = JSON.parse(Buffer.from(value.split('.')[1] ?? '', 'base64').toString('utf8'));
+			return typeof payload?.iss === 'string' ? payload.iss : null;
+		} catch {
+			return null;
+		}
+	};
+	const serviceIssuer = decodeIssuer(key);
+	if (!serviceIssuer) return false;
+
+	if (anonKey) {
+		const anonIssuer = decodeIssuer(anonKey);
+		// Opaque keys have no verifiable project identity. Do not claim that
+		// they agree merely because the URL and service key happen to match.
+		if (!anonIssuer) return null;
+		if ((serviceIssuer === 'supabase-demo') !== (anonIssuer === 'supabase-demo')) return false;
+		if (serviceIssuer !== anonIssuer && publicKind === 'hosted') return false;
 	}
 
+	const isLocalKey = serviceIssuer === 'supabase-demo';
 	return publicKind === 'local' ? isLocalKey : !isLocalKey;
 }
 
