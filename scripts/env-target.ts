@@ -185,20 +185,17 @@ export function credentialsAgree(values: Record<string, string>): {
 		return { verdict: 'unknown', reason: 'SVELTE_PUBLIC_SUPABASE_URL is not set' };
 	}
 
-	// A split outranks an unknown. Half a file still carries a verdict: an
-	// absent anon key must not hide a service-role key naming production,
-	// which is the one state this whole script is here to catch.
 	const missing = CREDENTIALS.filter(([key]) => !values[key]).map(([key]) => key);
-	const unknownReason =
-		missing.length > 0
-			? `${missing.join(' and ')} ${missing.length === 1 ? 'is' : 'are'} not set`
-			: null;
+	if (missing.length > 0) {
+		const verb = missing.length === 1 ? 'is' : 'are';
+		return { verdict: 'unknown', reason: `${missing.join(' and ')} ${verb} not set` };
+	}
 
 	const place = (kind: 'local' | 'hosted') =>
 		kind === 'local' ? 'the local stack' : 'a hosted project';
 
+	let knownCredential: { label: string; ref: string } | null = null;
 	for (const [key, label] of CREDENTIALS) {
-		if (!values[key]) continue;
 		const credential = describeCredential(values[key]);
 		if (credential.kind !== target.kind) {
 			return {
@@ -212,9 +209,18 @@ export function credentialsAgree(values: Record<string, string>): {
 				reason: `the ${label} belongs to hosted project ${credential.ref}, not ${target.ref}`
 			};
 		}
+		if (credential.ref) {
+			if (knownCredential && credential.ref !== knownCredential.ref) {
+				return {
+					verdict: 'split',
+					reason: `the ${label} belongs to hosted project ${credential.ref}, but the ${knownCredential.label} belongs to hosted project ${knownCredential.ref}`
+				};
+			}
+			knownCredential = { label, ref: credential.ref };
+		}
 	}
 
-	if (unknownReason) return { verdict: 'unknown', reason: unknownReason };
+
 	return { verdict: 'agree', reason: null };
 }
 
