@@ -42,3 +42,15 @@ coverage/
 
 # Supabase CLI scratch state lives in `supabase/.gitignore`, which is the
 # CLI's own template -- `.branches` and `.temp` both belong to it.
+
+# Claude Code. `.claude/skills/` IS tracked: those are repo-specific workflow
+# definitions, the same category as CLAUDE.md. Everything below is per-machine
+# state that would only conflict between developers, and `settings.local.json`
+# additionally holds personal tool-permission grants.
+#
+# The directory as a whole is deliberately not ignored. Ignoring it would hide
+# the tracked skills from `git status` when they change, and an unignored
+# `.claude/` is also what made one of them visible enough to commit at all --
+# it had otherwise sat untracked since it was written.
+.claude/settings.local.json
+.claude/state/
