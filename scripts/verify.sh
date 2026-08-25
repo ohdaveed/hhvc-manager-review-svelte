@@ -7,7 +7,12 @@
 #   bun run verify        local gates only (tests, build)
 #   bun run verify:live   also probes the deployed site
 #
-# Override the target with SITE_URL=... for a branch or preview deploy.
+# Override the target with SITE_URL=... for a branch or preview deploy. When you
+# do, set EXPECT_COMMIT=... to match, or the published-commit gate will compare
+# that deploy against origin/main and correctly report a mismatch:
+#
+#   SITE_URL=https://deploy-preview-54--hhvc-manager-review.netlify.app \
+#   EXPECT_COMMIT=$(git rev-parse HEAD) bun run verify:live
 
 set -uo pipefail
 cd "$(dirname "$0")/.."
@@ -69,6 +74,32 @@ echo "live · $SITE_URL"
 
 code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 "$SITE_URL/")
 [ "$code" = "200" ] && pass "GET / -> 200" || fail "GET / -> $code (want 200)"
+
+# Which commit the site is actually SERVING.
+#
+# This gate exists because every other probe here survived a three-merge
+# production freeze without flinching. A deploy locked to an older commit still
+# answers 200, still refuses the proxy with 401, and still carries no leaked
+# secrets -- so the script reported "all gates green" while `main` and
+# production had diverged by three PRs. Status codes describe a site; only the
+# commit describes WHICH site.
+#
+# Read from `/_app/version.json`, which vite.config.ts stamps with the build's
+# commit, rather than from Netlify's API: the API needs auth, and its
+# deploy-level `state: ready` is the very field that was misleading.
+expected="${EXPECT_COMMIT:-$(git rev-parse origin/main 2>/dev/null)}"
+served=$(curl -s --max-time 30 "$SITE_URL/_app/version.json" |
+	sed -n 's/.*"version":"\([^"]*\)".*/\1/p')
+
+if [ -z "$expected" ]; then
+	fail "published commit — cannot resolve origin/main; set EXPECT_COMMIT=<sha>"
+elif [ -z "$served" ]; then
+	fail "published commit — $SITE_URL/_app/version.json served no version"
+elif [ "$served" = "$expected" ]; then
+	pass "published commit is ${served:0:7}"
+else
+	fail "published commit is ${served:0:7}, expected ${expected:0:7} — the deploy is not what main says"
+fi
 
 # The AI proxy must refuse unauthenticated callers: it spends real money.
 for label in 'no auth header' 'bad bearer token'; do
