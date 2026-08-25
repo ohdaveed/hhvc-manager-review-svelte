@@ -23,7 +23,7 @@ bun run test:unit                               # watch mode
 bun run test:e2e                                # playwright (builds + previews on :4173)
 
 bun run verify           # unit tests + production build, one PASS/FAIL line each
-bun run verify:live      # also probes the deployed site (root 200, proxy 401s, bundle leak scan)
+bun run verify:live      # also probes the deployed site (published commit, root 200, proxy 401s, bundle leak scan)
 
 bun run env:status       # which Supabase target local development points at
 bun run env:local        # point it at the local stack (values read from `supabase status`)
@@ -139,6 +139,10 @@ Locally they come from `.env.local` (untracked). **CI has no `.env.local`, so `p
 Netlify, site `hhvc-manager-review`, **Git-connected and deploying automatically**. Merging to `main` publishes production, and every PR gets a deploy preview at `deploy-preview-<n>--hhvc-manager-review.netlify.app` — both build on Netlify, so builds do consume Netlify minutes. Netlify's build settings are overridden by `netlify.toml` in this repo, which is where the command and publish directory actually come from. Env vars are set on the Netlify site; `RAILWAY_API_TOKEN` is marked secret.
 
 `netlify deploy --build --prod` still works and builds locally, but it is a manual override, not the normal path: the deploy it uploads carries no `commit_ref`, so it supersedes the commit-linked release and the published deploy can no longer be traced to a SHA. Reach for it only when Netlify's own build is unavailable.
+
+**A deploy being `ready` at your commit does not mean it is the one being served.** A locked or pinned deploy keeps the published one fixed while new merges keep building green behind it — `getSite.published_deploy.locked` is the field that says so, and `listSiteDeploys` will happily show a `ready` production deploy at the right SHA while an older one is what visitors get. This state held for three merges (#49, #53, #54) between 2026-08-24 and 2026-08-25 without a single status code changing; it was unlocked and `54160a5` published with `netlify api unlockDeploy` then `netlify api restoreSiteDeploy`.
+
+That is why `verify:live` asserts the **published commit** first. `vite.config.ts` stamps the build's commit into SvelteKit's `version.name` — Netlify's `COMMIT_REF`, else Actions' `GITHUB_SHA`, else `git rev-parse HEAD` — so it is served at `/_app/version.json`, and the check reads it back out of the artifact rather than trusting the control plane. The expected side comes from `git ls-remote origin refs/heads/main`, not `git rev-parse origin/main` — the local tracking ref is only as fresh as your last fetch, and a clone that is behind would agree with a stale deploy and report PASS. Against a preview, set `EXPECT_COMMIT` too, or the gate compares that deploy against `main` and correctly reports a mismatch.
 
 CI runs separately in `.github/workflows/pr.yml` — unit tests, build and e2e block, while prettier/eslint/svelte-check report without blocking. A green Netlify preview says the site built; it does not say the tests passed.
 
