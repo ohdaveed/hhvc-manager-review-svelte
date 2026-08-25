@@ -15,11 +15,7 @@
 	"project": ["src/**/*.{js,ts,svelte,css}", "scripts/**/*.{ts,js}"],
 
 	"ignore": [
-		// Kept as porting reference; imported by nothing and its ./review/*.js
-		// imports do not resolve.
-		"src/legacy_main.js",
-
-		// The CSS half of that same legacy port. Still dead as an ENTRY:
+		// The CSS half of the legacy port. Still dead as an ENTRY:
 		// nothing imports src/routes/layout.css, which additionally pulls
 		// @sfgov/design-system (the Tailwind v3 bundle whose 7,714 !important
 		// declarations beat every v4 utility -- see PLAN.md B3). Deleting the

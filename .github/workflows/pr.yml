@@ -146,8 +146,9 @@ jobs:
         continue-on-error: true
         run: bunx eslint .
 
-      # svelte-check carries a large documented baseline (~55 errors, almost
-      # all from src/legacy_main.js's unresolved imports). Informational only.
+      # svelte-check carries a documented baseline (24 errors, mostly loose
+      # fixture types in test files). Informational only. The old ~55-error
+      # baseline was src/legacy_main.js's unresolved imports; that file is gone.
       - name: Types (svelte-check)
         id: svelte_check
         continue-on-error: true

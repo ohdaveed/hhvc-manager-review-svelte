@@ -83,11 +83,24 @@ of inheriting them. The hosted project gets those grants from Supabase's own
 the app worked against the hosted database and could not work against a local
 one.
 
-RLS is enabled on all four tables, but every policy is `FOR ALL TO authenticated USING (true)` — any signed-in user can read and delete any row, and `edits` records no author. Known, unresolved, needs a product decision before it matters.
+RLS is enabled on all four tables and the policies are **scoped per operation**, not blanket. `20260822030000_scope_rls_policies.sql` replaced the original `FOR ALL TO authenticated USING (true)` set; the model is read-everything, write-only-your-own:
+
+| Table      | SELECT | INSERT | UPDATE | DELETE |
+| ---------- | ------ | ------ | ------ | ------ |
+| `reviews`  | all    | —      | —      | —      |
+| `pages`    | all    | —      | any    | —      |
+| `edits`    | all    | own    | —      | —      |
+| `comments` | all    | own    | own    | own    |
+
+Two shapes there are deliberate rather than oversights. `edits` has no UPDATE or DELETE policy at all — the table is append-only, last-write-wins, which is how `HelpPanel` folds it, so an UPDATE path would contradict the reader. `pages.status`/`manager_notes` are writable by any reviewer because a decision is a property of the page, not of whoever recorded it.
+
+Authorship is recorded and enforced: `edits.user_id` and `comments.user_id` are both `NOT NULL REFERENCES auth.users`, and the own-row policies compare against `(select auth.uid())` — wrapped in a subquery so the initplan runs once per statement rather than once per row.
+
+**Supabase's security advisor reports nothing about any of this.** Its linter checks whether RLS is on and whether policies exist, not whether they are permissive — the old blanket policies passed both tests. Don't read a clean advisor as evidence the policies are scoped; read the migration.
 
 ### Legacy port
 
-`src/lib/legacy-core/` holds ported vanilla-JS modules still in use (`karl-transcript.js` drives `HelpPanel`, `karl-blocks.js` the Karl field mapping). `src/legacy_main.js` is the old entry point, imported by nothing — kept as reference. Its `./review/*.js` imports don't resolve.
+`src/lib/legacy-core/` holds ported vanilla-JS modules still in use (`karl-transcript.js` drives `HelpPanel`, `karl-blocks.js` the Karl field mapping). The old entry point `src/legacy_main.js` is **gone** — it was imported by nothing and its unresolved `./review/*.js` imports were 52 of the 76 `bun run check` errors. The CSS half of that port (`src/css/**`, `src/routes/layout.css`, and the `@sfgov/design-system` dependency they pull) is still retained as reference; see PLAN.md B5.
 
 ## Configuration gotchas
 
@@ -99,7 +112,7 @@ Locally they come from `.env.local` (untracked). **CI has no `.env.local`, so `p
 
 **`bun run lint` is red on the current tree**, both halves: `prettier --check .` on 98 files and `eslint .` on 11 errors (counts measured at `d2b1f5f`; the prettier figure drifts as files are touched) (legacy `@ts-nocheck`, an `any`, a `prefer-const`, a `goto()` without `resolve()`). Because the script is `prettier && eslint`, a prettier failure means eslint never runs. This is why CI reports lint without blocking on it. Do not "fix" it by reformatting the tree as a side effect of unrelated work.
 
-**`bun run check` has a large pre-existing error baseline** (~55), almost all from `src/legacy_main.js`'s unresolved imports. Compare against the baseline rather than expecting zero.
+**`bun run check` has a pre-existing error baseline of 24** (measured after `legacy_main.js` was removed, which took it from 76). What remains is loose fixture typing in test files, not app code — `tests/reviewQueue.test.ts` alone accounts for 12, all the same `status: string` vs. the `ReviewPage` union. Compare against the baseline rather than expecting zero, and note it is now small enough to be worth driving to zero.
 
 **A green test suite does not mean the build passes.** Unit tests don't import the legacy modules, so a broken one there (e.g. duplicate `export { ... }` blocks in `karl-blocks.js`, which rolldown rejects) fails only at build. Run `bun run verify` before claiming a change is good.
 
