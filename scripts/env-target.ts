@@ -57,9 +57,26 @@ export type TargetKey = (typeof TARGET_KEYS)[number];
 export type EnvValues = Partial<Record<TargetKey, string>>;
 
 /**
- * Reads `KEY=value` lines. Deliberately not a full dotenv parser -- this file
- * is written by this script and by hand, and quoting or interpolation here
- * would be a second dialect to keep in step with Vite's.
+ * Strips one matched pair of surrounding quotes, the way dotenv does.
+ *
+ * `"http://127.0.0.1:54321"` has to read as a loopback URL, not as a string
+ * beginning with `"`. Leaving the quotes on classified a correctly quoted
+ * `.env.local` as hosted and reported SPLIT TARGET on a healthy local setup.
+ */
+function unquote(value: string): string {
+	const quote = value[0];
+	if ((quote === '"' || quote === "'") && value.length > 1 && value.endsWith(quote)) {
+		return value.slice(1, -1);
+	}
+	return value;
+}
+
+/**
+ * Reads `KEY=value` lines. Still not a full dotenv parser -- no interpolation,
+ * no multi-line values -- but it does strip surrounding quotes, because Vite's
+ * dotenv strips them too. Keeping them would be the second dialect, not the
+ * other way round: the same file would mean one thing to the app and another
+ * to the tool that reports on it.
  */
 export function parseEnv(text: string): Record<string, string> {
 	const out: Record<string, string> = {};
@@ -68,7 +85,7 @@ export function parseEnv(text: string): Record<string, string> {
 		if (trimmed === '' || trimmed.startsWith('#')) continue;
 		const eq = trimmed.indexOf('=');
 		if (eq === -1) continue;
-		out[trimmed.slice(0, eq).trim()] = trimmed.slice(eq + 1).trim();
+		out[trimmed.slice(0, eq).trim()] = unquote(trimmed.slice(eq + 1).trim());
 	}
 	return out;
 }
@@ -100,46 +117,100 @@ export function applyEnv(text: string, values: EnvValues): string {
  */
 export function describeTarget(url: string | undefined): {
 	kind: 'local' | 'hosted' | 'unset';
+	ref: string | null;
 	label: string;
 } {
-	if (!url) return { kind: 'unset', label: 'not set' };
+	if (!url) return { kind: 'unset', ref: null, label: 'not set' };
 	if (/^https?:\/\/(127\.0\.0\.1|localhost|\[::1\])(:\d+)?/.test(url)) {
-		return { kind: 'local', label: `local stack (${url})` };
+		return { kind: 'local', ref: null, label: `local stack (${url})` };
 	}
-	const ref = /^https?:\/\/([a-z0-9-]+)\.supabase\./.exec(url)?.[1];
-	return { kind: 'hosted', label: ref ? `hosted project ${ref} (${url})` : `hosted (${url})` };
+	const ref = /^https?:\/\/([a-z0-9-]+)\.supabase\./.exec(url)?.[1] ?? null;
+	return { kind: 'hosted', ref, label: ref ? `hosted project ${ref} (${url})` : `hosted (${url})` };
 }
 
-/**
- * Whether the browser-facing vars and the service-role key point at the same
- * place.
- *
- * This is the check the script exists for as much as the switching is. The two
- * can disagree -- they did in this repo -- and when they do, the app reads one
- * database while the import and sync scripts write to the other.
- */
-export function serviceKeyAgrees(values: Record<string, string>): boolean | null {
-	const key = values.SUPABASE_SERVICE_ROLE_KEY;
-	if (!key) return null;
-	const publicKind = describeTarget(values.SVELTE_PUBLIC_SUPABASE_URL).kind;
-	if (publicKind === 'unset') return null;
+/** The two credentials that have to name the same place as the URL does. */
+const CREDENTIALS = [
+	['SVELTE_PUBLIC_SUPABASE_ANON_KEY', 'anon key'],
+	['SUPABASE_SERVICE_ROLE_KEY', 'service-role key']
+] as const;
 
-	// The local stack's keys are the Supabase CLI's fixed demo JWTs, whose
-	// payload carries `"iss":"supabase-demo"`. That is what distinguishes a
-	// local service-role key from a hosted one without needing the stack to be
-	// running or the key to be decoded properly.
-	let isLocalKey = false;
+/**
+ * Names the target a Supabase key belongs to, from its JWT payload.
+ *
+ * The local stack's keys are the Supabase CLI's fixed demo JWTs, whose payload
+ * carries `"iss":"supabase-demo"`. That distinguishes a local key from a hosted
+ * one without needing the stack to be running. A hosted key additionally
+ * carries `"ref"`, which is how two different hosted projects are told apart.
+ */
+function describeCredential(key: string): { kind: 'local' | 'hosted'; ref: string | null } {
 	try {
-		const payload = JSON.parse(Buffer.from(key.split('.')[1] ?? '', 'base64').toString('utf8'));
-		isLocalKey = payload?.iss === 'supabase-demo';
+		// JWT payloads are base64url; normalise before decoding rather than
+		// relying on a lenient decoder.
+		const segment = (key.split('.')[1] ?? '').replace(/-/g, '+').replace(/_/g, '/');
+		const payload = JSON.parse(Buffer.from(segment, 'base64').toString('utf8'));
+		if (payload?.iss === 'supabase-demo') return { kind: 'local', ref: null };
+		return { kind: 'hosted', ref: typeof payload?.ref === 'string' ? payload.ref : null };
 	} catch {
 		// A key shaped like anything else is treated as hosted: the safe
 		// assumption, because the consequence of guessing "local" wrongly is a
 		// script writing to production while the tool reports agreement.
-		isLocalKey = false;
+		return { kind: 'hosted', ref: null };
+	}
+}
+
+/**
+ * Whether the URL, the anon key and the service-role key all name the same
+ * database.
+ *
+ * This is the check the script exists for as much as the switching is. They can
+ * disagree -- they did in this repo -- and when they do, the app reads one
+ * database while the import and sync scripts write to the other.
+ *
+ * Two unknowns resolve in opposite directions, deliberately:
+ *
+ * - **An undecodable key is assumed hosted**, so a local URL beside it reads as
+ *   a split. Guessing "local" wrongly reports agreement while a script writes
+ *   to production; guessing "hosted" wrongly is loud and harmless.
+ * - **A missing project ref is not treated as a disagreement.** A null ref
+ *   carries no information -- the newer non-JWT `sb_secret_` keys have none --
+ *   and flagging every one of them would make the script cry wolf on a correct
+ *   setup. Refs are compared only when both sides have one.
+ */
+export function credentialsAgree(values: Record<string, string>): {
+	verdict: 'agree' | 'split' | 'unknown';
+	reason: string | null;
+} {
+	const target = describeTarget(values.SVELTE_PUBLIC_SUPABASE_URL);
+	if (target.kind === 'unset') {
+		return { verdict: 'unknown', reason: 'SVELTE_PUBLIC_SUPABASE_URL is not set' };
 	}
 
-	return publicKind === 'local' ? isLocalKey : !isLocalKey;
+	const missing = CREDENTIALS.filter(([key]) => !values[key]).map(([key]) => key);
+	if (missing.length > 0) {
+		const verb = missing.length === 1 ? 'is' : 'are';
+		return { verdict: 'unknown', reason: `${missing.join(' and ')} ${verb} not set` };
+	}
+
+	const place = (kind: 'local' | 'hosted') =>
+		kind === 'local' ? 'the local stack' : 'a hosted project';
+
+	for (const [key, label] of CREDENTIALS) {
+		const credential = describeCredential(values[key]);
+		if (credential.kind !== target.kind) {
+			return {
+				verdict: 'split',
+				reason: `the ${label} names ${place(credential.kind)}, the URL names ${place(target.kind)}`
+			};
+		}
+		if (target.ref && credential.ref && credential.ref !== target.ref) {
+			return {
+				verdict: 'split',
+				reason: `the ${label} belongs to hosted project ${credential.ref}, not ${target.ref}`
+			};
+		}
+	}
+
+	return { verdict: 'agree', reason: null };
 }
 
 /** Local values, straight from the running stack. */
@@ -222,19 +293,24 @@ function reportStatus(): void {
 
 	const values = parseEnv(readFileSync(ENV_FILE, 'utf8'));
 	const target = describeTarget(values.SVELTE_PUBLIC_SUPABASE_URL);
-	const agrees = serviceKeyAgrees(values);
+	const { verdict, reason } = credentialsAgree(values);
 
 	console.log(`  target: ${target.label}`);
 
-	if (agrees === null) {
-		console.log('  service-role key: not set — `corpus:import` and `sync-checks` will not run.');
-	} else if (agrees) {
-		console.log('  service-role key: same target');
+	if (verdict === 'unknown') {
+		console.log(`  credentials: ${reason} — nothing to compare.`);
+		if (!values.SUPABASE_SERVICE_ROLE_KEY) {
+			console.log('  Without SUPABASE_SERVICE_ROLE_KEY, `corpus:import` and `sync-checks`');
+			console.log('  will not run.');
+		}
+	} else if (verdict === 'agree') {
+		console.log('  credentials: anon and service-role keys name the same target');
 	} else {
 		console.log('');
-		console.log('  !! SPLIT TARGET. The app reads one database and the service-role key');
-		console.log('     names the other, so `corpus:import` and `scripts/sync-checks.ts`');
-		console.log('     would write somewhere the app is not reading. Re-run a switch to fix.');
+		console.log(`  !! SPLIT TARGET — ${reason}.`);
+		console.log('     The app, `corpus:import` and `scripts/sync-checks.ts` do not all');
+		console.log('     name the same database, so writes land somewhere the app is not');
+		console.log('     reading. Re-run `bun run env:local` or `bun run env:hosted` to fix.');
 	}
 
 	if (target.kind === 'hosted') {
