@@ -156,6 +156,37 @@ enough.
 
 Supabase auth URLs must include any new origin, or magic links redirect to a dead URL. The hosted allow-list covers production, `localhost:5173`, and Netlify preview hostnames; `supabase/config.toml` covers the local stack.
 
+### Two hosted Supabase projects, split by deploy context
+
+There are two, and which one a build talks to is decided by its Netlify deploy context:
+
+| Context                    | Supabase project              | Ref                    |
+| -------------------------- | ----------------------------- | ---------------------- |
+| `production`               | `hhvc-manager-review-svelte`  | `kiynekyzqxneepjipqhg` |
+| `deploy-preview`           | `hhvc-manager-review-staging` | `aplbsgacqnxhzjuquvft` |
+| `branch-deploy`            | `hhvc-manager-review-staging` | `aplbsgacqnxhzjuquvft` |
+| `dev` (`netlify dev` only) | `hhvc-manager-review-svelte`  | `kiynekyzqxneepjipqhg` |
+
+**Before this split every context was `contexts=all`, so every deploy preview read and wrote the real review database.** A reviewer clicking through a PR preview and editing copy was editing production. That is what the split fixes, and it is the reason not to "simplify" these back to one value.
+
+`SVELTE_PUBLIC_*` are inlined at **build time**, so the context is fixed when the build runs — you cannot tell which database a deploy uses by looking at it at runtime. To check, build under a context and read the bundle:
+
+```sh
+netlify build --context deploy-preview
+grep -rhoE 'https://[a-z0-9]+\.supabase\.co' build/   # expect aplbsgac…
+```
+
+Two consequences worth knowing before using a preview:
+
+- **A reviewer needs an invite on the staging project to sign in.** Staging has its own `auth.users`, and `seed.hosted.sql` deliberately creates no identity. A production invite does not work on a preview.
+- **Staging is free-tier and pauses after about 7 days idle.** A preview against a paused project fails to read; wake it from the dashboard.
+
+Staging was built from the repo, not by hand: `supabase db push` applied all seven migrations, `supabase/seed.hosted.sql` wrote the review and its 29 page rows, and `bun run corpus:import` wrote the corpus version. Its auth allow-list is `https://*--hhvc-manager-review.netlify.app/**,http://localhost:5173/**` — deliberately **not** the production origin. To rebuild it, repeat those three steps against the staging ref.
+
+**`RAILWAY_API_TOKEN` and `RAILWAY_API_URL` are still shared across every context**, so a preview's AI rewrites hit the production backend and spend real money. Unlike the database, that has not been split.
+
+Note that `supabase link` sets `supabase/.temp/project-ref` for the whole checkout, so whichever project you linked last is what `supabase db push` targets — there is no per-command project flag in that path. Check it before pushing.
+
 ## Branch protection
 
 `main` is governed by repository ruleset **`main: require CI`** (id `21203092`), scoped to `~DEFAULT_BRANCH` so it follows a rename. It is `active` with **no bypass actors** — the repo owner is subject to it too, and `current_user_can_bypass` reads `never`.
