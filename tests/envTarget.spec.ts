@@ -200,7 +200,45 @@ describe('credentialsAgree', () => {
 		expect(reason).toContain('SUPABASE_SERVICE_ROLE_KEY');
 	});
 
+	it('still catches a split when the other credential is merely absent', () => {
+		// A split outranks an unknown. Checking presence first would let an
+		// absent anon key hide exactly the state #49 already caught: a
+		// service-role key naming production beside a local URL.
+		const { verdict, reason } = credentialsAgree({
+			SVELTE_PUBLIC_SUPABASE_URL: LOCAL_URL,
+			SUPABASE_SERVICE_ROLE_KEY: HOSTED_KEY
+		});
+		expect(verdict).toBe('split');
+		expect(reason).toContain('service-role key');
+	});
+
 	it('reports unknown rather than a verdict when the url is unset', () => {
 		expect(credentialsAgree({ SUPABASE_SERVICE_ROLE_KEY: LOCAL_KEY }).verdict).toBe('unknown');
+	});
+
+	it('never puts key material in the reason it reports', () => {
+		// `reportStatus` prints `reason` verbatim, and "no key is ever printed"
+		// is one of the three load-bearing properties of this script.
+		const HOSTED = hostedKey('nopqrstuvwxyz');
+		const reasons = [
+			credentialsAgree({
+				SVELTE_PUBLIC_SUPABASE_URL: LOCAL_URL,
+				SVELTE_PUBLIC_SUPABASE_ANON_KEY: LOCAL_KEY,
+				SUPABASE_SERVICE_ROLE_KEY: HOSTED
+			}),
+			credentialsAgree({
+				SVELTE_PUBLIC_SUPABASE_URL: PROJECT_URL,
+				SVELTE_PUBLIC_SUPABASE_ANON_KEY: hostedKey(PROJECT),
+				SUPABASE_SERVICE_ROLE_KEY: HOSTED
+			}),
+			credentialsAgree({ SVELTE_PUBLIC_SUPABASE_URL: LOCAL_URL })
+		].map((result) => result.reason ?? '');
+
+		expect(reasons).toHaveLength(3);
+		for (const reason of reasons) {
+			expect(reason).not.toContain(LOCAL_KEY);
+			expect(reason).not.toContain(HOSTED);
+			expect(reason).not.toContain(hostedKey(PROJECT));
+		}
 	});
 });
