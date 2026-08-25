@@ -50,14 +50,14 @@ import { expect, test } from '@playwright/test';
  * a test that passes because it measured nothing. Focus is therefore driven
  * with real Tab presses.
  *
- * ## Themes
+ * ## One theme, deliberately
  *
- * Dark mode is a `.dark` CLASS on `:root` (see the note at
- * `src/css/theme.css:549` -- it was deliberately moved off
- * `prefers-color-scheme` so both halves of the token layer flip on one
- * signal). `emulateMedia` therefore does nothing here; the class is set
- * directly. Nothing in the app sets it today, which is why the dark palette
- * has never been scanned.
+ * There is no dark run. sf.gov has no dark mode, and this app's dark palette
+ * was removed on 2026-08-25 -- nothing had ever set the `.dark` class that
+ * gated it. Asserting a theme the property does not have would be measuring a
+ * surface no reviewer can reach. `tests/theme.test.ts` guards the removal,
+ * including the `@custom-variant dark` line that has to stay so the vendored
+ * shadcn `dark:` utilities cannot fall back to `prefers-color-scheme`.
  */
 
 /** SC 1.4.11 threshold for a focus indicator. */
@@ -104,6 +104,19 @@ async function measureFocusIndicators(page: import('@playwright/test').Page) {
 
 			const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
 			return [r, g, b];
+		}
+
+		/**
+		 * A colour as a comparable string, resolved through the same engine.
+		 *
+		 * Chrome serialises the SAME colour differently depending on state --
+		 * a border reads `oklch(0.922 0 0)` blurred and `oklab(0.922 0 0)`
+		 * focused. Comparing the raw strings therefore reported every unchanged
+		 * border as having "arrived" on focus, which produced six false
+		 * failures at 1.26:1 before this existed. Compositing normalises them.
+		 */
+		function normalize(color: string): string {
+			return composite([color]).join(',');
 		}
 
 		/** WCAG relative luminance. */
@@ -172,7 +185,7 @@ async function measureFocusIndicators(page: import('@playwright/test').Page) {
 
 			if (style.outlineStyle !== 'none' && parseFloat(style.outlineWidth) > 0) {
 				out.push({
-					key: `outline:${style.outlineWidth}:${style.outlineColor}`,
+					key: `outline:${style.outlineWidth}:${normalize(style.outlineColor)}`,
 					name: `outline ${style.outlineWidth} ${style.outlineColor}`,
 					color: style.outlineColor,
 					inset: false
@@ -181,7 +194,7 @@ async function measureFocusIndicators(page: import('@playwright/test').Page) {
 
 			for (const { color, inset } of shadowLayers(style.boxShadow)) {
 				out.push({
-					key: `shadow:${inset}:${color}`,
+					key: `shadow:${inset}:${normalize(color)}`,
 					name: `${inset ? 'inset ' : ''}shadow ${color}`,
 					color,
 					inset
@@ -190,7 +203,7 @@ async function measureFocusIndicators(page: import('@playwright/test').Page) {
 
 			if (style.borderTopStyle !== 'none' && parseFloat(style.borderTopWidth) > 0) {
 				out.push({
-					key: `border:${style.borderTopWidth}:${style.borderTopColor}`,
+					key: `border:${style.borderTopWidth}:${normalize(style.borderTopColor)}`,
 					name: `border ${style.borderTopWidth} ${style.borderTopColor}`,
 					color: style.borderTopColor,
 					inset: true
@@ -263,34 +276,26 @@ async function measureFocusIndicators(page: import('@playwright/test').Page) {
 	}, TAB_DEPTH);
 }
 
-for (const theme of ['light', 'dark'] as const) {
-	test(`focus indicators clear 3:1 (SC 1.4.11) — ${theme}`, async ({ page }) => {
-		await page.goto('/review/topic-healthy-housing-and-vector-control--about');
-		await page.waitForLoadState('networkidle');
+test('focus indicators clear 3:1 (SC 1.4.11)', async ({ page }) => {
+	await page.goto('/review/topic-healthy-housing-and-vector-control--about');
+	await page.waitForLoadState('networkidle');
 
-		// `.dark` on the root element, not prefers-color-scheme -- see the note
-		// at the top of this file.
-		await page.evaluate((t) => {
-			document.documentElement.classList.toggle('dark', t === 'dark');
-		}, theme);
+	// A genuine Tab press, so Chrome's focus-visible heuristic is armed
+	// before anything is measured.
+	await page.keyboard.press('Tab');
 
-		// A genuine Tab press, so Chrome's focus-visible heuristic is armed
-		// before anything is measured.
-		await page.keyboard.press('Tab');
+	const measured: Measurement[] = await measureFocusIndicators(page);
 
-		const measured: Measurement[] = await measureFocusIndicators(page);
+	expect(measured.length, 'no focusable elements were reached').toBeGreaterThan(0);
 
-		expect(measured.length, 'no focusable elements were reached').toBeGreaterThan(0);
+	const failures = measured.filter((m) => m.ratio < MIN_RATIO);
 
-		const failures = measured.filter((m) => m.ratio < MIN_RATIO);
-
-		expect(
-			failures,
-			[
-				`${failures.length} of ${measured.length} focus indicators are below ${MIN_RATIO}:1 in ${theme} mode.`,
-				'',
-				...failures.map((f) => `  ${f.ratio}:1  <${f.tag}> "${f.label}"  [${f.layer}]`)
-			].join('\n')
-		).toEqual([]);
-	});
-}
+	expect(
+		failures,
+		[
+			`${failures.length} of ${measured.length} focus indicators are below ${MIN_RATIO}:1.`,
+			'',
+			...failures.map((f) => `  ${f.ratio}:1  <${f.tag}> "${f.label}"  [${f.layer}]`)
+		].join('\n')
+	).toEqual([]);
+});
