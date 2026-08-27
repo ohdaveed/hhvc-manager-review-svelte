@@ -110,10 +110,18 @@ export async function loadReview(): Promise<() => void> {
 	// Hydrate saved edits too. initializeRealtime only observes future inserts,
 	// so without this a reload leaves editsStore empty and HelpPanel silently
 	// builds a Karl transcript with none of the reviewer's previous edits in it.
+	//
+	// Read `latest_edits`, not `edits`. The view is one row per
+	// (page_id, field_id), which is what this store holds anyway --
+	// saveInlineEdit filters that pair out before appending. Querying the table
+	// meant fetching an unbounded append-only history, and PostgREST truncates
+	// at max_rows (1000) without erroring: ascending order plus a
+	// last-write-wins fold made the silently dropped rows the NEWEST ones. See
+	// 20260827110000_latest_edits_view.sql.
 	const pageIds = (pages ?? []).map((p) => p.id);
 	if (pageIds.length > 0) {
 		const { data: edits, error: editsError } = await supabase
-			.from('edits')
+			.from('latest_edits')
 			.select('*')
 			.in('page_id', pageIds)
 			.order('created_at', { ascending: true });
