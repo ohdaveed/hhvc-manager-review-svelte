@@ -10,7 +10,7 @@
  */
 import { execSync } from 'child_process';
 import { existsSync, readFileSync, rmSync, mkdtempSync } from 'fs';
-import { tmpdir } from 'os';
+import { homedir, tmpdir } from 'os';
 import { join } from 'path';
 
 type Check = { name: string; run: () => string };
@@ -82,17 +82,19 @@ const checks: Check[] = [
 		}
 	},
 	{
-		name: 'lefthook hook is installed',
+		name: 'global hook dispatcher is configured',
 		run: () => {
-			// `lefthook version` passes on a clone with no hooks installed, which is
-			// the state that let commits skip every gate.
-			const hook = '.git/hooks/pre-commit';
-			assert(existsSync(hook), `${hook} missing -- run \`bun run prepare\``);
+			// Hooks are managed machine-wide by the ggshield dispatcher. A repo-local
+			// hooksPath would bypass that dispatcher and must not be recreated here.
+			const hooksPath = sh('git config --global --get core.hooksPath').trim();
+			assert(hooksPath.length > 0, 'global core.hooksPath is not configured');
+			const hook = join(hooksPath.replace(/^~/, homedir()), 'pre-push');
+			assert(existsSync(hook), `${hook} missing -- configure the global dispatcher`);
 			assert(
-				readFileSync(hook, 'utf-8').includes('lefthook'),
-				`${hook} exists but is not lefthook's`
+				readFileSync(hook, 'utf-8').includes('ggshield'),
+				`${hook} exists but does not invoke ggshield`
 			);
-			return 'pre-commit present';
+			return 'global pre-push dispatcher present';
 		}
 	},
 	{
