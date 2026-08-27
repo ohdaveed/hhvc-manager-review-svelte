@@ -604,7 +604,7 @@ left.
 
 ## Phase G — audit remainder
 
-- [ ] **G1. `loadReview()` cannot see past 1000 edits, and the ones it drops are
+- [x] **G1. `loadReview()` cannot see past 1000 edits, and the ones it drops are
       the newest.** `src/lib/stores/reviewState.ts` fetches
       `.in('page_id', pageIds).order('created_at', { ascending: true })` over
       `edits` with no `.limit()`. `edits` is append-only and unbounded;
@@ -640,6 +640,17 @@ left.
           - test: prove that with more than `max_rows` rows present the newest edit
             for a field is still the one returned. A test that only checks the fold
             would pass today and pass after, and prove nothing.
+
+      **Closed 2026-08-27** by `20260827110000_latest_edits_view.sql` plus
+      `loadReview()` reading the view. Reproduced first: with 1500 edits on one
+      field, the old ascending-capped query surfaces `rev-999` and the view
+      surfaces `rev-1500`, returning one row rather than 1500.
+      `pg_class.reloptions` reads `{security_invoker=true}` on the real object.
+      The composite index is unused at current scale -- the planner picks
+      Seq Scan + Sort, which is correct for 29 pages -- and is there for growth.
+      Guard tests: `tests/loadReviewEdits.test.ts` (the reader queries the view,
+      not the table) and `tests/latestEditsView.spec.ts` (the view keeps
+      `security_invoker`).
 
 - [ ] **G2. The anon-EXECUTE hole is closed per function, not per class.**
       `20260823130000` documents exactly why revoking `PUBLIC` was insufficient
