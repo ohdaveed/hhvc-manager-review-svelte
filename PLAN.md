@@ -681,7 +681,21 @@ left.
              loudly at push time, names the function, and leaves intentional RPCs
              possible.
 
-          **Recommend 3, then 1 for `import_corpus_version` specifically** if the
+          **Correction, 2026-08-27, found while starting the work:** option 3 as
+      written above does not work in its migration form. A `DO` block in a
+      migration runs exactly once -- `supabase_migrations.schema_migrations`
+      records the version and `db push` skips it forever after -- so it would
+      assert the state of `public` on the day it was applied and never again.
+      The function added two migrations later is precisely the one it needs to
+      catch, and is the one it cannot. Nor can a unit test do it: CI has no
+      database, which is why `pr.yml` builds with placeholder Supabase env vars.
+      Detection here has to be a **script run against a live project** -- the
+      shape `verify:live` already uses for the deployed site -- and it needs a
+      direct Postgres connection, because `pg_proc.proacl` is not reachable
+      through PostgREST. `pg` is already a dependency (knip currently reports it
+      unused).
+
+      **Recommend 3, then 1 for `import_corpus_version` specifically** if the
           script is moving to `pg` for other reasons. 2 is the trap: it prevents the
           hole and the legitimate case with the same lever. Decide before writing.
 
