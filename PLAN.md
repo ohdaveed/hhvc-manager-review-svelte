@@ -246,6 +246,14 @@ From the audit's twelve, sequenced by value here rather than by stars.
       before it existed. A secret caught pre-commit needs no rotation; one
       caught in CI is already in history. Runs with `--redact`, so a detection
       never prints the secret.
+      **Reversed 2026-08-26 — gitleaks is gone from this repo.** The premise
+      above was the repo-local `core.hooksPath`, and that has been unset, so the
+      machine's global ggshield pre-push scan reaches this repo again and a
+      second local scanner is duplication. The local hooksPath was itself a
+      hazard: `lefthook install` writes to the _effective_ hooks path, so it
+      overwrote the global ggshield scanner on another repo the same day.
+      Scanning is now pre-push rather than pre-commit — the rotation argument
+      above still stands against that trade, and it was made knowingly.
 - [x] **E2. `typos` runs on staged files.** Repo-wide it found three things,
       handled at source rather than blanket-ignored: `SME` (Subject Matter
       Expert, 12 deliberate uses in editor notes) is allowlisted with the reason
