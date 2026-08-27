@@ -31,7 +31,8 @@
 		"verify:live": "bash scripts/verify.sh --live",
 		"context:pack": "repomix",
 		"ast:scan": "ast-grep scan",
-		"verify:tools": "bun run scripts/verify-tooling.ts"
+		"verify:tools": "bun run scripts/verify-tooling.ts",
+		"audit:privileges": "bun run scripts/audit-privileges.ts"
 	},
 	"devDependencies": {
 		"@ast-grep/cli": "^0.45.1",
