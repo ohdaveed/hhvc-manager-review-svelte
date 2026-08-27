@@ -106,9 +106,20 @@ END
 $$;
 
 -- Idempotent in the style of 20260822020000: Postgres has no
--- ADD CONSTRAINT IF NOT EXISTS, and a bare ADD aborts the migration on re-run.
-ALTER TABLE pages DROP CONSTRAINT IF EXISTS pages_review_id_path_key;
-ALTER TABLE pages ADD CONSTRAINT pages_review_id_path_key UNIQUE (review_id, path);
+-- ADD CONSTRAINT IF NOT EXISTS, so check the catalog before adding it.
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1
+        FROM pg_constraint
+        WHERE conname = 'pages_review_id_path_key'
+          AND conrelid = 'public.pages'::regclass
+    ) THEN
+        ALTER TABLE public.pages
+            ADD CONSTRAINT pages_review_id_path_key UNIQUE (review_id, path);
+    END IF;
+END
+$$;
 
 -- ---------------------------------------------------------------------------
 -- 3. reviews.status: NOT NULL, with the default stated
