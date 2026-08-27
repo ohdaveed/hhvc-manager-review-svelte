@@ -57,9 +57,21 @@ projects:
         SVELTE_PUBLIC_SUPABASE_URL: ''
         SVELTE_PUBLIC_SUPABASE_ANON_KEY: ''
         SUPABASE_SERVICE_ROLE_KEY: ''
-      # No hosted staging Supabase project is wired up yet. Left empty rather
-      # than filled speculatively.
-      stg: {}
+      # stg targets the hosted staging project hhvc-manager-review-staging
+      # (ref aplbsgacqnxhzjuquvft). Netlify's deploy-preview and branch-deploy
+      # contexts build against it, which is what stops a reviewer clicking
+      # through a PR preview from editing the real review database. Staging
+      # carries its own auth.users, so a production invite does not sign anyone
+      # in on a preview.
+      #
+      # RAILWAY_API_* are deliberately absent here: unlike the database, they
+      # are still SHARED across every deploy context, so a preview's AI
+      # rewrites hit the production backend. Listing them under stg would
+      # assert a split that does not exist.
+      stg:
+        SVELTE_PUBLIC_SUPABASE_URL: ''
+        SVELTE_PUBLIC_SUPABASE_ANON_KEY: ''
+        SUPABASE_SERVICE_ROLE_KEY: ''
       # prd targets the hosted Supabase project. RAILWAY_API_* address the live
       # mockup-tool deploy; RAILWAY_API_TOKEN is a REVIEW_API_TOKEN for that
       # service, so it is the SAME credential class held in the
