@@ -172,10 +172,11 @@
 		{#if sessionStore.knownSignedOut}
 			<!-- Anonymous browsing is supported on purpose: the mockups come from
 			     static modules, so a stakeholder can read them without an account.
-			     What is not acceptable is doing it silently -- `edits.user_id` is
-			     NOT NULL, so nothing a signed-out visitor types can be saved, and
-			     before this banner the edit simply vanished on reload with no
-			     signal. EditTarget also drops the affordance entirely. -->
+			     What is not acceptable is doing it silently -- the `edits` INSERT
+			     policy only accepts a row whose user_id is the caller, so nothing a
+			     signed-out visitor types can be saved, and before this banner the
+			     edit simply vanished on reload with no signal. EditTarget also
+			     drops the affordance entirely. -->
 			<div
 				class="border-b border-amber-300 bg-amber-50 px-4 py-2 text-sm text-amber-900"
 				role="status"

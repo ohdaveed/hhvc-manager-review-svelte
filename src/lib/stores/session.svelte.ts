@@ -7,9 +7,11 @@ import { supabase } from '$lib/supabase';
  * The mockups themselves are static (`$lib/data`), so a signed-out visitor can
  * still read every page — sharing one with a stakeholder who should not need an
  * account is a use we keep. What they must not get is an editable mockup whose
- * edits go nowhere: `edits.user_id` is `NOT NULL`, so `saveInlineEdit` rolls its
- * optimistic entry back and returns when there is no user, and before this
- * store existed the edit silently vanished on reload with no signal at all.
+ * edits go nowhere: an edit is only writable as its own author, since the
+ * `edits` INSERT policy checks `(select auth.uid()) = user_id`. So
+ * `saveInlineEdit` rolls its optimistic entry back and returns when there is no
+ * user, and before this store existed the edit silently vanished on reload with
+ * no signal at all.
  */
 class SessionStore {
 	/** Undefined until the first check resolves, so the UI can avoid flashing a

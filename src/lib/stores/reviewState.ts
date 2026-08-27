@@ -262,8 +262,12 @@ export async function saveInlineEdit(
 	});
 
 	// 2. Background Sync
-	// edits.user_id is `NOT NULL REFERENCES auth.users(id)` and was never being
-	// set, so every insert failed its NOT NULL constraint regardless of session.
+	// user_id has to be set explicitly, and once was not -- every insert failed
+	// regardless of session. What refuses an unauthored row is now the `edits`
+	// INSERT policy, `WITH CHECK ((select auth.uid()) = user_id)`: NULL = uid()
+	// is NULL rather than true. It used to be the column's own NOT NULL, which
+	// 20260827100000 dropped so that deleting a reviewer nulls their edits
+	// instead of cascading them away.
 	const {
 		data: { user }
 	} = await supabase.auth.getUser();
