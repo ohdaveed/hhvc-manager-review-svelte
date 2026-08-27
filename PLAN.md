@@ -592,3 +592,93 @@ Cosmetic until it isn't — the badge is the only thing tying a card to the copy
 Nothing reaches it now that the client sends at most 8,000, but the proxy will
 still forward 8,001-20,000 to a backend that rejects it. Reconciling the two is a
 change to a shared route, not to this panel.
+
+# Postgres best-practices audit — follow-ups
+
+Opened 2026-08-27 from the audit behind PR #64 (`fix/pg-audit-constraints`),
+which closed four of seven findings — the `edits`/`comments` CASCADE, the
+missing `pages` uniqueness, `reviews.status` nullability, and the function's
+mutable `search_path`. Those are applied to local, staging and production and
+verified by catalog read-back. What follows is the three that PR deliberately
+left.
+
+## Phase G — audit remainder
+
+- [ ] **G1. `loadReview()` cannot see past 1000 edits, and the ones it drops are
+      the newest.** `src/lib/stores/reviewState.ts` fetches
+      `.in('page_id', pageIds).order('created_at', { ascending: true })` over
+      `edits` with no `.limit()`. `edits` is append-only and unbounded;
+      PostgREST caps the response at `max_rows` (`supabase/config.toml:18` sets
+      1000, hosted defaults match) and supabase-js does not error on
+      truncation. Ascending order plus a last-write-wins fold means the rows
+      that survive are the _oldest_, so past the cap reviewers see stale copy
+      with a clean console. Production held 0 edits on 2026-08-27, so this has
+      not bitten yet.
+
+      **Fix: fetch one row per `(page_id, field_id)` rather than the whole
+          history.** That is what `editsStore` already holds — `saveInlineEdit`
+          filters the pair out before appending — so the reader's semantics do not
+          change, only the row count, which becomes bounded by field count instead
+          of edit count. PostgREST has no `DISTINCT ON`, so this needs a database
+          object:
+
+          - migration: `CREATE INDEX edits_page_field_created_idx ON edits
+            (page_id, field_id, created_at DESC)`, then
+            `CREATE VIEW latest_edits WITH (security_invoker = true) AS SELECT
+            DISTINCT ON (page_id, field_id) * FROM edits ORDER BY page_id,
+            field_id, created_at DESC`, then `GRANT SELECT ON latest_edits TO
+            authenticated`.
+          - `security_invoker = true` is load bearing. Without it a view runs with
+            its owner's rights and the underlying `edits` RLS is bypassed — the
+            view would be a read-everything hole wearing a SELECT policy's clothes.
+            Postgres 15+ only; the stack is 17.6.
+          - a **view, not an RPC**, deliberately: a function in `public` would add
+            another object to exactly the class G2 is about, and would need its own
+            REVOKE dance. A view carries RLS instead of EXECUTE grants.
+          - `loadReview()` reads `latest_edits`; the realtime channel stays
+            subscribed to `edits`, since publications carry tables, not views.
+          - test: prove that with more than `max_rows` rows present the newest edit
+            for a field is still the one returned. A test that only checks the fold
+            would pass today and pass after, and prove nothing.
+
+- [ ] **G2. The anon-EXECUTE hole is closed per function, not per class.**
+      `20260823130000` documents exactly why revoking `PUBLIC` was insufficient
+      on hosted Supabase: the project's `ALTER DEFAULT PRIVILEGES` grants
+      EXECUTE to `anon` and `authenticated` **by name**. That fix covers one
+      function. The next `CREATE FUNCTION` in a migration arrives
+      anon-executable again and needs the same three REVOKE lines remembered by
+      hand — and a missed one is silent, reachable at
+      `/rest/v1/rpc/<name>` by anyone holding the anon key.
+
+      **Three candidate fixes, and the choice is not obvious:**
+
+          1. *Non-exposed schema.* The rule file's own answer, and structurally the
+             strongest — PostgREST does not serve a schema outside `db.schemas`, so
+             there is no grant to forget. **But it breaks the only caller:**
+             `scripts/corpus-import.ts` reaches `import_corpus_version` through
+             `supabase.rpc()`, which is PostgREST. Moving the function means moving
+             that script onto a direct Postgres connection (`pg` is already a
+             dependency, currently flagged unused by knip).
+          2. *Schema-wide default revoke.* `ALTER DEFAULT PRIVILEGES FOR ROLE
+             postgres IN SCHEMA public REVOKE EXECUTE ON FUNCTIONS FROM anon,
+             authenticated`. One migration, no caller changes — but it also 403s
+             the first RPC someone genuinely wants callable, at a distance, with no
+             hint as to why.
+          3. *Detection rather than prevention.* Assert in a migration `DO` block
+             (and a `bun run audit:privileges` script) that no function in `public`
+             is anon- or authenticated-executable outside a named allowlist. Fails
+             loudly at push time, names the function, and leaves intentional RPCs
+             possible.
+
+          **Recommend 3, then 1 for `import_corpus_version` specifically** if the
+          script is moving to `pg` for other reasons. 2 is the trap: it prevents the
+          hole and the legitimate case with the same lever. Decide before writing.
+
+- [ ] **G3. UUIDv4 primary keys — decided, no change, recorded so it is not
+      re-litigated.** `schema-primary-keys` prefers `bigint identity` or UUIDv7
+      because random v4 scatters index inserts and fragments the B-tree. Every
+      table here uses `gen_random_uuid()`. Correct to leave: `reviews` holds one
+      row, `pages` 29, and the two growing tables (`edits`, `page_versions`) are
+      nowhere near the size where fragmentation is measurable. Revisit only if
+      `edits` reaches a scale where insert locality shows up in a measurement —
+      not on the rule's say-so.
