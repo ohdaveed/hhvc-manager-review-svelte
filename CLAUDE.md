@@ -24,6 +24,7 @@ bun run test:e2e                                # playwright (builds + previews 
 
 bun run verify           # unit tests + production build, one PASS/FAIL line each
 bun run verify:live      # also probes the deployed site (published commit, root 200, proxy 401s, bundle leak scan)
+bun run audit:privileges # which functions in `public` an anon/authenticated caller can EXECUTE
 
 bun run env:status       # which Supabase target local development points at
 bun run env:local        # point it at the local stack (values read from `supabase status`)
@@ -49,6 +50,25 @@ Three properties worth keeping if this script is ever changed:
 **`verify`'s result is trustworthy again as of `819d914`, and was not before.** Its `quiet()` helper ended the brace group with `echo`, so the group's status was always `0`: both gates printed PASS unconditionally and the script exited `0` whatever happened. It reported "all local gates green" over a failing unit test for as long as that test had been broken. If you are reading a `verify` result from a commit older than that fix, it means nothing. The one visible symptom was the count rendering as `(? passed)` — the regex expects `Tests N passed` and a failing run prints `Tests 1 failed | 12 passed`, so a `?` there is worth chasing.
 
 The same gates run in CI on every PR (`.github/workflows/pr.yml`), and `main` requires them — see Branch protection below. Running `verify` locally is the fast check; it is not what decides whether a PR can merge.
+
+### `audit:privileges`
+
+`bun run audit:privileges --local` audits the local stack; without `--local` it
+reads `SUPABASE_DB_URL` and audits whatever that points at. It needs a **direct
+Postgres connection** because `pg_proc.proacl` is not reachable through
+PostgREST, and it names the target by hostname only — the connection string
+carries the database password.
+
+It exists because `20260823130000` closed the anon-EXECUTE hole **for one
+function**, and the hosted projects' `ALTER DEFAULT PRIVILEGES` grant EXECUTE to
+`anon` and `authenticated` by name, so every new function arrives
+anon-executable and reachable at `/rest/v1/rpc/<name>`. Prevention was rejected
+twice: a `DO` block in a migration runs once and cannot see a function added two
+migrations later, and a schema-wide default revoke would 403 the first RPC
+someone genuinely wants callable. It also flags any `SECURITY DEFINER` function
+with no pinned `search_path`. The allowlist in the script is empty and a test
+asserts it stays that way — adding a name is meant to need a justification, not
+a drive-by edit.
 
 ### Vitest project split
 
