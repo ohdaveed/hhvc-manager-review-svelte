@@ -1,3 +1,24 @@
+# Local secret scanning is NOT here any more, and that is deliberate. This repo
+# used to run gitleaks at pre-commit because its repo-local core.hooksPath
+# bypassed the machine's global ggshield hooks. That local hooksPath has been
+# unset, so the global ggshield pre-push scan covers this repo again and a
+# second scanner would be duplication. GitGuardian's GitHub App still scans
+# every PR. The trade is real and worth stating: scanning moved from pre-commit
+# to pre-push, so a secret is now caught before it leaves the machine rather
+# than before it enters local history — removing one means rewriting history
+# (rebase/amend), not just unstaging.
+#
+# DO NOT run `lefthook install` here, and do not set a repo-local
+# core.hooksPath. The machine's global hooks live in ~/.config/git/hooks, whose
+# pre-push runs ggshield and THEN chains to lefthook; either action aims
+# lefthook at that directory and overwrites the scanner. lefthook does this on
+# its own too, which is what no_auto_install prevents — without it ANY
+# `lefthook run` re-installs hooks once the config checksum goes stale,
+# including a run that errors out on an unknown hook. That directory's other
+# hook names symlink to a dispatcher that chains to lefthook whenever the repo
+# has a config, so the jobs below still fire with no install step here.
+no_auto_install: true
+
 pre-commit:
   parallel: true
   commands:
@@ -14,15 +35,6 @@ pre-commit:
     # server secret in a client bundle) that no test or type check catches.
     ast-grep:
       run: bunx ast-grep scan
-    # GitGuardian already scans pull requests as a GitHub App, so this is not a
-    # duplicate: it is the LOCAL half, which this repo has been missing. A
-    # repo-local core.hooksPath (needed so lefthook can install at all) bypasses
-    # the machine's global ggshield hooks, so nothing scanned a commit before it
-    # existed. A secret caught here needs no rotation; one caught in CI is
-    # already in history.
-    # --redact so a detected secret is never printed into a terminal or a log.
-    secrets:
-      run: bash scripts/local-tool.sh gitleaks git --staged --redact --no-banner
     # The app exists to review copy, so a typo in src/lib/data/*.ts is a content
     # defect that ships looking deliberate.
     typos:
