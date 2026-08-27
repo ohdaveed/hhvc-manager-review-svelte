@@ -1,0 +1,79 @@
+# Doppler Project Template — the shape of this repo's secrets, not their values.
+#
+# Supersedes `.env.example` as the record of what this app needs, because
+# `.env.example` is one flat list and the environments here differ in a way
+# that MATTERS: dev points the whole trio at the local Supabase stack on
+# :54321, prd points the same trio at the hosted project. A single example file
+# cannot express that, and the difference is the thing that has broken before.
+#
+# WHAT MUST NEVER GO IN HERE: secret values. Doppler's guidance is "Don't
+# hard-code secrets in your template file, even if in a private repository" —
+# note SECRETS rather than values. Doppler's own sample populates plain
+# configuration (`ENV: development`), so a non-sensitive setting may carry its
+# value. Every key listed here is sensitive, so every value here is empty.
+#
+# One exception worth naming rather than hiding: the dev SUPABASE_SERVICE_ROLE_KEY
+# is the Supabase CLI's fixed local JWT — identical on every machine and not
+# secret at all. It is listed for SHAPE, because the three-variable set below
+# has to move together, not because its value needs protecting.
+projects:
+  - name: hhvc-svelte
+    description: HHVC manager review Svelte rebuild — Netlify site, Supabase backend
+    environments:
+      - name: Development
+        slug: dev
+        configs:
+          - slug: dev
+          - slug: dev_personal
+      - name: Staging
+        slug: stg
+        configs:
+          - slug: stg
+      - name: Production
+        slug: prd
+        configs:
+          - slug: prd
+      - name: CI-CD
+        slug: ci-cd
+        configs:
+          - slug: ci-cd
+    secrets:
+      # THESE THREE MOVE AS A SET. CLAUDE.md records why:
+      # SUPABASE_SERVICE_ROLE_KEY is what `corpus:import` and
+      # `scripts/sync-checks.ts` authenticate with, and it BYPASSES RLS.
+      # Switching only the two SVELTE_PUBLIC_* vars leaves the app reading
+      # local while those scripts write to production — `env:status` calls that
+      # state SPLIT TARGET, and this repo was in it before the script existed.
+      #
+      # Only the SVELTE_PUBLIC_ prefix reaches the browser (publicPrefix is set
+      # in vite.config.ts). The URL and anon key are public by design; the
+      # service role key must never carry that prefix.
+      #
+      # dev targets the local Supabase stack (127.0.0.1:54321). Its service
+      # role key is the Supabase CLI's fixed demo JWT — identical on every
+      # machine and not actually a secret, listed here for shape rather than
+      # secrecy.
+      dev:
+        SVELTE_PUBLIC_SUPABASE_URL: ''
+        SVELTE_PUBLIC_SUPABASE_ANON_KEY: ''
+        SUPABASE_SERVICE_ROLE_KEY: ''
+      # No hosted staging Supabase project is wired up yet. Left empty rather
+      # than filled speculatively.
+      stg: {}
+      # prd targets the hosted Supabase project. RAILWAY_API_* address the live
+      # mockup-tool deploy; RAILWAY_API_TOKEN is a REVIEW_API_TOKEN for that
+      # service, so it is the SAME credential class held in the
+      # hhvc-manager-review project. Rotating it means updating both places
+      # unless a Doppler secret reference is used to make one canonical.
+      #
+      # Deliberately absent from dev: a local build talking to the production
+      # API is the mistake worth designing out. Point a local RAILWAY_API_URL
+      # at http://127.0.0.1:8080 and pair it with the dev REVIEW_API_TOKEN from
+      # the hhvc-manager-review project instead.
+      prd:
+        SVELTE_PUBLIC_SUPABASE_URL: ''
+        SVELTE_PUBLIC_SUPABASE_ANON_KEY: ''
+        SUPABASE_SERVICE_ROLE_KEY: ''
+        RAILWAY_API_URL: ''
+        RAILWAY_API_TOKEN: ''
+      ci-cd: {}
