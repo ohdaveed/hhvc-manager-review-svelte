@@ -19,9 +19,11 @@
  *    name claims it is handled. It also keeps local keys out of this repo and
  *    out of shell history.
  *
- * 2. **`SUPABASE_SERVICE_ROLE_KEY` switches with the public vars.** It is the
- *    credential `corpus:import` and `scripts/sync-checks.ts` use, and it
- *    bypasses RLS entirely. A switcher that moved only the two
+ * 2. **The script credentials switch with the public vars.**
+ *    `SUPABASE_SERVICE_ROLE_KEY` is what `scripts/sync-checks.ts` uses and it
+ *    bypasses RLS entirely; `SUPABASE_DB_URL` is the direct Postgres connection
+ *    `corpus:import` uses, since `import_corpus_version` moved to the `private`
+ *    schema where PostgREST cannot reach it. A switcher that moved only the two
  *    `SVELTE_PUBLIC_*` vars would leave the app reading local while those
  *    scripts wrote to PRODUCTION -- the exact split this repo was in before
  *    this script existed, now hidden behind a command that implies otherwise.
@@ -54,11 +56,16 @@ const HOSTED_PROFILE = '.env.hosted';
 const DOPPLER_PROJECT = 'hhvc-svelte';
 const DOPPLER_CONFIG = 'prd';
 
-/** The three variables a target owns. Anything else in `.env.local` is left alone. */
+/** The four variables a target owns. Anything else in `.env.local` is left alone. */
 export const TARGET_KEYS = [
 	'SVELTE_PUBLIC_SUPABASE_URL',
 	'SVELTE_PUBLIC_SUPABASE_ANON_KEY',
-	'SUPABASE_SERVICE_ROLE_KEY'
+	'SUPABASE_SERVICE_ROLE_KEY',
+	// `corpus:import` connects directly to Postgres rather than through
+	// PostgREST, because `import_corpus_version` lives in the `private` schema
+	// (20260828100000) where the Data API cannot reach it. That credential has
+	// to switch with the others or it becomes a fourth way to be split.
+	'SUPABASE_DB_URL'
 ] as const;
 
 export type TargetKey = (typeof TARGET_KEYS)[number];
@@ -167,8 +174,38 @@ function describeCredential(key: string): { kind: 'local' | 'hosted'; ref: strin
 }
 
 /**
- * Whether the URL, the anon key and the service-role key all name the same
- * database.
+ * Names the target a Postgres connection string belongs to, from its shape.
+ *
+ * Not a JWT, so `describeCredential` cannot read it -- but the ref is in the
+ * string all the same, in one of two places depending on how the project is
+ * reached: a direct connection puts it in the host (`db.<ref>.supabase.co`),
+ * and the pooler puts it in the username (`postgres.<ref>@...pooler...`).
+ *
+ * **Nothing derived here may reach a message.** The string carries the database
+ * password, so this returns only a kind and a ref, and callers name the ref
+ * rather than the URL -- unlike `describeTarget`, whose URL is the public API
+ * endpoint and safe to print.
+ */
+export function describeDbUrl(url: string): { kind: 'local' | 'hosted'; ref: string | null } {
+	try {
+		const parsed = new URL(url);
+		if (/^(127\.0\.0\.1|localhost|\[::1\])$/.test(parsed.hostname)) {
+			return { kind: 'local', ref: null };
+		}
+		const fromHost = /^db\.([a-z0-9-]+)\.supabase\./.exec(parsed.hostname)?.[1];
+		const fromUser = /^postgres\.([a-z0-9-]+)$/.exec(decodeURIComponent(parsed.username))?.[1];
+		return { kind: 'hosted', ref: fromHost ?? fromUser ?? null };
+	} catch {
+		// Same asymmetry as describeCredential: an unparsable value is assumed
+		// hosted, because guessing "local" wrongly reports agreement while a
+		// script writes to production.
+		return { kind: 'hosted', ref: null };
+	}
+}
+
+/**
+ * Whether the URL, the anon key, the service-role key and the database
+ * connection string all name the same database.
  *
  * This is the check the script exists for as much as the switching is. They can
  * disagree -- they did in this repo -- and when they do, the app reads one
@@ -197,7 +234,9 @@ export function credentialsAgree(values: Record<string, string>): {
 	// A split outranks an unknown. Half a file still carries a verdict: an
 	// absent anon key must not hide a service-role key naming production,
 	// which is the one state this whole script is here to catch.
-	const missing = CREDENTIALS.filter(([key]) => !values[key]).map(([key]) => key);
+	const missing = [...CREDENTIALS.map(([key]) => key), 'SUPABASE_DB_URL'].filter(
+		(key) => !values[key]
+	);
 	const unknownReason =
 		missing.length > 0
 			? `${missing.join(' and ')} ${missing.length === 1 ? 'is' : 'are'} not set`
@@ -233,6 +272,29 @@ export function credentialsAgree(values: Record<string, string>): {
 		known.push({ name: `the ${label}`, ref: credential.ref });
 	}
 
+	// The connection string last, and by its own describer: it is not a JWT, so
+	// it carries its ref in the host or the username rather than in a payload.
+	// Named, never printed -- see describeDbUrl.
+	if (values.SUPABASE_DB_URL) {
+		const db = describeDbUrl(values.SUPABASE_DB_URL);
+		if (db.kind !== target.kind) {
+			return {
+				verdict: 'split',
+				reason: `the database connection string names ${place(db.kind)}, the URL names ${place(target.kind)}`
+			};
+		}
+		if (db.ref) {
+			const disagrees = known.find((other) => other.ref !== db.ref);
+			if (disagrees) {
+				return {
+					verdict: 'split',
+					reason: `the database connection string belongs to hosted project ${db.ref}, ${disagrees.name} names ${disagrees.ref}`
+				};
+			}
+			known.push({ name: 'the database connection string', ref: db.ref });
+		}
+	}
+
 	if (unknownReason) return { verdict: 'unknown', reason: unknownReason };
 	return { verdict: 'agree', reason: null };
 }
@@ -252,14 +314,15 @@ function readLocalStack(): EnvValues {
 	}
 
 	const status = JSON.parse(raw);
-	if (!status.API_URL || !status.ANON_KEY || !status.SERVICE_ROLE_KEY) {
-		throw new Error('`supabase status` returned no API_URL/ANON_KEY/SERVICE_ROLE_KEY.');
+	if (!status.API_URL || !status.ANON_KEY || !status.SERVICE_ROLE_KEY || !status.DB_URL) {
+		throw new Error('`supabase status` returned no API_URL/ANON_KEY/SERVICE_ROLE_KEY/DB_URL.');
 	}
 
 	return {
 		SVELTE_PUBLIC_SUPABASE_URL: status.API_URL,
 		SVELTE_PUBLIC_SUPABASE_ANON_KEY: status.ANON_KEY,
-		SUPABASE_SERVICE_ROLE_KEY: status.SERVICE_ROLE_KEY
+		SUPABASE_SERVICE_ROLE_KEY: status.SERVICE_ROLE_KEY,
+		SUPABASE_DB_URL: status.DB_URL
 	};
 }
 
@@ -398,7 +461,9 @@ function reportStatus(): void {
 			console.log('  will not run.');
 		}
 	} else if (verdict === 'agree') {
-		console.log('  credentials: anon and service-role keys name the same target');
+		console.log(
+			'  credentials: anon key, service-role key and database connection string name the same target'
+		);
 	} else {
 		console.log('');
 		console.log(`  !! SPLIT TARGET — ${reason}.`);

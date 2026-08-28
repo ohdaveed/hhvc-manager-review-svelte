@@ -32,9 +32,13 @@ export type FunctionGrant = {
 
 /**
  * Functions that are *meant* to be callable through PostgREST by a signed-in
- * or anonymous caller. Empty today, and that is the correct state: the only
- * function in `public` is `import_corpus_version`, whose sole caller
- * (scripts/corpus-import.ts) authenticates as service_role.
+ * or anonymous caller. Empty today, and that is the correct state.
+ *
+ * Note that `public` currently holds no functions at all: `import_corpus_version`
+ * moved to the `private` schema in 20260828100000, where PostgREST cannot reach
+ * it. So a PASS here is presently a weak signal -- it says nothing is exposed
+ * because nothing is there. The check earns its keep on the next function
+ * someone adds to `public`, which is exactly the case it was written for.
  *
  * Adding a name here is a deliberate act. It should come with the reason.
  */
