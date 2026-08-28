@@ -54,3 +54,12 @@ coverage/
 # it had otherwise sat untracked since it was written.
 .claude/settings.local.json
 .claude/state/
+
+# Vendored agent skills, installed by `npx skills add`. The files live in
+# `.agents/skills/` and `.claude/skills/` holds symlinks into it, so both sides
+# are ignored -- committing them would vendor someone else's skill into this
+# repo and shadow the identically-named plugin skill for everyone who clones it.
+# The repo's own skills (hhvc-ship-workflow, verify) stay tracked.
+.agents/
+.claude/skills/supabase
+.claude/skills/supabase-postgres-best-practices
