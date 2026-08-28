@@ -201,9 +201,43 @@ Two consequences worth knowing before using a preview:
 - **A reviewer needs an invite on the staging project to sign in.** Staging has its own `auth.users`, and `seed.hosted.sql` deliberately creates no identity. A production invite does not work on a preview.
 - **Staging is free-tier and pauses after about 7 days idle.** A preview against a paused project fails to read; wake it from the dashboard.
 
-Staging was built from the repo, not by hand: `supabase db push` applied all seven migrations, `supabase/seed.hosted.sql` wrote the review and its 29 page rows, and `bun run corpus:import` wrote the corpus version. Its auth allow-list is `https://*--hhvc-manager-review.netlify.app/**,http://localhost:5173/**` — deliberately **not** the production origin. To rebuild it, repeat those three steps against the staging ref.
+Staging was built from the repo, not by hand: `supabase db push` applied every migration then in the repo, `supabase/seed.hosted.sql` wrote the review and its 29 page rows, and `bun run corpus:import` wrote the corpus version. Its auth allow-list is `https://*--hhvc-manager-review.netlify.app/**,http://localhost:5173/**` — deliberately **not** the production origin. To rebuild it, repeat those three steps against the staging ref.
 
 **`RAILWAY_API_TOKEN` and `RAILWAY_API_URL` are still shared across every context**, so a preview's AI rewrites hit the production backend and spend real money. Unlike the database, that has not been split.
+
+### Merging to `main` applies migrations to production
+
+A merge to `main` does not only deploy the frontend. The **Supabase GitHub App**
+(`app.slug` is `supabase`) applies pending migrations to the **production**
+project on the merge commit. Nothing in `.github/` does this — `grep -rn supabase
+.github/` finds only `pr.yml`'s placeholder env vars — so the only visible trace
+is the `Supabase Preview` check, which behaves differently on the two commits:
+
+| Commit                 | Conclusion | Check target                                |
+| ---------------------- | ---------- | ------------------------------------------- |
+| PR head                | `skipped`  | `.../project/kiynekyzqxneepjipqhg/branches` |
+| merge commit on `main` | `success`  | `.../project/kiynekyzqxneepjipqhg`          |
+
+Measured on PR #64: `20260827110000_latest_edits_view.sql` was pushed by hand
+**only** to the local stack, and appeared in production's
+`supabase_migrations.schema_migrations` immediately after the merge.
+
+Two consequences worth knowing before merging anything with a migration in it:
+
+- **The merge is the apply.** Check what is pending against production _before_
+  merging rather than after, because the merge changes the production schema
+  with nobody running a command — a wider blast radius than the Netlify deploy
+  it arrives alongside.
+- **Staging is not covered.** The integration names the production ref only, so
+  `aplbsgacqnxhzjuquvft` stays wherever the last manual push left it. After #64
+  merged, staging sat one migration behind production while deploy previews —
+  which read staging — queried a view it did not have. Push it by hand:
+  `supabase link --project-ref aplbsgacqnxhzjuquvft && supabase db push`.
+
+`verify:live` cannot see any of this. Its gates passed against a frontend
+querying `latest_edits`, and would have passed identically had the view been
+missing from the database, because a failed edits hydration logs to the console
+and leaves the app rendering.
 
 Note that `supabase link` sets `supabase/.temp/project-ref` for the whole checkout, so whichever project you linked last is what `supabase db push` targets — there is no per-command project flag in that path. Check it before pushing.
 
