@@ -40,7 +40,7 @@ Pointed at the hosted project, `ensureDevSession()` signs in with the local seed
 Three properties worth keeping if this script is ever changed:
 
 - **Local values come from `supabase status` at switch time, never stored.** They change when the stack is recreated, and a stored copy goes stale silently.
-- **`SUPABASE_SERVICE_ROLE_KEY` switches with the two `SVELTE_PUBLIC_*` vars.** It is what `corpus:import` and `scripts/sync-checks.ts` authenticate with, and it bypasses RLS. Moving only the public vars leaves the app reading local while those scripts write to production — `env:status` reports that state as `SPLIT TARGET`, and it is the state this repo was in before the script existed.
+- **Two script credentials switch with the two `SVELTE_PUBLIC_*` vars — four variables in all.** `SUPABASE_SERVICE_ROLE_KEY` is what `scripts/sync-checks.ts` authenticates with, and it bypasses RLS. `SUPABASE_DB_URL` is the direct Postgres connection `corpus:import` uses, since `import_corpus_version` moved to the `private` schema where PostgREST cannot reach it — that script no longer uses the service-role key at all. Moving only some of them leaves the app reading local while those scripts write to production — `env:status` reports that state as `SPLIT TARGET`, and it is the state this repo was in before the script existed. `credentialsAgree` reads the project ref out of the connection string's host (`db.<ref>.supabase.co`) or its username (`postgres.<ref>@…pooler…`), so a mismatched connection string is caught rather than merely carried along; the string itself is never printed, because unlike the API URL it carries the database password.
 - **No key is printed.** Targets are named by URL and project ref.
 
 `SVELTE_PUBLIC_*` are `$env/static/public` and inlined at build time, so **a running dev server keeps serving the old target until restarted**. The script says so when it sees something on :5173.
@@ -107,6 +107,8 @@ Call the endpoint through `requestGeneration()`. A bare `fetch('/api/ai/generate
 Note the error handling: `HttpError`s are rethrown so upstream status codes survive, and the auth check sits _outside_ the try — a SvelteKit `HttpError` is not an `Error` instance, so a catch-all would flatten a 401 into a 500.
 
 ### Supabase
+
+**`import_corpus_version` lives in the `private` schema, not `public`.** PostgREST serves only the schemas in `[api] schemas` (`supabase/config.toml`: `public`, `graphql_public`), so nothing in `private` is reachable over the Data API at any grant level — verified against the local stack: an anon `POST /rest/v1/rpc/import_corpus_version` returns **404**, and forcing it with `Content-Profile: private` returns **406**, while an anon read of the exposed `corpus_versions` returns 401 (the control that says the key and request path are fine). That is why `scripts/corpus-import.ts` connects with `pg` rather than `supabase.rpc()`. The alternative — leaving it in `public` and revoking per function — is what `20260823130000` had to do, and it has to be remembered on every new function; this removes the category instead. `bun run audit:privileges` still guards `public`, which now holds no functions at all.
 
 Client-side only. There is no `hooks.server.ts` and no `event.locals` — sessions live in the browser, and the API route verifies bearer tokens itself with a per-request client (`persistSession: false`). Schema is `supabase/migrations/`: `reviews`, `pages`, `comments`, `edits`.
 

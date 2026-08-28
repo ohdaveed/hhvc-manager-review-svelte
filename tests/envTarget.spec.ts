@@ -21,6 +21,15 @@ const PROJECT = 'abcdefghijklm';
 const PROJECT_URL = `https://${PROJECT}.supabase.co`;
 const LOCAL_URL = 'http://127.0.0.1:54321';
 
+const LOCAL_DB = 'postgresql://postgres:postgres@127.0.0.1:54322/postgres';
+/** Direct connection: the ref is in the host. */
+const hostedDb = (ref: string) => `postgresql://postgres:pw@db.${ref}.supabase.co:5432/postgres`;
+/** Pooler: the ref is in the username instead, which is why both are parsed. */
+const poolerDb = (ref: string) =>
+	`postgresql://postgres.${ref}:pw@aws-0-us-east-1.pooler.supabase.com:6543/postgres`;
+/** A custom domain hides the ref, the same way a custom API domain does. */
+const REFLESS_DB = 'postgresql://postgres:pw@custom.example.com:5432/postgres';
+
 describe('parseEnv', () => {
 	it('reads keys and values, ignoring comments and blanks', () => {
 		expect(parseEnv('# note\n\nA=1\nB=two\n')).toEqual({ A: '1', B: 'two' });
@@ -87,22 +96,24 @@ describe('describeTarget', () => {
 });
 
 describe('credentialsAgree', () => {
-	it('agrees when all three name the local stack', () => {
+	it('agrees when all four name the local stack', () => {
 		expect(
 			credentialsAgree({
 				SVELTE_PUBLIC_SUPABASE_URL: LOCAL_URL,
 				SVELTE_PUBLIC_SUPABASE_ANON_KEY: LOCAL_KEY,
-				SUPABASE_SERVICE_ROLE_KEY: LOCAL_KEY
+				SUPABASE_SERVICE_ROLE_KEY: LOCAL_KEY,
+				SUPABASE_DB_URL: LOCAL_DB
 			}).verdict
 		).toBe('agree');
 	});
 
-	it('agrees when all three name the same hosted project', () => {
+	it('agrees when all four name the same hosted project', () => {
 		expect(
 			credentialsAgree({
 				SVELTE_PUBLIC_SUPABASE_URL: PROJECT_URL,
 				SVELTE_PUBLIC_SUPABASE_ANON_KEY: hostedKey(PROJECT),
-				SUPABASE_SERVICE_ROLE_KEY: hostedKey(PROJECT)
+				SUPABASE_SERVICE_ROLE_KEY: hostedKey(PROJECT),
+				SUPABASE_DB_URL: hostedDb(PROJECT)
 			}).verdict
 		).toBe('agree');
 	});
@@ -175,9 +186,73 @@ describe('credentialsAgree', () => {
 			credentialsAgree({
 				SVELTE_PUBLIC_SUPABASE_URL: PROJECT_URL,
 				SVELTE_PUBLIC_SUPABASE_ANON_KEY: HOSTED_KEY,
-				SUPABASE_SERVICE_ROLE_KEY: HOSTED_KEY
+				SUPABASE_SERVICE_ROLE_KEY: HOSTED_KEY,
+				SUPABASE_DB_URL: REFLESS_DB
 			}).verdict
 		).toBe('agree');
+	});
+
+	it('catches a connection string naming a different hosted project', () => {
+		// The failure this variable introduced the risk of: the app and both keys
+		// on staging while `corpus:import` writes the corpus version to
+		// production, with nothing in the UI to say so.
+		const { verdict, reason } = credentialsAgree({
+			SVELTE_PUBLIC_SUPABASE_URL: PROJECT_URL,
+			SVELTE_PUBLIC_SUPABASE_ANON_KEY: hostedKey(PROJECT),
+			SUPABASE_SERVICE_ROLE_KEY: hostedKey(PROJECT),
+			SUPABASE_DB_URL: hostedDb('otherproject')
+		});
+		expect(verdict).toBe('split');
+		expect(reason).toContain('connection string');
+		expect(reason).toContain('otherproject');
+	});
+
+	it('finds the ref in the pooler username too, not only the host', () => {
+		// A pooler connection string has no ref in its host at all -- it is
+		// `aws-0-<region>.pooler.supabase.com` for every project -- so reading
+		// only the host would silently classify every pooled connection as
+		// ref-unknown and never catch a mismatch.
+		const { verdict, reason } = credentialsAgree({
+			SVELTE_PUBLIC_SUPABASE_URL: PROJECT_URL,
+			SVELTE_PUBLIC_SUPABASE_ANON_KEY: hostedKey(PROJECT),
+			SUPABASE_SERVICE_ROLE_KEY: hostedKey(PROJECT),
+			SUPABASE_DB_URL: poolerDb('otherproject')
+		});
+		expect(verdict).toBe('split');
+		expect(reason).toContain('otherproject');
+	});
+
+	it('catches a local connection string beside a hosted app', () => {
+		const { verdict, reason } = credentialsAgree({
+			SVELTE_PUBLIC_SUPABASE_URL: PROJECT_URL,
+			SVELTE_PUBLIC_SUPABASE_ANON_KEY: hostedKey(PROJECT),
+			SUPABASE_SERVICE_ROLE_KEY: hostedKey(PROJECT),
+			SUPABASE_DB_URL: LOCAL_DB
+		});
+		expect(verdict).toBe('split');
+		expect(reason).toContain('connection string');
+	});
+
+	it('never puts the connection string itself in the reason', () => {
+		// It carries the database password. The ref is nameable; the string is not.
+		const { reason } = credentialsAgree({
+			SVELTE_PUBLIC_SUPABASE_URL: PROJECT_URL,
+			SVELTE_PUBLIC_SUPABASE_ANON_KEY: hostedKey(PROJECT),
+			SUPABASE_SERVICE_ROLE_KEY: hostedKey(PROJECT),
+			SUPABASE_DB_URL: hostedDb('otherproject')
+		});
+		expect(reason).not.toContain('pw');
+		expect(reason).not.toContain('postgresql://');
+	});
+
+	it('reports unknown when only the connection string is missing', () => {
+		const { verdict, reason } = credentialsAgree({
+			SVELTE_PUBLIC_SUPABASE_URL: LOCAL_URL,
+			SVELTE_PUBLIC_SUPABASE_ANON_KEY: LOCAL_KEY,
+			SUPABASE_SERVICE_ROLE_KEY: LOCAL_KEY
+		});
+		expect(verdict).toBe('unknown');
+		expect(reason).toContain('SUPABASE_DB_URL');
 	});
 
 	it('treats an undecodable key as hosted, the safe guess', () => {
@@ -200,7 +275,8 @@ describe('credentialsAgree', () => {
 		const file = [
 			`SVELTE_PUBLIC_SUPABASE_URL="${LOCAL_URL}"`,
 			`SVELTE_PUBLIC_SUPABASE_ANON_KEY="${LOCAL_KEY}"`,
-			`SUPABASE_SERVICE_ROLE_KEY="${LOCAL_KEY}"`
+			`SUPABASE_SERVICE_ROLE_KEY="${LOCAL_KEY}"`,
+			`SUPABASE_DB_URL="${LOCAL_DB}"`
 		].join('\n');
 		expect(credentialsAgree(parseEnv(file)).verdict).toBe('agree');
 	});
