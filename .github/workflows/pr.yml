@@ -77,6 +77,15 @@ jobs:
           ./actionlint -color
           rm -f actionlint "actionlint_${ACTIONLINT_VERSION}_"*
 
+      # Blocking for the same reason actionlint is, and for the reason PLAN.md
+      # D1 gives: eslint reports in the non-blocking `review` job, so before
+      # this step the error count could grow and nothing failed. This does not
+      # make eslint blocking -- the five pre-existing errors stay -- it asserts
+      # the count cannot rise. It calls eslint directly, never `bun run lint`,
+      # whose prettier half is red tree-wide and short-circuits eslint away.
+      - name: eslint ratchet
+        run: bun run lint:ratchet
+
       - name: Check corpus lock
         run: bun run corpus:check
 
