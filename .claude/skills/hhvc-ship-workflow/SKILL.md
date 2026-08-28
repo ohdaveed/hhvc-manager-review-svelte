@@ -1,16 +1,17 @@
 ---
 name: hhvc-ship-workflow
-description: 'Systematically ship feature work from branch through PR review, feedback coordination, merge, and live deployment verification. Use when you have a feature branch ready to merge and need to manage the complete production ship cycle. Use this skill when shipping a feature branch to production: opening a PR, coordinating review feedback with fixes, merging to main, verifying the live deployment, and identifying follow-up work.'
-trigger: 'Use this skill when shipping a feature branch to production: opening a PR, coordinating review feedback with fixes, merging to main, verifying the live deployment, and identifying follow-up work.'
+description: "Systematically ship feature work from branch through PR review, feedback coordination, merge, and live deployment verification. Use when you have a feature branch ready to merge and need to manage the complete production ship cycle, including Netlify-specific deployment safety and verification. Use this skill when 'Use this skill when shipping a feature branch to production: opening a PR, coordinating review feedback with fixes, merging to main, verifying the live deployment, and identifying follow-up work.'"
+trigger: "'Use this skill when shipping a feature branch to production: opening a PR, coordinating review feedback with fixes, merging to main, verifying the live deployment, and identifying follow-up work.'"
 author: arrizon.david
 source_sessions:
   - arrizon.david_arrizon.david's Organization_default_37db7d7e-7886-454d-b6f7-5b1262b7494d
+  - arrizon.david_arrizon.david's Organization_default_bbe13a83-bd8e-43ce-8723-90ff7ffd6933
 contributors:
   - arrizon.david
-version: 1
+version: 2
 created_by_agent: claude_code
 created_at: 2026-08-25T15:00:20.634Z
-updated_at: 2026-08-25T15:00:20.634Z
+updated_at: 2026-08-28T12:06:50.359Z
 ---
 
 # HHVC Ship Workflow
@@ -25,6 +26,7 @@ Use this skill when:
 - Managing a PR through review feedback and multiple fix cycles
 - Merging to `main` and verifying the live deployment
 - Coordinating design decisions with review bot feedback
+- Ensuring Netlify production deploys are safe and verification is reliable
 
 ## The Ship Sequence
 
@@ -78,6 +80,8 @@ This squash-merges the branch into `main` (one commit) and triggers the Netlify 
 
 ### 5. Verify the Live Deployment
 
+**Netlify production safety:** A production build that is **skipped** leaves the previous commit published to visitors. `verify:live` stamps the deployed commit into `/_app/version.json` and compares it against `origin/main` — a stale publish is a mismatch and the gate reports FAIL. Production builds must never skip; `vite.config.ts` ensures the commit is always stamped and readable at build time.
+
 Verify **at the live artifact**, not the build logs:
 
 ```sh
@@ -88,13 +92,17 @@ curl -I https://hhvc-manager-review.netlify.app/
 # Proxy endpoint (protected — should 401 without token)
 curl -I https://hhvc-manager-review.netlify.app/api/ai/generate
 # HTTP 401 expected
+
+# Deployed commit verification
+curl -s https://hhvc-manager-review.netlify.app/_app/version.json | jq -r .name
+# Compare against: git ls-remote origin refs/heads/main | awk '{print $1}'
 ```
 
 Also check:
 
-- **Deployed commit**: Verify the bundle contains a string or behavior unique to the merged commit
 - **Console**: No new errors (pre-existing ones don't count as regression)
 - **Smoke test**: Run through at least one critical user flow
+- **Build latency**: Netlify deploys take 1–3 minutes; if `verify:live` reports mismatch on the first try, wait and retry. A successful deploy will eventually appear in `/_app/version.json`.
 
 ### 6. Local/Remote Sync
 
@@ -118,17 +126,20 @@ After a successful deploy, assess and document:
 
 - **Branch protection**: Direct push to `main` is refused. The PR → CI → merge workflow is required.
 - **Netlify auto-deploys on merge to `main`** — confirm your fix is production-ready before merging.
+- **Production builds must never skip** — skipped builds leave a stale commit published. The `verify:live` gate catches this by comparing the stamped commit in `/_app/version.json`.
 - **Local `main` can drift** if other sessions move the ref. Always `git reset --hard origin/main` after merge.
 - **Squash merge loses granular history** — check reflog if you need per-commit recovery.
 - **`bun run verify` is trustworthy only from `819d914` onward** — earlier versions reported green even on test failure.
+- **Build latency retry**: Netlify takes 1–3 minutes to publish. `verify:live` may report mismatch on first run; wait and retry.
 - **Review feedback doesn't require acceptance** — explain non-obvious decisions with evidence so the owner can review the reasoning.
 
-## Example: Multi-Cycle Review
+## Example: Multi-Cycle Review with Netlify Latency
 
-If a PR requires multiple fix cycles:
+If a PR requires multiple fix cycles and deploy verification is delayed:
 
 1. Receive feedback → fix → `bun run verify` → push → CI green
 2. Receive additional feedback → fix → `bun run verify` → push → CI green
 3. All fixed or declined with reasoning → merge
+4. Verify live: first run shows build in progress (mismatch), wait 2 minutes, retry → published commit matches
 
 Each cycle re-verifies locally before push. Never merge with red CI or unresolved findings.
