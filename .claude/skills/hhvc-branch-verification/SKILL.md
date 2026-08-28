@@ -28,6 +28,18 @@ Use this skill when:
 
 ## The Verification Process
 
+### 0. Prune first, before counting anything
+
+```sh
+git fetch --prune
+```
+
+Measured 2026-08-28: a list of "13 stale branches" became 8 on the first prune.
+Every merged PR's branch had already been auto-deleted on the remote, so
+`git branch -r` was reporting this checkout's stale tracking refs rather than
+the repository's branches. Categorizing before pruning means investigating
+branches that do not exist.
+
 ### 1. Categorize by merge status and commit count
 
 For each branch, measure divergence from main:
@@ -37,16 +49,23 @@ git rev-list --left-right --count main...origin/<branch>
 # Output: "2 5" = 2 commits in main not in branch, 5 in branch not in main
 ```
 
-Also check PR status:
+Also check PR status by querying pull requests whose head branch matches the branch. The branch value is quoted so names containing `/` (or other shell-special characters) are passed as one argument:
 
 ```sh
-gh api repos/<owner>/<repo>/branches/<branch> -q '.pull_request'
-# null = no PR, {...} = linked PR
+branch="<branch>"
+gh pr list --head "$branch" --state all --json state,mergedAt,number
+# [] = no PR; inspect state and mergedAt for each returned PR
+# MERGED (or a non-null mergedAt) = merged PR; CLOSED with null mergedAt = closed PR
 ```
+
+Use the relevant returned PR (or PRs) to apply the categories below; do not use the branch endpoint for PR status, since it does not expose linked pull requests.
 
 **Categories:**
 
-- **Merged, 0 ahead:** PR merged, all content in main → **DELETE**
+- **Merged, 0 ahead:** PR merged, all content in main → **DELETE**. Note this
+  category is empty in a squash-merge repo: the squash commit is not the
+  branch's commit, so a merged branch is always "ahead". Do not read
+  commits-ahead as evidence of unmerged work.
 - **Closed PR, commits ahead:** Intended cherry-pick lifecycle → **VERIFY step 2**
 - **No PR, commits ahead:** Real unmerged work → **KEEP**
 
