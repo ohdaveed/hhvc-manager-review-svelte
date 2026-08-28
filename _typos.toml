@@ -7,11 +7,10 @@
 
 [files]
 extend-exclude = [
-	# The CSS half of the retained legacy port, ignored here for the same reason
-	# knip ignores it: it is reference material rather than live code, so a typo
-	# in one of its comments is not a defect worth blocking a commit over. The
-	# JS entry point is gone; what remains of that decision is B5 in PLAN.md.
-	"src/css/**",
+	# NOTE: `src/css/**` was excluded here as the CSS half of the legacy port.
+	# B5 deleted those nine files on 2026-08-28, and the two that remain --
+	# `sfds.css` and `theme.css` -- are live, imported by `src/app.css`. Keeping
+	# the exclude would have quietly stopped checking them.
 
 	# Generated or vendored.
 	"bun.lock",
@@ -23,3 +22,8 @@ extend-exclude = [
 # that still needs review by someone who knows the domain -- 12 occurrences,
 # all deliberate.
 SME = "SME"
+
+# Not a word: `fix/remediation-62bfbf5c-ded5f1` is a review-bot branch whose
+# suffix is a hash fragment. PLAN.md's H1 table records those names verbatim
+# because an identifier written approximately cannot be looked up.
+ded = "ded"
