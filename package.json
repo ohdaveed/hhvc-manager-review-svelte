@@ -14,6 +14,7 @@
 		"prepare": "svelte-kit sync || echo ''; git config --local --unset core.hooksPath 2>/dev/null || true",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+		"lint:ratchet": "bun run scripts/eslint-ratchet.ts",
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
 		"env:status": "bun run scripts/env-target.ts status",
