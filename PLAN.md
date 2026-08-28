@@ -715,6 +715,52 @@ left.
           direct `pg` connection, which is now less of a leap since this script
           already carries that dependency and connection pattern.
 
+- [ ] **G4. Move `import_corpus_version` out of `public` — G2 option 1.**
+      G2 shipped detection (`bun run audit:privileges`). This is the prevention
+      it deliberately left: PostgREST serves only the schemas in
+      `[api] schemas` (`supabase/config.toml:13` — `public`, `graphql_public`),
+      so a function in a `private` schema is not reachable at
+      `/rest/v1/rpc/<name>` at all and there is no grant to forget on the next
+      `CREATE FUNCTION`.
+
+      **It breaks the only caller, which is the whole cost.**
+      `scripts/corpus-import.ts` reaches the function through
+      `supabase.rpc()`, i.e. PostgREST. Moving the function means moving the
+      script onto a direct Postgres connection (`pg`, already a dependency and
+      already used by `scripts/audit-privileges.ts`).
+
+      **The ripple that matters is `env-target.ts`, not the script.**
+      `TARGET_KEYS` is the three variables that must move together, and CLAUDE.md
+      records why: moving only some of them leaves the app reading one project
+      while scripts write to another, which `env:status` reports as
+      `SPLIT TARGET` and which is the state this repo was in before that script
+      existed. A `SUPABASE_DB_URL` that `env-target.ts` does not manage
+      reintroduces exactly that hazard by the back door, so it has to join
+      `TARGET_KEYS` in the same change — not as a follow-up.
+
+      Steps:
+
+      - migration: `CREATE SCHEMA private`, `ALTER FUNCTION ... SET SCHEMA private`,
+        revoke from `PUBLIC`/`anon`/`authenticated`, and confirm `private` is
+        absent from the exposed-schema list on both hosted projects.
+      - `corpus-import.ts` onto `pg` **entirely**, not just the RPC call. If it
+        needs `SUPABASE_DB_URL` anyway, running the two lookups through the same
+        connection leaves it with one credential instead of two, which is a
+        smaller split-target surface rather than a larger one. The documented
+        idempotency semantics — pre-insert lookup, completeness check, 23505 as
+        "already imported" — carry over unchanged.
+      - `env-target.ts`: add `SUPABASE_DB_URL` to `TARGET_KEYS`, source it from
+        `supabase status` for local, and update `tests/envTarget.spec.ts`.
+      - CLAUDE.md: the new schema, and the fourth variable.
+
+      **Known prerequisite, and it cannot be worked around from here:** the
+      hosted `SUPABASE_DB_URL` carries the database password, which is not in
+      `supabase status` and not derivable from the project ref. `env:hosted`
+      will fail loudly until it is added to `.env.hosted`. Failing loudly is the
+      right behaviour — the alternative is `corpus:import` silently targeting
+      nothing — but it does mean this change leaves a step that only the repo
+      owner can complete.
+
 - [x] **G3. UUIDv4 primary keys — decided, no change, recorded so it is not
       re-litigated.** `schema-primary-keys` prefers `bigint identity` or UUIDv7
       because random v4 scatters index inserts and fragments the B-tree. Every
