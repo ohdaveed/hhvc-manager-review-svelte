@@ -31,8 +31,12 @@
  *    the service-role key in the same file is not, and a script that prints
  *    "the env" prints both.
  *
- * Hosted credentials live in `.env.hosted`, which is gitignored by the `.env.*`
- * rule. It is a profile, not the live file: nothing reads it but this script.
+ * Hosted credentials come from Doppler (`hhvc-svelte/prd`), falling back to
+ * `.env.hosted` when Doppler cannot answer -- not installed, not logged in, or
+ * offline. That file is gitignored by the `.env.*` rule and is a profile, not
+ * the live file: nothing reads it but this script. Whichever source supplied
+ * the values is printed, since "worked" and "worked from the file you meant to
+ * retire" are different outcomes.
  *
  * Usage:
  *   bun run env:status    # which target is active
@@ -45,6 +49,10 @@ import { execFileSync } from 'node:child_process';
 
 const ENV_FILE = '.env.local';
 const HOSTED_PROFILE = '.env.hosted';
+
+/** Where the hosted secrets live. `prd` is the production Supabase project. */
+const DOPPLER_PROJECT = 'hhvc-svelte';
+const DOPPLER_CONFIG = 'prd';
 
 /** The three variables a target owns. Anything else in `.env.local` is left alone. */
 export const TARGET_KEYS = [
@@ -255,21 +263,91 @@ function readLocalStack(): EnvValues {
 	};
 }
 
-/** Hosted values, from the gitignored profile. */
+/**
+ * Hosted secrets, read from Doppler at switch time.
+ *
+ * Returns null -- rather than throwing -- when Doppler cannot answer for any
+ * reason: not installed, not logged in, no network, project or config renamed.
+ * The caller falls back to `.env.hosted`, so a Doppler outage degrades to the
+ * previous behaviour instead of blocking a switch.
+ */
+function readDopplerSecrets(): Record<string, string> | null {
+	let raw: string;
+	try {
+		raw = execFileSync(
+			'doppler',
+			[
+				'secrets',
+				'download',
+				'--no-file',
+				'--format',
+				'json',
+				'--project',
+				DOPPLER_PROJECT,
+				'--config',
+				DOPPLER_CONFIG
+			],
+			// stderr discarded: Doppler puts auth and network errors there, and
+			// they can quote the value that failed.
+			{ encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }
+		);
+	} catch {
+		return null;
+	}
+
+	try {
+		const parsed = JSON.parse(raw);
+		return parsed && typeof parsed === 'object' ? (parsed as Record<string, string>) : null;
+	} catch {
+		return null;
+	}
+}
+
+/**
+ * Hosted values: Doppler first, the gitignored profile second.
+ *
+ * Doppler owns these because they are what a running process reads as
+ * environment variables, and because `SUPABASE_DB_URL` is the highest-privilege
+ * credential in the set -- the service-role key bypasses RLS through the API,
+ * but the connection string is DDL. Keeping it out of a plaintext file in the
+ * working tree is the point.
+ *
+ * `.env.hosted` still works and is still read when Doppler cannot answer or is
+ * missing a key, so this is not a cutover: a contributor without Doppler access
+ * is not blocked, and neither is a switch made offline. Which source was used is
+ * printed, because "it worked" and "it worked from the file you thought you had
+ * retired" are different states.
+ */
 function readHostedProfile(): EnvValues {
+	const complete = (values: Record<string, string>) => TARGET_KEYS.filter((k) => !values[k]);
+
+	const doppler = readDopplerSecrets();
+	if (doppler) {
+		const missing = complete(doppler);
+		if (missing.length === 0) {
+			console.log(`  hosted values from: Doppler ${DOPPLER_PROJECT}/${DOPPLER_CONFIG}`);
+			return Object.fromEntries(TARGET_KEYS.map((k) => [k, doppler[k]])) as EnvValues;
+		}
+		console.log(
+			`  Doppler ${DOPPLER_PROJECT}/${DOPPLER_CONFIG} is missing ${missing.join(', ')} — falling back to ${HOSTED_PROFILE}.`
+		);
+	}
+
 	if (!existsSync(HOSTED_PROFILE)) {
 		throw new Error(
-			`No ${HOSTED_PROFILE}. Create it with the hosted project's ` +
-				`${TARGET_KEYS.join(', ')} — it is gitignored by the .env.* rule.`
+			`No hosted values. Add ${TARGET_KEYS.join(', ')} to Doppler ` +
+				`${DOPPLER_PROJECT}/${DOPPLER_CONFIG}, or create ${HOSTED_PROFILE} ` +
+				`— it is gitignored by the .env.* rule.`
 		);
 	}
 
 	const parsed = parseEnv(readFileSync(HOSTED_PROFILE, 'utf8'));
-	const missing = TARGET_KEYS.filter((k) => !parsed[k]);
+	const missing = complete(parsed);
 	if (missing.length > 0) {
 		throw new Error(`${HOSTED_PROFILE} is missing ${missing.join(', ')}.`);
 	}
 
+	console.log(`  hosted values from: ${HOSTED_PROFILE}`);
 	return Object.fromEntries(TARGET_KEYS.map((k) => [k, parsed[k]])) as EnvValues;
 }
 
