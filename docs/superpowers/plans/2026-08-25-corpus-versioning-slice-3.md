@@ -24,7 +24,7 @@ Copied verbatim from the spec and from the repo's own documented gotchas. Every 
 - **RLS follows the per-operation shape** of `20260822030000_scope_rls_policies.sql` — read everything, write only your own, and the _absence_ of UPDATE/DELETE is the substance. Not the old blanket `FOR ALL USING (true)`.
 - **Vitest project split is by file location.** `src/**/*.{test,spec}.ts` → **node** environment. `tests/**/*.test.ts` → **jsdom**. `tests/**/*.spec.ts` → node. A test in the wrong directory gets the wrong environment.
 - **`bun run verify` is the local gate** (unit tests + production build). `bun run lint` is red on the current tree in both halves — do not "fix" it as a side effect of this work.
-- **Branch from `origin/main`**, not from whatever is currently checked out. PRs #44 and #45 are open and unmerged; branching off the current HEAD is how this repo has already produced add/add conflicts.
+- **Branch from `origin/main`**, not from whatever is currently checked out. (The PRs #44 and #45 this line used to cite are long merged — `gh pr list --state open` was empty on 2026-08-28. The rule stands on its own: branching off a stale local HEAD is how this repo has already produced add/add conflicts.)
 
 ## Decisions this plan settles (and why)
 
