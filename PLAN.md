@@ -616,41 +616,41 @@ left.
       not bitten yet.
 
       **Fix: fetch one row per `(page_id, field_id)` rather than the whole
-              history.** That is what `editsStore` already holds — `saveInlineEdit`
-              filters the pair out before appending — so the reader's semantics do not
-              change, only the row count, which becomes bounded by field count instead
-              of edit count. PostgREST has no `DISTINCT ON`, so this needs a database
-              object:
+                      history.** That is what `editsStore` already holds — `saveInlineEdit`
+                      filters the pair out before appending — so the reader's semantics do not
+                      change, only the row count, which becomes bounded by field count instead
+                      of edit count. PostgREST has no `DISTINCT ON`, so this needs a database
+                      object:
 
-              - migration: `CREATE INDEX edits_page_field_created_idx ON edits
-                (page_id, field_id, created_at DESC)`, then
-                `CREATE VIEW latest_edits WITH (security_invoker = true) AS SELECT
-                DISTINCT ON (page_id, field_id) * FROM edits ORDER BY page_id,
-                field_id, created_at DESC`, then `GRANT SELECT ON latest_edits TO
-                authenticated`.
-              - `security_invoker = true` is load bearing. Without it a view runs with
-                its owner's rights and the underlying `edits` RLS is bypassed — the
-                view would be a read-everything hole wearing a SELECT policy's clothes.
-                Postgres 15+ only; the stack is 17.6.
-              - a **view, not an RPC**, deliberately: a function in `public` would add
-                another object to exactly the class G2 is about, and would need its own
-                REVOKE dance. A view carries RLS instead of EXECUTE grants.
-              - `loadReview()` reads `latest_edits`; the realtime channel stays
-                subscribed to `edits`, since publications carry tables, not views.
-              - test: prove that with more than `max_rows` rows present the newest edit
-                for a field is still the one returned. A test that only checks the fold
-                would pass today and pass after, and prove nothing.
+                      - migration: `CREATE INDEX edits_page_field_created_idx ON edits
+                        (page_id, field_id, created_at DESC)`, then
+                        `CREATE VIEW latest_edits WITH (security_invoker = true) AS SELECT
+                        DISTINCT ON (page_id, field_id) * FROM edits ORDER BY page_id,
+                        field_id, created_at DESC`, then `GRANT SELECT ON latest_edits TO
+                        authenticated`.
+                      - `security_invoker = true` is load bearing. Without it a view runs with
+                        its owner's rights and the underlying `edits` RLS is bypassed — the
+                        view would be a read-everything hole wearing a SELECT policy's clothes.
+                        Postgres 15+ only; the stack is 17.6.
+                      - a **view, not an RPC**, deliberately: a function in `public` would add
+                        another object to exactly the class G2 is about, and would need its own
+                        REVOKE dance. A view carries RLS instead of EXECUTE grants.
+                      - `loadReview()` reads `latest_edits`; the realtime channel stays
+                        subscribed to `edits`, since publications carry tables, not views.
+                      - test: prove that with more than `max_rows` rows present the newest edit
+                        for a field is still the one returned. A test that only checks the fold
+                        would pass today and pass after, and prove nothing.
 
-          **Closed 2026-08-27** by `20260827110000_latest_edits_view.sql` plus
-          `loadReview()` reading the view. Reproduced first: with 1500 edits on one
-          field, the old ascending-capped query surfaces `rev-999` and the view
-          surfaces `rev-1500`, returning one row rather than 1500.
-          `pg_class.reloptions` reads `{security_invoker=true}` on the real object.
-          The composite index is unused at current scale -- the planner picks
-          Seq Scan + Sort, which is correct for 29 pages -- and is there for growth.
-          Guard tests: `tests/loadReviewEdits.test.ts` (the reader queries the view,
-          not the table) and `tests/latestEditsView.spec.ts` (the view keeps
-          `security_invoker`).
+                  **Closed 2026-08-27** by `20260827110000_latest_edits_view.sql` plus
+                  `loadReview()` reading the view. Reproduced first: with 1500 edits on one
+                  field, the old ascending-capped query surfaces `rev-999` and the view
+                  surfaces `rev-1500`, returning one row rather than 1500.
+                  `pg_class.reloptions` reads `{security_invoker=true}` on the real object.
+                  The composite index is unused at current scale -- the planner picks
+                  Seq Scan + Sort, which is correct for 29 pages -- and is there for growth.
+                  Guard tests: `tests/loadReviewEdits.test.ts` (the reader queries the view,
+                  not the table) and `tests/latestEditsView.spec.ts` (the view keeps
+                  `security_invoker`).
 
 - [x] **G2. The anon-EXECUTE hole is closed per function, not per class.**
       `20260823130000` documents exactly why revoking `PUBLIC` was insufficient
@@ -663,57 +663,129 @@ left.
 
       **Three candidate fixes, and the choice is not obvious:**
 
-              1. *Non-exposed schema.* The rule file's own answer, and structurally the
-                 strongest — PostgREST does not serve a schema outside `db.schemas`, so
-                 there is no grant to forget. **But it breaks the only caller:**
-                 `scripts/corpus-import.ts` reaches `import_corpus_version` through
-                 `supabase.rpc()`, which is PostgREST. Moving the function means moving
-                 that script onto a direct Postgres connection (`pg` is already a
-                 dependency, currently flagged unused by knip).
-              2. *Schema-wide default revoke.* `ALTER DEFAULT PRIVILEGES FOR ROLE
-                 postgres IN SCHEMA public REVOKE EXECUTE ON FUNCTIONS FROM anon,
-                 authenticated`. One migration, no caller changes — but it also 403s
-                 the first RPC someone genuinely wants callable, at a distance, with no
-                 hint as to why.
-              3. *Detection rather than prevention.* Assert in a migration `DO` block
-                 (and a `bun run audit:privileges` script) that no function in `public`
-                 is anon- or authenticated-executable outside a named allowlist. Fails
-                 loudly at push time, names the function, and leaves intentional RPCs
-                 possible.
+                      1. *Non-exposed schema.* The rule file's own answer, and structurally the
+                         strongest — PostgREST does not serve a schema outside `db.schemas`, so
+                         there is no grant to forget. **But it breaks the only caller:**
+                         `scripts/corpus-import.ts` reaches `import_corpus_version` through
+                         `supabase.rpc()`, which is PostgREST. Moving the function means moving
+                         that script onto a direct Postgres connection (`pg` is already a
+                         dependency, currently flagged unused by knip).
+                      2. *Schema-wide default revoke.* `ALTER DEFAULT PRIVILEGES FOR ROLE
+                         postgres IN SCHEMA public REVOKE EXECUTE ON FUNCTIONS FROM anon,
+                         authenticated`. One migration, no caller changes — but it also 403s
+                         the first RPC someone genuinely wants callable, at a distance, with no
+                         hint as to why.
+                      3. *Detection rather than prevention.* Assert in a migration `DO` block
+                         (and a `bun run audit:privileges` script) that no function in `public`
+                         is anon- or authenticated-executable outside a named allowlist. Fails
+                         loudly at push time, names the function, and leaves intentional RPCs
+                         possible.
 
-              **Correction, 2026-08-27, found while starting the work:** option 3 as
-          written above does not work in its migration form. A `DO` block in a
-          migration runs exactly once -- `supabase_migrations.schema_migrations`
-          records the version and `db push` skips it forever after -- so it would
-          assert the state of `public` on the day it was applied and never again.
-          The function added two migrations later is precisely the one it needs to
-          catch, and is the one it cannot. Nor can a unit test do it: CI has no
-          database, which is why `pr.yml` builds with placeholder Supabase env vars.
-          Detection here has to be a **script run against a live project** -- the
-          shape `verify:live` already uses for the deployed site -- and it needs a
-          direct Postgres connection, because `pg_proc.proacl` is not reachable
-          through PostgREST. `pg` is already a dependency (knip currently reports it
-          unused).
+                      **Correction, 2026-08-27, found while starting the work:** option 3 as
+                  written above does not work in its migration form. A `DO` block in a
+                  migration runs exactly once -- `supabase_migrations.schema_migrations`
+                  records the version and `db push` skips it forever after -- so it would
+                  assert the state of `public` on the day it was applied and never again.
+                  The function added two migrations later is precisely the one it needs to
+                  catch, and is the one it cannot. Nor can a unit test do it: CI has no
+                  database, which is why `pr.yml` builds with placeholder Supabase env vars.
+                  Detection here has to be a **script run against a live project** -- the
+                  shape `verify:live` already uses for the deployed site -- and it needs a
+                  direct Postgres connection, because `pg_proc.proacl` is not reachable
+                  through PostgREST. `pg` is already a dependency (knip currently reports it
+                  unused).
 
-          **Recommend 3, then 1 for `import_corpus_version` specifically** if the
-              script is moving to `pg` for other reasons. 2 is the trap: it prevents the
-              hole and the legitimate case with the same lever. Decide before writing.
+                  **Recommend 3, then 1 for `import_corpus_version` specifically** if the
+                      script is moving to `pg` for other reasons. 2 is the trap: it prevents the
+                      hole and the legitimate case with the same lever. Decide before writing.
 
-          **Closed 2026-08-27** with option 3, as corrected: `scripts/audit-privileges.ts`
-          plus `bun run audit:privileges`, documented in CLAUDE.md. Proved by
-          negative test rather than by a clean pass — granting EXECUTE to `anon` on
-          `import_corpus_version` made it report
-          `FAIL public.import_corpus_version / EXECUTE granted to: anon` and exit 1;
-          revoking restored PASS. It also flags any `SECURITY DEFINER` function with
-          no pinned `search_path`, which is the shape `20260827100100` removed. The
-          allowlist is empty and `tests/auditPrivileges.spec.ts` asserts it stays
-          that way, so adding a name has to be argued for.
+                  **Closed 2026-08-27** with option 3, as corrected: `scripts/audit-privileges.ts`
+                  plus `bun run audit:privileges`, documented in CLAUDE.md. Proved by
+                  negative test rather than by a clean pass — granting EXECUTE to `anon` on
+                  `import_corpus_version` made it report
+                  `FAIL public.import_corpus_version / EXECUTE granted to: anon` and exit 1;
+                  revoking restored PASS. It also flags any `SECURITY DEFINER` function with
+                  no pinned `search_path`, which is the shape `20260827100100` removed. The
+                  allowlist is empty and `tests/auditPrivileges.spec.ts` asserts it stays
+                  that way, so adding a name has to be argued for.
 
-          **Option 1 is still available and not foreclosed.** Moving
-          `import_corpus_version` into a non-exposed schema remains the stronger
-          prevention; it needs `corpus-import.ts` off `supabase.rpc()` and onto a
-          direct `pg` connection, which is now less of a leap since this script
-          already carries that dependency and connection pattern.
+                  **Option 1 is still available and not foreclosed.** Moving
+                  `import_corpus_version` into a non-exposed schema remains the stronger
+                  prevention; it needs `corpus-import.ts` off `supabase.rpc()` and onto a
+                  direct `pg` connection, which is now less of a leap since this script
+                  already carries that dependency and connection pattern.
+
+- [x] **G4. Move `import_corpus_version` out of `public` — G2 option 1.**
+      G2 shipped detection (`bun run audit:privileges`). This is the prevention
+      it deliberately left: PostgREST serves only the schemas in
+      `[api] schemas` (`supabase/config.toml:13` — `public`, `graphql_public`),
+      so a function in a `private` schema is not reachable at
+      `/rest/v1/rpc/<name>` at all and there is no grant to forget on the next
+      `CREATE FUNCTION`.
+
+      **It breaks the only caller, which is the whole cost.**
+              `scripts/corpus-import.ts` reaches the function through
+              `supabase.rpc()`, i.e. PostgREST. Moving the function means moving the
+              script onto a direct Postgres connection (`pg`, already a dependency and
+              already used by `scripts/audit-privileges.ts`).
+
+              **The ripple that matters is `env-target.ts`, not the script.**
+              `TARGET_KEYS` is the three variables that must move together, and CLAUDE.md
+              records why: moving only some of them leaves the app reading one project
+              while scripts write to another, which `env:status` reports as
+              `SPLIT TARGET` and which is the state this repo was in before that script
+              existed. A `SUPABASE_DB_URL` that `env-target.ts` does not manage
+              reintroduces exactly that hazard by the back door, so it has to join
+              `TARGET_KEYS` in the same change — not as a follow-up.
+
+              Steps:
+
+              - migration: `CREATE SCHEMA private`, `ALTER FUNCTION ... SET SCHEMA private`,
+                revoke from `PUBLIC`/`anon`/`authenticated`, and confirm `private` is
+                absent from the exposed-schema list on both hosted projects.
+              - `corpus-import.ts` onto `pg` **entirely**, not just the RPC call. If it
+                needs `SUPABASE_DB_URL` anyway, running the two lookups through the same
+                connection leaves it with one credential instead of two, which is a
+                smaller split-target surface rather than a larger one. The documented
+                idempotency semantics — pre-insert lookup, completeness check, 23505 as
+                "already imported" — carry over unchanged.
+              - `env-target.ts`: add `SUPABASE_DB_URL` to `TARGET_KEYS`, source it from
+                `supabase status` for local, and update `tests/envTarget.spec.ts`.
+              - CLAUDE.md: the new schema, and the fourth variable.
+
+              **Known prerequisite, and it cannot be worked around from here:** the
+              hosted `SUPABASE_DB_URL` carries the database password, which is not in
+              `supabase status` and not derivable from the project ref. `env:hosted`
+              will fail loudly until it is added to `.env.hosted`. Failing loudly is the
+              right behaviour — the alternative is `corpus:import` silently targeting
+              nothing — but it does mean this change leaves a step that only the repo
+              owner can complete.
+
+              **Closed 2026-08-28.** Proved by the thing the change is actually for,
+              against the local stack: an anon `POST /rest/v1/rpc/import_corpus_version`
+              returns **404**, the same call forced with `Content-Profile: private`
+              returns **406**, and an anon read of the exposed `corpus_versions` returns
+              401 — that last one is the control, and without it a 404 could just as
+              easily mean the request was malformed. `public` now holds zero functions;
+              `private.import_corpus_version` reports `anon_exec` f, `auth_exec` f, and
+              no schema USAGE for either role.
+
+              `corpus:import` was exercised end to end through the new path: a first run
+              imported 29 pages, a second reported `Corpus unchanged`, and
+              `corpus_versions` holds one row — so the pre-insert lookup and completeness
+              guard survived the move off PostgREST.
+
+              `env:status` caught its own gap before the fix landed
+              (`SUPABASE_DB_URL is not set — nothing to compare`), and
+              `credentialsAgree` now reads the ref from a connection string's host or
+              pooler username, with a test asserting the string itself never reaches a
+              message since it carries the password. 284 unit tests, up from 279.
+
+              **The prerequisite this could not solve for itself is now live:**
+              `env:hosted` will fail with `.env.hosted is missing SUPABASE_DB_URL` until
+              that value is added, because the hosted connection string carries a
+              password that is not in `supabase status` and not derivable from the
+              project ref. Local is unaffected — `supabase status` supplies `DB_URL`.
 
 - [x] **G3. UUIDv4 primary keys — decided, no change, recorded so it is not
       re-litigated.** `schema-primary-keys` prefers `bigint identity` or UUIDv7
