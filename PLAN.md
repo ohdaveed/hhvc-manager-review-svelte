@@ -97,8 +97,31 @@ leaving 16 dependency findings that are a single product decision (B5).
       CLAUDE.md says Supabase access is client-side only — it could never run
       in the browser. Either dead scaffolding or a server-side plan that never
       landed.
-      _Done when:_ each is removed, or recorded here as deliberately retained
-      with the reason.
+      **The list above is stale, and two of its entries are now live.**
+      Re-measured 2026-08-28 from knip's own output: `pg` is imported by
+      `scripts/corpus-import.ts:24` and `scripts/audit-privileges.ts:23`, and
+      `lucide-svelte` by `ReviewWorkspace.svelte:4` and
+      `src/routes/review/+layout.svelte:13`. `pg` became load-bearing in #67,
+      which moved `import_corpus_version` into the `private` schema where
+      PostgREST cannot reach it — so the flag above, that a Node Postgres driver
+      could never run in this browser-only app, is answered rather than
+      outstanding. **Deleting `pg` would break `corpus:import` and
+      `audit:privileges`, and `bun run verify` would not catch it**: it runs unit
+      tests and the build, neither of which executes either script.
+      **Decided 2026-08-28: remove thirteen, keep `pg` and `lucide-svelte`.**
+      The thirteen are `zod`, `ai`, `@tiptap/core`, `@tiptap/pm`,
+      `@tiptap/starter-kit`, `layerchart`, `sveltekit-superforms`,
+      `@formkit/drag-and-drop`, `@google/genai`, `@ai-sdk/anthropic`,
+      `@ai-sdk/google`, `@ai-sdk/openai` and `@ai-sdk/svelte` —
+      `@sfgov/design-system` is the fourteenth knip reports and belongs to B5.
+      The Tiptap and AI-SDK scaffolding describes work no plan on this repo
+      schedules, and Renovate (E6) would otherwise open PRs for packages nothing
+      calls. Anything genuinely wanted later reinstalls in one command; a
+      dependency nothing imports is a supply-chain surface with no offsetting
+      benefit.
+      _Done when:_ the thirteen are removed, `bun run verify` is green, **and
+      `bun run corpus:import` and `bun run audit:privileges --local` both still
+      run** — verify alone does not cover them.
       _Touches:_ `package.json`, `bun.lock`.
 
 - [x] **B3. `@sfgov/design-system` is answered — it is referenced only by dead
@@ -159,7 +182,13 @@ EXISTS`), so a re-run is safe.
       bundle whose 7,714 `!important` declarations beat every v4 utility, B3).
       Deleting those lets that dependency go too; keeping them means they stay
       ignored in `knip.jsonc`, which is the current state and is fine.
-      **This is your call, and it does not block anything else.**
+      **Decided 2026-08-28: delete the CSS half.** It is the sole referent of
+      `@sfgov/design-system`, so removing it lets that dependency go and
+      unblocks E6. Reference material that no code path reaches is served
+      better by git history than by a tree that knip has to be told to ignore.
+      _Done when:_ `src/css/**` and `src/routes/layout.css` are gone,
+      `@sfgov/design-system` is out of `package.json`, their `knip.jsonc`
+      ignores are removed, and `bun run verify` is green.
       _Touches:_ `src/css/**`, `src/routes/layout.css`, `knip.jsonc`,
       `package.json`.
 
@@ -211,7 +240,15 @@ EXISTS`), so a re-run is safe.
       and make eslint blocking, or record the count here with a ratchet so it
       can only go down. Today it is neither — it reports without blocking,
       so it can quietly grow.
-      _Touches:_ varies; `.github/workflows/pr.yml` if made blocking.
+      **Decided 2026-08-28: ratchet, do not block.** The eleven are
+      pre-existing and unrelated to any scheduled work, and making eslint
+      blocking would gate every future PR on cleaning up code none of them
+      touch. A ratchet closes the actual hole — that the count can quietly
+      grow — without that toll. Note the ratchet must run eslint directly,
+      not through `bun run lint`, whose prettier half fails first and means
+      eslint never runs at all.
+      _Done when:_ the count is asserted in CI and can only decrease.
+      _Touches:_ `.github/workflows/pr.yml`, `package.json`.
 
 - [x] **D2. Edit targets are keyboard-operable, and axe now gates it.** They
       were `<p role="button" tabindex="0">` with a click handler and no key
@@ -443,23 +480,108 @@ with native file tools. Low value, nonzero friction.
 
 ---
 
-## Suggested sequencing
+## Sequencing — current, decided 2026-08-28
 
-**F1a first, ahead of everything.** It is a dashboard check, it is the only
-item on this plan with a plausible path to data loss, and it does not depend on
-any other task.
+The original ordering is spent: Phases A, C, F and G have landed, and F1a — the
+one item with a plausible path to data loss — was closed first as planned. The
+partition table that drove it is kept at the end of this section as a record,
+not as live guidance.
 
-Then A and B1 — cheap, and they make everything downstream readable. B2/B3 are
-the remaining decision points. Nothing in C, D or E is blocked except E6, which
-should wait for B2 so Renovate is not opening PRs for packages about to be
-deleted.
+**The rule that replaces it: one PR at a time, merged before the next opens.**
+`main` is governed by the `strict` ruleset `main: require CI`, so every merge
+re-stales every other open PR and forces an update-branch plus a full re-run,
+Playwright included. Concurrent PRs cost more here than they save. Measured, not
+assumed: `gh pr list --state open` returned empty when this was written, so the
+sequence starts from a clean board.
 
-**F2a is time-sensitive in a way the others are not.** Its cost rises with
-every edit saved to the `edits` table, so it should land before the tool sees
-real review traffic.
+### Step 1 — housekeeping, one PR
 
-**Parallel-safe groups** (no shared files, per the orchestration rules in the
-global CLAUDE.md):
+B2, B5 and D1 are each decided in place above; this is only the order. They all
+touch `package.json` — the hub file named at the end of this section — so they
+cannot run concurrently, and there is no reason to spend three CI runs on them.
+
+**B5 before B2 within that PR** — a tidiness constraint, not a correctness one,
+and stated precisely because the imprecise version is tempting. knip already
+reports `@sfgov/design-system` unused, but only because B1 put its sole importer
+(`src/routes/layout.css`, which nothing imports) on knip's ignore list; the
+`@import` at `layout.css:5-7` is real. Nothing imports `layout.css`, so it is
+outside the build graph and dropping the package first would not fail the build
+— it would just leave a file in the tree importing a package that is no longer
+installed. Order them anyway; there is no cost to it.
+
+- [ ] **H1. Prune the stale remote branches.** Thirteen remotes, none reachable
+      by `git branch -r --merged origin/main`, because every PR here lands as a
+      squash and a squash-merged branch is not an ancestor of `main`. Four are
+      traceable to merged PRs by commit subject (#67, #68, #70, #71); the five
+      `fix/remediation-*` branches are not, and from the ref alone a
+      squash-merged branch and an abandoned one look identical. Verify each
+      before deleting — `.claude/skills/hhvc-branch-verification/` exists for
+      exactly this and is currently untracked.
+      _Done when:_ every branch is deleted, or recorded here with the reason it
+      was kept.
+      _Touches:_ remote refs only; no file in the tree.
+
+### Step 2 — corpus versioning slice 3, the accepted-edit overlay
+
+Plan: `docs/superpowers/plans/2026-08-25-corpus-versioning-slice-3.md` — ten
+tasks, every box open. Chosen ahead of the MVP login route because it is
+verifiable entirely from the local stack, and because Section Rethink is
+explicitly gated behind it.
+
+Two steps that are easy to omit and expensive to add back:
+
+- **Check pending migrations against production _before_ merging.** The merge is
+  the apply: the Supabase GitHub App applies
+  `20260825010000_edit_decisions.sql` to `kiynekyzqxneepjipqhg` on the merge
+  commit, with nobody running a command.
+- **Push staging by hand afterwards.** The integration names the production ref
+  only, so `aplbsgacqnxhzjuquvft` stays wherever the last manual push left it,
+  and deploy previews read staging. `supabase link --project-ref
+aplbsgacqnxhzjuquvft && supabase db push` — and check
+  `supabase/.temp/project-ref` first, because it is checkout-global and
+  whichever project was linked last is what `db push` targets.
+
+### Step 3 — what slice 3 unblocks
+
+Section Rethink slice 1
+(`docs/superpowers/plans/2026-08-23-section-rethink-slice-1.md`, eight tasks)
+becomes buildable; it must not start before slice 3, because structural ops are
+statements about an ordering that only exists at render time and would vanish on
+reload.
+
+Version-history slice 2 (durable notes, `manager_notes` → `page_notes`) has no
+plan file, and slice 3 does not depend on it.
+
+The MVP login route (`docs/superpowers/specs/2026-08-22-hhvc-mvp-ship-design.md`,
+still marked "approved design, pending implementation plan") has no plan file and
+no `/login` route in `src/routes/` — sign-in remains `ensureDevSession()` behind
+`import.meta.env.DEV` at `src/lib/supabase.ts:33`, so no reviewer but the owner
+can use production. Its Definition of Done is a live magic-link round trip,
+which needs a shared mailbox address and that account already present in the
+hosted project's `auth.users`. Resolve those two before planning it, or the code
+lands unverifiable.
+
+### The audit ladder
+
+Cheapest gate first; every one already exists in the repo. Run these per task,
+not per phase — a plan interrupted at task four should leave four verified tasks
+behind it, not ten unverified ones.
+
+| When                | Command                                                                         | What it catches                                                                                                                            |
+| ------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| Every task          | `bun run verify`                                                                | Unit tests and the production build. Prints one line each; full output goes to `$TMPDIR/hhvc-verify.log`, read only when a line says FAIL. |
+| Every task          | `git diff --name-only main...HEAD`, against the plan's **File Structure** table | An out-of-scope edit — without reading the diff.                                                                                           |
+| After any migration | `bun run audit:privileges`                                                      | A new function arriving anon-executable, and `SECURITY DEFINER` with no pinned `search_path`.                                              |
+| Once per merge      | `bun run verify:live`                                                           | The published commit. The only gate that catches a locked deploy serving an older build while newer ones go green behind it.               |
+| Never               | `bun run lint` tree-wide                                                        | Red on both halves; a prettier failure means eslint never runs. Do not reformat as a side effect of unrelated work.                        |
+
+Ticking the box and committing is part of each task, not a batch at the end.
+`resume from PLAN.md` has to be enough on its own.
+
+### The original partition, kept as a record
+
+How Phases A–F were grouped when they could still run in parallel. Superseded by
+the one-PR-at-a-time rule above, but the file boundaries are still accurate.
 
 | Group | Tasks        | Files                                                      |
 | ----- | ------------ | ---------------------------------------------------------- |
@@ -469,15 +591,10 @@ global CLAUDE.md):
 | 4     | F1b          | `supabase/migrations/**`, `supabase/seed.sql`              |
 | 5     | D2, F2a, F3a | `src/lib/components/*.svelte`, `src/lib/data/**`, `tests/` |
 
-**Group 5 is one group on purpose, not three.** D2 (keyboard access), F2a
+**Group 5 was one group on purpose, not three.** D2 (keyboard access), F2a
 (stable ids) and F3a (signed-out state) all rewrite the same edit-target markup
-in `Section.svelte` and `Page.svelte`. Splitting them across worktrees
-guarantees conflicts; doing them as one pass over those components is both
-cheaper and more coherent, since all three change what an edit target _is_.
-
-`package.json` remains the hub file: A1, B2, D2 and every Phase E item touch
-it, so they cannot run concurrently. Sequence anything that adds or removes a
-dependency.
+in `Section.svelte` and `Page.svelte`. Splitting them across worktrees guarantees
+conflicts.
 
 `package.json` is the hub file: A1, B2, D2 and every Phase E item touch it, so
 they cannot run concurrently. Sequence anything that adds or removes a
@@ -616,41 +733,41 @@ left.
       not bitten yet.
 
       **Fix: fetch one row per `(page_id, field_id)` rather than the whole
-                      history.** That is what `editsStore` already holds — `saveInlineEdit`
-                      filters the pair out before appending — so the reader's semantics do not
-                      change, only the row count, which becomes bounded by field count instead
-                      of edit count. PostgREST has no `DISTINCT ON`, so this needs a database
-                      object:
+                                  history.** That is what `editsStore` already holds — `saveInlineEdit`
+                                  filters the pair out before appending — so the reader's semantics do not
+                                  change, only the row count, which becomes bounded by field count instead
+                                  of edit count. PostgREST has no `DISTINCT ON`, so this needs a database
+                                  object:
 
-                      - migration: `CREATE INDEX edits_page_field_created_idx ON edits
-                        (page_id, field_id, created_at DESC)`, then
-                        `CREATE VIEW latest_edits WITH (security_invoker = true) AS SELECT
-                        DISTINCT ON (page_id, field_id) * FROM edits ORDER BY page_id,
-                        field_id, created_at DESC`, then `GRANT SELECT ON latest_edits TO
-                        authenticated`.
-                      - `security_invoker = true` is load bearing. Without it a view runs with
-                        its owner's rights and the underlying `edits` RLS is bypassed — the
-                        view would be a read-everything hole wearing a SELECT policy's clothes.
-                        Postgres 15+ only; the stack is 17.6.
-                      - a **view, not an RPC**, deliberately: a function in `public` would add
-                        another object to exactly the class G2 is about, and would need its own
-                        REVOKE dance. A view carries RLS instead of EXECUTE grants.
-                      - `loadReview()` reads `latest_edits`; the realtime channel stays
-                        subscribed to `edits`, since publications carry tables, not views.
-                      - test: prove that with more than `max_rows` rows present the newest edit
-                        for a field is still the one returned. A test that only checks the fold
-                        would pass today and pass after, and prove nothing.
+                                  - migration: `CREATE INDEX edits_page_field_created_idx ON edits
+                                    (page_id, field_id, created_at DESC)`, then
+                                    `CREATE VIEW latest_edits WITH (security_invoker = true) AS SELECT
+                                    DISTINCT ON (page_id, field_id) * FROM edits ORDER BY page_id,
+                                    field_id, created_at DESC`, then `GRANT SELECT ON latest_edits TO
+                                    authenticated`.
+                                  - `security_invoker = true` is load bearing. Without it a view runs with
+                                    its owner's rights and the underlying `edits` RLS is bypassed — the
+                                    view would be a read-everything hole wearing a SELECT policy's clothes.
+                                    Postgres 15+ only; the stack is 17.6.
+                                  - a **view, not an RPC**, deliberately: a function in `public` would add
+                                    another object to exactly the class G2 is about, and would need its own
+                                    REVOKE dance. A view carries RLS instead of EXECUTE grants.
+                                  - `loadReview()` reads `latest_edits`; the realtime channel stays
+                                    subscribed to `edits`, since publications carry tables, not views.
+                                  - test: prove that with more than `max_rows` rows present the newest edit
+                                    for a field is still the one returned. A test that only checks the fold
+                                    would pass today and pass after, and prove nothing.
 
-                  **Closed 2026-08-27** by `20260827110000_latest_edits_view.sql` plus
-                  `loadReview()` reading the view. Reproduced first: with 1500 edits on one
-                  field, the old ascending-capped query surfaces `rev-999` and the view
-                  surfaces `rev-1500`, returning one row rather than 1500.
-                  `pg_class.reloptions` reads `{security_invoker=true}` on the real object.
-                  The composite index is unused at current scale -- the planner picks
-                  Seq Scan + Sort, which is correct for 29 pages -- and is there for growth.
-                  Guard tests: `tests/loadReviewEdits.test.ts` (the reader queries the view,
-                  not the table) and `tests/latestEditsView.spec.ts` (the view keeps
-                  `security_invoker`).
+                              **Closed 2026-08-27** by `20260827110000_latest_edits_view.sql` plus
+                              `loadReview()` reading the view. Reproduced first: with 1500 edits on one
+                              field, the old ascending-capped query surfaces `rev-999` and the view
+                              surfaces `rev-1500`, returning one row rather than 1500.
+                              `pg_class.reloptions` reads `{security_invoker=true}` on the real object.
+                              The composite index is unused at current scale -- the planner picks
+                              Seq Scan + Sort, which is correct for 29 pages -- and is there for growth.
+                              Guard tests: `tests/loadReviewEdits.test.ts` (the reader queries the view,
+                              not the table) and `tests/latestEditsView.spec.ts` (the view keeps
+                              `security_invoker`).
 
 - [x] **G2. The anon-EXECUTE hole is closed per function, not per class.**
       `20260823130000` documents exactly why revoking `PUBLIC` was insufficient
@@ -663,57 +780,57 @@ left.
 
       **Three candidate fixes, and the choice is not obvious:**
 
-                      1. *Non-exposed schema.* The rule file's own answer, and structurally the
-                         strongest — PostgREST does not serve a schema outside `db.schemas`, so
-                         there is no grant to forget. **But it breaks the only caller:**
-                         `scripts/corpus-import.ts` reaches `import_corpus_version` through
-                         `supabase.rpc()`, which is PostgREST. Moving the function means moving
-                         that script onto a direct Postgres connection (`pg` is already a
-                         dependency, currently flagged unused by knip).
-                      2. *Schema-wide default revoke.* `ALTER DEFAULT PRIVILEGES FOR ROLE
-                         postgres IN SCHEMA public REVOKE EXECUTE ON FUNCTIONS FROM anon,
-                         authenticated`. One migration, no caller changes — but it also 403s
-                         the first RPC someone genuinely wants callable, at a distance, with no
-                         hint as to why.
-                      3. *Detection rather than prevention.* Assert in a migration `DO` block
-                         (and a `bun run audit:privileges` script) that no function in `public`
-                         is anon- or authenticated-executable outside a named allowlist. Fails
-                         loudly at push time, names the function, and leaves intentional RPCs
-                         possible.
+                                  1. *Non-exposed schema.* The rule file's own answer, and structurally the
+                                     strongest — PostgREST does not serve a schema outside `db.schemas`, so
+                                     there is no grant to forget. **But it breaks the only caller:**
+                                     `scripts/corpus-import.ts` reaches `import_corpus_version` through
+                                     `supabase.rpc()`, which is PostgREST. Moving the function means moving
+                                     that script onto a direct Postgres connection (`pg` is already a
+                                     dependency, currently flagged unused by knip).
+                                  2. *Schema-wide default revoke.* `ALTER DEFAULT PRIVILEGES FOR ROLE
+                                     postgres IN SCHEMA public REVOKE EXECUTE ON FUNCTIONS FROM anon,
+                                     authenticated`. One migration, no caller changes — but it also 403s
+                                     the first RPC someone genuinely wants callable, at a distance, with no
+                                     hint as to why.
+                                  3. *Detection rather than prevention.* Assert in a migration `DO` block
+                                     (and a `bun run audit:privileges` script) that no function in `public`
+                                     is anon- or authenticated-executable outside a named allowlist. Fails
+                                     loudly at push time, names the function, and leaves intentional RPCs
+                                     possible.
 
-                      **Correction, 2026-08-27, found while starting the work:** option 3 as
-                  written above does not work in its migration form. A `DO` block in a
-                  migration runs exactly once -- `supabase_migrations.schema_migrations`
-                  records the version and `db push` skips it forever after -- so it would
-                  assert the state of `public` on the day it was applied and never again.
-                  The function added two migrations later is precisely the one it needs to
-                  catch, and is the one it cannot. Nor can a unit test do it: CI has no
-                  database, which is why `pr.yml` builds with placeholder Supabase env vars.
-                  Detection here has to be a **script run against a live project** -- the
-                  shape `verify:live` already uses for the deployed site -- and it needs a
-                  direct Postgres connection, because `pg_proc.proacl` is not reachable
-                  through PostgREST. `pg` is already a dependency (knip currently reports it
-                  unused).
+                                  **Correction, 2026-08-27, found while starting the work:** option 3 as
+                              written above does not work in its migration form. A `DO` block in a
+                              migration runs exactly once -- `supabase_migrations.schema_migrations`
+                              records the version and `db push` skips it forever after -- so it would
+                              assert the state of `public` on the day it was applied and never again.
+                              The function added two migrations later is precisely the one it needs to
+                              catch, and is the one it cannot. Nor can a unit test do it: CI has no
+                              database, which is why `pr.yml` builds with placeholder Supabase env vars.
+                              Detection here has to be a **script run against a live project** -- the
+                              shape `verify:live` already uses for the deployed site -- and it needs a
+                              direct Postgres connection, because `pg_proc.proacl` is not reachable
+                              through PostgREST. `pg` is already a dependency (knip currently reports it
+                              unused).
 
-                  **Recommend 3, then 1 for `import_corpus_version` specifically** if the
-                      script is moving to `pg` for other reasons. 2 is the trap: it prevents the
-                      hole and the legitimate case with the same lever. Decide before writing.
+                              **Recommend 3, then 1 for `import_corpus_version` specifically** if the
+                                  script is moving to `pg` for other reasons. 2 is the trap: it prevents the
+                                  hole and the legitimate case with the same lever. Decide before writing.
 
-                  **Closed 2026-08-27** with option 3, as corrected: `scripts/audit-privileges.ts`
-                  plus `bun run audit:privileges`, documented in CLAUDE.md. Proved by
-                  negative test rather than by a clean pass — granting EXECUTE to `anon` on
-                  `import_corpus_version` made it report
-                  `FAIL public.import_corpus_version / EXECUTE granted to: anon` and exit 1;
-                  revoking restored PASS. It also flags any `SECURITY DEFINER` function with
-                  no pinned `search_path`, which is the shape `20260827100100` removed. The
-                  allowlist is empty and `tests/auditPrivileges.spec.ts` asserts it stays
-                  that way, so adding a name has to be argued for.
+                              **Closed 2026-08-27** with option 3, as corrected: `scripts/audit-privileges.ts`
+                              plus `bun run audit:privileges`, documented in CLAUDE.md. Proved by
+                              negative test rather than by a clean pass — granting EXECUTE to `anon` on
+                              `import_corpus_version` made it report
+                              `FAIL public.import_corpus_version / EXECUTE granted to: anon` and exit 1;
+                              revoking restored PASS. It also flags any `SECURITY DEFINER` function with
+                              no pinned `search_path`, which is the shape `20260827100100` removed. The
+                              allowlist is empty and `tests/auditPrivileges.spec.ts` asserts it stays
+                              that way, so adding a name has to be argued for.
 
-                  **Option 1 is still available and not foreclosed.** Moving
-                  `import_corpus_version` into a non-exposed schema remains the stronger
-                  prevention; it needs `corpus-import.ts` off `supabase.rpc()` and onto a
-                  direct `pg` connection, which is now less of a leap since this script
-                  already carries that dependency and connection pattern.
+                              **Option 1 is still available and not foreclosed.** Moving
+                              `import_corpus_version` into a non-exposed schema remains the stronger
+                              prevention; it needs `corpus-import.ts` off `supabase.rpc()` and onto a
+                              direct `pg` connection, which is now less of a leap since this script
+                              already carries that dependency and connection pattern.
 
 - [x] **G4. Move `import_corpus_version` out of `public` — G2 option 1.**
       G2 shipped detection (`bun run audit:privileges`). This is the prevention
@@ -724,68 +841,68 @@ left.
       `CREATE FUNCTION`.
 
       **It breaks the only caller, which is the whole cost.**
-              `scripts/corpus-import.ts` reaches the function through
-              `supabase.rpc()`, i.e. PostgREST. Moving the function means moving the
-              script onto a direct Postgres connection (`pg`, already a dependency and
-              already used by `scripts/audit-privileges.ts`).
+                          `scripts/corpus-import.ts` reaches the function through
+                          `supabase.rpc()`, i.e. PostgREST. Moving the function means moving the
+                          script onto a direct Postgres connection (`pg`, already a dependency and
+                          already used by `scripts/audit-privileges.ts`).
 
-              **The ripple that matters is `env-target.ts`, not the script.**
-              `TARGET_KEYS` is the three variables that must move together, and CLAUDE.md
-              records why: moving only some of them leaves the app reading one project
-              while scripts write to another, which `env:status` reports as
-              `SPLIT TARGET` and which is the state this repo was in before that script
-              existed. A `SUPABASE_DB_URL` that `env-target.ts` does not manage
-              reintroduces exactly that hazard by the back door, so it has to join
-              `TARGET_KEYS` in the same change — not as a follow-up.
+                          **The ripple that matters is `env-target.ts`, not the script.**
+                          `TARGET_KEYS` is the three variables that must move together, and CLAUDE.md
+                          records why: moving only some of them leaves the app reading one project
+                          while scripts write to another, which `env:status` reports as
+                          `SPLIT TARGET` and which is the state this repo was in before that script
+                          existed. A `SUPABASE_DB_URL` that `env-target.ts` does not manage
+                          reintroduces exactly that hazard by the back door, so it has to join
+                          `TARGET_KEYS` in the same change — not as a follow-up.
 
-              Steps:
+                          Steps:
 
-              - migration: `CREATE SCHEMA private`, `ALTER FUNCTION ... SET SCHEMA private`,
-                revoke from `PUBLIC`/`anon`/`authenticated`, and confirm `private` is
-                absent from the exposed-schema list on both hosted projects.
-              - `corpus-import.ts` onto `pg` **entirely**, not just the RPC call. If it
-                needs `SUPABASE_DB_URL` anyway, running the two lookups through the same
-                connection leaves it with one credential instead of two, which is a
-                smaller split-target surface rather than a larger one. The documented
-                idempotency semantics — pre-insert lookup, completeness check, 23505 as
-                "already imported" — carry over unchanged.
-              - `env-target.ts`: add `SUPABASE_DB_URL` to `TARGET_KEYS`, source it from
-                `supabase status` for local, and update `tests/envTarget.spec.ts`.
-              - CLAUDE.md: the new schema, and the fourth variable.
+                          - migration: `CREATE SCHEMA private`, `ALTER FUNCTION ... SET SCHEMA private`,
+                            revoke from `PUBLIC`/`anon`/`authenticated`, and confirm `private` is
+                            absent from the exposed-schema list on both hosted projects.
+                          - `corpus-import.ts` onto `pg` **entirely**, not just the RPC call. If it
+                            needs `SUPABASE_DB_URL` anyway, running the two lookups through the same
+                            connection leaves it with one credential instead of two, which is a
+                            smaller split-target surface rather than a larger one. The documented
+                            idempotency semantics — pre-insert lookup, completeness check, 23505 as
+                            "already imported" — carry over unchanged.
+                          - `env-target.ts`: add `SUPABASE_DB_URL` to `TARGET_KEYS`, source it from
+                            `supabase status` for local, and update `tests/envTarget.spec.ts`.
+                          - CLAUDE.md: the new schema, and the fourth variable.
 
-              **Known prerequisite, and it cannot be worked around from here:** the
-              hosted `SUPABASE_DB_URL` carries the database password, which is not in
-              `supabase status` and not derivable from the project ref. `env:hosted`
-              will fail loudly until it is added to `.env.hosted`. Failing loudly is the
-              right behaviour — the alternative is `corpus:import` silently targeting
-              nothing — but it does mean this change leaves a step that only the repo
-              owner can complete.
+                          **Known prerequisite, and it cannot be worked around from here:** the
+                          hosted `SUPABASE_DB_URL` carries the database password, which is not in
+                          `supabase status` and not derivable from the project ref. `env:hosted`
+                          will fail loudly until it is added to `.env.hosted`. Failing loudly is the
+                          right behaviour — the alternative is `corpus:import` silently targeting
+                          nothing — but it does mean this change leaves a step that only the repo
+                          owner can complete.
 
-              **Closed 2026-08-28.** Proved by the thing the change is actually for,
-              against the local stack: an anon `POST /rest/v1/rpc/import_corpus_version`
-              returns **404**, the same call forced with `Content-Profile: private`
-              returns **406**, and an anon read of the exposed `corpus_versions` returns
-              401 — that last one is the control, and without it a 404 could just as
-              easily mean the request was malformed. `public` now holds zero functions;
-              `private.import_corpus_version` reports `anon_exec` f, `auth_exec` f, and
-              no schema USAGE for either role.
+                          **Closed 2026-08-28.** Proved by the thing the change is actually for,
+                          against the local stack: an anon `POST /rest/v1/rpc/import_corpus_version`
+                          returns **404**, the same call forced with `Content-Profile: private`
+                          returns **406**, and an anon read of the exposed `corpus_versions` returns
+                          401 — that last one is the control, and without it a 404 could just as
+                          easily mean the request was malformed. `public` now holds zero functions;
+                          `private.import_corpus_version` reports `anon_exec` f, `auth_exec` f, and
+                          no schema USAGE for either role.
 
-              `corpus:import` was exercised end to end through the new path: a first run
-              imported 29 pages, a second reported `Corpus unchanged`, and
-              `corpus_versions` holds one row — so the pre-insert lookup and completeness
-              guard survived the move off PostgREST.
+                          `corpus:import` was exercised end to end through the new path: a first run
+                          imported 29 pages, a second reported `Corpus unchanged`, and
+                          `corpus_versions` holds one row — so the pre-insert lookup and completeness
+                          guard survived the move off PostgREST.
 
-              `env:status` caught its own gap before the fix landed
-              (`SUPABASE_DB_URL is not set — nothing to compare`), and
-              `credentialsAgree` now reads the ref from a connection string's host or
-              pooler username, with a test asserting the string itself never reaches a
-              message since it carries the password. 284 unit tests, up from 279.
+                          `env:status` caught its own gap before the fix landed
+                          (`SUPABASE_DB_URL is not set — nothing to compare`), and
+                          `credentialsAgree` now reads the ref from a connection string's host or
+                          pooler username, with a test asserting the string itself never reaches a
+                          message since it carries the password. 284 unit tests, up from 279.
 
-              **The prerequisite this could not solve for itself is now live:**
-              `env:hosted` will fail with `.env.hosted is missing SUPABASE_DB_URL` until
-              that value is added, because the hosted connection string carries a
-              password that is not in `supabase status` and not derivable from the
-              project ref. Local is unaffected — `supabase status` supplies `DB_URL`.
+                          **The prerequisite this could not solve for itself is now live:**
+                          `env:hosted` will fail with `.env.hosted is missing SUPABASE_DB_URL` until
+                          that value is added, because the hosted connection string carries a
+                          password that is not in `supabase status` and not derivable from the
+                          project ref. Local is unaffected — `supabase status` supplies `DB_URL`.
 
 - [x] **G3. UUIDv4 primary keys — decided, no change, recorded so it is not
       re-litigated.** `schema-primary-keys` prefers `bigint identity` or UUIDv7
