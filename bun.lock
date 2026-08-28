@@ -13,7 +13,6 @@
         "@fontsource/roboto-slab": "^5.3.0",
         "@formkit/drag-and-drop": "^0.6.1",
         "@google/genai": "^2.18.0",
-        "@sfgov/design-system": "^0.0.1",
         "@supabase/supabase-js": "^2.112.3",
         "@tiptap/core": "^3.30.2",
         "@tiptap/pm": "^3.30.2",
@@ -516,8 +515,6 @@
     "@secretlint/secretlint-rule-preset-recommend": ["@secretlint/secretlint-rule-preset-recommend@13.0.4", "", {}, "sha512-Nbcr7tvyKuRF4BKh7RQSCEOaif4gFPH/qjK2ajcoUDGL7HAY/C6PzcsmVR1Y0qQCRqrBuMuXn1onXE+wxNNNsw=="],
 
     "@secretlint/types": ["@secretlint/types@13.0.4", "", {}, "sha512-on/DivRDZEFzRD2pZJO0wkIL+AvEY+KOoZLPCWcz4pjZnJ4NzMuHQjvTJc9KY0yht+ugcYg9AmtOUzpEk31IWA=="],
-
-    "@sfgov/design-system": ["@sfgov/design-system@0.0.1", "", { "peerDependencies": { "react": "^18.2.0", "react-dom": "^18.2.0", "tailwindcss": "^2.2.19" }, "optionalPeers": ["react", "react-dom", "tailwindcss"] }, "sha512-6ylKYdSO3ycJuWouw6O8PBJzB5EUmPPa2W55j4BUerpmj60CNpedBJmQ65G7ppFRVuwLhIhb7bdhgpbtc/wYAg=="],
 
     "@sideway/address": ["@sideway/address@4.1.5", "", { "dependencies": { "@hapi/hoek": "^9.0.0" } }, "sha512-IqO/DUQHUkPeixNQ8n0JA6102hT9CmaljNTPmQ1u8MEhBo/R4Q8eKLN/vGZxuebwOroDB4cbpjheD4+/sKFK4Q=="],
 

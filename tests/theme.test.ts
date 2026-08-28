@@ -27,8 +27,10 @@ describe('Global Theme Configuration', () => {
 	// These three exist because the SFDS token layer was dead for months in a
 	// way nothing caught: `src/css/theme.css` was real, 952 lines, and imported
 	// by NOTHING. Its only importer was `src/routes/layout.css`, itself
-	// imported by nothing. The design handoff names theme.css as the token
-	// layer to build on, which is only true while it is actually loaded.
+	// imported by nothing — that file has since been deleted (PLAN.md B5), so
+	// `app.css` is now the only path by which either token file loads at all.
+	// The design handoff names theme.css as the token layer to build on, which
+	// is only true while it is actually loaded.
 	//
 	// The old version of this file would have passed with theme.css deleted —
 	// it asserts against app.css and never mentions the token files. That is

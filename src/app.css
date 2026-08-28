@@ -16,11 +16,12 @@
    `theme.css` composes into semantic and component tokens. Primitives first.
 
    Both files are `:root` custom properties only — no selectors, no
-   `!important`, so nothing here can outrank a Tailwind utility. Deliberately
-   NOT importing the rest of `src/css/`: those are the legacy component
-   stylesheets, and `layout.css` additionally pulls `@sfgov/design-system`,
-   whose Tailwind v3 build carries 7,714 `!important` declarations that beat
-   every v4 utility (see `src/app.css` note below and PLAN.md B3). */
+   `!important`, so nothing here can outrank a Tailwind utility.
+
+   These are now the ONLY two files in `src/css/`. The nine legacy component
+   stylesheets and `layout.css` — the dead entry point that was their sole
+   importer, and the sole importer of `@sfgov/design-system` — were deleted in
+   PLAN.md B5, along with the package itself. Git history holds them. */
 @import './css/sfds.css';
 @import './css/theme.css';
 
@@ -199,8 +200,9 @@ body {
 /* ---------------------------------------------------------------------------
    SFDS tokens, translated to Tailwind v4.
 
-   This replaces `@import '@sfgov/design-system/dist/css/sfds.css'`. That file
-   is a Tailwind v3 build: 401KB of it (99%) is `utilities.css`, generated from
+   This replaces `@import '@sfgov/design-system/dist/css/sfds.css'`. That
+   package was removed from `package.json` in PLAN.md B5; this note records why
+   there was nothing to port from it. That file was a Tailwind v3 build: 401KB of it (99%) is `utilities.css`, generated from
    the package's own theme.js with `important: true` in the preset. All 7,714
    of its `!important` declarations beat every v4 utility regardless of
    specificity or cascade layer, which is why every shadcn component rendered
