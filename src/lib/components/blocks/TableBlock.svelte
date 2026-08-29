@@ -18,7 +18,7 @@
 	 * grey fill and right border. The `**` in `'**Sec. 581(a)**'` is NOT that
 	 * signal: it is the corpus's ordinary inline emphasis, used 94 times
 	 * across bullets, paragraphs and callouts too, and it renders as bold
-	 * through the same `InlineMarkdown` path every other field uses.
+	 * through the same `MarkdownText` path every other field uses.
 	 *
 	 * The design's "Full Table" instance also carries a 40px title and a
 	 * description. Neither is ported: that instance is a documentation

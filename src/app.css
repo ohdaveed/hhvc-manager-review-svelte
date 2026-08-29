@@ -341,6 +341,23 @@ body {
 		color: var(--color-sfds-blue-dark);
 	}
 
+	/* `MarkdownText` renders a link as a span rather than an anchor when it sits
+	   inside `EditTarget`'s selection button, where a nested `<a>` would be
+	   invalid HTML. It has to LOOK the same, or the page reads differently
+	   signed in and signed out for a reason that is purely structural. */
+	& .md-link {
+		color: var(--color-sfds-action);
+		text-decoration: underline;
+		text-underline-offset: 3px;
+	}
+
+	/* A `#` target: the mockup says a link belongs here and has not chosen the
+	   destination. Dotted rather than solid, so the gap is visible to a reviewer
+	   instead of reading as a finished link. */
+	& .md-link-unset {
+		text-decoration-style: dotted;
+	}
+
 	& h1,
 	& h2 {
 		margin-top: 0;

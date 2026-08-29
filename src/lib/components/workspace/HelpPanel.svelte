@@ -3,7 +3,7 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { ScrollArea } from '$lib/components/ui/scroll-area/index.js';
 	import { buildTranscript, renderTranscriptMarkdown } from '$lib/legacy-core/karl-transcript.js';
-	import { pageStore } from '$lib/stores/pageData.svelte';
+	import { pagesByKey } from '$lib/data';
 	import { editsStore, pagesStore } from '$lib/stores/reviewState';
 
 	let { pageData } = $props();
@@ -59,17 +59,21 @@
 	// Build the markdown transcript for the current page
 	let markdownContent = $derived.by(() => {
 		if (!pageData) return 'No page selected.';
-		// The legacy builder expects the page corpus as a map of `id -> page` for resolving link titles
-		const pagesMap = pageStore.pages.reduce(
-			(acc, p) => {
-				acc[p.id] = p;
-				return acc;
-			},
-			{} as Record<string, object>
-		);
-
 		try {
-			const transcript = buildTranscript(pageData, record, pagesMap);
+			// `pagesByKey`, NOT a map keyed by the derived routable id.
+			//
+			// Every lookup the transcript does against this map is a TARGET lookup
+			// -- `linkRepresentation`, `buttonTarget`, `card.target` -- and a target
+			// is a `pagesByKey` key (`afterReport`), which is also what
+			// `src/lib/data/index.ts` documents as "the AI backend's link
+			// vocabulary". Keyed by routable id instead, none of them resolved: on
+			// `article-11-compliance-for-property-owners` all four internal links
+			// rendered as "unresolved target -- neither a page key in this corpus
+			// nor an http(s) URL", where they should read
+			// `Internal link -> "<title>"`. The transcript is what an editor
+			// retypes into Karl, so this was telling them a real destination did
+			// not exist.
+			const transcript = buildTranscript(pageData, record, pagesByKey);
 			return renderTranscriptMarkdown(transcript);
 		} catch (e) {
 			console.error('Error generating transcript:', e);
@@ -101,7 +105,7 @@
 		</Card.Content>
 	</Card.Root>
 
-	<ScrollArea class="bg-muted/40 min-h-0 flex-1 rounded-lg border">
+	<ScrollArea class="min-h-0 flex-1 rounded-lg border bg-muted/40">
 		<pre class="p-4 font-mono text-xs whitespace-pre-wrap">{markdownContent}</pre>
 	</ScrollArea>
 </div>

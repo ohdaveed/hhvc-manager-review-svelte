@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { pageStore } from '$lib/stores/pageData.svelte';
 	import { sessionStore } from '$lib/stores/session.svelte';
-	import InlineMarkdown from './InlineMarkdown.svelte';
+	import MarkdownText from './MarkdownText.svelte';
 
 	/**
 	 * One editable piece of mockup copy.
@@ -81,7 +81,12 @@
 				     margin: that overflows the mockup sideways. Vertical room is
 				     made by the host element instead. -->
 				<span class="edit-target-badge" aria-hidden="true">{badge} · {name}</span>
-			{/if}<InlineMarkdown text={value} />
+			{/if}
+			<!-- `interactive={false}`: this is inside the selection `<button>`, and an
+			     `<a>` nested in a `<button>` is invalid HTML. `value` itself is
+			     untouched -- the raw markdown is still what `select` puts on the
+			     panel and what any rewrite writes back. -->
+			<MarkdownText {value} interactive={false} />
 		</button>
 	</svelte:element>
 {:else}
@@ -92,6 +97,8 @@
 		{id}
 		class={className}
 		data-rewrite-field={fieldId}
-		data-unverified={unverified || undefined}><InlineMarkdown text={value} /></svelte:element
+		data-unverified={unverified || undefined}
 	>
+		<MarkdownText {value} />
+	</svelte:element>
 {/if}
