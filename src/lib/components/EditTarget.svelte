@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { pageStore } from '$lib/stores/pageData.svelte';
 	import { sessionStore } from '$lib/stores/session.svelte';
+	import InlineMarkdown from './InlineMarkdown.svelte';
 
 	/**
 	 * One editable piece of mockup copy.
@@ -80,8 +81,7 @@
 				     margin: that overflows the mockup sideways. Vertical room is
 				     made by the host element instead. -->
 				<span class="edit-target-badge" aria-hidden="true">{badge} · {name}</span>
-			{/if}
-			{value}
+			{/if}<InlineMarkdown text={value} />
 		</button>
 	</svelte:element>
 {:else}
@@ -92,8 +92,6 @@
 		{id}
 		class={className}
 		data-rewrite-field={fieldId}
-		data-unverified={unverified || undefined}
+		data-unverified={unverified || undefined}><InlineMarkdown text={value} /></svelte:element
 	>
-		{value}
-	</svelte:element>
 {/if}

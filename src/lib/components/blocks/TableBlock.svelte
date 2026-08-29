@@ -25,7 +25,7 @@
 	 * specimen, `Section.svelte` already renders `section.heading` as the
 	 * `<h2>` one level up, and the corpus has no per-table description field.
 	 */
-	let { table, fieldKey, label }: { table?: string[][]; fieldKey: string; label: string } =
+	let { table, sectionKey, label }: { table?: string[][]; sectionKey: string; label: string } =
 		$props();
 
 	const rows = $derived(Array.isArray(table) ? table : []);
@@ -36,7 +36,14 @@
 {#if rows.length}
 	<!-- `tabindex` + `role="region"` so the scroll container is reachable by
 	     keyboard when it actually overflows; without it a keyboard-only
-	     reviewer cannot reach the hidden columns. -->
+	     reviewer cannot reach the hidden columns.
+
+	     Svelte's `a11y_no_noninteractive_tabindex` fires here and is wrong for
+	     this case: axe's own `scrollable-region-focusable` rule REQUIRES a
+	     scrollable container to be focusable, and the labelled-region pattern
+	     is how it is satisfied. Suppressing the framework warning is what keeps
+	     the e2e axe pass green, so the two are not in tension. -->
+	<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 	<div class="table-scroll" tabindex="0" role="region" aria-label={`${label} table`}>
 		<table class="sfgov-table">
 			<thead>
@@ -46,7 +53,7 @@
 							<EditTarget
 								as="span"
 								name={`${label} Table Header`}
-								fieldId={`sections.${fieldKey}.table.0.${c}`}
+								fieldId={`sections.${sectionKey}.table.0.${c}`}
 								value={cell}
 							/>
 						</th>
@@ -61,7 +68,7 @@
 								<EditTarget
 									as="span"
 									name={`${label} Table Cell`}
-									fieldId={`sections.${fieldKey}.table.${r + 1}.${c}`}
+									fieldId={`sections.${sectionKey}.table.${r + 1}.${c}`}
 									value={cell}
 								/>
 							</td>
@@ -94,14 +101,19 @@
 		overflow-x: auto;
 		margin: 20px 0;
 		background:
-			linear-gradient(to right, #ffffff 30%, rgba(255, 255, 255, 0)) left center,
-			linear-gradient(to left, #ffffff 30%, rgba(255, 255, 255, 0)) right center,
-			linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.4)) left center,
-			linear-gradient(to left, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.4)) right center;
+			linear-gradient(to right, #ffffff 50%, rgba(255, 255, 255, 0)) left center,
+			linear-gradient(to left, #ffffff 50%, rgba(255, 255, 255, 0)) right center,
+			linear-gradient(to left, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.4)) left center,
+			linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.4)) right center;
 		background-repeat: no-repeat;
+		/* The white masks MUST be wider than the shadows they cover. At equal
+		   widths the mask is still mid-fade where the shadow is still dark, so
+		   a dark band prints down a table that does not even scroll -- which is
+		   exactly what the first render did. 80px white (solid through its
+		   first 50%, i.e. 40px) fully covers a 40px shadow. */
 		background-size:
-			40px 100%,
-			40px 100%,
+			80px 100%,
+			80px 100%,
 			40px 100%,
 			40px 100%;
 		background-attachment: local, local, scroll, scroll;
