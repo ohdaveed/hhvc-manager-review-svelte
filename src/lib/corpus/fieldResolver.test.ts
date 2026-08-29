@@ -322,7 +322,11 @@ describe('resolveField — extractCopy parity (Group D)', () => {
 		const page = findPage('sf.gov/report/health-code-article-11-plain-language');
 		expect(resolveField(page, 'spotlight.title')!.value).toBe('Read the full Health Code');
 		expect(resolveField(page, 'spotlight.paragraphs.0')!.value).toMatch(/plain-language summary/);
-		expect(resolveField(page, 'spotlight.button')!.value).toBe('View Health Code Article 11');
+		// Compared against the corpus's own value, not a literal: this test is
+		// about the RESOLVER, and pinning copy here means an editorial change
+		// breaks a resolver test. It just did -- this button was shortened to fit
+		// Karl's 25-character cap and took this assertion down with it.
+		expect(resolveField(page, 'spotlight.button')!.value).toBe(page.spotlight.button);
 		expect(resolveField(page, 'spotlight.buttonUrl')!.value).toMatch(/amlegal\.com/);
 		resolveField(page, 'spotlight.button')!.set('Read Article 11');
 		expect(resolveField(page, 'spotlight.button')!.value).toBe('Read Article 11');

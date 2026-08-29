@@ -26,7 +26,7 @@ const RULES = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];
 // definition list behind Top facts, or the What-to-know box's heading order.
 const PAGES = [
 	'/',
-	'/review/topic-healthy-housing-and-vector-control--about',
+	'/review/departments--healthy-housing-and-vector-control--about',
 	// 7 tables, page-level spotlight, cards
 	'/review/report-health-code-article-11-plain-language',
 	// whatToKnow (Cost + Things to know), cards, steps, section button
@@ -52,7 +52,7 @@ for (const path of PAGES) {
 }
 
 test('every edit target is reachable and operable by keyboard', async ({ page }) => {
-	await page.goto('/review/topic-healthy-housing-and-vector-control--about');
+	await page.goto('/review/departments--healthy-housing-and-vector-control--about');
 	await page.waitForLoadState('networkidle');
 
 	const targets = page.locator('.edit-target');
