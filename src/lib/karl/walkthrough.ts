@@ -23,6 +23,7 @@
  */
 import { buildTranscript } from '$lib/legacy-core/karl-transcript.js';
 import { KARL_NAV, panelByRawName } from '$lib/legacy-core/karl-blocks.js';
+import { pagesByKey } from '$lib/data';
 
 /* eslint-disable-next-line @typescript-eslint/no-explicit-any --
    the legacy Karl modules are untyped JS, so this is the boundary where their
@@ -39,11 +40,11 @@ const panelFor = (type: string, rawName: string): KarlPanel =>
 /* `buildTranscript` is JSDoc-typed for the legacy caller, which passed a keyed
    object rather than the corpus array. The runtime only iterates it, so this
    narrows the call rather than reshaping a 1141-line module around one caller. */
-const transcriptFor = (page: AnyEntry, pages: AnyEntry[]): AnyEntry =>
+const transcriptFor = (page: AnyEntry, _pages: AnyEntry[]): AnyEntry =>
 	(buildTranscript as unknown as (p: unknown, r: unknown, ps: unknown) => AnyEntry)(
 		page,
 		null,
-		pages
+		pagesByKey
 	);
 
 /** One copyable value inside a step: a sub-field of the Karl panel. */
@@ -125,6 +126,8 @@ export type WalkthroughStep = {
 	values: StepValue[];
 	/** Options when Karl asks the reviewer to choose rather than type. */
 	choices: string[];
+	/** Inline links and the Karl representation needed to recreate them. */
+	links: { label: string; target: string; representation: string }[];
 	/** The prose behind "Why this mapping", which the design keeps collapsed. */
 	notes: string[];
 	/** Set only when `outcome` is `FLAG`. */
@@ -213,7 +216,18 @@ export function buildWalkthrough(page: AnyEntry, pages: AnyEntry[]): Walkthrough
 			rawName,
 			outcome,
 			values: usableValues(entry.fields),
-			choices: Array.isArray(entry.choices) ? entry.choices.map(String) : [],
+			choices: Array.isArray(entry.choices)
+				? entry.choices.map((choice: AnyEntry) =>
+					typeof choice === 'object' && choice !== null ? String(choice.label ?? choice.title ?? choice.slug ?? '') : String(choice)
+				  )
+				: [],
+			links: Array.isArray(entry.links)
+				? entry.links.map((link: AnyEntry) => ({
+						label: String(link.label ?? ''),
+						target: String(link.target ?? ''),
+						representation: String(link.representation ?? '')
+				  }))
+				: [],
 			notes: Array.isArray(entry.notes) ? entry.notes.map(String) : []
 		};
 

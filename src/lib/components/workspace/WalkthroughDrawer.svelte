@@ -172,6 +172,17 @@
 							</div>
 						{/if}
 
+						{#if step.links.length > 0}
+							<div class="choices">
+								<p class="choices-label">Karl inline links</p>
+								<ul class="choices-list">
+									{#each step.links as link, l (l)}
+										<li class="choice">“{link.label}” → {link.representation} ({link.target})</li>
+									{/each}
+								</ul>
+							</div>
+						{/if}
+
 						{#if step.choices.length > 0}
 							<div class="choices">
 								<p class="choices-label">Karl asks you to choose</p>
