@@ -63,3 +63,6 @@ coverage/
 .agents/
 .claude/skills/supabase
 .claude/skills/supabase-postgres-best-practices
+
+# Sentry Config File
+.env.sentry-build-plugin

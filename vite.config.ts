@@ -1,3 +1,4 @@
+import { sentrySvelteKit } from '@sentry/sveltekit';
 import { execFileSync } from 'node:child_process';
 import { defineConfig } from 'vitest/config';
 import tailwindcss from '@tailwindcss/vite';
@@ -48,6 +49,10 @@ function buildCommit(): string {
 
 export default defineConfig({
 	plugins: [
+		sentrySvelteKit({
+			org: 'glycolysis',
+			project: 'javascript-sveltekit'
+		}),
 		tailwindcss(),
 		sveltekit({
 			compilerOptions: {
@@ -60,6 +65,11 @@ export default defineConfig({
 			},
 			version: {
 				name: buildCommit()
+			},
+			experimental: {
+				instrumentation: {
+					server: true
+				}
 			},
 			adapter: adapter()
 		}),
