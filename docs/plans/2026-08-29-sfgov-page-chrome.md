@@ -61,7 +61,7 @@ thingsToKnow[{label,text}]}`). Corpus wins.
 
 - [x] `src/lib/corpus/fieldResolver.ts` — resolve the paths `extractCopy`
       already emits: `whatToKnow.*`, `sections.<key>.{cards,facts,steps,table,
-  button,buttonUrl}.*`, `spotlight.*`
+button,buttonUrl}.*`, `spotlight.*`
 - [x] `src/lib/corpus/fieldResolver.test.ts`
 
 ### Group E — Wiring _(hub files — done by the main session, sequentially, after A-D land)_
@@ -118,3 +118,17 @@ Landed in seven commits. Measured, not asserted:
   untracked `dev-5173.png`). `src/lib/data/index.ts` looks like a regression —
   semicolons stripped and a curated comment about the AI backend's link
   vocabulary replaced with a one-liner. Resolve before branching.
+
+## Collision with #76, resolved
+
+While this branch was in flight, #76 landed on `main` carrying the same inline-
+markdown feature under different names: `MarkdownText.svelte` + `corpus/markdown.ts`
+against this branch's `InlineMarkdown.svelte` + `corpus/inlineMarkdown.ts`.
+
+`main`'s won and this branch's three files were deleted. It is the better of the
+two and it landed first: it is shared by the renderer, the readability scorer,
+the link-text check and the bare-URL check rather than serving only the renderer,
+and its link pattern is deliberately the same one `karl-legacy-core`'s
+`extractInlineLinks` already used, instead of being a second definition of it.
+
+`main` was merged in rather than rebased onto, because the PR was already open.
