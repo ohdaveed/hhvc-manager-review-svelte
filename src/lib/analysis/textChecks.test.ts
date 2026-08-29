@@ -107,3 +107,23 @@ describe('labelCount', () => {
 		expect(total).toBe(3);
 	});
 });
+
+describe('multiple pasted URLs in one field', () => {
+	it('reports every bare URL, not just the first', () => {
+		// The panel derives its count and its item list from this, so one issue
+		// per field would understate the finding and leave the later addresses
+		// with nothing for a reviewer to act on.
+		const issues = rawUrlsInProse([
+			prose('p', 'Go to https://sf.gov/a then https://sf.gov/b and finally www.example.com today.')
+		]);
+		expect(issues.map((i) => i.text)).toEqual([
+			'https://sf.gov/a',
+			'https://sf.gov/b',
+			'www.example.com'
+		]);
+	});
+
+	it('still reports a single URL once', () => {
+		expect(rawUrlsInProse([prose('p', 'Go to https://sf.gov/a now.')])).toHaveLength(1);
+	});
+});

@@ -45,8 +45,19 @@ export type Readability = {
 	characterCount: number;
 	wordCount: number;
 	sentenceCount: number;
-	/** Whether the instructional re-split path was taken. Scores across the two paths are not comparable. */
+	/** Whether the instructional cues fired. Scores across the two paths are not comparable. */
 	instructional: boolean;
+	/**
+	 * Whether the re-split was actually ACCEPTED, which is a narrower thing.
+	 *
+	 * `instructional` alone gates the lower sentence floor and the adjustment
+	 * even when the guarded re-split is rejected -- that is the extension's own
+	 * design (`const H=Z?3:5` runs off the cue flag, not off the split), and it
+	 * is preserved so both tools report one number. But it means "instructional"
+	 * must not be reported to a reviewer as "steps and bullets were re-split",
+	 * because sometimes they were not.
+	 */
+	resplitApplied: boolean;
 	/** Mean words per counted sentence — the input to half of the ARI term. */
 	wordsPerSentence: number;
 	/** Mean letters per word — the other half. */
@@ -57,6 +68,13 @@ export type Readability = {
 
 /**
  * The extension's text cleanup, applied before any counting.
+ *
+ * Only `http(s)://` addresses are stripped, NOT bare `www.` ones -- an asymmetry
+ * with the raw-URL check in `textChecks.ts`, which recognises both. It is the
+ * extension's asymmetry, transcribed rather than corrected, because the whole
+ * point of this module is that both tools report one number and a bare `www.`
+ * address would otherwise score differently in each. There are none in the
+ * corpus today. Worth revisiting if that changes, as a deliberate divergence.
  *
  * Three of these materially move the score and are easy to drop by accident:
  * URLs, email addresses and bare integers are all REMOVED. An ARI that counts
@@ -92,6 +110,7 @@ const EMPTY: Readability = {
 	wordCount: 0,
 	sentenceCount: 0,
 	instructional: false,
+	resplitApplied: false,
 	wordsPerSentence: 0,
 	charactersPerWord: 0,
 	hasContent: false
@@ -195,6 +214,7 @@ export function scoreReadability(text: string): Readability {
 	const instructional =
 		INSTRUCTIONAL_CUE.test(text) && LIST_MARKER.test(text) && meanWordsPerRawSentence < 12;
 
+	let resplitApplied = false;
 	if (instructional) {
 		const resplit: string[] = [];
 		for (const sentence of sentences) {
@@ -211,6 +231,7 @@ export function scoreReadability(text: string): Readability {
 		// grade for copy that has not changed.
 		if (resplit.length > sentences.length && wordCount / resplit.length >= 8) {
 			sentences = resplit;
+			resplitApplied = true;
 		}
 	}
 
@@ -247,6 +268,7 @@ export function scoreReadability(text: string): Readability {
 		wordCount,
 		sentenceCount,
 		instructional,
+		resplitApplied,
 		wordsPerSentence,
 		charactersPerWord,
 		hasContent: true

@@ -47,7 +47,8 @@ const VAGUE_BUTTON_TEXT = [
 	'more'
 ];
 
-const RAW_URL = /(?:https?:\/\/|www\.)\S+/i;
+/** A pasted web address. Global: a field can carry more than one. */
+const RAW_URL_ALL = /(?:https?:\/\/|www\.)\S+/gi;
 const EMAIL_ONLY = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /**
@@ -154,8 +155,11 @@ export function rawUrlsInProse(entries: CopyEntry[]): TextIssue[] {
 		if (entry.kind !== 'prose' && entry.kind !== 'heading') continue;
 		const trimmed = withoutMarkdownLinks(entry.text).trim();
 		if (EMAIL_ONLY.test(trimmed)) continue;
-		const match = trimmed.match(RAW_URL);
-		if (match) {
+		// Every match, not just the first. The panel derives both its count and
+		// its item list from what this returns, so stopping at one URL per field
+		// would understate the finding AND leave the later addresses with no
+		// actionable item -- a paragraph with three pasted URLs would report one.
+		for (const match of trimmed.matchAll(RAW_URL_ALL)) {
 			issues.push({
 				key: entry.key,
 				text: match[0],

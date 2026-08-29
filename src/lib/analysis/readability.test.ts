@@ -112,3 +112,49 @@ describe('parseReadingTarget', () => {
 		expect(parseReadingTarget('Grade 99')).toBeNull();
 	});
 });
+
+describe('the instructional cue flag versus the re-split', () => {
+	// The extension gates the lower sentence floor and the grade adjustment on
+	// the CUE flag (`const H=Z?3:5`), not on whether the guarded re-split was
+	// accepted. That is preserved here so both tools report one number -- which
+	// means the two facts have to be reported separately, or the panel claims a
+	// re-split that did not happen. On this corpus that is not hypothetical:
+	// 14 pages fire the cues and only 9 accept the re-split.
+	const instructional = (text: string) => scoreReadability(text);
+
+	it('reports a re-split when the finer split is accepted', () => {
+		const result = instructional(
+			'How to report a problem\n\n' +
+				'- Call 311 and give the address of the building where the problem is.\n' +
+				'- Describe what you saw and how long it has been going on for.\n' +
+				'- Ask 311 for a service request number so you can follow up later on.\n' +
+				'- Wait for an inspector to contact you about scheduling a visit.'
+		);
+		expect(result.instructional).toBe(true);
+		expect(result.resplitApplied).toBe(true);
+	});
+
+	it('fires the cues but rejects a re-split that would shred the copy', () => {
+		// Short bullets: the split clears the count guard but not the >= 8 words
+		// per segment guard, so `sentences` stands as written. `instructional`
+		// is still true, and still lowers the floor -- faithfully.
+		const result = instructional(
+			'What to do\n\n- Call 311.\n- Give the address.\n- Wait for a visit.\nYou must give the address.'
+		);
+		expect(result.instructional).toBe(true);
+		expect(result.resplitApplied).toBe(false);
+	});
+
+	it('never reports a re-split on copy that took the prose path', () => {
+		const result = scoreReadability(
+			'The department inspects housing across the city. Inspectors look for conditions ' +
+				'that affect health. They write a report after each visit. The report goes to the owner.'
+		);
+		expect(result.instructional).toBe(false);
+		expect(result.resplitApplied).toBe(false);
+	});
+
+	it('reports no re-split for empty text', () => {
+		expect(scoreReadability('').resplitApplied).toBe(false);
+	});
+});

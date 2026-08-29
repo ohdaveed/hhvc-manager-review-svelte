@@ -205,9 +205,13 @@
 						Measured over {analysis.measuredFields} copy fields —
 						{analysis.readability.wordCount} words, {analysis.readability.sentenceCount} sentences,
 						{analysis.readability.wordsPerSentence.toFixed(1)} words per sentence.
-						{#if analysis.readability.instructional}
-							Scored on the instructional path (steps and bullets re-split), so this is not directly
-							comparable to a page scored as prose.
+						{#if analysis.readability.resplitApplied}
+							Scored on the instructional path, with steps and bullets re-split, so this is not
+							directly comparable to a page scored as prose.
+						{:else if analysis.readability.instructional}
+							Scored on the instructional path — cues detected, but the re-split was rejected as too
+							fragmenting, so sentences stand as written. Not directly comparable to a page scored
+							as prose.
 						{/if}
 					</p>
 
