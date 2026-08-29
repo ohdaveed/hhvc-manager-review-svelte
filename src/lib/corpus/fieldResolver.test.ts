@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { resolveField, resolveFields } from './fieldResolver';
 import { deriveFieldKey } from './fieldKey';
+import { extractCopy } from './fields';
 import { allPages } from '$lib/data';
 
 /**
@@ -18,7 +19,7 @@ import { allPages } from '$lib/data';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type CorpusShape = Record<string, any>;
 
-function withKeys(page: CorpusShape) {
+function withKeys(page: CorpusShape): CorpusShape {
 	return {
 		...page,
 		sections: (page.sections ?? []).map((s: CorpusShape, i: number) => ({
@@ -159,5 +160,213 @@ describe('resolveField', () => {
 		expect(out.map((o) => o.fieldId)).not.toContain('sections.gone.heading');
 		expect(out.every((o) => o.field !== null)).toBe(true);
 		expect(out[0].fieldId).toBe(good);
+	});
+});
+
+/**
+ * Group D: `resolveField` used to know only the seven path shapes
+ * `extractFields` advertises as edit targets. `extractCopy` -- the canonical
+ * vocabulary every reader-visible string in the corpus, which `corpus.lock`
+ * hashes -- emits many more, and every one of those silently vanished from the
+ * Fields panel (`resolveFields` drops nulls with no error). These tests cover
+ * the path families added to close that gap.
+ */
+describe('resolveField — extractCopy parity (Group D)', () => {
+	const pages = allPages.map(withKeys);
+	const findPage = (slug: string) => pages.find((p) => p.slug === slug)!;
+
+	it('resolves every path extractCopy emits, not just the original seven', () => {
+		const unresolved: string[] = [];
+		let checked = 0;
+		for (const raw of allPages) {
+			const stamped = withKeys(raw);
+			for (const id of Object.keys(extractCopy(raw))) {
+				checked++;
+				if (!resolveField(stamped, id)) unresolved.push(`${raw.slug} :: ${id}`);
+			}
+		}
+		expect(checked).toBeGreaterThan(500);
+		expect(unresolved).toEqual([]);
+	});
+
+	it('whatToKnow.cost', () => {
+		const page = findPage('sf.gov/step-by-step--get-ready-for-a-housing-inspection');
+		const f = resolveField(page, 'whatToKnow.cost')!;
+		expect(f.value).toBe('Free');
+		f.set('Free with a valid 311 report');
+		expect(resolveField(page, 'whatToKnow.cost')!.value).toBe('Free with a valid 311 report');
+	});
+
+	it('whatToKnow.thingsToKnow.N (plain-string form)', () => {
+		const page = findPage('sf.gov/step-by-step--get-ready-for-a-housing-inspection');
+		const id = 'whatToKnow.thingsToKnow.0';
+		expect(resolveField(page, id)!.value).toMatch(/may contact you/);
+		resolveField(page, id)!.set('Rewritten thing to know.');
+		expect(resolveField(page, id)!.value).toBe('Rewritten thing to know.');
+	});
+
+	it('whatToKnow.thingsToKnow.N.{label,text} (labelled form)', () => {
+		const page = findPage('sf.gov/lookup-residential-health-code-violations');
+		const labelId = 'whatToKnow.thingsToKnow.0.label';
+		const textId = 'whatToKnow.thingsToKnow.0.text';
+		expect(resolveField(page, labelId)!.value).toBe('What this tool covers');
+		expect(resolveField(page, textId)!.value).toMatch(/same Environmental Health lookup tool/);
+		resolveField(page, labelId)!.set('New label');
+		resolveField(page, textId)!.set('New text');
+		expect(resolveField(page, labelId)!.value).toBe('New label');
+		expect(resolveField(page, textId)!.value).toBe('New text');
+	});
+
+	it('sections.<key>.cards.N.{title,text,url}, and leaves cards.N.target null', () => {
+		const page = findPage('sf.gov/report/health-code-article-11-plain-language');
+		const base = 'sections.mold-and-lead-hazards.cards.1';
+		expect(resolveField(page, `${base}.title`)!.value).toBe(
+			'Find Citywide healthy housing services'
+		);
+		expect(resolveField(page, `${base}.url`)!.value).toMatch(/^https:\/\/www\.sf\.gov/);
+		resolveField(page, `${base}.url`)!.set('https://example.com/updated');
+		expect(resolveField(page, `${base}.url`)!.value).toBe('https://example.com/updated');
+		// Structural routing id, deliberately unread by extractCopy.
+		expect(resolveField(page, 'sections.mold-and-lead-hazards.cards.0.target')).toBeNull();
+	});
+
+	it('sections.<key>.facts.N.{label,text}', () => {
+		const page = findPage('sf.gov/mosquito-education-workshop');
+		const base = 'sections.questions-before-you-apply.facts.1';
+		expect(resolveField(page, `${base}.label`)!.value).toBe('Service area');
+		expect(resolveField(page, `${base}.text`)!.value).toMatch(/schools, camps, museums/);
+		resolveField(page, `${base}.text`)!.set('Updated service area.');
+		expect(resolveField(page, `${base}.text`)!.value).toBe('Updated service area.');
+	});
+
+	it('sections.<key>.table.R.C', () => {
+		const page = findPage('sf.gov/report/health-code-article-11-plain-language');
+		const id = 'sections.article-11-sections-at-a-glance.table.1.0';
+		expect(resolveField(page, id)!.value).toBe('**Sec. 581(a)**');
+		resolveField(page, id)!.set('Sec. 581(a)');
+		expect(resolveField(page, id)!.value).toBe('Sec. 581(a)');
+	});
+
+	it('sections.<key>.{button,buttonUrl}, and leaves the sibling buttonStyle null', () => {
+		const page = findPage('sf.gov/mosquito-education-workshop');
+		const buttonId = 'sections.request-a-workshop.button';
+		const urlId = 'sections.request-a-workshop.buttonUrl';
+		expect(resolveField(page, buttonId)!.value).toBe('Request a workshop online');
+		expect(resolveField(page, urlId)!.value).toMatch(/fillout\.com/);
+		resolveField(page, buttonId)!.set('Request now');
+		expect(resolveField(page, buttonId)!.value).toBe('Request now');
+
+		// Structural presentation flag, sibling of a real button/buttonUrl pair.
+		const rodents = findPage('sf.gov/report-rats-mice-four-legged-problems');
+		expect(resolveField(rodents, 'sections.how-your-report-is-processed.buttonStyle')).toBeNull();
+	});
+
+	it('sections.<key>.steps.N.{title,button,buttonUrl}', () => {
+		const page = findPage('sf.gov/step-by-step--get-ready-for-a-housing-inspection');
+		const id = 'sections.before-the-inspector-arrives.steps.0.title';
+		expect(resolveField(page, id)!.value).toBe('Clear access to the reported area');
+		resolveField(page, id)!.set('Clear a path first.');
+		expect(resolveField(page, id)!.value).toBe('Clear a path first.');
+
+		// No corpus step carries button/buttonUrl yet, so this half exercises a
+		// minimal fixture rather than real data.
+		const fixture = withKeys({
+			slug: 'fixture',
+			sections: [
+				{ heading: 'S', steps: [{ title: 'T', button: 'Go', buttonUrl: 'https://example.com' }] }
+			]
+		});
+		expect(resolveField(fixture, 'sections.s.steps.0.button')!.value).toBe('Go');
+		expect(resolveField(fixture, 'sections.s.steps.0.buttonUrl')!.value).toBe(
+			'https://example.com'
+		);
+	});
+
+	it('sections.<key>.steps.N.text.J keeps the unverified flag through a write', () => {
+		const page = findPage('sf.gov/step-by-step--get-ready-for-a-housing-inspection');
+		const id = 'sections.before-the-inspector-arrives.steps.0.text.0';
+
+		const before = resolveField(page, id)!;
+		expect(before.value).toMatch(/Clear a path/);
+		expect(before.unverified).toBe(true);
+		expect(before.unverifiedReason).toMatch(/Confirm with HHVC/);
+
+		before.set('Rewritten step text.');
+
+		const after = resolveField(page, id)!;
+		expect(after.value).toBe('Rewritten step text.');
+		expect(after.unverified).toBe(true);
+		expect(after.unverifiedReason).toMatch(/Confirm with HHVC/);
+	});
+
+	it('sections.<key>.steps.N.bullets.J', () => {
+		const page = findPage('sf.gov/step-by-step--get-ready-for-a-housing-inspection');
+		const id = 'sections.before-the-inspector-arrives.steps.2.bullets.0';
+		expect(resolveField(page, id)!.value).toMatch(/Photos of the condition/);
+		resolveField(page, id)!.set('Rewritten bullet.');
+		expect(resolveField(page, id)!.value).toBe('Rewritten bullet.');
+	});
+
+	it('sections.<key>.steps.N.callout.{title,text}', () => {
+		const page = findPage('sf.gov/pay-your-annual-healthy-housing-fee-apartment-buildings');
+		const titleId = 'sections.what-to-do.steps.1.callout.title';
+		const textId = 'sections.what-to-do.steps.1.callout.text';
+		expect(resolveField(page, titleId)!.value).toBe(
+			'Annual fee and reinspection fees are different'
+		);
+		resolveField(page, textId)!.set('Rewritten callout text.');
+		expect(resolveField(page, textId)!.value).toBe('Rewritten callout text.');
+	});
+
+	it('spotlight.{title,paragraphs.N,button,buttonUrl}', () => {
+		const page = findPage('sf.gov/report/health-code-article-11-plain-language');
+		expect(resolveField(page, 'spotlight.title')!.value).toBe('Read the full Health Code');
+		expect(resolveField(page, 'spotlight.paragraphs.0')!.value).toMatch(/plain-language summary/);
+		expect(resolveField(page, 'spotlight.button')!.value).toBe('View Health Code Article 11');
+		expect(resolveField(page, 'spotlight.buttonUrl')!.value).toMatch(/amlegal\.com/);
+		resolveField(page, 'spotlight.button')!.set('Read Article 11');
+		expect(resolveField(page, 'spotlight.button')!.value).toBe('Read Article 11');
+	});
+
+	it('contact.{phone,email,other}.N', () => {
+		const page = findPage('sf.gov/information--article-11-compliance-for-property-owners');
+		expect(resolveField(page, 'contact.phone.0')!.value).toBe('311 (call or text)');
+		expect(resolveField(page, 'contact.email.0')!.value).toBe('ehb@sfdph.org');
+		expect(resolveField(page, 'contact.other.0')!.value).toMatch(/Environmental Health/);
+		resolveField(page, 'contact.phone.1')!.set('415-000-0000');
+		expect(resolveField(page, 'contact.phone.1')!.value).toBe('415-000-0000');
+	});
+
+	it('partnerAgencies.N.{title,url}', () => {
+		const page = findPage('sf.gov/find-complaints-and-inspection-records');
+		expect(resolveField(page, 'partnerAgencies.0.title')!.value).toBe(
+			'Department of Public Health'
+		);
+		resolveField(page, 'partnerAgencies.0.url')!.set('https://example.com/dph');
+		expect(resolveField(page, 'partnerAgencies.0.url')!.value).toBe('https://example.com/dph');
+	});
+
+	it('page-level metaDescription, reportDate, seoTitle, topicTag', () => {
+		const article11 = findPage('sf.gov/report/health-code-article-11-plain-language');
+		expect(resolveField(article11, 'reportDate')!.value).toBe('August 7, 2026');
+		expect(resolveField(article11, 'seoTitle')!.value).toBe(
+			'Health Code Article 11 in plain language'
+		);
+		resolveField(article11, 'metaDescription')!.set('Updated description.');
+		expect(resolveField(article11, 'metaDescription')!.value).toBe('Updated description.');
+
+		const compliance = findPage('sf.gov/information--article-11-compliance-for-property-owners');
+		expect(resolveField(compliance, 'topicTag')!.value).toBe(
+			'Agency: Healthy Housing and Vector Control'
+		);
+	});
+
+	it('returns null for structural/annotation paths extractCopy also excludes', () => {
+		const page = findPage('sf.gov/report/health-code-article-11-plain-language');
+		expect(resolveField(page, 'slug')).toBeNull();
+		expect(resolveField(page, 'type')).toBeNull();
+		expect(resolveField(page, 'reading')).toBeNull();
+		expect(resolveField(page, 'sections.how-to-use-this-guide.callout.variant')).toBeNull();
+		expect(resolveField(page, 'sections.mold-and-lead-hazards.cards.0.target')).toBeNull();
 	});
 });
