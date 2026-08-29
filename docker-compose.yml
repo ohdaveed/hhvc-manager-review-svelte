@@ -9,13 +9,12 @@ services:
       - NODE_ENV=production
       - PORT=3000
       - HOST=0.0.0.0
-      # Passes variables directly from your local .env file
       - SVELTE_PUBLIC_SUPABASE_URL=${SVELTE_PUBLIC_SUPABASE_URL}
       - SVELTE_PUBLIC_SUPABASE_ANON_KEY=${SVELTE_PUBLIC_SUPABASE_ANON_KEY}
-    
-    # Maps host.docker.internal to your host machine's IP
-    # Ensures cross-platform networking compatibility
+      - SVELTE_PUBLIC_SUPABASE_SERVER_URL=${SVELTE_PUBLIC_SUPABASE_SERVER_URL}
+      - SVELTE_PUBLIC_LOCAL_AUTH=${SVELTE_PUBLIC_LOCAL_AUTH:-false}
+      - RAILWAY_API_URL=${RAILWAY_API_URL}
+      - RAILWAY_API_TOKEN=${RAILWAY_API_TOKEN}
     extra_hosts:
       - "host.docker.internal:host-gateway"
-      
     restart: unless-stopped

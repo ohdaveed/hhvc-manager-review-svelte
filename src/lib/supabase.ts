@@ -1,8 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
-import { SVELTE_PUBLIC_SUPABASE_URL, SVELTE_PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public';
+import { env } from '$env/dynamic/public';
 
 // Initialize the Supabase client
-export const supabase = createClient(SVELTE_PUBLIC_SUPABASE_URL, SVELTE_PUBLIC_SUPABASE_ANON_KEY);
+export const supabase = createClient(env.SVELTE_PUBLIC_SUPABASE_URL, env.SVELTE_PUBLIC_SUPABASE_ANON_KEY);
 
 /**
  * The account `supabase/seed.sql` creates for the local stack. Kept in step with
@@ -30,7 +30,7 @@ let devSignIn: Promise<void> | null = null;
  * delete any row.
  */
 export async function ensureDevSession(): Promise<void> {
-	if (!import.meta.env.DEV) return;
+	if (import.meta.env.DEV === false && env.SVELTE_PUBLIC_LOCAL_AUTH !== 'true') return;
 
 	// One in-flight attempt, reused: the review layout can mount more than once.
 	devSignIn ??= (async () => {

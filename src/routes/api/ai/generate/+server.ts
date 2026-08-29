@@ -1,5 +1,5 @@
 import { env } from '$env/dynamic/private';
-import { SVELTE_PUBLIC_SUPABASE_ANON_KEY, SVELTE_PUBLIC_SUPABASE_URL } from '$env/static/public';
+import { env as publicEnv } from '$env/dynamic/public';
 import { error, json } from '@sveltejs/kit';
 import { createClient } from '@supabase/supabase-js';
 
@@ -13,7 +13,7 @@ async function requireUser(request: Request) {
 	if (!token) throw error(401, 'Unauthorized');
 
 	// Per-request client: no session is persisted or refreshed on the server.
-	const supabase = createClient(SVELTE_PUBLIC_SUPABASE_URL, SVELTE_PUBLIC_SUPABASE_ANON_KEY, {
+	const supabase = createClient(publicEnv.SVELTE_PUBLIC_SUPABASE_SERVER_URL || publicEnv.SVELTE_PUBLIC_SUPABASE_URL, publicEnv.SVELTE_PUBLIC_SUPABASE_ANON_KEY, {
 		auth: { persistSession: false, autoRefreshToken: false }
 	});
 
