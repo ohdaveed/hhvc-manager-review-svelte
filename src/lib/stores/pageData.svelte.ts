@@ -58,6 +58,7 @@ export type RethinkState =
 	  };
 
 const RAIL_KEY = 'hhvc:railCollapsed';
+const COPIED_KEY = 'hhvc:walkthroughCopied';
 
 /**
  * Gives a section a stable key for `edits.field_id`.
@@ -347,6 +348,94 @@ class PageStore {
 		} catch {
 			// As above: the toggle still works for this session.
 		}
+	}
+
+	// ---- walkthrough and site map ----------------------------------------
+
+	/**
+	 * Which of the centre column's three views is showing.
+	 *
+	 * Ephemeral on purpose. Entering the walkthrough auto-collapses both rails,
+	 * and leaving restores them -- that is a view mode, not a preference, so it
+	 * should not survive a reload and strand someone in a drawer.
+	 */
+	mode = $state<'review' | 'walkthrough' | 'sitemap'>('review');
+
+	/** Index into the current page's step list. Per page, per session. */
+	stepIndex = $state(0);
+
+	/**
+	 * Copied step ids, keyed by page id.
+	 *
+	 * Per user and per device, in `localStorage`, which is a DECISION rather than
+	 * a default: `pages` is shared across reviewers over realtime, so storing
+	 * this there would make one person's progress everyone's, and two people
+	 * rebuilding the same page in Karl is plausible. Keeping it local also means
+	 * no migration, and on this repo a migration reaches production the moment
+	 * the PR merges.
+	 */
+	copiedSteps = $state<Record<string, string[]>>({});
+
+	/** Rail state captured on entering the walkthrough, restored on exit. */
+	#railsBeforeWalkthrough: { queue: boolean; panel: boolean } | null = null;
+
+	/** Same reason as `loadRailState`: called from the layout, never on import. */
+	loadCopiedSteps() {
+		try {
+			const raw = localStorage.getItem(COPIED_KEY);
+			if (!raw) return;
+			const parsed = JSON.parse(raw);
+			if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+				const out: Record<string, string[]> = {};
+				for (const [pageId, ids] of Object.entries(parsed)) {
+					if (Array.isArray(ids)) out[pageId] = ids.filter((id) => typeof id === 'string');
+				}
+				this.copiedSteps = out;
+			}
+		} catch {
+			// Private mode, disabled storage, or a hand-edited value. Progress is a
+			// convenience; losing it must not cost the page load.
+		}
+	}
+
+	isCopied(pageId: string, stepId: string): boolean {
+		return (this.copiedSteps[pageId] ?? []).includes(stepId);
+	}
+
+	markCopied(pageId: string, stepId: string) {
+		if (this.isCopied(pageId, stepId)) return;
+		this.copiedSteps = {
+			...this.copiedSteps,
+			[pageId]: [...(this.copiedSteps[pageId] ?? []), stepId]
+		};
+		try {
+			localStorage.setItem(COPIED_KEY, JSON.stringify(this.copiedSteps));
+		} catch {
+			// As above.
+		}
+	}
+
+	enterWalkthrough() {
+		this.#railsBeforeWalkthrough = { ...this.railCollapsed };
+		this.railCollapsed = { queue: true, panel: true };
+		this.stepIndex = 0;
+		this.mode = 'walkthrough';
+	}
+
+	exitWalkthrough() {
+		if (this.#railsBeforeWalkthrough) {
+			this.railCollapsed = this.#railsBeforeWalkthrough;
+			this.#railsBeforeWalkthrough = null;
+		}
+		this.mode = 'review';
+	}
+
+	showSitemap() {
+		this.mode = 'sitemap';
+	}
+
+	showReview() {
+		this.mode = 'review';
 	}
 }
 
