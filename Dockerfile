@@ -14,7 +14,11 @@ COPY . .
 # Build the application. ADAPTER=node selects adapter-node in vite.config.ts,
 # whose entrypoint is the build/index.js this image runs; the default is
 # adapter-netlify, which produces no such file.
+ARG SVELTE_PUBLIC_SUPABASE_URL
+ARG SVELTE_PUBLIC_SUPABASE_ANON_KEY
 ENV ADAPTER=node
+ENV SVELTE_PUBLIC_SUPABASE_URL=$SVELTE_PUBLIC_SUPABASE_URL
+ENV SVELTE_PUBLIC_SUPABASE_ANON_KEY=$SVELTE_PUBLIC_SUPABASE_ANON_KEY
 RUN bun run build
 
 # Stage 2: Serve the app in a minimal image

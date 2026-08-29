@@ -3,6 +3,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        SVELTE_PUBLIC_SUPABASE_URL: ${SVELTE_PUBLIC_SUPABASE_URL}
+        SVELTE_PUBLIC_SUPABASE_ANON_KEY: ${SVELTE_PUBLIC_SUPABASE_ANON_KEY}
     ports:
       - "3000:3000"
     environment:
@@ -12,10 +15,12 @@ services:
       # Passes variables directly from your local .env file
       - SVELTE_PUBLIC_SUPABASE_URL=${SVELTE_PUBLIC_SUPABASE_URL}
       - SVELTE_PUBLIC_SUPABASE_ANON_KEY=${SVELTE_PUBLIC_SUPABASE_ANON_KEY}
-    
+      - RAILWAY_API_TOKEN=${RAILWAY_API_TOKEN}
+      - RAILWAY_API_URL=${RAILWAY_API_URL}
+
     # Maps host.docker.internal to your host machine's IP
     # Ensures cross-platform networking compatibility
     extra_hosts:
       - "host.docker.internal:host-gateway"
-      
+
     restart: unless-stopped
