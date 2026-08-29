@@ -60,7 +60,7 @@ the "recommendation" call, which reuses `task: 'rewrite-field'` with a
 
 ## Flows worth driving
 
-- `/review/topic-healthy-housing-and-vector-control--about` — richest page.
+- `/review/departments--healthy-housing-and-vector-control--about` — richest page.
 - Edit targets are `button[data-rewrite-field="<fieldId>"]`. Ids:
   `title`, `summary`, `audience.{i}`, `sections.{fieldKey}.heading|paragraphs.{i}|bullets.{i}|callout.title|callout.text`.
   Click = replace selection; shift/meta/ctrl-click = toggle. `aria-pressed`

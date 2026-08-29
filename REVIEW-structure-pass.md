@@ -251,7 +251,7 @@ program with two audiences.
 
 ### B3. Two landing surfaces with an unstated boundary
 
-`topic-healthy-housing-and-vector-control` (6 sections) and
+`departments--healthy-housing-and-vector-control` (6 sections) and
 `topics--healthy-housing-conditions` (5 sections). Both are top-of-funnel. The
 boundary between them is not stated on either page. Resolve alongside the
 blocking question above, since the answer changes what the first one is.
