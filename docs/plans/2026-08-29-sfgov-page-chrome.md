@@ -40,52 +40,79 @@ thingsToKnow[{label,text}]}`). Corpus wins.
 
 ### Group A — SF.gov chrome _(new files only)_
 
-- [ ] `static/sfgov/` — 11 assets from the design project
-- [ ] `src/lib/components/sfgov/SiteHeader.svelte` — lockup, nav, language, search
-- [ ] `src/lib/components/sfgov/SiteFooter.svelte` — CCSF lockup, social, 3 link
+- [x] `static/sfgov/` — 11 assets from the design project
+- [x] `src/lib/components/sfgov/SiteHeader.svelte` — lockup, nav, language, search
+- [x] `src/lib/components/sfgov/SiteFooter.svelte` — CCSF lockup, social, 3 link
       columns, the two illustrations
 
 ### Group B — Page furniture _(new files only)_
 
-- [ ] `src/lib/components/sfgov/Breadcrumb.svelte` — `partOf`
-- [ ] `src/lib/components/sfgov/OnThisPage.svelte` — TOC from section headings
-- [ ] `src/lib/components/WhatToKnow.svelte` — the grey box: Cost + Things to
+- [x] `src/lib/components/sfgov/Breadcrumb.svelte` — `partOf`
+- [x] `src/lib/components/sfgov/OnThisPage.svelte` — TOC from section headings
+- [x] `src/lib/components/WhatToKnow.svelte` — the grey box: Cost + Things to
       know as `h3` blocks, with the amber orphan warning on non-Transaction types
 
 ### Group C — Block renderer _(new files only)_
 
-- [ ] `src/lib/components/blocks/` — cards, facts, steps, table, button,
+- [x] `src/lib/components/blocks/` — cards, facts, steps, table, button,
       spotlight, listing, image. Field ids come from `extractCopy`.
 
 ### Group D — Field resolver _(one existing file + its test)_
 
-- [ ] `src/lib/corpus/fieldResolver.ts` — resolve the paths `extractCopy`
+- [x] `src/lib/corpus/fieldResolver.ts` — resolve the paths `extractCopy`
       already emits: `whatToKnow.*`, `sections.<key>.{cards,facts,steps,table,
-    button,buttonUrl}.*`, `spotlight.*`
-- [ ] `src/lib/corpus/fieldResolver.test.ts`
+  button,buttonUrl}.*`, `spotlight.*`
+- [x] `src/lib/corpus/fieldResolver.test.ts`
 
 ### Group E — Wiring _(hub files — done by the main session, sequentially, after A-D land)_
 
-- [ ] `src/lib/components/Page.svelte` — mount chrome + furniture + blocks
-- [ ] `src/lib/components/Section.svelte` — delegate to the block renderer
-- [ ] `src/css/theme.css` — only genuinely missing tokens (`tests/theme.test.ts`
+- [x] `src/lib/components/Page.svelte` — mount chrome + furniture + blocks
+- [x] `src/lib/components/Section.svelte` — delegate to the block renderer
+- [x] `src/css/theme.css` — only genuinely missing tokens (`tests/theme.test.ts`
       guards the three-layer structure)
 
 ## Gates
 
-- [ ] `bun run verify` (unit + prod build) green
-- [ ] `bun run corpus:check` green — no data module is edited, so the lock should
+- [x] `bun run verify` (unit + prod build) green
+- [x] `bun run corpus:check` green — no data module is edited, so the lock should
       not move; if it does, that is a bug in this work
-- [ ] `bun run lint:ratchet` not worse than BASELINE
-- [ ] `bun run check` not worse than the 25-error/1-warning baseline
-- [ ] `bun run test:e2e` — includes the axe pass; new chrome needs alt text and
+- [x] `bun run lint:ratchet` not worse than BASELINE
+- [x] `bun run check` not worse than the 25-error/1-warning baseline
+- [x] `bun run test:e2e` — includes the axe pass; new chrome needs alt text and
       the search/nav controls must not be announced as interactive (they are
       inert mockup furniture)
-- [ ] Verified in a browser at the real surface, console clean
+- [x] Verified in a browser at the real surface, console clean
 
-## Blockers / open
+## Outcome
 
-- The working tree carries uncommitted changes that are NOT part of this work
+Landed in seven commits. Measured, not asserted:
+
+- `bun run verify` green — 312 unit tests + production build.
+- `bun run check` 21 errors / 1 warning against a 25/1 baseline. No new error
+  in any file this work touched; the two in `Section.svelte` are the pre-existing
+  untyped snippet params, only shifted in line number.
+- `bun run lint:ratchet` PASS at 5, `bun run corpus:check` clean at 29 pages.
+- `bun run test:e2e` 7 passed / 1 skipped, axe now covering 5 pages instead of 2.
+- Of the 1290 field paths `extractCopy` emits, **0** fail to resolve. Was ~7 shapes.
+- Browser-observed at 1440x900, console clean: header, footer, both illustrations,
+  4 social marks, What-to-know, contents list, 7 tables on the Article 11 page,
+  103 edit targets there, 0 literal `**` and 22 rendered bold runs.
+
+## Known gaps, deliberately not closed
+
+- `assets/icons/x.svg` in the design project is a crossed-stroke close glyph, not
+  the X brand mark. Rendered as-is; the project also ships `icon.20.ui.twitter.svg`.
+- `partOf` is set by no corpus module, so `Breadcrumb` renders nothing on all 29.
+- `facts` carry `unverified` as a SIBLING of `text` rather than wrapping it, so an
+  unverified fact does not raise the amber callout. `extractCopy` reads facts with
+  `str()` and the resolver follows suit.
+- `data-unverified` is emitted only on `EditTarget`'s signed-out branch, and
+  nothing reads the attribute. Pre-existing; left alone rather than adding a
+  marker with no consumer.
+
+## Superseded
+
+- The working tree carried uncommitted changes that are NOT part of this work
   (`CLAUDE.md`, `corpus.lock`, `src/lib/data/index.ts`,
   `src/lib/data/health-code-article-11.ts`, `tests/karlButtonCap.spec.ts`,
   untracked `dev-5173.png`). `src/lib/data/index.ts` looks like a regression —
