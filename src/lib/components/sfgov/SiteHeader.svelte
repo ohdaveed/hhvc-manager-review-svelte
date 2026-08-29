@@ -14,7 +14,7 @@
 		class="block h-[38px] w-[123px] flex-none"
 	/>
 
-	<nav aria-label="Primary" class="flex gap-2.5 text-sm font-bold">
+	<nav aria-label="Primary" class="flex min-w-0 shrink gap-2.5 overflow-hidden text-sm font-bold">
 		<span class="inline-flex items-center gap-1 whitespace-nowrap">
 			Services
 			<img src="/sfgov/icons/chevron-down.svg" alt="" class="block h-3.5 w-3.5" />
@@ -38,7 +38,7 @@
 		</span>
 		<span class="flex min-w-0 items-stretch border-2 border-sfds-black">
 			<span
-				class="flex h-[34px] w-[66px] min-w-0 flex-1 items-center overflow-hidden px-2 text-sm text-nowrap text-sfds-slate-l2"
+				class="flex h-[34px] w-[66px] min-w-0 flex-1 items-center overflow-hidden px-2 text-sm whitespace-nowrap text-sfds-slate-l2"
 			>
 				Search
 			</span>

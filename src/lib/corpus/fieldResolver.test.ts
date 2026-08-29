@@ -370,3 +370,62 @@ describe('resolveField — extractCopy parity (Group D)', () => {
 		expect(resolveField(page, 'sections.mold-and-lead-hazards.cards.0.target')).toBeNull();
 	});
 });
+
+describe('unverified metadata survives resolution', () => {
+	// FieldsPanel derives its "no confirmed source" callout from
+	// `field.unverified` on the RESOLVED field, while the mockup gets it from
+	// FactsBlock's own prop. When the resolver dropped it, the page warned and
+	// the panel did not -- so a reviewer could rewrite and approve an explicitly
+	// unconfirmed phone number without ever seeing the flag.
+	const factsPage = () =>
+		withKeys({
+			title: 'T',
+			summary: 'S',
+			sections: [
+				{
+					heading: 'Top facts',
+					facts: [
+						{
+							label: 'Contact',
+							text: 'Call 415-252-3806',
+							unverified: true,
+							unverifiedReason: 'No tier-1 source; tier-1 cites 415-252-3800.'
+						},
+						{ label: 'Cost', text: 'Free' }
+					]
+				}
+			]
+		});
+
+	it("surfaces a fact's sibling unverified flag and its reason", () => {
+		const page = factsPage();
+		const key = page.sections[0].fieldKey;
+		const field = resolveField(page, `sections.${key}.facts.0.text`);
+
+		expect(field?.unverified).toBe(true);
+		expect(field?.unverifiedReason).toContain('415-252-3800');
+	});
+
+	it('leaves a confirmed fact unflagged', () => {
+		const page = factsPage();
+		const key = page.sections[0].fieldKey;
+
+		expect(resolveField(page, `sections.${key}.facts.1.text`)?.unverified).toBeFalsy();
+	});
+
+	it('does not flag the label, which FactsBlock does not flag either', () => {
+		const page = factsPage();
+		const key = page.sections[0].fieldKey;
+
+		expect(resolveField(page, `sections.${key}.facts.0.label`)?.unverified).toBeFalsy();
+	});
+
+	it('matches only own properties, so an inherited key is not a field', () => {
+		const page = factsPage();
+
+		// `'__proto__' in TOP_LEVEL_STRINGS` is true, which used to match and
+		// return a field whose `name` was undefined.
+		expect(resolveField(page, '__proto__')).toBeNull();
+		expect(resolveField(page, 'constructor')).toBeNull();
+	});
+});

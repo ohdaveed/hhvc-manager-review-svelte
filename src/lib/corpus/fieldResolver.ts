@@ -165,7 +165,7 @@ export function resolveField(
 		seoTitle: 'SEO Title',
 		topicTag: 'Topic Tag'
 	};
-	if (fieldId in TOP_LEVEL_STRINGS) {
+	if (Object.hasOwn(TOP_LEVEL_STRINGS, fieldId)) {
 		return stringField(page, fieldId, TOP_LEVEL_STRINGS[fieldId]);
 	}
 
@@ -300,7 +300,21 @@ export function resolveField(
 		const i = Number(rest[1]);
 		const fact = Array.isArray(section.facts) ? section.facts[i] : undefined;
 		const kind = rest[2] === 'label' ? 'Label' : 'Text';
-		return stringField(fact, rest[2], `${label} Fact [${i + 1}] ${kind}`);
+		const field = stringField(fact, rest[2], `${label} Fact [${i + 1}] ${kind}`);
+		if (!field || rest[2] === 'label') return field;
+
+		// A fact carries `unverified`/`unverifiedReason` as SIBLINGS of `text`,
+		// not as a wrapper around it -- unlike a paragraph or bullet. `readEntry`
+		// reads that shape directly, so no new helper is needed.
+		//
+		// This has to be surfaced here and not only on the mockup: FieldsPanel
+		// derives its "no confirmed source" callout from `field.unverified` on
+		// the RESOLVED field, while the page gets it from FactsBlock's own prop.
+		// Returning a plain string made the two disagree -- the page warned and
+		// the panel did not, so a reviewer could rewrite and approve an
+		// explicitly unconfirmed phone number without ever seeing the flag.
+		const entry = readEntry(fact);
+		return { ...field, unverified: entry?.unverified, unverifiedReason: entry?.reason };
 	}
 
 	if (rest.length === 3 && rest[0] === 'table') {
