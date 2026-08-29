@@ -21,7 +21,7 @@
  */
 
 import { extractCopy, type CorpusPage } from '$lib/corpus/fields';
-import { withoutMarkdownLinks } from './markdown';
+import { withoutMarkdownLinks } from '$lib/corpus/markdown';
 
 /**
  * What a string is for, which decides whether it is scored as prose.

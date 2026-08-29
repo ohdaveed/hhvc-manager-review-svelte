@@ -15,7 +15,7 @@
  */
 
 import type { CopyEntry } from './pageCopy';
-import { markdownLinksIn, normalizeLabel, withoutMarkdownLinks } from './markdown';
+import { markdownLinksIn, normalizeLabel, withoutMarkdownLinks } from '$lib/corpus/markdown';
 
 /** Link labels the extension treats as uninformative. */
 const VAGUE_LINK_TEXT = [

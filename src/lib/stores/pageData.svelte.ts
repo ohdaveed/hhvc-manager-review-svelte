@@ -1,6 +1,7 @@
 // src/lib/stores/pageData.svelte.ts
 import { allPages } from '$lib/data';
 import { deriveFieldKey } from '$lib/corpus/fieldKey.js';
+import { routableId } from '$lib/corpus/pageId';
 import type { Op } from '$lib/rethink/diff';
 import type { RethinkResult } from '$lib/rethink/request';
 
@@ -130,13 +131,13 @@ class PageStore {
 	constructor() {
 		// Map the legacy objects to include an 'id' (from their 'slug' or a generated one)
 		this.pages = allPages.map((p) => {
-			// Remove 'sf.gov/' and replace any remaining slashes with dashes so it plays nice with SvelteKit's [slug] router
-			const cleanId = p.slug
-				? p.slug.replace('sf.gov/', '').replace(/\//g, '-')
-				: p.title.replace(/\s+/g, '-').toLowerCase();
+			// `routableId` rather than the expression inlined here before: an
+			// internal markdown link resolves a `pagesByKey` key to the route its
+			// page renders at, and two copies of this rule would drift into a link
+			// that 404s with nothing to report it.
 			return {
 				...p,
-				id: cleanId,
+				id: routableId(p),
 				sections: (p.sections ?? []).map(withFieldKey)
 			};
 		});
