@@ -32,7 +32,10 @@
 	};
 
 	function open(id: string | undefined) {
-		if (id) goto(resolve('/review/[slug]', { slug: id }));
+		if (id) {
+			pageStore.showReview();
+			goto(resolve('/review/[slug]', { slug: id }));
+		}
 	}
 </script>
 
