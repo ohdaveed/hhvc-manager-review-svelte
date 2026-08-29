@@ -74,3 +74,30 @@ test('every edit target is reachable and operable by keyboard', async ({ page })
 	await page.keyboard.press('Enter');
 	await expect(first).toHaveAttribute('aria-pressed', 'true');
 });
+
+/**
+ * The walkthrough and the site map are VIEWS of the review route, not routes,
+ * so the PAGES sweep above cannot reach them -- both need a click. Without
+ * these two the axe gate cannot see the drawer's step list, its gap callouts,
+ * or the site map's 29 cards and 143 links, which between them are most of
+ * what those two features render.
+ */
+for (const view of [
+	{ name: 'Karl walkthrough', open: 'Open Karl walkthrough', ready: '.drawer' },
+	{ name: 'site map', open: 'Site map', ready: '.sitemap' }
+]) {
+	test(`no WCAG 2.1 AA violations in the ${view.name}`, async ({ page }) => {
+		await page.goto('/review/report-garbage-filth-vegetation');
+		await page.waitForLoadState('networkidle');
+
+		await page.getByRole('button', { name: view.open }).click();
+		await page.waitForSelector(view.ready);
+
+		const { violations } = await new AxeBuilder({ page }).withTags(RULES).analyze();
+
+		expect(
+			violations,
+			violations.map((v) => `${v.id} (${v.impact}) x${v.nodes.length}: ${v.help}`).join('\n')
+		).toEqual([]);
+	});
+}
