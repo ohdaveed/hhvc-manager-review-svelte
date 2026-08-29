@@ -90,4 +90,22 @@ describe('TableBlock', () => {
 		const region = screen.getByRole('region', { name: /table/i });
 		expect(region.getAttribute('tabindex')).toBe('0');
 	});
+
+	it('gives every cell a distinct accessible name', () => {
+		// Every header and cell target once shared one name (`... Table Header`,
+		// `... Table Cell`), so a screen reader announced all three columns
+		// identically and a reviewer could not tell which cell was selected.
+		const { container } = renderPage();
+
+		const names = [...container.querySelectorAll('table [data-rewrite-field]')].map((n) =>
+			n.getAttribute('aria-label')
+		);
+
+		expect(names.length).toBe(6);
+		expect(new Set(names).size).toBe(names.length);
+		// The column a cell belongs to is what makes it identifiable, so the
+		// header text has to appear in the name, not just an index.
+		expect(names).toContain('Section [1] Table Header: Health code');
+		expect(names).toContain('Section [1] Table Row 1, In plain language');
+	});
 });

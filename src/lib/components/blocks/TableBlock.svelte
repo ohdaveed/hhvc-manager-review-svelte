@@ -52,7 +52,7 @@
 						<th scope="col">
 							<EditTarget
 								as="span"
-								name={`${label} Table Header`}
+								name={`${label} Table Header: ${cell}`}
 								fieldId={`sections.${sectionKey}.table.0.${c}`}
 								value={cell}
 							/>
@@ -67,7 +67,7 @@
 							<td>
 								<EditTarget
 									as="span"
-									name={`${label} Table Cell`}
+									name={`${label} Table Row ${r + 1}, ${header[c] || `Column ${c + 1}`}`}
 									fieldId={`sections.${sectionKey}.table.${r + 1}.${c}`}
 									value={cell}
 								/>
