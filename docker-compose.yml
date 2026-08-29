@@ -1,0 +1,21 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - HOST=0.0.0.0
+      # Passes variables directly from your local .env file
+      - SVELTE_PUBLIC_SUPABASE_URL=${SVELTE_PUBLIC_SUPABASE_URL}
+      - SVELTE_PUBLIC_SUPABASE_ANON_KEY=${SVELTE_PUBLIC_SUPABASE_ANON_KEY}
+    
+    # Maps host.docker.internal to your host machine's IP
+    # Ensures cross-platform networking compatibility
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+      
+    restart: unless-stopped

@@ -1,11 +1,7 @@
 {
 	"name": "hhvc-manager-review-svelte",
-	"private": true,
 	"version": "0.0.1",
-	"type": "module",
-	"trustedDependencies": [
-		"@ast-grep/cli"
-	],
+	"private": true,
 	"scripts": {
 		"dev": "vite dev",
 		"dev:op": "op run -- wsl.exe -e bash -c 'cd /home/ohdaveed/hhvc-manager-review-svelte && ~/.bun/bin/bun run dev'",
@@ -14,25 +10,25 @@
 		"prepare": "svelte-kit sync || echo ''; git config --local --unset core.hooksPath 2>/dev/null || true",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-		"lint:ratchet": "bun run scripts/eslint-ratchet.ts",
-		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
-		"env:status": "bun run scripts/env-target.ts status",
-		"env:local": "bun run scripts/env-target.ts local",
-		"env:hosted": "bun run scripts/env-target.ts hosted",
-		"seed:gen": "bun run scripts/gen-seed.ts",
-		"corpus:lock": "bun run scripts/corpus-lock.ts",
-		"corpus:check": "bun run scripts/check-corpus-lock.ts",
-		"corpus:import": "bun run scripts/corpus-import.ts",
-		"test:e2e": "playwright install && playwright test",
+		"lint": "prettier --check . && eslint .",
+		"lint:ratchet": "bun run scripts/eslint-ratchet.ts",
 		"test": "npm run test:unit -- --run && npm run test:e2e",
 		"test:unit": "vitest",
+		"test:e2e": "playwright install && playwright test",
 		"test:coverage": "vitest run --coverage",
 		"verify": "bash scripts/verify.sh",
 		"verify:live": "bash scripts/verify.sh --live",
-		"context:pack": "repomix",
-		"ast:scan": "ast-grep scan",
 		"verify:tools": "bun run scripts/verify-tooling.ts",
+		"context:pack": "repomix",
+		"corpus:import": "bun run scripts/corpus-import.ts",
+		"corpus:lock": "bun run scripts/corpus-lock.ts",
+		"corpus:check": "bun run scripts/check-corpus-lock.ts",
+		"ast:scan": "ast-grep scan",
+		"env:local": "bun run scripts/env-target.ts local",
+		"env:hosted": "bun run scripts/env-target.ts hosted",
+		"env:status": "bun run scripts/env-target.ts status",
+		"seed:gen": "bun run scripts/gen-seed.ts",
 		"audit:privileges": "bun run scripts/audit-privileges.ts"
 	},
 	"devDependencies": {
@@ -44,7 +40,7 @@
 		"@internationalized/date": "^3.12.0",
 		"@playwright/test": "^1.60.0",
 		"@sveltejs/adapter-auto": "^7.0.1",
-		"@sveltejs/adapter-netlify": "^6.0.4",
+		"@sveltejs/adapter-node": "^5.2.0",
 		"@sveltejs/kit": "^2.63.0",
 		"@sveltejs/vite-plugin-svelte": "^7.1.2",
 		"@tailwindcss/vite": "^4.3.0",
@@ -85,5 +81,9 @@
 		"@supabase/supabase-js": "^2.112.3",
 		"bits-ui": "^2.19.0",
 		"pg": "^8.23.0"
-	}
+	},
+	"type": "module",
+	"trustedDependencies": [
+		"@ast-grep/cli"
+	]
 }
