@@ -39,10 +39,11 @@ describe('button label cap (O14 / U24)', () => {
 		// `allPages` is a union of the eight page shapes and only some carry a
 		// spotlight, so this reads it through the same untyped-corpus boundary
 		// `notesFor` already takes.
-		const source = article11 as Record<string, unknown> | undefined;
+		const source = article11 as (Record<string, unknown> & { spotlight?: object }) | undefined;
+		expect(source, 'health-code-article-11 must be in allPages').toBeTruthy();
 		const overCapPage = {
-			...source,
-			spotlight: { ...(source?.spotlight as object), button: 'View Health Code Article 11' }
+			...source!,
+			spotlight: { ...(source!.spotlight as object), button: 'View Health Code Article 11' }
 		};
 		const notes = notesFor(overCapPage);
 		const flagged = notes.filter((n) => n.includes('27 characters'));
@@ -58,7 +59,8 @@ describe('button label cap (O14 / U24)', () => {
 	});
 
 	it('does not tell the reviewer the cap is optional', () => {
-		const notes = notesFor(article11).join('\n');
+		expect(article11, 'health-code-article-11 must be in allPages').toBeTruthy();
+		const notes = notesFor(article11!).join('\n');
 
 		expect(notes).not.toMatch(/editorial guidance/);
 		expect(notes).not.toMatch(/not a schema limit/);
