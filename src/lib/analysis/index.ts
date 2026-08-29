@@ -105,15 +105,27 @@ export function analyzePage({ page, edits = [], root = null }: AnalyzeInput): An
 		items: labels.map((i) => ({ key: i.key, text: i.text, detail: i.detail }))
 	});
 
+	// Each check states the DENOMINATOR it scanned, and reports `unavailable`
+	// when that denominator is zero. Without it a page with no body copy gets a
+	// green "No bare URLs in body copy" for having read nothing -- the exact
+	// unearned pass this module's contract rules out, and the reason `link-text`
+	// above guards on `labelsTotal`. The two counts differ because the checks
+	// read different sets: `rawUrlsInProse` scans prose AND headings, while
+	// `longParagraphs` scans prose only (a heading is not a paragraph).
+	const proseCount = entries.filter((e) => e.kind === 'prose').length;
+	const bodyCount = entries.filter((e) => e.kind === 'prose' || e.kind === 'heading').length;
+
 	const rawUrls = rawUrlsInProse(entries);
 	findings.push({
 		id: 'raw-urls',
 		title: 'URLs pasted into text',
-		status: rawUrls.length > 0 ? 'issue' : 'pass',
+		status: bodyCount === 0 ? 'unavailable' : rawUrls.length > 0 ? 'issue' : 'pass',
 		summary:
-			rawUrls.length > 0
-				? `${rawUrls.length} bare URL${rawUrls.length > 1 ? 's' : ''} printed in body copy.`
-				: 'No bare URLs in body copy.',
+			bodyCount === 0
+				? 'This page has no body copy to scan.'
+				: rawUrls.length > 0
+					? `${rawUrls.length} bare URL${rawUrls.length > 1 ? 's' : ''} printed in body copy.`
+					: `No bare URLs across ${bodyCount} copy fields.`,
 		help: 'descriptiveLinks',
 		items: rawUrls.map((i) => ({ key: i.key, text: i.text, detail: i.detail }))
 	});
@@ -122,11 +134,13 @@ export function analyzePage({ page, edits = [], root = null }: AnalyzeInput): An
 	findings.push({
 		id: 'paragraph-length',
 		title: 'Paragraph length',
-		status: long.length > 0 ? 'issue' : 'pass',
+		status: proseCount === 0 ? 'unavailable' : long.length > 0 ? 'issue' : 'pass',
 		summary:
-			long.length > 0
-				? `${long.length} paragraph${long.length > 1 ? 's run' : ' runs'} past 3 sentences.`
-				: 'Every paragraph is 3 sentences or fewer.',
+			proseCount === 0
+				? 'This page has no paragraphs to measure.'
+				: long.length > 0
+					? `${long.length} of ${proseCount} paragraph${proseCount > 1 ? 's' : ''} run past 3 sentences.`
+					: `All ${proseCount} paragraphs are 3 sentences or fewer.`,
 		help: 'howToWritePlainLanguage',
 		items: long.map((i) => ({ key: i.key, text: i.text, detail: i.detail }))
 	});
