@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { analyzableCopy, classifyKey, readabilityTextFrom } from './pageCopy';
+import { scoreReadability } from './readability';
 import { allPages } from '$lib/data/index';
 
 describe('classifyKey', () => {
@@ -102,6 +103,8 @@ describe('over the real corpus', () => {
 		const entries = analyzableCopy(rodents as never);
 		const stepEntries = entries.filter((e) => /\.steps\.\d+\./.test(e.key));
 		expect(stepEntries.length).toBeGreaterThan(10);
+		const score = scoreReadability(readabilityTextFrom(entries));
+		expect(score.instructional).toBe(true);
 	});
 
 	it('produces analyzable text for every page in the corpus', () => {
