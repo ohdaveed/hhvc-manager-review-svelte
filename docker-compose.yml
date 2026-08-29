@@ -7,6 +7,11 @@ services:
       # two have to arrive as build args. Passing them under `environment:`
       # below would be silently ignored -- the bundle would carry whatever the
       # image was built with. Change one and rebuild: `docker compose up --build`.
+      #
+      # Compose reads `${...}` from the shell or `./.env` only -- NOT from
+      # `.env.local`, which is where `bun run dev` gets them. An unset variable
+      # is a warning, not an error, so the image builds green with an empty
+      # Supabase URL inside it. See `.env.example`.
       args:
         SVELTE_PUBLIC_SUPABASE_URL: ${SVELTE_PUBLIC_SUPABASE_URL}
         SVELTE_PUBLIC_SUPABASE_ANON_KEY: ${SVELTE_PUBLIC_SUPABASE_ANON_KEY}
