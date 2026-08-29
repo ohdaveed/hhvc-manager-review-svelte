@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import ErrorMessage from './ErrorMessage.svelte';
-	import { nextFieldId } from './fieldId';
 
 	/**
 	 * Single-line text field. 48px tall, 56px under 640px.
@@ -60,7 +59,7 @@
 		class: className = ''
 	}: Props = $props();
 
-	const uid = id ?? nextFieldId('text');
+	const uid = id ?? $props.id();
 	const helpId = $derived(help ? `${uid}-help` : undefined);
 	const errorId = $derived(error ? `${uid}-error` : undefined);
 	const describedBy = $derived([helpId, errorId].filter(Boolean).join(' ') || undefined);

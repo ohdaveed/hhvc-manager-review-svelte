@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { ChoiceOption } from './types';
 	import ErrorMessage from './ErrorMessage.svelte';
-	import { nextFieldId } from './fieldId';
 
 	/**
 	 * Checkbox or radio group in a fieldset.
@@ -33,6 +32,7 @@
 		/** Radio: the selected value. Checkbox: the array of selected values. */
 		value?: string | string[];
 		name?: string;
+		id?: string;
 		disabled?: boolean;
 		class?: string;
 	}
@@ -45,11 +45,12 @@
 		options = [],
 		value = $bindable(type === 'radio' ? '' : []),
 		name,
+		id,
 		disabled = false,
 		class: className = ''
 	}: Props = $props();
 
-	const uid = nextFieldId(type);
+	const uid = id ?? $props.id();
 	const groupName = name ?? uid;
 	const helpId = $derived(help ? `${uid}-help` : undefined);
 	const errorId = $derived(error ? `${uid}-error` : undefined);

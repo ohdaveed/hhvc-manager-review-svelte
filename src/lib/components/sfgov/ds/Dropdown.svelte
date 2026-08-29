@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { SelectOption, SelectGroup } from './types';
 	import ErrorMessage from './ErrorMessage.svelte';
-	import { nextFieldId } from './fieldId';
 
 	/**
 	 * Dropdown — a native `<select>`.
@@ -67,7 +66,7 @@
 		class: className = ''
 	}: Props = $props();
 
-	const uid = id ?? nextFieldId('select');
+	const uid = id ?? $props.id();
 	const helpId = $derived(help ? `${uid}-help` : undefined);
 	const errorId = $derived(error ? `${uid}-error` : undefined);
 	const describedBy = $derived([helpId, errorId].filter(Boolean).join(' ') || undefined);

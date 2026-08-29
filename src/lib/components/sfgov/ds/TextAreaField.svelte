@@ -1,6 +1,5 @@
 <script lang="ts">
 	import ErrorMessage from './ErrorMessage.svelte';
-	import { nextFieldId } from './fieldId';
 
 	/**
 	 * Multi-line text field.
@@ -45,7 +44,7 @@
 		class: className = ''
 	}: Props = $props();
 
-	const uid = id ?? nextFieldId('textarea');
+	const uid = id ?? $props.id();
 	const helpId = $derived(help ? `${uid}-help` : undefined);
 	const errorId = $derived(error ? `${uid}-error` : undefined);
 	const describedBy = $derived([helpId, errorId].filter(Boolean).join(' ') || undefined);
