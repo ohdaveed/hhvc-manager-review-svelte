@@ -1,16 +1,19 @@
 ---
 name: hhvc-ship-workflow
-description: 'Systematically ship feature work from branch through PR review, feedback coordination, merge, and live deployment verification. Use when you have a feature branch ready to merge and need to manage the complete production ship cycle. Use this skill when shipping a feature branch to production: opening a PR, coordinating review feedback with fixes, merging to main, verifying the live deployment, and identifying follow-up work.'
-trigger: 'Use this skill when shipping a feature branch to production: opening a PR, coordinating review feedback with fixes, merging to main, verifying the live deployment, and identifying follow-up work.'
+description: "Systematically ship feature work from branch through PR review, feedback coordination, merge blockers resolution, and live deployment verification. Use this skill when 'Use this skill when shipping a feature branch to production: opening a PR, coordinating review feedback with fixes, merging to main, verifying the live deployment, and identifying follow-up work.'"
+trigger: "'Use this skill when shipping a feature branch to production: opening a PR, coordinating review feedback with fixes, merging to main, verifying the live deployment, and identifying follow-up work.'"
 author: arrizon.david
 source_sessions:
   - arrizon.david_arrizon.david's Organization_default_37db7d7e-7886-454d-b6f7-5b1262b7494d
+  - arrizon.david_arrizon.david's Organization_default_acd2a71a-79ac-46df-9176-9d9b399e830a
+  - arrizon.david_arrizon.david's Organization_default_8e274d7b-ecd5-4de4-aed9-a8bee5db8352
+  - arrizon.david_arrizon.david's Organization_default_591e2ce2-18b8-4b5b-a127-384f48139998
 contributors:
   - arrizon.david
-version: 1
+version: 2
 created_by_agent: claude_code
 created_at: 2026-08-25T15:00:20.634Z
-updated_at: 2026-08-25T15:00:20.634Z
+updated_at: 2026-08-29T23:41:18.556Z
 ---
 
 # HHVC Ship Workflow
@@ -25,6 +28,7 @@ Use this skill when:
 - Managing a PR through review feedback and multiple fix cycles
 - Merging to `main` and verifying the live deployment
 - Coordinating design decisions with review bot feedback
+- Your merge is blocked or another session has edited your branch
 
 ## The Ship Sequence
 
@@ -54,7 +58,7 @@ Monitor:
 - **Netlify deploy preview** (https://deploy-preview-<n>--hhvc-manager-review.netlify.app)
 - **Review bot findings** (CodeRabbit, Qodo) that post automatically
 
-Do not proceed until CI is green.
+Do not proceed until CI is green. If merge is blocked, see Troubleshooting below.
 
 ### 3. Address Review Feedback: Fix or Decline
 
@@ -114,6 +118,62 @@ After a successful deploy, assess and document:
 3. **Cheap wins** — low-effort, high-impact cleanups (lint red, unused deps, dead code)
 4. **Deferred findings** — review feedback you declined with visible reasoning
 
+## Troubleshooting: Merge Blockers and Concurrent Edits
+
+### Merge Blocked by Ruleset Gate
+
+Merges can be blocked by GitHub ruleset requirements, not just CI failures.
+
+```console
+mergeStateStatus: BLOCKED     mergeable: MERGEABLE
+```
+
+Check what's required:
+
+```bash
+gh pr checks <n>
+```
+
+On this project, `main: require CI` (ruleset `21203092`) requires `test & build` and `e2e` to pass. Both must run. If they show `action_required` with zero jobs, see "Bot-Pushed Workflows Require Approval" below.
+
+### Bot-Pushed Workflows Require Approval
+
+When a bot (Copilot, automation, etc.) pushes to a branch, GitHub gates the workflow behind manual approval:
+
+```console
+triggering_actor: Copilot
+status: action_required
+```
+
+**Unblock**: Click **"Approve and run workflows"** on the PR's checks tab. Alternatively, push a commit under your own account to re-trigger with a human actor.
+
+### Handling Concurrent Session Commits
+
+If another session edited your branch:
+
+1. **Check the new commits**: `git log origin/main..HEAD --oneline`
+2. **Review their content**: `git show <sha>` for each new commit
+3. **Verify they're yours or compatible**: Concurrent sessions may have committed unrelated fixes or changes
+4. **After sync**: Run `bun run verify` to confirm no breakage
+5. **If conflicts**: Ask the other session or use `git revert` (requires a new commit, then push again)
+
+Example from this project: two concurrent sessions edited `fix/karl-button-cap`, one committed the button cap fix, the other deleted tooling files — both landed in the same PR and needed unified verification before merge.
+
+### Verifying Real Artifact State
+
+CI passing does not guarantee the deployed version works. Always verify beyond the logs:
+
+```bash
+# Check the deploy preview loads
+curl -I https://deploy-preview-<n>--hhvc-manager-review.netlify.app/
+# HTTP 200 expected
+
+# Verify code presence for renames or deletions
+git show origin/<branch>:src/file.ts | grep "expected_string"
+
+# Smoke test: run one critical user flow on the preview
+```
+
 ## Gotchas
 
 - **Branch protection**: Direct push to `main` is refused. The PR → CI → merge workflow is required.
@@ -122,13 +182,17 @@ After a successful deploy, assess and document:
 - **Squash merge loses granular history** — check reflog if you need per-commit recovery.
 - **`bun run verify` is trustworthy only from `819d914` onward** — earlier versions reported green even on test failure.
 - **Review feedback doesn't require acceptance** — explain non-obvious decisions with evidence so the owner can review the reasoning.
+- **Commit messages may be mislabeled by concurrent sessions** — verify author and message intent before merge.
+- **Workflow approval gates are GitHub security, not a build failure** — bot-pushed branches require manual approval even if CI would pass.
 
-## Example: Multi-Cycle Review
+## Example: Multi-Cycle Review with Blockers
 
-If a PR requires multiple fix cycles:
+If a PR requires multiple fix cycles and encounters a merge blocker:
 
-1. Receive feedback → fix → `bun run verify` → push → CI green
-2. Receive additional feedback → fix → `bun run verify` → push → CI green
-3. All fixed or declined with reasoning → merge
+1. Receive feedback → fix → `bun run verify` → push → CI re-runs
+2. Workflow approval needed: click "Approve and run workflows"
+3. Verify deploy preview renders correctly
+4. Another session added commits: `git log HEAD` to review, run `bun run verify`, merge if compatible
+5. All fixed or declined with reasoning → merge → verify live deployment
 
 Each cycle re-verifies locally before push. Never merge with red CI or unresolved findings.
