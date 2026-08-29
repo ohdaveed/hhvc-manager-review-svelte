@@ -300,7 +300,15 @@ export function resolveField(
 		const i = Number(rest[1]);
 		const fact = Array.isArray(section.facts) ? section.facts[i] : undefined;
 		const kind = rest[2] === 'label' ? 'Label' : 'Text';
-		return stringField(fact, rest[2], `${label} Fact [${i + 1}] ${kind}`);
+		const field = stringField(fact, rest[2], `${label} Fact [${i + 1}] ${kind}`);
+		if (!field || rest[2] === 'label') return field;
+
+		const entry = readEntry(fact);
+		return {
+			...field,
+			unverified: entry?.unverified,
+			unverifiedReason: entry?.reason
+		};
 	}
 
 	if (rest.length === 3 && rest[0] === 'table') {
