@@ -1,0 +1,27 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      # `$env/static/public` is inlined by Vite during `bun run build`, so these
+      # two have to arrive as build args. Passing them under `environment:`
+      # below would be silently ignored -- the bundle would carry whatever the
+      # image was built with. Change one and rebuild: `docker compose up --build`.
+      args:
+        SVELTE_PUBLIC_SUPABASE_URL: ${SVELTE_PUBLIC_SUPABASE_URL}
+        SVELTE_PUBLIC_SUPABASE_ANON_KEY: ${SVELTE_PUBLIC_SUPABASE_ANON_KEY}
+    ports:
+      - '3000:3000'
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - HOST=0.0.0.0
+      # `$env/dynamic/private`, read by /api/ai/generate per request, so unlike
+      # the public pair above these do take effect on a plain restart. Without
+      # the token the proxy forwards to the Railway backend with no Bearer
+      # header and every AI rewrite comes back 401. RAILWAY_API_URL is optional
+      # -- the route falls back to the production backend.
+      - RAILWAY_API_TOKEN=${RAILWAY_API_TOKEN}
+      - RAILWAY_API_URL=${RAILWAY_API_URL}
+
+    restart: unless-stopped

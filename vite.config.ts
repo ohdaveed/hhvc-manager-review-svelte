@@ -1,9 +1,22 @@
 import { execFileSync } from 'node:child_process';
 import { defineConfig } from 'vitest/config';
 import tailwindcss from '@tailwindcss/vite';
-import adapter from '@sveltejs/adapter-netlify';
+import adapterNetlify from '@sveltejs/adapter-netlify';
+import adapterNode from '@sveltejs/adapter-node';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { svelteTesting } from '@testing-library/svelte/vite';
+
+/**
+ * Netlify builds production and every deploy preview, so it is the default.
+ * The Dockerfile sets `ADAPTER=node` for the container, whose `CMD` runs
+ * `build/index.js` -- an entrypoint only adapter-node produces.
+ *
+ * The polarity matters: netlify has to be the default so CI's `bun run build`
+ * exercises the adapter production actually ships on. Keying off Netlify's own
+ * `NETLIFY` variable would invert that and leave the production adapter
+ * untested by the merge gate.
+ */
+const adapter = process.env.ADAPTER === 'node' ? adapterNode : adapterNetlify;
 
 /**
  * The commit this bundle was built from, stamped into SvelteKit's
@@ -22,6 +35,7 @@ import { svelteTesting } from '@testing-library/svelte/vite';
 function buildCommit(): string {
 	const fromCI = process.env.COMMIT_REF || process.env.GITHUB_SHA;
 	if (fromCI) return fromCI;
+
 	try {
 		return execFileSync('git', ['rev-parse', 'HEAD'], {
 			encoding: 'utf8',
@@ -52,7 +66,9 @@ export default defineConfig({
 		svelteTesting()
 	],
 	test: {
-		expect: { requireAssertions: true },
+		expect: {
+			requireAssertions: true
+		},
 		projects: [
 			{
 				extends: './vite.config.ts',
