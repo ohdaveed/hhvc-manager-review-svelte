@@ -11,7 +11,10 @@ RUN bun install --frozen-lockfile
 # Copy the rest of the application code
 COPY . .
 
-# Build the application
+# Build the application. ADAPTER=node selects adapter-node in vite.config.ts,
+# whose entrypoint is the build/index.js this image runs; the default is
+# adapter-netlify, which produces no such file.
+ENV ADAPTER=node
 RUN bun run build
 
 # Stage 2: Serve the app in a minimal image
