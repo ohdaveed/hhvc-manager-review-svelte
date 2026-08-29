@@ -50,6 +50,14 @@
 	}: Props = $props();
 </script>
 
+<!-- Every `href` below is caller-supplied and falls back to `#`. They are
+     SF.gov destinations handed in by whoever renders the component -- absolute
+     URLs into sf.gov, or the `#` placeholder the specimen route passes -- and
+     `resolve()` turns THIS app's route ids into paths, so it has nothing to say
+     about any of them. Re-scope this if an internal route is ever hardcoded
+     here. -->
+<!-- eslint-disable svelte/no-navigation-without-resolve -->
+
 <footer class="ds-footer {className}">
 	{#if contact?.length}
 		<div class="ds-contact flex flex-col gap-5">

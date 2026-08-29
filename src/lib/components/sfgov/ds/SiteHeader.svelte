@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import type { LinkRef } from './types';
 
 	/**
@@ -62,13 +63,17 @@
 </script>
 
 <header class="ds-header flex flex-wrap items-center gap-4 {className}">
-	<a href="/" class="ds-home flex-none">
+	<a href={resolve('/')} class="ds-home flex-none">
 		<img src={lockup} alt={lockupAlt} class="ds-lockup block" />
 	</a>
 
 	{#if nav.length}
 		<nav aria-label="Primary" class="flex min-w-0 shrink flex-wrap gap-4">
 			{#each nav as item, i (i)}
+				<!-- A caller-supplied SF.gov destination, not a route in this app, so
+				     `resolve()` has nothing to say about it. The lockup above IS
+				     resolved -- that one really does point at this app's root. -->
+				<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
 				<a href={item.href ?? '#'} class="ds-nav-link">{item.label}</a>
 			{/each}
 		</nav>

@@ -48,6 +48,14 @@
 	const hiddenCount = $derived(Math.max(0, ancestors.length - 2));
 </script>
 
+<!-- Every `href` below is caller-supplied and falls back to `#`. They are
+     SF.gov destinations handed in by whoever renders the component -- absolute
+     URLs into sf.gov, or the `#` placeholder the specimen route passes -- and
+     `resolve()` turns THIS app's route ids into paths, so it has nothing to say
+     about any of them. Re-scope this if an internal route is ever hardcoded
+     here. -->
+<!-- eslint-disable svelte/no-navigation-without-resolve -->
+
 {#if compact}
 	<nav aria-label="Breadcrumb" class="ds-crumbs {className}" class:on-dark={onDark}>
 		<a href={parent?.href ?? '#'} class="ds-crumb-link inline-flex items-center gap-2">
