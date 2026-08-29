@@ -13,6 +13,8 @@
 	import { ChevronsLeft, ChevronsRight } from 'lucide-svelte';
 	import ReviewQueue from '$lib/components/workspace/ReviewQueue.svelte';
 	import ReviewWorkspace from '$lib/components/workspace/ReviewWorkspace.svelte';
+	import SiteHeader from '$lib/components/sfgov/SiteHeader.svelte';
+	import SiteFooter from '$lib/components/sfgov/SiteFooter.svelte';
 
 	let { children } = $props();
 
@@ -87,14 +89,14 @@
      rails are 52px (design 2a) — the buttons live here, the rail contents are
      the 2a pass. -->
 <div
-	class="bg-muted/40 grid h-screen w-full overflow-hidden"
+	class="grid h-screen w-full overflow-hidden bg-muted/40"
 	style="grid-template-columns: {pageStore.railCollapsed.queue ? '52px' : '280px'} 1fr {pageStore
 		.railCollapsed.panel
 		? '52px'
 		: '380px'}"
 >
 	<!-- Left Sidebar: Global Navigation & Review Queue -->
-	<aside class="bg-background flex h-full min-w-0 flex-col border-r">
+	<aside class="flex h-full min-w-0 flex-col border-r bg-background">
 		{#if pageStore.railCollapsed.queue}
 			<div class="flex flex-col items-center gap-4 py-3.5">
 				<Button
@@ -111,10 +113,10 @@
 		{:else}
 			<div class="flex items-start gap-2 px-3 pt-5 pb-4 pl-5">
 				<div class="min-w-0 flex-1">
-					<div class="text-sfds-slate-l2 text-[11px] font-bold tracking-[0.1em] uppercase">
+					<div class="text-[11px] font-bold tracking-[0.1em] text-sfds-slate-l2 uppercase">
 						SFDS rebuild
 					</div>
-					<h2 class="font-heading text-sfds-black mt-1.5 text-xl leading-[26px] font-bold">
+					<h2 class="mt-1.5 font-heading text-xl leading-[26px] font-bold text-sfds-black">
 						HHVC mockup review
 					</h2>
 				</div>
@@ -139,7 +141,7 @@
 				     404s. A placeholder destination that lands somewhere real. -->
 				<a
 					href={resolve('/review/[slug]', { slug: exportTarget })}
-					class="text-sfds-action text-[13px] font-semibold hover:underline"
+					class="text-[13px] font-semibold text-sfds-action hover:underline"
 					data-testid="export-review-data">Export review data</a
 				>
 				<!-- Site map is still dead, deliberately. It has no spec anywhere in
@@ -148,7 +150,7 @@
 				     guess. Left visibly broken rather than quietly aimed somewhere. -->
 				<a
 					href={resolve('/review')}
-					class="text-sfds-action text-[13px] font-semibold hover:underline">Site map</a
+					class="text-[13px] font-semibold text-sfds-action hover:underline">Site map</a
 				>
 			</div>
 		{/if}
@@ -166,7 +168,7 @@
 	     the `main` landmark and was there for the handler, but changing landmark
 	     semantics is its own decision. -->
 	<main
-		class="bg-muted relative flex h-full cursor-default flex-col overflow-hidden"
+		class="relative flex h-full cursor-default flex-col overflow-hidden bg-muted"
 		role="presentation"
 	>
 		{#if sessionStore.knownSignedOut}
@@ -187,11 +189,11 @@
 		{/if}
 
 		<!-- Toolbar (Top) -->
-		<nav class="bg-background flex h-12 flex-none items-center justify-between border-b px-5">
+		<nav class="flex h-12 flex-none items-center justify-between border-b bg-background px-5">
 			<div class="flex min-w-0 items-center gap-2">
 				{#if pageData?.type}
 					<span
-						class="bg-sfds-grey-l2/60 text-sfds-black inline-flex h-[22px] flex-none items-center rounded-[4px] px-2 text-[11px] font-bold tracking-[0.08em] uppercase"
+						class="inline-flex h-[22px] flex-none items-center rounded-[4px] bg-sfds-grey-l2/60 px-2 text-[11px] font-bold tracking-[0.08em] text-sfds-black uppercase"
 					>
 						{pageData.type}
 					</span>
@@ -199,9 +201,9 @@
 				<!-- When the queue is collapsed it no longer shows the page title, so
 				     the toolbar absorbs it (design 2a). Restored to the queue on expand. -->
 				{#if pageStore.railCollapsed.queue && pageData?.title}
-					<span class="text-sfds-black truncate text-sm font-semibold">{pageData.title}</span>
+					<span class="truncate text-sm font-semibold text-sfds-black">{pageData.title}</span>
 				{/if}
-				<span class="text-sfds-slate-l2 truncate font-mono text-xs">
+				<span class="truncate font-mono text-xs text-sfds-slate-l2">
 					{pageData?.slug ?? 'https://sf.gov/'}
 				</span>
 			</div>
@@ -241,33 +243,31 @@
 			<!-- `self-start` is load-bearing: without it this flex parent stretches
 			     the figure to the container height and the page footer becomes
 			     unreachable by scrolling. -->
+			<!-- `overflow-hidden` so the footer's two illustrations clip at the
+			     rounded corners instead of squaring them off; they are laid out
+			     flush to the left and right edges. -->
 			<figure
-				class="w-full max-w-[880px] self-start rounded-[4px] border border-gray-200 bg-white shadow-[0_2px_4px_rgba(12,20,100,.06),0_4px_12px_rgba(12,20,100,.1)]"
+				class="w-full max-w-[880px] self-start overflow-hidden rounded-[4px] border border-gray-200 bg-white shadow-[0_2px_4px_rgba(12,20,100,.06),0_4px_12px_rgba(12,20,100,.1)]"
 			>
-				<!-- Legacy SF.gov Header -->
-				<header class="flex items-center justify-between bg-[#002f6c] p-4 text-white">
-					<div class="text-xl font-bold">SF.gov</div>
-					<div class="flex gap-4 text-sm">
-						<span>Services</span>
-						<span>Departments</span>
-					</div>
-				</header>
+				<SiteHeader />
 
-				<!-- Page specific content -->
-				<div id="mockPage" class="p-8">
-					{@render children()}
+				<!-- Page specific content. 40px/32px padding around a 760px column
+				     is the design's measure, not the previous uniform 32px: SF.gov
+				     body copy is set to a fixed reading width, and the chrome above
+				     and below is full-bleed, which is why it sits outside here. -->
+				<div id="mockPage" class="px-8 py-10">
+					<div class="mx-auto max-w-[760px]">
+						{@render children()}
+					</div>
 				</div>
 
-				<!-- Legacy SF.gov Footer -->
-				<footer class="mt-12 border-t border-gray-200 bg-gray-100 p-8">
-					<div class="font-bold">City and County of San Francisco</div>
-				</footer>
+				<SiteFooter />
 			</figure>
 		</div>
 	</main>
 
 	<!-- Right Sidebar: Contextual Manager Review & Checks -->
-	<section class="bg-background flex h-full min-w-0 flex-col overflow-hidden border-l">
+	<section class="flex h-full min-w-0 flex-col overflow-hidden border-l bg-background">
 		{#if pageStore.railCollapsed.panel}
 			<div class="flex flex-col items-center gap-4 py-3.5">
 				<Button
@@ -284,7 +284,7 @@
 				     it is repeated here rather than hidden with the tabs. -->
 				{#if unsavedCount > 0}
 					<span
-						class="bg-sfds-action inline-flex size-6 items-center justify-center rounded-full text-[11px] font-bold text-white"
+						class="inline-flex size-6 items-center justify-center rounded-full bg-sfds-action text-[11px] font-bold text-white"
 						role="status"
 						aria-label="{unsavedCount} unsaved edits"
 					>

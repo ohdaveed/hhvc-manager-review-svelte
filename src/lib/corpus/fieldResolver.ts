@@ -101,6 +101,31 @@ function writeEntry(list: unknown[], i: number, next: string): void {
 	}
 }
 
+/**
+ * A plain-string leaf directly on `obj[key]` (a card's `title`, a step's
+ * `buttonUrl`, ...). Null if `obj` doesn't exist or the value isn't a string
+ * — covers both a stale index and a shape nobody anticipated.
+ */
+function stringField(
+	obj: AnyPage | undefined | null,
+	key: string,
+	name: string
+): ResolvedField | null {
+	if (!obj || typeof obj[key] !== 'string') return null;
+	return { name, value: obj[key], set: (v) => (obj[key] = v) };
+}
+
+/**
+ * A plain-string entry at `list[i]` (a table cell, a `thingsToKnow` item, an
+ * `audience` line). Distinct from `readEntry`/`writeEntry`: these lists never
+ * hold the `{ text, unverified }` wrapper in the corpus, per `extractCopy`,
+ * which reads every one of them with `str()` rather than `entryText()`.
+ */
+function arrayStringField(list: unknown, i: number, name: string): ResolvedField | null {
+	if (!Array.isArray(list) || !Number.isInteger(i) || typeof list[i] !== 'string') return null;
+	return { name, value: list[i], set: (v: string) => (list[i] = v) };
+}
+
 /** Mirrors the display labels `Page.svelte` and `Section.svelte` pass. */
 function sectionLabel(page: AnyPage, fieldKey: string): string {
 	const i = (page.sections ?? []).findIndex((s: AnyPage) => s.fieldKey === fieldKey);
@@ -132,6 +157,18 @@ export function resolveField(
 		return { name: 'Summary', value: page.summary, set: (v) => (page.summary = v) };
 	}
 
+	// Flat page-level strings with no nested path — mirrors the `set(...)`
+	// calls at the bottom of `extractCopy`.
+	const TOP_LEVEL_STRINGS: Record<string, string> = {
+		metaDescription: 'Meta Description',
+		reportDate: 'Report Date',
+		seoTitle: 'SEO Title',
+		topicTag: 'Topic Tag'
+	};
+	if (Object.hasOwn(TOP_LEVEL_STRINGS, fieldId)) {
+		return stringField(page, fieldId, TOP_LEVEL_STRINGS[fieldId]);
+	}
+
 	const parts = fieldId.split('.');
 
 	if (parts[0] === 'audience' && parts.length === 2) {
@@ -139,6 +176,60 @@ export function resolveField(
 		const list = page.audience;
 		if (!Array.isArray(list) || !Number.isInteger(i) || typeof list[i] !== 'string') return null;
 		return { name: `Audience [${i + 1}]`, value: list[i], set: (v) => (list[i] = v) };
+	}
+
+	if (parts[0] === 'contact' && parts.length === 3) {
+		const sub = parts[1];
+		if (sub !== 'phone' && sub !== 'email' && sub !== 'other') return null;
+		const i = Number(parts[2]);
+		const kind = sub === 'phone' ? 'Phone' : sub === 'email' ? 'Email' : 'Other';
+		return arrayStringField(page.contact?.[sub], i, `Contact ${kind} [${i + 1}]`);
+	}
+
+	if (parts[0] === 'partnerAgencies' && parts.length === 3) {
+		if (parts[2] !== 'title' && parts[2] !== 'url') return null;
+		const i = Number(parts[1]);
+		const agency = Array.isArray(page.partnerAgencies) ? page.partnerAgencies[i] : undefined;
+		const kind = parts[2] === 'title' ? 'Title' : 'URL';
+		return stringField(agency, parts[2], `Partner Agency [${i + 1}] ${kind}`);
+	}
+
+	if (parts[0] === 'spotlight') {
+		if (parts.length === 3 && parts[1] === 'paragraphs') {
+			const i = Number(parts[2]);
+			return arrayStringField(page.spotlight?.paragraphs, i, `Spotlight Paragraph [${i + 1}]`);
+		}
+		if (parts.length === 2) {
+			const SPOTLIGHT_NAMES: Record<string, string> = {
+				title: 'Spotlight Title',
+				button: 'Spotlight Button',
+				buttonUrl: 'Spotlight Button URL'
+			};
+			const name = SPOTLIGHT_NAMES[parts[1]];
+			if (!name) return null;
+			return stringField(page.spotlight, parts[1], name);
+		}
+		return null;
+	}
+
+	if (parts[0] === 'whatToKnow') {
+		if (parts.length === 2 && parts[1] === 'cost') {
+			return stringField(page.whatToKnow, 'cost', 'Cost');
+		}
+		if (parts[1] === 'thingsToKnow') {
+			const list = page.whatToKnow?.thingsToKnow;
+			if (parts.length === 3) {
+				const i = Number(parts[2]);
+				return arrayStringField(list, i, `Thing To Know [${i + 1}]`);
+			}
+			if (parts.length === 4 && (parts[3] === 'label' || parts[3] === 'text')) {
+				const i = Number(parts[2]);
+				const item = Array.isArray(list) ? list[i] : undefined;
+				const kind = parts[3] === 'label' ? 'Label' : 'Text';
+				return stringField(item, parts[3], `Thing To Know [${i + 1}] ${kind}`);
+			}
+		}
+		return null;
 	}
 
 	if (parts[0] !== 'sections' || parts.length < 3) return null;
@@ -189,6 +280,88 @@ export function resolveField(
 			value: callout[rest[1]],
 			set: (v) => (callout[rest[1]] = v)
 		};
+	}
+
+	if (rest.length === 1 && (rest[0] === 'button' || rest[0] === 'buttonUrl')) {
+		const kind = rest[0] === 'button' ? 'Button' : 'Button URL';
+		return stringField(section, rest[0], `${label} ${kind}`);
+	}
+
+	if (rest.length === 3 && rest[0] === 'cards') {
+		const CARD_NAMES: Record<string, string> = { title: 'Title', text: 'Text', url: 'URL' };
+		const kind = CARD_NAMES[rest[2]];
+		if (!kind) return null;
+		const i = Number(rest[1]);
+		const card = Array.isArray(section.cards) ? section.cards[i] : undefined;
+		return stringField(card, rest[2], `${label} Card [${i + 1}] ${kind}`);
+	}
+
+	if (rest.length === 3 && rest[0] === 'facts' && (rest[2] === 'label' || rest[2] === 'text')) {
+		const i = Number(rest[1]);
+		const fact = Array.isArray(section.facts) ? section.facts[i] : undefined;
+		const kind = rest[2] === 'label' ? 'Label' : 'Text';
+		const field = stringField(fact, rest[2], `${label} Fact [${i + 1}] ${kind}`);
+		if (!field || rest[2] === 'label') return field;
+
+		// A fact carries `unverified`/`unverifiedReason` as SIBLINGS of `text`,
+		// not as a wrapper around it -- unlike a paragraph or bullet. `readEntry`
+		// reads that shape directly, so no new helper is needed.
+		//
+		// This has to be surfaced here and not only on the mockup: FieldsPanel
+		// derives its "no confirmed source" callout from `field.unverified` on
+		// the RESOLVED field, while the page gets it from FactsBlock's own prop.
+		// Returning a plain string made the two disagree -- the page warned and
+		// the panel did not, so a reviewer could rewrite and approve an
+		// explicitly unconfirmed phone number without ever seeing the flag.
+		const entry = readEntry(fact);
+		return { ...field, unverified: entry?.unverified, unverifiedReason: entry?.reason };
+	}
+
+	if (rest.length === 3 && rest[0] === 'table') {
+		const r = Number(rest[1]);
+		const c = Number(rest[2]);
+		const row = Array.isArray(section.table) ? section.table[r] : undefined;
+		return arrayStringField(row, c, `${label} Table [${r + 1},${c + 1}]`);
+	}
+
+	if (rest[0] === 'steps' && rest.length >= 3) {
+		const i = Number(rest[1]);
+		const step = Array.isArray(section.steps) ? section.steps[i] : undefined;
+		const stepLabel = `${label} Step [${i + 1}]`;
+
+		if (rest.length === 3) {
+			const STEP_NAMES: Record<string, string> = {
+				title: 'Title',
+				button: 'Button',
+				buttonUrl: 'Button URL'
+			};
+			const kind = STEP_NAMES[rest[2]];
+			if (!kind) return null;
+			return stringField(step, rest[2], `${stepLabel} ${kind}`);
+		}
+
+		if (rest.length === 4 && (rest[2] === 'text' || rest[2] === 'bullets')) {
+			const list = step?.[rest[2]];
+			const j = Number(rest[3]);
+			if (!Array.isArray(list) || !Number.isInteger(j)) return null;
+			const entry = readEntry(list[j]);
+			if (!entry) return null;
+			const kind = rest[2] === 'text' ? 'Text' : 'Bullet';
+			return {
+				name: `${stepLabel} ${kind} [${j + 1}]`,
+				value: entry.text,
+				set: (v) => writeEntry(list, j, v),
+				unverified: entry.unverified,
+				unverifiedReason: entry.reason
+			};
+		}
+
+		if (rest.length === 4 && rest[2] === 'callout' && (rest[3] === 'title' || rest[3] === 'text')) {
+			const kind = rest[3] === 'title' ? 'Callout Title' : 'Callout Text';
+			return stringField(step?.callout, rest[3], `${stepLabel} ${kind}`);
+		}
+
+		return null;
 	}
 
 	return null;

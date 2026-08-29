@@ -1,5 +1,10 @@
 <script lang="ts">
 	import EditTarget from './EditTarget.svelte';
+	import ButtonBlock from './blocks/ButtonBlock.svelte';
+	import CardsBlock from './blocks/CardsBlock.svelte';
+	import FactsBlock from './blocks/FactsBlock.svelte';
+	import StepsBlock from './blocks/StepsBlock.svelte';
+	import TableBlock from './blocks/TableBlock.svelte';
 	import { entryText, entryUnverified } from '$lib/corpus/fieldResolver';
 	import { pageStore } from '$lib/stores/pageData.svelte';
 	import { sessionStore } from '$lib/stores/session.svelte';
@@ -85,6 +90,36 @@
 
 	{#if section.callout}
 		{@render calloutSnippet(section.callout)}
+	{/if}
+
+	<!-- Every block below keys its edits on `key` (the section's heading-derived
+	     fieldKey), never on the array index, so reordering a section does not
+	     orphan its saved edits. The field ids these produce are the ones
+	     `extractCopy` already emits and `corpus.lock` already hashes. -->
+	{#if section.steps}
+		<StepsBlock steps={section.steps} sectionKey={key} {label} />
+	{/if}
+
+	{#if section.cards}
+		<CardsBlock cards={section.cards} sectionKey={key} {label} />
+	{/if}
+
+	{#if section.facts}
+		<FactsBlock facts={section.facts} sectionKey={key} {label} />
+	{/if}
+
+	{#if section.table}
+		<TableBlock table={section.table} sectionKey={key} {label} />
+	{/if}
+
+	{#if section.button}
+		<ButtonBlock
+			text={section.button}
+			url={section.buttonUrl}
+			fieldId={`sections.${key}.button`}
+			urlFieldId={`sections.${key}.buttonUrl`}
+			name={`${label} Button`}
+		/>
 	{/if}
 </div>
 
