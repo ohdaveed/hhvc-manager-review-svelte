@@ -27,11 +27,9 @@
 	 *    scrolls the nearest ancestor it likes, which here drags the whole app
 	 *    shell sideways. Computing the offset keeps the movement inside the list.
 	 */
-	let {
-		walkthrough,
-		pageId,
-		onExit
-	}: { walkthrough: Walkthrough; pageId: string; onExit: () => void } = $props();
+	// No exit control here: the navy header above owns both it and the add-page
+	// link, and two copies of the same two controls is just noise on screen.
+	let { walkthrough, pageId }: { walkthrough: Walkthrough; pageId: string } = $props();
 
 	let listEl = $state<HTMLDivElement | null>(null);
 	let headingEl = $state<HTMLHeadingElement | null>(null);
@@ -242,15 +240,6 @@
 				{/each}
 			</div>
 		{/if}
-	</div>
-
-	<div class="drawer-foot">
-		<!-- api.sf.gov is the real Karl admin, not a route in this app. -->
-		<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-		<a class="drawer-form" href={walkthrough.formUrl} target="_blank" rel="noreferrer">
-			Open the Karl add-page form ↗
-		</a>
-		<button type="button" class="btn-ghost" onclick={onExit}>Exit walkthrough</button>
 	</div>
 </div>
 
@@ -640,21 +629,5 @@
 		background: #ffffff;
 		font-size: 13px;
 		cursor: pointer;
-	}
-
-	.drawer-foot {
-		flex: none;
-		display: flex;
-		align-items: center;
-		gap: 12px;
-		padding: 12px 20px;
-		border-top: 1px solid var(--sfds-color-grey-l2);
-	}
-
-	.drawer-form {
-		font-size: 13px;
-		font-weight: 600;
-		color: var(--color-sfds-action, #495ed4);
-		text-underline-offset: 3px;
 	}
 </style>

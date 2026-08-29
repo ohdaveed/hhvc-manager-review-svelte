@@ -272,11 +272,7 @@
 
 			<div class="flex min-h-0 flex-1 overflow-hidden">
 				{#if pageStore.mode === 'walkthrough' && walkthrough && pageData}
-					<WalkthroughDrawer
-						{walkthrough}
-						pageId={pageData.id}
-						onExit={() => pageStore.exitWalkthrough()}
-					/>
+					<WalkthroughDrawer {walkthrough} pageId={pageData.id} />
 				{/if}
 				<!-- Scrollable Mockup Container.
 			     tabindex="0" is what axe's scrollable-region-focusable asks for: a
