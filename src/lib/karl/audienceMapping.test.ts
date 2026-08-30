@@ -66,4 +66,36 @@ describe('audience is reported, not suppressed', () => {
 		const [gap] = audienceGap(pagesByKey.filthReport);
 		expect(gap.reason).toMatch(/caps Things to know at 2/);
 	});
+
+	/**
+	 * `things_to_know` is Transaction-only. Telling an Information page its
+	 * audience belongs in a panel that type does not have would send an editor
+	 * looking for a field that is not on their form — a worse failure than the
+	 * silence this whole change replaced, because it looks actionable.
+	 */
+	it('does not promise a Things to know entry on types that have no such panel', () => {
+		const nonTransaction = (Object.values(pagesByKey) as { type?: string }[]).filter(
+			(p) => p.type && p.type !== 'Transaction'
+		);
+		expect(
+			nonTransaction.length,
+			'the corpus should still have non-Transaction pages'
+		).toBeGreaterThan(0);
+
+		for (const page of nonTransaction) {
+			const [gap] = audienceGap(page);
+			if (!gap) continue;
+			expect(gap.reason, `${page.type}`).toMatch(/nowhere on this type to put it/);
+			expect(gap.reason, `${page.type}`).toMatch(/Transaction-only/);
+			expect(gap.reason, `${page.type}`).not.toMatch(/already spend both/);
+		}
+	});
+
+	it('still cites the live pattern on both branches', () => {
+		const transaction = audienceGap(pagesByKey.filthReport)[0];
+		const information = audienceGap(pagesByKey.afterReport)[0];
+		for (const gap of [transaction, information]) {
+			expect(gap.reason).toContain('Who this information is for');
+		}
+	});
 });

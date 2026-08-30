@@ -75,14 +75,29 @@ const NOT_MIGRATED_PAGE_FIELDS = new Set([
  * line deleted rather than placed.
  */
 const PAGE_FIELD_REASONS = {
-	audience: (type) =>
-		`The page carries \`audience\`, and Karl does have a home for it: a **Things to know** ` +
-		`entry titled "Who this information is for", with the audiences as a bulleted list. ` +
-		`Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs ` +
-		`renders exactly that inside its grey "What to know" box. ` +
-		`What blocks it is the budget, not the field: the Help Center caps Things to know at 2 ` +
-		`entries, and most ${type} pages here already spend both, so placing the audience means ` +
-		`deciding which existing entry it replaces. That is a content call, not a missing panel.`
+	audience: (type) => {
+		const live =
+			'Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs ' +
+			'renders "Who this information is for" as an H3 inside its grey "What to know" box, with the ' +
+			'audiences as a bulleted list.';
+		const hasThingsToKnow = panelsFor(type).some((panel) => panel.rawName === 'things_to_know');
+
+		// `things_to_know` is Transaction-only, so the two cases are genuinely
+		// different findings and must not share wording. Telling an Information
+		// page its audience belongs in a panel that type does not have would send
+		// an editor looking for a field that is not on their form.
+		return hasThingsToKnow
+			? 'The page carries `audience`, and Karl does have a home for it: a **Things to know** entry ' +
+					`titled "Who this information is for". ${live} ` +
+					'What blocks it is the budget, not the field: the Help Center caps Things to know at 2 ' +
+					`entries, and most ${type} pages here already spend both, so placing the audience means ` +
+					'deciding which existing entry it replaces. That is a content call, not a missing panel.'
+			: 'The page carries `audience`, and there is nowhere on this type to put it. The pattern ' +
+					`SF.gov uses is a **Things to know** entry, and ${type} has no \`things_to_know\` panel — ` +
+					`it is Transaction-only. ${live} ` +
+					`So this is a real gap rather than a budget question: either the audience moves into ` +
+					`${type}'s own body copy, or the line is dropped deliberately.`;
+	}
 };
 
 /** Section and step fields that carry content an editor has to place somewhere. */
