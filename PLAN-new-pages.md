@@ -44,18 +44,23 @@ filled with a plausible number:
 
 ## Tasks
 
-- [ ] Write the ten modules in `src/lib/data/`, matching the existing shape:
+- [x] Write the ten modules in `src/lib/data/`, matching the existing shape:
       `slug`, `type`, `title`, `summary`, `audience[]`, `reading`, `editorNote`,
       `editorStatus`, `whatToKnow`, `sections[]` (each with a `karl` note),
       `partnerAgencies[]`, `seoTitle`, `metaDescription`.
-- [ ] Put the audience in `whatToKnow.thingsToKnow` as a "Who this information
-      is for" entry, per the corrected mapping — the live pattern on
+- [x] Put the audience in `whatToKnow.thingsToKnow` as a "Who this information
+      is for" entry **on the two Transaction pages**. Corrected mid-build: only
+      Transaction has that panel. Step by step and Location put it in `intro`
+      instead, and the other four types have neither, so their audience stays in
+      `audience` and the transcript reports it as a gap — which is now accurate
+      per type. Original wording assumed one destination for all ten. Per the
+      corrected mapping — the live pattern on
       `sf.gov/manage-covid-19-schools-childcare-and-youth-programs`. New pages
       can adopt it directly; the existing 29 still need the per-page budget
       decision.
-- [ ] Export each from `src/lib/data/index.ts` (import + `pagesByKey`).
-- [ ] `bun run corpus:lock` — blocking in CI via `corpus:check`.
-- [ ] `bun run verify` and the e2e suite.
+- [x] Export each from `src/lib/data/index.ts` (import + `pagesByKey`).
+- [x] `bun run corpus:lock` — blocking in CI via `corpus:check`.
+- [x] `bun run verify` and the e2e suite.
 - [ ] Publish the design canvas for the supervisor.
 
 ## The database step, which is easy to miss
@@ -66,7 +71,7 @@ filled with a plausible number:
 compiled corpus. So a new module renders at its route but is **absent from the
 review queue** until a row exists.
 
-- [ ] Add the ten paths to `supabase/seed.sql` and `supabase/seed.hosted.sql`.
+- [x] Add the ten paths to `supabase/seed.sql` and `supabase/seed.hosted.sql`.
 - [ ] Migration inserting the ten rows against the existing review, for
       production and staging both. Merging to `main` applies migrations to
       production only; staging needs a manual `supabase db push`.

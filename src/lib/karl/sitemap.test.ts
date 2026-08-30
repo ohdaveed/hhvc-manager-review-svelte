@@ -76,7 +76,7 @@ describe('buildSitemap', () => {
 describe('typeBreakdown', () => {
 	it('reads back the corpus composition, commonest type first', () => {
 		expect(typeBreakdown(hydrate())).toBe(
-			'14 Transaction · 6 Information · 3 Resource Collection · 2 Campaign · 1 About us · 1 Agency · 1 Report · 1 Topic'
+			'16 Transaction · 7 Information · 4 Resource Collection · 3 Campaign · 3 Step by step · 2 Report · 1 About us · 1 Agency · 1 Location · 1 Topic'
 		);
 	});
 });
