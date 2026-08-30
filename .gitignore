@@ -66,3 +66,11 @@ coverage/
 
 # Sentry Config File
 .env.sentry-build-plugin
+
+# Design reference dropped in from the mockup tooling -- .dc.html artboards,
+# exported zips, scratch notes. 8.5M of binaries that nothing in the app
+# imports, so it is reference material a person opens, not source the build
+# reads. The `:Zone.Identifier` files alongside them are Windows
+# alternate-data-stream stubs that ride along when files cross from Windows
+# into WSL; they are noise wherever they land.
+design/
