@@ -12,6 +12,46 @@ src/lib/components/sfgov/ds/
   types.ts  fieldId.ts
 ```
 
+## Design source of truth: Figma
+
+**Design values — color, type, spacing, geometry — come from the Figma file
+"Public — User Interface Components"** (`wv6CXpGGH0W8mAmkXKpiex`), not from this
+repo's CSS. The tokens below were transcribed from the design frames by hand, so
+the CSS is a copy and Figma is the original; when the two disagree, the original
+decides.
+
+This reverses the rule in the design-system export's own readme ("Where a value
+here disagrees with `src/css/theme.css`, theme.css wins"). That rule is
+superseded.
+
+Reading it: the file is a "(Copy)", so its components are unpublished and
+`search_design_system` returns nothing — reach nodes by `node-id` and use
+`get_variable_defs` on a real node to get the variables. Spot-checked
+2026-08-30, the public-site palette matches exactly: `Primary/600 #1B519E`
+(action), `Primary/900 #000925` (dark end), `Primary/500 #386EBF` (focus ring's
+second stop), `Black-White/Black #0B0C0C` (icon stroke). The spacing ladder is
+`0 / 4 / 8 / 12 / 16 / 20 / 24 / 28`.
+
+Two deltas found in that check, both open:
+
+- **`Accent/500 #B64A00` exists in Figma and nowhere in this repo.** It is _not_
+  yet established to be the warning role — a variable name is not a role — so
+  `--color-site-warning: #843f00` stays until someone confirms the mapping
+  against a Figma alert node. Contrast is not the blocker: `#B64A00` measures
+  5.16:1 on the page ground and 4.66:1 on `#FAEFE1`, both passing AA, against
+  `#843F00`'s 7.60 and 6.87.
+- **Figma specifies Roboto Slab at Medium 500 and SemiBold 600** for headings,
+  while `src/app.css` imports `@fontsource/roboto-slab/700.css` only. Nothing
+  breaks today because no component here names a slab family — the 500/600
+  weights in `ListItem` and `Spotlight` sit on `--site-font-body`, which is
+  Roboto Flex and _variable_, so those weights genuinely exist. Anyone building
+  the slab headings must add the 500 and 600 imports, or the weight silently
+  synthesizes from 700 and looks plausible but wrong.
+
+This governs design values only. How a _page_ should be built is the Karl Editor
+Help Center's call, and what a URL actually renders is settled by the live
+published page — see `docs/karl-export-field-map.md`.
+
 ## Why this sits beside `sfgov/`, not inside it
 
 `src/lib/components/sfgov/` already holds `Breadcrumb`, `SiteFooter`,
