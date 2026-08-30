@@ -43,7 +43,7 @@
 	const sectionSelected = $derived(pageStore.selectedSectionKey === key);
 </script>
 
-<div class="page-section {section.kind || 'body'}">
+<div class="page-section {section.kind || 'body'}" data-component={section.component}>
 	{#if editable}
 		<div class="page-section-chrome">
 			<button

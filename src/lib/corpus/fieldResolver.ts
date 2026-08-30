@@ -157,6 +157,15 @@ export function resolveField(
 		return { name: 'Summary', value: page.summary, set: (v) => (page.summary = v) };
 	}
 
+	if (fieldId === 'primaryAgency') {
+		if (typeof page.primaryAgency !== 'string') return null;
+		return {
+			name: 'Primary agency',
+			value: page.primaryAgency,
+			set: (v) => (page.primaryAgency = v)
+		};
+	}
+
 	// Flat page-level strings with no nested path — mirrors the `set(...)`
 	// calls at the bottom of `extractCopy`.
 	const TOP_LEVEL_STRINGS: Record<string, string> = {
