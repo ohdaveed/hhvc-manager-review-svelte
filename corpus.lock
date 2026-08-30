@@ -1,9 +1,9 @@
 {
   "version": 1,
-  "corpusHash": "c834cbce863498196eac166563a1ebf86432a17aac8c2951760cdb384c109e9b",
+  "corpusHash": "7003f78c89f51bb3044412300309cffd66812676744dc75de848b13f34d6d7db",
   "pages": {
     "departments--healthy-housing-and-vector-control": {
-      "contentHash": "234045b6cf53d5b028a6a19d1c70a8cfbdbe0421d28859aa5222d7f9847578a4",
+      "contentHash": "5b136eb13e66532aa646b847bcaed912a5f3843a72dfb5eaa9b4657b5664f5a8",
       "fieldHashes": {
         "audience.0": "1b5edf6795c2de3a86d15170ff8fa258e537de07a9f9dc905e38c22bdfb59b47",
         "sections.about-healthy-housing-and-vector-control.heading": "b3a0da0297589220c360c0576541a7e4a1134dcf8060626c73f7264df3778cda",
@@ -210,7 +210,7 @@
       }
     },
     "information-learn-what-hhvc-can-inspect": {
-      "contentHash": "0d384ab9ed9c4b9731780e984a8c26a69a65d58eec840ddb6673873c42862c42",
+      "contentHash": "0592f01566d3351ffcbe3c57554e6d5237bd81bcd7ac189ddb0e670670e73988",
       "fieldHashes": {
         "audience.0": "1ef84115f8e2b0d700a51ccd2042154c64a2df7737f7d3d2fc132d0a1efd7cdb",
         "sections.have-this-ready-when-you-report.bullets.0": "e69ea26f7a991067a2a35e601065fe3b8460745193848d323e9088e0492e922f",
@@ -220,7 +220,7 @@
         "sections.have-this-ready-when-you-report.paragraphs.0": "258aedf661a7dfad2f7dccad9d9a3ac8b7b7c0d145886a322f60a272f4e82606",
         "sections.how-to-choose-the-right-page.bullets.0": "2c7f5c934e542327ce3fd895f2f3dcaca9a600d1b4811e3dbba2d17831c61942",
         "sections.how-to-choose-the-right-page.bullets.1": "07ec7c365e6da1a9961c4c5403b72fcaa8aa38c9f1687f929c879d22824cc813",
-        "sections.how-to-choose-the-right-page.bullets.2": "5d2204db84127e4f1ce42653cc73c0df02103cbb74b71545806318c1ff003b03",
+        "sections.how-to-choose-the-right-page.bullets.2": "1c477f0f125f77c24820f6b8d6c434c1f8166004539fdf8a29c79e5e6b581f27",
         "sections.how-to-choose-the-right-page.bullets.3": "54e06ac40eef0e941430da9038db5cf7ceef8bdae4125ea9b5a54d2600cf0f67",
         "sections.how-to-choose-the-right-page.bullets.4": "b741433513dd0cd048193156919e7a6f2c4f4abdbc7ceb1196cd220fd0a294d7",
         "sections.how-to-choose-the-right-page.bullets.5": "044afd07a724c45f1dade2835948d3c230ab408bf789d1f23f4f1b54457115c5",
@@ -530,7 +530,7 @@
       }
     },
     "report-garbage-filth-vegetation": {
-      "contentHash": "04e381d7404bc547192e8150dae782ff082e0db00518ec23240ea3f5f9e7119d",
+      "contentHash": "6befbf20734d660cac305fbd7878a494fae7e3b9bc4ee33c1e1d24bf65c83660",
       "fieldHashes": {
         "audience.0": "0141f1792023db799338c596092991d8c6b8fdd26cfad661752f4c75ecae3941",
         "audience.1": "7ea11dfb70cfa49f0c3effee3965434ea835da01b69ddfff911ff6b4b9851d7a",
@@ -562,7 +562,7 @@
         "sections.while-you-wait-tips-to-help-with-the-problem.heading": "2a48c1f432e88393905002da6aa167655da242c845c0b5d3b6a2c5ac736416c1",
         "sections.while-you-wait-tips-to-help-with-the-problem.paragraphs.0": "a83aaa4be38220b027448141140b29300f531ed7b868b5f748ad42e685cc3a83",
         "summary": "c06010d1e17f4dd9c53c40c3be7881b116f4a803c775edef64c6774968434e9f",
-        "title": "74de13bc739f9d9dfcbbe61c1ae3ce78d2ca316655e2da867c1f7c93f956a04c"
+        "title": "18671c98f659bc53fc88f6f749a1a5b98d2e7755414c382652a04f2fcf6b5123"
       }
     },
     "report-health-code-article-11-plain-language": {
@@ -607,7 +607,7 @@
       }
     },
     "report-rats-mice-four-legged-problems": {
-      "contentHash": "3da102003ef7f2a9ee48c5d216580b345adbae4d067a139ee9c95fc425ef911c",
+      "contentHash": "0cd8db38398a4529ee8d9054a8cdaf5967ac34762606d49a41bbcd4d4cd8ff52",
       "fieldHashes": {
         "audience.0": "46b8f713b30af842c8b3fbb13a3d880bd06d78b8c0e61ad9cecfc6f94c59ef8d",
         "audience.1": "7ea11dfb70cfa49f0c3effee3965434ea835da01b69ddfff911ff6b4b9851d7a",
@@ -640,7 +640,7 @@
       }
     },
     "resource--healthy-housing-and-vermin-information": {
-      "contentHash": "28410cf602a1696038876ea43f09544479532b8debaa64b4e02b4a961b6ac2a3",
+      "contentHash": "50fa19780be850c8de56146ca11b328c92312a857149daf24966d39b7cc42bf4",
       "fieldHashes": {
         "audience.0": "c6d6281f9bda09203c33b8b44f260b9c022d40154d0ca5d1caef5ffb8f45c842",
         "sections.find-forms-records-and-rules.heading": "e52607138746eba8ff41209c5f076f17ed93789390108056f811dd300ca7e328",
@@ -715,7 +715,7 @@
       }
     },
     "topics--healthy-housing-conditions": {
-      "contentHash": "6a2c6b2f65ce5c8885f4adf71e3dd817d70924c7d3bb8edf229e2985c1e658bb",
+      "contentHash": "7f2f0e0ade3532e0fbfbd3c427cbc1c7b1e881d211ac7793b87379e9f2673624",
       "fieldHashes": {
         "audience.0": "2515acba7f28f2c65b06ae4a6e4066558162cc09e682029364c6a60bdbb6e559",
         "sections.general-housing-issues.heading": "fef3b59552fe45dd2c867d1d286caec4982e91b462b78eabc15e06c17557f7ad",

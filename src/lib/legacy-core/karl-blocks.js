@@ -412,7 +412,7 @@ const KARL_PANELS = {
 				kind: 'none'
 			},
 			docLine: 307,
-			note: 'U6 — the mockup has no primary_agency field, and Karl requires it. Supply the parent Agency page by hand.'
+			note: 'U6 — the mockup has no primary_agency field, and Karl requires it. Supply the parent Agency page by hand: HHVC was approved for its own Agency page (sf.gov/departments--healthy-housing-and-vector-control), so that is the value for HHVC pages rather than Environmental Health or DPH. Those two remain Partner agencies.'
 		},
 		{
 			uiLabel: 'Cost',
