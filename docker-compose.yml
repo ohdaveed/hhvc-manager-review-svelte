@@ -15,6 +15,7 @@ services:
       args:
         SVELTE_PUBLIC_SUPABASE_URL: ${SVELTE_PUBLIC_SUPABASE_URL}
         SVELTE_PUBLIC_SUPABASE_ANON_KEY: ${SVELTE_PUBLIC_SUPABASE_ANON_KEY}
+        CONTEXT: ${CONTEXT:-production}
     ports:
       - '3000:3000'
     environment:
