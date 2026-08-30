@@ -169,13 +169,13 @@
 	}
 
 	.ds-alert[data-kind='archive'] .ds-bar {
-		background: var(--color-site-archive, #5b5f63);
+		background: var(--color-site-archive, #843f00);
 	}
 	.ds-alert[data-kind='archive'] .ds-body {
-		background: var(--color-site-archive-bg, #f2f2f2);
+		background: var(--color-site-archive-bg, #faefe1);
 	}
 	.ds-alert[data-kind='archive'] .ds-glyph {
-		color: var(--color-site-archive, #5b5f63);
+		color: var(--color-site-archive, #843f00);
 	}
 
 	.ds-dismiss {
@@ -209,6 +209,6 @@
 		--ds-alert-bg: var(--color-site-danger-bg, #ffeae5);
 	}
 	.ds-alert[data-kind='archive'] .ds-dismiss {
-		--ds-alert-bg: var(--color-site-archive-bg, #f2f2f2);
+		--ds-alert-bg: var(--color-site-archive-bg, #faefe1);
 	}
 </style>

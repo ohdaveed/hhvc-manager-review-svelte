@@ -165,7 +165,12 @@ const FORM_SEGMENT: Record<string, string> = {
 	Topic: 'topic',
 	Agency: 'agency',
 	'About us': 'aboutpage',
-	Report: 'report'
+	Report: 'report',
+	// Model names from docs/karl-export-field-map.md's "Types not yet in use"
+	// table, which records the `<model>` for every captured type -- so these are
+	// read off the capture like the eight above, not slugified from the label.
+	'Step by step': 'stepbystep',
+	Location: 'locationpage'
 };
 
 /** The add-page form for a content type, or the Wagtail page list if unknown. */

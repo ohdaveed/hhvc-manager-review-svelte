@@ -4,7 +4,7 @@ import { allPages, pagesByKey } from '$lib/data';
 
 describe('pagesByKey', () => {
 	it('holds every page, keyed by the name cards[].target uses', () => {
-		expect(Object.keys(pagesByKey)).toHaveLength(29);
+		expect(Object.keys(pagesByKey)).toHaveLength(39);
 		expect(pagesByKey.scopeInfo).toBeDefined();
 		expect(pagesByKey.article11Guide.slug).toContain('sf.gov/');
 	});

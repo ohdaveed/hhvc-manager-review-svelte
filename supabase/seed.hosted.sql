@@ -53,7 +53,17 @@ FROM (
       ('information-integrated-pest-management-for-property-owners-and-managers'),
       ('pay-your-annual-healthy-housing-fee-apartment-buildings'),
       ('integrated-pest-management-education'),
-      ('information-learn-what-hhvc-can-inspect')
+      ('information-learn-what-hhvc-can-inspect'),
+      ('step-by-step-report-a-pest-problem'),
+      ('step-by-step-correct-a-violation-and-close-your-case'),
+      ('step-by-step-prepare-your-unit-for-pest-treatment'),
+      ('location-environmental-health-office'),
+      ('information-who-to-call-about-a-housing-problem'),
+      ('appeal-a-notice-of-violation'),
+      ('pay-a-healthy-housing-citation'),
+      ('resource-guides-in-other-languages'),
+      ('rat-free-blocks'),
+      ('report-healthy-housing-inspections-annual-summary')
 ) AS corpus(path)
 WHERE NOT EXISTS (
     SELECT 1 FROM pages p
