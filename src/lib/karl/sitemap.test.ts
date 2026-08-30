@@ -210,10 +210,10 @@ describe('the real corpus', () => {
 
 	it('has five pages unreachable from the Agency and Topic hubs', () => {
 		expect(findOrphans(entries).map((e) => e.id)).toEqual([
-			'step-by-step--get-ready-for-a-follow-up-inspection',
-			'step-by-step--get-ready-for-a-housing-inspection',
+			'get-ready-for-a-follow-up-inspection',
+			'get-ready-for-a-housing-inspection',
 			'departments--healthy-housing-and-vector-control--about',
-			'step-by-step--tenant-steps-after-notice-of-violation',
+			'tenant-steps-after-notice-of-violation',
 			'information--article-11-compliance-for-property-owners'
 		]);
 	});

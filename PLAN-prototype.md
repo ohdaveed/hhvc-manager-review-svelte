@@ -332,11 +332,32 @@ The Help Center is **incomplete and partly wrong**, so prefer the form:
 since no mockup uses them, but item 7's retype diff cannot offer a target type
 it has no field list for.
 
-One live consequence: **four pages slugged `step-by-step--*` are typed
-`Transaction`**, and `Step by step` is a real type the form offers ("process
-involving multiple steps or transactions", 15-step limit). Three of the four
-are also unreachable from any hub. That is the first concrete case for the
-content-type check.
+**Resolved 2026-08-30 by renaming the slug, not the type.** Four pages were
+slugged `step-by-step--*` while typed `Transaction`. Retyping them was
+rejected on evidence: all four carry `whatToKnow.cost` ("Free") and two
+`thingsToKnow` items each, and `Step by step` has **no page-level `cost` and
+no `things_to_know`** — its `cost` is per step, a different statement. The
+retype would have dropped 12 pieces of reviewer-facing copy and manufactured
+12 fresh violations of the 1:1 validator. `docs/karl-export-field-map.md` had
+already reached the same conclusion on 2026-08-15 for the same reason.
+
+The prefix was the error: Transaction's own convention is no prefix (10 of 14
+carry none, and these 4 were the outliers). Renamed across the 4 data modules,
+both seeds, two test files that pinned the paths, `REVIEW-structure-pass.md`,
+and `corpus.lock`. Field ids are unchanged in value — the lock diff is a
+symmetric 45/45 re-key of page paths, not a content change.
+
+- [ ] **Production `pages` rows for the old paths will orphan.** The
+      `corpus_versions` migration is explicit: "a renamed or dropped slug
+      orphaned its `pages` row — which still held a reviewer's status, notes
+      and checks — pointing at a path the app no longer rendered. Nothing
+      errored; the work just stopped being reachable." Whether anything is
+      actually lost depends on whether reviewers recorded work on these four.
+      **Unverified:** `SUPABASE_DB_URL` is restricted-visibility in Doppler, so
+      a CLI token cannot read it. Check before importing this corpus:
+      `SELECT path, status, manager_notes FROM pages WHERE path LIKE 'step-by-step--%';`
+      If any row has a status or notes, re-key it to the new path rather than
+      letting the import strand it.
 
 ## Not designed yet
 

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "corpusHash": "3462cb16cd20287923d0b16d523182d7d49739c1824aef6dd2b5cf73cc97a161",
+  "corpusHash": "5d5a3d4908ebb53356d57231358ab75f319904aa164262f41b0a71001544d46b",
   "pages": {
     "departments--healthy-housing-and-vector-control": {
       "contentHash": "234045b6cf53d5b028a6a19d1c70a8cfbdbe0421d28859aa5222d7f9847578a4",
@@ -103,6 +103,49 @@
         "sections.what-this-tool-covers.paragraphs.1": "6c4f02ec631fc2f6e5036cf802c955cf0e50cd02b98c8d4791dd8caa747c13d6",
         "summary": "1299feb1c60e2d50d7d3fc24a4b0c3f11859ddcf38fa8af90ac1f4dae47c65f5",
         "title": "1d3ebdb2f1d2dbf6864155419cc4ad892ff462f6853ae7bd6d33d629fda50518"
+      }
+    },
+    "fix-healthy-housing-and-vector-control-violation": {
+      "contentHash": "ecf53e09dbc5713689e23a29487564d266393e4995c049849beb0a719a484ae4",
+      "fieldHashes": {
+        "audience.0": "d9b855b5d44c9c8bfe79e4d4202ac84ded93178af5b43fa69066d4c16c19687f",
+        "audience.1": "b0ed964a408f3306f5c3a69c42d64aa3cf0f8c21f9024a107d01b0a730484d87",
+        "audience.2": "37029e505afdc8782dc3b6889ca9a666dad5dfed43741c2815a725ccc759ca94",
+        "audience.3": "662cf13bca3db9797fa563150e6a55e0a131b9b67354639955373d994b731172",
+        "primaryAgency": "8a2847f0ee854052d30378a2ef091f979c9737bbd8219086a1e04dc0abd84f9f",
+        "sections.what-to-do.heading": "f47f1edc44ed92664871471b0cf8f463813788468c23680c12f52a36c2827e26",
+        "summary": "555e7c618017dad0452f7e9968b16c9bd139a3c911e4efd9fa24c8b782f0b51c",
+        "title": "2f2e6edd0d3a34311808fc171347c9d72941f16bc485d04658de852a80c669ab"
+      }
+    },
+    "get-ready-for-a-follow-up-inspection": {
+      "contentHash": "f92f61d1601d3467f4cf6a76ba364fc99b384f36672519095edc60665d00245e",
+      "fieldHashes": {
+        "audience.0": "d9b855b5d44c9c8bfe79e4d4202ac84ded93178af5b43fa69066d4c16c19687f",
+        "audience.1": "b0ed964a408f3306f5c3a69c42d64aa3cf0f8c21f9024a107d01b0a730484d87",
+        "audience.2": "37029e505afdc8782dc3b6889ca9a666dad5dfed43741c2815a725ccc759ca94",
+        "audience.3": "662cf13bca3db9797fa563150e6a55e0a131b9b67354639955373d994b731172",
+        "primaryAgency": "8a2847f0ee854052d30378a2ef091f979c9737bbd8219086a1e04dc0abd84f9f",
+        "sections.document-your-work.heading": "304c4a74da01f197a282d4be11040ec6816c28fae8397b54a20090c893b62fd1",
+        "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",
+        "sections.what-to-expect-at-the-follow-up-visit.heading": "65223502f845c39f7b88f54d9fbae1c61e22a0de171172ef540531c8993bba53",
+        "summary": "63a9d390e1bc0009d0947e0a68d17e04dfbd5b6384c05e1090a356cca88a3166",
+        "title": "3f6270be138230e5646f4c38f6cf4f898f3ed82c40f6ba016ba34173f0f11ec9"
+      }
+    },
+    "get-ready-for-a-housing-inspection": {
+      "contentHash": "538816f1bdc610c13479ac0b5fc67bd2fd6885642435ccf00b38ee70e7763042",
+      "fieldHashes": {
+        "audience.0": "8833e75a61873a1a1741939f7d56ab39fd4b492b1528bede9e4a699bd3e9ae48",
+        "audience.1": "56846a949e799eef0c313788379b2f7025fc31ba7cf13fdbc616971d4fe4737b",
+        "audience.2": "a9b76b3e7a5fde689b559f85784ede889371d8b33829403a4e52454ecd55522a",
+        "audience.3": "aa33f438596d745e3000d14bf215ee4d8b2ba83cec56186f043bb9efe696f26e",
+        "primaryAgency": "8a2847f0ee854052d30378a2ef091f979c9737bbd8219086a1e04dc0abd84f9f",
+        "sections.before-the-inspector-arrives.heading": "25ecee0435a662840ba67086172bc64dea3f2151a66b466d0095c928dadb001b",
+        "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",
+        "sections.what-to-expect-during-the-visit.heading": "e79bfb3d6cd2696f43f54749bceaae6ae145c62fffc1ce195b899dad98b9694d",
+        "summary": "7a0c706792f37c041a6eb79a1ce2c0b3ce1846177fcd294f7e26ad098a18b84c",
+        "title": "884f26793ca60c13bcd2e1f3a195d21e976d2ea2d1cde228c1cd1a43661a5bce"
       }
     },
     "information--article-11-compliance-for-property-owners": {
@@ -666,50 +709,7 @@
         "title": "c3280491d992c0590a274022202a18ca32bc26e7dd4ba18fc9baeff965aa1831"
       }
     },
-    "step-by-step--fix-healthy-housing-and-vector-control-violation": {
-      "contentHash": "ecf53e09dbc5713689e23a29487564d266393e4995c049849beb0a719a484ae4",
-      "fieldHashes": {
-        "audience.0": "d9b855b5d44c9c8bfe79e4d4202ac84ded93178af5b43fa69066d4c16c19687f",
-        "audience.1": "b0ed964a408f3306f5c3a69c42d64aa3cf0f8c21f9024a107d01b0a730484d87",
-        "audience.2": "37029e505afdc8782dc3b6889ca9a666dad5dfed43741c2815a725ccc759ca94",
-        "audience.3": "662cf13bca3db9797fa563150e6a55e0a131b9b67354639955373d994b731172",
-        "primaryAgency": "8a2847f0ee854052d30378a2ef091f979c9737bbd8219086a1e04dc0abd84f9f",
-        "sections.what-to-do.heading": "f47f1edc44ed92664871471b0cf8f463813788468c23680c12f52a36c2827e26",
-        "summary": "555e7c618017dad0452f7e9968b16c9bd139a3c911e4efd9fa24c8b782f0b51c",
-        "title": "2f2e6edd0d3a34311808fc171347c9d72941f16bc485d04658de852a80c669ab"
-      }
-    },
-    "step-by-step--get-ready-for-a-follow-up-inspection": {
-      "contentHash": "f92f61d1601d3467f4cf6a76ba364fc99b384f36672519095edc60665d00245e",
-      "fieldHashes": {
-        "audience.0": "d9b855b5d44c9c8bfe79e4d4202ac84ded93178af5b43fa69066d4c16c19687f",
-        "audience.1": "b0ed964a408f3306f5c3a69c42d64aa3cf0f8c21f9024a107d01b0a730484d87",
-        "audience.2": "37029e505afdc8782dc3b6889ca9a666dad5dfed43741c2815a725ccc759ca94",
-        "audience.3": "662cf13bca3db9797fa563150e6a55e0a131b9b67354639955373d994b731172",
-        "primaryAgency": "8a2847f0ee854052d30378a2ef091f979c9737bbd8219086a1e04dc0abd84f9f",
-        "sections.document-your-work.heading": "304c4a74da01f197a282d4be11040ec6816c28fae8397b54a20090c893b62fd1",
-        "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",
-        "sections.what-to-expect-at-the-follow-up-visit.heading": "65223502f845c39f7b88f54d9fbae1c61e22a0de171172ef540531c8993bba53",
-        "summary": "63a9d390e1bc0009d0947e0a68d17e04dfbd5b6384c05e1090a356cca88a3166",
-        "title": "3f6270be138230e5646f4c38f6cf4f898f3ed82c40f6ba016ba34173f0f11ec9"
-      }
-    },
-    "step-by-step--get-ready-for-a-housing-inspection": {
-      "contentHash": "538816f1bdc610c13479ac0b5fc67bd2fd6885642435ccf00b38ee70e7763042",
-      "fieldHashes": {
-        "audience.0": "8833e75a61873a1a1741939f7d56ab39fd4b492b1528bede9e4a699bd3e9ae48",
-        "audience.1": "56846a949e799eef0c313788379b2f7025fc31ba7cf13fdbc616971d4fe4737b",
-        "audience.2": "a9b76b3e7a5fde689b559f85784ede889371d8b33829403a4e52454ecd55522a",
-        "audience.3": "aa33f438596d745e3000d14bf215ee4d8b2ba83cec56186f043bb9efe696f26e",
-        "primaryAgency": "8a2847f0ee854052d30378a2ef091f979c9737bbd8219086a1e04dc0abd84f9f",
-        "sections.before-the-inspector-arrives.heading": "25ecee0435a662840ba67086172bc64dea3f2151a66b466d0095c928dadb001b",
-        "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",
-        "sections.what-to-expect-during-the-visit.heading": "e79bfb3d6cd2696f43f54749bceaae6ae145c62fffc1ce195b899dad98b9694d",
-        "summary": "7a0c706792f37c041a6eb79a1ce2c0b3ce1846177fcd294f7e26ad098a18b84c",
-        "title": "884f26793ca60c13bcd2e1f3a195d21e976d2ea2d1cde228c1cd1a43661a5bce"
-      }
-    },
-    "step-by-step--tenant-steps-after-notice-of-violation": {
+    "tenant-steps-after-notice-of-violation": {
       "contentHash": "2f5ace10ef57481e3c4a2ec01025245daf703f4ac427ac7e18d670d18d1551b6",
       "fieldHashes": {
         "audience.0": "b0ed964a408f3306f5c3a69c42d64aa3cf0f8c21f9024a107d01b0a730484d87",
