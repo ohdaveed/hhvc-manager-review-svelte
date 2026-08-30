@@ -110,7 +110,9 @@ Note the error handling: `HttpError`s are rethrown so upstream status codes surv
 
 **`import_corpus_version` lives in the `private` schema, not `public`.** PostgREST serves only the schemas in `[api] schemas` (`supabase/config.toml`: `public`, `graphql_public`), so nothing in `private` is reachable over the Data API at any grant level — verified against the local stack: an anon `POST /rest/v1/rpc/import_corpus_version` returns **404**, and forcing it with `Content-Profile: private` returns **406**, while an anon read of the exposed `corpus_versions` returns 401 (the control that says the key and request path are fine). That is why `scripts/corpus-import.ts` connects with `pg` rather than `supabase.rpc()`. The alternative — leaving it in `public` and revoking per function — is what `20260823130000` had to do, and it has to be remembered on every new function; this removes the category instead. `bun run audit:privileges` still guards `public`, which now holds no functions at all.
 
-Client-side only. There is no `hooks.server.ts` and no `event.locals` — sessions live in the browser, and the API route verifies bearer tokens itself with a per-request client (`persistSession: false`). Schema is `supabase/migrations/`: `reviews`, `pages`, `comments`, `edits`.
+Client-side only. Sessions live in the browser and there is no `event.locals`; the API route verifies bearer tokens itself with a per-request client (`persistSession: false`). Schema is `supabase/migrations/`: `reviews`, `pages`, `comments`, `edits`.
+
+`src/hooks.server.ts` does exist, but it is Sentry's and nothing else — `sequence(sentryHandle())` plus `handleErrorWithSentry()`. It establishes no session and populates no `locals`, so it is not a place to reach for auth: adding one there would put a server-side session beside the browser-side one and give two answers to who the caller is.
 
 The local stack is usable from a clean `supabase start` + `supabase db reset`
 with no hand-patching. Two things had to be fixed for that and are worth knowing
