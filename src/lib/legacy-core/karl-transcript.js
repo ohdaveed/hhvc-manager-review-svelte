@@ -92,11 +92,19 @@ const PAGE_FIELD_REASONS = {
 					'What blocks it is the budget, not the field: the Help Center caps Things to know at 2 ' +
 					`entries, and most ${type} pages here already spend both, so placing the audience means ` +
 					'deciding which existing entry it replaces. That is a content call, not a missing panel.'
-			: 'The page carries `audience`, and there is nowhere on this type to put it. The pattern ' +
-					`SF.gov uses is a **Things to know** entry, and ${type} has no \`things_to_know\` panel — ` +
-					`it is Transaction-only. ${live} ` +
-					`So this is a real gap rather than a budget question: either the audience moves into ` +
-					`${type}'s own body copy, or the line is dropped deliberately.`;
+			: (() => {
+					const intro = panelsFor(type).find((panel) => panel.rawName === 'intro');
+					const home = intro
+						? `${type} has no \`things_to_know\` panel — it is Transaction-only — but it does have ` +
+							`**${intro.uiLabel}**, a free-text slot before the body, which is where the line belongs ` +
+							'on this type.'
+						: `${type} has no \`things_to_know\` panel — it is Transaction-only — and no free-text ` +
+							'intro either, so the audience has to move into the body copy or be dropped deliberately.';
+					return (
+						'The page carries `audience`, and the panel SF.gov puts it in is not on this type. ' +
+						`${home} ${live}`
+					);
+				})();
 	}
 };
 

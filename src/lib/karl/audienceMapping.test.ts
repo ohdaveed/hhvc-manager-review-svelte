@@ -85,10 +85,29 @@ describe('audience is reported, not suppressed', () => {
 		for (const page of nonTransaction) {
 			const [gap] = audienceGap(page);
 			if (!gap) continue;
-			expect(gap.reason, `${page.type}`).toMatch(/nowhere on this type to put it/);
+			expect(gap.reason, `${page.type}`).toMatch(/not on this type/);
 			expect(gap.reason, `${page.type}`).toMatch(/Transaction-only/);
 			expect(gap.reason, `${page.type}`).not.toMatch(/already spend both/);
 		}
+	});
+
+	/**
+	 * Step by step and Location have no `things_to_know` but do have `intro` —
+	 * a free-text slot before the body. Naming it beats telling an editor the
+	 * line has nowhere to go, which is what the first version of this said.
+	 */
+	it('points types with an intro panel at it by name', () => {
+		const stepByStep = {
+			slug: 'sf.gov/step-by-step/x',
+			type: 'Step by step',
+			title: 'T',
+			summary: 's',
+			audience: ['A tenant'],
+			sections: [{ heading: 'H', kind: 'body', karl: 'n', paragraphs: ['p'] }]
+		};
+		const [gap] = audienceGap(stepByStep);
+		expect(gap.reason).toMatch(/\*\*Intro\*\*/);
+		expect(gap.reason).not.toMatch(/dropped deliberately/);
 	});
 
 	it('still cites the live pattern on both branches', () => {
