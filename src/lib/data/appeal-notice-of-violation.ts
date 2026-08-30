@@ -66,7 +66,7 @@ export const appealNotice = {
 						'Bring dated photos, receipts, and treatment reports.',
 						'PLACEHOLDER: the request form or address, and any fee, are not confirmed.'
 					],
-					karl: 'Section 3. STRUCTURAL FLAG — the hearing is a Meeting in Karl, not part of this Transaction. This step should carry a Transaction link or a Related entry to that Meeting page once it exists, and this page should never grow a "what happens at the hearing" section.'
+					karl: 'Section 3. STRUCTURAL FLAG — the hearing is a Meeting in Karl, not part of this Transaction. Transaction has no per-step page link, so the route to that Meeting page is a page-level Related entry once it exists, or a link placed with the rich-text Link tool inside this Section. This page should never grow a "what happens at the hearing" section.'
 				},
 				{
 					title: 'Keep correcting what you do not dispute',
