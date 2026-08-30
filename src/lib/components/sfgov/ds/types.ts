@@ -20,7 +20,7 @@ export type AlertKind = 'information' | 'success' | 'warning' | 'danger' | 'arch
 
 export type ButtonVariant = 'primary' | 'secondary' | 'tertiary' | 'ghost';
 
-export type SpotlightTone = 'primary' | 'secondary' | 'dark';
+export type SpotlightTone = 'primary' | 'secondary' | 'accent';
 export type SpotlightLayout = 'side' | 'full' | 'none';
 
 export interface ChoiceOption {

@@ -175,7 +175,7 @@ export const rodentsReport = {
 					target: 'afterReport'
 				},
 				{
-					title: 'Report garbage, filth, and overgrown vegetation',
+					title: 'Report garbage, mold, and overgrown vegetation',
 					target: 'filthReport'
 				},
 				{

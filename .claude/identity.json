@@ -1,15 +1,12 @@
 {
-  "version": "2.0",
-  "technicalLevel": "technical",
-  "preferredStyle": {
-    "verbosity": "detailed",
-    "codeComments": true,
-    "explanations": true
-  },
-  "domains": [
-    "typescript",
-    "vite"
-  ],
-  "suggestedBy": "ecc-tools-repo-analysis",
-  "createdAt": "2026-08-29T17:53:21.334Z"
+	"version": "2.0",
+	"technicalLevel": "technical",
+	"preferredStyle": {
+		"verbosity": "detailed",
+		"codeComments": true,
+		"explanations": true
+	},
+	"domains": ["typescript", "vite"],
+	"suggestedBy": "ecc-tools-repo-analysis",
+	"createdAt": "2026-08-29T17:53:21.334Z"
 }

@@ -1,7 +1,7 @@
 export const filthReport = {
 	slug: 'sf.gov/report-garbage-filth-vegetation',
 	type: 'Transaction',
-	title: 'Report garbage, filth, and overgrown vegetation',
+	title: 'Report garbage, mold, and overgrown vegetation',
 	summary:
 		'Report garbage, clutter, mold, animal waste, pigeon droppings, or overgrown plants that may attract pests or vectors.',
 	primaryAgency: 'Healthy Housing and Vector Control',
@@ -213,7 +213,7 @@ export const filthReport = {
 			url: 'https://www.sf.gov/departments--department-public-health--environmental-health'
 		}
 	],
-	seoTitle: 'Report garbage, filth, and overgrown vegetation | SF.gov',
+	seoTitle: 'Report garbage, mold, and overgrown vegetation | SF.gov',
 	metaDescription:
 		'Report garbage, clutter, mold, animal waste, pigeon problems, or overgrown vegetation in San Francisco.'
 };
