@@ -56,16 +56,17 @@ Findings from that check:
   the slab headings must add the 500 and 600 imports, or the weight silently
   synthesizes from 700 and looks plausible but wrong.
 
-### Spotlight is three tones where the design has six — open
+### Spotlight: three hues x light/dark — implemented 2026-08-30
 
 Measured off `design/SF.gov Components (standalone).html` (computed styles, not
 eyeballed). The design runs a **two-axis** system — three hues x light/dark —
-while `SpotlightTone` is a flat `'primary' | 'secondary' | 'dark'` that conflates
-the two axes:
+`SpotlightTone` used to be a flat `'primary' | 'secondary' | 'dark'` that
+conflated the two axes. It is now `'primary' | 'secondary' | 'accent'` plus a
+separate `dark` boolean, so all six combinations are reachable and total:
 
 | design tone    | bg        | title     | action bg / label     | in repo                   |
 | -------------- | --------- | --------- | --------------------- | ------------------------- |
-| default        | `#E9F1FE` | `#001D4E` | `#1B519E` / `#FCFCFC` | `primary` — matches       |
+| default        | `#E9F1FE` | `#001D4E` | `#1B519E` / `#FCFCFC` | `primary`                 |
 | secondary      | `#E6F4F5` | `#002A30` | `#1B519E` / `#FCFCFC` | **wrong hue** (see below) |
 | accent         | `#FEEDE3` | `#470000` | `#1B519E` / `#FCFCFC` | **missing**               |
 | dark default   | `#1B519E` | `#FCFCFC` | `#FCFCFC` / `#1B519E` | `dark` — matches          |
@@ -85,9 +86,14 @@ Two things worth keeping:
   tone's own hue. Easy to get wrong by inference; it is measured.
 
 All six pass AA: dark backgrounds carry `#FCFCFC` at 7.53 / 6.73 / 7.90:1, light
-backgrounds carry ink at 17.2-18.1:1. Nothing here is blocked on accessibility —
-it is an API-shape decision (six-value enum, or `tone` x `dark`), which is why it
-is recorded rather than applied.
+backgrounds carry ink at 17.2-18.1:1.
+
+Verified by re-measuring the built app rather than by inspection: the specimen
+route now renders all six, and every one of the 24 values above (background,
+title, action background, action label) matches the design exactly. The
+`sfgov-components` e2e suite passes 8/8 with all six on the page, including the
+WCAG AA sweep and the "focus ring whitens on dark grounds" check, which is what
+confirms the `[data-tone='dark']` to `[data-dark]` migration.
 
 This governs design values only. How a _page_ should be built is the Karl Editor
 Help Center's call, and what a URL actually renders is settled by the live

@@ -544,6 +544,16 @@ body {
 	   between --color-site-tint and --color-site-action-soft, and the frames use
 	   all three within one page. */
 	--color-site-spotlight-bg: #e9f1fe;
+	/* The other two spotlight hues, and their dark ends. Measured off the design
+	   specimen's computed styles; all six tones pass AA (dark 7.53 / 6.73 / 7.90:1,
+	   light 17.2-18.1:1). `secondary` used to borrow --color-site-tint, which
+	   belongs to the breadcrumb strip, and rendered blue where the design is teal. */
+	--color-site-spotlight-secondary-bg: #e6f4f5;
+	--color-site-spotlight-secondary-heading: #002a30;
+	--color-site-spotlight-secondary-dark: #00646c;
+	--color-site-spotlight-accent-bg: #feede3;
+	--color-site-spotlight-accent-heading: #470000;
+	--color-site-spotlight-accent-dark: #942a00;
 	--color-site-spotlight-heading: #001d4e;
 	--color-site-table-head: #f0f0f0;
 	--color-site-table-rule: #c9caca;

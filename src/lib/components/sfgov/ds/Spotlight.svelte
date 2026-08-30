@@ -7,13 +7,14 @@
 	 *
 	 * Rules the frames settle:
 	 * - One spotlight per page. Two of anything makes both ordinary.
-	 * - Three tones and three layouts. `side` puts a 420px image left of the
+	 * - Three hues x light/dark, and three layouts. `side` puts a 420px image left of the
 	 *   copy, `full` stacks a full-width image above it, `none` is copy only.
 	 *
 	 * WCAG 2.1 AA:
-	 * - 1.4.3 Contrast. The `dark` tone is #FCFCFC on #1B519E — measured 7.53:1,
+	 * - 1.4.3 Contrast. Dark carries #FCFCFC on #1B519E / #00646C / #942A00 —
+	 *   measured 7.53:1, 6.73:1 and 7.90:1,
 	 *   over the 4.5:1 floor for the 16px body copy. Do not lighten the fill.
-	 * - 1.4.11. On the dark tone the focus ring's first stop becomes white. The
+	 * - 1.4.11. On any dark tone the focus ring's first stop becomes white. The
 	 *   focus blue is 1.53:1 against the #1B519E fill — under the 3:1 floor for
 	 *   the indicator against the component it outlines.
 	 * - 2.4.4. The action is an `<a>` styled as a button, so it announces as a
@@ -23,6 +24,7 @@
 	 */
 	interface Props {
 		tone?: SpotlightTone;
+		dark?: boolean;
 		layout?: SpotlightLayout;
 		title: string;
 		action?: LinkRef;
@@ -35,6 +37,7 @@
 
 	let {
 		tone = 'primary',
+		dark = false,
 		layout = 'side',
 		title,
 		action,
@@ -54,7 +57,12 @@
      here. -->
 <!-- eslint-disable svelte/no-navigation-without-resolve -->
 
-<div class="ds-spot {className}" data-tone={tone} data-layout={layout}>
+<div
+	class="ds-spot {className}"
+	data-tone={tone}
+	data-dark={dark || undefined}
+	data-layout={layout}
+>
 	{#if layout !== 'none' && image}
 		<figure class="ds-figure m-0 flex flex-col gap-3">
 			<img src={image} alt={imageAlt} class="ds-img block" />
@@ -144,6 +152,8 @@
 		text-decoration: none;
 	}
 
+	/* Light tones: a hue tint with a hue-matched title. The action button is the
+	   same blue on all three -- measured off the design specimen, not inferred. */
 	.ds-spot[data-tone='primary'] {
 		background: var(--color-site-spotlight-bg, #e9f1fe);
 	}
@@ -152,41 +162,54 @@
 	}
 
 	.ds-spot[data-tone='secondary'] {
-		background: var(--color-site-tint, #f2f6fc);
+		background: var(--color-site-spotlight-secondary-bg, #e6f4f5);
 	}
 	.ds-spot[data-tone='secondary'] .ds-spot-title {
-		color: var(--color-site-action-dark, #043578);
+		color: var(--color-site-spotlight-secondary-heading, #002a30);
 	}
 
-	.ds-spot[data-tone='primary'] .ds-spot-body,
-	.ds-spot[data-tone='secondary'] .ds-spot-body {
+	.ds-spot[data-tone='accent'] {
+		background: var(--color-site-spotlight-accent-bg, #feede3);
+	}
+	.ds-spot[data-tone='accent'] .ds-spot-title {
+		color: var(--color-site-spotlight-accent-heading, #470000);
+	}
+
+	.ds-spot:not([data-dark]) .ds-spot-body {
 		color: var(--color-site-ink, #0b0c0c);
 	}
-	.ds-spot[data-tone='primary'] .ds-spot-action,
-	.ds-spot[data-tone='secondary'] .ds-spot-action {
+	.ds-spot:not([data-dark]) .ds-spot-action {
 		background: var(--color-site-action, #1b519e);
 		border-color: var(--color-site-action, #1b519e);
 		color: #fcfcfc;
 	}
-	.ds-spot[data-tone='primary'] .ds-spot-action:hover,
-	.ds-spot[data-tone='secondary'] .ds-spot-action:hover {
+	.ds-spot:not([data-dark]) .ds-spot-action:hover {
 		background: var(--color-site-action-hover, #001d4e);
 		border-color: var(--color-site-action-hover, #001d4e);
 	}
 
-	.ds-spot[data-tone='dark'] {
+	/* Dark tones: the hue fills the card, text goes white, and the action button
+	   inverts to white with a BLUE label on every tone -- it does not take the
+	   tone's own hue. Measured; inference would get this wrong. */
+	.ds-spot[data-dark][data-tone='primary'] {
 		background: var(--color-site-action, #1b519e);
 	}
-	.ds-spot[data-tone='dark'] .ds-spot-title,
-	.ds-spot[data-tone='dark'] .ds-spot-body {
+	.ds-spot[data-dark][data-tone='secondary'] {
+		background: var(--color-site-spotlight-secondary-dark, #00646c);
+	}
+	.ds-spot[data-dark][data-tone='accent'] {
+		background: var(--color-site-spotlight-accent-dark, #942a00);
+	}
+	.ds-spot[data-dark] .ds-spot-title,
+	.ds-spot[data-dark] .ds-spot-body {
 		color: #fcfcfc;
 	}
-	.ds-spot[data-tone='dark'] .ds-spot-action {
+	.ds-spot[data-dark] .ds-spot-action {
 		background: #fcfcfc;
 		border-color: #fcfcfc;
 		color: var(--color-site-action, #1b519e);
 	}
-	.ds-spot[data-tone='dark'] .ds-spot-action:hover {
+	.ds-spot[data-dark] .ds-spot-action:hover {
 		background: #ffffff;
 		color: var(--color-site-action-hover, #001d4e);
 	}
@@ -198,10 +221,10 @@
 		color: var(--color-site-action, #1b519e);
 		text-decoration: underline;
 	}
-	.ds-spot[data-tone='dark'] .ds-credit {
+	.ds-spot[data-dark] .ds-credit {
 		color: #e9eaea;
 	}
-	.ds-spot[data-tone='dark'] .ds-credit-link {
+	.ds-spot[data-dark] .ds-credit-link {
 		color: #fcfcfc;
 	}
 
@@ -210,8 +233,8 @@
 		outline: none;
 		box-shadow: var(--site-focus-ring, 0 0 0 4px #fcfcfc, 0 0 0 7px #386ebf);
 	}
-	.ds-spot[data-tone='dark'] .ds-spot-action:focus-visible,
-	.ds-spot[data-tone='dark'] .ds-credit-link:focus-visible {
+	.ds-spot[data-dark] .ds-spot-action:focus-visible,
+	.ds-spot[data-dark] .ds-credit-link:focus-visible {
 		box-shadow: var(--site-focus-ring-dark, 0 0 0 4px #ffffff, 0 0 0 7px #386ebf);
 	}
 
