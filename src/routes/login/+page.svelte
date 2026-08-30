@@ -31,6 +31,12 @@
 
 	const emailLooksValid = $derived(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()));
 
+	/** With `shouldCreateUser: false`, an address with no account comes back as a
+	 *  refusal rather than a silent success. Treated as success on purpose. */
+	function isUnknownAccount(error: { code?: string; message: string }): boolean {
+		return error.code === 'otp_disabled' || /signups? not allowed/i.test(error.message);
+	}
+
 	async function sendLink(event: SubmitEvent) {
 		event.preventDefault();
 		if (!emailLooksValid || sending) return;
@@ -40,17 +46,31 @@
 
 		const { error } = await supabase.auth.signInWithOtp({
 			email: email.trim(),
-			options: { emailRedirectTo: `${window.location.origin}/login` }
+			options: {
+				emailRedirectTo: `${window.location.origin}/login`,
+				// `signInWithOtp` SIGNS UP by default -- auth-js sends
+				// `create_user: options?.shouldCreateUser ?? true`. Left at the
+				// default, this page would let any address on the internet mint
+				// itself an `authenticated` session, and the RLS table hands that
+				// role SELECT on every table plus UPDATE on ANY row of `pages` --
+				// so a stranger could rewrite the review status and manager notes
+				// of all 29 pages. Reviewers are invited; sign-in is not sign-up.
+				shouldCreateUser: false
+			}
 		});
 
 		sending = false;
 
-		if (error) {
-			// Surfaced rather than logged: a reviewer who gets no email needs to
-			// know whether the address was refused or the send failed.
+		if (error && !isUnknownAccount(error)) {
+			// A real failure -- rate limit, network, misconfigured SMTP. A reviewer
+			// who gets no email needs to know the send itself broke.
 			errorMessage = error.message;
 			return;
 		}
+		// Unknown addresses fall through to the same confirmation as known ones.
+		// Saying "no account exists" here would turn the form into an oracle for
+		// who holds one, and the neutral wording still tells an uninvited person
+		// what to do next.
 		sent = true;
 	}
 
@@ -82,8 +102,9 @@
 			</div>
 		{:else if sent}
 			<PageAlert kind="success" title="Check your email">
-				A sign-in link is on its way to <strong>{email}</strong>. Open it on this device — the link
-				carries the session, so it has to land in this browser.
+				If <strong>{email}</strong> has an account, a sign-in link is on its way. Open it on this device
+				— the link carries the session, so it has to land in this browser. Reviewers are invited, so ask
+				for an invitation if nothing arrives.
 			</PageAlert>
 			<div class="mt-6">
 				<SiteButton variant="secondary" onclick={() => (sent = false)}>

@@ -203,7 +203,8 @@
 			>
 				<strong class="font-semibold">Viewing signed out.</strong> You can read every mockup, but
 				editing is disabled because edits cannot be saved without an account.
-				<a href="/login" class="font-semibold underline underline-offset-2">Sign in</a> to edit.
+				<a href={resolve('/login')} class="font-semibold underline underline-offset-2">Sign in</a> to
+				edit.
 			</div>
 		{/if}
 
