@@ -44,8 +44,33 @@ ports as-is. §2–§10 are what is missing.
         §10 says cannot exist: a Callout is one rich-text field with no title.
         Either the extractor or the 1:1 rule is wrong; resolve when the
         validator lands (item 2).
-- [ ] **2. The 1:1 validator** (§10). Cheap once the loader exists, and it stops
-      the corpus drifting back.
+- [x] **2. The 1:1 validator** (§10). `src/lib/corpus/oneToOne.ts` — a mockup
+      may not carry an element Karl has no field for. The pinned corpus test is
+      the gate: unit tests block `test & build`, so a fifth violation turns CI
+      red without a separate script.
+  - **It could not be derived from `KARL_PANELS`**, and that is the finding.
+    Of 89 panels across the 8 types, only 27 carry a `source.path`; 40 are
+    `none` (Karl fields with no mockup source — gaps, not violations) and 17
+    are `sections`. There are 9 distinct source paths and none mentions
+    `callout`. The inventory answers "which Karl field does this property
+    feed?", not "does this element have anywhere to go?", so the rules are
+    explicit. `acceptsImage` is still read from the inventory, so the list of
+    types that may hold an image moves with the field map.
+  - **Two spec claims corrected.** §2 fears a page missing `panels` falling
+    back to the Transaction branch "wrong for six of the seven types" — there
+    are **8** types and every one has an inventory (Transaction 17, Agency 25,
+    Campaign 13, Resource Collection 9, Information 8, Report 7, Topic 6,
+    About us 4). And the photo removal did land: **0** pages carry one.
+  - [ ] **4 callout titles survive**, though §10 records them as removed "on
+        every page" — `report-garbage-filth-vegetation`,
+        `find-healthy-housing-inspector-by-neighborhood`,
+        `report/health-code-article-11-plain-language`,
+        `information/tenant-rights-and-reporting-housing-conditions`. Folding
+        each into its callout body is a copy edit on reviewer-facing content,
+        so it is the content owner's call, not a drive-by fix. The test pins the
+        count at 4 so it cannot grow while the decision is pending.
+  - [ ] Wire into `corpus:import` as well, so a violating corpus cannot be
+        imported. The test covers the tree; the import path needs DB access.
 - [ ] **3. Persistence** (§3). The tool loses a reviewer's work on navigation,
       which is the one defect that makes it unusable rather than incomplete.
 - [ ] **4. Assistant service** (§4). Per-field rewrite first; analysis and
