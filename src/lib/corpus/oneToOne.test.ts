@@ -59,19 +59,16 @@ describe('the real corpus', () => {
 	// despite the 1:1 decision recording callout titles as removed "on every
 	// page", and folding each into its callout body is a copy edit on
 	// reviewer-facing content -- a decision for the content owner, not a
-	// drive-by fix. Pinning stops a seventh appearing quietly.
+	// drive-by fix. Pinning stops a fourth appearing quietly.
 	//
 	// Was 4 until the walk was fixed: five of the nine then in the corpus sit
-	// under `sections[].steps[]` and a one-level pass never saw them. Three
-	// have since been resolved, leaving six.
-	it('has exactly the six known callout-title violations, and no others', () => {
+	// under `sections[].steps[]` and a one-level pass never saw them. Six have
+	// since been resolved, leaving three.
+	it('has exactly the three known callout-title violations, and no others', () => {
 		const violations = findOneToOneViolations(allPages);
 
 		expect(violations.map((v) => `${v.slug}|${v.text}`)).toEqual([
-			'sf.gov/report-garbage-filth-vegetation|Your report is confidential',
 			'sf.gov/report/health-code-article-11-plain-language|This is not legal advice',
-			'sf.gov/report-rats-mice-four-legged-problems|Your report is confidential',
-			'sf.gov/report-cockroaches-mosquitoes-insects|Your report is confidential',
 			'sf.gov/pay-your-annual-healthy-housing-fee-apartment-buildings|Annual fee and reinspection fees are different',
 			'sf.gov/pay-your-annual-healthy-housing-fee-apartment-buildings|What the annual fee supports'
 		]);
@@ -83,7 +80,7 @@ describe('the real corpus', () => {
 	it('finds callouts nested below the top-level sections', () => {
 		const nested = findOneToOneViolations(allPages).filter((v) => v.where.includes('.steps.'));
 
-		expect(nested).toHaveLength(5);
+		expect(nested).toHaveLength(2);
 	});
 
 	it('carries no image the corpus has no panel for', () => {

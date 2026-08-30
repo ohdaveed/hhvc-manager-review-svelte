@@ -61,24 +61,22 @@ ports as-is. §2–§10 are what is missing.
     are **8** types and every one has an inventory (Transaction 17, Agency 25,
     Campaign 13, Resource Collection 9, Information 8, Report 7, Topic 6,
     About us 4). And the photo removal did land: **0** pages carry one.
-  - [ ] **Six callout titles remain**, down from nine. The validator's first
+  - [ ] **Three callout titles remain**, down from nine. The validator's first
         version walked only `page.sections[]` and reported **4** where the
         corpus had **9** — five sit under `sections[].steps[]`. Fixed to walk
-        any depth; a test now asserts the nested ones are found, because an
+        any depth; a test asserts the nested ones are found, because an
         undercounting validator is worse than none once a pinned test freezes
         its number as correct.
-        Three resolved 2026-08-30: `Lookup destination not yet confirmed`
-        (already stated in that page's `editorNote`), `Mold from humidity or
-    condensation` and `72-hour reporting pattern` (both redundant — the
-        callout bodies already carry the wording and the 72-hour figure).
-        Remaining, each needing a content decision:
-        `This is not legal advice` (deliberately left — a legal disclaimer
-        carrying meaning the body does not, so it wants signing off verbatim),
-        `Your report is confidential` ×3, and the two annual-fee titles on
-        `pay-your-annual-healthy-housing-fee-apartment-buildings`. The corpus
-        already names the fix in its own `karl` note: "Fold … in as a bolded
-        lead-in within the callout text, or flag for Digital Services if a
-        distinct heading is actually needed."
+        Resolved 2026-08-30: `Lookup destination not yet confirmed` (already in
+        that page's `editorNote`), `Mold from humidity or condensation` and
+        `72-hour reporting pattern` (both redundant against their bodies), and
+        `Your report is confidential` on three report pages — folded in as a
+        bolded lead-in exactly as those pages' own `karl` notes prescribed, and
+        the notes rewritten so they no longer instruct a fold that has happened.
+        Remaining, each needing a content decision: `This is not legal advice`
+        (a legal disclaimer carrying meaning its body does not, so it wants
+        wording signed off rather than relocated) and the two annual-fee titles
+        on `pay-your-annual-healthy-housing-fee-apartment-buildings`.
   - [ ] Wire into `corpus:import` as well, so a violating corpus cannot be
         imported. The test covers the tree; the import path needs DB access.
 - [ ] **3. Persistence** (§3). The tool loses a reviewer's work on navigation,
