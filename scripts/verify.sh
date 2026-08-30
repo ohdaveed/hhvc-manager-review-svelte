@@ -63,6 +63,43 @@ else
 	fail "production build — see $LOG"
 fi
 
+# Invariants in config files -- the gap every other gate leaves open.
+#
+# Nothing imports a Dockerfile and no test renders docker-compose.yml, so the
+# suite passes whatever those files happen to say. PR #86 arrived carrying
+# pre-fix copies of both: merging it would have reverted #83's build-arg fix and
+# dropped the Railway credential from Compose, with unit tests, e2e and the
+# Netlify preview all green. It was caught by reading the diff, and reading is
+# not a control. These are the claims that were nearly lost.
+config_broken=''
+require() { # <file> <literal string> <what it protects>
+	grep -qF -- "$2" "$1" 2>/dev/null || config_broken="$config_broken
+      missing in $1: $3"
+}
+forbid() { # <file> <literal string> <why it must not come back>
+	! grep -qF -- "$2" "$1" 2>/dev/null || config_broken="$config_broken
+      present in $1: $3"
+}
+
+require Dockerfile 'ARG SVELTE_PUBLIC_SUPABASE_URL' \
+	'public Supabase URL as a build arg -- $env/static/public is inlined at build time, so runtime env never reaches it'
+require Dockerfile 'ARG SVELTE_PUBLIC_SUPABASE_ANON_KEY' \
+	'public anon key as a build arg, same reason'
+require docker-compose.yml 'args:' \
+	'the public pair passed as build args'
+forbid docker-compose.yml '- SVELTE_PUBLIC_SUPABASE_URL=' \
+	'the public pair back under environment:, where Compose sets it and the bundle ignores it'
+require docker-compose.yml 'RAILWAY_API_TOKEN' \
+	'the AI proxy credential, without which every rewrite 401s'
+require vite.config.ts ': adapterNetlify' \
+	'netlify as the default adapter, so CI builds the one production ships'
+
+if [ -z "$config_broken" ]; then
+	pass 'config invariants'
+else
+	fail "config invariants$config_broken"
+fi
+
 if [ "${1:-}" != "--live" ]; then
 	echo
 	[ "$failures" -eq 0 ] && echo "all local gates green" || echo "$failures failed · $LOG"
