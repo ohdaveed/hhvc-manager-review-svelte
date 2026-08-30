@@ -52,6 +52,34 @@ function acceptsImage(type: string): boolean {
 	return (PANELS[type] ?? []).some((panel) => /image/i.test(String(panel.blockTypesDoc ?? '')));
 }
 
+/**
+ * Every non-empty `callout.title` on a page, at any depth, as
+ * `[where, title]`. Depth-first over plain objects and arrays, skipping the
+ * `callout` key itself so a nested callout is not visited twice.
+ */
+function calloutTitles(page: AnyPage): [string, string][] {
+	const found: [string, string][] = [];
+
+	const walk = (node: unknown, path: string): void => {
+		if (!node || typeof node !== 'object') return;
+		if (Array.isArray(node)) {
+			node.forEach((entry, i) => walk(entry, `${path}.${i}`));
+			return;
+		}
+		const record = node as AnyPage;
+		const title = record.callout?.title;
+		if (typeof title === 'string' && title.trim()) {
+			found.push([`${path || 'page'}.callout`, title.trim()]);
+		}
+		for (const [key, value] of Object.entries(record)) {
+			if (key !== 'callout') walk(value, path ? `${path}.${key}` : key);
+		}
+	};
+
+	walk(page, '');
+	return found;
+}
+
 export function findOneToOneViolations(pages: AnyPage[]): OneToOneViolation[] {
 	const violations: OneToOneViolation[] = [];
 
@@ -62,19 +90,23 @@ export function findOneToOneViolations(pages: AnyPage[]): OneToOneViolation[] {
 		// A Callout is ONE rich-text field, on any host. It has no title on any
 		// content type, so a title written here has nowhere to land and whatever
 		// it said is lost on rebuild.
-		for (const section of page?.sections ?? []) {
-			const title = section?.callout?.title;
-			if (typeof title === 'string' && title.trim()) {
-				violations.push({
-					slug,
-					type,
-					where: `section "${String(section.heading ?? '')}" callout`,
-					text: title.trim(),
-					rule: 'callout-title',
-					reason:
-						'A Callout is one rich-text field with no title, on any host. Fold this into the callout body or drop it.'
-				});
-			}
+		//
+		// Walked recursively, not just over `page.sections[]`. The first version
+		// of this check looked only one level deep and reported 4 violations
+		// where the corpus has 9 -- five callouts live under
+		// `sections[].steps[]`, which a shallow pass never sees. An undercounting
+		// validator is worse than none: it reports a clean-looking number that a
+		// pinned test then freezes as correct.
+		for (const [where, title] of calloutTitles(page)) {
+			violations.push({
+				slug,
+				type,
+				where,
+				text: title,
+				rule: 'callout-title',
+				reason:
+					'A Callout is one rich-text field with no title, on any host. Fold this into the callout body or drop it.'
+			});
 		}
 
 		// Images belong to the types whose inventory has an image-bearing panel

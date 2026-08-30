@@ -110,7 +110,6 @@ export const filthReport = {
 				'You can ask 311 for a service request number so you can follow up later.'
 			],
 			callout: {
-				title: 'Mold from humidity or condensation',
 				text: 'You can use 311 to report mold caused by humidity or condensation inside a building. Describe where the mold is, how large the affected wall or ceiling area is, and what is causing moisture.',
 				karl: 'Callout block. Carries the mold-reporting path from the deleted standalone mold report page — mold from humidity or condensation stays reportable through the same 311 flow. The source page’s leak-versus-condensation responsibility language is intentionally not repeated because the SFDPH guidance says responsibility depends on the moisture cause.'
 			}

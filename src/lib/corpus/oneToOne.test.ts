@@ -26,7 +26,7 @@ describe('findOneToOneViolations', () => {
 
 		expect(violation.rule).toBe('callout-title');
 		expect(violation.text).toBe('Not legal advice');
-		expect(violation.where).toContain('How to apply');
+		expect(violation.where).toBe('sections.0.callout');
 	});
 
 	it('ignores an empty or whitespace callout title', () => {
@@ -55,27 +55,35 @@ describe('findOneToOneViolations', () => {
 });
 
 describe('the real corpus', () => {
-	// Deliberately asserts the CURRENT count rather than zero. Four callout
-	// titles survive despite the 1:1 decision recording them as removed "on
-	// every page", and folding them into their callout bodies is a copy edit on
+	// Deliberately asserts the CURRENT count rather than zero. These survive
+	// despite the 1:1 decision recording callout titles as removed "on every
+	// page", and folding each into its callout body is a copy edit on
 	// reviewer-facing content -- a decision for the content owner, not a
-	// drive-by fix. This pins the number so it cannot grow quietly, and turns
-	// red the moment someone adds a fifth.
-	it('has exactly the four known callout-title violations, and no others', () => {
+	// drive-by fix. Pinning stops a seventh appearing quietly.
+	//
+	// Was 4 until the walk was fixed: five of the nine then in the corpus sit
+	// under `sections[].steps[]` and a one-level pass never saw them. Three
+	// have since been resolved, leaving six.
+	it('has exactly the six known callout-title violations, and no others', () => {
 		const violations = findOneToOneViolations(allPages);
 
-		expect(violations.map((v) => v.rule)).toEqual([
-			'callout-title',
-			'callout-title',
-			'callout-title',
-			'callout-title'
+		expect(violations.map((v) => `${v.slug}|${v.text}`)).toEqual([
+			'sf.gov/report-garbage-filth-vegetation|Your report is confidential',
+			'sf.gov/report/health-code-article-11-plain-language|This is not legal advice',
+			'sf.gov/report-rats-mice-four-legged-problems|Your report is confidential',
+			'sf.gov/report-cockroaches-mosquitoes-insects|Your report is confidential',
+			'sf.gov/pay-your-annual-healthy-housing-fee-apartment-buildings|Annual fee and reinspection fees are different',
+			'sf.gov/pay-your-annual-healthy-housing-fee-apartment-buildings|What the annual fee supports'
 		]);
-		expect(violations.map((v) => v.slug)).toEqual([
-			'sf.gov/report-garbage-filth-vegetation',
-			'sf.gov/find-healthy-housing-inspector-by-neighborhood',
-			'sf.gov/report/health-code-article-11-plain-language',
-			'sf.gov/information/tenant-rights-and-reporting-housing-conditions'
-		]);
+	});
+
+	// The bug this catches shipped once: a one-level pass over `page.sections[]`
+	// reported 4 where the corpus had 9. An undercounting validator is worse
+	// than none, because a pinned test then freezes the wrong number as correct.
+	it('finds callouts nested below the top-level sections', () => {
+		const nested = findOneToOneViolations(allPages).filter((v) => v.where.includes('.steps.'));
+
+		expect(nested).toHaveLength(5);
 	});
 
 	it('carries no image the corpus has no panel for', () => {
