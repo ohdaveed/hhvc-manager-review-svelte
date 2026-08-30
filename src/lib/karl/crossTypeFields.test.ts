@@ -38,6 +38,7 @@ const EXCLUSIVE: { name: string; owner: string }[] = [
 	{ name: 'Transaction link', owner: 'Step by step' },
 	{ name: 'Steps', owner: 'Step by step' },
 	{ name: 'Step description', owner: 'Step by step' },
+	{ name: 'Transaction Step rich-text description', owner: 'Step by step' },
 	// Information's body panel. karl-blocks.js:729.
 	{ name: 'Information section', owner: 'Information' },
 	{ name: 'information_section', owner: 'Information' }
