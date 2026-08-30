@@ -23,8 +23,9 @@
  */
 import { Client } from 'pg';
 import { execSync } from 'node:child_process';
+import { readFile } from 'node:fs/promises';
 import { allPages } from '../src/lib/data/index.js';
-import { buildLock, derivePagePath } from '../src/lib/corpus/lock.js';
+import { buildLock, derivePagePath, isValidFieldHashMap, type CorpusLock } from '../src/lib/corpus/lock.js';
 
 const connectionString = process.env.SUPABASE_DB_URL;
 
@@ -50,7 +51,25 @@ async function done(code: number): Promise<never> {
 	process.exit(code);
 }
 
-const lock = buildLock(allPages);
+let committed: CorpusLock;
+try {
+	const parsed: unknown = JSON.parse(await readFile(new URL('../corpus.lock', import.meta.url), 'utf8'));
+	if (!parsed || typeof parsed !== 'object' || (parsed as CorpusLock).version !== 1 ||
+		!(parsed as CorpusLock).pages || !Object.values((parsed as CorpusLock).pages).every((entry) =>
+			entry && typeof entry.contentHash === 'string' && isValidFieldHashMap(entry.fieldHashes))) {
+		throw new Error('invalid lock shape');
+	}
+	committed = parsed as CorpusLock;
+} catch (error) {
+	console.error(`Cannot read or validate committed corpus.lock: ${String(error)}`);
+	await done(1);
+}
+
+const lock = buildLock(allPages, committed);
+if (lock.corpusHash !== committed.corpusHash || JSON.stringify(lock.pages) !== JSON.stringify(committed.pages)) {
+	console.error('Rebuilt corpus lock does not match committed corpus.lock; refusing import.');
+	await done(1);
+}
 
 const existing = await client.query<{ id: string; imported_at: string }>(
 	'SELECT id, imported_at FROM public.corpus_versions WHERE corpus_hash = $1',
