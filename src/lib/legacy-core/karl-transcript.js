@@ -54,7 +54,6 @@ const APPROVED_DECISIONS = new Set(['Approved', 'Approved with edits']);
  * migration, so migrating it would be a category error.
  */
 const NOT_MIGRATED_PAGE_FIELDS = new Set([
-	'audience',
 	'reading',
 	'editorNote',
 	'editorStatus',
@@ -65,6 +64,26 @@ const NOT_MIGRATED_PAGE_FIELDS = new Set([
 	'seoTitle',
 	'metaDescription'
 ]);
+
+/**
+ * Page fields whose gap is a DECISION rather than a missing destination.
+ *
+ * The default sweep reason says no panel accepts the field, which is the right
+ * thing to say about most of what lands there and the wrong thing to say about
+ * these. Reporting `audience` with the generic wording would tell a reviewer
+ * SF.gov has nowhere to put "who this is for", which is false and would get the
+ * line deleted rather than placed.
+ */
+const PAGE_FIELD_REASONS = {
+	audience: (type) =>
+		`The page carries \`audience\`, and Karl does have a home for it: a **Things to know** ` +
+		`entry titled "Who this information is for", with the audiences as a bulleted list. ` +
+		`Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs ` +
+		`renders exactly that inside its grey "What to know" box. ` +
+		`What blocks it is the budget, not the field: the Help Center caps Things to know at 2 ` +
+		`entries, and most ${type} pages here already spend both, so placing the audience means ` +
+		`deciding which existing entry it replaces. That is a content call, not a missing panel.`
+};
 
 /** Section and step fields that carry content an editor has to place somewhere. */
 const SECTION_CONTENT_FIELDS = [
@@ -963,7 +982,9 @@ function sweepUnconsumed(context) {
 		transcript.unmapped.push({
 			path: field,
 			shape: `${kebab(type)}-page-${kebab(field)}`,
-			reason: `The page carries \`${field}\`, and no ${type} panel documented in the field map accepts it.`
+			reason: PAGE_FIELD_REASONS[field]
+				? PAGE_FIELD_REASONS[field](type)
+				: `The page carries \`${field}\`, and no ${type} panel documented in the field map accepts it.`
 		});
 	}
 
