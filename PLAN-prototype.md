@@ -21,6 +21,29 @@ ports as-is. §2–§10 are what is missing.
 
 - [ ] **1. Corpus loader and field-id scheme** (§2). Everything else keys off it,
       and it is the change most likely to force id decisions elsewhere.
+  - [x] **Field ids are frozen at import.** Decision taken: freeze, not content
+        hash. `src/lib/corpus/freeze.ts` resolves the id each field keeps, using
+        the previous lock's `fieldHashes` as the ledger — no new file and no
+        lock format change, because `frozen id -> sha256(text)` is already what
+        the lock stores for edit expiry. Wired through `buildLock`,
+        `corpus:lock` and `corpus:check`.
+        Measured first: 371 of 595 ids (62%) carry a positional segment, while
+        0 sections lack a heading and 0 section keys collide — so the section
+        layer was already stable via `deriveFieldKey` and only the leaf index
+        was exposed. Observed on `look-up-building-records`, inserting a
+        paragraph at the top of a 2-paragraph section: without the ledger 7 of
+        9 ids survive and `paragraphs.0`/`.1` reattach to their neighbours'
+        text; with it, 9 of 9.
+  - [ ] **Per-type normalisers and validation on load.** Deferred deliberately,
+        not skipped: `panels` appears in **1** of 29 data modules and
+        `descLimit` in **0**, so the `panels[]` contract §2 describes does not
+        exist in this corpus yet. Building validation for absent data would be
+        speculative. Blocked on the field map becoming data (§9) — the same
+        prerequisite the retype diff has.
+  - [ ] **`extractFields` still emits `sections.<key>.callout.title`**, which
+        §10 says cannot exist: a Callout is one rich-text field with no title.
+        Either the extractor or the 1:1 rule is wrong; resolve when the
+        validator lands (item 2).
 - [ ] **2. The 1:1 validator** (§10). Cheap once the loader exists, and it stops
       the corpus drifting back.
 - [ ] **3. Persistence** (§3). The tool loses a reviewer's work on navigation,

@@ -21,8 +21,6 @@ import {
 
 const CONTENT_HASH_PATTERN = /^[0-9a-f]{64}$/;
 
-const expected = buildLock(allPages);
-
 let actual: CorpusLock;
 try {
 	actual = JSON.parse(readFileSync(new URL('../corpus.lock', import.meta.url), 'utf8'));
@@ -77,6 +75,12 @@ if (recomputedHash !== actual.corpusHash) {
 	console.error('bun run corpus:lock.');
 	process.exit(1);
 }
+
+// Only now is `actual` trustworthy enough to serve as the id ledger: its
+// version, shape and internal consistency have all been checked above. Built
+// any earlier, a corrupt file would be feeding the very comparison meant to
+// catch it. It cannot manufacture a false pass either -- see `buildLock`.
+const expected = buildLock(allPages, actual);
 
 if (actual.corpusHash === expected.corpusHash) {
 	console.log(`corpus.lock matches — ${Object.keys(expected.pages).length} pages.`);
