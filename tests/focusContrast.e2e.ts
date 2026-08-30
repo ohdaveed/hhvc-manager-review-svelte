@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures';
 
 /**
  * Focus-indicator contrast, WCAG 2.1 AA SC 1.4.11 (Non-text Contrast).
