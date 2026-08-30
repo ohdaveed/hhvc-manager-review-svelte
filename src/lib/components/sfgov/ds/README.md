@@ -56,6 +56,39 @@ Findings from that check:
   the slab headings must add the 500 and 600 imports, or the weight silently
   synthesizes from 700 and looks plausible but wrong.
 
+### Spotlight is three tones where the design has six — open
+
+Measured off `design/SF.gov Components (standalone).html` (computed styles, not
+eyeballed). The design runs a **two-axis** system — three hues x light/dark —
+while `SpotlightTone` is a flat `'primary' | 'secondary' | 'dark'` that conflates
+the two axes:
+
+| design tone    | bg        | title     | action bg / label     | in repo                   |
+| -------------- | --------- | --------- | --------------------- | ------------------------- |
+| default        | `#E9F1FE` | `#001D4E` | `#1B519E` / `#FCFCFC` | `primary` — matches       |
+| secondary      | `#E6F4F5` | `#002A30` | `#1B519E` / `#FCFCFC` | **wrong hue** (see below) |
+| accent         | `#FEEDE3` | `#470000` | `#1B519E` / `#FCFCFC` | **missing**               |
+| dark default   | `#1B519E` | `#FCFCFC` | `#FCFCFC` / `#1B519E` | `dark` — matches          |
+| dark secondary | `#00646C` | `#FCFCFC` | `#FCFCFC` / `#1B519E` | **missing**               |
+| dark accent    | `#942A00` | `#FCFCFC` | `#FCFCFC` / `#1B519E` | **missing**               |
+
+Two things worth keeping:
+
+- **`secondary` is teal in the design and blue here.** The repo paints it
+  `var(--color-site-tint, #f2f6fc)` — a token `app.css` documents as belonging to
+  the "breadcrumb strip, input prefixes", borrowed rather than owned. The design
+  gives the secondary family its own teal (`#E6F4F5` light, `#00646C` dark) with a
+  hue-matched title `#002A30`. Fixing the background alone would be worse than
+  leaving it, because the repo's secondary is a whole blue family — title
+  `#043578` included.
+- **On every dark tone the action button's label stays `#1B519E`**, not the
+  tone's own hue. Easy to get wrong by inference; it is measured.
+
+All six pass AA: dark backgrounds carry `#FCFCFC` at 7.53 / 6.73 / 7.90:1, light
+backgrounds carry ink at 17.2-18.1:1. Nothing here is blocked on accessibility —
+it is an API-shape decision (six-value enum, or `tone` x `dark`), which is why it
+is recorded rather than applied.
+
 This governs design values only. How a _page_ should be built is the Karl Editor
 Help Center's call, and what a URL actually renders is settled by the live
 published page — see `docs/karl-export-field-map.md`.
