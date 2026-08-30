@@ -77,7 +77,30 @@ ports as-is. §2–§10 are what is missing.
       verdict after, since both need the backend task list extended.
 - [ ] **5. Checks and caps config** (§5). Small, and it unblocks the
       non-Transaction types.
-- [ ] **6. Site map graph** (§7). Independent; can run in parallel.
+- [x] **6. Site map graph** (§7). The graph itself already existed in
+      `sitemap.ts` — target resolution, `live`, `publishes` via
+      `classifySection`, `incoming` counts. Only §7's two derivations were
+      missing; both now in `sitemap.ts` with tests.
+  - **`findRelatedTypeViolations`** — `O3`, from
+    `docs/karl-export-field-map.md`: Related accepts only
+    **Transaction / Information / Campaign / Topic**. Note the rule is
+    contested and the doc says which side wins — `KARL_PANELS` records the
+    Related block as an unrestricted "page chooser", and a live Campaign
+    picker accepted a Resource Collection page, but the 2026-08-23 precedence
+    reversal makes the Help Center govern. The permissive form is a gap in
+    the form, not a refutation. **Do not "correct" the list against the
+    picker.**
+    Found **3 of 14** Related cards in violation: two point at `ownerHub`
+    (Resource Collection), one at `pestsTopic` (Agency).
+  - **`findOrphans`** — reachability from hubs, not `incoming === 0`. A hub is
+    an Agency or Topic page, which on this corpus is exactly the two pages
+    carrying a `services` listing; the predicate is a parameter so a third
+    routing type does not need the function reopened. Found **5** unreachable
+    pages. The weaker `incoming === 0` test reports 6 — it counts the Agency
+    hub itself, which has no inbound links but is a starting point.
+  - [ ] Surface both in `SiteMapView.svelte`. §7 notes both figures are quoted
+        in the UI, so they must be counted rather than asserted — they are now
+        counted, but the view still needs wiring to show them.
 - [ ] **7. Retype diff, then page authoring** (§9). Both depend on the field map
       becoming data.
 

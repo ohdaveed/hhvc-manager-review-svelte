@@ -2,7 +2,13 @@ import { describe, it, expect } from 'vitest';
 import { allPages } from '$lib/data';
 import { deriveFieldKey } from '$lib/corpus/fieldKey';
 import { routableId } from '$lib/corpus/pageId';
-import { buildSitemap, typeBreakdown } from './sitemap';
+import {
+	buildSitemap,
+	findOrphans,
+	findRelatedTypeViolations,
+	RELATED_PERMITTED_TYPES,
+	typeBreakdown
+} from './sitemap';
 
 /**
  * Hydrate the way `pageData.svelte.ts` does, because `buildSitemap` documents
@@ -78,5 +84,137 @@ describe('typeBreakdown', () => {
 		expect(typeBreakdown(hydrate())).toBe(
 			'14 Transaction · 6 Information · 3 Resource Collection · 2 Campaign · 1 About us · 1 Agency · 1 Report · 1 Topic'
 		);
+	});
+});
+
+describe('findRelatedTypeViolations', () => {
+	const link = (component: string, type: string, live = true) => ({
+		target: 't',
+		live,
+		id: 'dest',
+		title: 'Dest',
+		type,
+		cardTitle: '',
+		sectionHeading: '',
+		component,
+		publishes: 'title-only' as const
+	});
+	const entry = (id: string, outgoing: ReturnType<typeof link>[]) => ({
+		id,
+		title: id,
+		type: 'Transaction',
+		slug: id,
+		outgoing,
+		incoming: 0
+	});
+
+	it('accepts the four permitted types', () => {
+		const entries = [
+			entry(
+				'a',
+				RELATED_PERMITTED_TYPES.map((type) => link('related', type))
+			)
+		];
+
+		expect(findRelatedTypeViolations(entries)).toEqual([]);
+	});
+
+	it('flags a Related card pointing outside them', () => {
+		const entries = [entry('a', [link('related', 'Resource Collection')])];
+
+		expect(findRelatedTypeViolations(entries)).toHaveLength(1);
+	});
+
+	it('ignores the same type in a non-Related panel, since O3 is Related-only', () => {
+		const entries = [entry('a', [link('services', 'Resource Collection')])];
+
+		expect(findRelatedTypeViolations(entries)).toEqual([]);
+	});
+
+	// A dead target has no type to judge. Reporting it as O3 would file a
+	// broken link under another defect's name.
+	it('ignores a card whose target is not a page in the corpus', () => {
+		const entries = [entry('a', [link('related', '', false)])];
+
+		expect(findRelatedTypeViolations(entries)).toEqual([]);
+	});
+});
+
+describe('findOrphans', () => {
+	const page = (id: string, type: string, targets: string[] = []) => ({
+		id,
+		title: id,
+		type,
+		slug: id,
+		incoming: 0,
+		outgoing: targets.map((t) => ({
+			target: t,
+			live: true,
+			id: t,
+			title: t,
+			type: 'Transaction',
+			cardTitle: '',
+			sectionHeading: '',
+			component: 'related',
+			publishes: 'title-only' as const
+		}))
+	});
+
+	it('reaches pages linked from a hub, and those linked on from there', () => {
+		const entries = [
+			page('hub', 'Topic', ['a']),
+			page('a', 'Transaction', ['b']),
+			page('b', 'Transaction')
+		];
+
+		expect(findOrphans(entries)).toEqual([]);
+	});
+
+	it('reports a page no hub reaches', () => {
+		const entries = [
+			page('hub', 'Topic', ['a']),
+			page('a', 'Transaction'),
+			page('lost', 'Transaction')
+		];
+
+		expect(findOrphans(entries).map((e) => e.id)).toEqual(['lost']);
+	});
+
+	// The whole reason this is a reachability pass rather than `incoming === 0`:
+	// two unreachable pages pointing at each other each have an incoming link.
+	it('catches a mutually-linked pair that no hub reaches, which incoming counts miss', () => {
+		const entries = [
+			page('hub', 'Topic'),
+			page('x', 'Transaction', ['y']),
+			page('y', 'Transaction', ['x'])
+		];
+
+		expect(findOrphans(entries).map((e) => e.id)).toEqual(['x', 'y']);
+	});
+});
+
+describe('the real corpus', () => {
+	const entries = buildSitemap(allPages.map((p) => ({ ...p, id: routableId(p) })));
+
+	it('has three Related cards outside the four permitted types', () => {
+		const targets = findRelatedTypeViolations(entries).map(
+			(v) => `${v.link.target}:${v.link.type}`
+		);
+
+		expect(targets).toEqual([
+			'ownerHub:Resource Collection',
+			'ownerHub:Resource Collection',
+			'pestsTopic:Agency'
+		]);
+	});
+
+	it('has five pages unreachable from the Agency and Topic hubs', () => {
+		expect(findOrphans(entries).map((e) => e.id)).toEqual([
+			'step-by-step--get-ready-for-a-follow-up-inspection',
+			'step-by-step--get-ready-for-a-housing-inspection',
+			'departments--healthy-housing-and-vector-control--about',
+			'step-by-step--tenant-steps-after-notice-of-violation',
+			'information--article-11-compliance-for-property-owners'
+		]);
 	});
 });
