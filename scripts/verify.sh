@@ -80,19 +80,37 @@ forbid() { # <file> <literal string> <why it must not come back>
 	! grep -qF -- "$2" "$1" 2>/dev/null || config_broken="$config_broken
       present in $1: $3"
 }
+require_active() { # <file> <awk pattern> <what it protects>
+	awk -v pattern="$2" '$0 ~ pattern { found=1 } END { exit !found }' "$1" 2>/dev/null ||
+		config_broken="$config_broken
+       missing active mapping in $1: $3"
+}
 
-require Dockerfile 'ARG SVELTE_PUBLIC_SUPABASE_URL' \
-	'public Supabase URL as a build arg -- $env/static/public is inlined at build time, so runtime env never reaches it'
-require Dockerfile 'ARG SVELTE_PUBLIC_SUPABASE_ANON_KEY' \
-	'public anon key as a build arg, same reason'
-require docker-compose.yml 'args:' \
-	'the public pair passed as build args'
+# These must be active builder-stage ARG directives, and must precede the build
+# that inlines $env/static/public. A substring check would also accept comments or
+# arguments added after the build.
+if ! awk '
+	/^[[:space:]]*RUN[[:space:]]+bun run build([[:space:]]|$)/ { build=1 }
+	/^[[:space:]]*ARG[[:space:]]+SVELTE_PUBLIC_SUPABASE_URL([[:space:]]|$)/ && !build { url=1 }
+	/^[[:space:]]*ARG[[:space:]]+SVELTE_PUBLIC_SUPABASE_ANON_KEY([[:space:]]|$)/ && !build { key=1 }
+	END { exit !(url && key) }
+' Dockerfile; then
+	config_broken="$config_broken
+       missing active pre-build Dockerfile ARGs: public Supabase values must be available when the bundle is built"
+fi
+
+# Require the mappings in the build.args section, rather than accepting a
+# generic args key or a commented-out/runtime-only copy.
+require_active docker-compose.yml '^[[:space:]]+SVELTE_PUBLIC_SUPABASE_URL: [$][{]SVELTE_PUBLIC_SUPABASE_URL[}]' \
+	'the public Supabase URL actively passed as a build arg'
+require_active docker-compose.yml '^[[:space:]]+SVELTE_PUBLIC_SUPABASE_ANON_KEY: [$][{]SVELTE_PUBLIC_SUPABASE_ANON_KEY[}]' \
+	'the public anon key actively passed as a build arg'
 forbid docker-compose.yml '- SVELTE_PUBLIC_SUPABASE_URL=' \
 	'the public pair back under environment:, where Compose sets it and the bundle ignores it'
-require docker-compose.yml 'RAILWAY_API_TOKEN' \
-	'the AI proxy credential, without which every rewrite 401s'
-require vite.config.ts ': adapterNetlify' \
-	'netlify as the default adapter, so CI builds the one production ships'
+require_active docker-compose.yml '^[[:space:]]+- RAILWAY_API_TOKEN=[$][{]RAILWAY_API_TOKEN[}]' \
+	'the AI proxy credential actively injected at runtime, without which every rewrite 401s'
+require vite.config.ts "process.env.ADAPTER === 'node' ? adapterNode : adapterNetlify" \
+	'netlify as the default adapter, with node selected only explicitly, so CI builds the one production ships'
 
 if [ -z "$config_broken" ]; then
 	pass 'config invariants'
