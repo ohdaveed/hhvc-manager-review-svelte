@@ -1,5 +1,5 @@
 export const noticeOfViolation = {
-	slug: 'sf.gov/step-by-step--fix-healthy-housing-and-vector-control-violation',
+	slug: 'sf.gov/fix-healthy-housing-and-vector-control-violation',
 	type: 'Transaction',
 	title: 'Fix your Healthy Housing and Vector Control violation',
 	summary:

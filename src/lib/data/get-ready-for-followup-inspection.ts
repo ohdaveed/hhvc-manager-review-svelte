@@ -1,5 +1,5 @@
 export const inspectionPrepFollowup = {
-	slug: 'sf.gov/step-by-step--get-ready-for-a-follow-up-inspection',
+	slug: 'sf.gov/get-ready-for-a-follow-up-inspection',
 	type: 'Transaction',
 	title: 'Get ready for a follow-up inspection',
 	summary:

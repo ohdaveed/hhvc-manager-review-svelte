@@ -9,12 +9,27 @@
  * a committed manifest needs no network at all, and it makes a corpus change
  * visible in the diff.
  */
-import { writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { allPages } from '../src/lib/data/index.js';
-import { buildLock } from '../src/lib/corpus/lock.js';
+import { buildLock, type CorpusLock } from '../src/lib/corpus/lock.js';
 
-const lock = buildLock(allPages);
-writeFileSync(new URL('../corpus.lock', import.meta.url), JSON.stringify(lock, null, 2) + '\n');
+const lockPath = new URL('../corpus.lock', import.meta.url);
+
+/**
+ * The lock we are about to overwrite is also the id ledger for the one we
+ * write: a field whose copy has not changed keeps the id it was frozen under.
+ * A missing or unreadable file is a first import, not an error -- every field
+ * is then new, which is exactly what an absent ledger means.
+ */
+let previous: CorpusLock | undefined;
+try {
+	previous = JSON.parse(readFileSync(lockPath, 'utf8')) as CorpusLock;
+} catch {
+	previous = undefined;
+}
+
+const lock = buildLock(allPages, previous);
+writeFileSync(lockPath, JSON.stringify(lock, null, 2) + '\n');
 console.log(
 	`Wrote corpus.lock — ${Object.keys(lock.pages).length} pages, ${lock.corpusHash.slice(0, 12)}.`
 );

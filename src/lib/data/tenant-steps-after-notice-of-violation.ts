@@ -1,5 +1,5 @@
 export const tenantNoticeSteps = {
-	slug: 'sf.gov/step-by-step--tenant-steps-after-notice-of-violation',
+	slug: 'sf.gov/tenant-steps-after-notice-of-violation',
 	type: 'Transaction',
 	title: 'What tenants need to do after a Notice of Violation',
 	summary:
