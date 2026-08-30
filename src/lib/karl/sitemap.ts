@@ -166,8 +166,11 @@ export function typeBreakdown(pages: AnyPage[]): string {
  * `New: Topic -> Content` for it exactly as it does for Agency. A reviewer can
  * therefore design and walk through a Topic mockup; publishing is the step
  * that needs Digital Services.
- * It is listed under Sitewide pages on "Understanding content types":
- * https://sfdigitalservices.gitbook.io/karl-sf.gov-editor-help-center/using-karl-the-cms/content-types/understanding-content-types
+ * Confirmed 2026-08-30 by reading Karl's own "Create a page" dashboard, which
+ * offers Topic alongside sixteen other types. Prefer that form to the Help
+ * Center, which is incomplete: it documents fifteen types, omits `Form` and
+ * `Document Collection Search` entirely, and calls this corpus's `About us`
+ * type `About`.
  */
 export const RELATED_PERMITTED_TYPES = ['Transaction', 'Information', 'Campaign', 'Topic'];
 

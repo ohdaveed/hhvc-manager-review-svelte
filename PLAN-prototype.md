@@ -302,43 +302,41 @@ warning; the rule replaces them for this class of problem.
 
 ---
 
-## Karl's canonical content types
+## Karl's content types — observed in the CMS
 
-Source, confirmed 2026-08-30 against the Help Center:
-[Understanding content types](https://sfdigitalservices.gitbook.io/karl-sf.gov-editor-help-center/using-karl-the-cms/content-types/understanding-content-types)
-and
-[Choosing a content type](https://sfdigitalservices.gitbook.io/karl-sf.gov-editor-help-center/using-karl-the-cms/content-types/choosing-a-content-type).
-**Fifteen types in four groups** — the corpus uses eight.
+**Source of truth is the live "Create a page" dashboard**, read 2026-08-30.
+Seventeen types, listed alphabetically by the form:
 
-| Group              | Types                                                                                |
-| ------------------ | ------------------------------------------------------------------------------------ |
-| Services           | Transaction, Information, **Step by step**, **Location**                             |
-| Outreach           | **News**, **Event**, Campaign                                                        |
-| Department support | About, Resource Collection, **Meeting**, **Profile**, **Data story**, Report, Agency |
-| Sitewide           | Topic                                                                                |
+```
+About us · Agency · Campaign · Data story · Document Collection Search
+Event · Form · Information · Location · Meeting · News · Profile
+Report · Resource Collection · Step by step · Topic · Transaction
+```
 
-**The two pages disagree, and only one is complete.** "Choosing a content type"
-omits the Sitewide group, so **Topic is absent from it** — but that page is
-editorial guidance on which type to pick for a new public page, not an
-inventory of the form. Topic is creatable in Karl like any other type:
-`KARL_NAV` carries `New: Topic → Content` for it exactly as it does for Agency.
-"Only DS admin can add a new sitewide page" governs whether a Topic page **goes
-live**, not whether a reviewer can design one — so Topic mockups and their
-walkthroughs are in scope, and only publishing needs Digital Services. The two
-pages also disagree on casing and plurals (`Report`/`Reports`, `Resource
-collection`/`Resource Collection`, `Event`/`Events`), so neither is safe to
-string-match against without normalising.
+The Help Center is **incomplete and partly wrong**, so prefer the form:
 
-Two divergences in our corpus, both worth a decision:
+- **`About us` is correct.** Both Help Center pages call it `About`; the form
+  says `About us`, which is what this corpus and `KARL_PANELS` already use. An
+  earlier note here claimed the repo was "externally wrong" — it is not, and
+  nothing should be renamed.
+- **Two types are documented nowhere**: `Document Collection Search` and
+  `Form`. Neither Help Center page lists them.
+- `Topic` is offered in the form like any other type, confirming that a
+  reviewer can design one; only publishing is gated on Digital Services.
+- Casing and plurals follow the form: `Report` (not `Reports`),
+  `Resource Collection` (not `Resource collection`), `Event` (not `Events`).
 
-- **`About us` is not a Karl type name** — both Help Center pages say `About`.
-  `KARL_PANELS` also keys it `About us`, so the repo is internally consistent
-  and externally wrong. Harmless today, but item 7's retype diff is keyed by
-  type name and would miss it.
-- **Four pages slugged `step-by-step--*` are all typed `Transaction`**, while
-  Karl has a dedicated Step by step type ("process involving multiple steps or
-  transactions", 15-step limit). Three of the four are also in the orphan list.
-  This is exactly what the unbuilt content-type check is for.
+**`KARL_NAV` covers 8 of the 17.** The nine with no panel inventory —
+`Data story`, `Document Collection Search`, `Event`, `Form`, `Location`,
+`Meeting`, `News`, `Profile`, `Step by step` — are not a corpus problem today,
+since no mockup uses them, but item 7's retype diff cannot offer a target type
+it has no field list for.
+
+One live consequence: **four pages slugged `step-by-step--*` are typed
+`Transaction`**, and `Step by step` is a real type the form offers ("process
+involving multiple steps or transactions", 15-step limit). Three of the four
+are also unreachable from any hub. That is the first concrete case for the
+content-type check.
 
 ## Not designed yet
 
