@@ -55,9 +55,20 @@ export function freezeFieldIds(
 	const frozen: FrozenIds = {};
 	const claimed = new Set<string>();
 
-	// 1 -- same id, same text.
+	// 1 -- same id, same text. Duplicate hash groups are ambiguous: do not
+	// claim one occurrence while its peer may have shifted, since that can swap
+	// the persisted ids of identical fields.
+	const previousCounts = new Map<string, number>();
+	for (const hash of Object.values(previousFieldHashes)) {
+		previousCounts.set(hash, (previousCounts.get(hash) ?? 0) + 1);
+	}
+	const currentCounts = new Map<string, number>();
+	for (const hash of hashOf.values()) {
+		currentCounts.set(hash, (currentCounts.get(hash) ?? 0) + 1);
+	}
 	for (const id of structuralIds) {
-		if (previousFieldHashes[id] === hashOf.get(id)) {
+		const hash = hashOf.get(id)!;
+		if (previousFieldHashes[id] === hash && previousCounts.get(hash) === 1 && currentCounts.get(hash) === 1) {
 			frozen[id] = id;
 			claimed.add(id);
 		}
