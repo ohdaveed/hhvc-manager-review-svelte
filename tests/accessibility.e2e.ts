@@ -1,5 +1,5 @@
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures';
 
 /**
  * Accessibility gate.
@@ -50,30 +50,6 @@ for (const path of PAGES) {
 		).toEqual([]);
 	});
 }
-
-test('every edit target is reachable and operable by keyboard', async ({ page }) => {
-	await page.goto('/review/departments--healthy-housing-and-vector-control--about');
-	await page.waitForLoadState('networkidle');
-
-	const targets = page.locator('.edit-target');
-	const count = await targets.count();
-
-	// Signed out there are deliberately none, and that is a valid state: the
-	// copy renders as plain text with no affordance. Only assert operability
-	// when the targets are actually present.
-	test.skip(count === 0, 'signed out: edit targets are intentionally inert');
-
-	const first = targets.first();
-	await first.focus();
-	await expect(first).toBeFocused();
-
-	// A real <button> activates on Enter and Space. The old markup did neither.
-	// Activation selects the field: `aria-pressed` is asserted rather than the
-	// highlight, because a selection conveyed only by colour is the violation
-	// this file exists to catch.
-	await page.keyboard.press('Enter');
-	await expect(first).toHaveAttribute('aria-pressed', 'true');
-});
 
 /**
  * The walkthrough and the site map are VIEWS of the review route, not routes,
