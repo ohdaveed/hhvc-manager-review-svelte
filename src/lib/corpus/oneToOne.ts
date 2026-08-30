@@ -63,17 +63,28 @@ export function findOneToOneViolations(pages: AnyPage[]): OneToOneViolation[] {
 		// content type, so a title written here has nowhere to land and whatever
 		// it said is lost on rebuild.
 		for (const section of page?.sections ?? []) {
-			const title = section?.callout?.title;
-			if (typeof title === 'string' && title.trim()) {
-				violations.push({
-					slug,
-					type,
-					where: `section "${String(section.heading ?? '')}" callout`,
-					text: title.trim(),
-					rule: 'callout-title',
-					reason:
-						'A Callout is one rich-text field with no title, on any host. Fold this into the callout body or drop it.'
-				});
+			const hosts = [
+				{ callout: section?.callout, where: `section "${String(section.heading ?? '')}" callout` },
+				...(Array.isArray(section?.steps)
+					? section.steps.map((step: AnyPage, i: number) => ({
+						callout: step?.callout,
+						where: `section "${String(section.heading ?? '')}" step [${i + 1}] callout`
+					}))
+					: [])
+			];
+			for (const host of hosts) {
+				const title = host.callout?.title;
+				if (typeof title === 'string' && title.trim()) {
+					violations.push({
+						slug,
+						type,
+						where: host.where,
+						text: title.trim(),
+						rule: 'callout-title',
+						reason:
+							'A Callout is one rich-text field with no title, on any host. Fold this into the callout body or drop it.'
+					});
+				}
 			}
 		}
 
