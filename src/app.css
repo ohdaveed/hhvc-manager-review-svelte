@@ -473,3 +473,126 @@ body {
 		line-height: 2rem;
 	}
 }
+
+/* ---------------------------------------------------------------------------
+   The PUBLIC SF.gov palette, registered as Tailwind v4 theme colours.
+
+   Append this block to src/app.css, after the existing `@theme { --color-sfds-*
+   … }` block.
+
+   Two palettes live in this app and they are NOT the same blue:
+
+   - `--color-sfds-*`  the review tool's own chrome. #495ed4 action, #0c1464
+                       dark. It dresses the workspace AROUND the mockup.
+   - `--color-site-*`  sf.gov itself. #1B519E action, #000925 navy. Anything
+                       that has to look like the live property reads these.
+
+   Do not alias one to the other. A reviewer has to be able to tell the tool
+   from the page at a glance, and the whole arrangement depends on those two
+   surfaces staying visually distinct. If a component reads `--color-site-*` it
+   belongs on a mockup or a public page; if it reads `--color-sfds-*`,
+   `--primary` or `--ring`, it belongs in the chrome around it.
+
+   Why `@theme` rather than a plain `:root` block: registering here is what
+   generates `bg-site-action`, `text-site-ink`, `border-site-border` and the
+   rest as real utilities, so the components can use Tailwind for layout and
+   colour and fall back to scoped CSS only for what utilities cannot express.
+   Tailwind also emits every one of these as a `:root` custom property, so
+   `var(--color-site-action)` works inside a scoped `<style>` block at the same
+   time. One name, both mechanisms.
+
+   Contrast ratios in the comments are against #FCFCFC, the page colour, and
+   were measured rather than estimated. See
+   src/lib/components/sfgov/ds/README.md for the full table.
+   --------------------------------------------------------------------------- */
+@theme {
+	/* Action ramp. One ramp carries every interactive state. */
+	--color-site-action: #1b519e; /* default fill, link text        7.53:1 */
+	--color-site-action-hover: #001d4e; /* primary hover / pressed       15.92:1 */
+	--color-site-action-dark: #043578; /* link hover, text on light     11.46:1 */
+	--color-site-action-soft: #dfebfd; /* secondary + ghost hover fill */
+	--color-site-action-soft-strong: #afccf7; /* secondary hover fill */
+	--color-site-tint: #f2f6fc; /* breadcrumb strip, input prefixes */
+	--color-site-navy: #000925; /* global footer, dark button field */
+	--color-site-focus: #386ebf; /* focus ring colour, never a fill */
+
+	/* Neutrals. Five steps and no more. */
+	--color-site-ink: #0b0c0c; /* headings, body, hover borders */
+	--color-site-ink-secondary: #3a3e42; /* help text, current breadcrumb */
+	--color-site-ink-muted: #5b5f63; /* placeholders, default field border */
+	--color-site-border: #c9caca; /* disabled control edge */
+	--color-site-border-subtle: #e9eaea; /* hairline rules, table row rules */
+	--color-site-disabled-fg: #aaabab;
+	--color-site-disabled-bg: #e9eaea;
+	--color-site-surface: #fcfcfc; /* the page */
+	--color-site-surface-input: #ffffff; /* fields sit a step above the page */
+
+	/* Status. Bar colour plus tint. The bar is 8px and is always paired with a
+	   glyph and a heading; colour never carries the meaning alone. */
+	--color-site-info: #0046c2;
+	--color-site-info-bg: #e5f1ff;
+	--color-site-success: #026800;
+	--color-site-success-bg: #e8f5e2;
+	--color-site-warning: #843f00;
+	--color-site-warning-bg: #faefe1;
+	--color-site-danger: #ac0000;
+	--color-site-danger-bg: #ffeae5;
+	--color-site-archive: #5b5f63;
+	--color-site-archive-bg: #f2f2f2;
+
+	/* Content surfaces. Not aliases of the action ramp: --site-spotlight-bg sits
+	   between --color-site-tint and --color-site-action-soft, and the frames use
+	   all three within one page. */
+	--color-site-spotlight-bg: #e9f1fe;
+	--color-site-spotlight-heading: #001d4e;
+	--color-site-table-head: #f0f0f0;
+	--color-site-table-rule: #c9caca;
+	--color-site-table-link: #386ebf;
+	--color-site-list-border: #aaabab;
+	--color-site-meta-icon: #8b8d8d;
+	--color-site-badge-bg: #fde4d7;
+	--color-site-badge-fg: #942a00;
+}
+
+/* Geometry, focus rings and the type ladder stay as plain custom properties.
+   `@theme` namespaces are per-utility-family (`--color-*`, `--text-*`,
+   `--spacing-*`); a two-stop box-shadow and a pair of control heights have no
+   family, and inventing `--spacing-site-field-height` would generate a p-* and
+   m-* utility nobody wants. */
+:root {
+	--site-radius: 4px;
+	--site-control-height: 40px; /* buttons */
+	--site-field-height: 48px; /* fields */
+	--site-field-height-mobile: 56px; /* fields under 640px */
+	--site-tap-min: 44px;
+
+	/* Two-stop ring: 4px of ground colour, then 3px of focus blue.
+	   WCAG 2.1 AA SC 1.4.11 asks 3:1 of a focus indicator against what is
+	   adjacent to it — which includes the edge of the component it outlines,
+	   not only the page behind it. Measured: #386EBF is 4.93:1 against #FCFCFC
+	   and 3.90:1 against #000925, but only 1.53:1 against a #1B519E button
+	   fill. So on dark grounds the first stop becomes #FFFFFF rather than being
+	   dropped, and the white is what carries the contrast — 7.53:1 against that
+	   fill, 19.2:1 against the navy.
+	   tests/sfgov-components.e2e.ts asserts both rings. */
+	--site-focus-ring: 0 0 0 4px #fcfcfc, 0 0 0 7px #386ebf;
+	--site-focus-ring-dark: 0 0 0 4px #ffffff, 0 0 0 7px #386ebf;
+
+	--site-menu-shadow: 0 6px 16px rgba(11, 12, 12, 0.16);
+
+	/* Roboto Slab for headings, Roboto Flex for everything else — the same two
+	   families the tool uses, at the site's larger sizes. Both are already
+	   self-hosted via @fontsource at the top of this file. The variable package
+	   registers as 'Roboto Flex Variable', not 'Roboto Flex'; both names are
+	   listed because naming only the wrong one falls back to the system sans
+	   and nothing looks obviously broken. */
+	--site-font-display: 'Roboto Slab', ui-serif, Georgia, serif;
+	--site-font-body: 'Roboto Flex Variable', 'Roboto Flex', system-ui, sans-serif;
+
+	--site-text-page-title: 44px;
+	--site-text-page-title-lh: 56px;
+	--site-text-page-title-ls: -1px;
+	--site-text-lede: 20px;
+	--site-text-lede-lh: 30px;
+	--site-eyebrow-ls: 0.5px;
+}
