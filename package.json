@@ -15,7 +15,7 @@
 		"lint:ratchet": "bun run scripts/eslint-ratchet.ts",
 		"test": "npm run test:unit -- --run && npm run test:e2e",
 		"test:unit": "vitest",
-		"test:e2e": "playwright install && playwright test",
+		"test:e2e": "playwright install chromium && playwright test",
 		"test:coverage": "vitest run --coverage",
 		"verify": "bash scripts/verify.sh",
 		"verify:live": "bash scripts/verify.sh --live",

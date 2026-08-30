@@ -46,6 +46,47 @@ because every page that links to the landing page inherits its URL.
 
 ---
 
+## URL convention — verified against the live site 2026-08-30
+
+The `departments--` form used by the rename is **confirmed correct**, and the
+way it was confirmed is worth keeping, because the two authoritative sources
+appear to disagree and do not.
+
+The Karl Editor Help Center (E3, and the declared source of truth for _how a
+page should be built_) gives the Agency URL structure as:
+
+```
+sf.gov/departments/title-of-department
+sf.gov/departments/title-of-department/title-of-child-department
+```
+
+A slash. But live SF.gov canonicalizes the slash form to the double dash:
+
+```
+/departments/controllers-office        -> 301 -> /departments--controllers-office
+/departments/controllers-office/about  -> 301 -> /departments--controllers-office--about
+/departments/department-public-health  -> 301 -> /departments--department-public-health
+```
+
+Both forms resolve; only the `--` form is canonical. So the Help Center
+describes the **authoring** path in the CMS tree, and the published page renders
+`--`. That is precisely the distinction `design/field-map-corrections.md`
+preserves when it declines to let E3 supersede E4:
+
+> E4 still answers a different question and is not superseded. E1 says what
+> fields the editor form has; E3 says how a page should be built; E4 says what a
+> published page actually renders.
+
+**For a URL, E4 governs.** The corpus's existing `--about` suffix is therefore
+correct rather than a shorthand, and the same reading settles the other types:
+the Help Center's `sf.gov/topics/name-of-topic` and
+`sf.gov/step-by-step/title-of-step-by-step` are authoring paths, so the corpus's
+`topics--` and `step-by-step--` slugs are consistent with how those pages
+publish. **A1 is a typing question only — the slugs are not evidence of a URL
+defect.**
+
+---
+
 ## Agency rename — blast radius
 
 `routableId()` (`src/lib/corpus/pageId.ts`) strips `sf.gov/` and converts
@@ -166,22 +207,37 @@ Step-block content. Retyping them is a real change with real consequences
 (different field inventory, different editor), not a slug tidy — it needs its
 own pass.
 
+**Added nuance from `design/karl-content-types.md`:** Step by step is "an
+overview of a multi-step process over time, **max 15 steps**", and "details
+belong on Transactions or Information pages." So a `stepbystep`-slugged page that
+carries step _detail_ rather than an _overview_ may legitimately be a
+Transaction. Check each of the four against that overview-vs-detail line before
+retyping any of them — the slug alone does not settle it.
+
 Note these are not thin pages. `respond-to-notice-of-violation.ts` shows
 `heading` × 1 but holds 7 `steps` entries inside that one section, because the
 Transaction editor models steps as a repeatable field rather than as sections.
 Count `steps`, not headings, when judging Transaction depth.
 
-### A2. `type: 'Report'` on a plain-language guide
+### A2. `type: 'Report'` — CORRECTED: the type is right, only the URL is a problem
 
-`sf.gov/report/health-code-article-11-plain-language` — 9 sections explaining
-Article 11 in plain language. "Report" as a Karl type normally means a
-published document (an annual report), not an explainer.
+**This finding was wrong and is retracted.** `design/karl-content-types.md`
+(sourced from the Karl Editor Help Center, read 2026-08-23) states:
 
-Independent of Karl correctness, the URL is a user-facing problem: a resident
-scanning `sf.gov/report/...` reads _report_ as the verb they came to do. This
-URL sits one segment away from `sf.gov/report-rats-mice-four-legged-problems`,
-which genuinely is a reporting path. Two adjacent URLs, opposite meanings of
-the same word.
+> **Report** is for long text with a publication date. It is the only type that
+> supports tables.
+
+`health-code-article-11.ts` carries `karl: 'Report Content -> Table block'` and
+is long reference text. Report is therefore the **correct** type — it is the only
+one that can render the tables this page is built from, and its table of contents
+generates from Heading 2s, which is why Report is the one type whose rich-text
+toolbar includes H2.
+
+What survives is only the URL observation, which is a findability point rather
+than a typing error: `sf.gov/report/health-code-article-11-plain-language` sits
+one segment from `sf.gov/report-rats-mice-four-legged-problems`, so the same word
+carries opposite meanings — a noun (a published document) and a verb (the thing
+the reader came to do) — on adjacent URLs.
 
 ### A3. Lookup pages typed three different ways for one function
 

@@ -12,6 +12,93 @@ src/lib/components/sfgov/ds/
   types.ts  fieldId.ts
 ```
 
+## Design source of truth: Figma
+
+**Design values — color, type, spacing, geometry — come from the Figma file
+"Public — User Interface Components"** (`wv6CXpGGH0W8mAmkXKpiex`), not from this
+repo's CSS. The tokens below were transcribed from the design frames by hand, so
+the CSS is a copy and Figma is the original; when the two disagree, the original
+decides.
+
+This reverses the rule in the design-system export's own readme ("Where a value
+here disagrees with `src/css/theme.css`, theme.css wins"). That rule is
+superseded.
+
+Reading it: the file is a "(Copy)", so its components are unpublished and
+`search_design_system` returns nothing — reach nodes by `node-id` and use
+`get_variable_defs` on a real node to get the variables. Spot-checked
+2026-08-30, the public-site palette matches exactly: `Primary/600 #1B519E`
+(action), `Primary/900 #000925` (dark end), `Primary/500 #386EBF` (focus ring's
+second stop), `Black-White/Black #0B0C0C` (icon stroke). The spacing ladder is
+`0 / 4 / 8 / 12 / 16 / 20 / 24 / 28`.
+
+Findings from that check:
+
+- **`Accent/500 #B64A00` is NOT the alert ramp — settled 2026-08-30.** Pixel
+  sampling of the Alerts design export puts every bar within ΔRGB ≤ 2 of the
+  tokens already here (Information `#0046C4`/`#0046C2`, Success
+  `#016900`/`#026800`, Warning `#834000`/`#843F00`, Danger `#AD0000`/`#AC0000`),
+  which is lossy-WebP noise. `--color-site-warning: #843f00` is correct and
+  stays. Where `Accent/500` belongs is still unknown; it is simply not this.
+- **Archive was wrong and is now corrected.** It shipped grey
+  (`#5b5f63` bar, `#f2f2f2` fill) while both the design source and the export's
+  readme put it on the _same tan ramp as Warning_ — `#843F00` bar, `#FAEFE1`
+  fill, with the box glyph as the only separator, "which is why it is never
+  optional" (the glyph is unconditional in `PageAlert.svelte`, so that
+  precondition holds). Contrast improves: 6.28:1 → 7.60:1 on the page ground.
+- **Bar geometry confirmed.** The design measures an 8px bar; `.ds-bar` is
+  `width: 8px`.
+- **Figma specifies Roboto Slab at Medium 500 and SemiBold 600** for headings,
+  while `src/app.css` imports `@fontsource/roboto-slab/700.css` only. Nothing
+  breaks today because no component here names a slab family — the 500/600
+  weights in `ListItem` and `Spotlight` sit on `--site-font-body`, which is
+  Roboto Flex and _variable_, so those weights genuinely exist. Anyone building
+  the slab headings must add the 500 and 600 imports, or the weight silently
+  synthesizes from 700 and looks plausible but wrong.
+
+### Spotlight: three hues x light/dark — implemented 2026-08-30
+
+Measured off `design/SF.gov Components (standalone).html` (computed styles, not
+eyeballed). The design runs a **two-axis** system — three hues x light/dark —
+`SpotlightTone` used to be a flat `'primary' | 'secondary' | 'dark'` that
+conflated the two axes. It is now `'primary' | 'secondary' | 'accent'` plus a
+separate `dark` boolean, so all six combinations are reachable and total:
+
+| design tone    | bg        | title     | action bg / label     | in repo                   |
+| -------------- | --------- | --------- | --------------------- | ------------------------- |
+| default        | `#E9F1FE` | `#001D4E` | `#1B519E` / `#FCFCFC` | `primary`                 |
+| secondary      | `#E6F4F5` | `#002A30` | `#1B519E` / `#FCFCFC` | **wrong hue** (see below) |
+| accent         | `#FEEDE3` | `#470000` | `#1B519E` / `#FCFCFC` | **missing**               |
+| dark default   | `#1B519E` | `#FCFCFC` | `#FCFCFC` / `#1B519E` | `dark` — matches          |
+| dark secondary | `#00646C` | `#FCFCFC` | `#FCFCFC` / `#1B519E` | **missing**               |
+| dark accent    | `#942A00` | `#FCFCFC` | `#FCFCFC` / `#1B519E` | **missing**               |
+
+Two things worth keeping:
+
+- **`secondary` is teal in the design and blue here.** The repo paints it
+  `var(--color-site-tint, #f2f6fc)` — a token `app.css` documents as belonging to
+  the "breadcrumb strip, input prefixes", borrowed rather than owned. The design
+  gives the secondary family its own teal (`#E6F4F5` light, `#00646C` dark) with a
+  hue-matched title `#002A30`. Fixing the background alone would be worse than
+  leaving it, because the repo's secondary is a whole blue family — title
+  `#043578` included.
+- **On every dark tone the action button's label stays `#1B519E`**, not the
+  tone's own hue. Easy to get wrong by inference; it is measured.
+
+All six pass AA: dark backgrounds carry `#FCFCFC` at 7.53 / 6.73 / 7.90:1, light
+backgrounds carry ink at 17.2-18.1:1.
+
+Verified by re-measuring the built app rather than by inspection: the specimen
+route now renders all six, and every one of the 24 values above (background,
+title, action background, action label) matches the design exactly. The
+`sfgov-components` e2e suite passes 8/8 with all six on the page, including the
+WCAG AA sweep and the "focus ring whitens on dark grounds" check, which is what
+confirms the `[data-tone='dark']` to `[data-dark]` migration.
+
+This governs design values only. How a _page_ should be built is the Karl Editor
+Help Center's call, and what a URL actually renders is settled by the live
+published page — see `docs/karl-export-field-map.md`.
+
 ## Why this sits beside `sfgov/`, not inside it
 
 `src/lib/components/sfgov/` already holds `Breadcrumb`, `SiteFooter`,
@@ -151,7 +238,7 @@ focus indicators, the edge of a control — need 3:1.
 | `--color-site-success` `#026800`       | page                                                   |     6.86 |   4.5 | pass              |
 | `--color-site-warning` `#843F00`       | page                                                   |     7.60 |   4.5 | pass              |
 | `--color-site-danger` `#AC0000`        | page                                                   |     7.43 |   4.5 | pass              |
-| `--color-site-archive` `#5B5F63`       | page                                                   |     6.28 |   4.5 | pass              |
+| `--color-site-archive` `#843F00`       | page                                                   |     7.60 |   4.5 | pass              |
 | `--color-site-badge-fg` `#942A00`      | `--color-site-badge-bg` `#FDE4D7`                      |     7.16 |   4.5 | pass              |
 | `#FCFCFC` footer links                 | `--color-site-navy` `#000925`                          |    18.75 |   4.5 | pass              |
 | focus `#386EBF`                        | page `#FCFCFC`                                         |     4.93 |   3.0 | pass              |

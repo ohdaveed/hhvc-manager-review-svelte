@@ -129,6 +129,57 @@ test('focus ring keeps its two stops, and whitens on dark grounds', async ({ pag
 });
 
 /**
+ * Spotlight's six tones, asserted against the values measured off the design
+ * source (`design/SF.gov Components (standalone).html`, computed styles).
+ *
+ * The component used to expose `'primary' | 'secondary' | 'dark'`, which
+ * conflated two axes -- hue and mode -- so `accent` had nowhere to go and
+ * `secondary` rendered blue where the design has teal. It is now three hues
+ * plus a `dark` boolean, and this is what stops that regressing.
+ *
+ * The action row is the part worth guarding: on every dark tone the button
+ * inverts to white with a #1B519E label rather than taking the tone's own hue.
+ * That is measured, not inferred, and it is the detail a well-meaning edit
+ * would "correct" into the tone colour.
+ */
+const SPOTLIGHT_TONES = [
+	{ tone: 'primary', dark: false, bg: 'rgb(233, 241, 254)', title: 'rgb(0, 29, 78)' },
+	{ tone: 'secondary', dark: false, bg: 'rgb(230, 244, 245)', title: 'rgb(0, 42, 48)' },
+	{ tone: 'accent', dark: false, bg: 'rgb(254, 237, 227)', title: 'rgb(71, 0, 0)' },
+	{ tone: 'primary', dark: true, bg: 'rgb(27, 81, 158)', title: 'rgb(252, 252, 252)' },
+	{ tone: 'secondary', dark: true, bg: 'rgb(0, 100, 108)', title: 'rgb(252, 252, 252)' },
+	{ tone: 'accent', dark: true, bg: 'rgb(148, 42, 0)', title: 'rgb(252, 252, 252)' }
+] as const;
+
+test('every Spotlight tone matches the design source', async ({ page }) => {
+	for (const { tone, dark, bg, title } of SPOTLIGHT_TONES) {
+		const sel = dark
+			? `.ds-spot[data-tone="${tone}"][data-dark]`
+			: `.ds-spot[data-tone="${tone}"]:not([data-dark])`;
+		const spot = page.locator(sel).first();
+		const label = `${tone}${dark ? ' + dark' : ''}`;
+
+		await expect(spot, `${label} should be rendered on the specimen`).toHaveCount(1);
+		await expect(spot, `${label} background`).toHaveCSS('background-color', bg);
+		await expect(spot.locator('.ds-spot-title'), `${label} title`).toHaveCSS('color', title);
+
+		// The action button: the same blue on every light tone, and on every dark
+		// tone a white button whose LABEL stays the action blue.
+		const action = spot.locator('.ds-spot-action').first();
+		if (await action.count()) {
+			await expect(action, `${label} action background`).toHaveCSS(
+				'background-color',
+				dark ? 'rgb(252, 252, 252)' : 'rgb(27, 81, 158)'
+			);
+			await expect(action, `${label} action label`).toHaveCSS(
+				'color',
+				dark ? 'rgb(27, 81, 158)' : 'rgb(252, 252, 252)'
+			);
+		}
+	}
+});
+
+/**
  * The collapsed breadcrumb's ellipsis announces as a button, so it has to do
  * something. The JSX renders it inert, which is fine for a static specimen and
  * an SC 4.1.2 failure in a shipped component.

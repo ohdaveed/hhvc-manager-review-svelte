@@ -28,6 +28,23 @@ import { payFee } from './pay-healthy-housing-fee';
 import { ipmEducation } from './integrated-pest-management-education';
 import { scopeInfo } from './hhvc-inspection-scope';
 
+// Ten proposed pages from `design/HHVC Page Ideas.dc.html`, drafted for a
+// supervisor review. They are NOT part of the reviewed 29 -- every one carries
+// `editorStatus: 'needs-review'` and an editorNote opening "PROPOSED PAGE".
+// Three of them hold facts the source plan flags as unconfirmed (the citation
+// amount, the language list, the office address) and those read PLACEHOLDER
+// rather than a plausible value.
+import { stepPestReport } from './step-report-a-pest-problem';
+import { stepCorrectViolation } from './step-correct-a-violation';
+import { stepPrepUnit } from './step-prepare-unit-for-treatment';
+import { ehOffice } from './location-environmental-health-office';
+import { whoToCall } from './who-to-call-housing-problem';
+import { appealNotice } from './appeal-notice-of-violation';
+import { payCitation } from './pay-healthy-housing-citation';
+import { languageGuides } from './guides-in-other-languages';
+import { ratFreeBlocks } from './campaign-rat-free-blocks';
+import { inspectionsAnnual } from './report-inspections-annual-summary';
+
 /**
  * The corpus, keyed by the name `cards[].target` uses to point at a page.
  *
@@ -66,7 +83,17 @@ export const pagesByKey = {
 	ownerGuidance,
 	payFee,
 	ipmEducation,
-	scopeInfo
+	scopeInfo,
+	stepPestReport,
+	stepCorrectViolation,
+	stepPrepUnit,
+	ehOffice,
+	whoToCall,
+	appealNotice,
+	payCitation,
+	languageGuides,
+	ratFreeBlocks,
+	inspectionsAnnual
 };
 
 export const allPages = Object.values(pagesByKey);

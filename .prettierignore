@@ -7,3 +7,11 @@ bun.lockb
 
 # Miscellaneous
 /static/
+
+# Generated ECC instincts (#84). The extension says YAML but the content is
+# markdown, so Prettier's YAML parser throws rather than reporting a style
+# problem -- "A block sequence may not be used as an implicit map key". It is
+# committed on main, so the lefthook `format` step failed on every commit that
+# staged it, which any merge from main does. Ignoring it unblocks that without
+# rewriting a generated file nobody hand-maintains.
+.claude/homunculus/instincts/inherited/*.yaml

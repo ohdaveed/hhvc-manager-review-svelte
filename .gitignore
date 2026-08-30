@@ -72,5 +72,7 @@ coverage/
 # imports, so it is reference material a person opens, not source the build
 # reads. The `:Zone.Identifier` files alongside them are Windows
 # alternate-data-stream stubs that ride along when files cross from Windows
-# into WSL; they are noise wherever they land.
+# into WSL; they are noise wherever they land -- hence the second pattern,
+# which catches the ones that land outside `design/` too.
 design/
+*:Zone.Identifier

@@ -343,7 +343,7 @@
 
 	<section aria-labelledby="spot-h" class="spec">
 		<h2 id="spot-h" class="specimen-h2">Spotlight</h2>
-		<p class="spec-note">One per page, three tones, three layouts.</p>
+		<p class="spec-note">One per page. Three hues x light/dark, three layouts.</p>
 		<div class="stack">
 			<Spotlight
 				tone="primary"
@@ -357,13 +357,49 @@
 				San Francisco.
 			</Spotlight>
 			<Spotlight
-				tone="dark"
+				tone="primary"
+				dark
 				layout="none"
 				title="Report standing water"
 				action={{ label: 'Start a report', href: '#' }}
 			>
 				Standing water in a yard, roof, gutter, or catch basin is where mosquitoes breed. Tell us
 				and we will treat or remove it.
+			</Spotlight>
+			<Spotlight
+				tone="secondary"
+				layout="none"
+				title="Guides in other languages"
+				action={{ label: 'Browse the guides', href: '#' }}
+			>
+				Pest, mold, and tenant rights guides in Spanish, Chinese, Filipino, Russian, and Vietnamese.
+			</Spotlight>
+			<Spotlight
+				tone="secondary"
+				dark
+				layout="none"
+				title="Request an interpreter"
+				action={{ label: 'Ask for an interpreter', href: '#' }}
+			>
+				Ask for an interpreter or a translated notice before a Healthy Housing inspection.
+			</Spotlight>
+			<Spotlight
+				tone="accent"
+				layout="none"
+				title="Your Notice of Violation has a deadline"
+				action={{ label: 'Read what it means', href: '#' }}
+			>
+				A notice lists the conditions to correct and the date they are due. Contact the investigator
+				named on it before that date if you need more time.
+			</Spotlight>
+			<Spotlight
+				tone="accent"
+				dark
+				layout="none"
+				title="Pay a Healthy Housing citation"
+				action={{ label: 'Pay your citation', href: '#' }}
+			>
+				A penalty issued after an uncorrected Notice of Violation or a missed re-inspection.
 			</Spotlight>
 		</div>
 	</section>

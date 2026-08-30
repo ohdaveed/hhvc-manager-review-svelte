@@ -243,7 +243,9 @@ const KARL_NAV = {
 	Topic: 'New: Topic → Content',
 	Agency: 'New: Agency → Content',
 	'About us': 'New: About us → Content',
-	Report: 'New: Report → Content'
+	Report: 'New: Report → Content',
+	'Step by step': 'New: Step by step → Content',
+	Location: 'New: Location → Content'
 };
 
 /**
@@ -412,7 +414,7 @@ const KARL_PANELS = {
 				kind: 'none'
 			},
 			docLine: 307,
-			note: 'U6 — the mockup has no primary_agency field, and Karl requires it. Supply the parent Agency page by hand.'
+			note: 'U6 — the mockup has no primary_agency field, and Karl requires it. Supply the parent Agency page by hand: HHVC was approved for its own Agency page (sf.gov/departments--healthy-housing-and-vector-control), so that is the value for HHVC pages rather than Environmental Health or DPH. Those two remain Partner agencies.'
 		},
 		{
 			uiLabel: 'Cost',
@@ -1895,6 +1897,309 @@ const KARL_PANELS = {
 				path: 'partnerAgencies'
 			},
 			docLine: 623
+		}
+	],
+	/* Step by step and Location were captured under the field map's "Types not
+	   yet in use" (docs/karl-export-field-map.md lines 705-800) and never
+	   transcribed, because nothing depended on them. Ten proposed pages now do.
+
+	   Two limits are carried through honestly rather than smoothed over:
+
+	   - Required markers were MEASURED on Step by step (title, primary_agency,
+	     slug, like the eleven measured types) and NOT on Location. The document
+	     says the pattern is "an inference, not a measurement, and is not
+	     asserted here", so Location's panels claim `requiredDoc: 'not recorded'`
+	     rather than borrowing the pattern.
+	   - Both types are captured at PANEL level; only Step by step's `steps`
+	     block was expanded. So Location's block internals are unknown and the
+	     `blockTypesDoc` entries say so instead of guessing a chooser.
+
+	   Mockup sources marked `inferred: true` are this repo's mapping, not the
+	   field map's: neither type is in use, so the document records no "Mockup
+	   source" column for either. */
+	'Step by step': [
+		{
+			uiLabel: 'Title',
+			rawName: 'title',
+			order: 0,
+			required: true,
+			repeatable: false,
+			requiredDoc: 'yes',
+			repeatableDoc: 'single',
+			blockTypesDoc: 'plain text',
+			sourceDoc: 'title',
+			source: { kind: 'path', path: 'title' },
+			docLine: 726
+		},
+		{
+			uiLabel: 'Primary agency',
+			rawName: 'primary_agency',
+			order: 1,
+			required: true,
+			repeatable: false,
+			requiredDoc: 'yes',
+			repeatableDoc: 'single',
+			blockTypesDoc: 'page chooser → Agency only',
+			sourceDoc: '— (no mockup field; U6)',
+			source: { kind: 'none' },
+			docLine: 726,
+			note: 'U6 — the mockup has no primary_agency field, and Karl requires it. Supply the parent Agency page by hand: HHVC was approved for its own Agency page (sf.gov/departments--healthy-housing-and-vector-control), so that is the value for HHVC pages rather than Environmental Health or DPH. Those two remain Partner agencies.'
+		},
+		{
+			uiLabel: 'Description',
+			rawName: 'description',
+			order: 2,
+			required: false,
+			repeatable: false,
+			requiredDoc: 'not recorded',
+			repeatableDoc: 'single',
+			blockTypesDoc: 'textarea',
+			sourceDoc: 'summary',
+			source: { kind: 'path', path: 'summary' },
+			docLine: 726
+		},
+		{
+			uiLabel: 'Intro',
+			rawName: 'intro',
+			order: 3,
+			required: false,
+			repeatable: false,
+			requiredDoc: 'not recorded',
+			repeatableDoc: 'single',
+			blockTypesDoc: 'rich text',
+			sourceDoc: "section with component: 'intro' (inferred)",
+			source: { kind: 'sections', match: { component: 'intro' }, inferred: true },
+			docLine: 726,
+			note: 'Step by step has no things_to_know and no page-level cost, so a Transaction page\'s whatToKnow has nowhere to go here. Intro is the one free-text slot before the steps, which makes it where an audience line ("Who this information is for") belongs on this type.'
+		},
+		{
+			uiLabel: 'Steps',
+			rawName: 'steps',
+			order: 4,
+			required: false,
+			repeatable: true,
+			requiredDoc: 'not recorded',
+			repeatableDoc: 'repeatable',
+			blockTypesDoc:
+				'Step block: step_type* (number | and | or), title*, optional, cost, time, step_description, Transaction link',
+			sourceDoc: 'sections[].steps[]',
+			source: { kind: 'sections', match: { has: ['steps'] } },
+			docLine: 731,
+			note: "The block 27 mockup karl notes were describing. Unlike Transaction's what_to_do Section, a Step carries its own cost and time, and a Transaction link chooser — which is how a Step by step points at the Transaction pages holding the detail."
+		},
+		{
+			uiLabel: 'Topics',
+			rawName: 'topics',
+			order: 5,
+			required: false,
+			repeatable: true,
+			requiredDoc: 'not recorded',
+			repeatableDoc: 'repeatable',
+			blockTypesDoc: 'page chooser → Topic only',
+			sourceDoc: '— unmapped metadata (mockup values store Agency labels)',
+			source: { kind: 'none' },
+			docLine: 726,
+			note: 'topicTag is unmapped metadata — the stored values are Agency labels, not Topic chooser references.'
+		},
+		{
+			uiLabel: 'Partner agencies',
+			rawName: 'partner_agencies',
+			order: 6,
+			required: false,
+			repeatable: true,
+			requiredDoc: 'not recorded',
+			repeatableDoc: 'repeatable',
+			blockTypesDoc: 'page chooser → Agency only',
+			sourceDoc: 'partnerAgencies[]',
+			source: { kind: 'path', path: 'partnerAgencies' },
+			docLine: 726
+		}
+	],
+	Location: [
+		{
+			uiLabel: 'Title',
+			rawName: 'title',
+			order: 0,
+			required: false,
+			repeatable: false,
+			requiredDoc: 'not recorded',
+			repeatableDoc: 'single',
+			blockTypesDoc: 'plain text',
+			sourceDoc: 'title',
+			source: { kind: 'path', path: 'title' },
+			docLine: 784,
+			note: 'Required markers were measured on Step by step and Event only. Every other captured type, this one included, is panel-level capture with no required column — so `required` stays false here rather than inheriting the title/primary_agency/slug pattern the field map declines to assert.'
+		},
+		{
+			uiLabel: 'Primary agency',
+			rawName: 'primary_agency',
+			order: 1,
+			required: false,
+			repeatable: false,
+			requiredDoc: 'not recorded',
+			repeatableDoc: 'single',
+			blockTypesDoc: 'page chooser → Agency only',
+			sourceDoc: '— (no mockup field; U6)',
+			source: { kind: 'none' },
+			docLine: 784,
+			note: 'U6 — supply the parent Agency page by hand. HHVC has its own Agency page as of 2026-08-29.'
+		},
+		{
+			uiLabel: 'Description',
+			rawName: 'description',
+			order: 2,
+			required: false,
+			repeatable: false,
+			requiredDoc: 'not recorded',
+			repeatableDoc: 'single',
+			blockTypesDoc: 'textarea',
+			sourceDoc: 'summary',
+			source: { kind: 'path', path: 'summary' },
+			docLine: 784
+		},
+		{
+			uiLabel: 'Alert',
+			rawName: 'alert',
+			order: 3,
+			required: false,
+			repeatable: false,
+			requiredDoc: 'not recorded',
+			repeatableDoc: 'not recorded',
+			blockTypesDoc: 'not captured — panel-level capture only',
+			sourceDoc: '—',
+			source: { kind: 'none' },
+			docLine: 784
+		},
+		{
+			uiLabel: 'Image',
+			rawName: 'image',
+			order: 4,
+			required: false,
+			repeatable: false,
+			requiredDoc: 'not recorded',
+			repeatableDoc: 'not recorded',
+			blockTypesDoc: 'not captured — panel-level capture only',
+			sourceDoc: '— (no mockup field)',
+			source: { kind: 'none' },
+			docLine: 784
+		},
+		{
+			uiLabel: 'Body',
+			rawName: 'body',
+			order: 5,
+			required: false,
+			repeatable: true,
+			requiredDoc: 'not recorded',
+			repeatableDoc: 'not recorded',
+			blockTypesDoc: 'not captured — panel-level capture only',
+			sourceDoc: 'body sections (inferred)',
+			source: { kind: 'sections', match: { component: null }, inferred: true },
+			docLine: 784
+		},
+		{
+			uiLabel: 'Intro',
+			rawName: 'intro',
+			order: 6,
+			required: false,
+			repeatable: false,
+			requiredDoc: 'not recorded',
+			repeatableDoc: 'not recorded',
+			blockTypesDoc: 'not captured — panel-level capture only',
+			sourceDoc: "section with component: 'intro' (inferred)",
+			source: { kind: 'sections', match: { component: 'intro' }, inferred: true },
+			docLine: 784
+		},
+		{
+			uiLabel: 'Services',
+			rawName: 'services',
+			order: 7,
+			required: false,
+			repeatable: true,
+			requiredDoc: 'not recorded',
+			repeatableDoc: 'not recorded',
+			blockTypesDoc: 'not captured — panel-level capture only',
+			sourceDoc: "sections with component: 'services' (inferred)",
+			source: { kind: 'sections', match: { component: 'services' }, inferred: true },
+			docLine: 784,
+			note: 'Location has its own services field, like Agency — the field map calls that out specifically.'
+		},
+		{
+			uiLabel: 'About location',
+			rawName: 'about_location',
+			order: 8,
+			required: false,
+			repeatable: false,
+			requiredDoc: 'not recorded',
+			repeatableDoc: 'not recorded',
+			blockTypesDoc: 'not captured — panel-level capture only',
+			sourceDoc: '—',
+			source: { kind: 'none' },
+			docLine: 784
+		},
+		{
+			uiLabel: 'Partner agencies',
+			rawName: 'partner_agencies',
+			order: 9,
+			required: false,
+			repeatable: true,
+			requiredDoc: 'not recorded',
+			repeatableDoc: 'repeatable',
+			blockTypesDoc: 'page chooser → Agency only',
+			sourceDoc: 'partnerAgencies[]',
+			source: { kind: 'path', path: 'partnerAgencies' },
+			docLine: 784
+		},
+		{
+			uiLabel: 'At this location',
+			rawName: 'at_this_location',
+			order: 10,
+			required: false,
+			repeatable: true,
+			requiredDoc: 'not recorded',
+			repeatableDoc: 'not recorded',
+			blockTypesDoc: 'not captured — panel-level capture only',
+			sourceDoc: '—',
+			source: { kind: 'none' },
+			docLine: 784
+		},
+		{
+			uiLabel: 'People',
+			rawName: 'people',
+			order: 11,
+			required: false,
+			repeatable: true,
+			requiredDoc: 'not recorded',
+			repeatableDoc: 'not recorded',
+			blockTypesDoc: 'not captured — panel-level capture only',
+			sourceDoc: '— (no mockup field)',
+			source: { kind: 'none' },
+			docLine: 784
+		},
+		{
+			uiLabel: 'Related locations',
+			rawName: 'related_locations',
+			order: 12,
+			required: false,
+			repeatable: true,
+			requiredDoc: 'not recorded',
+			repeatableDoc: 'not recorded',
+			blockTypesDoc: 'not captured — panel-level capture only',
+			sourceDoc: '—',
+			source: { kind: 'none' },
+			docLine: 784
+		},
+		{
+			uiLabel: 'Contact us',
+			rawName: 'contact',
+			order: 13,
+			required: false,
+			repeatable: true,
+			requiredDoc: 'not recorded',
+			repeatableDoc: 'not recorded',
+			blockTypesDoc: 'not captured — panel-level capture only',
+			sourceDoc: 'contact',
+			source: { kind: 'path', path: 'contact' },
+			docLine: 784
 		}
 	]
 };

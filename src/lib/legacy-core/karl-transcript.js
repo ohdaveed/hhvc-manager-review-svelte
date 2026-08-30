@@ -54,7 +54,6 @@ const APPROVED_DECISIONS = new Set(['Approved', 'Approved with edits']);
  * migration, so migrating it would be a category error.
  */
 const NOT_MIGRATED_PAGE_FIELDS = new Set([
-	'audience',
 	'reading',
 	'editorNote',
 	'editorStatus',
@@ -65,6 +64,49 @@ const NOT_MIGRATED_PAGE_FIELDS = new Set([
 	'seoTitle',
 	'metaDescription'
 ]);
+
+/**
+ * Page fields whose gap is a DECISION rather than a missing destination.
+ *
+ * The default sweep reason says no panel accepts the field, which is the right
+ * thing to say about most of what lands there and the wrong thing to say about
+ * these. Reporting `audience` with the generic wording would tell a reviewer
+ * SF.gov has nowhere to put "who this is for", which is false and would get the
+ * line deleted rather than placed.
+ */
+const PAGE_FIELD_REASONS = {
+	audience: (type) => {
+		const live =
+			'Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs ' +
+			'renders "Who this information is for" as an H3 inside its grey "What to know" box, with the ' +
+			'audiences as a bulleted list.';
+		const hasThingsToKnow = panelsFor(type).some((panel) => panel.rawName === 'things_to_know');
+
+		// `things_to_know` is Transaction-only, so the two cases are genuinely
+		// different findings and must not share wording. Telling an Information
+		// page its audience belongs in a panel that type does not have would send
+		// an editor looking for a field that is not on their form.
+		return hasThingsToKnow
+			? 'The page carries `audience`, and Karl does have a home for it: a **Things to know** entry ' +
+					`titled "Who this information is for". ${live} ` +
+					'What blocks it is the budget, not the field: the Help Center caps Things to know at 2 ' +
+					`entries, and most ${type} pages here already spend both, so placing the audience means ` +
+					'deciding which existing entry it replaces. That is a content call, not a missing panel.'
+			: (() => {
+					const intro = panelsFor(type).find((panel) => panel.rawName === 'intro');
+					const home = intro
+						? `${type} has no \`things_to_know\` panel — it is Transaction-only — but it does have ` +
+							`**${intro.uiLabel}**, a free-text slot before the body, which is where the line belongs ` +
+							'on this type.'
+						: `${type} has no \`things_to_know\` panel — it is Transaction-only — and no free-text ` +
+							'intro either, so the audience has to move into the body copy or be dropped deliberately.';
+					return (
+						'The page carries `audience`, and the panel SF.gov puts it in is not on this type. ' +
+						`${home} ${live}`
+					);
+				})();
+	}
+};
 
 /** Section and step fields that carry content an editor has to place somewhere. */
 const SECTION_CONTENT_FIELDS = [
@@ -963,7 +1005,9 @@ function sweepUnconsumed(context) {
 		transcript.unmapped.push({
 			path: field,
 			shape: `${kebab(type)}-page-${kebab(field)}`,
-			reason: `The page carries \`${field}\`, and no ${type} panel documented in the field map accepts it.`
+			reason: PAGE_FIELD_REASONS[field]
+				? PAGE_FIELD_REASONS[field](type)
+				: `The page carries \`${field}\`, and no ${type} panel documented in the field map accepts it.`
 		});
 	}
 

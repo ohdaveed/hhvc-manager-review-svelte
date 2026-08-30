@@ -82,7 +82,7 @@ describe('buildSitemap', () => {
 describe('typeBreakdown', () => {
 	it('reads back the corpus composition, commonest type first', () => {
 		expect(typeBreakdown(hydrate())).toBe(
-			'14 Transaction · 6 Information · 3 Resource Collection · 2 Campaign · 1 About us · 1 Agency · 1 Report · 1 Topic'
+			'16 Transaction · 7 Information · 4 Resource Collection · 3 Campaign · 3 Step by step · 2 Report · 1 About us · 1 Agency · 1 Location · 1 Topic'
 		);
 	});
 });
@@ -208,13 +208,33 @@ describe('the real corpus', () => {
 		]);
 	});
 
-	it('has five pages unreachable from the Agency and Topic hubs', () => {
+	// Pinned so a corpus change cannot quietly move the figure the UI quotes.
+	// Seven of these carry inbound links and are still unreachable from a hub.
+	// The weaker `incoming === 0` test reports nine pages and misses those
+	// seven, which is why this is a reachability pass rather than a count.
+	it('has fifteen pages unreachable from the Agency and Topic hubs', () => {
 		expect(findOrphans(entries).map((e) => e.id)).toEqual([
 			'get-ready-for-a-follow-up-inspection',
 			'get-ready-for-a-housing-inspection',
 			'departments--healthy-housing-and-vector-control--about',
 			'tenant-steps-after-notice-of-violation',
-			'information--article-11-compliance-for-property-owners'
+			'information--article-11-compliance-for-property-owners',
+			'step-by-step-report-a-pest-problem',
+			'step-by-step-correct-a-violation-and-close-your-case',
+			'step-by-step-prepare-your-unit-for-pest-treatment',
+			'location-environmental-health-office',
+			'information-who-to-call-about-a-housing-problem',
+			'appeal-a-notice-of-violation',
+			'pay-a-healthy-housing-citation',
+			'resource-guides-in-other-languages',
+			'rat-free-blocks',
+			'report-healthy-housing-inspections-annual-summary'
 		]);
+	});
+
+	it('finds seven orphans that inbound-link counting would miss', () => {
+		const missed = findOrphans(entries).filter((e) => e.incoming > 0);
+
+		expect(missed).toHaveLength(7);
 	});
 });
