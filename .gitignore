@@ -66,3 +66,8 @@ coverage/
 
 # Sentry Config File
 .env.sentry-build-plugin
+
+# Design imports: canvases, zips and Windows download markers (7.4M, untracked).
+# The Karl docs inside are worth keeping — move them to docs/ to track them.
+design/
+*:Zone.Identifier
