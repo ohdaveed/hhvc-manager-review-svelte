@@ -318,13 +318,16 @@ and
 | Sitewide           | Topic                                                                                |
 
 **The two pages disagree, and only one is complete.** "Choosing a content type"
-omits the Sitewide group entirely, so **Topic is absent from it** — not because
-Topic is not a type, but because an editor never chooses one: "only DS admin can
-add a new sitewide page", the same reason Agency carries "Digital Services must
-create this content type for you". Read "Understanding content types" for the
-full list. They also disagree on casing and plurals (`Report`/`Reports`,
-`Resource collection`/`Resource Collection`, `Event`/`Events`), so neither is
-safe to string-match against without normalising.
+omits the Sitewide group, so **Topic is absent from it** — but that page is
+editorial guidance on which type to pick for a new public page, not an
+inventory of the form. Topic is creatable in Karl like any other type:
+`KARL_NAV` carries `New: Topic → Content` for it exactly as it does for Agency.
+"Only DS admin can add a new sitewide page" governs whether a Topic page **goes
+live**, not whether a reviewer can design one — so Topic mockups and their
+walkthroughs are in scope, and only publishing needs Digital Services. The two
+pages also disagree on casing and plurals (`Report`/`Reports`, `Resource
+collection`/`Resource Collection`, `Event`/`Events`), so neither is safe to
+string-match against without normalising.
 
 Two divergences in our corpus, both worth a decision:
 

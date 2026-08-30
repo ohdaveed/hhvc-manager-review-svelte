@@ -157,10 +157,15 @@ export function typeBreakdown(pages: AnyPage[]): string {
  *
  * `Topic` is easy to delete from this list by mistake, so: it is a real
  * content type, and it is missing from the Help Center's "Choosing a content
- * type" page on purpose. Topic is a **sitewide** page -- "collects content
- * around a common theme, across multiple departments", and "only DS admin can
- * add a new sitewide page" -- so an editor never chooses it, the same reason
- * Agency carries "Digital Services must create this content type for you".
+ * type" page because that page is editorial guidance on which type to pick for
+ * a new public page, not an inventory of the form. Topic is a **sitewide**
+ * page -- "collects content around a common theme, across multiple
+ * departments" -- and "only DS admin can add a new sitewide page" governs
+ * whether it GOES LIVE, not whether it can be built: Karl offers Topic in the
+ * add-page form like any other type, which is why `KARL_NAV` carries
+ * `New: Topic -> Content` for it exactly as it does for Agency. A reviewer can
+ * therefore design and walk through a Topic mockup; publishing is the step
+ * that needs Digital Services.
  * It is listed under Sitewide pages on "Understanding content types":
  * https://sfdigitalservices.gitbook.io/karl-sf.gov-editor-help-center/using-karl-the-cms/content-types/understanding-content-types
  */
