@@ -90,19 +90,35 @@ The merge auto-applies Supabase migrations to **production only**. Staging must 
 #### 5a. Sync Staging Database (if migrations were included)
 
 ```sh
-supabase link --project-ref aplbsgacqnxhzjuquvft  # staging ref
+# supabase link persists the target in ignored local state; restore it when done.
+project_ref="aplbsgacqnxhzjuquvft"
+ref_file="supabase/.temp/project-ref"
+if [ -f "$ref_file" ]; then
+  had_project_ref=true
+  prior_project_ref=$(cat "$ref_file")
+else
+  had_project_ref=false
+fi
+restore_project_ref() {
+  if [ "$had_project_ref" = true ]; then
+    mkdir -p "$(dirname "$ref_file")"
+    printf '%s\n' "$prior_project_ref" > "$ref_file"
+  else
+    rm -f "$ref_file"
+  fi
+}
+trap restore_project_ref EXIT
+
+supabase link --project-ref "$project_ref"
+test "$(cat "$ref_file")" = "$project_ref" || { echo "Not linked to staging; refusing to push" >&2; exit 1; }
 supabase db push
+supabase migration list
+# Confirm the list shows local and remote migration histories in sync.
 ```
 
-**Why:** The Supabase GitHub App integration applies migrations to production (`kiynekyzqxneepjipqhg`) on merge. Staging (`aplbsgacqnxhzjuquvft`) is not covered, so deploy previews render against stale schema. This breaks when pages are renamed, views are added, or table columns change.
+**Why:** The Supabase GitHub App integration applies migrations to production (`kiynekyzqxneepjipqhg`) on merge. Staging (`aplbsgacqnxhzjuquvft`) is not covered, so deploy previews render against stale schema. This breaks when pages are renamed, views are added, or table columns change. The trap restores the checkout's previous linked project when the sync command exits.
 
-Verify:
-
-```sh
-supabase link --project-ref aplbsgacqnxhzjuquvft
-supabase db remote diff
-# Should show no pending changes
-```
+`supabase migration list` compares local and linked-remote migration timestamps. Successful synchronization shows no local migrations missing remotely (the local and remote histories are aligned).
 
 #### 5b. Sync Multi-Context Environment Variables (if credentials changed)
 
@@ -201,11 +217,29 @@ Example from this project: two concurrent sessions edited `fix/karl-button-cap`,
 If deploy previews are broken or missing after a merge, check if staging is in sync:
 
 ```sh
+ref_file="supabase/.temp/project-ref"
+if [ -f "$ref_file" ]; then
+  had_project_ref=true
+  prior_project_ref=$(cat "$ref_file")
+else
+  had_project_ref=false
+fi
+restore_project_ref() {
+  if [ "$had_project_ref" = true ]; then
+    mkdir -p "$(dirname "$ref_file")"
+    printf '%s\n' "$prior_project_ref" > "$ref_file"
+  else
+    rm -f "$ref_file"
+  fi
+}
+trap restore_project_ref EXIT
+
 supabase link --project-ref aplbsgacqnxhzjuquvft
-supabase db remote diff
+supabase migration list
+# Confirm local and remote migration histories are aligned.
 ```
 
-If output shows pending migrations, run step 5a before re-deploying previews.
+The trap restores the checkout's previous linked project. If the migration list shows pending local migrations, run step 5a before re-deploying previews.
 
 ### Verifying Real Artifact State
 
@@ -240,8 +274,8 @@ If a PR requires multiple fix cycles and includes database migrations:
 2. Workflow approval if needed: click "Approve and run workflows"
 3. Verify deploy preview renders correctly
 4. Merge when all feedback is fixed or declined with reasoning
-5. Sync staging: `supabase link --project-ref aplbsgacqnxhzjuquvft && supabase db push`
-6. Confirm staging: `supabase db remote diff` shows no pending changes
+5. Sync staging using step 5a's save/restore wrapper: link to `aplbsgacqnxhzjuquvft`, verify the linked ref, then run `supabase db push`
+6. Confirm staging: `supabase migration list` shows local and remote migration histories aligned; the wrapper restores the prior linked project
 7. Verify live deployment: curl the endpoint, check console, run a user flow
 8. If env vars changed, update all Netlify contexts and verify by calling the backend
 
