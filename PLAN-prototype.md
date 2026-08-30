@@ -302,9 +302,45 @@ warning; the rule replaces them for this class of problem.
 
 ---
 
+## Karl's canonical content types
+
+Source, confirmed 2026-08-30 against the Help Center:
+[Understanding content types](https://sfdigitalservices.gitbook.io/karl-sf.gov-editor-help-center/using-karl-the-cms/content-types/understanding-content-types)
+and
+[Choosing a content type](https://sfdigitalservices.gitbook.io/karl-sf.gov-editor-help-center/using-karl-the-cms/content-types/choosing-a-content-type).
+**Fifteen types in four groups** — the corpus uses eight.
+
+| Group              | Types                                                                                |
+| ------------------ | ------------------------------------------------------------------------------------ |
+| Services           | Transaction, Information, **Step by step**, **Location**                             |
+| Outreach           | **News**, **Event**, Campaign                                                        |
+| Department support | About, Resource Collection, **Meeting**, **Profile**, **Data story**, Report, Agency |
+| Sitewide           | Topic                                                                                |
+
+**The two pages disagree, and only one is complete.** "Choosing a content type"
+omits the Sitewide group entirely, so **Topic is absent from it** — not because
+Topic is not a type, but because an editor never chooses one: "only DS admin can
+add a new sitewide page", the same reason Agency carries "Digital Services must
+create this content type for you". Read "Understanding content types" for the
+full list. They also disagree on casing and plurals (`Report`/`Reports`,
+`Resource collection`/`Resource Collection`, `Event`/`Events`), so neither is
+safe to string-match against without normalising.
+
+Two divergences in our corpus, both worth a decision:
+
+- **`About us` is not a Karl type name** — both Help Center pages say `About`.
+  `KARL_PANELS` also keys it `About us`, so the repo is internally consistent
+  and externally wrong. Harmless today, but item 7's retype diff is keyed by
+  type name and would miss it.
+- **Four pages slugged `step-by-step--*` are all typed `Transaction`**, while
+  Karl has a dedicated Step by step type ("process involving multiple steps or
+  transactions", 15-step limit). Three of the four are also in the orphan list.
+  This is exactly what the unbuilt content-type check is for.
+
 ## Not designed yet
 
 - Reviewer notes (typed / audio / drawn) — specified in the handoff, never
   ported.
-- The content-type check.
+- The content-type check. First concrete case to answer: the four
+  `step-by-step--*` pages typed `Transaction` above.
 - The Rethink tab — shipped in the app, has no frame.

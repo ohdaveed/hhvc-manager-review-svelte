@@ -154,6 +154,15 @@ export function typeBreakdown(pages: AnyPage[]): string {
  * Resource Collection page -- but the 2026-08-23 precedence reversal makes the
  * Help Center govern, so the four-type restriction stands and the permissive
  * form is a gap in the form. Do not "correct" this list against the picker.
+ *
+ * `Topic` is easy to delete from this list by mistake, so: it is a real
+ * content type, and it is missing from the Help Center's "Choosing a content
+ * type" page on purpose. Topic is a **sitewide** page -- "collects content
+ * around a common theme, across multiple departments", and "only DS admin can
+ * add a new sitewide page" -- so an editor never chooses it, the same reason
+ * Agency carries "Digital Services must create this content type for you".
+ * It is listed under Sitewide pages on "Understanding content types":
+ * https://sfdigitalservices.gitbook.io/karl-sf.gov-editor-help-center/using-karl-the-cms/content-types/understanding-content-types
  */
 export const RELATED_PERMITTED_TYPES = ['Transaction', 'Information', 'Campaign', 'Topic'];
 
