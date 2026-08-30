@@ -1,4 +1,5 @@
-import { expect, test } from '@playwright/test';
+import type { Page } from '@playwright/test';
+import { expect, test } from './fixtures';
 
 /**
  * The mockup must reflow on its OWN width, not the window's.
@@ -22,15 +23,15 @@ import { expect, test } from '@playwright/test';
  */
 const PAGE = '/review/report-garbage-filth-vegetation';
 
-const frameWidth = (page: import('@playwright/test').Page) =>
+const frameWidth = (page: Page) =>
 	page.locator('.mockup-frame').evaluate((el) => Math.round(el.getBoundingClientRect().width));
 
-const footerColumnCount = (page: import('@playwright/test').Page) =>
+const footerColumnCount = (page: Page) =>
 	page
 		.locator('.footer-grid')
 		.evaluate((el) => getComputedStyle(el).gridTemplateColumns.split(' ').length);
 
-const overflows = (page: import('@playwright/test').Page) =>
+const overflows = (page: Page) =>
 	page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth);
 
 test.describe('the mockup scales with the space it has', () => {
