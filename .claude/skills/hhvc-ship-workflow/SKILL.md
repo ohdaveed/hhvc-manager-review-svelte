@@ -1,6 +1,6 @@
 ---
 name: hhvc-ship-workflow
-description: "Systematically ship feature work from branch through PR review, feedback coordination, merge blockers resolution, and live deployment verification. Use this skill when 'Use this skill when shipping a feature branch to production: opening a PR, coordinating review feedback with fixes, merging to main, verifying the live deployment, and identifying follow-up work.'"
+description: "Systematically ship feature work from branch through PR review, merge, post-merge environment synchronization, and deployment verification. Use this skill when 'Use this skill when shipping a feature branch to production: opening a PR, coordinating review feedback with fixes, merging to main, verifying the live deployment, and identifying follow-up work.'"
 trigger: "'Use this skill when shipping a feature branch to production: opening a PR, coordinating review feedback with fixes, merging to main, verifying the live deployment, and identifying follow-up work.'"
 author: arrizon.david
 source_sessions:
@@ -8,17 +8,19 @@ source_sessions:
   - arrizon.david_arrizon.david's Organization_default_acd2a71a-79ac-46df-9176-9d9b399e830a
   - arrizon.david_arrizon.david's Organization_default_8e274d7b-ecd5-4de4-aed9-a8bee5db8352
   - arrizon.david_arrizon.david's Organization_default_591e2ce2-18b8-4b5b-a127-384f48139998
+  - arrizon.david_arrizon.david's Organization_default_e7a876c8-b35b-4593-ad3e-860f65882f7a
+  - arrizon.david_arrizon.david's Organization_default_25b29e61-75cd-4d31-af6e-26a6fe717f3e
 contributors:
   - arrizon.david
-version: 2
+version: 3
 created_by_agent: claude_code
 created_at: 2026-08-25T15:00:20.634Z
-updated_at: 2026-08-29T23:41:18.556Z
+updated_at: 2026-08-30T06:56:35.104Z
 ---
 
 # HHVC Ship Workflow
 
-Ship feature work systematically from feature branch through PR review, feedback coordination, merge, and live deployment verification.
+Ship feature work systematically from feature branch through PR review, feedback coordination, merge, post-merge environment sync, and live deployment verification.
 
 ## When to Use This Skill
 
@@ -29,6 +31,7 @@ Use this skill when:
 - Merging to `main` and verifying the live deployment
 - Coordinating design decisions with review bot feedback
 - Your merge is blocked or another session has edited your branch
+- Synchronizing staging databases and environment variables after merge
 
 ## The Ship Sequence
 
@@ -80,27 +83,61 @@ gh pr merge <n> --squash
 
 This squash-merges the branch into `main` (one commit) and triggers the Netlify deploy automatically.
 
-### 5. Verify the Live Deployment
+### 5. Post-Merge: Synchronize Environments
+
+The merge auto-applies Supabase migrations to **production only**. Staging must be synced manually or deploy previews fall out of sync with the live schema. Environment variables with multiple contexts also require separate updates.
+
+#### 5a. Sync Staging Database (if migrations were included)
+
+```sh
+supabase link --project-ref aplbsgacqnxhzjuquvft  # staging ref
+supabase db push
+```
+
+**Why:** The Supabase GitHub App integration applies migrations to production (`kiynekyzqxneepjipqhg`) on merge. Staging (`aplbsgacqnxhzjuquvft`) is not covered, so deploy previews render against stale schema. This breaks when pages are renamed, views are added, or table columns change.
+
+Verify:
+
+```sh
+supabase link --project-ref aplbsgacqnxhzjuquvft
+supabase db remote diff
+# Should show no pending changes
+```
+
+#### 5b. Sync Multi-Context Environment Variables (if credentials changed)
+
+Netlify variables with multiple contexts (`production`, `deploy-preview`, `branch-deploy`) do not sync automatically. `RAILWAY_API_TOKEN` has three separate contexts; updating production does not update previews.
+
+```sh
+netlify env:set RAILWAY_API_TOKEN <new-value> --context production
+netlify env:set RAILWAY_API_TOKEN <new-value> --context deploy-preview
+netlify env:set RAILWAY_API_TOKEN <new-value> --context branch-deploy
+```
+
+**Why:** The Netlify UI shows one context at a time. Secret variables do not expose `updated_at` timestamps, so you cannot verify whether the old value persists without hitting the backend service.
+
+Verify secret updates by calling the service that uses it (e.g., hit `/api/ai/generate` and check for 401 vs 200/400 response — 401 means old token, 400 on a valid request means new token accepted).
+
+### 6. Verify the Live Deployment
 
 Verify **at the live artifact**, not the build logs:
 
 ```sh
-# Status code
 curl -I https://hhvc-manager-review.netlify.app/
 # HTTP 200 expected
 
-# Proxy endpoint (protected — should 401 without token)
 curl -I https://hhvc-manager-review.netlify.app/api/ai/generate
-# HTTP 401 expected
+# HTTP 401 expected (unauthenticated proxy call)
 ```
 
 Also check:
 
-- **Deployed commit**: Verify the bundle contains a string or behavior unique to the merged commit
+- **Deployed commit**: Verify `/_app/version.json` contains the merged commit SHA
 - **Console**: No new errors (pre-existing ones don't count as regression)
 - **Smoke test**: Run through at least one critical user flow
+- **Staging**: If this merge included a schema change, confirm staging sync actually applied before relying on deploy previews
 
-### 6. Local/Remote Sync
+### 7. Local/Remote Sync
 
 After merge, sync local `main` to remote:
 
@@ -109,7 +146,7 @@ git fetch origin
 git reset --hard origin/main
 ```
 
-### 7. Retrospective: Follow-Up Work
+### 8. Retrospective: Follow-Up Work
 
 After a successful deploy, assess and document:
 
@@ -159,19 +196,26 @@ If another session edited your branch:
 
 Example from this project: two concurrent sessions edited `fix/karl-button-cap`, one committed the button cap fix, the other deleted tooling files — both landed in the same PR and needed unified verification before merge.
 
+### Staging Falls Behind After Merge
+
+If deploy previews are broken or missing after a merge, check if staging is in sync:
+
+```sh
+supabase link --project-ref aplbsgacqnxhzjuquvft
+supabase db remote diff
+```
+
+If output shows pending migrations, run step 5a before re-deploying previews.
+
 ### Verifying Real Artifact State
 
 CI passing does not guarantee the deployed version works. Always verify beyond the logs:
 
 ```bash
-# Check the deploy preview loads
 curl -I https://deploy-preview-<n>--hhvc-manager-review.netlify.app/
 # HTTP 200 expected
 
-# Verify code presence for renames or deletions
 git show origin/<branch>:src/file.ts | grep "expected_string"
-
-# Smoke test: run one critical user flow on the preview
 ```
 
 ## Gotchas
@@ -184,15 +228,21 @@ git show origin/<branch>:src/file.ts | grep "expected_string"
 - **Review feedback doesn't require acceptance** — explain non-obvious decisions with evidence so the owner can review the reasoning.
 - **Commit messages may be mislabeled by concurrent sessions** — verify author and message intent before merge.
 - **Workflow approval gates are GitHub security, not a build failure** — bot-pushed branches require manual approval even if CI would pass.
+- **Supabase migrations apply to production only** — staging needs manual sync or deploy previews break silently.
+- **Netlify env var contexts don't sync automatically** — multi-context variables (like `RAILWAY_API_TOKEN`) require separate updates per context, and old values persist invisibly.
+- **Secret value updates cannot be verified by reading the env var** — test by calling the backend service, not by checking Netlify's API.
 
-## Example: Multi-Cycle Review with Blockers
+## Example: Multi-Cycle Review with Post-Merge Schema Changes
 
-If a PR requires multiple fix cycles and encounters a merge blocker:
+If a PR requires multiple fix cycles and includes database migrations:
 
 1. Receive feedback → fix → `bun run verify` → push → CI re-runs
-2. Workflow approval needed: click "Approve and run workflows"
+2. Workflow approval if needed: click "Approve and run workflows"
 3. Verify deploy preview renders correctly
-4. Another session added commits: `git log HEAD` to review, run `bun run verify`, merge if compatible
-5. All fixed or declined with reasoning → merge → verify live deployment
+4. Merge when all feedback is fixed or declined with reasoning
+5. Sync staging: `supabase link --project-ref aplbsgacqnxhzjuquvft && supabase db push`
+6. Confirm staging: `supabase db remote diff` shows no pending changes
+7. Verify live deployment: curl the endpoint, check console, run a user flow
+8. If env vars changed, update all Netlify contexts and verify by calling the backend
 
 Each cycle re-verifies locally before push. Never merge with red CI or unresolved findings.
