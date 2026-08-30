@@ -9,6 +9,7 @@ export const appealNotice = {
 		'A tenant named on a notice who disputes what it says',
 		'Someone who believes a notice names the wrong party'
 	],
+	primaryAgency: 'Healthy Housing and Vector Control',
 	reading: 'Grade 7',
 	editorNote:
 		'PROPOSED PAGE — not in the current 29. `design/HHVC Page Ideas.dc.html` opens its Transaction list with this one: the existing set covers reporting a problem and looking up a record, and nothing covers what happens after an inspector arrives. NO DEADLINE, FEE OR PROCEDURAL STEP IS INVENTED HERE. The appeal window, the form, and what a hearing costs are all unconfirmed, and each is written as "the notice tells you" rather than given a value — `noticeOfViolation` already takes that approach for the same reason and explicitly warns against adding appeal requirements without HHVC and legal review. ONE STRUCTURAL FLAG FOR DIGITAL SERVICES: a Director’s Hearing is a *Meeting* in Karl — something a person attends, not something they apply for — so the hearing itself should be a Meeting page this Transaction links to, not a section of this page. That split is the reason this page stops at "request one" and does not describe the hearing. The audience sits in Things to know as "Who this information is for", matching the live pattern on sf.gov/manage-covid-19-schools-childcare-and-youth-programs, and it takes one of the two entries the Help Center allows.',

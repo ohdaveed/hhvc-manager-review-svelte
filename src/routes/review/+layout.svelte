@@ -201,8 +201,10 @@
 				class="border-b border-amber-300 bg-amber-50 px-4 py-2 text-sm text-amber-900"
 				role="status"
 			>
-				<strong class="font-semibold">Viewing signed out.</strong> You can read every mockup, but editing
-				is disabled because edits cannot be saved without an account.
+				<strong class="font-semibold">Viewing signed out.</strong> You can read every mockup, but
+				editing is disabled because edits cannot be saved without an account.
+				<a href={resolve('/login')} class="font-semibold underline underline-offset-2">Sign in</a> to
+				edit.
 			</div>
 		{/if}
 

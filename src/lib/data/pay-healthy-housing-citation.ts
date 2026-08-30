@@ -9,6 +9,7 @@ export const payCitation = {
 		'A billing or accounts contact paying on an owner’s behalf',
 		'Someone who received a citation and believes it is wrong'
 	],
+	primaryAgency: 'Healthy Housing and Vector Control',
 	reading: 'Grade 7',
 	editorNote:
 		'PROPOSED PAGE — not in the current 29. THE CITATION AMOUNT IS ONE OF THE FOUR FACTS `design/HHVC Page Ideas.dc.html` FLAGS AS A PLACEHOLDER, and it is not supplied here. No dollar figure, no penalty schedule, no late interest and no payment deadline appears on this page, because none of them is confirmed anywhere in the corpus, and a plausible-looking number on a payment page is the worst possible invention — a reader would act on it. Every one is written as "your citation says". This is distinct from `payFee`, which is the ANNUAL Healthy Housing fee owed by buildings with three or more rental units; a citation is a penalty after enforcement, and the two are separated so neither reads as the other. The audience takes one of the two Things to know entries, matching the live pattern on sf.gov/manage-covid-19-schools-childcare-and-youth-programs.',
