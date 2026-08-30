@@ -277,7 +277,7 @@ async function measureFocusIndicators(page: import('@playwright/test').Page) {
 }
 
 test('focus indicators clear 3:1 (SC 1.4.11)', async ({ page }) => {
-	await page.goto('/review/topic-healthy-housing-and-vector-control--about');
+	await page.goto('/review/departments--healthy-housing-and-vector-control--about');
 	await page.waitForLoadState('networkidle');
 
 	// A genuine Tab press, so Chrome's focus-visible heuristic is armed

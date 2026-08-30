@@ -1,9 +1,23 @@
+import { sentrySvelteKit } from '@sentry/sveltekit';
 import { execFileSync } from 'node:child_process';
 import { defineConfig } from 'vitest/config';
 import tailwindcss from '@tailwindcss/vite';
-import adapter from '@sveltejs/adapter-netlify';
+import adapterNetlify from '@sveltejs/adapter-netlify';
+import adapterNode from '@sveltejs/adapter-node';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { svelteTesting } from '@testing-library/svelte/vite';
+
+/**
+ * Netlify builds production and every deploy preview, so it is the default.
+ * The Dockerfile sets `ADAPTER=node` for the container, whose `CMD` runs
+ * `build/index.js` -- an entrypoint only adapter-node produces.
+ *
+ * The polarity matters: netlify has to be the default so CI's `bun run build`
+ * exercises the adapter production actually ships on. Keying off Netlify's own
+ * `NETLIFY` variable would invert that and leave the production adapter
+ * untested by the merge gate.
+ */
+const adapter = process.env.ADAPTER === 'node' ? adapterNode : adapterNetlify;
 
 /**
  * The commit this bundle was built from, stamped into SvelteKit's
@@ -22,6 +36,7 @@ import { svelteTesting } from '@testing-library/svelte/vite';
 function buildCommit(): string {
 	const fromCI = process.env.COMMIT_REF || process.env.GITHUB_SHA;
 	if (fromCI) return fromCI;
+
 	try {
 		return execFileSync('git', ['rev-parse', 'HEAD'], {
 			encoding: 'utf8',
@@ -32,8 +47,32 @@ function buildCommit(): string {
 	}
 }
 
+/**
+ * Which deploy this bundle is for, stamped in at build time and read by
+ * Sentry's `environment`.
+ *
+ * Netlify sets `CONTEXT` to `production`, `deploy-preview` or `branch-deploy`,
+ * which is the only thing that distinguishes them -- the DSN is one project and
+ * the bundles are otherwise identical. Without this every preview's errors land
+ * in the same stream as production's, indistinguishable at the moment you most
+ * need to tell them apart.
+ *
+ * `development` is the fallback rather than `production`, so an unstamped build
+ * under-claims instead of quietly polluting the production environment.
+ */
+function deployContext(): string {
+	return process.env.CONTEXT || (process.env.CI ? 'ci' : 'development');
+}
+
 export default defineConfig({
+	define: {
+		__SENTRY_ENVIRONMENT__: JSON.stringify(deployContext())
+	},
 	plugins: [
+		sentrySvelteKit({
+			org: 'glycolysis',
+			project: 'javascript-sveltekit'
+		}),
 		tailwindcss(),
 		sveltekit({
 			compilerOptions: {
@@ -47,12 +86,19 @@ export default defineConfig({
 			version: {
 				name: buildCommit()
 			},
+			experimental: {
+				instrumentation: {
+					server: true
+				}
+			},
 			adapter: adapter()
 		}),
 		svelteTesting()
 	],
 	test: {
-		expect: { requireAssertions: true },
+		expect: {
+			requireAssertions: true
+		},
 		projects: [
 			{
 				extends: './vite.config.ts',

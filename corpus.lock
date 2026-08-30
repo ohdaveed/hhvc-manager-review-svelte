@@ -1,7 +1,49 @@
 {
   "version": 1,
-  "corpusHash": "a7776df63e0f135e5a9aaff69d200b318bde9af739f5b0537609ff95698c64bf",
+  "corpusHash": "c834cbce863498196eac166563a1ebf86432a17aac8c2951760cdb384c109e9b",
   "pages": {
+    "departments--healthy-housing-and-vector-control": {
+      "contentHash": "234045b6cf53d5b028a6a19d1c70a8cfbdbe0421d28859aa5222d7f9847578a4",
+      "fieldHashes": {
+        "audience.0": "1b5edf6795c2de3a86d15170ff8fa258e537de07a9f9dc905e38c22bdfb59b47",
+        "sections.about-healthy-housing-and-vector-control.heading": "b3a0da0297589220c360c0576541a7e4a1134dcf8060626c73f7264df3778cda",
+        "sections.about-healthy-housing-and-vector-control.paragraphs.0": "7f750a8d2c0214c0d7b469ec4f683bcec89ff3d9c6584e6b6a7a43f265a16803",
+        "sections.get-help-with-pests-mold-or-trash.heading": "0b6b87c3f7a456736035d688dca0d81564e54ab2a3850487f7b6fcea0c3cde01",
+        "sections.get-help-with-pests-mold-or-trash.paragraphs.0": "300e5baed724b7dc541d773a85bde6438b7ef0056a75c0803c84a1f3a0cb154c",
+        "sections.if-you-own-or-manage-a-building.heading": "8108b33754cd36b8113570b4b6912aca645e19c4cfbc23dba1c75493a75336e8",
+        "sections.if-you-own-or-manage-a-building.paragraphs.0": "b6f6c9e96a620aa7e3b0046763f66cf79d66827fe82926c60d1dceabbb913525",
+        "sections.if-you-rent.heading": "17ef362e8db7b8143bb4d9ce689d842ebf5786324a1d228b15ddf68d6e6e492f",
+        "sections.if-you-rent.paragraphs.0": "f72acdf128f6a358a9d371a5b87250af5b17fb6faa201eade9810cb1893a85b2",
+        "sections.look-up-records-and-rules.heading": "155530329a9fe00962e15b10e21979da70f305ffd3ff0943caf2e0728d623a34",
+        "sections.need-another-city-housing-service.heading": "f43be67c4a2ac9e452909235e659d089794f887051301fdcbfb30cae666ca992",
+        "sections.need-another-city-housing-service.paragraphs.0": "5c7d9456417564686291bd0624b1b9b0d55e6c3a7447f8322152b7d862116c87",
+        "summary": "308b76031ab875ffd35ab2133a37264a0f423b98909c802d8d54dc72e3bce6ad",
+        "title": "8a2847f0ee854052d30378a2ef091f979c9737bbd8219086a1e04dc0abd84f9f"
+      }
+    },
+    "departments--healthy-housing-and-vector-control--about": {
+      "contentHash": "2b18384260606e67af23e2ba10665fa7c3e6f5b4e473d6b954710ce85900e335",
+      "fieldHashes": {
+        "audience.0": "86ef690f3676c5c6e6198614e16c94424d0cf778db2af03764fcc84b46b30124",
+        "sections.how-the-team-is-organized.bullets.0": "e9db4d36f817f3ba050f4840db47832038679f57873b87a911e6b745ef99d553",
+        "sections.how-the-team-is-organized.bullets.1": "d515f44bc7c6e63af71792e719438070f670d746fb92e9fea5015db453fbae2e",
+        "sections.how-the-team-is-organized.bullets.2": "24428d28c46c3f42a4ff251cdeafb81c6137f12f5278d56efc5cb50eeba7a301",
+        "sections.how-the-team-is-organized.heading": "9ef9dae34b098e031375b70c4b23999a54bd0e6e4df3caf562a897b1db3e1d93",
+        "sections.how-the-team-is-organized.paragraphs.0": "d3363bebce4ab33c15ff906c2640f1f9b2ee683e621e8af7ad7bd8927f82a9f0",
+        "sections.program-information.heading": "094549324c795114d3fadfeebcb456d1ed9bc9735e2e735b6de3b17d2005ec94",
+        "sections.what-we-do.bullets.0": "c67aacd54c688ee79c89b63195a827e46ecb609f74580a967d4a52a5655b8ab4",
+        "sections.what-we-do.bullets.1": "714b6517f7cd29c50fdf309a2e5d19cd270b081ac7795d936c60969fd0736a03",
+        "sections.what-we-do.bullets.2": "1cab3011d442c59ae49eed073372abc05bec4166333ddff1b0d15a845338dc14",
+        "sections.what-we-do.bullets.3": "bc6b1b5455f37c7d1f461fceb09948d4e53141b7247965b4fb988bc7f988ffdb",
+        "sections.what-we-do.bullets.4": "5af3761e85a8e969d23b640777fe0a5e43ea5b2a708bef923d1354128d3619f3",
+        "sections.what-we-do.heading": "8783c085bdc96251f0ce96b2fbcf8fa854378c0efaa4f6af1b6d7a8ae9c62503",
+        "sections.what-we-do.paragraphs.0": "9bc0a5d3904a707918d9b907e33429cc8f2f2a15e86cdc46786627fd889d0aa0",
+        "sections.who-we-are.heading": "696ab4d5bfb5383b32834cc7435b2425605f1535be8004319519b2d27cc90b99",
+        "sections.who-we-are.paragraphs.0": "4d951e71b9a2a3e0eb6ac494cf74f2152d7ea1410e3e8bb711fce82c307d3c33",
+        "summary": "8663d3423ac6ceced4941e32b1c2cd48fbb1cb6da399e963225518346f20f5fa",
+        "title": "8a2847f0ee854052d30378a2ef091f979c9737bbd8219086a1e04dc0abd84f9f"
+      }
+    },
     "find-complaints-and-inspection-records": {
       "contentHash": "8147c2a5687d035b35d07129ac07bc5ac141e766ed0296299c5bb86e9a205f0d",
       "fieldHashes": {
@@ -524,7 +566,7 @@
       }
     },
     "report-health-code-article-11-plain-language": {
-      "contentHash": "1463e2054a4eab77b27527518a0e4d0984afa7b44d9efd0fc0760f471ee36cdf",
+      "contentHash": "84b007492dbc7dda1fbe2778aa24be25077a6ff025d782746a6aa67a8e47e32a",
       "fieldHashes": {
         "audience.0": "8ef0320f7265039ef939ba6670edfb33aef4c26f8e5925624723a4c89e449397",
         "sections.animals-clutter-and-other-health-threats.heading": "62fb5ffe07e7caa1b200888205994b3495e6e4f1838c94901c33ece0e1e0b2eb",
@@ -670,48 +712,6 @@
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",
         "summary": "6379d75a6f8aaffab3595f25468f9ce799caf33feea25816498ec23bac0f3208",
         "title": "cd3cb362adfa7132a47e3c191a2b4673a387ec751b8c4e0b34aec5133930348e"
-      }
-    },
-    "topic-healthy-housing-and-vector-control": {
-      "contentHash": "234045b6cf53d5b028a6a19d1c70a8cfbdbe0421d28859aa5222d7f9847578a4",
-      "fieldHashes": {
-        "audience.0": "1b5edf6795c2de3a86d15170ff8fa258e537de07a9f9dc905e38c22bdfb59b47",
-        "sections.about-healthy-housing-and-vector-control.heading": "b3a0da0297589220c360c0576541a7e4a1134dcf8060626c73f7264df3778cda",
-        "sections.about-healthy-housing-and-vector-control.paragraphs.0": "7f750a8d2c0214c0d7b469ec4f683bcec89ff3d9c6584e6b6a7a43f265a16803",
-        "sections.get-help-with-pests-mold-or-trash.heading": "0b6b87c3f7a456736035d688dca0d81564e54ab2a3850487f7b6fcea0c3cde01",
-        "sections.get-help-with-pests-mold-or-trash.paragraphs.0": "300e5baed724b7dc541d773a85bde6438b7ef0056a75c0803c84a1f3a0cb154c",
-        "sections.if-you-own-or-manage-a-building.heading": "8108b33754cd36b8113570b4b6912aca645e19c4cfbc23dba1c75493a75336e8",
-        "sections.if-you-own-or-manage-a-building.paragraphs.0": "b6f6c9e96a620aa7e3b0046763f66cf79d66827fe82926c60d1dceabbb913525",
-        "sections.if-you-rent.heading": "17ef362e8db7b8143bb4d9ce689d842ebf5786324a1d228b15ddf68d6e6e492f",
-        "sections.if-you-rent.paragraphs.0": "f72acdf128f6a358a9d371a5b87250af5b17fb6faa201eade9810cb1893a85b2",
-        "sections.look-up-records-and-rules.heading": "155530329a9fe00962e15b10e21979da70f305ffd3ff0943caf2e0728d623a34",
-        "sections.need-another-city-housing-service.heading": "f43be67c4a2ac9e452909235e659d089794f887051301fdcbfb30cae666ca992",
-        "sections.need-another-city-housing-service.paragraphs.0": "5c7d9456417564686291bd0624b1b9b0d55e6c3a7447f8322152b7d862116c87",
-        "summary": "308b76031ab875ffd35ab2133a37264a0f423b98909c802d8d54dc72e3bce6ad",
-        "title": "8a2847f0ee854052d30378a2ef091f979c9737bbd8219086a1e04dc0abd84f9f"
-      }
-    },
-    "topic-healthy-housing-and-vector-control--about": {
-      "contentHash": "2b18384260606e67af23e2ba10665fa7c3e6f5b4e473d6b954710ce85900e335",
-      "fieldHashes": {
-        "audience.0": "86ef690f3676c5c6e6198614e16c94424d0cf778db2af03764fcc84b46b30124",
-        "sections.how-the-team-is-organized.bullets.0": "e9db4d36f817f3ba050f4840db47832038679f57873b87a911e6b745ef99d553",
-        "sections.how-the-team-is-organized.bullets.1": "d515f44bc7c6e63af71792e719438070f670d746fb92e9fea5015db453fbae2e",
-        "sections.how-the-team-is-organized.bullets.2": "24428d28c46c3f42a4ff251cdeafb81c6137f12f5278d56efc5cb50eeba7a301",
-        "sections.how-the-team-is-organized.heading": "9ef9dae34b098e031375b70c4b23999a54bd0e6e4df3caf562a897b1db3e1d93",
-        "sections.how-the-team-is-organized.paragraphs.0": "d3363bebce4ab33c15ff906c2640f1f9b2ee683e621e8af7ad7bd8927f82a9f0",
-        "sections.program-information.heading": "094549324c795114d3fadfeebcb456d1ed9bc9735e2e735b6de3b17d2005ec94",
-        "sections.what-we-do.bullets.0": "c67aacd54c688ee79c89b63195a827e46ecb609f74580a967d4a52a5655b8ab4",
-        "sections.what-we-do.bullets.1": "714b6517f7cd29c50fdf309a2e5d19cd270b081ac7795d936c60969fd0736a03",
-        "sections.what-we-do.bullets.2": "1cab3011d442c59ae49eed073372abc05bec4166333ddff1b0d15a845338dc14",
-        "sections.what-we-do.bullets.3": "bc6b1b5455f37c7d1f461fceb09948d4e53141b7247965b4fb988bc7f988ffdb",
-        "sections.what-we-do.bullets.4": "5af3761e85a8e969d23b640777fe0a5e43ea5b2a708bef923d1354128d3619f3",
-        "sections.what-we-do.heading": "8783c085bdc96251f0ce96b2fbcf8fa854378c0efaa4f6af1b6d7a8ae9c62503",
-        "sections.what-we-do.paragraphs.0": "9bc0a5d3904a707918d9b907e33429cc8f2f2a15e86cdc46786627fd889d0aa0",
-        "sections.who-we-are.heading": "696ab4d5bfb5383b32834cc7435b2425605f1535be8004319519b2d27cc90b99",
-        "sections.who-we-are.paragraphs.0": "4d951e71b9a2a3e0eb6ac494cf74f2152d7ea1410e3e8bb711fce82c307d3c33",
-        "summary": "8663d3423ac6ceced4941e32b1c2cd48fbb1cb6da399e963225518346f20f5fa",
-        "title": "8a2847f0ee854052d30378a2ef091f979c9737bbd8219086a1e04dc0abd84f9f"
       }
     },
     "topics--healthy-housing-conditions": {

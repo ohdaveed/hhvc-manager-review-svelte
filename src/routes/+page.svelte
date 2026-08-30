@@ -9,7 +9,7 @@
 		//
 		// This used to fall back to the literal `'agency-service-grouping'`, which
 		// is a FILENAME in `$lib/data`, not a routable id -- that module's page
-		// derives `topic-healthy-housing-and-vector-control` from its `slug`, so
+		// derives `departments--healthy-housing-and-vector-control` from its `slug`, so
 		// the fallback redirected to a 404. There is nothing to fall back to
 		// anyway: `pageStore.pages` is built at construction from the 29 compiled
 		// corpus modules, so an empty one means the corpus itself failed to load

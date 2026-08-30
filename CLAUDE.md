@@ -110,7 +110,9 @@ Note the error handling: `HttpError`s are rethrown so upstream status codes surv
 
 **`import_corpus_version` lives in the `private` schema, not `public`.** PostgREST serves only the schemas in `[api] schemas` (`supabase/config.toml`: `public`, `graphql_public`), so nothing in `private` is reachable over the Data API at any grant level — verified against the local stack: an anon `POST /rest/v1/rpc/import_corpus_version` returns **404**, and forcing it with `Content-Profile: private` returns **406**, while an anon read of the exposed `corpus_versions` returns 401 (the control that says the key and request path are fine). That is why `scripts/corpus-import.ts` connects with `pg` rather than `supabase.rpc()`. The alternative — leaving it in `public` and revoking per function — is what `20260823130000` had to do, and it has to be remembered on every new function; this removes the category instead. `bun run audit:privileges` still guards `public`, which now holds no functions at all.
 
-Client-side only. There is no `hooks.server.ts` and no `event.locals` — sessions live in the browser, and the API route verifies bearer tokens itself with a per-request client (`persistSession: false`). Schema is `supabase/migrations/`: `reviews`, `pages`, `comments`, `edits`.
+Client-side only. Sessions live in the browser and there is no `event.locals`; the API route verifies bearer tokens itself with a per-request client (`persistSession: false`). Schema is `supabase/migrations/`: `reviews`, `pages`, `comments`, `edits`.
+
+`src/hooks.server.ts` does exist, but it is Sentry's and nothing else — `sequence(sentryHandle())` plus `handleErrorWithSentry()`. It establishes no session and populates no `locals`, so it is not a place to reach for auth: adding one there would put a server-side session beside the browser-side one and give two answers to who the caller is.
 
 The local stack is usable from a clean `supabase start` + `supabase db reset`
 with no hand-patching. Two things had to be fixed for that and are worth knowing
@@ -273,9 +275,9 @@ Consequences worth knowing before working here:
 Apply what the task signals; with no signal, baseline only. Read each pack only when needed. Routing: smallest matching discipline only, overlap only when genuinely multi-category, mimic observable behavior only.
 
 - **[always]** Lead with the outcome · stay within the requested scope (no incidental refactors) · ground completion claims in this session's tool results · confirm before destructive or hard-to-reverse actions.
-- **[2+ sequential stories]** Run `python3 /home/ohdaveed/.claude/plugins/cache/fablize/fablize/2.1.1/scripts/goals.py`: create → next → checkpoint (with evidence) → final verification gate (no completion without `--verify-cmd` and `--verify-evidence`). Run from the repo root; state in `./.fablize/` (resume with `status`). Skip for single-step tasks.
-- **[debugging / test failure / unknown cause / review]** Follow `/home/ohdaveed/.claude/plugins/cache/fablize/fablize/2.1.1/packs/investigation-protocol.txt`: reproduce first → 3+ competing hypotheses → evidence per hypothesis → full causal chain → verify before/after → report rejected hypotheses.
-- **[render/executable artifact: HTML, SVG, game, UI, chart]** Follow `/home/ohdaveed/.claude/plugins/cache/fablize/fablize/2.1.1/packs/verification-grounding-pack.txt` grounding loop: run it in the real renderer → observe the output → fix what you see → re-run. A static check is not observation.
+- **[2+ sequential stories]** Invoke the `fablize:fablize` skill and follow its multi-story loop (§1): create → next → checkpoint (with evidence) → final verification gate (no completion without `--verify-cmd` and `--verify-evidence`). Run from the repo root; state in `./.fablize/` (resume with `status`). Skip for single-step tasks.
+- **[debugging / test failure / unknown cause / review]** Invoke `fablize:fablize` and follow its investigation protocol (§2): reproduce first → 3+ competing hypotheses → evidence per hypothesis → full causal chain → verify before/after → report rejected hypotheses.
+- **[render/executable artifact: HTML, SVG, game, UI, chart]** Invoke `fablize:fablize` and follow its verification-grounding loop (§3): run it in the real renderer → observe the output → fix what you see → re-run. A static check is not observation.
 - **[hard or ambiguous task]** Adaptive thinking scales with difficulty automatically. To go higher, recommend `/effort xhigh` to the user. Depth (capability) cannot be raised: if stuck 2+ times or out-of-spec discovery is needed, report the limit honestly and escalate.
 
 <!-- FABLIZE:END -->
