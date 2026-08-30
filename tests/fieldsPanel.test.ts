@@ -213,14 +213,6 @@ describe('FieldsPanel', () => {
 		// reach a state there used to be no way out of: with nothing pending, the
 		// per-card buttons were gone and `decideAll` only ever touched pending.
 		await fireEvent.click(screen.getByRole('button', { name: 'Undo all' }));
-		console.log(
-			'DBG footer',
-			screen
-				.getAllByRole('button')
-				.map((b) => b.textContent?.trim())
-				.filter((t) => t?.startsWith('Save'))
-		);
-
 		expect(await screen.findByRole('button', { name: 'Save 0 edits' })).toHaveProperty(
 			'disabled',
 			true

@@ -1,0 +1,6 @@
+interface:
+  display_name: "Hhvc Manager Review Svelte"
+  short_description: "Repo-specific patterns and workflows for hhvc-manager-review-svelte"
+  default_prompt: "Use the hhvc-manager-review-svelte repo skill to follow existing architecture, testing, and workflow conventions."
+policy:
+  allow_implicit_invocation: true
