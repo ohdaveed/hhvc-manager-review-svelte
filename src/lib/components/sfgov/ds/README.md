@@ -32,14 +32,22 @@ Reading it: the file is a "(Copy)", so its components are unpublished and
 second stop), `Black-White/Black #0B0C0C` (icon stroke). The spacing ladder is
 `0 / 4 / 8 / 12 / 16 / 20 / 24 / 28`.
 
-Two deltas found in that check, both open:
+Findings from that check:
 
-- **`Accent/500 #B64A00` exists in Figma and nowhere in this repo.** It is _not_
-  yet established to be the warning role — a variable name is not a role — so
-  `--color-site-warning: #843f00` stays until someone confirms the mapping
-  against a Figma alert node. Contrast is not the blocker: `#B64A00` measures
-  5.16:1 on the page ground and 4.66:1 on `#FAEFE1`, both passing AA, against
-  `#843F00`'s 7.60 and 6.87.
+- **`Accent/500 #B64A00` is NOT the alert ramp — settled 2026-08-30.** Pixel
+  sampling of the Alerts design export puts every bar within ΔRGB ≤ 2 of the
+  tokens already here (Information `#0046C4`/`#0046C2`, Success
+  `#016900`/`#026800`, Warning `#834000`/`#843F00`, Danger `#AD0000`/`#AC0000`),
+  which is lossy-WebP noise. `--color-site-warning: #843f00` is correct and
+  stays. Where `Accent/500` belongs is still unknown; it is simply not this.
+- **Archive was wrong and is now corrected.** It shipped grey
+  (`#5b5f63` bar, `#f2f2f2` fill) while both the design source and the export's
+  readme put it on the _same tan ramp as Warning_ — `#843F00` bar, `#FAEFE1`
+  fill, with the box glyph as the only separator, "which is why it is never
+  optional" (the glyph is unconditional in `PageAlert.svelte`, so that
+  precondition holds). Contrast improves: 6.28:1 → 7.60:1 on the page ground.
+- **Bar geometry confirmed.** The design measures an 8px bar; `.ds-bar` is
+  `width: 8px`.
 - **Figma specifies Roboto Slab at Medium 500 and SemiBold 600** for headings,
   while `src/app.css` imports `@fontsource/roboto-slab/700.css` only. Nothing
   breaks today because no component here names a slab family — the 500/600
@@ -191,7 +199,7 @@ focus indicators, the edge of a control — need 3:1.
 | `--color-site-success` `#026800`       | page                                                   |     6.86 |   4.5 | pass              |
 | `--color-site-warning` `#843F00`       | page                                                   |     7.60 |   4.5 | pass              |
 | `--color-site-danger` `#AC0000`        | page                                                   |     7.43 |   4.5 | pass              |
-| `--color-site-archive` `#5B5F63`       | page                                                   |     6.28 |   4.5 | pass              |
+| `--color-site-archive` `#843F00`       | page                                                   |     7.60 |   4.5 | pass              |
 | `--color-site-badge-fg` `#942A00`      | `--color-site-badge-bg` `#FDE4D7`                      |     7.16 |   4.5 | pass              |
 | `#FCFCFC` footer links                 | `--color-site-navy` `#000925`                          |    18.75 |   4.5 | pass              |
 | focus `#386EBF`                        | page `#FCFCFC`                                         |     4.93 |   3.0 | pass              |

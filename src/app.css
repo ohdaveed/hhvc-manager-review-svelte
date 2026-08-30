@@ -537,8 +537,8 @@ body {
 	--color-site-warning-bg: #faefe1;
 	--color-site-danger: #ac0000;
 	--color-site-danger-bg: #ffeae5;
-	--color-site-archive: #5b5f63;
-	--color-site-archive-bg: #f2f2f2;
+	--color-site-archive: #843f00;
+	--color-site-archive-bg: #faefe1;
 
 	/* Content surfaces. Not aliases of the action ramp: --site-spotlight-bg sits
 	   between --color-site-tint and --color-site-action-soft, and the frames use
