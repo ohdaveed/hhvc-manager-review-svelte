@@ -28,6 +28,7 @@ export type CorpusPage = {
 	contact?: { phone?: unknown; email?: unknown; other?: unknown };
 	metaDescription?: unknown;
 	partnerAgencies?: unknown;
+	primaryAgency?: unknown;
 	reportDate?: unknown;
 	seoTitle?: unknown;
 	spotlight?: { title?: unknown; paragraphs?: unknown; button?: unknown; buttonUrl?: unknown };
@@ -70,6 +71,9 @@ export function extractFields(page: CorpusPage): FieldMap {
 
 	const summary = str(page.summary);
 	if (summary !== null) fields['summary'] = summary;
+
+	const primaryAgency = str(page.primaryAgency);
+	if (primaryAgency !== null) fields['primaryAgency'] = primaryAgency;
 
 	list(page.audience).forEach((entry, i) => {
 		const text = str(entry);

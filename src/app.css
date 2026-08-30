@@ -426,6 +426,55 @@ body {
 		margin-block: 0;
 	}
 
+	/* `primary_agency` -- the owning department, directly under the summary.
+	   Styled as a link because that is what it is on every live sf.gov page
+	   captured 2026-08-30, but it is a span (see Breadcrumb): the mockup does
+	   not navigate, and a dead anchor is an axe failure. */
+	& .page-primary-agency {
+		margin-bottom: 1.75rem;
+		color: var(--color-sfds-action);
+		font-size: var(--text-sfds-small);
+		text-decoration: underline;
+		text-underline-offset: 3px;
+	}
+	& .page-primary-agency p {
+		margin-block: 0;
+	}
+
+	/* `supporting_information` renders as an ACCORDION on sf.gov -- blue label, a
+	   rule, a disclosure marker (captured on Special cases, 2026-08-30). Nine
+	   sections across five pages declare `component: 'supporting'`.
+
+	   It carries the chrome but does NOT collapse, deliberately. Two reasons, and
+	   the corpus already states the first: the `open` flag exists "so the tips are
+	   visible without a click -- flag for Digital Services that the real accordion
+	   renders collapsed". The second is this tool's job. Reviewers are here to read
+	   and edit the copy; hiding it behind a click loses it from the page, from the
+	   reviewer's eye, and from a screenshot sent to a supervisor. The heading is
+	   also an edit target, and a real <summary> would swallow the click that opens
+	   the editor.
+	   ponytail: chrome only. Make it a real <details> if reviewers ask to collapse,
+	   and move the disclosure onto its own control so the heading stays editable. */
+	& .page-section[data-component='supporting'] {
+		padding-top: 0.75rem;
+		border-top: 1px solid var(--color-sfds-grey-l2);
+	}
+	& .page-section[data-component='supporting'] .section-heading {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		color: var(--color-sfds-action);
+		font-size: var(--text-sfds-small);
+		font-weight: 700;
+	}
+	& .page-section[data-component='supporting'] .section-heading::after {
+		content: '\2013';
+		color: var(--color-sfds-action);
+		font-size: 1.25rem;
+		line-height: 1;
+	}
+
 	& .page-audience {
 		margin-bottom: 1.75rem;
 		padding-left: 1rem;

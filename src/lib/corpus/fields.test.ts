@@ -351,7 +351,7 @@ describe('extractCopy', () => {
  */
 describe('extractFields/extractCopy coverage of the real corpus', () => {
 	// Keys `extractFields` actually reads, per level of the page shape.
-	const HANDLED_TOP = ['title', 'summary', 'audience', 'sections'];
+	const HANDLED_TOP = ['title', 'summary', 'primaryAgency', 'audience', 'sections'];
 	const HANDLED_SECTION = ['heading', 'paragraphs', 'bullets', 'callout'];
 	const HANDLED_CALLOUT = ['title', 'text'];
 

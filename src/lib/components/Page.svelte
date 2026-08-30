@@ -2,7 +2,6 @@
 	import Section from './Section.svelte';
 	import EditTarget from './EditTarget.svelte';
 	import Breadcrumb from './sfgov/Breadcrumb.svelte';
-	import OnThisPage from './sfgov/OnThisPage.svelte';
 	import WhatToKnow from './WhatToKnow.svelte';
 	import SpotlightBlock from './blocks/SpotlightBlock.svelte';
 
@@ -14,9 +13,15 @@
 		<div class="page-type-eyebrow">{page.type}</div>
 	{/if}
 
-	<!-- Ordering follows the design prototype's own DOM order: eyebrow,
-	     breadcrumb, title, summary, contents, the What-to-know box, audience,
-	     then the sections. -->
+	<!-- Ordering follows a live sf.gov page: eyebrow, breadcrumb, title, summary,
+	     the owning agency, the What-to-know box, audience, then the sections.
+	     
+	     The prototype put an "On this page" TOC between summary and What-to-know
+	     and `OnThisPage.svelte` says plainly that no Karl field backs it. Three
+	     live pages captured 2026-08-30 -- a Transaction, an Information and a
+	     Topic -- carry no such nav, so it is not rendered here. The component is
+	     kept (the design-system specimen still shows it) and this is one line to
+	     put back if the prototype is the standard rather than sf.gov. -->
 	<Breadcrumb partOf={page.partOf} />
 
 	<!-- `title` and `summary` are the exact keys HelpPanel folds on
@@ -30,7 +35,16 @@
 		</div>
 	{/if}
 
-	<OnThisPage sections={page.sections} />
+	<!-- `primary_agency` -- the department that owns the service. On every live
+	     sf.gov page captured it sits directly under the summary as a link, and it
+	     was the most consistent element across the captures and absent from all
+	     29 mockups. Inert like the rest of the mockup chrome (see `Breadcrumb`):
+	     a non-functional anchor is an axe failure, so this is a styled span. -->
+	{#if page.primaryAgency}
+		<div class="page-primary-agency">
+			<EditTarget name="Primary agency" fieldId="primaryAgency" value={page.primaryAgency} />
+		</div>
+	{/if}
 
 	<WhatToKnow whatToKnow={page.whatToKnow} type={page.type} />
 
