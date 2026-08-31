@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto';
 import { extractCopy, extractFields, type CorpusPage } from './fields.js';
+import { freezeFieldIds, freezeFieldHashes } from './freeze.js';
 import { hashFields, hashFieldMap } from './hash.js';
 
 export type CorpusLock = {
@@ -95,13 +96,29 @@ export function hashLockPages(pages: CorpusLock['pages']): string {
  * reuse `hashFields`'s length-prefixed digest unchanged -- `CopyMap` and
  * `FieldMap` are the same `Record<string, string>` shape, so no new digest
  * construction is needed, only a different map fed into the existing one.
+ *
+ * `previous` is the last committed lock, used only as the id ledger: a field
+ * whose copy is unchanged keeps the id it was frozen under, so inserting a
+ * paragraph renumbers nothing and the edits saved against the paragraphs below
+ * it stay attached. See `freeze.ts` for why content identity has to outrank
+ * position. Omitting it treats every field as new, which is right for a first
+ * import and for any caller with no trustworthy prior file.
+ *
+ * Passing a lock in does not let that file vouch for the corpus. `contentHash`
+ * comes from `extractCopy(page)` and never consults the ledger, so a page whose
+ * copy moved mints a new content hash whatever the ledger claims; the ledger
+ * only influences which *ids* the fields are filed under. A tampered ledger
+ * therefore shifts `corpusHash` and makes the check fail loudly, rather than
+ * pass falsely.
  */
-export function buildLock(pages: CorpusPage[]): CorpusLock {
+export function buildLock(pages: CorpusPage[], previous?: CorpusLock): CorpusLock {
 	const entries = pages
 		.map((page) => {
+			const path = derivePagePath(page);
 			const { pageHash: contentHash } = hashFields(extractCopy(page));
-			const { fieldHashes } = hashFields(extractFields(page));
-			return { path: derivePagePath(page), contentHash, fieldHashes };
+			const fields = extractFields(page);
+			const frozen = freezeFieldIds(previous?.pages[path]?.fieldHashes ?? {}, fields);
+			return { path, contentHash, fieldHashes: freezeFieldHashes(fields, frozen) };
 		})
 		.sort((a, b) => (a.path < b.path ? -1 : a.path > b.path ? 1 : 0));
 

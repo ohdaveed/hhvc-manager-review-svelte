@@ -48,9 +48,8 @@ export const rodentsReport = {
 					button: 'Report through 311',
 					karl: 'what_to_do -> Section. Section title: "Start your report". Section specifics: Text block (these 2 sentences) + Button link block ("Report through 311") + Callout block below. Keep the 311 action first.',
 					callout: {
-						title: 'Your report is confidential',
-						text: 'The City will never share your name or contact information with your landlord or property manager.',
-						karl: 'Callout block inside the "Start your report" Section specifics: single rich text field only, no separate title field like this mockup callout has. Fold "Your report is confidential" in as a bolded lead-in within the callout text, or flag for Digital Services if a distinct heading is actually needed.'
+						text: '**Your report is confidential.** The City will never share your name or contact information with your landlord or property manager.',
+						karl: 'Callout block inside the "Start your report" Section specifics: single rich text field only, no separate title field like this mockup callout has. The confidentiality line is the bolded lead-in of that one field, not a heading -- retype it exactly, bold included.'
 					}
 				},
 				{

@@ -1,5 +1,5 @@
 export const inspectionPrepInitial = {
-	slug: 'sf.gov/step-by-step--get-ready-for-a-housing-inspection',
+	slug: 'sf.gov/get-ready-for-a-housing-inspection',
 	type: 'Transaction',
 	title: 'Get ready for a housing inspection after you report',
 	summary:

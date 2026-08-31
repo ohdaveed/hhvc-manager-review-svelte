@@ -190,7 +190,7 @@ describe('resolveField — extractCopy parity (Group D)', () => {
 	});
 
 	it('whatToKnow.cost', () => {
-		const page = findPage('sf.gov/step-by-step--get-ready-for-a-housing-inspection');
+		const page = findPage('sf.gov/get-ready-for-a-housing-inspection');
 		const f = resolveField(page, 'whatToKnow.cost')!;
 		expect(f.value).toBe('Free');
 		f.set('Free with a valid 311 report');
@@ -198,7 +198,7 @@ describe('resolveField — extractCopy parity (Group D)', () => {
 	});
 
 	it('whatToKnow.thingsToKnow.N (plain-string form)', () => {
-		const page = findPage('sf.gov/step-by-step--get-ready-for-a-housing-inspection');
+		const page = findPage('sf.gov/get-ready-for-a-housing-inspection');
 		const id = 'whatToKnow.thingsToKnow.0';
 		expect(resolveField(page, id)!.value).toMatch(/may contact you/);
 		resolveField(page, id)!.set('Rewritten thing to know.');
@@ -262,7 +262,7 @@ describe('resolveField — extractCopy parity (Group D)', () => {
 	});
 
 	it('sections.<key>.steps.N.{title,button,buttonUrl}', () => {
-		const page = findPage('sf.gov/step-by-step--get-ready-for-a-housing-inspection');
+		const page = findPage('sf.gov/get-ready-for-a-housing-inspection');
 		const id = 'sections.before-the-inspector-arrives.steps.0.title';
 		expect(resolveField(page, id)!.value).toBe('Clear access to the reported area');
 		resolveField(page, id)!.set('Clear a path first.');
@@ -283,7 +283,7 @@ describe('resolveField — extractCopy parity (Group D)', () => {
 	});
 
 	it('sections.<key>.steps.N.text.J keeps the unverified flag through a write', () => {
-		const page = findPage('sf.gov/step-by-step--get-ready-for-a-housing-inspection');
+		const page = findPage('sf.gov/get-ready-for-a-housing-inspection');
 		const id = 'sections.before-the-inspector-arrives.steps.0.text.0';
 
 		const before = resolveField(page, id)!;
@@ -300,7 +300,7 @@ describe('resolveField — extractCopy parity (Group D)', () => {
 	});
 
 	it('sections.<key>.steps.N.bullets.J', () => {
-		const page = findPage('sf.gov/step-by-step--get-ready-for-a-housing-inspection');
+		const page = findPage('sf.gov/get-ready-for-a-housing-inspection');
 		const id = 'sections.before-the-inspector-arrives.steps.2.bullets.0';
 		expect(resolveField(page, id)!.value).toMatch(/Photos of the condition/);
 		resolveField(page, id)!.set('Rewritten bullet.');

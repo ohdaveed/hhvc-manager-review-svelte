@@ -45,9 +45,8 @@ export const filthReport = {
 					button: 'Report through 311',
 					karl: 'what_to_do -> Section. Section title: "Start your report". Section specifics: Text block (these 2 sentences) + Button link block ("Report through 311") + Callout block below. Keep the 311 action first.',
 					callout: {
-						title: 'Your report is confidential',
-						text: 'The City will never share your name or contact information with your landlord or property manager.',
-						karl: 'Callout block inside the "Start your report" Section specifics: single rich text field only, no separate title field like this mockup callout has. Fold "Your report is confidential" in as a bolded lead-in within the callout text, or flag for Digital Services if a distinct heading is actually needed.'
+						text: '**Your report is confidential.** The City will never share your name or contact information with your landlord or property manager.',
+						karl: 'Callout block inside the "Start your report" Section specifics: single rich text field only, no separate title field like this mockup callout has. The confidentiality line is the bolded lead-in of that one field, not a heading -- retype it exactly, bold included.'
 					}
 				},
 				{
@@ -110,7 +109,6 @@ export const filthReport = {
 				'You can ask 311 for a service request number so you can follow up later.'
 			],
 			callout: {
-				title: 'Mold from humidity or condensation',
 				text: 'You can use 311 to report mold caused by humidity or condensation inside a building. Describe where the mold is, how large the affected wall or ceiling area is, and what is causing moisture.',
 				karl: 'Callout block. Carries the mold-reporting path from the deleted standalone mold report page — mold from humidity or condensation stays reportable through the same 311 flow. The source page’s leak-versus-condensation responsibility language is intentionally not repeated because the SFDPH guidance says responsibility depends on the moisture cause.'
 			}

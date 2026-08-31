@@ -187,14 +187,14 @@ while the type was unconfirmed. Now each is a real choice:
 
 ## A. Type inconsistencies inside the corpus
 
-### A1. Four `step-by-step--` slugs are typed `Transaction`
+### A1. Four `` slugs are typed `Transaction`
 
-| Slug                                                                    | Type        |
-| ----------------------------------------------------------------------- | ----------- |
-| `sf.gov/step-by-step--get-ready-for-a-housing-inspection`               | Transaction |
-| `sf.gov/step-by-step--get-ready-for-a-follow-up-inspection`             | Transaction |
-| `sf.gov/step-by-step--fix-healthy-housing-and-vector-control-violation` | Transaction |
-| `sf.gov/step-by-step--tenant-steps-after-notice-of-violation`           | Transaction |
+| Slug                                                      | Type        |
+| --------------------------------------------------------- | ----------- |
+| `sf.gov/get-ready-for-a-housing-inspection`               | Transaction |
+| `sf.gov/get-ready-for-a-follow-up-inspection`             | Transaction |
+| `sf.gov/fix-healthy-housing-and-vector-control-violation` | Transaction |
+| `sf.gov/tenant-steps-after-notice-of-violation`           | Transaction |
 
 **Verified against `docs/karl-export-field-map.md`: "Step by step" IS a
 distinct Karl type** (`stepbystep`, line 145). The map already records the

@@ -42,7 +42,6 @@ export const inspectorLookup = {
 			button: 'Find your inspector',
 			buttonUrl: '#',
 			callout: {
-				title: 'Lookup destination not yet confirmed',
 				text: 'This button is a placeholder until HHVC confirms the real lookup tool and entry point.',
 				variant: 'note'
 			}
