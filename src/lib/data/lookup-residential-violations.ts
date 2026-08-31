@@ -34,21 +34,21 @@ export const findViolations = {
 	},
 	sections: [
 		{
-			heading: 'What you can search',
-			karl: 'Best real-schema fit: a things_to_know entry (Title = this heading, Text = the two paragraphs below).',
-			kind: 'body',
-			paragraphs: [
-				'Search by address or record ID to see investigated complaints, inspections, and health code violations tied to a residential property.',
-				'This is the same Environmental Health lookup tool used for complaint and inspection history.'
-			]
-		},
-		{
 			heading: 'Open the violation lookup',
 			karl: 'what_to_do -> Section. Section title: "Open the violation lookup". Section specifics: Text block (this paragraph) + Button link block (External URL radio, target = the xnet URL).',
 			kind: 'body',
 			paragraphs: ['You will leave SF.gov to use the Department of Public Health records site.'],
 			button: 'Search violations',
 			buttonUrl: 'https://xnet.sfdph.org:8443/ords/eeop/f?p=119:1'
+		},
+		{
+			heading: 'What you can search',
+			karl: "custom_section -> title_and_text. Title = this heading, Text = the copy below. MOVED OUT OF things_to_know 2026-08-31, option (b): with this section the page claimed 3 things_to_know entries against the Help Center's two-item guidance, and the panel already holds the 2 What-to-know entries. custom_section is the same title_and_text block, repeatable with no recorded cap, so every word is kept and nothing is cut. PLACEMENT CONSEQUENCE, for the editor to judge: custom_section renders AFTER what_to_do and supporting_information, so this section now sits below them rather than above — things_to_know would have placed it above what_to_do. If that reading order matters more than the guidance, revert to option (a) and let the panel run to 3. PRIOR MAPPING, kept for the record: Best real-schema fit: a things_to_know entry (Title = this heading, Text = the two paragraphs below).",
+			kind: 'body',
+			paragraphs: [
+				'Search by address or record ID to see investigated complaints, inspections, and health code violations tied to a residential property.',
+				'This is the same Environmental Health lookup tool used for complaint and inspection history.'
+			]
 		},
 		{
 			heading: 'Related pages',

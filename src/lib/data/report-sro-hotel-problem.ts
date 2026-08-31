@@ -24,19 +24,6 @@ export const sroHotelReport = {
 	},
 	sections: [
 		{
-			heading: 'What this covers',
-			karl: "Best real-schema fit: a things_to_know entry (Title = this heading, Text = the paragraph below). Scope explainer mirrors findHotelRecords' framing of a separate program dataset for this housing type.",
-			kind: 'body',
-			paragraphs: [
-				{
-					text: 'Environmental Health reviews pest, garbage, and housing health reports for residential hotels, SROs, and shelters, including shared kitchens, bathrooms, and garbage areas.',
-					unverified: true,
-					unverifiedReason:
-						'Whether this report routes through the same 311 intake as rodentsReport/filthReport/insectsReport, or a separate SRO/hotel-specific intake, has no tier-1 source. Confirm with HHVC before publication.'
-				}
-			]
-		},
-		{
 			heading: 'What to do',
 			karl: 'what_to_do StreamField. Each step below = one Section block (section_title + section_specifics), mirroring insectsReport\'s "Start your report" / "Tell us where the problem is" shape.',
 			kind: 'body',
@@ -60,6 +47,19 @@ export const sroHotelReport = {
 						'**Your contact info:** Leave your name and phone number or email if you want an inspector to reach out to you.'
 					],
 					karl: 'what_to_do -> Section. Section title: "Tell us where the problem is". Section specifics: Text block (intro sentence) + bulleted checklist, mirroring insectsReport\'s equivalent step.'
+				}
+			]
+		},
+		{
+			heading: 'What this covers',
+			karl: "custom_section -> title_and_text. Title = this heading, Text = the copy below. MOVED OUT OF things_to_know 2026-08-31, option (b): with this section the page claimed 3 things_to_know entries against the Help Center's two-item guidance, and the panel already holds the 2 What-to-know entries. custom_section is the same title_and_text block, repeatable with no recorded cap, so every word is kept and nothing is cut. PLACEMENT CONSEQUENCE, for the editor to judge: custom_section renders AFTER what_to_do and supporting_information, so this section now sits below them rather than above — things_to_know would have placed it above what_to_do. If that reading order matters more than the guidance, revert to option (a) and let the panel run to 3. PRIOR MAPPING, kept for the record: Best real-schema fit: a things_to_know entry (Title = this heading, Text = the paragraph below). Scope explainer mirrors findHotelRecords' framing of a separate program dataset for this housing type.",
+			kind: 'body',
+			paragraphs: [
+				{
+					text: 'Environmental Health reviews pest, garbage, and housing health reports for residential hotels, SROs, and shelters, including shared kitchens, bathrooms, and garbage areas.',
+					unverified: true,
+					unverifiedReason:
+						'Whether this report routes through the same 311 intake as rodentsReport/filthReport/insectsReport, or a separate SRO/hotel-specific intake, has no tier-1 source. Confirm with HHVC before publication.'
 				}
 			]
 		},

@@ -33,18 +33,6 @@ export const findHotelRecords = {
 	},
 	sections: [
 		{
-			heading: 'What this tool covers',
-			karl: 'Best real-schema fit: a things_to_know entry (Title = this heading, Text = the paragraphs). Resolved schema gap: things_to_know is Title + Text only, no nested callout — folded the audience-guidance callout below into the Text field.',
-			kind: 'body',
-			paragraphs: [
-				'Environmental Health inspects residential hotels, SROs, shelters, and related housing programs under separate datasets from the general residential complaint search.',
-				'Use this page when you need records for a residential hotel, SRO, or shelter rather than a standard apartment or mixed-use building.'
-			],
-			bullets: [
-				'**Note:** If you are staying at a regular tourist hotel, you may still use the general complaints and inspection lookup. Residential hotel and shelter records use a different program dataset.'
-			]
-		},
-		{
 			heading: 'Open the lookup tool',
 			karl: 'what_to_do -> Section. Section title: "Open the lookup tool". Section specifics: Text block (this paragraph) + Button link block (External URL radio, target = the sfdph.org URL). No callout in this section.',
 			kind: 'body',
@@ -53,6 +41,18 @@ export const findHotelRecords = {
 			],
 			button: 'Open hotel lookup',
 			buttonUrl: 'https://sfdph.org/dph/EH/ResidentialHotels/default.asp'
+		},
+		{
+			heading: 'What this tool covers',
+			karl: "custom_section -> title_and_text. Title = this heading, Text = the copy below. MOVED OUT OF things_to_know 2026-08-31, option (b): with this section the page claimed 3 things_to_know entries against the Help Center's two-item guidance, and the panel already holds the 2 What-to-know entries. custom_section is the same title_and_text block, repeatable with no recorded cap, so every word is kept and nothing is cut. PLACEMENT CONSEQUENCE, for the editor to judge: custom_section renders AFTER what_to_do and supporting_information, so this section now sits below them rather than above — things_to_know would have placed it above what_to_do. If that reading order matters more than the guidance, revert to option (a) and let the panel run to 3. PRIOR MAPPING, kept for the record: Best real-schema fit: a things_to_know entry (Title = this heading, Text = the paragraphs). Resolved schema gap: things_to_know is Title + Text only, no nested callout — folded the audience-guidance callout below into the Text field.",
+			kind: 'body',
+			paragraphs: [
+				'Environmental Health inspects residential hotels, SROs, shelters, and related housing programs under separate datasets from the general residential complaint search.',
+				'Use this page when you need records for a residential hotel, SRO, or shelter rather than a standard apartment or mixed-use building.'
+			],
+			bullets: [
+				'**Note:** If you are staying at a regular tourist hotel, you may still use the general complaints and inspection lookup. Residential hotel and shelter records use a different program dataset.'
+			]
 		},
 		{
 			heading: 'Related pages',
