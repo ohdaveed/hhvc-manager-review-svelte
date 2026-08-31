@@ -34,6 +34,21 @@ export const findRecords = {
 	},
 	sections: [
 		{
+			heading: 'What you can look up',
+			karl: 'Best real-schema fit: a things_to_know entry (Title = this heading, Text = the two paragraphs plus the bulleted list below). THINGS TO KNOW COUNT — OPTION (a), CHOSEN DELIBERATELY 2026-08-31: with this section the page carries 3 things_to_know entries, one past the Karl Help Center guidance of two. That is a decision, not an oversight. things_to_know has no schema maximum, so the page builds and publishes. The alternative was custom_section, which is uncapped and holds the same title_and_text block — it was built that way and reverted, because custom_section renders AFTER what_to_do while things_to_know renders BEFORE it, and this section is a scope explainer that has to reach the reader before the action, not after it. Reading order was judged worth the one-item overage. To revisit: move this to custom_section and accept it sitting below the action, or fold it into one of the two What-to-know entries.',
+			kind: 'body',
+			paragraphs: [
+				'Use the Environmental Health lookup tool to search investigated complaints and inspections tied to a street address, complaint ID, or location ID.',
+				'The tool shows about five years of investigated complaint and inspection activity for residential health code enforcement.'
+			],
+			bullets: [
+				'Street address searches',
+				'Complaint ID or location ID searches',
+				'Past inspections and violation history',
+				'Complaint status for investigated cases'
+			]
+		},
+		{
 			heading: 'Open the lookup tool',
 			karl: 'what_to_do -> Section. Section title: "Open the lookup tool". Section specifics: Text block (this paragraph) + Button link block (External URL radio, target = the xnet URL) + Callout block below.',
 			kind: 'body',
@@ -46,21 +61,6 @@ export const findRecords = {
 			},
 			button: 'Open lookup tool',
 			buttonUrl: 'https://xnet.sfdph.org:8443/ords/eeop/f?p=119:1'
-		},
-		{
-			heading: 'What you can look up',
-			karl: "custom_section -> title_and_text. Title = this heading, Text = the copy below. MOVED OUT OF things_to_know 2026-08-31, option (b): with this section the page claimed 3 things_to_know entries against the Help Center's two-item guidance, and the panel already holds the 2 What-to-know entries. custom_section is the same title_and_text block, repeatable with no recorded cap, so every word is kept and nothing is cut. PLACEMENT CONSEQUENCE, for the editor to judge: custom_section renders AFTER what_to_do and supporting_information, so this section now sits below them rather than above — things_to_know would have placed it above what_to_do. If that reading order matters more than the guidance, revert to option (a) and let the panel run to 3. PRIOR MAPPING, kept for the record: Best real-schema fit: a things_to_know entry (Title = this heading, Text = the two paragraphs plus the bulleted list below).",
-			kind: 'body',
-			paragraphs: [
-				'Use the Environmental Health lookup tool to search investigated complaints and inspections tied to a street address, complaint ID, or location ID.',
-				'The tool shows about five years of investigated complaint and inspection activity for residential health code enforcement.'
-			],
-			bullets: [
-				'Street address searches',
-				'Complaint ID or location ID searches',
-				'Past inspections and violation history',
-				'Complaint status for investigated cases'
-			]
 		},
 		{
 			heading: 'If you need to report a new problem',
