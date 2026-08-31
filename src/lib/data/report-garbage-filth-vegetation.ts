@@ -96,40 +96,6 @@ export const filthReport = {
 			]
 		},
 		{
-			heading: 'Get help making your report',
-			karl: 'Best real-schema fit: one things_to_know entry (confirmed repeatable, no hard schema max — but Karl\'s own editorial guidance recommends keeping this section to 2 items or fewer; this page uses one, so it\'s within guidance). Title: "Get help making your report". Text: the paragraph + bulleted list below (third-party reporting, language access, privacy). Open question for Digital Services: things_to_know renders ABOVE what_to_do on the real form, so this content may need to move earlier on the live page even though it stays here in this mockup draft.',
-			kind: 'body',
-			paragraphs: [
-				'You can make a report even if you are not the tenant. A friend, family member, advocate, or helper can report for someone else.'
-			],
-			bullets: [
-				'You can ask 311 for help in your language.',
-				'You do not have to give your name to make a report.',
-				'HHVC does not share the reporter’s identity with the property owner or manager.',
-				'You can ask 311 for a service request number so you can follow up later.'
-			],
-			callout: {
-				text: 'You can use 311 to report mold caused by humidity or condensation inside a building. Describe where the mold is, how large the affected wall or ceiling area is, and what is causing moisture.',
-				karl: 'Callout block. Carries the mold-reporting path from the deleted standalone mold report page — mold from humidity or condensation stays reportable through the same 311 flow. The source page’s leak-versus-condensation responsibility language is intentionally not repeated because the SFDPH guidance says responsibility depends on the moisture cause.'
-			}
-		},
-		{
-			heading: 'How your report is processed',
-			karl: 'Best real-schema fit: a second things_to_know entry. Title: "How your report is processed". Text: the bulleted list below (after-report expectations, weekday processing note, enforcement statement, tenant rights note, and the Health Code Article 11 property-owner-obligation summary required by HHVC content standards Ch. 8.7.1). Same ordering caveat as the section above — things_to_know sits before what_to_do on the real form. Secondary Button link block ("View Article 11") citing the municipal code per Ch. 8.7.2.',
-			kind: 'body',
-			bullets: [
-				'**Review time:** It can take a few weekdays for 311 to send your report to Environmental Health and assign an inspector.',
-				'**If you gave contact information:** An inspector may reach out to ask questions or schedule a visit.',
-				'**If you reported anonymously:** An inspector may still visit the property without notice—especially if there is an urgent safety or health risk.',
-				'**If we find a problem:** The City can order the property owner or responsible party to fix the violation.',
-				'**Note:** Tenants have rights to safe and habitable housing. A property owner or manager cannot retaliate because a tenant reports housing conditions to the City.',
-				'Under San Francisco Health Code Article 11, property owners must not let trash, filth, animal waste, or overgrown plants build up in a way that shelters pests or creates a health hazard.'
-			],
-			button: 'View Article 11',
-			buttonUrl: 'https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890',
-			buttonStyle: 'secondary'
-		},
-		{
 			heading: 'While you wait: tips to help with the problem',
 			karl: 'Maps to supporting_information (Accordions). This accordion uses the mockup-only open flag so the tips are visible without a click — flag for Digital Services that the real accordion renders collapsed. Contents: one Text block (lead paragraph + IPM bullets) + a Resources-style external links list (UC IPM, EPA, CDC, NEHA). Manager directive: set the response-time expectation, then give simple integrated pest management steps people can start on their own.',
 			kind: 'body',
@@ -172,6 +138,40 @@ export const filthReport = {
 					karl: 'External link inside the supporting_information accordion. Third-party NEHA reference.'
 				}
 			]
+		},
+		{
+			heading: 'Get help making your report',
+			karl: "custom_section -> title_and_text. Title = this heading, Text = the copy below. MOVED OUT OF things_to_know 2026-08-31, option (b): with this section the page claimed 4 things_to_know entries against the Help Center's two-item guidance, and the panel already holds the 2 What-to-know entries. custom_section is the same title_and_text block, repeatable with no recorded cap, so every word is kept and nothing is cut. PLACEMENT CONSEQUENCE, for the editor to judge: custom_section renders AFTER what_to_do and supporting_information, so this section now sits below them rather than above — things_to_know would have placed it above what_to_do. If that reading order matters more than the guidance, revert to option (a) and let the panel run to 4. PRIOR MAPPING, kept for the record: Best real-schema fit: one things_to_know entry (confirmed repeatable, no hard schema max — but Karl's own editorial guidance recommends keeping this section to 2 items or fewer; this page uses one, so it's within guidance). Title: \"Get help making your report\". Text: the paragraph + bulleted list below (third-party reporting, language access, privacy). Open question for Digital Services: things_to_know renders ABOVE what_to_do on the real form, so this content may need to move earlier on the live page even though it stays here in this mockup draft.",
+			kind: 'body',
+			paragraphs: [
+				'You can make a report even if you are not the tenant. A friend, family member, advocate, or helper can report for someone else.'
+			],
+			bullets: [
+				'You can ask 311 for help in your language.',
+				'You do not have to give your name to make a report.',
+				'HHVC does not share the reporter’s identity with the property owner or manager.',
+				'You can ask 311 for a service request number so you can follow up later.'
+			],
+			callout: {
+				text: 'You can use 311 to report mold caused by humidity or condensation inside a building. Describe where the mold is, how large the affected wall or ceiling area is, and what is causing moisture.',
+				karl: 'Callout block. Carries the mold-reporting path from the deleted standalone mold report page — mold from humidity or condensation stays reportable through the same 311 flow. The source page’s leak-versus-condensation responsibility language is intentionally not repeated because the SFDPH guidance says responsibility depends on the moisture cause.'
+			}
+		},
+		{
+			heading: 'How your report is processed',
+			karl: 'custom_section -> title_and_text. Title = this heading, Text = the copy below. MOVED OUT OF things_to_know 2026-08-31, option (b): with this section the page claimed 4 things_to_know entries against the Help Center\'s two-item guidance, and the panel already holds the 2 What-to-know entries. custom_section is the same title_and_text block, repeatable with no recorded cap, so every word is kept and nothing is cut. PLACEMENT CONSEQUENCE, for the editor to judge: custom_section renders AFTER what_to_do and supporting_information, so this section now sits below them rather than above — things_to_know would have placed it above what_to_do. If that reading order matters more than the guidance, revert to option (a) and let the panel run to 4. PRIOR MAPPING, kept for the record: Best real-schema fit: a second things_to_know entry. Title: "How your report is processed". Text: the bulleted list below (after-report expectations, weekday processing note, enforcement statement, tenant rights note, and the Health Code Article 11 property-owner-obligation summary required by HHVC content standards Ch. 8.7.1). Same ordering caveat as the section above — things_to_know sits before what_to_do on the real form. Secondary Button link block ("View Article 11") citing the municipal code per Ch. 8.7.2.',
+			kind: 'body',
+			bullets: [
+				'**Review time:** It can take a few weekdays for 311 to send your report to Environmental Health and assign an inspector.',
+				'**If you gave contact information:** An inspector may reach out to ask questions or schedule a visit.',
+				'**If you reported anonymously:** An inspector may still visit the property without notice—especially if there is an urgent safety or health risk.',
+				'**If we find a problem:** The City can order the property owner or responsible party to fix the violation.',
+				'**Note:** Tenants have rights to safe and habitable housing. A property owner or manager cannot retaliate because a tenant reports housing conditions to the City.',
+				'Under San Francisco Health Code Article 11, property owners must not let trash, filth, animal waste, or overgrown plants build up in a way that shelters pests or creates a health hazard.'
+			],
+			button: 'View Article 11',
+			buttonUrl: 'https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890',
+			buttonStyle: 'secondary'
 		},
 		{
 			heading: 'Related pages',

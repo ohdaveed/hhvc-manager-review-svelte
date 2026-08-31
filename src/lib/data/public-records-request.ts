@@ -32,7 +32,7 @@ export const publicRecords = {
 	sections: [
 		{
 			heading: 'Before you request records',
-			karl: 'Best real-schema fit: a things_to_know entry (Title = this heading, Text = the two paragraphs plus the bulleted list below).',
+			karl: 'Best real-schema fit: a things_to_know entry (Title = this heading, Text = the two paragraphs plus the bulleted list below). THINGS TO KNOW COUNT — OPTION (a), CHOSEN DELIBERATELY 2026-08-31: with this section the page carries 3 things_to_know entries, one past the Karl Help Center guidance of two. That is a decision, not an oversight. things_to_know has no schema maximum, so the page builds and publishes. The alternative was custom_section, which is uncapped and holds the same title_and_text block — it was built that way and reverted, because custom_section renders AFTER what_to_do while things_to_know renders BEFORE it, and this section is a scope explainer that has to reach the reader before the action, not after it. Reading order was judged worth the one-item overage. To revisit: move this to custom_section and accept it sitting below the action, or fold it into one of the two What-to-know entries.',
 			kind: 'body',
 			paragraphs: [
 				'Many complaint and inspection records are already available through the online lookup tools.',
