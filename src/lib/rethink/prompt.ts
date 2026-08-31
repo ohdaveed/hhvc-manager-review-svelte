@@ -39,6 +39,16 @@ const hasNestedStructure = (section: { steps?: unknown; cards?: unknown } | unde
 	return nonEmpty(section?.steps) || nonEmpty(section?.cards);
 };
 
+// Karl annotations can contain editorial audit history that is useful in the
+// corpus but not as model guidance. Keep the current mapping and a small,
+// bounded amount of any remaining guidance so the corpus index retains room in
+// the backend prompt budget.
+const getPromptKarl = (karl: unknown): string => {
+	if (typeof karl !== 'string') return '(none recorded)';
+	const currentMapping = karl.split('MOVED OUT OF', 1)[0].trim();
+	return currentMapping.slice(0, 300);
+};
+
 export function buildRethinkPrompt({
 	page,
 	sectionKey,
@@ -81,7 +91,7 @@ export function buildRethinkPrompt({
 		'',
 		readingLine,
 		'',
-		`Section Karl mapping: ${typeof section.karl === 'string' ? section.karl : '(none recorded)'}`,
+		`Section Karl mapping: ${getPromptKarl(section.karl)}`,
 		'',
 		instruction ? `What the reviewer wants from this section: ${instruction}` : '',
 		'',
