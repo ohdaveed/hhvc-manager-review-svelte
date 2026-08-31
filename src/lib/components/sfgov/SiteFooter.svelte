@@ -5,7 +5,7 @@
 </script>
 
 <footer class="bg-sfds-blue-dark text-white">
-	<div class="grid grid-cols-[1.5fr_1fr_1fr_1.1fr] gap-6 px-8 pt-10 pb-7">
+	<div class="footer-grid grid grid-cols-[1.5fr_1fr_1fr_1.1fr] gap-6 px-8 pt-10 pb-7">
 		<div>
 			<img
 				src="/sfgov/Lockup_CCSF_White.png"
@@ -66,3 +66,27 @@
 		<img src="/sfgov/Illustration-Right.svg" alt="" class="block h-[92px] w-auto flex-none" />
 	</div>
 </footer>
+
+<style>
+	/* Queries the `mockup` frame declared in src/routes/review/+layout.svelte,
+	   not the viewport. The mockup renders inside a pane far narrower than the
+	   window -- at a 1280px window this footer is ~540px wide while
+	   `@media (max-width: 900px)` still reports desktop -- so a viewport query
+	   would keep four columns at phone width and never fire. The whole point of
+	   the mockup is to show what the built page does, and four 1fr columns in
+	   540px is not what SF.gov does.
+
+	   Two steps rather than one: sf.gov pairs the columns before stacking them,
+	   so the logo block keeps a partner beside it down to tablet. */
+	@container mockup (max-width: 900px) {
+		.footer-grid {
+			grid-template-columns: 1fr 1fr;
+		}
+	}
+
+	@container mockup (max-width: 560px) {
+		.footer-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

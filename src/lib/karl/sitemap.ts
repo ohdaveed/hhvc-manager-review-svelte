@@ -37,6 +37,9 @@ export type SitemapLink = {
 	cardTitle: string;
 	/** The section the card sits in, for locating it on the page. */
 	sectionHeading: string;
+	/** The section's `component`, e.g. `related`, `services`. Needed because
+	    the O3 restriction applies to Related panels only. */
+	component: string;
 	publishes: Publishes;
 };
 
@@ -101,6 +104,7 @@ export function buildSitemap(pages: AnyPage[]): SitemapEntry[] {
 					type: String(dest?.type ?? ''),
 					cardTitle: String(card.title ?? ''),
 					sectionHeading: String(section.heading ?? ''),
+					component: String(section.component ?? ''),
 					publishes
 				});
 			}
@@ -139,4 +143,91 @@ export function typeBreakdown(pages: AnyPage[]): string {
 		.sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
 		.map(([type, n]) => `${n} ${type}`)
 		.join(' · ');
+}
+
+/**
+ * The four content types a Related panel may point at (`O3`).
+ *
+ * From the Karl Help Center via `docs/karl-export-field-map.md`. The live
+ * picker is *unrestricted* -- `KARL_PANELS` records the Related block as a
+ * "page chooser, unrestricted", and a Campaign picker was observed returning a
+ * Resource Collection page -- but the 2026-08-23 precedence reversal makes the
+ * Help Center govern, so the four-type restriction stands and the permissive
+ * form is a gap in the form. Do not "correct" this list against the picker.
+ *
+ * `Topic` is easy to delete from this list by mistake, so: it is a real
+ * content type, and it is missing from the Help Center's "Choosing a content
+ * type" page because that page is editorial guidance on which type to pick for
+ * a new public page, not an inventory of the form. Topic is a **sitewide**
+ * page -- "collects content around a common theme, across multiple
+ * departments" -- and "only DS admin can add a new sitewide page" governs
+ * whether it GOES LIVE, not whether it can be built: Karl offers Topic in the
+ * add-page form like any other type, which is why `KARL_NAV` carries
+ * `New: Topic -> Content` for it exactly as it does for Agency. A reviewer can
+ * therefore design and walk through a Topic mockup; publishing is the step
+ * that needs Digital Services.
+ * Confirmed 2026-08-30 by reading Karl's own "Create a page" dashboard, which
+ * offers Topic alongside sixteen other types. Prefer that form to the Help
+ * Center, which is incomplete: it documents fifteen types, omits `Form` and
+ * `Document Collection Search` entirely, and calls this corpus's `About us`
+ * type `About`.
+ */
+export const RELATED_PERMITTED_TYPES = ['Transaction', 'Information', 'Campaign', 'Topic'];
+
+/**
+ * Related cards pointing at a type Karl's Related panel may not hold.
+ *
+ * Only `live` targets are judged: a card whose target names no page in the
+ * corpus has no type to check, and is a broken link rather than an O3
+ * violation. Reporting it here would file one defect under another's name.
+ */
+export function findRelatedTypeViolations(
+	entries: SitemapEntry[]
+): { from: string; link: SitemapLink }[] {
+	const violations: { from: string; link: SitemapLink }[] = [];
+	for (const entry of entries) {
+		for (const link of entry.outgoing) {
+			if (link.component !== 'related' || !link.live) continue;
+			if (!RELATED_PERMITTED_TYPES.includes(link.type)) violations.push({ from: entry.id, link });
+		}
+	}
+	return violations;
+}
+
+/**
+ * Pages a reader cannot reach by walking out from the hubs.
+ *
+ * A hub is an Agency or Topic page -- the two SF.gov types whose job is to
+ * route to other pages, and (measured on this corpus) exactly the two pages
+ * carrying a `services` listing. The predicate is a parameter rather than a
+ * constant so a corpus that grows a third routing type does not need this
+ * function reopened.
+ *
+ * Reachability, not `incoming === 0`. The weaker test passes a page linked
+ * only from another orphan: a pair of unreachable pages pointing at each other
+ * both have an incoming link and neither can be found from anywhere a reader
+ * starts. Walking out from the hubs is the question the UI actually asks --
+ * "not linked from any hub".
+ */
+export function findOrphans(
+	entries: SitemapEntry[],
+	isHub: (entry: SitemapEntry) => boolean = (entry) =>
+		entry.type === 'Agency' || entry.type === 'Topic'
+): SitemapEntry[] {
+	const byId = new Map(entries.map((entry) => [entry.id, entry]));
+	const reached = new Set<string>();
+	const queue = entries.filter(isHub);
+
+	for (const hub of queue) reached.add(hub.id);
+	while (queue.length) {
+		const entry = queue.shift()!;
+		for (const link of entry.outgoing) {
+			if (!link.id || reached.has(link.id)) continue;
+			reached.add(link.id);
+			const next = byId.get(link.id);
+			if (next) queue.push(next);
+		}
+	}
+
+	return entries.filter((entry) => !reached.has(entry.id));
 }

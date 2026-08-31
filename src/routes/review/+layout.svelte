@@ -107,14 +107,14 @@
      rails are 52px (design 2a) — the buttons live here, the rail contents are
      the 2a pass. -->
 <div
-	class="grid h-screen w-full overflow-hidden bg-muted/40"
+	class="review-shell grid h-screen w-full overflow-hidden bg-muted/40"
 	style="grid-template-columns: {pageStore.railCollapsed.queue ? '52px' : '280px'} 1fr {pageStore
 		.railCollapsed.panel
 		? '52px'
 		: '380px'}"
 >
 	<!-- Left Sidebar: Global Navigation & Review Queue -->
-	<aside class="flex h-full min-w-0 flex-col border-r bg-background">
+	<aside class="queue-rail flex h-full min-w-0 flex-col border-r bg-background">
 		{#if pageStore.railCollapsed.queue}
 			<div class="flex flex-col items-center gap-4 py-3.5">
 				<Button
@@ -293,8 +293,21 @@
 					<!-- `overflow-hidden` so the footer's two illustrations clip at the
 				     rounded corners instead of squaring them off; they are laid out
 				     flush to the left and right edges. -->
+					<!-- The frame is a named CONTAINER, and that is what makes the
+				     mockup honest. SF.gov's own components reflow on
+				     `@media (max-width: 900px)` -- the VIEWPORT -- but the mockup
+				     lives in a pane far narrower than the window: at a 1280px
+				     viewport this frame is ~620px while both media queries still
+				     report desktop, so the mockup rendered a desktop layout at
+				     phone width and never showed the tablet or mobile view at any
+				     window size. Querying the frame instead ties the reflow to the
+				     space the page actually has.
+				     `max-width` scales with the pane rather than sitting at 880px,
+				     so a wide monitor shows a wide page instead of a narrow card in
+				     a field of grey. 1440px is the ceiling because beyond it SF.gov
+				     only adds gutter, not layout. -->
 					<figure
-						class="w-full max-w-[880px] self-start overflow-hidden rounded-[4px] border border-gray-200 bg-white shadow-[0_2px_4px_rgba(12,20,100,.06),0_4px_12px_rgba(12,20,100,.1)]"
+						class="mockup-frame w-full self-start overflow-hidden rounded-[4px] border border-gray-200 bg-white shadow-[0_2px_4px_rgba(12,20,100,.06),0_4px_12px_rgba(12,20,100,.1)]"
 					>
 						<SiteHeader />
 
@@ -302,7 +315,7 @@
 					     is the design's measure, not the previous uniform 32px: SF.gov
 					     body copy is set to a fixed reading width, and the chrome above
 					     and below is full-bleed, which is why it sits outside here. -->
-						<div id="mockPage" class="px-8 py-10">
+						<div id="mockPage" class="mock-page">
 							<div class="mx-auto max-w-[760px]">
 								{@render children()}
 							</div>
@@ -316,7 +329,7 @@
 	</main>
 
 	<!-- Right Sidebar: Contextual Manager Review & Checks -->
-	<section class="flex h-full min-w-0 flex-col overflow-hidden border-l bg-background">
+	<section class="panel-rail flex h-full min-w-0 flex-col overflow-hidden border-l bg-background">
 		{#if pageStore.railCollapsed.panel}
 			<div class="flex flex-col items-center gap-4 py-3.5">
 				<Button
@@ -346,3 +359,57 @@
 		{/if}
 	</section>
 </div>
+
+<style>
+	/* The mockup frame is the container every SF.gov component inside it
+	   queries. `inline-size` rather than `size`: only width drives SF.gov's
+	   reflow, and `size` would require the frame to carry an explicit height,
+	   which it does not -- it grows with its content so the footer stays
+	   reachable by scrolling. */
+	.mockup-frame {
+		container: mockup / inline-size;
+		max-width: 1440px;
+	}
+
+	/* 40px/32px around the reading column is the design's measure at desktop.
+	   It cannot stay fixed once the frame can be phone-width: 32px of padding
+	   either side of a 390px frame leaves 326px of copy. Scaling the padding
+	   with the container keeps the proportion and stops the column being
+	   crushed, while `clamp` holds it between a usable minimum and the value
+	   the design specifies. */
+	.mock-page {
+		padding-block: clamp(1.25rem, 4cqi, 2.5rem);
+		padding-inline: clamp(1rem, 3.5cqi, 2rem);
+	}
+
+	/* The rails are viewport business, not container business, and this is the
+	   one place a media query is still right: whether a 280px queue and a 380px
+	   panel can be afforded depends on the real device, not on any element.
+	   Below 1024px they cannot -- at a 390px viewport the two rails claimed
+	   660px and squeezed the mockup frame to 2px, so the mockup could never
+	   reach its own mobile layout however narrow the window got.
+
+	   Hidden rather than shrunk. Both rails already have toggles
+	   (`pageStore.toggleRail`), so the controls are not lost; a 130px queue
+	   would be neither usable nor honest about the space. */
+	@media (max-width: 1024px) {
+		/* The grid template is an inline style, because the rail widths are
+		   reactive state (`pageStore.railCollapsed`). `!important` is what
+		   overrides an inline declaration from a stylesheet, and this is the
+		   case it exists for -- there is no selector specificity that beats
+		   inline otherwise.
+
+		   Collapsing the template is required, not merely tidy: `display: none`
+		   removes the rails but leaves their grid TRACKS, so at a 390px
+		   viewport the canvas still measured 280px and the mockup frame 201px.
+		   The rails have to stop reserving width, not just stop painting. */
+		.review-shell {
+			grid-template-columns: 1fr !important;
+		}
+
+		.queue-rail,
+		.panel-rail {
+			display: none;
+		}
+	}
+</style>
