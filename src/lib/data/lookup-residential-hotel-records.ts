@@ -34,7 +34,7 @@ export const findHotelRecords = {
 	sections: [
 		{
 			heading: 'What this tool covers',
-			karl: 'Best real-schema fit: a things_to_know entry (Title = this heading, Text = the paragraphs). Resolved schema gap: things_to_know is Title + Text only, no nested callout — folded the audience-guidance callout below into the Text field.',
+			karl: 'Best real-schema fit: a things_to_know entry (Title = this heading, Text = the paragraphs). Resolved schema gap: things_to_know is Title + Text only, no nested callout — folded the audience-guidance callout below into the Text field. THINGS TO KNOW COUNT — OPTION (a), CHOSEN DELIBERATELY 2026-08-31: with this section the page carries 3 things_to_know entries, one past the Karl Help Center guidance of two. That is a decision, not an oversight. things_to_know has no schema maximum, so the page builds and publishes. The alternative was custom_section, which is uncapped and holds the same title_and_text block — it was built that way and reverted, because custom_section renders AFTER what_to_do while things_to_know renders BEFORE it, and this section is a scope explainer that has to reach the reader before the action, not after it. Reading order was judged worth the one-item overage. To revisit: move this to custom_section and accept it sitting below the action, or fold it into one of the two What-to-know entries.',
 			kind: 'body',
 			paragraphs: [
 				'Environmental Health inspects residential hotels, SROs, shelters, and related housing programs under separate datasets from the general residential complaint search.',
