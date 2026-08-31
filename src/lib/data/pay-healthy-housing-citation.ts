@@ -52,7 +52,7 @@ export const payCitation = {
 						'Quote the case or notice number so the payment reaches the right case.',
 						'[Environmental Health office](ehOffice)'
 					],
-					karl: 'Section 2. Transaction link: none until a confirmed payment destination exists. The Location page is linked for the in-person and postal route rather than an address being restated here.'
+					karl: 'Section 2. No outbound link until a confirmed payment destination exists; on Transaction that link is placed with the rich-text Link tool inside Section specifics, not by a per-step chooser. The Location page is linked for the in-person and postal route rather than an address being restated here.'
 				},
 				{
 					title: 'Correct the condition as well',

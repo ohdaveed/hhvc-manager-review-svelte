@@ -67,7 +67,7 @@ export const tenantNoticeSteps = {
 		},
 		{
 			heading: 'Know your rights during this process',
-			karl: 'Maps to an "Information section" -> Title and text block. Reuses noticeOfViolation\'s already-verified habitability statement rather than restating it as new unverified content.',
+			karl: "Maps to Custom Section -> Title and text block, which is the Title-and-text home on Transaction. Reuses noticeOfViolation's already-verified habitability statement rather than restating it as new unverified content.",
 			kind: 'body',
 			paragraphs: [
 				'A Notice of Violation does not change your right to safe and habitable housing.'

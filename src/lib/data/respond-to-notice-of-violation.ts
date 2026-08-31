@@ -13,7 +13,7 @@ export const noticeOfViolation = {
 	],
 	reading: 'Grade 7',
 	editorNote:
-		'Transaction page modeled on the live Karl Transaction editor: Primary agency, Description, Intro, then repeatable Steps. Each Step has a number/or type, title, optional flag, cost, time, rich-text description, and optional Transaction link. This HHVC page uses sequential numbered steps and deliberately leaves the optional, cost, time, and Transaction-link fields blank. The workflow is supported by the Article 11 Interpretation Guide v1.0 and the Vegetation Overgrowth Notice. Do not add DBI permit, appeal, or abatement-order requirements here without HHVC and legal review; those processes belong to DBI and are not established for this HHVC flow.',
+		'Transaction page modeled on the live Karl Transaction editor: Primary agency, Description, Things to Know, then the repeatable What to Do panel. Each mockup step becomes one Section with a Section title and one Text block in Section specifics. Transaction carries no per-step cost, time or optional flag, and no per-step page link, so an outbound link is placed with the rich-text Link tool inside Section specifics. The workflow is supported by the Article 11 Interpretation Guide v1.0 and the Vegetation Overgrowth Notice. Do not add DBI permit, appeal, or abatement-order requirements here without HHVC and legal review; those processes belong to DBI and are not established for this HHVC flow.',
 	editorStatus: 'needs-review',
 	whatToKnow: {
 		cost: 'Free',
@@ -37,7 +37,7 @@ export const noticeOfViolation = {
 	sections: [
 		{
 			heading: 'What to do',
-			karl: 'Maps to the Transaction editor’s repeatable Steps field, not an Information-section stream. Each mockup step below becomes one Step with type "number", a Title, and a rich-text Step description. Optional, Cost, Time, and Transaction link remain blank unless HHVC supplies case-independent values or a confirmed related Transaction.',
+			karl: 'Maps to the repeatable What to Do panel. Each mockup step below becomes one Section with a Section title and one Text block in Section specifics. Transaction carries no per-step cost, time or optional flag, and no per-step page link: a link to a related page is placed with the rich-text Link tool inside Section specifics.',
 			kind: 'body',
 			steps: [
 				{

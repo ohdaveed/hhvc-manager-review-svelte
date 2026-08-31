@@ -34,7 +34,7 @@ export const payFee = {
 	sections: [
 		{
 			heading: 'What to do',
-			karl: 'Maps to the Transaction editor’s repeatable Steps field. Each mockup step becomes one Step with type "number", a Title, and a rich-text Step description. Optional, Cost, Time, and Transaction link remain blank unless Environmental Health supplies a case-independent value. The confirmed external payment URL is carried by the mockup button; confirm the production Transaction editor’s external-link treatment before publishing.',
+			karl: 'Maps to the repeatable What to Do panel — each mockup step becomes one Section carrying a Section title and one Text block in Section specifics. Transaction hosts no per-step cost, time or optional flag and no per-step page link; its Cost is a single page-level statement, which is where any fee amount belongs. The confirmed external payment URL is carried by the mockup button; confirm the production Transaction editor’s external-link treatment before publishing.',
 			kind: 'body',
 			steps: [
 				{
