@@ -44,6 +44,64 @@ export default defineConfig(
 			}
 		}
 	},
+	// The three guards that used to live in `.ast-grep/rules/`. They encode
+	// RUNTIME failures nothing else catches -- a 401 from an unauthenticated
+	// fetch, a silently-undefined env var, a server secret in a client bundle --
+	// so they are errors, and `lefthook.yml` runs eslint at pre-commit to keep
+	// them firing before a commit exists rather than after it is pushed.
+	{
+		files: ['src/**/*.ts', 'src/**/*.js', 'src/**/*.svelte'],
+		ignores: ['src/routes/api/**'],
+		rules: {
+			// Private env is server-only. This app has no `hooks.server.ts` doing
+			// auth and no `event.locals`; the only server surface is
+			// `src/routes/api/**`, which is ignored above. `RAILWAY_API_TOKEN` is
+			// read there via `$env/dynamic/private` and must never reach a client
+			// bundle.
+			'no-restricted-imports': [
+				'error',
+				{
+					paths: [
+						{
+							name: '$env/dynamic/private',
+							message:
+								'Private env is server-only; outside src/routes/api this ships a secret to the browser.'
+						},
+						{
+							name: '$env/static/private',
+							message:
+								'Private env is server-only; outside src/routes/api this ships a secret to the browser.'
+						}
+					]
+				}
+			]
+		}
+	},
+	{
+		files: ['src/**/*.ts', 'src/**/*.js', 'src/**/*.svelte'],
+		rules: {
+			// Two checks that need syntax selectors rather than a rule option.
+			//
+			// The PUBLIC_ one cannot be `no-restricted-imports`: eslint 10's schema
+			// has no `importNamePattern`, and the offence is the imported NAME, not
+			// the module -- `$env/static/public` is legitimate, `PUBLIC_FOO` from it
+			// is not.
+			'no-restricted-syntax': [
+				'error',
+				{
+					selector:
+						"ImportDeclaration[source.value='$env/static/public'] > ImportSpecifier[imported.name=/^PUBLIC_/]",
+					message:
+						"This project's public env prefix is SVELTE_PUBLIC_, not PUBLIC_ (vite.config.ts sets env.publicPrefix). A PUBLIC_ name is treated as PRIVATE and resolves to nothing, so the value is silently undefined in the browser."
+				},
+				{
+					selector: "CallExpression[callee.name='fetch'] > Literal[value='/api/ai/generate']",
+					message:
+						'Call requestGeneration() instead of fetching /api/ai/generate directly. The endpoint verifies a Supabase bearer token that requestGeneration() attaches; a bare fetch sends no Authorization header and 401s at runtime.'
+				}
+			]
+		}
+	},
 	{
 		// Override or add rule settings here, such as:
 		// 'svelte/button-has-type': 'error'

@@ -1,8 +1,0 @@
-id: no-public-prefix-env
-snapshots:
-  import { PUBLIC_SUPABASE_URL } from '$env/static/public';:
-    labels:
-    - source: import { PUBLIC_SUPABASE_URL } from '$env/static/public';
-      style: primary
-      start: 0
-      end: 57
