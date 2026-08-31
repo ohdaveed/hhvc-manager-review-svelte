@@ -31,6 +31,13 @@ export async function requestGeneration(payload: Record<string, unknown>, signal
 	} = await supabase.auth.getSession();
 	if (!session) throw new Error('You must be signed in to use AI assistance.');
 
+	// This IS requestGeneration: the one sanctioned caller, and the function that
+	// attaches the bearer token every other caller must go through. `.ast-grep/`
+	// excluded this file by path; eslint marks it at the call site instead, which
+	// is harder to widen by accident. The directive sits directly above the code
+	// on purpose -- `disable-next-line` applies to the very next line, so a
+	// comment between the two silently disables nothing.
+	// eslint-disable-next-line no-restricted-syntax
 	const res = await fetch('/api/ai/generate', {
 		method: 'POST',
 		headers: {

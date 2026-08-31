@@ -27,8 +27,6 @@ test-results
 # playwright-mcp screenshots
 .playwright-mcp/
 
-# repomix context dumps
-repomix-output.xml
 
 # MemPalace per-project files (issue #185)
 mempalace.yaml

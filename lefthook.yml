@@ -30,11 +30,18 @@ pre-commit:
       stage_fixed: true
     verify:
       run: bun run verify
-    # Blocking, unlike knip below: these three rules encode runtime failures
+    # Blocking, unlike knip below: three eslint rules encode runtime failures
     # (a 401 from an unauthenticated fetch, a silently-undefined env var, a
     # server secret in a client bundle) that no test or type check catches.
-    ast-grep:
-      run: bunx ast-grep scan
+    # They used to be ast-grep rules run here; eslint now hosts them, so eslint
+    # has to run here too. Without this step they would only fire in CI, and a
+    # secret that reaches a commit is already in local history.
+    #
+    # `--no-warn-ignored` keeps a staged-but-ignored file from failing the hook;
+    # the ratchet in CI is what guards the total count.
+    eslint:
+      glob: '*.{js,ts,svelte}'
+      run: bunx eslint --no-warn-ignored {staged_files}
     # The app exists to review copy, so a typo in src/lib/data/*.ts is a content
     # defect that ships looking deliberate.
     typos:
