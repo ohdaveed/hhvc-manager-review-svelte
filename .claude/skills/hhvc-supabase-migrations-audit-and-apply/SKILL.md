@@ -55,7 +55,7 @@ supabase migration new <descriptive-name>
 
 Do not invent filenames. For iterating freely on your local database before committing to a migration file, use `supabase db query` or `execute_sql` (MCP) rather than `apply_migration` (which writes a history entry on every call and prevents iteration).
 
-When ready, use `supabase db pull <name>` to generate a clean migration file.
+When ready, use `supabase db pull <name> --local --yes` to generate a clean migration file from the local database.
 
 **For constraint changes involving existing rows:**
 
@@ -113,7 +113,15 @@ Interactively confirms and prompts for the database password. Staging is free-ti
 
 ### 7. Precondition Check for Production
 
-Before merging (which auto-applies to production), verify no data conflicts:
+Before merging (which auto-applies to production), explicitly switch to and verify the production database before running the read-only conflict check:
+
+```sh
+bunx supabase link --project-ref kiynekyzqxneepjipqhg
+cat supabase/.temp/project-ref
+# Expected: kiynekyzqxneepjipqhg (production for this repo)
+```
+
+Run this query against the verified production link:
 
 ```sql
 SELECT review_id, path, COUNT(*)
@@ -121,6 +129,12 @@ SELECT review_id, path, COUNT(*)
   GROUP BY review_id, path
   HAVING COUNT(*) > 1;
 -- Expected: 0 rows (or whatever your constraint allows)
+```
+
+After the check, restore the staging link so the checkout remains pointed at the manually managed staging target:
+
+```sh
+bunx supabase link --project-ref aplbsgacqnxhzjuquvft
 ```
 
 ### 8. Merge to Main (Production Auto-Apply)
