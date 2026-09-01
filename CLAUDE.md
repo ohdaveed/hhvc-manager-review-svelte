@@ -83,6 +83,29 @@ a drive-by edit.
 
 A test placed in the wrong directory gets the wrong environment. E2E is separate: `**/*.e2e.{ts,js}`, matched by `playwright.config.ts`.
 
+### Every e2e spec imports `test` from `tests/fixtures`
+
+```ts
+import { expect, test } from './fixtures'; // not '@playwright/test'
+```
+
+`tests/fixtures.ts` carries an auto-fixture that fails a test when the page raised an uncaught exception, logged a console error, or navigated to a **document** response ≥ 400. Playwright has no config-level auto-fixture — a fixture reaches a test only through the `test` object it imports — so this is opt-in, and a spec importing from `@playwright/test` runs entirely ungated.
+
+**That bypass is silent, and a new file is the dangerous case**: it conflicts with nothing, so a clean merge is exactly what hides it. `tests/e2eFixtureImports.spec.ts` asserts the rule rather than documenting it, and `tests/mockupResponsive.e2e.ts` is the instance that merged cleanly while sitting outside the gate before it existed.
+
+Type-only imports stay legal and are the normal way to get Playwright's types:
+
+```ts
+import type { Page } from '@playwright/test'; // fine — binds nothing at runtime
+```
+
+The guard parses each `from '@playwright/test'` clause and compares specifier names exactly, so it skips a `type`-only import and a `type` specifier inside the braces. An alias still binds the runtime object, so `test as base` is a violation.
+
+Two consequences when writing a spec:
+
+- **Signed out, Supabase reads are expected to fail** — the mockups render from the static corpus while every `TO authenticated` policy denies the review data. `/rest/v1/` and `/auth/v1/` are excluded by **path**, not host, because the host differs per environment (`127.0.0.1:54321` local, a placeholder in CI, the real project in a preview) and a host rule would silently stop matching in one of them.
+- **A test that deliberately visits a 4xx will fail the gate.** That is why `/review/[slug]`'s 404 is covered by `tests/reviewSlug404.spec.ts` as a unit test — the load is pure, so a browser adds nothing, and testing it there keeps the gate strict instead of carving an exception into it.
+
 ## Architecture
 
 ### Content pipeline
