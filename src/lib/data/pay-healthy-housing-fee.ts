@@ -100,7 +100,7 @@ export const payFee = {
 						'If the count is wrong because you live in a unit, include a copy of your most recent PG&E bill.',
 						'For an ownership change, provide the escrow date and the new owner’s name and mailing address.',
 						'For a mailing-address change, include the property address and block and lot number, or the invoice number.',
-						'Email healthyhousing@sfdph.org or call 415-252-3800. Also report ownership changes to the Assessor-Recorder’s Office.'
+						'Email healthyhousing@sf.gov or call 415-252-3800. Also report ownership changes to the Assessor-Recorder’s Office.'
 					],
 					karl: 'what_to_do -> Section. Section title: "Correct an invoice or update your information". Section specifics: one Text block (one intro paragraph and five bullets). Consolidates the live page’s scattered owner-occupied, unit-count, building-type, ownership, and mailing-address exceptions into one correction path.'
 				},

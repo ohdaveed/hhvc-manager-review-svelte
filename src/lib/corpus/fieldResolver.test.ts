@@ -335,7 +335,7 @@ describe('resolveField — extractCopy parity (Group D)', () => {
 	it('contact.{phone,email,other}.N', () => {
 		const page = findPage('sf.gov/information--article-11-compliance-for-property-owners');
 		expect(resolveField(page, 'contact.phone.0')!.value).toBe('311 (call or text)');
-		expect(resolveField(page, 'contact.email.0')!.value).toBe('ehb@sfdph.org');
+		expect(resolveField(page, 'contact.email.0')!.value).toBe('healthyhousing@sf.gov');
 		expect(resolveField(page, 'contact.other.0')!.value).toMatch(/Environmental Health/);
 		resolveField(page, 'contact.phone.1')!.set('415-000-0000');
 		expect(resolveField(page, 'contact.phone.1')!.value).toBe('415-000-0000');
