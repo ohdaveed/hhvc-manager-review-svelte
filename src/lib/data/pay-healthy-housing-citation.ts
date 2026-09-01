@@ -68,13 +68,13 @@ export const payCitation = {
 				{
 					title: 'If you think the citation is wrong',
 					text: [
-						'Dispute it using the instructions on the citation. Do not simply withhold payment.'
+						'Contact the investigator named on your notice if you disagree. Do not simply withhold payment.'
 					],
 					bullets: [
-						'[Appeal a Notice of Violation](appealNotice)',
+						'[Question a Notice of Violation](appealNotice)',
 						'Contact the investigator named on your notice before the due date.'
 					],
-					karl: 'Section 4. No appeal window is stated — the same reason as appealNotice, where the deadline is deferred to the document.'
+					karl: 'Section 4. No dispute deadline is stated. HHVC confirmed on 2026-08-31 that there is no appeal route for a notice — questions go to the investigator named on it — so this step routes there rather than describing a process.'
 				}
 			]
 		},
@@ -87,7 +87,7 @@ export const payCitation = {
 					title: 'Pay your annual Healthy Housing fee for apartment buildings',
 					target: 'payFee'
 				},
-				{ title: 'Appeal a Notice of Violation', target: 'appealNotice' },
+				{ title: 'Question a Notice of Violation', target: 'appealNotice' },
 				{ title: 'Article 11 compliance for property owners', target: 'article11Compliance' }
 			]
 		}

@@ -107,7 +107,7 @@ export const stepCorrectViolation = {
 						'Follow the instructions and deadlines in any later notice you receive.'
 					],
 					bullets: [
-						'[Appeal a Notice of Violation](appealNotice)',
+						'[Question a Notice of Violation](appealNotice)',
 						'[Pay a Healthy Housing citation](payCitation)'
 					],
 					karl: 'Step 7. Carried from noticeOfViolation’s own closing step, which took its wording from the Article 11 Interpretation Guide’s high-level workflow and intentionally omits unverified fee timing, hearing and abatement detail. The two links are proposed pages.'

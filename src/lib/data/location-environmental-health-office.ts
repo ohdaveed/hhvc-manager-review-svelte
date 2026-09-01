@@ -10,11 +10,11 @@ export const ehOffice = {
 	],
 	reading: 'Grade 6',
 	editorNote:
-		'PROPOSED PAGE — not in the current 29, and the ninth Karl type, which the corpus has never used. `design/HHVC Page Ideas.dc.html` argues a team that sends people mail and takes walk-ins needs one, and it is the most straightforwardly missing page in the set. THE ADDRESS AND HOURS BELOW ARE PLACEHOLDERS AND MUST BE CONFIRMED BEFORE THIS PAGE SAVES — the source plan flags the office address as one of its four unverified facts. The phone numbers and email are NOT placeholders: 311, 415-252-3805 and ehb@sfdph.org are carried from `article11Compliance`, which already publishes them. Location was captured at panel level only, so its block internals are unknown; the karl notes below say which panel a section maps to and stop there rather than naming a block type the field map never recorded. Required markers were never measured on this type, so nothing here is marked required.',
+		'PROPOSED PAGE — not in the current 29, and the ninth Karl type, which the corpus has never used. `design/HHVC Page Ideas.dc.html` argues a team that sends people mail and takes walk-ins needs one, and it is the most straightforwardly missing page in the set. THE ADDRESS AND HOURS BELOW ARE PLACEHOLDERS AND MUST BE CONFIRMED BEFORE THIS PAGE SAVES — the source plan flags the office address as one of its four unverified facts. The phone number and email are confirmed by HHVC (2026-08-31): 311, 415-252-3800 and healthyhousing@sf.gov. An earlier draft of this note called them confirmed on the grounds that `article11Compliance` already published them — that was circular, and both values it carried were wrong. Location was captured at panel level only, so its block internals are unknown; the karl notes below say which panel a section maps to and stop there rather than naming a block type the field map never recorded. Required markers were never measured on this type, so nothing here is marked required.',
 	editorStatus: 'needs-review',
 	contact: {
-		phone: ['311 (call or text)', '415-252-3805'],
-		email: ['ehb@sfdph.org'],
+		phone: ['311 (call or text)', '415-252-3800'],
+		email: ['healthyhousing@sf.gov'],
 		other: ['Environmental Health — Healthy Housing and Vector Control']
 	},
 	sections: [
