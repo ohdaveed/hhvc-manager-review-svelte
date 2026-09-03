@@ -32,8 +32,7 @@ export const article11Guide = {
 				'The left column names the code section. The right column explains what that rule means in everyday language. A condition may involve more than one section, and an inspector reviews the facts of each case.'
 			],
 			callout: {
-				title: 'This is not legal advice',
-				text: 'The municipal code controls if this guide and the code differ. The City will identify the applicable sections and required corrections in a Notice of Violation.',
+				text: '**This is not legal advice.** The municipal code controls if this guide and the code differ. The City will identify the applicable sections and required corrections in a Notice of Violation.',
 				karl: 'Report Content -> Callout-style rich-text block. Karl’s Report editor does not have a dedicated legal-disclaimer component; retain the bold lead-in in the rich text if a visual callout is unavailable.'
 			}
 		},

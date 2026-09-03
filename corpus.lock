@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "corpusHash": "1b3599e8f300e32d5626cacc7176cf47bfbc450ab73d3dfc3714b32945804205",
+  "corpusHash": "d6ad3dee29832e94e1fe1d62375d56b8b24ccd424fe5096275c36f0b4a5c7b02",
   "pages": {
     "appeal-a-notice-of-violation": {
       "contentHash": "8bcebf0af1429d175823d5b8524e4739469b8ff0ebef8e8be7fcf3d56a549efb",
@@ -611,7 +611,7 @@
       }
     },
     "pay-your-annual-healthy-housing-fee-apartment-buildings": {
-      "contentHash": "fab979f006d76ebc81507bf4394ec7d32905fbfdf4d347ca734b096b7be6dde9",
+      "contentHash": "4b4af30c85b308e8dec41d187375987070b17091a7bdf8503d622bc4c44a6e99",
       "fieldHashes": {
         "audience.0": "ce954ee632623499a80aa7e89585abd482eac785efdba7bbb521095bdffd6776",
         "audience.1": "03e8b05d2a9089953d76ab77c1851840c9296a818085a09ee8058e2c6c9eb2a5",
@@ -732,7 +732,7 @@
       }
     },
     "report-health-code-article-11-plain-language": {
-      "contentHash": "84b007492dbc7dda1fbe2778aa24be25077a6ff025d782746a6aa67a8e47e32a",
+      "contentHash": "340fef53401851a9007a5620b71de135b7600af842431a3622840a0bf3cbeb3a",
       "fieldHashes": {
         "audience.0": "8ef0320f7265039ef939ba6670edfb33aef4c26f8e5925624723a4c89e449397",
         "sections.animals-clutter-and-other-health-threats.heading": "62fb5ffe07e7caa1b200888205994b3495e6e4f1838c94901c33ece0e1e0b2eb",
@@ -742,8 +742,7 @@
         "sections.article-11-sections-at-a-glance.heading": "28dca83c3a2fe9cb13c6e469e9d1d3641ec5e82eb508011bdb1aba1e81044eac",
         "sections.garbage-filth-and-waste.heading": "8d5b69a5c6d373194d22ae91142ee578cd45f14ddf88c34c0ef12f02ad8b43e8",
         "sections.garbage-filth-and-waste.paragraphs.0": "56af27a82cdcecbccbd12c9d832c9b24c5ea32e494d9097424366d72fa805a32",
-        "sections.how-to-use-this-guide.callout.text": "3f4caa552f06c419e4fe0f869db030723092a55151cb8b5a025de250e6a5f293",
-        "sections.how-to-use-this-guide.callout.title": "dadb4eb505301f4c51acd3ecc3d1306f1a463ac81220fb50639b256879e1c103",
+        "sections.how-to-use-this-guide.callout.text": "f6158d53571ad8e4a3bf684e79a1603b81bfa8904605c74153e97f94c2a25554",
         "sections.how-to-use-this-guide.heading": "4d161383d57b3c5cf058a4be028c00e8a10a2b492492b5a598169d6696a5ce19",
         "sections.how-to-use-this-guide.paragraphs.0": "b791bdfafd8d52c103a624397c632c99947b7ff02434ab2068fb2a4998652f27",
         "sections.how-to-use-this-guide.paragraphs.1": "35b95a0fc903c07e3c8f6f4883ba6a0f606f70f9b6fd4a4b77f5f003ff07f3e0",

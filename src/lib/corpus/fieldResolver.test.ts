@@ -307,15 +307,41 @@ describe('resolveField — extractCopy parity (Group D)', () => {
 		expect(resolveField(page, id)!.value).toBe('Rewritten bullet.');
 	});
 
-	it('sections.<key>.steps.N.callout.{title,text}', () => {
+	it('sections.<key>.steps.N.callout.text', () => {
 		const page = findPage('sf.gov/pay-your-annual-healthy-housing-fee-apartment-buildings');
-		const titleId = 'sections.what-to-do.steps.1.callout.title';
 		const textId = 'sections.what-to-do.steps.1.callout.text';
-		expect(resolveField(page, titleId)!.value).toBe(
-			'Annual fee and reinspection fees are different'
-		);
+		expect(resolveField(page, textId)!.value).toMatch(/reinspection fees are different/);
 		resolveField(page, textId)!.set('Rewritten callout text.');
 		expect(resolveField(page, textId)!.value).toBe('Rewritten callout text.');
+	});
+
+	// The corpus can no longer supply a fixture for this branch: the 1:1 rule
+	// forbids a callout title on any host, and `findOneToOneViolations` now
+	// asserts zero of them. The resolver still ADDRESSES `callout.title`, and
+	// that is deliberate -- it is what lets the validator report one by field id
+	// if a title ever comes back. Capability and content are separate claims, so
+	// this uses a synthetic page rather than pinning a corpus page the rule
+	// requires to be clean.
+	it('sections.<key>.steps.N.callout.title still resolves, though the corpus has none', () => {
+		const synthetic = {
+			slug: 'sf.gov/synthetic',
+			sections: [
+				{
+					// `fieldKey` is stamped onto sections by `pageData.svelte.ts`, and the
+					// resolver matches on it rather than re-deriving from the heading --
+					// a synthetic page has to carry it or nothing under the section
+					// resolves at all.
+					fieldKey: 'what-to-do',
+					heading: 'What to do',
+					steps: [{}, { callout: { title: 'A title the 1:1 rule forbids', text: 'body' } }]
+				}
+			]
+		};
+		const id = 'sections.what-to-do.steps.1.callout.title';
+
+		expect(resolveField(synthetic, id)!.value).toBe('A title the 1:1 rule forbids');
+		resolveField(synthetic, id)!.set('Retitled.');
+		expect(resolveField(synthetic, id)!.value).toBe('Retitled.');
 	});
 
 	it('spotlight.{title,paragraphs.N,button,buttonUrl}', () => {
