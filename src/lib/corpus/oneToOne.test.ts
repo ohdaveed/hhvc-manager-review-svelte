@@ -29,6 +29,25 @@ describe('findOneToOneViolations', () => {
 		expect(violation.where).toBe('sections.0.callout');
 	});
 
+	// The shallow-walk bug shipped once: a one-level pass over `page.sections[]`
+	// reported 4 violations where the corpus had 9, because five sat under
+	// `sections[].steps[]`. This is a synthetic fixture rather than a corpus
+	// count so it keeps proving the walk goes deep now the corpus is clean.
+	it('finds a callout nested below the top-level sections', () => {
+		const pages = [
+			{
+				slug: 'x',
+				type: 'Transaction',
+				sections: [{ steps: [{ callout: { title: 'Buried', text: 'body' } }] }]
+			}
+		];
+
+		const [violation] = findOneToOneViolations(pages);
+
+		expect(violation.text).toBe('Buried');
+		expect(violation.where).toBe('sections.0.steps.0.callout');
+	});
+
 	it('ignores an empty or whitespace callout title', () => {
 		const pages = [
 			{ slug: 'x', type: 'Transaction', sections: [{ callout: { title: '   ', text: 'b' } }] }
@@ -64,23 +83,15 @@ describe('the real corpus', () => {
 	// Was 4 until the walk was fixed: five of the nine then in the corpus sit
 	// under `sections[].steps[]` and a one-level pass never saw them. Six have
 	// since been resolved, leaving three.
-	it('has exactly the three known callout-title violations, and no others', () => {
-		const violations = findOneToOneViolations(allPages);
-
-		expect(violations.map((v) => `${v.slug}|${v.text}`)).toEqual([
-			'sf.gov/report/health-code-article-11-plain-language|This is not legal advice',
-			'sf.gov/pay-your-annual-healthy-housing-fee-apartment-buildings|Annual fee and reinspection fees are different',
-			'sf.gov/pay-your-annual-healthy-housing-fee-apartment-buildings|What the annual fee supports'
-		]);
-	});
-
-	// The bug this catches shipped once: a one-level pass over `page.sections[]`
-	// reported 4 where the corpus had 9. An undercounting validator is worse
-	// than none, because a pinned test then freezes the wrong number as correct.
-	it('finds callouts nested below the top-level sections', () => {
-		const nested = findOneToOneViolations(allPages).filter((v) => v.where.includes('.steps.'));
-
-		expect(nested).toHaveLength(2);
+	// Asserts ZERO, not a pinned count. Every callout title the 1:1 decision
+	// recorded as removed is now actually gone: nine were found once the walk
+	// was fixed, and all nine have been folded into their callout bodies as
+	// bolded lead-ins -- the treatment each page's own `karl` note prescribed,
+	// including the Article 11 disclaimer, whose note asks to "retain the bold
+	// lead-in in the rich text". A tenth turns this red rather than being
+	// absorbed into a baseline.
+	it('carries no element Karl has no field for', () => {
+		expect(findOneToOneViolations(allPages)).toEqual([]);
 	});
 
 	it('carries no image the corpus has no panel for', () => {
