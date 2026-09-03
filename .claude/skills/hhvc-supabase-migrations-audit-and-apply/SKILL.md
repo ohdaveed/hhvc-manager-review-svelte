@@ -113,7 +113,29 @@ Interactively confirms and prompts for the database password. Staging is free-ti
 
 ### 7. Precondition Check for Production
 
-Before merging (which auto-applies to production), verify no data conflicts:
+Before merging (which auto-applies to production), **switch to production and
+verify the link took** before running anything against it. `supabase link`
+writes a checkout-wide `supabase/.temp/project-ref`, so whichever project was
+linked last is what an unqualified command hits — and in this repo that is
+usually staging, because staging is the one synced by hand.
+
+```sh
+bunx supabase link --project-ref kiynekyzqxneepjipqhg
+cat supabase/.temp/project-ref
+# Expected: kiynekyzqxneepjipqhg (production for this repo)
+```
+
+Restore the staging link afterwards, or the next hand-run `db push` goes to
+production:
+
+```sh
+bunx supabase link --project-ref aplbsgacqnxhzjuquvft
+```
+
+A separate worktree sidesteps this entirely — `supabase/.temp/` is
+per-worktree, so a link there cannot move the shared checkout's target.
+
+Then verify no data conflicts:
 
 ```sql
 SELECT review_id, path, COUNT(*)
