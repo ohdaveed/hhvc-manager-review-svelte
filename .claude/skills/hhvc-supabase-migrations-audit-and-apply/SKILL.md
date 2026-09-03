@@ -113,11 +113,14 @@ Interactively confirms and prompts for the database password. Staging is free-ti
 
 ### 7. Precondition Check for Production
 
-Before merging (which auto-applies to production), **switch to production and
-verify the link took** before running anything against it. `supabase link`
-writes a checkout-wide `supabase/.temp/project-ref`, so whichever project was
-linked last is what an unqualified command hits — and in this repo that is
-usually staging, because staging is the one synced by hand.
+Before merging (which auto-applies to production), use a dedicated worktree
+that no other session uses, then **switch to production and verify the link
+took** before running anything against it. `supabase link` writes a
+checkout-wide `supabase/.temp/project-ref`, so whichever project was linked
+last is what an unqualified command hits — and in this repo that is usually
+staging, because staging is the one synced by hand. The dedicated worktree also
+ensures an interruption cannot leave a shared checkout pointed at production.
+
 
 ```sh
 bunx supabase link --project-ref kiynekyzqxneepjipqhg
@@ -125,17 +128,7 @@ cat supabase/.temp/project-ref
 # Expected: kiynekyzqxneepjipqhg (production for this repo)
 ```
 
-Restore the staging link afterwards, or the next hand-run `db push` goes to
-production:
-
-```sh
-bunx supabase link --project-ref aplbsgacqnxhzjuquvft
-```
-
-A separate worktree sidesteps this entirely — `supabase/.temp/` is
-per-worktree, so a link there cannot move the shared checkout's target.
-
-Then verify no data conflicts:
+Then, while production is still linked, verify no data conflicts:
 
 ```sql
 SELECT review_id, path, COUNT(*)
@@ -144,6 +137,16 @@ SELECT review_id, path, COUNT(*)
   HAVING COUNT(*) > 1;
 -- Expected: 0 rows (or whatever your constraint allows)
 ```
+
+Restore the staging link afterwards, including if the check fails or is
+interrupted, or the next hand-run `db push` goes to production:
+
+```sh
+bunx supabase link --project-ref aplbsgacqnxhzjuquvft
+```
+
+A separate worktree sidesteps this entirely — `supabase/.temp/` is
+per-worktree, so a link there cannot move the shared checkout's target.
 
 ### 8. Merge to Main (Production Auto-Apply)
 

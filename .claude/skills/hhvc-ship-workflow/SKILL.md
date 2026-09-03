@@ -89,40 +89,24 @@ The merge auto-applies Supabase migrations to **production only**. Staging must 
 
 #### 5a. Sync Staging Database (if migrations were included)
 
-`supabase link` writes `supabase/.temp/project-ref`, which is **checkout-wide and
-persists** — whichever project you linked last is what the next `db push`
-targets, from any session sharing that checkout. Restore it rather than
-remembering to:
+Because the Supabase link is checkout-wide mutable state, perform this entire
+operation in a **dedicated worktree** that no other session uses. Do not run it
+in a shared checkout: a separate worktree makes the link metadata (including
+project-specific connection and service metadata) isolated and prevents a
+concurrent relink from redirecting the push.
 
 ```sh
 project_ref="aplbsgacqnxhzjuquvft"   # staging
-ref_file="supabase/.temp/project-ref"
-if [ -f "$ref_file" ]; then
-  had_ref=true; prior_ref=$(cat "$ref_file")
-else
-  had_ref=false
-fi
-restore_ref() {
-  if [ "$had_ref" = true ]; then
-    mkdir -p "$(dirname "$ref_file")"; printf '%s\n' "$prior_ref" > "$ref_file"
-  else
-    rm -f "$ref_file"
-  fi
-}
-trap restore_ref EXIT
-
 supabase link --project-ref "$project_ref"
+ref_file="supabase/.temp/project-ref"
 test "$(cat "$ref_file")" = "$project_ref" || { echo "Not linked to staging; refusing to push" >&2; exit 1; }
 supabase db push
 supabase migration list
 ```
 
 The `test` is not ceremony: a `db push` against the wrong ref is a production
-schema change nobody ran a command for.
-
-Working in a **separate worktree avoids the whole problem** — `supabase/.temp/`
-is per-worktree, so linking there cannot disturb the shared checkout. Prefer it
-when peers are active.
+schema change nobody ran a command for. Dispose of the dedicated worktree when
+finished rather than restoring link metadata in a checkout that may be shared.
 
 **Why:** The Supabase GitHub App integration applies migrations to production (`kiynekyzqxneepjipqhg`) on merge. Staging (`aplbsgacqnxhzjuquvft`) is not covered, so deploy previews render against stale schema. This breaks when pages are renamed, views are added, or table columns change.
 
