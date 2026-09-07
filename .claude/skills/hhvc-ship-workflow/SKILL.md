@@ -95,26 +95,28 @@ targets, from any session sharing that checkout. Restore it rather than
 remembering to:
 
 ```sh
-project_ref="aplbsgacqnxhzjuquvft"   # staging
-ref_file="supabase/.temp/project-ref"
-if [ -f "$ref_file" ]; then
-  had_ref=true; prior_ref=$(cat "$ref_file")
-else
-  had_ref=false
-fi
-restore_ref() {
-  if [ "$had_ref" = true ]; then
-    mkdir -p "$(dirname "$ref_file")"; printf '%s\n' "$prior_ref" > "$ref_file"
+(
+  project_ref="aplbsgacqnxhzjuquvft"   # staging
+  ref_file="supabase/.temp/project-ref"
+  if [ -f "$ref_file" ]; then
+    had_ref=true; prior_ref=$(cat "$ref_file")
   else
-    rm -f "$ref_file"
+    had_ref=false
   fi
-}
-trap restore_ref EXIT
+  restore_ref() {
+    if [ "$had_ref" = true ]; then
+      mkdir -p "$(dirname "$ref_file")"; printf '%s\n' "$prior_ref" > "$ref_file"
+    else
+      rm -f "$ref_file"
+    fi
+  }
+  trap restore_ref EXIT
 
-supabase link --project-ref "$project_ref"
-test "$(cat "$ref_file")" = "$project_ref" || { echo "Not linked to staging; refusing to push" >&2; exit 1; }
-supabase db push
-supabase migration list
+  bunx supabase link --project-ref "$project_ref"
+  test "$(cat "$ref_file")" = "$project_ref" || { echo "Not linked to staging; refusing to push" >&2; exit 1; }
+  bunx supabase db push
+  bunx supabase migration list
+)
 ```
 
 The `test` is not ceremony: a `db push` against the wrong ref is a production
