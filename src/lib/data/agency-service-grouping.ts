@@ -58,6 +58,11 @@ export const pestsTopic = {
 					title: 'Learn what Healthy Housing and Vector Control can inspect',
 					target: 'scopeInfo',
 					karl: 'Services subsection entry -> SF.gov page link to the inspection-scope Information page. This integrates the live topic’s "Healthy housing inspection programs" service and is also the safe route for a visitor who cannot identify their condition.'
+				},
+				{
+					title: 'Guides in other languages',
+					target: 'languageGuides',
+					karl: 'Services subsection entry -> SF.gov page link to the translated-guides Resource Collection (a PROPOSED page). Placed last under the reporting services so a visitor who does not read English finds it beside the reporting routes. As with every subsection entry, Karl renders the destination title and Description, so keep this title in sync with `languageGuides`.'
 				}
 			]
 		},
@@ -180,8 +185,9 @@ export const pestsTopic = {
 		{
 			heading: 'About Healthy Housing and Vector Control',
 			component: 'body',
-			karl: 'Agency -> About field. Keep this short: the landing page should route tasks, not repeat a program overview.',
+			karl: 'Agency -> About field. Keep this short: the landing page should route tasks, not repeat a program overview. The closing link hands the overview to the About us page, which is otherwise reachable only from the office Location page.',
 			kind: 'body',
+			bullets: ['[About Healthy Housing and Vector Control](aboutHhvcTeam)'],
 			paragraphs: [
 				'Healthy Housing and Vector Control is part of Environmental Health at the San Francisco Department of Public Health. We address pests, vectors, garbage, filth, animal waste, overgrown vegetation, and mold from humidity or condensation under Health Code Article 11.'
 			]
