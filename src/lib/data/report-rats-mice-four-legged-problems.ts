@@ -162,7 +162,7 @@ export const rodentsReport = {
 		},
 		{
 			heading: 'Related pages',
-			karl: 'Maps to the related panel: repeatable field "Page *" with a "Choose a page" button. 4 cards below = 4 related "Page" entries. All internal SF.gov pages — Karl Related is a page chooser and cannot hold external links.',
+			karl: 'Maps to the related panel: repeatable field "Page *" with a "Choose a page" button. 5 cards below = 5 related "Page" entries. All internal SF.gov pages — Karl Related is a page chooser and cannot hold external links.',
 			kind: 'placement',
 			cards: [
 				{
@@ -180,6 +180,10 @@ export const rodentsReport = {
 				{
 					title: 'Tenant rights when reporting housing conditions',
 					target: 'tenantRights'
+				},
+				{
+					title: 'Rat-free blocks',
+					target: 'ratFreeBlocks'
 				}
 			]
 		}

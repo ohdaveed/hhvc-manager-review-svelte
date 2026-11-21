@@ -12,10 +12,12 @@ changed pages, CI green. Merging publishes production on Netlify — ask first.
 
 ## PR 1 — Reach the three unreachable pages (content only)
 
-- [ ] `languageGuides` linked from the Agency page (`pestsTopic`) and `verminResources`
-- [ ] `ratFreeBlocks` linked from `rodentsReport` and `verminResources`
-- [ ] `inspectionsAnnual` linked from `recordsHub`
-- [ ] Test: every page is reachable from the Agency or Topic page
+- [x] `languageGuides` linked from the Agency page (`pestsTopic`) and `verminResources`
+- [x] `ratFreeBlocks` linked from `rodentsReport` and `verminResources`
+- [x] `inspectionsAnnual` linked from `recordsHub`
+- [x] Reachability guard: reused the existing `findOrphans` pin in `src/lib/karl/sitemap.test.ts` (15 → 10) rather than adding a second definition
+- [x] Also linked the six pages that were only reachable from each other: Agency → About; "Fix your violation" → correct / question / pay
+- [ ] Follow-up decision: `findOrphans` follows cards only, not `[text](pageKey)` links in copy, so its 10 overstates — every page is reachable once prose links count
 
 ## PR 2 — One role per hub
 

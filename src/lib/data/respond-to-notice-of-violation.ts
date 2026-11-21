@@ -57,9 +57,10 @@ export const noticeOfViolation = {
 						'If professional pest treatment is required, use a licensed pest control operator.',
 						'One person finishing their work does not close the violation if other cited conditions remain.',
 						'Owners and managers should not wait for tenant actions before starting work they control.',
-						'Tenants should follow unit-preparation instructions and allow properly noticed access for treatment or inspection.'
+						'Tenants should follow unit-preparation instructions and allow properly noticed access for treatment or inspection.',
+						'[Correct a violation and close your case](stepCorrectViolation)'
 					],
-					karl: 'what_to_do -> Section. Section title: "Make a plan to correct the conditions". Section specifics: one Text block (lead paragraph and six bullets). Responsibilities stay conditional because the notice, rather than this page, assigns the work for each case.'
+					karl: 'what_to_do -> Section. Section title: "Make a plan to correct the conditions". Section specifics: one Text block (lead paragraph and seven bullets; the last is an Internal link to the correct-a-violation Step by step page). Responsibilities stay conditional because the notice, rather than this page, assigns the work for each case.'
 				},
 				{
 					title: 'Contact the investigator if you need help',
@@ -91,7 +92,11 @@ export const noticeOfViolation = {
 						'If the violation is not corrected, HHVC may take additional enforcement action. This can include a reinspection fee when applicable, a citation, or a Director’s Hearing.',
 						'Follow the instructions and deadlines in any later notice you receive.'
 					],
-					karl: 'what_to_do -> Section. Section title: "Finish the work or respond to further enforcement". Section specifics: one Text block holding both paragraphs. This uses the Article 11 Interpretation Guide’s high-level enforcement workflow only; it intentionally omits unverified fee timing, hearing, appeal, and abatement details.'
+					bullets: [
+						'[Question a Notice of Violation](appealNotice)',
+						'[Pay a Healthy Housing citation](payCitation)'
+					],
+					karl: 'what_to_do -> Section. Section title: "Finish the work or respond to further enforcement". Section specifics: one Text block holding both paragraphs plus two bullets, whose rich-text Link tool carries Internal links to the question-a-notice and pay-a-citation Transactions. This uses the Article 11 Interpretation Guide’s high-level enforcement workflow only; it intentionally omits unverified fee timing, hearing, appeal, and abatement details.'
 				}
 			]
 		}

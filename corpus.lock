@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "corpusHash": "d6ad3dee29832e94e1fe1d62375d56b8b24ccd424fe5096275c36f0b4a5c7b02",
+  "corpusHash": "3f34546d49a0ab1cb2790cd1e0bcc94fc615ca5697f7cea83e49727f07de3a39",
   "pages": {
     "appeal-a-notice-of-violation": {
       "contentHash": "8bcebf0af1429d175823d5b8524e4739469b8ff0ebef8e8be7fcf3d56a549efb",
@@ -16,9 +16,10 @@
       }
     },
     "departments--healthy-housing-and-vector-control": {
-      "contentHash": "5b136eb13e66532aa646b847bcaed912a5f3843a72dfb5eaa9b4657b5664f5a8",
+      "contentHash": "35112d41327d45018a0f3ae16c899b24cd9451347052145675d0f22d392f79ab",
       "fieldHashes": {
         "audience.0": "1b5edf6795c2de3a86d15170ff8fa258e537de07a9f9dc905e38c22bdfb59b47",
+        "sections.about-healthy-housing-and-vector-control.bullets.0": "e37512c23166c962510967ef585876fec724eec3d3fea21d555aac60ae7667b3",
         "sections.about-healthy-housing-and-vector-control.heading": "b3a0da0297589220c360c0576541a7e4a1134dcf8060626c73f7264df3778cda",
         "sections.about-healthy-housing-and-vector-control.paragraphs.0": "7f750a8d2c0214c0d7b469ec4f683bcec89ff3d9c6584e6b6a7a43f265a16803",
         "sections.get-help-with-pests-mold-or-trash.heading": "0b6b87c3f7a456736035d688dca0d81564e54ab2a3850487f7b6fcea0c3cde01",
@@ -118,7 +119,7 @@
       }
     },
     "fix-healthy-housing-and-vector-control-violation": {
-      "contentHash": "ecf53e09dbc5713689e23a29487564d266393e4995c049849beb0a719a484ae4",
+      "contentHash": "331662062c5535ec9e8fa3288d5b47b9dbd00b9076acc681c8464adc62957809",
       "fieldHashes": {
         "audience.0": "d9b855b5d44c9c8bfe79e4d4202ac84ded93178af5b43fa69066d4c16c19687f",
         "audience.1": "b0ed964a408f3306f5c3a69c42d64aa3cf0f8c21f9024a107d01b0a730484d87",
@@ -490,7 +491,7 @@
       }
     },
     "look-up-building-records": {
-      "contentHash": "2c60940cf6d79262295fa257451a63f455613286d2a56f78309005fd4058b49e",
+      "contentHash": "e3a3c241bf6adf157f2c3f619dad65a89e905a172f5a0ebfb1dc5d9686aa2856",
       "fieldHashes": {
         "audience.0": "8e138cfd892fc1bab528353fab9dc44ae94f54c485f83c52c0af203ea4f55af0",
         "sections.about-this-collection.heading": "d5e79b327c74ac6408b5964cc746e5749aab478be3df3699b879302b5383080c",
@@ -798,7 +799,7 @@
       }
     },
     "report-rats-mice-four-legged-problems": {
-      "contentHash": "a04a8646575f00071b7172feb3db8a8da11489144073655a4a3eedd5fefb8419",
+      "contentHash": "35713792ca365dcb232c1d03c1f43d542ff9603d9f737f4c3b4f064eb57a2c15",
       "fieldHashes": {
         "audience.0": "46b8f713b30af842c8b3fbb13a3d880bd06d78b8c0e61ad9cecfc6f94c59ef8d",
         "audience.1": "7ea11dfb70cfa49f0c3effee3965434ea835da01b69ddfff911ff6b4b9851d7a",
@@ -832,7 +833,7 @@
       }
     },
     "resource--healthy-housing-and-vermin-information": {
-      "contentHash": "50fa19780be850c8de56146ca11b328c92312a857149daf24966d39b7cc42bf4",
+      "contentHash": "a94fb0d8a6ee3161fffa99899fb616ca8602c0ed060d840f99a782ef8bb0d633",
       "fieldHashes": {
         "audience.0": "c6d6281f9bda09203c33b8b44f260b9c022d40154d0ca5d1caef5ffb8f45c842",
         "sections.find-forms-records-and-rules.heading": "e52607138746eba8ff41209c5f076f17ed93789390108056f811dd300ca7e328",

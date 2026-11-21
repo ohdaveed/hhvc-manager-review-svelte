@@ -127,6 +127,16 @@ export const verminResources = {
 					title: 'Watch a roach-prevention video',
 					url: 'https://www.youtube.com/watch?v=S-aJzCk-rNQ',
 					karl: 'Resource section -> External link. Source-page video: "Video: Roach Prevention - English." Add translated versions only after confirming their active media links.'
+				},
+				{
+					title: 'Guides in other languages',
+					target: 'languageGuides',
+					karl: 'Resource section -> SF.gov page link to the translated-guides Resource Collection (a PROPOSED page).'
+				},
+				{
+					title: 'Rat-free blocks',
+					target: 'ratFreeBlocks',
+					karl: 'Resource section -> SF.gov page link to the rat-free blocks Campaign (a PROPOSED page). Sits under "share" because it is how neighbors act on prevention together.'
 				}
 			]
 		},
