@@ -1,7 +1,7 @@
 export const aboutHhvcTeam = {
 	slug: 'sf.gov/departments--healthy-housing-and-vector-control--about',
 	type: 'About us',
-	title: 'Healthy Housing and Vector Control',
+	title: 'About Healthy Housing and Vector Control',
 	summary:
 		'Who we are, what we do, and how the Healthy Housing and Vector Control team is organized.',
 	audience: [

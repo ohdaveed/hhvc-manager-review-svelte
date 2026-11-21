@@ -9,7 +9,7 @@ export const healthyHousingTopic = {
 	],
 	reading: 'Grade 6',
 	editorNote:
-		"New Topic-type page mock, verified against the real, currently-live sf.gov/topics--healthy-housing-conditions — a Topic page that sits exactly where HHVC's own program belongs in SF.gov's real information architecture, one level above where this mockup's Agency page (pestsTopic) sits. Field mapping confirmed against docs/wagtail-content-mapping.md's \"Verified against the real Karl 'Topic' add-page form\" section (2026-07-05) plus this live re-check (2026-08-12). Every card below targets a page this mockup already has — no invented pages. The live page's own 'Lead poisoning issues'/asbestos content has no equivalent anywhere in this mockup and sits outside HHVC's established Article 11 scope (CLAUDE.md's banned-terms list), so it is not reproduced; the second Services sub-group below (\"Look up records\") substitutes this mockup's own real lookup Transaction pages in its place. Mockup fields with no equivalent here, matching every other page type's own documented gaps: Primary agency, Set top-level?, Child topics, Timeline (no other Topic pages exist in this mockup to nest under or list as children).",
+		"New Topic-type page mock, verified against the real, currently-live sf.gov/topics--healthy-housing-conditions — a Topic page that sits exactly where HHVC's own program belongs in SF.gov's real information architecture, one level above where this mockup's Agency page (pestsTopic) sits. Field mapping confirmed against docs/wagtail-content-mapping.md's \"Verified against the real Karl 'Topic' add-page form\" section (2026-07-05) plus this live re-check (2026-08-12). Every card below targets a page this mockup already has — no invented pages. The live page's own 'Lead poisoning issues'/asbestos content has no equivalent anywhere in this mockup and sits outside HHVC's established Article 11 scope (CLAUDE.md's banned-terms list), so it is not reproduced; the second Services sub-group below (\"Look up records\") substitutes this mockup's own records Resource Collection in its place. Mockup fields with no equivalent here, matching every other page type's own documented gaps: Primary agency, Set top-level?, Child topics, Timeline (no other Topic pages exist in this mockup to nest under or list as children).",
 	sections: [
 		{
 			heading: 'Report a housing health issue',
@@ -24,7 +24,7 @@ export const healthyHousingTopic = {
 		},
 		{
 			heading: 'General housing issues',
-			karl: "Maps to one repeatable Services block (Title = this heading, Links = each card below). Confirmed live as the first of the real page's two Services sub-groups. Card titles/descriptions are inherited from each destination page (same rule as every other Services/Resources subsection in this mockup) — no text field is set here.",
+			karl: "Maps to one repeatable Services block (Title = this heading, Links = each card below). Confirmed live as the first of the real page's two Services sub-groups. Card titles/descriptions are inherited from each destination page (same rule as every other Services/Resources subsection in this mockup) — no text field is set here. Holds only the three resident-facing reports plus the Agency page: the owner and enforcement tasks (annual fee, fixing a violation) were removed in the hub-roles pass because the Agency page already lists them by audience. A Topic is citywide, so it routes into the program rather than repeating its task list.",
 			kind: 'body',
 			component: 'services',
 			cards: [
@@ -37,33 +37,15 @@ export const healthyHousingTopic = {
 					title: 'Report garbage, mold, and overgrown vegetation',
 					target: 'filthReport'
 				},
-				{
-					title: 'Pay your annual Healthy Housing fee for apartment buildings',
-					target: 'payFee'
-				},
-				{
-					title: 'Fix your Healthy Housing and Vector Control violation',
-					target: 'noticeOfViolation'
-				}
+				{ title: 'Healthy Housing and Vector Control', target: 'pestsTopic' }
 			]
 		},
 		{
 			heading: 'Look up records',
-			karl: 'Maps to a second repeatable Services block. Substitutes for the real page\'s "Lead poisoning issues" sub-group, which has no equivalent content in this mockup (see page editorNote) — this mockup\'s own real lookup Transaction pages fill the second sub-group instead, keeping the same two-group Services shape confirmed live.',
+			karl: 'Maps to a second repeatable Services block. Substitutes for the real page\'s "Lead poisoning issues" sub-group, which has no equivalent content in this mockup (see page editorNote) — this mockup\'s own real lookup Transaction pages fill the second sub-group instead, keeping the same two-group Services shape confirmed live. Holds one entry, the records Resource Collection, rather than the four lookup Transactions it used to list: that collection already routes a visitor to the right lookup, so listing all four here duplicated it.',
 			kind: 'body',
 			component: 'services',
-			cards: [
-				{ title: 'Find complaints and inspection records', target: 'findRecords' },
-				{
-					title: 'Look up residential health code violations',
-					target: 'findViolations'
-				},
-				{
-					title: 'Find residential hotel and shelter records',
-					target: 'findHotelRecords'
-				},
-				{ title: 'Make a public records request', target: 'publicRecords' }
-			]
+			cards: [{ title: 'Look up building records', target: 'recordsHub' }]
 		},
 		{
 			heading: 'Guidance and resources',

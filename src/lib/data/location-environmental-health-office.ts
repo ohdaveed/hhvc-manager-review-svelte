@@ -79,7 +79,7 @@ export const ehOffice = {
 			karl: 'Maps to Related locations if the destination is another Location page, and to the general related field otherwise. Both are panel-level capture only.',
 			kind: 'body',
 			cards: [
-				{ title: 'Healthy Housing and Vector Control', target: 'aboutHhvcTeam' },
+				{ title: 'About Healthy Housing and Vector Control', target: 'aboutHhvcTeam' },
 				{ title: 'Learn what Healthy Housing and Vector Control can inspect', target: 'scopeInfo' }
 			]
 		}

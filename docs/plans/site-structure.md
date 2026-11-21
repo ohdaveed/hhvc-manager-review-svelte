@@ -21,10 +21,10 @@ changed pages, CI green. Merging publishes production on Netlify — ask first.
 
 ## PR 2 — One role per hub
 
-- [ ] Agency page: HHVC's own tasks, grouped by audience
-- [ ] Topic page: city-wide housing issues; HHVC tasks collapse to a link to the Agency page
-- [ ] `verminResources` / `ownerHub`: documents and guides only
-- [ ] Retitle About page "About Healthy Housing and Vector Control"
+- [x] Agency page: already grouped by audience (report / rent / own / records / other services / about) — no change needed
+- [x] Topic page: dropped the annual-fee and fix-a-violation cards and the four lookup cards; added the Agency page and the records collection in their place (18 → 14 outbound). Kept the two-Services-group shape copied from the live topic page
+- [x] ~~`verminResources` / `ownerHub`: documents and guides only~~ — **skipped, deliberately.** Their task cards are audience-scoped entry points (owner obligations on the owner page; "report first" on the pest page), and both pages' notes record that as a design choice. Removing them would undo a decision, not remove duplication
+- [x] Retitle About page "About Healthy Housing and Vector Control"
 
 ## PR 3 — Collapse overlapping pages
 
