@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "corpusHash": "5ed6880a2825ecd779971ab90685b7316d1b6c8e20311f4eb4b8b64d8eebfd14",
+  "corpusHash": "478998f0fad8a4882f582b3f1262f682e9d2de80185908280044713ad239b309",
   "pages": {
     "appeal-a-notice-of-violation": {
       "contentHash": "8bcebf0af1429d175823d5b8524e4739469b8ff0ebef8e8be7fcf3d56a549efb",
@@ -162,9 +162,13 @@
       }
     },
     "information--article-11-compliance-for-property-owners": {
-      "contentHash": "23c65e03f11813d3b18efebd69a8c8b44555c7db9fe38ac6b9b37fedba171028",
+      "contentHash": "f554c9512736686cfba3f84fc9c841d47879ffbff384202be4db14fb6593b8d3",
       "fieldHashes": {
         "audience.0": "62e56b32840a5718e35e8663134f9f0b53b9b8fbc05f65c186bc3a3edaf2704e",
+        "sections.fees-and-full-requirements.bullets.0": "131b77dea77b7171d760885b243930b75031a004dbd06d33f602ca4ac62091b0",
+        "sections.fees-and-full-requirements.bullets.1": "ad646da1719af4ed78bf9192eb53e3cd5e2c3985e26ba9fa211e75a6c7eb7217",
+        "sections.fees-and-full-requirements.heading": "1c78c801d87f7d38af156084c9b6eac1fe5d1aee381cfc6689c4d4d3b373c62c",
+        "sections.fees-and-full-requirements.paragraphs.0": "37b98ef5baf84e4b7132d9d5d3870b91f02134d72d87a62b86d7a772c6c5317f",
         "sections.if-you-get-a-report-or-notice.bullets.0": "b25f9e5229b107892e9ef22c70bbe78dee0d14c421b7c30a01907056d69e1644",
         "sections.if-you-get-a-report-or-notice.bullets.1": "f7d6e13d64e0e043c69b475484c4603c7d7495b204436e50bd43a5a6d9bbdd12",
         "sections.if-you-get-a-report-or-notice.heading": "612f3df8e2c5ab17f155e97353bcbf97bfa9a65f593c87481f3fc79ad52fc380",
