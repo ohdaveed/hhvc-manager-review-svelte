@@ -58,6 +58,37 @@ export type RethinkState =
 	  };
 
 const RAIL_KEY = 'hhvc:railCollapsed';
+const PREVIEW_WIDTH_KEY = 'hhvc:previewWidth';
+
+/**
+ * The widths the mockup can be previewed at, in CSS pixels.
+ *
+ * `null` is "fit the pane", the behaviour that existed before. The other
+ * three are chosen to land one clear step inside each of sf.gov's reflow
+ * bands (desktop above 900, tablet 560-900, phone below 560) rather than on
+ * a boundary, so the label a preset carries stays true if a threshold moves
+ * slightly.
+ */
+export const PREVIEW_WIDTHS = {
+	fit: null,
+	desktop: 1024,
+	tablet: 768,
+	phone: 390
+} as const;
+
+export type PreviewWidth = keyof typeof PREVIEW_WIDTHS;
+
+/**
+ * The sf.gov layout band a given frame width falls in. Shown beside the
+ * measured width so the reviewer can see WHICH rendering is on screen, which
+ * is the thing that was missing: the number alone does not say that 716px is
+ * the tablet layout.
+ */
+export function previewBand(width: number): 'Desktop' | 'Tablet' | 'Phone' {
+	if (width > 900) return 'Desktop';
+	if (width > 560) return 'Tablet';
+	return 'Phone';
+}
 const COPIED_KEY = 'hhvc:walkthroughCopied';
 
 /**
@@ -347,6 +378,76 @@ class PageStore {
 			localStorage.setItem(RAIL_KEY, JSON.stringify(this.railCollapsed));
 		} catch {
 			// As above: the toggle still works for this session.
+		}
+	}
+
+	// ---- narrow-viewport sheets ------------------------------------------
+
+	/**
+	 * Which rail is open as an overlay sheet, below the 1024px breakpoint.
+	 *
+	 * Below that width both rails are taken out of the grid -- a 280px queue
+	 * and a 380px panel cannot be afforded, and leaving their tracks in place
+	 * squeezed the mockup frame to 2px at a 390px viewport. That part was
+	 * right. What was wrong was the claim that came with it, that the rails'
+	 * own toggles meant the controls were not lost: those toggles are
+	 * rendered INSIDE the rails, so `display: none` took them too.
+	 *
+	 * MEASURED at 390px before this: 19 controls disappeared -- every queue
+	 * row, all the panel tabs, the whole decision control, Export, Site map,
+	 * and both rail toggles -- with nothing on screen to bring any of them
+	 * back. The tool was silently read-only on a tablet or a phone.
+	 *
+	 * Session state, not persisted: an overlay that was still open on the
+	 * next visit would be in the way, not helpful.
+	 */
+	mobileSheet = $state<'none' | 'queue' | 'panel'>('none');
+
+	openSheet(which: 'queue' | 'panel') {
+		this.mobileSheet = which;
+	}
+
+	closeSheet() {
+		this.mobileSheet = 'none';
+	}
+
+	// ---- preview width ---------------------------------------------------
+
+	/**
+	 * Which width the mockup is rendered at.
+	 *
+	 * `fit` is the old and still default behaviour: the frame takes the pane.
+	 * The problem with having only that is that the pane is never the width
+	 * the page is being approved for. MEASURED, with both rails open: a
+	 * 1280px viewport gives a 556px frame, 1440px gives 716px, 1600px gives
+	 * 876px. sf.gov's own reflow thresholds -- the ones the body and footer
+	 * already query -- are 900px and 560px, so a reviewer on a 1440 display
+	 * was approving the TABLET rendering and one on a 1280 the PHONE
+	 * rendering, with nothing on screen saying so. The desktop rendering
+	 * first appears above a ~1650px viewport.
+	 *
+	 * The three presets sit one clear step inside each band rather than on
+	 * its edge, so a small change to either does not silently reclassify a
+	 * preset.
+	 */
+	previewWidth = $state<PreviewWidth>('fit');
+
+	setPreviewWidth(width: PreviewWidth) {
+		this.previewWidth = width;
+		try {
+			localStorage.setItem(PREVIEW_WIDTH_KEY, width);
+		} catch {
+			// As with the rails: a chrome preference, not worth failing over.
+		}
+	}
+
+	/** Same reason as `loadRailState`: called from the layout, never on import. */
+	loadPreviewWidth() {
+		try {
+			const raw = localStorage.getItem(PREVIEW_WIDTH_KEY);
+			if (raw && raw in PREVIEW_WIDTHS) this.previewWidth = raw as PreviewWidth;
+		} catch {
+			// As above.
 		}
 	}
 

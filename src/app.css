@@ -198,6 +198,41 @@ body {
 }
 
 /* ---------------------------------------------------------------------------
+   The edit targets' own focus indicator -- the one the rule above excludes.
+
+   This is the app's PRIMARY control: ~40 per mockup page, and the only way to
+   edit copy. It had no visible focus indicator at all. Measured on the built
+   app, walking focus with real Tab presses and confirming
+   `element.matches(':focus-visible')` was true: `outline-style: none` (opted
+   out deliberately, above) and `box-shadow` resolving to
+   `rgba(0,0,0,0) 0px 0px 0px 0px` five times over. The intent lived in
+   `@utility edit-target` as `@apply focus-visible:shadow-[inset_...]` and
+   compiled to nothing.
+
+   Why tests/focusContrast.e2e.ts never caught it, despite existing for
+   exactly this failure: it runs SIGNED OUT, and signed out `EditTarget`
+   renders its copy as plain text with no `<button>` (see the component). The
+   controls it exists to measure were not in the page. That is the same blind
+   spot `tests/signedIn.ts` was written to close for axe, in a second place --
+   so the signed-in walk added to that spec is part of this fix, not a nicety.
+
+   Written as plain unlayered CSS rather than `@apply`: Tailwind v4 emits
+   utilities into `@layer utilities`, unlayered CSS outranks every layer, and
+   a literal `box-shadow` cannot silently compile to nothing the way the
+   arbitrary-value variant did.
+
+   The ring is BLACK, where the selection ring is brand blue, so the two
+   compose instead of colliding: focused reads as a dark ring, selected as a
+   blue tint plus blue ring, and a focused selected field shows the dark ring
+   over the tint -- still obviously both. `inset`, so neither one overlaps the
+   neighbouring target's box. ~16:1 on white and on the blue tint, well clear
+   of SC 1.4.11's 3:1 and of the ~3.4:1 the translucent shadcn ring manages.
+   --------------------------------------------------------------------------- */
+.edit-target:focus-visible {
+	box-shadow: inset 0 0 0 2px var(--color-sfds-black);
+}
+
+/* ---------------------------------------------------------------------------
    SFDS tokens, translated to Tailwind v4.
 
    This replaces `@import '@sfgov/design-system/dist/css/sfds.css'`. That
@@ -287,13 +322,22 @@ body {
 	   overflow design 1b warns about — and it gets worse with a selection ring,
 	   because the ring is drawn at the widened edge. Vertical rhythm is kept by
 	   the padding rather than by pulling the box outward. */
-	@apply relative cursor-pointer rounded-[4px] px-[10px] py-2 transition-all;
+	/* `transition-colors`, NOT `transition-all`. With `all`, the focus ring
+	   below animates in from transparent, so for the first frames of a focus
+	   move there is no visible indicator -- measurably so: a probe reading
+	   the computed style immediately after focus got
+	   `rgba(0,0,0,0) 0 0 0 0 inset`, the start of the interpolation. A focus
+	   indicator should be instant; hover tinting can still ease. */
+	@apply relative cursor-pointer rounded-[4px] px-[10px] py-2 transition-colors;
 	@apply hover:bg-sfds-blue-l1/60;
 	@apply focus-visible:outline-none;
 
-	/* `inset` matters. An outer ring is drawn outside the border box and shifts
-	   the copy under it, so the mockup twitches as the reviewer moves focus. */
-	@apply focus-visible:shadow-[inset_0_0_0_2px_var(--color-sfds-action)];
+	/* The focus ring is NOT declared here -- see `.edit-target:focus-visible`
+	   below. `@apply focus-visible:shadow-[inset_...]` inside `@utility`
+	   compiled to nothing: measured in the built app with `:focus-visible`
+	   confirmed matching, the element's `box-shadow` was five fully
+	   transparent zero-size layers, so this opted out of the global outline
+	   and then painted no replacement. */
 }
 
 /* Selected: the tint and the inset ring the panel's suggestion card matches. */

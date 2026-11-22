@@ -16,9 +16,16 @@ import ReviewQueue from '../src/lib/components/workspace/ReviewQueue.svelte';
 import { pageStore } from '../src/lib/stores/pageData.svelte.js';
 import { firstQueuePath, QUEUE_STATUS_ORDER, type ReviewPage } from '../src/lib/stores/reviewState';
 
+// `ensureDevSession` is required because ReviewQueue now reads `sessionStore`
+// to tell "signed out" from "this review is empty" in its empty state, and
+// `SessionStore`'s constructor calls it at module scope.
 vi.mock('$lib/supabase', () => ({
+	ensureDevSession: async () => {},
 	supabase: {
-		auth: {},
+		auth: {
+			getSession: async () => ({ data: { session: null } }),
+			onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } })
+		},
 		from: () => ({}),
 		channel: () => ({ on: () => ({ subscribe: () => ({}) }) })
 	}
@@ -61,10 +68,27 @@ describe('ReviewQueue', () => {
 		];
 	});
 
-	it('says so when nothing has loaded', () => {
+	/**
+	 * The empty queue is the signed-out queue, almost always: every
+	 * `TO authenticated` policy denies the read while the mockups keep
+	 * rendering from the static corpus, so this is the state a reviewer hits
+	 * when the tool looks broken but isn't.
+	 *
+	 * It used to read "No pages loaded. (Waiting for Supabase data)" -- a
+	 * loading promise the app was not keeping, naming a service the reviewer
+	 * cannot act on. The assertion here is that the empty state offers the
+	 * one thing that fixes it.
+	 */
+	it('offers sign-in when the queue is empty because nobody is signed in', () => {
 		pagesStore.set([]);
 		render(ReviewQueue);
-		expect(screen.getByText(/No pages loaded/)).toBeTruthy();
+
+		const link = screen.getByRole('link', { name: 'Sign in' });
+		expect(link.getAttribute('href')).toBe('/login');
+		expect(screen.getByText(/to load the review queue/)).toBeTruthy();
+
+		// The old copy must not come back.
+		expect(screen.queryByText(/Waiting for Supabase data/)).toBeNull();
 	});
 
 	it('counts decisions, not rows', () => {

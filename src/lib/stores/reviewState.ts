@@ -198,7 +198,10 @@ function initializeRealtime(reviewId: string) {
 /**
  * Saves a page review decision optimistically
  */
-export async function updatePageStatus(pageId: string, newStatus: ReviewPage['status']) {
+export async function updatePageStatus(
+	pageId: string,
+	newStatus: ReviewPage['status']
+): Promise<boolean> {
 	// 1. Optimistic Update (instant UI)
 	const previousPages = get(pagesStore);
 	pagesStore.update((pages) =>
@@ -209,11 +212,19 @@ export async function updatePageStatus(pageId: string, newStatus: ReviewPage['st
 	const { error } = await supabase.from('pages').update({ status: newStatus }).eq('id', pageId);
 
 	// 3. Rollback on failure
+	//
+	// Returns a boolean rather than logging and swallowing. A rolled-back
+	// decision is the one failure in this app the reviewer MUST see: the
+	// optimistic update already moved the queue row into another group, so a
+	// silent rollback reads as "the click did nothing" on a control whose
+	// whole output is which pages are approved. `updatePageNotes` already
+	// reports this way and ReviewPanel surfaces it; status now matches.
 	if (error) {
 		console.error('Failed to update status:', error);
 		pagesStore.set(previousPages);
-		// In a real app, trigger a toast notification here
+		return false;
 	}
+	return true;
 }
 
 /**

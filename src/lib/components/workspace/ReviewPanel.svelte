@@ -13,7 +13,7 @@
 		type PageCheck
 	} from '$lib/stores/reviewState';
 
-	let { pageData, showOnlyChecks = false } = $props();
+	let { pageData } = $props();
 
 	// Find the live record in the store matching the static corpus id
 	let liveRecord = $derived($pagesStore.find((p) => p.path === pageData?.id));
@@ -46,9 +46,28 @@
 	type Decision = 'needs-review' | 'approved' | 'blocked' | 'revise';
 
 	// `tone` keeps the traffic-light reading the hand-rolled pills had. Only the
-	// blocked end of it maps onto a shadcn token; the other two are tinted rings.
+	// blocked end of it maps onto a shadcn token; the others are tinted rings.
+	//
+	// FOUR options, not three. `needs-review` is a real state -- it is what
+	// every seeded row starts as -- and leaving it off the control made a
+	// decision one-way. MEASURED before this change: clicking Approve wrote
+	// `{"status":"approved"}`; clicking Approve again put all three pills in
+	// `data-state="off"`, sent NO write, and left the queue row under
+	// "Approved". The control reported "no decision recorded" while the
+	// database still said approved, which is the wrong direction to be wrong
+	// in for a tool whose output is which pages may publish.
+	//
+	// Listing the state fixes both halves at once: there is a way back from a
+	// misclick, and there is no longer an unrepresentable state to deselect
+	// into. Labels are all noun-phrases describing the state the page is IN,
+	// rather than the old mix of two verbs and an adjective.
 	const decisions: { value: Decision; label: string; tone: string }[] = [
-		{ value: 'approved', label: 'Approve', tone: 'data-[state=on]:ring-2 ring-emerald-500/60' },
+		{
+			value: 'needs-review',
+			label: 'Needs review',
+			tone: 'data-[state=on]:ring-2 ring-sfds-action/60'
+		},
+		{ value: 'approved', label: 'Approved', tone: 'data-[state=on]:ring-2 ring-emerald-500/60' },
 		{ value: 'revise', label: 'Revise', tone: 'data-[state=on]:ring-2 ring-amber-500/60' },
 		{
 			value: 'blocked',
@@ -57,12 +76,50 @@
 		}
 	];
 
-	// ToggleGroup in single mode emits '' when the active item is toggled off;
-	// there is no "unset" decision, so that case is ignored rather than written back.
-	const handleDecision = (status: string) => {
-		if (liveRecord && status) {
-			updatePageStatus(liveRecord.id, status as Decision);
+	// The RENDERED decision, kept in step with the stored row.
+	//
+	// `bind:value` is what makes the group controlled. Handed a one-way
+	// `value={...}` the bits-ui primitive keeps its own copy once the reviewer
+	// clicks, and no later render can correct it -- that is the mechanism
+	// behind the desync above, not the missing option on its own.
+	let decision = $state('');
+	let syncedFrom = $state<string | undefined>(undefined);
+	$effect(() => {
+		// Keyed on id AND status so a rollback (which restores the old status
+		// on the same row) re-syncs, not just a navigation to another page.
+		const key = `${liveRecord?.id ?? ''}:${liveRecord?.status ?? ''}`;
+		if (key !== syncedFrom) {
+			syncedFrom = key;
+			decision = liveRecord?.status ?? '';
 		}
+	});
+
+	let decisionError = $state(false);
+
+	const handleDecision = async (status: string) => {
+		if (!liveRecord) return;
+		// Toggling the active item off. There is no unset decision, so put the
+		// control back where the record is instead of writing an empty status.
+		if (!status) {
+			decision = liveRecord.status ?? '';
+			return;
+		}
+		if (status === liveRecord.status) return;
+		decisionError = false;
+		const saved = await updatePageStatus(liveRecord.id, status as Decision);
+		// The optimistic update already moved the queue row; on failure the
+		// store rolls back, the `$effect` above pulls `decision` with it, and
+		// this is the only thing that tells the reviewer their click was lost.
+		if (!saved) decisionError = true;
+	};
+
+	/** Re-send the note the debounce already gave up on. */
+	const retryNotes = async () => {
+		const id = liveRecord?.id;
+		if (!id) return;
+		notesError = false;
+		const saved = await updatePageNotes(id, notesValue);
+		if (!saved && lastRecordId === id) notesError = true;
 	};
 
 	const onNotesInput = (e: Event) => {
@@ -91,60 +148,76 @@
 </script>
 
 <div class="flex h-full flex-col">
-	{#if !showOnlyChecks}
-		<!-- Top Half: Manager Decision -->
-		<div class="space-y-4 p-6">
-			<h2 class="font-heading text-lg font-bold">Manager Review</h2>
+	<!-- Top: the decision itself -->
+	<div class="space-y-4 p-6">
+		<h2 class="font-heading text-lg font-bold">Manager Review</h2>
 
-			<div class="space-y-2">
+		<div class="space-y-2">
+			<div class="flex items-baseline justify-between gap-2">
 				<span id="decision-label" class="text-sm font-medium">Decision</span>
-				<ToggleGroup.Root
-					type="single"
-					variant="outline"
-					size="sm"
-					spacing={2}
-					aria-labelledby="decision-label"
-					value={liveRecord?.status ?? ''}
-					onValueChange={handleDecision}
-				>
-					{#each decisions as decision (decision.value)}
-						<ToggleGroup.Item
-							value={decision.value}
-							aria-label={decision.label}
-							class="rounded-4xl {decision.tone}"
-						>
-							{decision.label}
-						</ToggleGroup.Item>
-					{/each}
-				</ToggleGroup.Root>
+				{#if decisionError}
+					<span class="text-xs text-destructive" role="alert">Not saved — try again</span>
+				{/if}
 			</div>
-
-			<div class="space-y-2">
-				<div class="flex items-baseline justify-between gap-2">
-					<Label for="notes">Decision Notes</Label>
-					{#if notesError}
-						<span class="text-destructive text-xs" role="status">Not saved — retry</span>
-					{/if}
-				</div>
-				<Textarea
-					id="notes"
-					rows={4}
-					placeholder="What needs to change before approval?"
-					value={notesValue}
-					aria-invalid={notesError}
-					oninput={onNotesInput}
-				/>
-			</div>
+			<ToggleGroup.Root
+				type="single"
+				variant="outline"
+				size="sm"
+				spacing={2}
+				class="flex-wrap"
+				aria-labelledby="decision-label"
+				bind:value={decision}
+				onValueChange={handleDecision}
+			>
+				{#each decisions as decision (decision.value)}
+					<ToggleGroup.Item
+						value={decision.value}
+						aria-label={decision.label}
+						class="rounded-4xl {decision.tone}"
+					>
+						{decision.label}
+					</ToggleGroup.Item>
+				{/each}
+			</ToggleGroup.Root>
 		</div>
 
-		<Separator />
-	{/if}
+		<div class="space-y-2">
+			<div class="flex items-baseline justify-between gap-2">
+				<Label for="notes">Decision notes</Label>
+				{#if notesError}
+					<!-- Was a `<span>` reading "Not saved — retry": it named an
+						     action the UI did not offer, leaving the reviewer to
+						     re-type a character to re-arm the debounce. Now the word
+						     is the control. -->
+					<button
+						type="button"
+						class="text-xs font-semibold text-destructive underline underline-offset-2"
+						onclick={retryNotes}
+					>
+						Not saved — retry
+					</button>
+				{/if}
+			</div>
+			<Textarea
+				id="notes"
+				rows={4}
+				placeholder="What needs to change before approval?"
+				value={notesValue}
+				aria-invalid={notesError}
+				oninput={onNotesInput}
+			/>
+		</div>
+	</div>
 
-	<!-- Bottom Half: Page Checks -->
-	<div class="flex-1 overflow-y-auto p-6 {showOnlyChecks ? '' : 'bg-muted/40'}">
-		{#if !showOnlyChecks}
-			<h3 class="mb-4 text-sm font-bold">Page Checks</h3>
-		{/if}
+	<Separator />
+
+	<!-- Bottom: the checks that inform it. These used to ALSO be reachable
+	     through a "Checks" tab rendering this same component with
+	     `showOnlyChecks`, which made one tab a strict subset of another. The
+	     tab is gone; this is the single home for them, directly under the
+	     decision they bear on. -->
+	<div class="flex-1 overflow-y-auto bg-muted/40 p-6">
+		<h3 class="mb-4 text-sm font-bold">Page checks</h3>
 
 		{#if liveRecord?.page_checks && Object.keys(liveRecord.page_checks).length > 0}
 			<div class="space-y-3">
@@ -159,14 +232,14 @@
 								<p class="text-sm font-medium capitalize">
 									{checkId.replace(/([A-Z])/g, ' $1').trim()}
 								</p>
-								<p class="text-muted-foreground mt-1 text-xs">{check.message}</p>
+								<p class="mt-1 text-xs text-muted-foreground">{check.message}</p>
 							</div>
 						</Card.Content>
 					</Card.Root>
 				{/each}
 			</div>
 		{:else}
-			<p class="text-muted-foreground text-sm">No checks available for this page.</p>
+			<p class="text-sm text-muted-foreground">No checks available for this page.</p>
 		{/if}
 	</div>
 </div>

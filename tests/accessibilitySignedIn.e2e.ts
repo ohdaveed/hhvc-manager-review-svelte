@@ -53,14 +53,17 @@ test('no WCAG 2.1 AA violations in the signed-in queue and decision panel', asyn
 	await noViolations(page);
 });
 
-test('no WCAG 2.1 AA violations in the Checks panel', async ({ page }) => {
+test('no WCAG 2.1 AA violations in the page checks under the decision', async ({ page }) => {
 	await gotoSignedIn(page, PAGE);
-	await page.getByRole('tab', { name: 'Checks' }).click();
+
+	// No tab click: the page checks live under the decision, on the default
+	// tab. The separate "Checks" tab this test used to open rendered the SAME
+	// component with `showOnlyChecks`, which is why the note here used to warn
+	// about an unscoped locator matching a hidden second copy. One tab was a
+	// strict subset of another; it is gone, and so is the duplicate.
+	await expect(page.getByRole('tab', { name: 'Decision' })).toHaveAttribute('data-state', 'active');
 
 	// `page_checks` rows, which exist on this page only in the fixture.
-	// Scoped to the ACTIVE tabpanel. The Overview panel lists the same checks
-	// and stays mounted while hidden, so an unscoped locator matches twice and
-	// `.first()` matches the hidden copy -- visible only to the DOM, not a user.
 	await expect(page.getByRole('tabpanel')).toContainText('2 images have no alt text.');
 
 	await noViolations(page);
