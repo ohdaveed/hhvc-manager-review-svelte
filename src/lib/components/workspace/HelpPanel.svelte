@@ -5,56 +5,15 @@
 	import { buildTranscript, renderTranscriptMarkdown } from '$lib/legacy-core/karl-transcript.js';
 	import { pagesByKey } from '$lib/data';
 	import { editsStore, pagesStore } from '$lib/stores/reviewState';
+	import { reviewRecordFor } from '$lib/karl/reviewRecord';
 
 	let { pageData } = $props();
 
-	// `buildTranscript` is untyped legacy JS; these describe the shapes it expects
-	// rather than opting the whole call site out of type checking.
-	type ReviewRecord = {
-		section_edits: Record<string, string>;
-		decision: string;
-		edited_title?: string;
-		edited_summary?: string;
-		url_slug?: string;
-	};
-
-	// Map live Supabase edits to the legacy reviewRecord format
-	let record = $derived.by(() => {
-		if (!pageData) return null;
-
-		const livePage = $pagesStore.find((p) => p.path === pageData.id);
-		// Append-only table: a field can have several rows, and the fold below is
-		// last-write-wins, so order explicitly rather than trusting the row order
-		// PostgREST happened to return.
-		const edits = $editsStore
-			.filter((e) => e.page_id === livePage?.id)
-			.slice()
-			.sort((a, b) => (a.created_at ?? '').localeCompare(b.created_at ?? ''));
-
-		const statusLabels: Record<string, string> = {
-			approved: 'Approved',
-			blocked: 'Blocked',
-			revise: 'Needs revision'
-		};
-
-		const reviewRecord: ReviewRecord = {
-			section_edits: {},
-			decision: statusLabels[livePage?.status ?? ''] ?? 'Needs review'
-		};
-
-		for (const edit of edits) {
-			if (edit.field_id === 'title') reviewRecord.edited_title = edit.new_content;
-			else if (edit.field_id === 'summary') reviewRecord.edited_summary = edit.new_content;
-			else if (edit.field_id === 'slug') reviewRecord.url_slug = edit.new_content;
-			else reviewRecord.section_edits[edit.field_id] = edit.new_content;
-		}
-
-		return Object.keys(reviewRecord.section_edits).length > 0 ||
-			edits.length > 0 ||
-			livePage?.status
-			? reviewRecord
-			: null;
-	});
+	// The fold from live Supabase rows to the legacy reviewRecord lives in
+	// `$lib/karl/reviewRecord` rather than here, because the walkthrough needs
+	// the same record and used to pass `null` instead -- so the two halves of
+	// the tool disagreed about what the reviewed page said.
+	let record = $derived(reviewRecordFor(pageData?.id, $pagesStore, $editsStore));
 
 	// Build the markdown transcript for the current page
 	let markdownContent = $derived.by(() => {

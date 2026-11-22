@@ -40,6 +40,8 @@
 	let justCopied = $state<string | null>(null);
 
 	const steps = $derived(walkthrough.steps);
+	const flagGaps = $derived(walkthrough.gaps.filter((g) => g.kind === 'flag'));
+	const unmappedGaps = $derived(walkthrough.gaps.filter((g) => g.kind === 'unmapped'));
 	const index = $derived(Math.min(pageStore.stepIndex, Math.max(steps.length - 1, 0)));
 	const active = $derived(steps[index]);
 	const copiedCount = $derived(steps.filter((s) => pageStore.isCopied(pageId, s.id)).length);
@@ -177,7 +179,16 @@
 								<p class="choices-label">Karl asks you to choose</p>
 								<ul class="choices-list">
 									{#each step.choices as choice, c (c)}
-										<li class="choice">{choice}</li>
+										<!-- The label is what a reviewer types into Karl's page chooser,
+										     so it leads. The corpus key follows only where it differs
+										     from the label, which is the case worth seeing: it means the
+										     target resolved to a page whose title is not its key. -->
+										<li class="choice">
+											{choice.label}
+											{#if choice.pageKey && choice.pageKey !== choice.label}
+												<code class="choice-key">{choice.pageKey}</code>
+											{/if}
+										</li>
 									{/each}
 								</ul>
 							</div>
@@ -198,6 +209,25 @@
 								<p class="value-text">{value.value}</p>
 							</div>
 						{/each}
+
+						{#if step.links.length > 0}
+							<!-- Not decoration, and not a Copy target. Pasting the markdown
+							     into a Wagtail rich-text field stores the brackets as literal
+							     text, so each link has to be rebuilt with Karl's own Link
+							     tool. The transcript has always said so; the drawer did not. -->
+							<div class="links">
+								<p class="links-label">Rebuild these with Karl's Link tool</p>
+								<ul class="links-list">
+									{#each step.links as link, l (l)}
+										<li class="link">
+											<span class="link-text">“{link.label}”</span>
+											<span class="link-target">{link.representation}</span>
+										</li>
+									{/each}
+								</ul>
+								<p class="links-note">Do not paste the link markup into the field.</p>
+							</div>
+						{/if}
 
 						{#if step.notes.length > 0 && step.outcome !== 'FLAG'}
 							<!-- The prose lives here, collapsed. The header carries the structure. -->
@@ -232,10 +262,27 @@
 			</div>
 		{/each}
 
-		{#if walkthrough.gaps.length > 0}
+		<!-- Two registers, kept apart because they ask for different things. A
+		     flag is work to do before saving; an unmapped finding has nowhere to
+		     be typed at all, and is listed so that content leaving the migration
+		     is visible rather than silently absent. -->
+		{#if flagGaps.length > 0}
 			<div class="gap gap-advisory page-gap">
-				<p class="gap-title">About this page as a whole</p>
-				{#each walkthrough.gaps as gap (gap.path)}
+				<p class="gap-title">Resolve before saving</p>
+				{#each flagGaps as gap (gap.path)}
+					<p class="gap-body"><code>{gap.path}</code> — {gap.reason}</p>
+				{/each}
+			</div>
+		{/if}
+
+		{#if unmappedGaps.length > 0}
+			<div class="gap page-gap gap-unmapped">
+				<p class="gap-title">No Karl field for this content</p>
+				<p class="gap-body gap-lede">
+					Nothing here has a field to be typed into. It is listed rather than dropped, because an
+					absence reads as “there was nothing there”.
+				</p>
+				{#each unmappedGaps as gap (gap.path)}
 					<p class="gap-body"><code>{gap.path}</code> — {gap.reason}</p>
 				{/each}
 			</div>
@@ -530,14 +577,98 @@
 		list-style: none;
 	}
 
+	/* `min-height`, not `height`. These used to be short because every label
+	   was the string "[object Object]"; a real page title is up to 50
+	   characters and wrapped straight out through the bottom of a fixed 26px
+	   pill. Observed in Chromium at 1600x1000 on the Agency page. */
 	.choice {
 		display: inline-flex;
-		align-items: center;
-		height: 26px;
-		padding: 0 12px;
-		border-radius: 999px;
+		align-items: baseline;
+		gap: 6px;
+		min-height: 26px;
+		padding: 4px 12px;
+		border-radius: 13px;
 		border: 1px solid #c2c2c2;
 		font-size: 12px;
+		line-height: 17px;
+	}
+
+	.choice-key {
+		flex: none;
+		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+		font-size: 11px;
+		color: var(--text-secondary, #5a7a92);
+	}
+
+	/* Bordered like .choices rather than coloured like .gap: a link to rebuild
+	   is part of the step's work, not a problem with the page. */
+	.links {
+		border: 1px solid #c2c2c2;
+		border-radius: 4px;
+		padding: 10px;
+		margin-bottom: 8px;
+	}
+
+	.links-label {
+		margin: 0 0 8px;
+		font-size: 11px;
+		font-weight: 700;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: var(--text-secondary, #5a7a92);
+	}
+
+	.links-list {
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.link {
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+		font-size: 12px;
+		line-height: 17px;
+	}
+
+	.link-text {
+		font-weight: 600;
+	}
+
+	.link-target {
+		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+		font-size: 11px;
+		color: var(--text-secondary, #5a7a92);
+	}
+
+	.links-note {
+		margin: 8px 0 0;
+		font-size: 11px;
+		color: var(--text-secondary, #5a7a92);
+	}
+
+	/* Grey, not amber: there is nothing here for the reviewer to fix, so
+	   colouring it like a flag would send them looking for an action. */
+	.gap-unmapped {
+		background: var(--sfds-color-grey-l3, #f4f4f4);
+		border-left: 4px solid #c2c2c2;
+	}
+
+	.gap-unmapped .gap-title,
+	.gap-unmapped .gap-body {
+		color: var(--sfds-color-black, #1c1c1c);
+	}
+
+	.gap-lede {
+		color: var(--text-secondary, #5a7a92);
+	}
+
+	.gap-unmapped .gap-lede {
+		color: var(--text-secondary, #5a7a92);
 	}
 
 	.value {
