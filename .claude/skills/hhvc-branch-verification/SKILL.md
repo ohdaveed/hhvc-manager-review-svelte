@@ -1,6 +1,6 @@
 ---
 name: hhvc-branch-verification
-description: 'Post-merge branch lifecycle verification: categorizing branches by merge status, verifying code presence on main, handling multi-commit sequences, coordinating isolated worktrees, and safely cleaning up stale remotes. Use this skill when identifying which branches are safe to delete after a merge wave, verifying whether bot-proposed fixes actually landed (including via cherry-picks or squash merges), or coordinating multi-PR sequences without losing work or authorship.'
+description: "Post-merge branch lifecycle verification: categorizing branches by merge status, verifying code presence on main, handling multi-commit sequences, detecting partial landing via different PRs, evaluating mixed-content commits independently, and safely cleaning up stale remotes. Use this skill when 'Use this skill when identifying which stale or closed branches are safe to delete, verifying whether bot-proposed fixes actually landed in main, or cleaning up branch clutter after a merge sequence.'"
 trigger: "'Use this skill when identifying which stale or closed branches are safe to delete, verifying whether bot-proposed fixes actually landed in main, or cleaning up branch clutter after a merge sequence.'"
 author: arrizon.david
 source_sessions:
@@ -10,10 +10,10 @@ source_sessions:
   - arrizon.david_arrizon.david's Organization_default_6a758eaf-4166-4b4c-ac89-ed89426edc77
 contributors:
   - arrizon.david
-version: 2
+version: 3
 created_by_agent: claude_code
 created_at: 2026-08-27T01:45:56.679Z
-updated_at: 2026-09-01T08:42:19.728Z
+updated_at: 2026-09-03T07:12:27.990Z
 ---
 
 # HHVC Post-Merge Branch Cleanup and Multi-Commit Coordination
@@ -30,6 +30,7 @@ Use this skill when:
 - You need to land one commit from a multi-commit branch while deferring others
 - Managing post-merge cleanup when you have open decisions about what stays/goes
 - Coordinating multiple PRs without moving branches out from under a peer's active checkout
+- A branch's content may have landed via a different PR, making cheap signals (PR status, commit counts) unreliable
 
 ## The Verification Process
 
@@ -67,19 +68,14 @@ gh pr list --head "$branch" --state all --json state,mergedAt,number
 
 Squash merges and cherry-picks erase commit identity. The fix may have landed in reworked form, been integrated via a different route, or targeted code never added.
 
-**Start with the whole-branch question, not a per-file grep.** One number answers
-"does this branch contain anything main lacks", without guessing which file or
-which string carries the evidence:
+**Start with the whole-branch question, not a per-file grep.** One number answers "does this branch contain anything main lacks", without guessing which file or which string carries the evidence:
 
 ```sh
 git diff --numstat origin/main...<branch> | awk '{ins+=$1} END {print ins+0}'
 # 0 = the branch adds nothing main lacks -> safe to delete
 ```
 
-**Note the THREE dots.** Three-dot diffs from the merge base, answering "what has
-this branch added since it diverged". Two dots compares the two tips, so every
-line main changed _after_ the branch diverged counts as branch content. Measured
-2026-09-01 on three refs fully contained in `origin/main`:
+**Note the THREE dots.** Three-dot diffs from the merge base, answering "what has this branch added since it diverged". Two dots compares the two tips, so every line main changed _after_ the branch diverged counts as branch content. Measured 2026-09-01 on three refs fully contained in `origin/main`:
 
 | ref       | contained | two-dot insertions | three-dot |
 | --------- | --------- | ------------------ | --------- |
@@ -87,43 +83,17 @@ line main changed _after_ the branch diverged counts as branch content. Measured
 | `b86a803` | yes       | 1477               | 0         |
 | `fe3f224` | yes       | 1847               | 0         |
 
-Two-dot says DO NOT DELETE for three branches that are provably safe. It reads
-clean only when the branch is already current with main — which is not the case
-this skill is for. A stale branch is exactly where it over-reports.
+Two-dot says DO NOT DELETE for three branches that are provably safe. It reads clean only when the branch is already current with main — which is not the case this skill is for. A stale branch is exactly where it over-reports.
 
-Read insertions only. Deletions mean the branch is _behind_ main, which is
-expected and not a reason to keep it: a clean branch showed `172 deletions, 0
-insertions` purely because its local ref predated an `update-branch`.
+Read insertions only. Deletions mean the branch is _behind_ main, which is expected and not a reason to keep it: a clean branch showed `172 deletions, 0 insertions` purely because its local ref predated an `update-branch`.
 
 Then, only if the count is non-zero and you need to know _what_:
 
 ```sh
 # What the branch proposes, and whether main carries it.
-# `git show` EXITS NON-ZERO when the path is absent on that side -- a diff built
-# on it reads the failure as a difference. Confirm the path exists on both sides
-# before trusting a comparison built this way.
-git show origin/<branch>:src/file.ts | grep -A5 "fix_code"
-git show origin/main:src/file.ts | grep -c "evidence"
-
-# If no direct match, search by behavior or functionality
 git log origin/main -S "search_term" --oneline | head
-
-# Check PR history for this branch
-gh pr list --head "<branch>" --state all --json number,mergedAt,commits
-# If merged, check which commit hashes landed via git log
+gh pr list --head "<branch>" --state all --json number,mergedAt
 ```
-
-**Authorship cannot tell you who wrote a branch here.** Every session commits as
-the same git identity, so `git log --author` cannot distinguish them. Ask the
-session, or read its transcript.
-
-> **Three checks in one day returned a plausible number while measuring the
-> wrong thing**: a table pipe-count that passed while the content moved, a
-> `git show` against a path that did not exist on one side, and the two-dot diff
-> above. Each was caught by someone re-measuring, never by the check failing. A
-> verification whose failure mode is indistinguishable from its pass is worse
-> than no verification, because it is trusted. Prove a new check fails when it
-> should before relying on it.
 
 **Outcomes:**
 
@@ -153,6 +123,16 @@ git cherry-pick --allow-empty -x <sha1> <sha2>
 # The -x flag adds a note: "(cherry picked from commit ...)" so the original is citable
 ```
 
+When a branch carries multiple independent changes (tooling, docs, corpus), evaluate each separately — some may have landed via different PRs:
+
+```bash
+# Measure deltas per-file to detect mixed content
+git diff main..origin/<branch> -- src/lib/data/index.ts  # corpus: landed already?
+git diff main..origin/<branch> -- CLAUDE.md              # docs: stale against HEAD?
+```
+
+If a documentation or config change computes as `+64 -231`, it would be removing lines added since the branch diverged. Check: are those removals deliberate or accidental reversion of newer work? Declined parts don't block the rest — land what's ready independently.
+
 When landing a cherry-pick from a peer's work:
 
 ```sh
@@ -163,7 +143,7 @@ git cherry-pick --author="Original Author <email>" <sha>
 git log --format="%an <%ae>" -1
 ```
 
-**Do not cherry-pick changes you haven't fully evaluated.** Read the commit diff, verify the ratchet or tests catch it, and test in isolation before opening a PR.
+**Do not cherry-pick changes you haven't fully evaluated.** Read the commit diff, verify the ratchet or tests catch it, and test in isolation before opening a PR. When structural issues exist (wrong enforcement point, orphaned files, stale dependencies), rebuild the change fresh rather than cherry-picking stale code.
 
 ### 4. Coordinate multi-PR sequences with isolated worktrees
 
@@ -237,3 +217,6 @@ git branch -r | wc -l
 - **The branch you're deleting might be checked out in another worktree.** Use `git worktree list` first, and move work to isolated worktrees rather than deleting branches someone is using.
 - **Authorship matters.** A cherry-pick loses authorship by default; use `--author` or `--allow-empty -x` to preserve it or note the original.
 - **Multi-commit branches landing selectively is normal.** One commit via cherry-pick, another deferred — don't treat this as incomplete; decide which commits go and which stay.
+- **Old documentation edits on stale branches revert newer work.** A CLAUDE.md condensation or config rewrite that was sound when the branch diverged may remove lines added since. Always compute the delta (`git diff main..branch -- file`) before applying; if it's mostly removals of recent content, decline it and let the corpus half land independently.
+- **Cherry-picking a commit with structural problems often means rebuilding.** If a commit has the right idea but wrong enforcement point (guard at wrong stage), orphaned files (wiring removed, implementation still present), or stale dependencies, cherry-picking it ships broken code. Rebuild fresh rather than shipping stale scaffolding.
+- **Three-dot diffs are your most reliable signal.** Commit counts, PR status, and two-dot diffs all fail when a branch's content reached main via cherry-picks or different PRs. Three-dot diff against the merge base (`git diff --numstat origin/main...<branch>`) won't say "safe to delete" about a branch carrying real work.
