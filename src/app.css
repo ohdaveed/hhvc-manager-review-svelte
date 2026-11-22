@@ -254,7 +254,7 @@ body {
    namespaces would silently rewrite `border`, `rounded`, `p-2` and every `md:`
    inside the shadcn components — the same bug again, minus the black borders
    that made it findable. These tokens ADD to the default theme; they must
-   never clear it, since the mockup frame and the callout use `gray-*`/`blue-*`
+   never clear it, since the mockup frame uses `gray-*`/`blue-*`
    and the decision toggles use `emerald-*`/`amber-*`.
    --------------------------------------------------------------------------- */
 @theme {
@@ -468,15 +468,25 @@ body {
 		margin: 0 auto;
 	}
 
+	/* The live type pill, measured 2026-11-22 on `report-health-nuisance-or-
+	   hazards`, `topics--housing` and `location--san-francisco-city-hall`:
+	   #E9F1FE fill, 4px radius, 6px 10px padding, 16/24 weight 800 in #1B519E
+	   (6.8:1 on the fill). Two differences from live, both deliberate:
+	   - Live sets it `uppercase`; this is sentence case, as Phase 2 decided.
+	     One line to switch.
+	   - Live hides the pill (`sr-only`) on Service, Info Page and Step-by-step
+	     pages and shows it on Topic and Location. Here it always shows, above
+	     the title, by an earlier decision (PLAN.md, "keep the type eyebrow"). */
 	& .page-type-eyebrow {
+		width: fit-content;
 		margin-bottom: 0.5rem;
-		/* slate-l2 #5a7a92 was 4.41:1 on the site's #FCFCFC page -- axe fails it. */
-		color: var(--color-site-ink-secondary);
-		font-size: var(--text-sfds-small);
-		font-weight: 600;
-		line-height: var(--text-sfds-small--line-height);
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
+		padding: 6px 10px;
+		border-radius: var(--site-radius);
+		background: var(--color-site-spotlight-bg);
+		color: var(--color-site-action);
+		font-size: 1rem;
+		font-weight: 800;
+		line-height: 1.5rem;
 	}
 
 	& .page-summary {
@@ -517,25 +527,111 @@ body {
 	   the editor.
 	   ponytail: chrome only. Make it a real <details> if reviewers ask to collapse,
 	   and move the disclosure onto its own control so the heading stays editable. */
-	& .page-section[data-component='supporting'] {
-		padding-top: 0.75rem;
-		border-top: 1px solid var(--color-site-border);
-	}
+	/* Re-measured 2026-11-22 on the "Special cases" accordion of live
+	   `report-health-nuisance-or-hazards`: the summary is 12px 0 padding over a
+	   1px #707070 bottom rule (no top rule), title #2A60AF 16/24 bold, a 24px
+	   SVG minus in the same blue when open, and the open body on #EFF0F0 with
+	   20px padding. The minus is sf.gov's own path, drawn as a mask so it takes
+	   `currentColor` like the live `fill="currentcolor"`. */
 	& .page-section[data-component='supporting'] .section-heading {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
 		gap: 1rem;
-		color: var(--color-site-action);
+		margin-bottom: 0;
+		padding-block: 12px;
+		border-bottom: 1px solid #707070;
+		color: var(--color-site-action-fill);
 		font-family: var(--site-font-body);
 		font-size: 1rem;
 		font-weight: 700;
+		line-height: 1.5rem;
 	}
 	& .page-section[data-component='supporting'] .section-heading::after {
-		content: '\2013';
-		color: var(--color-site-action);
-		font-size: 1.25rem;
-		line-height: 1;
+		content: '';
+		flex: none;
+		width: 24px;
+		height: 24px;
+		background: currentColor;
+		mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M21 13H3V11H21V13Z'/%3E%3C/svg%3E")
+			center / 24px no-repeat;
+	}
+	& .page-section[data-component='supporting'] .page-section-body {
+		padding: 20px;
+		background: var(--color-site-panel);
+	}
+	& .page-section[data-component='supporting'] .page-section-body > :last-child {
+		margin-bottom: 0;
+	}
+
+	/* Numbered steps, measured 2026-11-22 on "1. Check if your issue is on the
+	   online services page": an h3 in Slab 600, 24/32, stepping to 32/44 with
+	   the h1 (query below), 12px under it and 20px between a step's blocks.
+	   Live types the number into the title; the corpus does not, so a counter
+	   prints it in the same face. Set here rather than in StepsBlock because
+	   `#mockPage h3` outranks any class selector a component can scope. */
+	& .steps-block {
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
+		margin: 16px 0;
+		padding-left: 0;
+		list-style: none;
+		counter-reset: step;
+	}
+	& .steps-block-item {
+		counter-increment: step;
+	}
+	& .steps-block-title {
+		display: flex;
+		align-items: baseline;
+		margin-bottom: 0.75rem;
+		font-family: var(--site-font-display);
+		font-size: 1.5rem;
+		font-weight: 600;
+		line-height: 2rem;
+	}
+	& .steps-block-title::before {
+		content: counter(step) '.';
+		flex: none;
+		margin-right: 0.3em;
+	}
+
+	/* The callout (CalloutBlock.svelte), measured 2026-11-22 on "Track your
+	   case.": #DAEBFF fill, 1px #6FAAFF border, square corners, 20px 28px
+	   padding, a 24px #0046C2 info glyph. Column on a phone, a left gutter
+	   from sf.gov's `md` step (query below); 12px row gap, 20px column gap.
+	   The live text paragraph keeps its own 20px bottom margin inside the box. */
+	& .callout {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 12px 20px;
+		margin: 20px 0;
+		padding: 20px 28px;
+		border: 1px solid var(--color-site-callout-border);
+		background: var(--color-site-callout-bg);
+	}
+	& .callout-icon {
+		flex: none;
+		width: 24px;
+		height: 24px;
+		color: var(--color-site-info);
+	}
+	& .callout-body {
+		margin-bottom: 20px;
+	}
+	/* Run-on lead-in: both parts inline, and the selection button inside each
+	   hugs its text instead of taking `.edit-target`'s full-width block. */
+	& :is(.callout-title, .callout-text),
+	& :is(.callout-title, .callout-text) > .edit-target {
+		display: inline;
+		width: auto;
+		padding-inline: 0;
+	}
+	& .callout-title {
+		margin-right: 0.25em;
+		font-weight: 700;
 	}
 
 	& .page-audience {
@@ -597,6 +693,20 @@ body {
 		font-size: 1.5rem;
 		line-height: 2rem;
 	}
+	#mockPage .steps-block-title {
+		font-size: 2rem;
+		line-height: 2.75rem;
+	}
+}
+
+/* sf.gov's `md` (768px viewport) puts the callout glyph in a left gutter. Its
+   grid is 727px at 767 and 712px at 768 (the gutters grow), so no single
+   width matches exactly; 700px puts the Tablet preset (~712px) on the
+   gutter side and the Phone preset on the stacked side, as on live. */
+@container mockup (min-width: 700px) {
+	#mockPage .callout {
+		flex-direction: row;
+	}
 }
 
 /* ---------------------------------------------------------------------------
@@ -635,6 +745,7 @@ body {
 	--color-site-action: #1b519e; /* default fill, link text        7.53:1 */
 	--color-site-action-hover: #001d4e; /* primary hover / pressed       15.92:1 */
 	--color-site-action-dark: #043578; /* link hover, text on light     11.46:1 */
+	--color-site-action-fill: #2a60af; /* buttons, accordion titles     6.0:1 */
 	--color-site-action-soft: #dfebfd; /* secondary + ghost hover fill */
 	--color-site-action-soft-strong: #afccf7; /* secondary hover fill */
 	--color-site-tint: #f2f6fc; /* breadcrumb strip, input prefixes */
@@ -668,7 +779,10 @@ body {
 	/* Content surfaces. Not aliases of the action ramp: --site-spotlight-bg sits
 	   between --color-site-tint and --color-site-action-soft, and the frames use
 	   all three within one page. */
-	--color-site-spotlight-bg: #e9f1fe;
+	--color-site-spotlight-bg: #e9f1fe; /* also the type pill */
+	--color-site-callout-bg: #daebff;
+	--color-site-callout-border: #6faaff;
+	--color-site-panel: #eff0f0; /* open accordion body */
 	/* The other two spotlight hues, and their dark ends. Measured off the design
 	   specimen's computed styles; all six tones pass AA (dark 7.53 / 6.73 / 7.90:1,
 	   light 17.2-18.1:1). `secondary` used to borrow --color-site-tint, which

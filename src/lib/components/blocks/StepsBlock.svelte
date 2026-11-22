@@ -1,6 +1,7 @@
 <script>
 	import EditTarget from '../EditTarget.svelte';
 	import ButtonBlock from './ButtonBlock.svelte';
+	import CalloutBlock from './CalloutBlock.svelte';
 	import { entryText, entryUnverified } from '$lib/corpus/fieldResolver';
 
 	/**
@@ -59,25 +60,14 @@
 			{/if}
 
 			{#if step.callout}
-				<div class="steps-block-callout">
-					{#if typeof step.callout.title === 'string' && step.callout.title}
-						<EditTarget
-							as="h4"
-							class="steps-block-callout-title"
-							fieldId={`sections.${sectionKey}.steps.${i}.callout.title`}
-							name={`${label} Step [${i + 1}] Callout Title`}
-							value={step.callout.title}
-						/>
-					{/if}
-					{#if step.callout.text}
-						<EditTarget
-							as="p"
-							fieldId={`sections.${sectionKey}.steps.${i}.callout.text`}
-							name={`${label} Step [${i + 1}] Callout Text`}
-							value={step.callout.text}
-						/>
-					{/if}
-				</div>
+				<CalloutBlock
+					title={step.callout.title}
+					text={step.callout.text}
+					titleFieldId={`sections.${sectionKey}.steps.${i}.callout.title`}
+					textFieldId={`sections.${sectionKey}.steps.${i}.callout.text`}
+					titleName={`${label} Step [${i + 1}] Callout Title`}
+					textName={`${label} Step [${i + 1}] Callout Text`}
+				/>
 			{/if}
 
 			{#if step.button}
@@ -92,33 +82,3 @@
 		</li>
 	{/each}
 </ol>
-
-<style>
-	.steps-block {
-		display: flex;
-		flex-direction: column;
-		gap: 24px;
-		margin: 16px 0;
-		padding-left: 1.4em;
-	}
-
-	.steps-block-item::marker {
-		font-weight: 700;
-	}
-
-	:global(.steps-block-title) {
-		font-family: var(--font-display);
-		font-weight: 700;
-	}
-
-	.steps-block-callout {
-		border-left: 4px solid var(--color-sfds-action, #495ed4);
-		background: var(--color-sfds-blue-l1, #edf4f7);
-		padding: 12px 16px;
-		margin: 8px 0;
-	}
-
-	:global(.steps-block-callout-title) {
-		font-weight: 700;
-	}
-</style>

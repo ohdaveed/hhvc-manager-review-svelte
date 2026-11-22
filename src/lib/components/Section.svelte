@@ -1,6 +1,7 @@
 <script lang="ts">
 	import EditTarget from './EditTarget.svelte';
 	import ButtonBlock from './blocks/ButtonBlock.svelte';
+	import CalloutBlock from './blocks/CalloutBlock.svelte';
 	import CardsBlock from './blocks/CardsBlock.svelte';
 	import FactsBlock from './blocks/FactsBlock.svelte';
 	import StepsBlock from './blocks/StepsBlock.svelte';
@@ -73,54 +74,58 @@
 		/>
 	{/if}
 
-	{#if section.paragraphs}
-		{#each section.paragraphs as p, i (i)}
-			<EditTarget
-				name={`${label} Paragraph`}
-				fieldId={`sections.${key}.paragraphs.${i}`}
-				value={entryText(p)}
-				unverified={entryUnverified(p)}
-			/>
-		{/each}
-	{/if}
+	<!-- Everything under the heading, as one box: the `supporting` accordion paints
+	     its open panel on it (app.css). Other sections give it no style. -->
+	<div class="page-section-body">
+		{#if section.paragraphs}
+			{#each section.paragraphs as p, i (i)}
+				<EditTarget
+					name={`${label} Paragraph`}
+					fieldId={`sections.${key}.paragraphs.${i}`}
+					value={entryText(p)}
+					unverified={entryUnverified(p)}
+				/>
+			{/each}
+		{/if}
 
-	{#if section.bullets}
-		{@render bulletsSnippet(section.bullets)}
-	{/if}
+		{#if section.bullets}
+			{@render bulletsSnippet(section.bullets)}
+		{/if}
 
-	{#if section.callout}
-		{@render calloutSnippet(section.callout)}
-	{/if}
+		{#if section.callout}
+			{@render calloutSnippet(section.callout)}
+		{/if}
 
-	<!-- Every block below keys its edits on `key` (the section's heading-derived
+		<!-- Every block below keys its edits on `key` (the section's heading-derived
 	     fieldKey), never on the array index, so reordering a section does not
 	     orphan its saved edits. The field ids these produce are the ones
 	     `extractCopy` already emits and `corpus.lock` already hashes. -->
-	{#if section.steps}
-		<StepsBlock steps={section.steps} sectionKey={key} {label} />
-	{/if}
+		{#if section.steps}
+			<StepsBlock steps={section.steps} sectionKey={key} {label} />
+		{/if}
 
-	{#if section.cards}
-		<CardsBlock cards={section.cards} sectionKey={key} {label} />
-	{/if}
+		{#if section.cards}
+			<CardsBlock cards={section.cards} sectionKey={key} {label} />
+		{/if}
 
-	{#if section.facts}
-		<FactsBlock facts={section.facts} sectionKey={key} {label} />
-	{/if}
+		{#if section.facts}
+			<FactsBlock facts={section.facts} sectionKey={key} {label} />
+		{/if}
 
-	{#if section.table}
-		<TableBlock table={section.table} sectionKey={key} {label} />
-	{/if}
+		{#if section.table}
+			<TableBlock table={section.table} sectionKey={key} {label} />
+		{/if}
 
-	{#if section.button}
-		<ButtonBlock
-			text={section.button}
-			url={section.buttonUrl}
-			fieldId={`sections.${key}.button`}
-			urlFieldId={`sections.${key}.buttonUrl`}
-			name={`${label} Button`}
-		/>
-	{/if}
+		{#if section.button}
+			<ButtonBlock
+				text={section.button}
+				url={section.buttonUrl}
+				fieldId={`sections.${key}.button`}
+				urlFieldId={`sections.${key}.buttonUrl`}
+				name={`${label} Button`}
+			/>
+		{/if}
+	</div>
 </div>
 
 {#snippet bulletsSnippet(bullets: unknown[])}
@@ -142,18 +147,14 @@
 {/snippet}
 
 {#snippet calloutSnippet(callout: { title?: string; text: string })}
-	<div class="callout my-4 border-l-4 border-blue-600 bg-blue-50 p-4">
-		{#if callout.title}
-			<EditTarget
-				as="h3"
-				class="mb-2 text-lg font-bold"
-				name="Callout Title"
-				fieldId={`sections.${key}.callout.title`}
-				value={callout.title}
-			/>
-		{/if}
-		<EditTarget name="Callout Text" fieldId={`sections.${key}.callout.text`} value={callout.text} />
-	</div>
+	<CalloutBlock
+		title={callout.title}
+		text={callout.text}
+		titleFieldId={`sections.${key}.callout.title`}
+		textFieldId={`sections.${key}.callout.text`}
+		titleName="Callout Title"
+		textName="Callout Text"
+	/>
 {/snippet}
 
 <style>
