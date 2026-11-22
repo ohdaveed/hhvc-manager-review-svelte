@@ -75,6 +75,38 @@ These are content decisions for HHVC, so the mockup should *show* the mismatch w
 
 Suggested order: A1–A3 → B1–B3 → C1–C3 → B4–B5 → D.
 
+### Batch plans and file ownership
+
+Each batch is done by one agent in its own worktree, on its own branch, with one PR. **No agent edits `PLAN.md`** — it is a hub file every batch would touch, so the supervisor ticks boxes when integrating. A file outside a batch's owned set fails that batch (checked with `git diff --name-only` against the base).
+
+**Gates every batch must pass before its PR:** `bun run test:unit -- --run`, `bun run check:ratchet`, `bun run lint:ratchet`, `bun run test:e2e` (axe is a merge gate). Also Playwright screenshots of the changed surface at the Phone, Tablet and Desktop presets, compared against the live sf.gov page named in the task, with a clean console. Mockup furniture stays inert: never a real `<a href>`, `<button>` or `<input>` where a reviewer is not meant to act.
+
+**Waves:** B ∥ D first. Then A ∥ C, branched from the result. A and C both need B's `CalloutBlock` and must not collide with each other on `Section.svelte`, and C needs D's rules table.
+
+#### Batch B — sf.gov look for existing components (wave 1)
+Owns: `src/lib/components/Section.svelte`, `src/lib/components/blocks/StepsBlock.svelte`, `src/lib/components/blocks/ButtonBlock.svelte`, **new** `src/lib/components/blocks/CalloutBlock.svelte`, `src/app.css`, `src/lib/components/Page.svelte` (eyebrow markup only), plus any test file it adds.
+- B1. Extract the callout into `CalloutBlock.svelte`, used by both `Section.svelte` (its `calloutSnippet`) and `StepsBlock` (`.steps-block-callout`). Live look: `#DAEBFF` fill, 1px `#6FAAFF` border, 0 radius, 20px 28px padding, a 24px sf.gov "i" glyph in a left gutter, and the title as a bold lead-in run on with the text. Keep every `EditTarget` field id unchanged.
+- B2. Step titles become Slab 500 h3, 28/36 at mobile → 40/52 at the desktop step. Measure the "1. Check if…" step on `report-health-nuisance-or-hazards`. Use the same `@container mockup (min-width: 800px)` threshold `app.css` documents.
+- B3. Mockup buttons: `#2A60AF` fill, white text, 4px radius, measured height and padding from the live "View 311 online services" button. Use or extend `--color-site-*`. Still inert.
+- B4. The `supporting` accordion keeps its non-collapsing behavior (see the comment in `app.css`). Open body on `#EFF0F0` with the live inset; a `—` glyph matching sf.gov's (the closed `+` state never shows).
+- B5. Restyle the type eyebrow as the live pill: `#E9F1FE` fill, 4px radius, sentence case. Map types to live labels by measuring live pages (Transaction → "Service", Information → "Info Page"); measure the others or keep the type name. It stays above the title (decided).
+
+#### Batch D — Karl component rules as data and checks (wave 1)
+Owns: **new** `src/lib/karl/componentSupport.ts` (+ `.test.ts`), **new** `src/lib/analysis/karlComponentChecks.ts` (+ `.test.ts`), `src/lib/analysis/index.ts`, `src/lib/components/workspace/AnalysisPanel.svelte` (only if needed to display).
+- D1. `componentSupport.ts`: the support table above as typed data. Callout, accordion (`component: 'supporting'`), button, spotlight, resource tiles (`component: 'resources'`), related, table. Use the corpus's own type strings (`'Transaction'`, `'Resource Collection'`, `'About us'`, …). Export a pure `isSupported(component, pageType)`. Cite the help-center URL per row. The resource-tile row lists the 4 named types and records that the help page says 5; Agency is **unknown**, not supported or unsupported.
+- D2. `karlComponentChecks.ts`: run over a page, return issues in the existing `analysis` issue shape. Unsupported components, and the character limits: accordion title 65, `section.button` 25, alert title 30 and description 120. A unit test pins the current corpus: callouts on `mosquito-education-workshop`, `integrated-pest-management-education` (Campaign) and `health-code-article-11-plain-language` (Report); resources on `integrated-pest-management-for-property-owners-and-managers` (Information); the 26-char button on `rat-free-blocks`. Do not change any page data.
+- D3. Wire into the Analysis panel the way the existing text checks are.
+
+#### Batch A — show content the mockup drops (wave 2, after B is merged)
+Owns: `src/lib/components/Page.svelte`, `src/lib/components/Section.svelte` (the `component === 'related'` dispatch only), **new** `src/lib/components/blocks/LinkGrid.svelte`, **new** `src/lib/components/blocks/ContactSection.svelte`, plus any test file it adds.
+- A1. `LinkGrid`: h2 plus inert links in columns separated by 1px vertical rules, measured from live "Partner agencies" / "Departments" (2 columns) and "Related" (3 columns, wrapping). Render `page.partnerAgencies` under an h2 "Partner agencies", after the sections. Each title is an `EditTarget`.
+- A2. Sections with `component: 'related'` render their entries through `LinkGrid` instead of `CardsBlock`, keeping field ids.
+- A3. `ContactSection`: render `page.contact` (4 pages) full width below the body column, as on live "Contact us". Address / Phone / Email / Social, each with an icon and a Slab h3. Inspect the 4 data shapes first; render only what exists.
+
+#### Batch C — flag what Karl cannot build (wave 2, after B and D are merged)
+Owns: `src/lib/components/blocks/CalloutBlock.svelte` (from B), `src/lib/components/blocks/CardsBlock.svelte`, **new** `src/lib/components/KarlOrphanNotice.svelte`, plus any test file it adds.
+- C1–C3. Extract the amber orphan notice from `WhatToKnow.svelte`'s markup **by copying its styling** (do not edit `WhatToKnow.svelte`; it is not owned) into `KarlOrphanNotice`. Show it on a callout or a `resources` card set when D's `isSupported(component, pageType)` is false. Get the page type from `pageStore`, not via new props through `Section.svelte` (not owned). Show nothing when support is "unknown" (the Agency case, C3). Do not change content.
+
 ## Deliberately skipped
 
 - Emergency alert banner (transient content, not page design).
