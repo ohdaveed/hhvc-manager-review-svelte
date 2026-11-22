@@ -57,11 +57,12 @@ Sources: live sf.gov `information--health-access-point-hap` and `report-health-n
 - [ ] A3. **Contact section.** `contact` is on 4 pages, with no renderer. Live: full-width, below the body column; Address / Phone / Email / Social, each with an icon and a Slab h3.
 
 ### B. Rendered, but not the sf.gov look
-- [ ] B1. **Callout.** `#DAEBFF` fill, 1px `#6FAAFF` border, an "i" icon in a left gutter, bold lead-in. Applies to both `Section.svelte` and `StepsBlock`, which today draw a 4px left bar on blue-50.
-- [ ] B2. **Numbered step titles** ("1. Check if…") as Slab h3, 28/36 → 40/52. They are small body-bold today.
-- [ ] B3. **Buttons** `#2A60AF`, white text, 4px radius. Today they use the tool's `#495ed4`.
-- [ ] B4. **Accordion.** Open panel on `#EFF0F0` with a 20px inset; `+`/`—` glyph instead of an en dash. Stays non-collapsing (see the existing comment in `app.css`).
-- [ ] B5. **Page-type label** becomes the live pill: `#E9F1FE`, 4px radius, sentence case ("Service", "Info Page"). It keeps its place above the title (decided above); only the look changes.
+- [x] B1. **Callout.** `#DAEBFF` fill, 1px `#6FAAFF` border, an "i" icon in a left gutter, bold lead-in. Applies to both `Section.svelte` and `StepsBlock`, which today draw a 4px left bar on blue-50.
+- [x] B2. **Numbered step titles** ("1. Check if…") as Slab h3, 28/36 → 40/52. They are small body-bold today.
+- [x] B3. **Buttons** `#2A60AF`, white text, 4px radius. Today they use the tool's `#495ed4`.
+- [x] B4. **Accordion.** Open panel on `#EFF0F0` with a 20px inset; `+`/`—` glyph instead of an en dash. Stays non-collapsing (see the existing comment in `app.css`).
+- [x] B5. **Page-type label** becomes the live pill: `#E9F1FE`, 4px radius, sentence case ("Service", "Info Page"). It keeps its place above the title (decided above); only the look changes.
+      Batch B landed in #152 (`9cb80f7`). Measured deviations from this list: step titles are Slab **600** 24/32 → 32/44 (28/36 → 40/52 was the h2 ladder); the accordion minus is sf.gov's SVG, not a text glyph; the pill stays sentence case and visible (live uppercases it and hides it on Service/Info/Step-by-step pages). Not done: `buttonStyle: 'secondary'` exists in the corpus but `ButtonBlock` ignores it.
 
 ### C. Component choices Karl cannot build — flag them, don't silently fix
 These are content decisions for HHVC, so the mockup should *show* the mismatch with the existing amber orphan notice (as `WhatToKnow` does for a non-Transaction page), not quietly restyle it.
