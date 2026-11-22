@@ -28,16 +28,3 @@ jobs:
           reporter: github-pr-review
           eslint_flags: '.'
           fail_on_error: false
-
-  pr-agent:
-    name: Qodo PR-Agent Code Review
-    runs-on: ubuntu-latest
-    if: github.event.pull_request.draft == false && github.actor != 'dependabot[bot]'
-    steps:
-      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
-      - name: Run PR-Agent Review
-        uses: The-PR-Agent/pr-agent@f6af7d77554ff8d26adffded077e6461329e92fa # v0.42.0
-        env:
-          OPENAI_KEY: ${{ secrets.OPENAI_API_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_AGENT.CONFIG: '{"pr_reviewer.inline_code_comments": true, "pr_reviewer.require_score_review": false}'
