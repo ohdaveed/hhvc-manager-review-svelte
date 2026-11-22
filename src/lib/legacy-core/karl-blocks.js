@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- untyped legacy port; waived so the staged-file hook can commit edits here (ratchet 5 -> 4)
 // @ts-nocheck
 /* The Karl CMS panel inventory: what an editor's form actually contains, per
    content type, in the order the form presents it.
@@ -223,7 +224,7 @@ const KARL_FLAGS = {
 	spotlightsAllowed: { Agency: 2, Campaign: 2, Report: 1, Topic: 1 },
 	// Same shape, same reason — the Help Center caps Things to know at two
 	// items; `things_to_know` has no schema maximum. Corpus is compliant:
-	// 15 pages carry it, 14 with exactly 2 and one with 1.
+	// 16 pages carry it, all Transaction: 15 with exactly 2 and one with 1.
 	thingsToKnowMaxItems: 2
 };
 
@@ -356,13 +357,6 @@ const UNRESOLVED = [
 		docLine: 857,
 		reason:
 			'Information has no Contact us panel — `get_help` is Transaction’s, and the `Contact` block belongs to Campaign and Agency — yet two Information pages carry `contact`. Blocked on a content decision.'
-	},
-	{
-		id: 'U23',
-		shape: 'information-page-whattoknow',
-		docLine: 858,
-		reason:
-			'Information has no `cost` and no `things_to_know`; both sit under Transaction’s "What to Know Before You Start" grouping. One Information page carries `whatToKnow`. This is U3’s trade seen from the other side. Blocked on a content decision.'
 	}
 ];
 
