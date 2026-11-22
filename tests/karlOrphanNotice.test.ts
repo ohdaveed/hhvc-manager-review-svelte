@@ -18,8 +18,9 @@ const notices = (c: HTMLElement) =>
 describe('KarlOrphanNotice', () => {
 	it('shows for a type Karl does not offer the component on', () => {
 		const { container } = render(KarlOrphanNotice, { component: 'callout', pageType: 'Campaign' });
-		expect(container.textContent).toContain('No Karl Callout on a Campaign page.');
+		expect(container.textContent).toContain('No Karl Callout on this Campaign page.');
 		expect(container.textContent).toContain('body copy instead');
+		expect(container.textContent).toContain('Components › Callout');
 	});
 
 	it('is inert: no link, nothing focusable', () => {

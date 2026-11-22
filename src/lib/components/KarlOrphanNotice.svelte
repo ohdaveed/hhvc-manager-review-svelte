@@ -11,8 +11,9 @@
 	 * reads any unlisted type, `undefined` included, as `no`.
 	 *
 	 * The look is WhatToKnow's orphan notice, copied rather than shared. The help
-	 * URL is plain text, not a link: nothing in the mockup navigates, and the
-	 * axe gate fails dead links.
+	 * page is named in plain text, not linked: nothing in the mockup navigates,
+	 * and the axe gate fails dead links. (The raw URL rendered its slashes
+	 * badly in the mockup face and ran three lines on a phone.)
 	 */
 	let { component, pageType }: { component: KarlComponent; pageType: unknown } = $props();
 
@@ -24,8 +25,8 @@
 	<div class="karl-orphan" data-karl-orphan={component}>
 		<span class="karl-orphan-icon" aria-hidden="true">!</span>
 		<span class="karl-orphan-text">
-			No Karl {rule.label} on a {pageType} page. {rule.instead}
-			<span class="karl-orphan-url">Karl help: {rule.url}</span>
+			No Karl {rule.label} on this {pageType} page. {rule.instead}
+			<span class="karl-orphan-help">Karl help center: Components › {rule.helpTitle}</span>
 		</span>
 	</div>
 {/if}
@@ -56,8 +57,7 @@
 		color: #6f4a00;
 	}
 
-	.karl-orphan-url {
+	.karl-orphan-help {
 		display: block;
-		overflow-wrap: anywhere;
 	}
 </style>
