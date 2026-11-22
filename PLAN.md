@@ -31,10 +31,10 @@ measured 2026-11-22 with Playwright on
 - [x] 7. What to know box matches live: `#EFF0F0`, 8px radius, 28px padding + gap, sf.gov info glyph, h2 "What to know", each entry label a Slab 500 h3 (20/28 -> 24/32); the "Things to know" heading is gone because sf.gov prints none. The `#DAEBFF` box measured earlier is the Information-page *callout*, a different component -- not done.
       Result: unit 490/490, check:ratchet 0/0, lint:ratchet 4, e2e 30/30; measured per preset, matches live within 2px.
 
-## Proposed, not done here (need a reviewer decision)
+## Decided 2026-11-22: keep, deliberately unlike sf.gov
 
-- **Type eyebrow** (`INFORMATION` above the breadcrumb) does not exist on sf.gov and duplicates the toolbar badge. Removing it is one line in `Page.svelte`.
-- **Audience block** renders as a left-ruled quote; sf.gov does not display audience at all. It is Karl review content, so it stays visible.
+- **Type eyebrow** (`INFORMATION` above the title) stays. sf.gov has none, but reviewers keep it on the page; do not re-propose removing it.
+- **Audience block** stays as the left-ruled quote. sf.gov does not display audience, but it is Karl review content; do not restyle or hide it.
 
 ## Deliberately skipped
 
