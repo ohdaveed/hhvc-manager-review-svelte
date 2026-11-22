@@ -1,5 +1,6 @@
 <script>
 	import EditTarget from '../EditTarget.svelte';
+	import { pageStore } from '$lib/stores/pageData.svelte';
 
 	/**
 	 * A mockup CTA button. Shared by section-level `button`/`buttonUrl`, step
@@ -12,7 +13,8 @@
 	 * go, and a second interactive element with no destination is exactly the
 	 * "inert furniture" axe flags. The `url`, when present, is copy too
 	 * (extractCopy includes it) so it renders as its own small edit target
-	 * rather than a functional `href`.
+	 * rather than a functional `href` -- but only while the button or its link
+	 * is selected, since sf.gov never prints a destination.
 	 */
 	let { text, url, fieldId, urlFieldId, name, variant = 'primary' } = $props();
 </script>
@@ -22,7 +24,9 @@
 	     anything; any other value draws the primary button. -->
 	<div class="button-block" data-variant={variant}>
 		<EditTarget as="span" class="button-block-cta" {fieldId} name={`${name}`} value={text} />
-		{#if url}
+		<!-- The destination shows only while the button or its link is selected:
+		     sf.gov prints neither, and a hidden field is still one click away. -->
+		{#if url && (pageStore.isSelected(fieldId) || pageStore.isSelected(urlFieldId))}
 			<EditTarget
 				as="span"
 				class="button-block-url"

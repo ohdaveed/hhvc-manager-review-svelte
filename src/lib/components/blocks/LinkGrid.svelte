@@ -1,5 +1,6 @@
 <script lang="ts">
 	import EditTarget from '../EditTarget.svelte';
+	import { pageStore } from '$lib/stores/pageData.svelte';
 	import KarlOrphanNotice from '../KarlOrphanNotice.svelte';
 	import { pagesByKey } from '$lib/data';
 
@@ -27,10 +28,12 @@
 	 * (and `.text` / `.url`), which is the shape `extractCopy` emits for both
 	 * `partnerAgencies` and `sections.<key>.cards`.
 	 *
-	 * Live shows only the title. `text` and `url` are copy too, and a reviewer
-	 * has to see them to review them, so they render under the title in a
-	 * smaller, muted face. No related card in the corpus carries either today;
-	 * every partner agency carries a `url`.
+	 * Live shows only the title. `text` is copy a reviewer has to see, so it
+	 * renders under the title in a smaller, muted face. `url` is copy too, but
+	 * it appears only while one of the item's fields is selected: at rest the
+	 * grid matches sf.gov, and the URL is still one click from editable. No
+	 * related card in the corpus carries either today; every partner agency
+	 * carries a `url`.
 	 */
 	let {
 		items,
@@ -94,7 +97,9 @@
 							value={item.text}
 						/>
 					{/if}
-					{#if item.url}
+					<!-- Live shows the title only. The URL is copy, so it appears while
+					     the item is being edited and stays out of the page otherwise. -->
+					{#if item.url && pageStore.hasSelectionUnder(`${fieldPrefix}.${i}.`)}
 						<EditTarget
 							as="div"
 							class="link-grid-note link-grid-url"
