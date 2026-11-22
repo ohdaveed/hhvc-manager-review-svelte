@@ -6,11 +6,20 @@
 	import SpotlightBlock from './blocks/SpotlightBlock.svelte';
 
 	let { page } = $props();
+
+	// The label live sf.gov prints in the type pill, measured 2026-11-22. Agency
+	// pages print an empty pill and Campaign, Report, Resource Collection and
+	// About us had no live example, so those keep the corpus type name.
+	const typeLabels: Record<string, string> = {
+		Transaction: 'Service',
+		Information: 'Info Page',
+		'Step by step': 'Step-by-step'
+	};
 </script>
 
 <div class="page-body">
 	{#if page.type}
-		<div class="page-type-eyebrow">{page.type}</div>
+		<div class="page-type-eyebrow">{typeLabels[page.type] ?? page.type}</div>
 	{/if}
 
 	<!-- Ordering follows a live sf.gov page: eyebrow, breadcrumb, title, summary,
