@@ -39,7 +39,7 @@ bun run dev --port 5199
 ```
 
 `ensureDevSession()` (src/lib/supabase.ts) then auto-signs-in as
-`arrizon.david@gmail.com` — dev-only, compiled out of production.
+`demo@hhvc.local` — dev-only, compiled out of production.
 
 ## Faking the AI backend
 
