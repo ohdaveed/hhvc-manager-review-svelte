@@ -123,7 +123,7 @@
 	{/if}
 </div>
 
-{#snippet bulletsSnippet(bullets)}
+{#snippet bulletsSnippet(bullets: unknown[])}
 	<!-- `list-style-position: outside` is the default and must stay: the badge on
 	     a selected bullet is absolutely positioned, and `inside` pulls the marker
 	     into the tinted highlight box with it. -->
@@ -141,7 +141,7 @@
 	</ul>
 {/snippet}
 
-{#snippet calloutSnippet(callout)}
+{#snippet calloutSnippet(callout: { title?: string; text: string })}
 	<div class="callout my-4 border-l-4 border-blue-600 bg-blue-50 p-4">
 		{#if callout.title}
 			<EditTarget

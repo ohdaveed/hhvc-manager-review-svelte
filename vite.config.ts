@@ -111,13 +111,20 @@ export default defineConfig({
 			},
 			{
 				extends: './vite.config.ts',
+				// `resolve` is a Vite-level key, a SIBLING of `test`, not a member of
+				// it: Vitest types a project as `UserWorkspaceConfig & { extends }`.
+				// Nested inside `test` it type-errors ('resolve' does not exist in type
+				// 'ProjectConfig') and is silently ignored, which is where it sat until
+				// 2026-11-21. The client specs that mount Svelte passed either way --
+				// browser resolution comes from the plugin chain -- so nothing failed to
+				// announce it.
+				resolve: {
+					conditions: ['browser']
+				},
 				test: {
 					name: 'client',
 					environment: 'jsdom',
-					include: ['tests/**/*.test.ts'],
-					resolve: {
-						conditions: ['browser']
-					}
+					include: ['tests/**/*.test.ts']
 				}
 			}
 		]

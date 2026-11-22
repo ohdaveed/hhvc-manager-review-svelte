@@ -15,3 +15,11 @@ bun.lockb
 # staged it, which any merge from main does. Ignoring it unblocks that without
 # rewriting a generated file nobody hand-maintains.
 .claude/homunculus/instincts/inherited/*.yaml
+
+# Supabase CLI scratch state. It is ignored by the CLI's own nested
+# `supabase/.gitignore`, not the root one, so `includeIgnoreFile()` never sees
+# it either -- which is why `eslint.config.js` states it explicitly as well.
+# Without this entry the `prettier --check .` file count depends on whether
+# `supabase start` has been run, and `bun run format` writes into the directory
+# holding `start-secrets/.../env/docker.env`.
+supabase/.temp/
