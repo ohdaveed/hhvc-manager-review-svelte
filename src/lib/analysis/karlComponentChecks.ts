@@ -170,7 +170,7 @@ export function karlComponentFindings(page: AnyPage): ComponentFinding[] {
 				id: `karl-${component}`,
 				title: `${rule.label}s`,
 				status: 'pass',
-				summary: `All ${noun} match Karl’s rules for a ${pageType} page.`,
+				summary: `${mine.length === 1 ? `The ${rule.label.toLowerCase()} matches` : `All ${noun} match`} Karl’s rules for a ${pageType} page.`,
 				help,
 				items: []
 			});
