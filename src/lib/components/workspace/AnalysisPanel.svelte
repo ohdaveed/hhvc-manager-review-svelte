@@ -83,8 +83,23 @@
 		return 'bg-destructive';
 	});
 
+	/**
+	 * shadcn's `destructive` badge is `bg-destructive/10 text-destructive`, which
+	 * MEASURES 3.98:1 (#e7000b on #fde5e7 at 12px) -- below WCAG AA's 4.5 floor,
+	 * on a badge whose whole job is to say something failed. SFDS's own red pair
+	 * is 5.64:1 and is already the palette this app states findings in, so the
+	 * issue badge carries those tokens instead of the shadcn default.
+	 *
+	 * Caught by `tests/accessibilitySignedIn.e2e.ts` the first time axe was
+	 * pointed at a signed-in panel. It had never been scanned before.
+	 */
+	const ISSUE_BADGE = 'border-transparent bg-sfds-red-l1 text-sfds-red';
+
 	const statusBadge = (status: Finding['status']) =>
-		status === 'issue' ? 'destructive' : status === 'pass' ? 'secondary' : 'outline';
+		status === 'issue' ? 'secondary' : status === 'pass' ? 'secondary' : 'outline';
+
+	/** Extra classes for the issue tone, which `statusBadge` cannot express. */
+	const statusClass = (status: Finding['status']) => (status === 'issue' ? ISSUE_BADGE : '');
 
 	const statusLabel = (status: Finding['status']) =>
 		status === 'issue' ? 'Check' : status === 'pass' ? 'Pass' : 'No data';
@@ -117,7 +132,10 @@
 	<Card.Root size="sm">
 		<Card.Content class="space-y-2">
 			<div class="flex items-start gap-2">
-				<Badge variant={statusBadge(finding.status)} class="mt-[2px] flex-none">
+				<Badge
+					variant={statusBadge(finding.status)}
+					class="mt-[2px] flex-none {statusClass(finding.status)}"
+				>
 					{statusLabel(finding.status)}
 				</Badge>
 				<div class="min-w-0 flex-1">
@@ -185,7 +203,10 @@
 
 					<div class="flex flex-wrap items-center gap-2">
 						{#if analysis.target !== null}
-							<Badge variant={analysis.targetStatus === 'pass' ? 'secondary' : 'destructive'}>
+							<Badge
+								variant="secondary"
+								class={analysis.targetStatus === 'pass' ? '' : ISSUE_BADGE}
+							>
 								{analysis.targetStatus === 'pass' ? 'Meets' : 'Over'} this page's target of grade {analysis.target}
 							</Badge>
 						{:else}
