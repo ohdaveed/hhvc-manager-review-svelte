@@ -23,3 +23,13 @@ bun.lockb
 # `supabase start` has been run, and `bun run format` writes into the directory
 # holding `start-secrets/.../env/docker.env`.
 supabase/.temp/
+
+# PLAN.md (#139 follow-up). Prettier is NON-IDEMPOTENT on this file: it adds
+# four spaces to one deeply nested list block on every run and never converges
+# -- measured at line 553, indentation 18 -> 26 -> 30 -> 34 across successive
+# writes. Because the lefthook `format` step runs `prettier --write` on staged
+# files, and the project workflow commits PLAN.md on every task tick, each
+# commit buried a ~370-line whitespace diff in itself and indented the block
+# further. `907b24e` is the instance that made it visible: a 3-line edit
+# carrying 186 lines of churn under a `ci:` subject.
+PLAN.md

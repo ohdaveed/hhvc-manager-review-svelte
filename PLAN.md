@@ -243,6 +243,36 @@ EXISTS`), so a re-run is safe.
       repo's own config YAML, `knip.jsonc` and stylesheets are auto-formatted on
       commit instead of drifting from `prettier --check .`.
 
+- [ ] **C4. Upgrade `@sveltejs/kit` 2 -> 3.** Four advisories are open against
+      `2.70.3`, and **every fix is in 3.x**, outside the pinned `^2.63.0` — so
+      Dependabot's security-update run could never resolve one and failed on
+      every push instead of opening a PR.
+
+      | Severity | CVE              | Patched | Issue                                             |
+      | -------- | ---------------- | ------- | ------------------------------------------------- |
+      | high     | CVE-2026-128120  | 3.1.1   | DoS parsing form data from a remote functions `form` |
+      | medium   | CVE-2026-128119  | 3.1.1   | private `query.batch` functions can collide       |
+      | low      | CVE-2026-114060  | 3.0.0   | XSS via untrusted cache-control on a prerendered page |
+      | low      | CVE-2026-114061  | 3.0.0   | open redirect via enhanced form submission        |
+
+      **All four were dismissed `not_used` on 2026-11-22, and this entry is the
+      thing that dismissal rests on.** None of the features is reachable here:
+      `experimental` in `vite.config.ts` enables only `instrumentation.server`,
+      there are no `*.remote.ts` files or `$app/server` imports, `query.batch`
+      is unused, nothing is prerendered, and there are no form actions or
+      `use:enhance`. That is true of the tree as it stands, not of SvelteKit.
+
+      _So the dismissal is conditional, and GitHub will not re-raise it._ Adding
+      a form action, a `+page.server.ts`, a `use:enhance`, a prerendered route
+      or `experimental.remoteFunctions` re-exposes the matching CVE with nothing
+      to announce it. Any of those changes should either come with this upgrade
+      or re-open the alert deliberately.
+
+      Sequenced behind **E6 (Renovate)**, consistent with C1 keeping version
+      bumps out of supply-chain changes — but note E6 is itself blocked on B5,
+      so this does not currently have a path. Unblocking one of the two is the
+      real prerequisite.
+
 ---
 
 ## Phase D — Quality baselines
