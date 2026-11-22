@@ -52,9 +52,10 @@ Sources: live sf.gov `information--health-access-point-hap` and `report-health-n
 | Alert | title ≤ 30, description ≤ 120 chars |
 
 ### A. Content the corpus has but the mockup never shows
-- [ ] A1. **Partner agencies.** `partnerAgencies` is on 20 pages, with no renderer. Live: h2, then links in columns split by 1px vertical rules.
-- [ ] A2. **Related as a link grid.** Live shows a 3-column link grid with vertical dividers; the mockup shows bordered cards. A1 and A2 share one component.
-- [ ] A3. **Contact section.** `contact` is on 4 pages, with no renderer. Live: full-width, below the body column; Address / Phone / Email / Social, each with an icon and a Slab h3.
+- [x] A1. **Partner agencies.** `partnerAgencies` is on 20 pages, with no renderer. Live: h2, then links in columns split by 1px vertical rules.
+- [x] A2. **Related as a link grid.** Live shows a 3-column link grid with vertical dividers; the mockup shows bordered cards. A1 and A2 share one component.
+- [x] A3. **Contact section.** `contact` is on 4 pages, with no renderer. Live: full-width, below the body column; Address / Phone / Email / Social, each with an icon and a Slab h3.
+      Batches A (#154, partner agencies + related grid + contact) and C (#153, amber notices on 2+2 Campaign callouts, 1 Report callout, 1 Information resource set; Agency shows none, as `unknown`) landed. Follow-ups: partner-agency and card URLs print under each title (corpus copy, but noisier than live); `contact` on two Information pages has no Karl panel (a C-class flag not yet shown); Related cards that link to a Resource Collection or Agency page are flagged in Analysis (D) but not on the canvas.
 
 ### B. Rendered, but not the sf.gov look
 - [x] B1. **Callout.** `#DAEBFF` fill, 1px `#6FAAFF` border, an "i" icon in a left gutter, bold lead-in. Applies to both `Section.svelte` and `StepsBlock`, which today draw a 4px left bar on blue-50.
@@ -66,9 +67,9 @@ Sources: live sf.gov `information--health-access-point-hap` and `report-health-n
 
 ### C. Component choices Karl cannot build — flag them, don't silently fix
 These are content decisions for HHVC, so the mockup should *show* the mismatch with the existing amber orphan notice (as `WhatToKnow` does for a non-Transaction page), not quietly restyle it.
-- [ ] C1. **Callouts on unsupported types:** `mosquito-education-workshop` and `integrated-pest-management-education` (Campaign), and `health-code-article-11-plain-language` (Report). Karl offers callouts on Transaction, Information and Data story only.
-- [ ] C2. **Resource tiles on an Information page:** `integrated-pest-management-for-property-owners-and-managers`. Rebuild as Related (if the targets are SF.gov pages) or as body links.
-- [ ] C3. **Resource tiles on the Agency page:** `departments--healthy-housing-and-vector-control`. The help page's unnamed fifth type may be Agency. Confirm in Karl before flagging.
+- [x] C1. **Callouts on unsupported types:** `mosquito-education-workshop` and `integrated-pest-management-education` (Campaign), and `health-code-article-11-plain-language` (Report). Karl offers callouts on Transaction, Information and Data story only.
+- [x] C2. **Resource tiles on an Information page:** `integrated-pest-management-for-property-owners-and-managers`. Rebuild as Related (if the targets are SF.gov pages) or as body links.
+- [x] C3. **Resource tiles on the Agency page:** `departments--healthy-housing-and-vector-control`. The help page's unnamed fifth type may be Agency. Confirm in Karl before flagging.
 
 ### D. Make the rules checkable
 - [x] D1. Encode the support table above as a page check (Checks panel), so a new mockup gets the C-class flags automatically, with a unit test per row.
