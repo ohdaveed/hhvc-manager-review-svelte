@@ -44,8 +44,9 @@
 		};
 	});
 
-	// The reviewer's saved edits for this page, folded the way `HelpPanel` folds
-	// them: append-only, last-write-wins, ordered explicitly by `created_at`.
+	// The reviewer's saved edits for this page, folded the way
+	// `$lib/karl/reviewRecord` folds them: append-only, last-write-wins, ordered
+	// explicitly by `created_at`.
 	const edits = $derived.by((): EditRow[] => {
 		const livePage = $pagesStore.find((p) => p.path === page?.id);
 		if (!livePage) return [];

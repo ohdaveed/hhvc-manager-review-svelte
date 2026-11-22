@@ -4,7 +4,7 @@
  * The Karl transcript is what an editor retypes into Karl, so an unresolved
  * link in it is an instruction to go looking for a page that does not exist.
  *
- * `HelpPanel` used to hand `buildTranscript` a map keyed by the DERIVED
+ * The Help tab's transcript panel used to hand `buildTranscript` a map keyed by the DERIVED
  * ROUTABLE ID (`what-happens-after-you-report-…`). Every lookup the transcript
  * makes against that map is a TARGET lookup -- `linkRepresentation`,
  * `buttonTarget`, `card.target` -- and a target is a `pagesByKey` key

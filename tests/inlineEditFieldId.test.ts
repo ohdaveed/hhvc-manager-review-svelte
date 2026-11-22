@@ -6,7 +6,7 @@
  * `edits.field_id` is the value each target advertises as `data-rewrite-field`.
  * If the id pushed onto `pageStore.selectedFieldIds` ever drifts from that
  * attribute, edits still save but land under a key nothing reads, and
- * `HelpPanel` folds them into the wrong slot -- the failure that let copy edits
+ * the Karl fold puts them in the wrong slot -- the failure that let copy edits
  * go unpersisted without anything looking broken.
  *
  * Selection became a list in design 1b, so the id is asserted through
@@ -78,7 +78,7 @@ describe('edit targets', () => {
 			);
 		});
 
-		it('uses the exact keys HelpPanel folds title and summary on', async () => {
+		it('uses the exact keys the Karl fold splits title and summary on', async () => {
 			const { container } = renderPage();
 
 			await fireEvent.click(container.querySelector<HTMLElement>('.page-title .edit-target')!);

@@ -70,14 +70,16 @@ export function classifyKey(key: string): CopyKind {
 
 /**
  * One `edits` row, narrowed to what this module needs. Matches the shape
- * `HelpPanel` folds, so the two readers cannot drift on what an edit means.
+ * `$lib/karl/reviewRecord` folds, so the two readers cannot drift on what an
+ * edit means.
  */
 export type EditRow = { field_id: string; new_content: string; created_at?: string | null };
 
 /**
  * The page's copy with the reviewer's saved edits applied.
  *
- * `edits` is append-only and last-write-wins — the same fold `HelpPanel` does,
+ * `edits` is append-only and last-write-wins — the same fold `reviewRecordFor`
+ * does,
  * and for the same reason: the table has no UPDATE policy, so a field can carry
  * several rows and only the newest is current. Rows are sorted by `created_at`
  * explicitly rather than trusting PostgREST's return order.

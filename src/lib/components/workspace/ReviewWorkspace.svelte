@@ -3,7 +3,6 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { ChevronsRight } from 'lucide-svelte';
 	import ReviewPanel from './ReviewPanel.svelte';
-	import HelpPanel from './HelpPanel.svelte';
 	import FieldsPanel from './FieldsPanel.svelte';
 	import RethinkPanel from './RethinkPanel.svelte';
 	import AnalysisPanel from './AnalysisPanel.svelte';
@@ -48,12 +47,14 @@
 	class="review-workspace flex h-full min-h-0 flex-col gap-0"
 	aria-label="Review workspace"
 >
-	<!-- `flex-wrap` + `h-auto`: six triggers total 428px and the panel's tab strip
+	<!-- `flex-wrap` + `h-auto`: five triggers total 352px and the panel's tab strip
 	     is 339px, so on one row the last tab renders straight over the collapse
-	     button. This already overflowed at five tabs (349px) -- the Analysis tab
-	     made it visible rather than causing it. Wrapping to a second row keeps
-	     every tab clickable, which horizontal scrolling would not: a tab nobody
-	     can see is a tab nobody opens. `h-auto!` is required, with the important
+	     button. Removing the Help tab took this from six (428px) back to five, and
+	     five was ALREADY over -- re-measured in Chromium at 1600x1000 after the
+	     removal: 352.47px of triggers against a 339px strip, still wrapping to two
+	     rows. Do not drop the wrap on the strength of the tab count alone.
+	     Wrapping to a second row keeps every tab clickable, which horizontal
+	     scrolling would not: a tab nobody can see is a tab nobody opens. `h-auto!` is required, with the important
 	     modifier: the `line` variant pins the list to `h-8` via
 	     `group-data-horizontal/tabs:h-8`, and that variant selector outranks a
 	     plain `h-auto`, so without the `!` the list keeps a 33px box while its
@@ -77,7 +78,6 @@
 			<Tabs.Trigger value="overview" class="flex-none px-2.5 py-2.5">Overview</Tabs.Trigger>
 			<Tabs.Trigger value="checks" class="flex-none px-2.5 py-2.5">Checks</Tabs.Trigger>
 			<Tabs.Trigger value="analysis" class="flex-none px-2.5 py-2.5">Analysis</Tabs.Trigger>
-			<Tabs.Trigger value="help" class="flex-none px-2.5 py-2.5">Help</Tabs.Trigger>
 		</Tabs.List>
 
 		{#if onCollapse}
@@ -114,8 +114,5 @@
 	     judgement, an analysis finding is this session's measurement. -->
 	<Tabs.Content value="analysis" class="min-h-0 flex-1 overflow-y-auto bg-background">
 		<AnalysisPanel {pageData} />
-	</Tabs.Content>
-	<Tabs.Content value="help" class="min-h-0 flex-1 overflow-y-auto bg-background">
-		<HelpPanel {pageData} />
 	</Tabs.Content>
 </Tabs.Root>

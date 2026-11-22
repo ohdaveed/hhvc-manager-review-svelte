@@ -11,8 +11,8 @@ import { allPages, pagesByKey } from '../src/lib/data/index';
 //
 // Before that, this transcript told the reviewer the cap was "editorial
 // guidance, not a schema limit — the field accepts 255". That sentence is now
-// the opposite of the instruction, and it is REVIEWER-FACING: HelpPanel
-// renders these notes. A doc that says the cap binds while the tool says it
+// the opposite of the instruction, and it is REVIEWER-FACING: the Karl
+// walkthrough renders these notes. A doc that says the cap binds while the tool says it
 // does not is worse than either alone, so the behaviour is pinned here.
 describe('button label cap (O14 / U24)', () => {
 	const article11 = allPages.find((p) => p.slug.includes('health-code-article-11'));
@@ -22,7 +22,7 @@ describe('button label cap (O14 / U24)', () => {
 		// `@param {Record<string, object>} pages` and `findPageKey` resolves it
 		// with `Object.entries(...)`, returning the KEY. Handed an array that
 		// yields `pageKey: '0'` -- an index -- so this built a transcript shape
-		// HelpPanel never builds. It passes `pagesByKey`; so does this now.
+		// the app never builds. It passes `pagesByKey`; so does this now.
 		const t = buildTranscript(page, null, pagesByKey);
 		const out: string[] = [];
 		const walk = (n: unknown) => {

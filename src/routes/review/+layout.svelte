@@ -59,7 +59,8 @@
 			: 0
 	);
 
-	// `pagesStore` is keyed by the routable id, the same lookup HelpPanel uses.
+	// `pagesStore` is keyed by the routable id, the same lookup `reviewRecordFor`
+	// uses.
 	// No live row means this page is not part of the loaded review (or nothing
 	// loaded at all), so an edit here has nothing to attach itself to. The Fields
 	// tab needs it to persist, so it is resolved once here rather than in three
