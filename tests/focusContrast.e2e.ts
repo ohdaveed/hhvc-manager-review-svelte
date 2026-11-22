@@ -1,4 +1,5 @@
 import { expect, test } from './fixtures';
+import { gotoSignedIn } from './signedIn';
 
 /**
  * Focus-indicator contrast, WCAG 2.1 AA SC 1.4.11 (Non-text Contrast).
@@ -71,6 +72,8 @@ type Measurement = {
 	label: string;
 	ratio: number;
 	layer: string;
+	/** Class list, so a test can assert WHICH controls were reached. */
+	cls: string;
 };
 
 /**
@@ -218,6 +221,7 @@ async function measureFocusIndicators(page: import('@playwright/test').Page) {
 			label: string;
 			ratio: number;
 			layer: string;
+			cls: string;
 		}[] = [];
 
 		const focusables = Array.from(
@@ -268,7 +272,8 @@ async function measureFocusIndicators(page: import('@playwright/test').Page) {
 				tag: el.tagName.toLowerCase(),
 				label: label || '(no label)',
 				ratio: best ? Math.round(best.value * 100) / 100 : 0,
-				layer: best ? best.name : 'none'
+				layer: best ? best.name : 'none',
+				cls: typeof el.className === 'string' ? el.className : ''
 			});
 		}
 
@@ -294,6 +299,50 @@ test('focus indicators clear 3:1 (SC 1.4.11)', async ({ page }) => {
 		failures,
 		[
 			`${failures.length} of ${measured.length} focus indicators are below ${MIN_RATIO}:1.`,
+			'',
+			...failures.map((f) => `  ${f.ratio}:1  <${f.tag}> "${f.label}"  [${f.layer}]`)
+		].join('\n')
+	).toEqual([]);
+});
+
+/**
+ * The same floor, on the SIGNED-IN surfaces -- and above all on the edit
+ * targets, which the test above cannot see.
+ *
+ * Signed out, `EditTarget` renders its copy as a plain element with no
+ * `<button>` (deliberately: nothing a signed-out visitor types can be saved).
+ * So the ~40 controls that ARE the editing interface were never in the
+ * measured set, and `.edit-target` shipped with no focus indicator at all
+ * while this spec reported green -- the same blind spot `tests/signedIn.ts`
+ * was written to close for axe, in a second place.
+ *
+ * The guard below is the point of the test as much as the ratio assertion is:
+ * without it, a future change that stops the edit targets rendering would
+ * make this pass by measuring nothing, which is exactly how the defect
+ * survived.
+ */
+test('focus indicators clear 3:1 on the signed-in edit targets (SC 1.4.11)', async ({ page }) => {
+	await gotoSignedIn(page, '/review/report-garbage-filth-vegetation');
+
+	// A genuine Tab press, so Chrome's focus-visible heuristic is armed
+	// before anything is measured.
+	await page.keyboard.press('Tab');
+
+	const measured: Measurement[] = await measureFocusIndicators(page);
+
+	const editTargets = measured.filter((m) => m.cls.includes('edit-target'));
+	expect(
+		editTargets.length,
+		'no .edit-target controls were measured -- the walk is scanning a page where the editing interface does not render, which is the blind spot this test exists to close'
+	).toBeGreaterThan(3);
+
+	const failures = measured.filter((m) => m.ratio < MIN_RATIO);
+
+	expect(
+		failures,
+		[
+			`${failures.length} of ${measured.length} signed-in focus indicators are below ${MIN_RATIO}:1`,
+			`(${editTargets.length} of them edit targets).`,
 			'',
 			...failures.map((f) => `  ${f.ratio}:1  <${f.tag}> "${f.label}"  [${f.layer}]`)
 		].join('\n')

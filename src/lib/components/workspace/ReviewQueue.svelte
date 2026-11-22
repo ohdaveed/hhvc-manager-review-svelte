@@ -3,6 +3,7 @@
 	import { resolve } from '$app/paths';
 	import { pagesStore, editsStore, QUEUE_STATUS_ORDER } from '$lib/stores/reviewState';
 	import { pageStore } from '$lib/stores/pageData.svelte';
+	import { sessionStore } from '$lib/stores/session.svelte';
 
 	// The pages table has no title column, so a hydrated row carries only `path`.
 	// Titles come from the static corpus, whose derived id is that same path.
@@ -39,23 +40,41 @@
 </script>
 
 <nav class="space-y-5 px-5 pt-4 pb-6" aria-label="Review queue">
-	<!-- If empty (e.g. testing without DB), show a fallback message -->
+	<!-- The empty state is not a loading state, and saying so was misleading.
+	     An empty `pagesStore` here means one of two things, and the old
+	     "No pages loaded. (Waiting for Supabase data)" described neither: it
+	     named an implementation detail, promised data was on its way, and gave
+	     the reviewer nothing to do.
+
+	     Signed out is the common case BY FAR -- every `TO authenticated`
+	     policy denies the read, so the queue is empty while the mockups still
+	     render from the static corpus, which is exactly when a reviewer is
+	     most likely to think the tool is broken. That case gets the action
+	     that fixes it. -->
 	{#if total === 0}
-		<p class="text-muted-foreground text-sm italic">No pages loaded. (Waiting for Supabase data)</p>
+		{#if sessionStore.knownSignedOut}
+			<p class="text-sm text-sfds-slate-l3">
+				<a href={resolve('/login')} class="font-semibold text-sfds-action hover:underline"
+					>Sign in</a
+				> to load the review queue.
+			</p>
+		{:else}
+			<p class="text-sm text-sfds-slate-l3">This review has no pages yet.</p>
+		{/if}
 	{:else}
 		<section aria-label="Review progress">
 			<div class="flex items-baseline justify-between">
-				<span class="text-sfds-black text-[13px] font-semibold">
+				<span class="text-[13px] font-semibold text-sfds-black">
 					{decided} of {total} decided
 				</span>
-				<span class="text-sfds-slate-l3 text-[13px] font-semibold tabular-nums">{pct}%</span>
+				<span class="text-[13px] font-semibold text-sfds-slate-l3 tabular-nums">{pct}%</span>
 			</div>
 
 			<!-- Three segments over a grey track, so the shape of the remaining work
 			     is visible rather than just its size. `role="img"` with a label:
 			     a bar split by colour alone says nothing to a screen reader. -->
 			<div
-				class="bg-sfds-grey-l2 mt-2 flex h-1.5 w-full overflow-hidden rounded-full"
+				class="mt-2 flex h-1.5 w-full overflow-hidden rounded-full bg-sfds-grey-l2"
 				role="img"
 				aria-label="{decided} of {total} pages decided, {pct} percent"
 			>
@@ -71,11 +90,11 @@
 		{#if pages.length > 0}
 			<section>
 				<h3 class="mb-2 flex items-center justify-between">
-					<span class="text-sfds-slate-l3 text-[11px] font-bold tracking-[0.08em] uppercase">
+					<span class="text-[11px] font-bold tracking-[0.08em] text-sfds-slate-l3 uppercase">
 						{group.heading}
 					</span>
 					<span
-						class="bg-sfds-grey-l2/70 text-sfds-black inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-full px-1.5 text-[11px] font-bold tabular-nums"
+						class="inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-sfds-grey-l2/70 px-1.5 text-[11px] font-bold text-sfds-black tabular-nums"
 					>
 						{pages.length}
 					</span>
@@ -91,7 +110,7 @@
 							<a
 								href={resolve('/review/[slug]', { slug: p.path })}
 								aria-current={isCurrent ? 'page' : undefined}
-								class="hover:bg-sfds-blue-l1/60 block rounded-[3px] border-l-2 py-1.5 pr-2 pl-2.5 transition-colors {isCurrent
+								class="block rounded-[3px] border-l-2 py-1.5 pr-2 pl-2.5 transition-colors hover:bg-sfds-blue-l1/60 {isCurrent
 									? 'border-sfds-action bg-sfds-blue-l1'
 									: 'border-transparent'}"
 							>
@@ -102,14 +121,14 @@
 									></span>
 									<span class="min-w-0">
 										<span
-											class="text-sfds-black block text-[13px] leading-[18px] {isCurrent
+											class="block text-[13px] leading-[18px] text-sfds-black {isCurrent
 												? 'font-semibold'
 												: ''}"
 										>
 											{titleFor(p.path)}
 										</span>
 										{#if corpusFor(p.path)?.type || edits > 0}
-											<span class="text-sfds-slate-l3 mt-0.5 block text-[11px] leading-[14px]">
+											<span class="mt-0.5 block text-[11px] leading-[14px] text-sfds-slate-l3">
 												{corpusFor(p.path)?.type ?? ''}{corpusFor(p.path)?.type && edits > 0
 													? ' · '
 													: ''}{edits > 0

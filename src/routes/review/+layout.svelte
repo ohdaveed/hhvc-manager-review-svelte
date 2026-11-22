@@ -3,10 +3,8 @@
 	import { page } from '$app/stores';
 	import { resolve } from '$app/paths';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import { Label } from '$lib/components/ui/label/index.js';
 	import { ScrollArea } from '$lib/components/ui/scroll-area/index.js';
 	import { Separator } from '$lib/components/ui/separator/index.js';
-	import { Switch } from '$lib/components/ui/switch/index.js';
 	import { pageStore } from '$lib/stores/pageData.svelte';
 	import { editsStore, firstQueuePath, loadReview, pagesStore } from '$lib/stores/reviewState';
 	import { sessionStore } from '$lib/stores/session.svelte';
@@ -24,10 +22,13 @@
 
 	let { children } = $props();
 
-	// Karl tag display is not implemented — nothing reads this yet. The control
-	// stays disabled rather than animating over dead state; it was previously a
-	// bare checkbox carrying DaisyUI classes for a DaisyUI that is not installed.
-	let showKarlTags = $state(false);
+	// The "Karl tags" switch that used to sit in the toolbar is gone. It was
+	// permanently `disabled` because nothing reads the state, so it was a
+	// control that could never do anything, and it cost ~100px of a toolbar
+	// measured at ZERO slack between 1080px and 1400px -- at 1100px the page
+	// slug was being squeezed to 0px wide and the type badge collided with
+	// this switch's label. Removing dead chrome is what makes room for the
+	// preview-width control, which reviewers can actually use.
 
 	// Dynamically pick the page data based on slug for the workspace
 	const pageData = $derived(pageStore.pages.find((p) => p.id === $page.params.slug));
@@ -136,6 +137,17 @@
 		? '52px'
 		: '380px'}"
 >
+	<!-- Skip link. MEASURED before this existed: from a fresh load, 60 Tab
+	     presses never reached Approve/Revise/Blocked. Every edit target in the
+	     mockup is a focus stop and there are 40+ of them on a typical page, all
+	     of them ahead of the review panel in DOM order, so the decision -- the
+	     one thing this tool exists to record -- was effectively keyboard-only
+	     in theory and unreachable in practice.
+
+	     Deliberately the FIRST focusable element in the shell, ahead of the
+	     queue's collapse button, and visible only while focused. -->
+	<a href="#reviewPanel" class="skip-to-panel">Skip to review panel</a>
+
 	<!-- Left Sidebar: Global Navigation & Review Queue -->
 	<aside class="queue-rail flex h-full min-w-0 flex-col border-r bg-background">
 		{#if pageStore.railCollapsed.queue}
@@ -310,15 +322,6 @@
 								{unsavedCount} unsaved {unsavedCount === 1 ? 'edit' : 'edits'}
 							</span>
 						{/if}
-						<div class="flex items-center gap-2">
-							<Label for="tagToggle" class="text-sfds-slate-l3">Karl tags</Label>
-							<Switch
-								id="tagToggle"
-								bind:checked={showKarlTags}
-								disabled
-								title="Karl tag display is not implemented yet"
-							/>
-						</div>
 						<!-- The tool's second job, and the only way into it. Entering
 					     collapses both rails; exiting puts them back as they were. -->
 						<Button
@@ -399,7 +402,14 @@
 	</main>
 
 	<!-- Right Sidebar: Contextual Manager Review & Checks -->
-	<section class="panel-rail flex h-full min-w-0 flex-col overflow-hidden border-l bg-background">
+	<!-- `tabindex="-1"` so the skip link's fragment can move focus here. It adds
+	     no tab stop of its own; only a non-negative value would. -->
+	<section
+		id="reviewPanel"
+		tabindex="-1"
+		aria-label="Review panel"
+		class="panel-rail flex h-full min-w-0 flex-col overflow-hidden border-l bg-background"
+	>
 		{#if pageStore.railCollapsed.panel}
 			<div class="flex flex-col items-center gap-4 py-3.5">
 				<Button
@@ -431,6 +441,25 @@
 </div>
 
 <style>
+	/* Visible only while focused. Off-screen rather than `display: none`, which
+	   would take it out of the focus order and defeat the purpose. */
+	.skip-to-panel {
+		position: absolute;
+		left: -9999px;
+		z-index: 50;
+		border-radius: 0 0 4px 0;
+		background: var(--color-sfds-action);
+		padding: 0.625rem 1rem;
+		font-size: 13px;
+		font-weight: 600;
+		color: #fff;
+	}
+
+	.skip-to-panel:focus-visible {
+		left: 0;
+		top: 0;
+	}
+
 	/* The mockup frame is the container every SF.gov component inside it
 	   queries. `inline-size` rather than `size`: only width drives SF.gov's
 	   reflow, and `size` would require the frame to carry an explicit height,
