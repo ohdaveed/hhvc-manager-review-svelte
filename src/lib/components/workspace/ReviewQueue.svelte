@@ -48,7 +48,7 @@
 				<span class="text-sfds-black text-[13px] font-semibold">
 					{decided} of {total} decided
 				</span>
-				<span class="text-sfds-slate-l2 text-[13px] font-semibold tabular-nums">{pct}%</span>
+				<span class="text-sfds-slate-l3 text-[13px] font-semibold tabular-nums">{pct}%</span>
 			</div>
 
 			<!-- Three segments over a grey track, so the shape of the remaining work
@@ -71,7 +71,7 @@
 		{#if pages.length > 0}
 			<section>
 				<h3 class="mb-2 flex items-center justify-between">
-					<span class="text-sfds-slate-l2 text-[11px] font-bold tracking-[0.08em] uppercase">
+					<span class="text-sfds-slate-l3 text-[11px] font-bold tracking-[0.08em] uppercase">
 						{group.heading}
 					</span>
 					<span
@@ -109,7 +109,7 @@
 											{titleFor(p.path)}
 										</span>
 										{#if corpusFor(p.path)?.type || edits > 0}
-											<span class="text-sfds-slate-l2 mt-0.5 block text-[11px] leading-[14px]">
+											<span class="text-sfds-slate-l3 mt-0.5 block text-[11px] leading-[14px]">
 												{corpusFor(p.path)?.type ?? ''}{corpusFor(p.path)?.type && edits > 0
 													? ' · '
 													: ''}{edits > 0

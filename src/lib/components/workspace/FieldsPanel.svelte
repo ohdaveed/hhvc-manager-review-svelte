@@ -310,7 +310,7 @@
 <div class="flex h-full min-h-0 flex-col">
 	<div class="min-h-0 flex-1 overflow-y-auto">
 		{#if selected.length === 0}
-			<div class="text-sfds-slate-l2 px-5 py-6 text-sm">
+			<div class="text-sfds-slate-l3 px-5 py-6 text-sm">
 				<p class="text-sfds-black font-semibold">No field selected</p>
 				<p class="mt-1.5 leading-[20px]">
 					Click any piece of copy in the mockup to select it. Shift-click to add more, and the
@@ -342,7 +342,7 @@
 						>
 							{i + 1}
 						</span>
-						<span class="text-sfds-slate-l2 min-w-0 truncate">{field.name}</span>
+						<span class="text-sfds-slate-l3 min-w-0 truncate">{field.name}</span>
 					</li>
 				{/each}
 			</ol>
@@ -395,11 +395,11 @@
 				</div>
 
 				{#if pageStore.agentRec.state === 'idle'}
-					<p class="text-sfds-slate-l2 mt-2 text-[12px] leading-[17px]">
+					<p class="text-sfds-slate-l3 mt-2 text-[12px] leading-[17px]">
 						Ask the assistant what it would change about the selected copy before rewriting it.
 					</p>
 				{:else if pageStore.agentRec.state === 'loading'}
-					<p class="text-sfds-slate-l2 mt-2 text-[12px]" role="status">Reading the selection…</p>
+					<p class="text-sfds-slate-l3 mt-2 text-[12px]" role="status">Reading the selection…</p>
 				{:else if pageStore.agentRec.state === 'error'}
 					<p class="text-sfds-red mt-2 text-[12px] leading-[17px]" role="alert">
 						{pageStore.agentRec.text}
@@ -499,13 +499,13 @@
 											{badge}
 										</span>
 									{/if}
-									<span class="text-sfds-slate-l2 min-w-0 flex-1 truncate text-[12px]">
+									<span class="text-sfds-slate-l3 min-w-0 flex-1 truncate text-[12px]">
 										{resolveFields(pageData as never, [fieldId])[0]?.field.name ?? fieldId}
 									</span>
 									{#if suggestion.status === 'accepted'}
 										<span class="text-sfds-green text-[11px] font-bold uppercase">Accepted</span>
 									{:else if suggestion.status === 'rejected'}
-										<span class="text-sfds-slate-l2 text-[11px] font-bold uppercase">Rejected</span>
+										<span class="text-sfds-slate-l3 text-[11px] font-bold uppercase">Rejected</span>
 									{/if}
 								</div>
 

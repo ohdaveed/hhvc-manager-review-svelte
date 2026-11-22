@@ -10,7 +10,7 @@
 	import { pageStore } from '$lib/stores/pageData.svelte';
 	import { editsStore, firstQueuePath, loadReview, pagesStore } from '$lib/stores/reviewState';
 	import { sessionStore } from '$lib/stores/session.svelte';
-	import { ChevronsLeft, ChevronsRight } from 'lucide-svelte';
+	import { ArrowLeft, ChevronsLeft, ChevronsRight } from 'lucide-svelte';
 	import ReviewQueue from '$lib/components/workspace/ReviewQueue.svelte';
 	import ReviewWorkspace from '$lib/components/workspace/ReviewWorkspace.svelte';
 	import SiteHeader from '$lib/components/sfgov/SiteHeader.svelte';
@@ -89,8 +89,14 @@
 	// this layout on screen. An earlier version ended in `?? ''`, which resolves
 	// to `/review/`, and `/review` has no `+page.svelte`: the fallback for "no
 	// page to point at" was itself the 404 this link exists to avoid.
-	const exportTarget = $derived(
+	const firstQueueTarget = $derived(
 		firstQueuePath($pagesStore) ?? pageStore.pages[0]?.id ?? $page.params.slug
+	);
+	/** Already on it: the toolbar says so instead of offering a link to here. */
+	const atQueueStart = $derived(firstQueueTarget === $page.params.slug);
+	/** For the link's tooltip -- the queue row's own title, not the slug. */
+	const firstQueueTitle = $derived(
+		pageStore.pages.find((pg) => pg.id === firstQueueTarget)?.title ?? ''
 	);
 
 	onMount(() => {
@@ -148,7 +154,7 @@
 		{:else}
 			<div class="flex items-start gap-2 px-3 pt-5 pb-4 pl-5">
 				<div class="min-w-0 flex-1">
-					<div class="text-[11px] font-bold tracking-[0.1em] text-sfds-slate-l2 uppercase">
+					<div class="text-[11px] font-bold tracking-[0.1em] text-sfds-slate-l3 uppercase">
 						SFDS rebuild
 					</div>
 					<h2 class="mt-1.5 font-heading text-xl leading-[26px] font-bold text-sfds-black">
@@ -175,7 +181,7 @@
 				     starts rather than to `/review`, which has no `+page.svelte` and
 				     404s. A placeholder destination that lands somewhere real. -->
 				<a
-					href={resolve('/review/[slug]', { slug: exportTarget })}
+					href={resolve('/review/[slug]', { slug: firstQueueTarget })}
 					class="text-[13px] font-semibold text-sfds-action hover:underline"
 					data-testid="export-review-data">Export review data</a
 				>
@@ -238,8 +244,41 @@
 					onExit={() => pageStore.exitWalkthrough()}
 				/>
 			{:else}
-				<nav class="flex h-12 flex-none items-center justify-between border-b bg-background px-5">
+				<nav
+					class="flex h-12 flex-none items-center justify-between border-b border-sfds-grey-l2 bg-background px-5"
+				>
 					<div class="flex min-w-0 items-center gap-2">
+						<!-- Back to the queue's first row, the same target `Export review
+						     data` uses -- one definition, so the two cannot point at
+						     different pages. Left-most because it is the only control here
+						     that LEAVES the page; everything to its right describes or acts
+						     on the page you are looking at.
+
+						     On that page already, it renders as plain text rather than a
+						     link: a link that reloads the page you are on reads as broken,
+						     and hiding it instead would shift the whole bar sideways as you
+						     move through the queue. -->
+						{#if atQueueStart}
+							<span
+								class="flex-none text-[13px] font-semibold text-sfds-slate-l3"
+								aria-current="page"
+							>
+								First page
+							</span>
+						{:else}
+							<a
+								href={resolve('/review/[slug]', { slug: firstQueueTarget })}
+								class="flex flex-none items-center gap-1 text-[13px] font-semibold text-sfds-action hover:underline"
+								title={firstQueueTitle
+									? `Back to the first page in the queue: ${firstQueueTitle}`
+									: 'Back to the first page in the queue'}
+								data-testid="queue-start"
+							>
+								<ArrowLeft class="size-3.5" aria-hidden="true" />
+								First page
+							</a>
+						{/if}
+						<span class="h-4 w-px flex-none bg-sfds-grey-l2" aria-hidden="true"></span>
 						{#if pageData?.type}
 							<span
 								class="inline-flex h-[22px] flex-none items-center rounded-[4px] bg-sfds-grey-l2/60 px-2 text-[11px] font-bold tracking-[0.08em] text-sfds-black uppercase"
@@ -252,7 +291,12 @@
 						{#if pageStore.railCollapsed.queue && pageData?.title}
 							<span class="truncate text-sm font-semibold text-sfds-black">{pageData.title}</span>
 						{/if}
-						<span class="truncate font-mono text-xs text-sfds-slate-l2">
+						<!-- slate-l3, not slate-l2. MEASURED on the built app: #5a7a92 on
+						     white is 4.53:1, which clears WCAG AA's 4.5 floor by 0.03 and
+						     reads washed out at 12px; #1d4d70 is 8.94:1 and is already in
+						     the SFDS palette, so this is a token swap rather than a new
+						     colour. Same swap on the Karl tags label below. -->
+						<span class="truncate font-mono text-xs text-sfds-slate-l3">
 							{pageData?.slug ?? 'https://sf.gov/'}
 						</span>
 					</div>
@@ -267,7 +311,7 @@
 							</span>
 						{/if}
 						<div class="flex items-center gap-2">
-							<Label for="tagToggle" class="text-sfds-slate-l2">Karl tags</Label>
+							<Label for="tagToggle" class="text-sfds-slate-l3">Karl tags</Label>
 							<Switch
 								id="tagToggle"
 								bind:checked={showKarlTags}

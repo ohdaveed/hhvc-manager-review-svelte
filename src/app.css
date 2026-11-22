@@ -226,6 +226,13 @@ body {
 	--color-sfds-blue-l1: #edf4f7;
 	--color-sfds-blue-l2: #a9d6ea;
 	--color-sfds-black: #212123;
+	/* Two slates, and which one you want depends on what the text is FOR.
+	   MEASURED on white: slate-l2 is 4.53:1 and slate-l3 is 8.94:1. l2 clears
+	   WCAG AA's 4.5 floor by 0.03, which is a pass on paper and washed out at
+	   the 11-13px the tool's chrome is full of -- so secondary text in the
+	   queue, the toolbar and the panels uses l3. l2 stays for mockup furniture
+	   that has to match what sf.gov actually renders (SiteHeader), where
+	   fidelity to the real site outranks our own legibility preference. */
 	--color-sfds-slate-l2: #5a7a92;
 	--color-sfds-slate-l3: #1d4d70;
 	--color-sfds-grey-l2: #e2e2e2;
