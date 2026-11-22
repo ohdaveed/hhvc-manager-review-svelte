@@ -1,3 +1,47 @@
+# PLAN — make the mockup canvas look like live sf.gov (2026)
+
+Branch `feat/sfgov-mimicry`. Source of truth for this task is **live sf.gov**,
+measured 2026-11-22 with Playwright on
+`information--keeping-your-building-free-vermin` and
+`get-help-vermin-your-building` at 554px and 1280px.
+
+## Measured gaps (live → mockup before this branch)
+
+| Element           | Live sf.gov                                                              | Mockup before                               |
+| ----------------- | ------------------------------------------------------------------------ | ------------------------------------------- |
+| Header            | navy `#043578`, 2026 seal + "City and County of / San Francisco" (Slab) | white bar, old `SF.gov` black lockup        |
+| Page palette      | links `#1B519E`, text `#0B0C0C`, page `#FCFCFC`                          | review-tool `--color-sfds-*` (`#495ed4`)    |
+| h1                | Slab 600, 32/40 → 46/56 at ≥1024px, no negative tracking                 | Slab 700, -1px tracking, step at 768        |
+| h2                | Slab 500, 28/36 → 40/52 at ≥1024px                                       | Slab 700, -1px tracking                     |
+| h3                | Flex 700, 16/24                                                          | Flex 700, 20/24                             |
+| Summary           | ink, 20/24 → 24/32                                                       | slate, 20/28                                |
+| Callout box       | `#DAEBFF` fill, 1px `#6FAAFF` border, 20px 28px                          | —                                           |
+| Footer            | `#000925` navy                                                           | `#0c1464` (review-tool blue-dark)           |
+| Roboto Slab       | 500/600 used                                                             | only 700 loaded, so 500/600 would snap      |
+
+## Tasks
+
+- [x] 1. Write this plan
+- [ ] 2. `#mockPage` reads `--color-site-*` and the measured type ladder; load Slab 500/600; desktop step at a 1024px frame
+- [ ] 3. Inert `SiteHeader` becomes the navy 2026 header (seal, two-line wordmark, English ▾, search, labelled Menu); still all `<span>`s
+- [ ] 4. `SiteFooter` on `--color-site-navy`
+- [ ] 5. Verify: unit, `check:ratchet`, `lint:ratchet`, e2e (axe); before/after screenshots at phone + desktop frame; `/login` still renders
+
+## Proposed, not done here (need a reviewer decision)
+
+- **Type eyebrow** (`INFORMATION` above the breadcrumb) does not exist on sf.gov and duplicates the toolbar badge. Removing it is one line in `Page.svelte`.
+- **Audience block** renders as a left-ruled quote; sf.gov does not display audience at all. It is Karl review content, so it stays visible.
+- **Callout / What-to-know restyle** to the measured `#DAEBFF` box — next slice after this one.
+- **Desktop reading measure**: live body column is 616px of a 1076px grid (7/12). Mockup uses 760px.
+
+## Deliberately skipped
+
+- Emergency alert banner (transient content, not page design).
+- "Did you find what you needed?" tab (fixed overlay; would cover copy under review).
+- Figma precedence: live sf.gov has moved to the 2026 navy header; if the Figma file still shows the white lockup, that file is stale relative to the live site. Not checked in this pass.
+
+---
+
 # PLAN — Resolve outstanding audit items
 
 Follow-up to the tooling audit (#16), the inline-edit persistence fix (#17) and
