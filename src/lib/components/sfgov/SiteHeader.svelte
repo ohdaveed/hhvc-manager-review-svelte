@@ -5,118 +5,209 @@
 	// <input> -- so nothing here is focusable or announced as interactive to
 	// assistive tech. tests/e2e's axe pass is a merge gate; a fake search box
 	// exposed as a real control would fail it.
+	//
+	// Matches the live 2026 header, captured 2026-11-22: a navy (#043578) band,
+	// the city seal, and a two-line "City and County of / San Francisco"
+	// wordmark set in Roboto Slab. It replaced the white bar and black "SF.gov"
+	// lockup this component used to draw. The seal is the site's own
+	// `CCSF_seal_2026_white.svg`, rasterised to a 128px PNG because the SVG is
+	// 844KB and this renders on every review page.
 </script>
 
-<header class="flex items-center gap-2 border-b border-sfds-grey-l2 bg-white px-[18px] py-3.5">
-	<img
-		src="/sfgov/Lockup_SFgov_Black.png"
-		alt="SF.gov, City and County of San Francisco"
-		class="block h-[38px] w-[123px] flex-none"
-	/>
+<header class="sfgov-header bg-site-action-dark text-white">
+	<img src="/sfgov/CCSF_seal_2026_white.png" alt="" class="sfgov-seal flex-none" />
 
-	<nav
-		aria-label="Primary"
-		class="sfgov-nav flex min-w-0 shrink gap-2.5 overflow-hidden text-sm font-bold"
-	>
-		<span class="inline-flex items-center gap-1 whitespace-nowrap">
-			Services
-			<img src="/sfgov/icons/chevron-down.svg" alt="" class="block h-3.5 w-3.5" />
-		</span>
-		<span class="inline-flex items-center gap-1 whitespace-nowrap">
-			Departments
-			<img src="/sfgov/icons/chevron-down.svg" alt="" class="block h-3.5 w-3.5" />
-		</span>
-		<span class="whitespace-nowrap">Jobs</span>
-		<span class="inline-flex items-center gap-1 whitespace-nowrap">
-			Contact
-			<img src="/sfgov/icons/chevron-down.svg" alt="" class="block h-3.5 w-3.5" />
-		</span>
-	</nav>
+	<div class="sfgov-main">
+		<div class="sfgov-top">
+			<span class="sfgov-wordmark">
+				<span class="sfgov-wordmark-small">City and County of</span>
+				<span class="sfgov-wordmark-large">San Francisco</span>
+			</span>
 
-	<span class="ml-auto flex min-w-0 flex-initial items-center gap-2.5">
-		<span class="sfgov-lang inline-flex items-center gap-1 text-sm font-bold whitespace-nowrap">
-			<img src="/sfgov/icons/globe.svg" alt="" class="block h-[17px] w-[17px]" />
-			English
-			<img src="/sfgov/icons/chevron-down.svg" alt="" class="block h-3.5 w-3.5" />
-		</span>
-		<span class="flex min-w-0 items-stretch border-2 border-sfds-black">
-			<span
-				class="sfgov-search-field flex h-[34px] w-[66px] min-w-0 flex-1 items-center overflow-hidden px-2 text-sm whitespace-nowrap text-sfds-slate-l2"
-			>
-				Search
+			<span class="ml-auto flex items-center">
+				<span class="sfgov-lang inline-flex items-center gap-2 font-bold whitespace-nowrap">
+					English
+					<img src="/sfgov/icons/chevron-down.svg" alt="" class="h-4 w-4 brightness-0 invert" />
+				</span>
+
+				<span class="sfgov-search">
+					<span class="sfgov-search-field">Search</span>
+					<span aria-hidden="true" class="sfgov-search-button">
+						<img src="/sfgov/icons/search.svg" alt="" class="h-[18px] w-[18px]" />
+					</span>
+				</span>
+
+				<!-- Compact header: search collapses to its icon and the nav to a
+				     labelled Menu button, each behind a vertical rule. -->
+				<span class="sfgov-compact" aria-hidden="true">
+					<img src="/sfgov/icons/search.svg" alt="" class="h-5 w-5 brightness-0 invert" />
+				</span>
+				<span class="sfgov-compact sfgov-menu" aria-hidden="true">
+					<span class="sfgov-burger"><i></i><i></i><i></i></span>
+					<span class="text-[11px] leading-none">Menu</span>
+				</span>
 			</span>
-			<span
-				aria-hidden="true"
-				class="flex w-10 flex-none items-center justify-center bg-sfds-action"
-			>
-				<img
-					src="/sfgov/icons/search.svg"
-					alt=""
-					class="block h-[18px] w-[18px] brightness-0 invert"
-				/>
+		</div>
+
+		<nav aria-label="Primary" class="sfgov-nav">
+			<span class="inline-flex items-center gap-1.5">
+				Services
+				<img src="/sfgov/icons/chevron-down.svg" alt="" class="h-4 w-4 brightness-0 invert" />
 			</span>
-		</span>
-	</span>
-	<!-- The hamburger the real site swaps its nav for. Hidden until the frame
-	     is tablet-width or narrower. Drawn in CSS rather than added as an
-	     asset, and `aria-hidden` like every other glyph in this inert
-	     header. -->
-	<span class="sfgov-menu" aria-hidden="true">
-		<i></i><i></i><i></i>
-	</span>
+			<span class="inline-flex items-center gap-1.5">
+				Departments
+				<img src="/sfgov/icons/chevron-down.svg" alt="" class="h-4 w-4 brightness-0 invert" />
+			</span>
+			<span>Jobs</span>
+			<span class="inline-flex items-center gap-1.5">
+				Contact
+				<img src="/sfgov/icons/chevron-down.svg" alt="" class="h-4 w-4 brightness-0 invert" />
+			</span>
+		</nav>
+	</div>
 </header>
 
 <style>
-	/* ---------------------------------------------------------------------
-	   Reflow against the MOCKUP FRAME, not the viewport.
+	/* Reflow against the MOCKUP FRAME, not the viewport: the frame is a named
+	   container (src/routes/review/+layout.svelte) far narrower than the
+	   window, so a media query would show the desktop header at phone width.
 
-	   This header did not participate in the `mockup` container query at all
-	   -- `@container mockup` appeared only in app.css and SiteFooter.svelte --
-	   so while the page body and footer reflowed with the frame, the header
-	   kept its desktop row and relied on `overflow: hidden` to deal with the
-	   consequences. MEASURED on the built app: at a 1100px viewport the frame
-	   is 376px and the header's content overhung its right edge by 275px,
-	   with 27px of scroll overflow; at 1280px, 95px of overhang. Visibly that
-	   is "Departments" cut to "Departr" and the search box sliced in half --
-	   a rendering sf.gov never produces at any width, shown to a reviewer
-	   deciding whether the page is fit to publish.
-
-	   The breakpoints are the two the rest of the mockup already uses, so the
-	   header changes at the same frame widths as the body and footer.
-	   --------------------------------------------------------------------- */
-	.sfgov-menu {
-		display: none;
-		flex: none;
-		flex-direction: column;
-		gap: 4px;
-		margin-left: auto;
-		padding-inline: 4px;
+	   One step, at the same 1000px as the type ladder in app.css. Live sf.gov
+	   switches from the full header to the compact one at a 1024px viewport;
+	   the frame's border makes the "Desktop 1024px" preset a 1022px box. */
+	.sfgov-header {
+		display: flex;
+		gap: 1.25rem;
+		padding: 1rem 1.5rem 0.5rem;
+		font-family: var(--site-font-body);
 	}
 
-	.sfgov-menu i {
+	.sfgov-seal {
+		width: 110px;
+		height: 110px;
+	}
+
+	.sfgov-main {
+		display: flex;
+		flex: 1;
+		min-width: 0;
+		flex-direction: column;
+	}
+
+	.sfgov-top {
+		display: flex;
+		align-items: flex-start;
+		gap: 1rem;
+		padding-bottom: 0.75rem;
+		border-bottom: 1px solid rgb(255 255 255 / 0.35);
+	}
+
+	.sfgov-wordmark {
+		display: flex;
+		flex-direction: column;
+	}
+	.sfgov-wordmark-small {
+		font-size: 0.875rem;
+		line-height: 1.25rem;
+	}
+	.sfgov-wordmark-large {
+		font-family: var(--site-font-display);
+		font-size: 2rem;
+		font-weight: 600;
+		line-height: 2.25rem;
+	}
+
+	.sfgov-lang {
+		margin-right: 1.75rem;
+	}
+
+	.sfgov-search {
+		display: flex;
+		height: 46px;
+		border-radius: 4px;
+		overflow: hidden;
+		background: #fff;
+	}
+	.sfgov-search-field {
+		display: flex;
+		align-items: center;
+		width: 206px;
+		padding-inline: 1rem;
+		color: var(--color-site-ink-muted);
+	}
+	.sfgov-search-button {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 44px;
+		background: var(--color-site-action-soft);
+	}
+
+	.sfgov-nav {
+		display: flex;
+		gap: 1.5rem;
+		padding: 1rem 0.625rem 0.5rem;
+		font-weight: 700;
+		white-space: nowrap;
+	}
+
+	.sfgov-compact {
+		display: none;
+		align-items: center;
+		align-self: stretch;
+		padding-inline: 0.75rem;
+		border-left: 1px solid rgb(255 255 255 / 0.35);
+	}
+	.sfgov-menu {
+		flex-direction: column;
+		justify-content: center;
+		gap: 4px;
+	}
+	.sfgov-burger {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+	}
+	.sfgov-burger i {
 		display: block;
 		width: 20px;
 		height: 2px;
-		background: var(--color-sfds-black);
+		background: #fff;
 	}
 
-	/* Tablet: sf.gov drops the inline nav and the language control for a menu
-	   button, keeping search. */
-	@container mockup (max-width: 900px) {
-		.sfgov-nav,
+	@container mockup (max-width: 999px) {
+		.sfgov-header {
+			align-items: center;
+			gap: 0.75rem;
+			padding: 0.5rem 0 0.5rem 0.75rem;
+		}
+		.sfgov-seal {
+			width: 42px;
+			height: 42px;
+		}
+		.sfgov-top {
+			align-items: center;
+			padding-bottom: 0;
+			border-bottom: 0;
+		}
+		.sfgov-wordmark-small {
+			font-size: 0.6875rem;
+			line-height: 1rem;
+			font-weight: 700;
+		}
+		.sfgov-wordmark-large {
+			font-size: 1rem;
+			line-height: 1.25rem;
+		}
 		.sfgov-lang {
+			margin-right: 0.75rem;
+		}
+		.sfgov-search,
+		.sfgov-nav {
 			display: none;
 		}
-
-		.sfgov-menu {
+		.sfgov-compact {
 			display: flex;
-		}
-	}
-
-	/* Phone: the search field collapses to its icon. */
-	@container mockup (max-width: 560px) {
-		.sfgov-search-field {
-			display: none;
 		}
 	}
 </style>

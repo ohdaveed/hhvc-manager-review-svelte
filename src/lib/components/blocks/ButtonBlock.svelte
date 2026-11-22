@@ -48,13 +48,19 @@
 	   in this app regardless of specificity (see app.css's own note on the
 	   same cascade fact). Padding sits on the outer element so the signed-out
 	   branch (plain text, no inner button) still gets the same pill shape. */
+	/* Live sf.gov's "View 311 online services", measured 2026-11-22: 15px 16px
+	   padding inside a 1px transparent border (52px tall), 4px radius, #2A60AF
+	   fill, #FCFCFC text at 14/20 weight 400. */
 	:global(.button-block-cta) {
 		display: inline-flex;
-		padding: 10px 20px;
-		border-radius: 6px;
-		background: var(--color-sfds-action, #495ed4);
-		color: #ffffff;
-		font-weight: 600;
+		padding: 15px 16px;
+		border: 1px solid transparent;
+		border-radius: var(--site-radius);
+		background: var(--color-site-action-fill);
+		color: var(--color-site-surface);
+		font-size: 0.875rem;
+		font-weight: 400;
+		line-height: 1.25rem;
 	}
 
 	:global(.button-block-cta .edit-target) {

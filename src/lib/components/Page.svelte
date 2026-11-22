@@ -4,13 +4,24 @@
 	import Breadcrumb from './sfgov/Breadcrumb.svelte';
 	import WhatToKnow from './WhatToKnow.svelte';
 	import SpotlightBlock from './blocks/SpotlightBlock.svelte';
+	import LinkGrid from './blocks/LinkGrid.svelte';
+	import ContactSection from './blocks/ContactSection.svelte';
 
 	let { page } = $props();
+
+	// The label live sf.gov prints in the type pill, measured 2026-11-22. Agency
+	// pages print an empty pill and Campaign, Report, Resource Collection and
+	// About us had no live example, so those keep the corpus type name.
+	const typeLabels: Record<string, string> = {
+		Transaction: 'Service',
+		Information: 'Info Page',
+		'Step by step': 'Step-by-step'
+	};
 </script>
 
 <div class="page-body">
 	{#if page.type}
-		<div class="page-type-eyebrow">{page.type}</div>
+		<div class="page-type-eyebrow">{typeLabels[page.type] ?? page.type}</div>
 	{/if}
 
 	<!-- Ordering follows a live sf.gov page: eyebrow, breadcrumb, title, summary,
@@ -62,7 +73,21 @@
 				<Section {section} {index} />
 			{/each}
 		{/if}
+
+		<!-- `partnerAgencies`, after the sections as on live. Inside `.page-content`
+		     so it sits in the same 7/12 reading column live gives it. -->
+		<LinkGrid
+			heading="Partner agencies"
+			items={page.partnerAgencies}
+			fieldPrefix="partnerAgencies"
+			label="Partner agency"
+		/>
 	</div>
+
+	<!-- `contact`: full grid width on live, so outside `.page-content`. No page
+	     carries both `contact` and a page-level `spotlight`, so their order has
+	     no live reference. -->
+	<ContactSection contact={page.contact} />
 
 	<!-- Page-level `spotlight`, which one page carries. Not to be confused with
 	     a SECTION whose `component` is 'spotlight' -- those are ordinary
