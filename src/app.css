@@ -584,6 +584,7 @@ body {
 	}
 	& .steps-block-title {
 		display: flex;
+		align-items: baseline;
 		margin-bottom: 0.75rem;
 		font-family: var(--site-font-display);
 		font-size: 1.5rem;
