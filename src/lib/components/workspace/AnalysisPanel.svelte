@@ -4,7 +4,15 @@
 	import { Separator } from '$lib/components/ui/separator/index.js';
 	import { ExternalLink } from 'lucide-svelte';
 	import { tick } from 'svelte';
-	import { analyzePage, karlHelp, SFGOV_READING_GUIDELINE, type Finding } from '$lib/analysis';
+	import {
+		analyzePage,
+		karlHelp,
+		SFGOV_READING_GUIDELINE,
+		type ComponentFinding,
+		type Finding,
+		type KarlHelpKey,
+		type KarlHelpLink
+	} from '$lib/analysis';
 	import { MOCKUP_ROOT_SELECTOR } from '$lib/analysis/domChecks';
 	import type { EditRow } from '$lib/analysis/pageCopy';
 	import { editsStore, pagesStore } from '$lib/stores/reviewState';
@@ -63,9 +71,14 @@
 		page ? analyzePage({ page: page as never, edits, root: mockupRoot }) : null
 	);
 
-	const issues = $derived(analysis?.findings.filter((f) => f.status === 'issue') ?? []);
-	const passes = $derived(analysis?.findings.filter((f) => f.status === 'pass') ?? []);
-	const unavailable = $derived(analysis?.findings.filter((f) => f.status === 'unavailable') ?? []);
+	// Karl component findings sit beside the Karl Jr. ones, sorted into the same
+	// three groups. They carry their help link inline rather than as a key.
+	const allFindings = $derived<(Finding | ComponentFinding)[]>(
+		analysis ? [...analysis.findings, ...analysis.componentFindings] : []
+	);
+	const issues = $derived(allFindings.filter((f) => f.status === 'issue'));
+	const passes = $derived(allFindings.filter((f) => f.status === 'pass'));
+	const unavailable = $derived(allFindings.filter((f) => f.status === 'unavailable'));
 
 	/**
 	 * Where the score sits on a 0-14 track. Clamped, because Post-graduate is an
@@ -113,8 +126,8 @@
      internal link is ever added here, re-scope this. -->
 <!-- eslint-disable svelte/no-navigation-without-resolve -->
 
-{#snippet helpLink(key: Parameters<typeof karlHelp>[0])}
-	{@const help = karlHelp(key)}
+{#snippet helpLink(key: KarlHelpKey | KarlHelpLink)}
+	{@const help = typeof key === 'string' ? karlHelp(key) : key}
 	<a
 		class="inline-flex items-start gap-1 text-xs leading-snug font-semibold text-sfds-action hover:underline"
 		href={help.url}
@@ -128,7 +141,7 @@
 	</a>
 {/snippet}
 
-{#snippet findingCard(finding: Finding)}
+{#snippet findingCard(finding: Finding | ComponentFinding)}
 	<Card.Root size="sm">
 		<Card.Content class="space-y-2">
 			<div class="flex items-start gap-2">
@@ -266,7 +279,8 @@
 			<div class="space-y-2">
 				<h3 class="text-sm font-bold">Nothing to check ({unavailable.length})</h3>
 				<p class="text-xs text-muted-foreground">
-					These report no data rather than a pass — this mockup has nothing for them to look at.
+					These report no data rather than a pass — this mockup has nothing for them to look at, or
+					Karl’s help center does not settle the rule.
 				</p>
 				{#each unavailable as finding (finding.id)}
 					{@render findingCard(finding)}
