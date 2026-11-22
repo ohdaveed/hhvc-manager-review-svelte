@@ -9,16 +9,9 @@ export const article11Compliance = {
 	],
 	reading: 'Grade 7',
 	editorNote:
-		"Information page modeled on the SF.gov minimum wage ordinance pattern (sf.gov/information--minimum-wage-ordinance): a short compliance-first front door, not a replacement for the deep-dive `article11Guide` Report page it links out to. Every fact here (fee tiers, 72-hour window, 2-year records, PCO licensing, pesticide notice, training) is pulled from `article11Guide` and `payFee`, not re-derived — see each section's karl note for which source page to cross-check. The one exception is the vermin-log requirement, which no other mockup page carries: it comes straight from the Director's Rules excerpt at `docs/source/hhvc-policy/2026-07-08-residential-building-owner-operator-guidelines-vector-control.md` (item 2), the same sentence the 72-hour window is quoted from. Worth adding to `article11Guide`'s owner-responsibility table as well, so this page keeps summarizing rather than becoming the sole source for it. Two open questions carried from the design spec, not blocking: (1) whether Karl's Information content type has a distinct checklist/callout-with-list block, or whether the bulleted list used below (see \"What Article 11 requires\" section) is the closest real-schema fit; (2) the same `cost` panel radio-option gap already flagged on `payFee` — no \"varies by unit count\" option, so Range or Minimum-and-up is Digital Services' call.",
+		'Information page modeled on the SF.gov minimum wage ordinance pattern (sf.gov/information--minimum-wage-ordinance): a short compliance-first front door, not a replacement for the deep-dive `article11Guide` Report page it links out to. Every fact here (fee tiers, 72-hour window, 2-year records, PCO licensing, pesticide notice, training) is pulled from `article11Guide` and `payFee`, not re-derived — see each section\'s karl note for which source page to cross-check. The one exception is the vermin-log requirement, which no other mockup page carries: it comes straight from the Director\'s Rules excerpt at `docs/source/hhvc-policy/2026-07-08-residential-building-owner-operator-guidelines-vector-control.md` (item 2), the same sentence the 72-hour window is quoted from. Worth adding to `article11Guide`\'s owner-responsibility table as well, so this page keeps summarizing rather than becoming the sole source for it. One open question carried from the design spec, not blocking: whether Karl\'s Information content type has a distinct checklist/callout-with-list block, or whether the bulleted list used below (see "What Article 11 requires" section) is the closest real-schema fit. (A second question, the `cost` panel radio-option gap, no longer applies here: U23 moved the fee out of `whatToKnow` into the "Fees and full requirements" section, since Information has no `cost` panel. It stays open on `payFee`.)',
 	editorStatus: 'needs-review',
 	topicTag: 'Agency: Healthy Housing and Vector Control',
-	whatToKnow: {
-		cost: 'Annual fee for buildings with 3 or more rental units — current certified rates range $103–$808+ depending on unit count',
-		thingsToKnow: [
-			'See the full fee schedule for exact tier amounts and reinspection rates.',
-			'This page summarizes requirements — see the full Article 11 guide for the complete section-by-section mapping.'
-		]
-	},
 	contact: {
 		phone: ['311 (call or text)', '415-252-3800'],
 		email: ['healthyhousing@sf.gov'],
@@ -72,8 +65,20 @@ export const article11Compliance = {
 			]
 		},
 		{
+			heading: 'Fees and full requirements',
+			karl: "Maps to a fourth Title and text block: Title = this heading, Text = the paragraph plus the two linked bullets below. This content was the page's `whatToKnow` (cost + two Things to know) until U23 was resolved 2026-11-21: Information has no `cost` and no `things_to_know` — those sit only under Transaction's \"What to know before you start\" grouping — so it moved here, where Information can carry it. Fee figures match `payFee`'s `cost` and tier list; `payFee` stays the source of truth for amounts and is also in Related.",
+			kind: 'body',
+			paragraphs: [
+				'Buildings with 3 or more rental units pay an annual Healthy Housing fee. Current certified rates range from $103 to $808 or more, depending on unit count.'
+			],
+			bullets: [
+				'[See the full fee schedule for exact tier amounts and reinspection rates](payFee)',
+				'[See the full Article 11 guide for the complete section-by-section mapping](article11Guide)'
+			]
+		},
+		{
 			heading: 'Legal authority',
-			karl: 'Maps to a fourth Title and text block: Title = this heading, Text = the intro paragraph plus the bulleted list below, mirroring the citation pattern and municode URL already used in `health-code-article-11.js`\'s "Enforcement" section and Spotlight button.',
+			karl: 'Maps to a fifth Title and text block: Title = this heading, Text = the intro paragraph plus the bulleted list below, mirroring the citation pattern and municode URL already used in `health-code-article-11.js`\'s "Enforcement" section and Spotlight button.',
 			kind: 'body',
 			paragraphs: ['Article 11 defines these requirements and how HHVC enforces them.'],
 			bullets: [

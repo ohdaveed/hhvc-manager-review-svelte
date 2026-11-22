@@ -19,7 +19,7 @@
  *
  * What the field does NOT have is room, which is why this is reported as a gap
  * rather than resolved into a panel. The Help Center caps Things to know at 2
- * entries and 14 of the 15 pages carrying it already spend both, so placing an
+ * entries and 15 of the 16 pages carrying it already spend both, so placing an
  * audience means deciding which existing entry it replaces.
  */
 import { describe, it, expect } from 'vitest';

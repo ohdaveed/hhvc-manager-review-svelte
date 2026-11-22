@@ -15,10 +15,10 @@
 	 * so entries are read directly rather than through the
 	 * paragraph/bullet-style text-or-wrapper unwrapper.
 	 *
-	 * 14 of the 15 pages that carry `whatToKnow` are `type: 'Transaction'`; one
-	 * (`article-11-compliance-for-property-owners`) is `'Information'` and has
-	 * no Karl field backing this box at all, so it renders the amber orphan
-	 * notice from the same design source (`orphanShown` at prototype line
+	 * All 16 pages that carry `whatToKnow` are `type: 'Transaction'`, the only
+	 * type with a Karl field backing this box; `whatToKnowOwner.test.ts` keeps it
+	 * that way (U23). A non-Transaction page carrying it would render the amber
+	 * orphan notice from the same design source (`orphanShown` at prototype line
 	 * ~2015: shown whenever `type !== 'Transaction'`).
 	 */
 	let {

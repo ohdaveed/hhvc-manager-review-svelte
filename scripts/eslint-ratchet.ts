@@ -23,7 +23,7 @@
 import { spawnSync } from 'node:child_process';
 
 /** Measured on 2026-08-28 at the commit that added this script. */
-const BASELINE = 5;
+const BASELINE = 4;
 
 type EslintFileResult = { filePath: string; errorCount: number };
 
