@@ -280,7 +280,16 @@
 			     tabindex="0" is what axe's scrollable-region-focusable asks for: a
 			     region that scrolls but cannot be focused is unreachable by keyboard,
 			     so a keyboard-only reviewer could not scroll the mockup at all. The
-			     role and label give the focus stop a meaning once it exists. -->
+			     role and label give the focus stop a meaning once it exists.
+
+			     MEASURED, 2026-11-22: removing this attribute fails 5 of the 7
+			     specs in tests/accessibility.e2e.ts with
+			     "scrollable-region-focusable (serious) x1: Scrollable region must
+			     have keyboard access". Svelte's a11y_no_noninteractive_tabindex and
+			     axe's rule contradict each other here, and axe is the one that
+			     gates CI -- so the warning is suppressed rather than obeyed. Do not
+			     "fix" the warning by deleting the attribute. -->
+				<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 				<div
 					class="flex flex-1 justify-center overflow-y-auto px-8 pt-7 pb-30"
 					tabindex="0"

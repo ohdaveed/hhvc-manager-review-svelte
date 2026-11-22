@@ -63,6 +63,18 @@
      here. -->
 <!-- eslint-disable svelte/no-navigation-without-resolve -->
 
+<!-- tabindex="0" on the scroll wrapper, same reason as the mockup container in
+     src/routes/review/+layout.svelte: axe's scrollable-region-focusable wants a
+     scrolling region to be focusable, or a keyboard-only user cannot scroll a
+     table wider than its container. Svelte's a11y_no_noninteractive_tabindex
+     disagrees; axe gates CI, so it wins.
+
+     Unlike the layout case this is DEFENSIVE rather than measured -- the
+     specimen page's table does not overflow at the test viewport, so removing
+     the attribute does not currently fail the axe spec. It would once a table
+     is wide enough to scroll, which is the only state where the wrapper does
+     anything at all. -->
+<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 <div role="region" aria-label={caption} tabindex="0" class="ds-table-wrap {className}">
 	<table class="ds-table">
 		<caption class="ds-caption" class:sr-only={captionHidden}>{caption}</caption>
