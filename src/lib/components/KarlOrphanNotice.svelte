@@ -15,7 +15,11 @@
 	 * and the axe gate fails dead links. (The raw URL rendered its slashes
 	 * badly in the mockup face and ran three lines on a phone.)
 	 */
-	let { component, pageType }: { component: KarlComponent; pageType: unknown } = $props();
+	let {
+		component,
+		pageType,
+		subject = undefined
+	}: { component: KarlComponent; pageType: unknown; subject?: string } = $props();
 
 	const rule = $derived(COMPONENT_SUPPORT[component]);
 	const shown = $derived(typeof pageType === 'string' && isSupported(component, pageType) === 'no');
@@ -25,7 +29,14 @@
 	<div class="karl-orphan" data-karl-orphan={component}>
 		<span class="karl-orphan-icon" aria-hidden="true">!</span>
 		<span class="karl-orphan-text">
-			No Karl {rule.label} on this {pageType} page. {rule.instead}
+			<!-- For Related, `pageType` is the LINKED page's type: the rule is about
+			     what a Related card may point at, not the page holding it. -->
+			{#if component === 'related'}
+				{subject ? `“${subject}”: ` : ''}Karl’s Related section cannot link to a {pageType} page.
+				{rule.instead}
+			{:else}
+				No Karl {rule.label} on this {pageType} page. {rule.instead}
+			{/if}
 			<span class="karl-orphan-help">Karl help center: Components › {rule.helpTitle}</span>
 		</span>
 	</div>

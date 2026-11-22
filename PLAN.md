@@ -110,6 +110,13 @@ Owns: `src/lib/components/Page.svelte`, `src/lib/components/Section.svelte` (the
 Owns: `src/lib/components/blocks/CalloutBlock.svelte` (from B), `src/lib/components/blocks/CardsBlock.svelte`, **new** `src/lib/components/KarlOrphanNotice.svelte`, plus any test file it adds.
 - C1–C3. Extract the amber orphan notice from `WhatToKnow.svelte`'s markup **by copying its styling** (do not edit `WhatToKnow.svelte`; it is not owned) into `KarlOrphanNotice`. Show it on a callout or a `resources` card set when D's `isSupported(component, pageType)` is false. Get the page type from `pageStore`, not via new props through `Section.svelte` (not owned). Show nothing when support is "unknown" (the Agency case, C3). Do not change content.
 
+### Follow-ups (2026-11-22, branch `feat/phase2-followups`)
+- [x] F1. **Secondary buttons.** `ButtonBlock` takes `variant`, and `Section` passes the corpus's `buttonStyle`. Secondary uses the design system's `SiteButton` colours (`--color-site-action-soft` fill, `--color-site-action-dark` text); no live HHVC page has one to measure. Covered by `tests/buttonVariant.test.ts`.
+- [x] F2. **Contact on Information pages.** `contact` row added to `componentSupport`, citing `KARL_PANELS` in `karl-blocks.js`: Transaction (`get_help`), Campaign, Agency, Location. The help page lists no types. This flags `article-11-compliance-for-property-owners` and `integrated-pest-management-for-property-owners-and-managers` in Analysis and on the canvas.
+- [x] F3. **Related cards on the canvas.** `LinkGrid` (`checkRelated`) shows one full-width notice per card whose target type Related cannot hold, naming the card. Inside a 3-column cell it wrapped to 10 lines, so it sits above the grid. This flags 3 cards on 3 pages, the same set D's Analysis check finds.
+- [ ] F4. **URLs under link titles.** Waiting on a reviewer decision. The Fields panel lists only fields already selected on the canvas, so a URL hidden from the canvas could not be edited at all. `ButtonBlock`, `CardsBlock` and `LinkGrid` all print URLs for that reason.
+- **Decided against: component keys in `karlHelp.ts`.** `karlComponentChecks.ts` takes each finding's help link from the same `componentSupport` row as the rule, so rule and citation cannot drift. A second copy in `KARL_HELP` would reintroduce that drift.
+
 ## Deliberately skipped
 
 - Emergency alert banner (transient content, not page design).

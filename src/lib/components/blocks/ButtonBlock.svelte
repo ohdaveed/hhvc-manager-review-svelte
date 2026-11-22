@@ -14,11 +14,13 @@
 	 * (extractCopy includes it) so it renders as its own small edit target
 	 * rather than a functional `href`.
 	 */
-	let { text, url, fieldId, urlFieldId, name } = $props();
+	let { text, url, fieldId, urlFieldId, name, variant = 'primary' } = $props();
 </script>
 
 {#if text}
-	<div class="button-block">
+	<!-- `variant` is the corpus's `buttonStyle`. Only 'secondary' changes
+	     anything; any other value draws the primary button. -->
+	<div class="button-block" data-variant={variant}>
 		<EditTarget as="span" class="button-block-cta" {fieldId} name={`${name}`} value={text} />
 		{#if url}
 			<EditTarget
@@ -61,6 +63,15 @@
 		font-size: 0.875rem;
 		font-weight: 400;
 		line-height: 1.25rem;
+	}
+
+	/* Secondary, from the design system's own `SiteButton` (Figma-sourced, see
+	   src/lib/components/sfgov/ds/README.md): soft action fill, dark action
+	   text. No live HHVC page shows one to measure. */
+	.button-block[data-variant='secondary'] :global(.button-block-cta) {
+		border-color: var(--color-site-action-soft);
+		background: var(--color-site-action-soft);
+		color: var(--color-site-action-dark);
 	}
 
 	:global(.button-block-cta .edit-target) {

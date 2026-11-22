@@ -1,5 +1,7 @@
 <script lang="ts">
 	import EditTarget from '../EditTarget.svelte';
+	import KarlOrphanNotice from '../KarlOrphanNotice.svelte';
+	import { pagesByKey } from '$lib/data';
 
 	/**
 	 * sf.gov's link list: "Partner agencies", "Departments" and "Related" all
@@ -35,22 +37,41 @@
 		fieldPrefix,
 		label,
 		columns = 2,
-		heading = undefined
+		heading = undefined,
+		checkRelated = false
 	}: {
-		items: { title?: string; text?: string; url?: string }[] | undefined;
+		items: { title?: string; text?: string; url?: string; target?: string }[] | undefined;
 		fieldPrefix: string;
 		label: string;
 		columns?: 2 | 3;
 		/** A fixed label such as "Partner agencies". Omit it when the caller
 		 *  already renders an (editable) heading, as a Related section does. */
 		heading?: string;
+		/** A Related section: flag cards whose target page type Karl's Related
+		 *  cannot hold. Targets outside the corpus have no known type and are
+		 *  skipped, as the Analysis check skips them. */
+		checkRelated?: boolean;
 	} = $props();
+
+	const targetType = (target: string | undefined) =>
+		target ? (pagesByKey as Record<string, { type?: string }>)[target]?.type : undefined;
 </script>
 
 {#if items && items.length > 0}
 	<section class="link-grid">
 		{#if heading}
 			<h2 class="link-grid-heading">{heading}</h2>
+		{/if}
+		<!-- Above the grid at full width, naming the card: inside a 3-column cell
+		     the notice wrapped to ten lines at the desktop preset. -->
+		{#if checkRelated}
+			{#each items as item, i (i)}
+				<KarlOrphanNotice
+					component="related"
+					pageType={targetType(item.target)}
+					subject={item.title}
+				/>
+			{/each}
 		{/if}
 		<div class="link-grid-list cols-{columns}" class:headed={heading}>
 			{#each items as item, i (i)}
