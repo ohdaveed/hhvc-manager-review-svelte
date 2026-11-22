@@ -36,6 +36,45 @@ measured 2026-11-22 with Playwright on
 - **Type eyebrow** (`INFORMATION` above the title) stays. sf.gov has none, but reviewers keep it on the page; do not re-propose removing it.
 - **Audience block** stays as the left-ruled quote. sf.gov does not display audience, but it is Karl review content; do not restyle or hide it.
 
+## Phase 2 — components (proposed 2026-11-22, not started)
+
+Sources: live sf.gov `information--health-access-point-hap` and `report-health-nuisance-or-hazards`, and the Karl help center's Components pages (`sfdigitalservices.gitbook.io/karl-sf.gov-editor-help-center/using-karl-the-cms/components/*`). Karl's support table, as stated there:
+
+| Component | Content types Karl offers it on |
+| --- | --- |
+| Callout | Transaction, Information, Data story |
+| Accordion | Campaign, Location, Meeting, Transaction (title ≤ 65 chars) |
+| Button | Transaction (call to action); Event, Meeting (signup); inside a Spotlight on Agency, Campaign, Report (≤ 25 chars) |
+| Spotlight | Agency, Campaign (≤ 2); Report, Profile, Topic (1) |
+| Resource tiles | About, Campaign, Resource collection, Topic (the page says 5 types and lists 4) |
+| Related | lists only Transaction, Information, Campaign, Topic pages |
+| Table | Report only |
+| Alert | title ≤ 30, description ≤ 120 chars |
+
+### A. Content the corpus has but the mockup never shows
+- [ ] A1. **Partner agencies.** `partnerAgencies` is on 20 pages, with no renderer. Live: h2, then links in columns split by 1px vertical rules.
+- [ ] A2. **Related as a link grid.** Live shows a 3-column link grid with vertical dividers; the mockup shows bordered cards. A1 and A2 share one component.
+- [ ] A3. **Contact section.** `contact` is on 4 pages, with no renderer. Live: full-width, below the body column; Address / Phone / Email / Social, each with an icon and a Slab h3.
+
+### B. Rendered, but not the sf.gov look
+- [ ] B1. **Callout.** `#DAEBFF` fill, 1px `#6FAAFF` border, an "i" icon in a left gutter, bold lead-in. Applies to both `Section.svelte` and `StepsBlock`, which today draw a 4px left bar on blue-50.
+- [ ] B2. **Numbered step titles** ("1. Check if…") as Slab h3, 28/36 → 40/52. They are small body-bold today.
+- [ ] B3. **Buttons** `#2A60AF`, white text, 4px radius. Today they use the tool's `#495ed4`.
+- [ ] B4. **Accordion.** Open panel on `#EFF0F0` with a 20px inset; `+`/`—` glyph instead of an en dash. Stays non-collapsing (see the existing comment in `app.css`).
+- [ ] B5. **Page-type label** becomes the live pill: `#E9F1FE`, 4px radius, sentence case ("Service", "Info Page"). It keeps its place above the title (decided above); only the look changes.
+
+### C. Component choices Karl cannot build — flag them, don't silently fix
+These are content decisions for HHVC, so the mockup should *show* the mismatch with the existing amber orphan notice (as `WhatToKnow` does for a non-Transaction page), not quietly restyle it.
+- [ ] C1. **Callouts on unsupported types:** `mosquito-education-workshop` and `integrated-pest-management-education` (Campaign), and `health-code-article-11-plain-language` (Report). Karl offers callouts on Transaction, Information and Data story only.
+- [ ] C2. **Resource tiles on an Information page:** `integrated-pest-management-for-property-owners-and-managers`. Rebuild as Related (if the targets are SF.gov pages) or as body links.
+- [ ] C3. **Resource tiles on the Agency page:** `departments--healthy-housing-and-vector-control`. The help page's unnamed fifth type may be Agency. Confirm in Karl before flagging.
+
+### D. Make the rules checkable
+- [ ] D1. Encode the support table above as a page check (Checks panel), so a new mockup gets the C-class flags automatically, with a unit test per row.
+- [ ] D2. Character-limit checks: accordion title 65, button 25, alert 30 / 120. Buttons could not be located in the corpus by a `button` key; find their real field name first.
+
+Suggested order: A1–A3 → B1–B3 → C1–C3 → B4–B5 → D.
+
 ## Deliberately skipped
 
 - Emergency alert banner (transient content, not page design).
