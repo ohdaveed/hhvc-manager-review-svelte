@@ -415,9 +415,13 @@ local defaults still stand, and a `supabase db reset` reproduces them.
       Both agree — `disable_signup` `true` (self-registration off),
       `mailer_autoconfirm` `false` (email must be verified),
       `external_anonymous_users_enabled` `false`, and `email` the only enabled
-      provider, matching the app's magic-link flow. The admin view adds
-      `security_captcha_enabled` `true` and `site_url`
+      provider, matching the app's magic-link flow. `site_url` is
       `https://hhvc-manager-review.netlify.app`.
+      `security_captcha_enabled` was previously `true` on production, but because
+      magic-link sign-in uses `signInWithOtp` without a client captcha widget,
+      it blocked reviewer sign-ins with `captcha protection: request disallowed (no captcha_token found)`.
+      It was disabled (`false`) on 2026-11-22 via the Management API; signups remain
+      closed (`disable_signup: true`) and `shouldCreateUser: false` is enforced in the client.
       So the sign-up-and-delete path this item existed to close was never open
       on the hosted project, and the `@sfgov.org` allow-list is unnecessary
       while `disable_signup` stays `true` — new reviewers must be invited from

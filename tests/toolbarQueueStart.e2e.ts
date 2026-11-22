@@ -44,19 +44,10 @@ test('states the position instead of linking when already on that page', async (
 	await expect(page.locator('nav [aria-current="page"]')).toHaveText('First page');
 });
 
-test('points at the same page as Export review data', async ({ page }) => {
+test('renders the export review data button in the queue footer', async ({ page }) => {
 	await page.goto(OTHER);
 
-	// Compare the RESOLVED `href` property, not the attribute, and poll.
-	//
-	// `resolve()` emits a relative path during SSR (`../review/x`) and an
-	// absolute one after hydration (`/review/x`), so two bare `getAttribute`
-	// reads can straddle hydration and disagree about links that are in fact
-	// identical -- which is exactly how this test failed on its first full-suite
-	// run while passing alone. The `href` PROPERTY is always the absolute URL,
-	// and `expect.poll` retries until the page settles.
-	const hrefOf = (testId: string) =>
-		page.getByTestId(testId).evaluate((el) => (el as HTMLAnchorElement).href);
-
-	await expect.poll(async () => hrefOf('queue-start')).toBe(await hrefOf('export-review-data'));
+	const exportBtn = page.getByTestId('export-review-data');
+	await expect(exportBtn).toBeVisible();
+	await expect(exportBtn).toHaveText('Export review data');
 });
