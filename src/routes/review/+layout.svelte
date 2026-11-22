@@ -533,7 +533,7 @@
 						style={PREVIEW_WIDTHS[pageStore.previewWidth]
 							? `width:${PREVIEW_WIDTHS[pageStore.previewWidth]}px;max-width:none;flex:none`
 							: ''}
-						class="mockup-frame mx-auto w-full self-start overflow-hidden rounded-[4px] border border-gray-200 bg-white shadow-[0_2px_4px_rgba(12,20,100,.06),0_4px_12px_rgba(12,20,100,.1)]"
+						class="mockup-frame mx-auto w-full self-start overflow-hidden rounded-[4px] border border-gray-200 bg-site-surface shadow-[0_2px_4px_rgba(12,20,100,.06),0_4px_12px_rgba(12,20,100,.1)]"
 					>
 						<SiteHeader />
 

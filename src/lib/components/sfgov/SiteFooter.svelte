@@ -4,7 +4,7 @@
 	// interactive to assistive tech.
 </script>
 
-<footer class="bg-sfds-blue-dark text-white">
+<footer class="bg-site-navy text-white">
 	<div class="footer-grid grid grid-cols-[1.5fr_1fr_1fr_1.1fr] gap-6 px-8 pt-10 pb-7">
 		<div>
 			<img

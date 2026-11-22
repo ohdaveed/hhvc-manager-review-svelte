@@ -22,10 +22,11 @@ measured 2026-11-22 with Playwright on
 ## Tasks
 
 - [x] 1. Write this plan
-- [ ] 2. `#mockPage` reads `--color-site-*` and the measured type ladder; load Slab 500/600; desktop step at a 1024px frame
-- [ ] 3. Inert `SiteHeader` becomes the navy 2026 header (seal, two-line wordmark, English ▾, search, labelled Menu); still all `<span>`s
-- [ ] 4. `SiteFooter` on `--color-site-navy`
-- [ ] 5. Verify: unit, `check:ratchet`, `lint:ratchet`, e2e (axe); before/after screenshots at phone + desktop frame; `/login` still renders
+- [x] 2. `#mockPage` reads `--color-site-*` and the measured type ladder; load Slab 500/600; desktop step at 940px of `#mockPage` content box (= the 1024px preset; #mockPage is its own `mockup` container)
+- [x] 3. Inert `SiteHeader` becomes the navy 2026 header (seal, two-line wordmark, English ▾, search, labelled Menu); still all `<span>`s
+- [x] 4. `SiteFooter` on `--color-site-navy`
+- [x] 5. Verify: unit, `check:ratchet`, `lint:ratchet`, e2e (axe); before/after screenshots at phone + desktop frame; `/login` still renders
+      Result 2026-11-22: unit 490/490, check:ratchet 0/0, lint:ratchet 4, e2e 30/30. First e2e run caught the type eyebrow at 4.41:1 on #FCFCFC; moved to `--color-site-ink-secondary`.
 
 ## Proposed, not done here (need a reviewer decision)
 

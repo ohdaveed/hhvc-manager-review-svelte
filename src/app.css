@@ -1,5 +1,7 @@
 @import 'tailwindcss';
 @import '@fontsource-variable/roboto-flex';
+@import '@fontsource/roboto-slab/500.css';
+@import '@fontsource/roboto-slab/600.css';
 @import '@fontsource/roboto-slab/700.css';
 @import 'tw-animate-css';
 @import 'shadcn-svelte/tailwind.css';
@@ -377,19 +379,25 @@ body {
    made deliberately and documented in css/styles.css; they are carried over
    rather than re-litigated here.
    --------------------------------------------------------------------------- */
+/* Colours and the type ladder below were re-measured against live sf.gov on
+   2026-11-22 (Playwright computed styles, vermin Information + Transaction
+   pages, at 554px and 1280px). This surface used to read the review tool's
+   `--color-sfds-*` palette, which the `--color-site-*` comment further down
+   says a mockup must not do: links rendered #495ed4 where sf.gov uses #1B519E. */
 #mockPage {
 	container: mockup / inline-size;
-	color: var(--color-sfds-black);
-	font-size: var(--text-sfds-body);
-	line-height: var(--text-sfds-body--line-height);
+	color: var(--color-site-ink);
+	font-family: var(--site-font-body);
+	font-size: 1rem;
+	line-height: 1.5rem;
 
 	& a {
-		color: var(--color-sfds-action);
+		color: var(--color-site-action);
 		text-decoration: underline;
 		text-underline-offset: 3px;
 	}
 	& a:hover {
-		color: var(--color-sfds-blue-dark);
+		color: var(--color-site-action-dark);
 	}
 
 	/* `MarkdownText` renders a link as a span rather than an anchor when it sits
@@ -397,7 +405,7 @@ body {
 	   invalid HTML. It has to LOOK the same, or the page reads differently
 	   signed in and signed out for a reason that is purely structural. */
 	& .md-link {
-		color: var(--color-sfds-action);
+		color: var(--color-site-action);
 		text-decoration: underline;
 		text-underline-offset: 3px;
 	}
@@ -409,32 +417,35 @@ body {
 		text-decoration-style: dotted;
 	}
 
+	/* sf.gov: h1 Slab 600, h2 Slab 500, no negative tracking; h3 is body-face
+	   bold at body size. Mobile sizes here, desktop step in the query below. */
 	& h1,
 	& h2 {
 		margin-top: 0;
-		font-family: var(--font-heading);
-		font-weight: 700;
-		letter-spacing: -1px;
+		font-family: var(--site-font-display);
+		letter-spacing: 0;
 	}
 	& h3 {
 		margin-top: 0;
-		font-family: var(--font-body);
+		font-family: var(--site-font-body);
 		font-weight: 700;
 	}
 	& h1 {
-		margin-bottom: 1rem;
-		font-size: var(--text-sfds-title-xl);
-		line-height: var(--text-sfds-title-xl--line-height);
+		margin-bottom: 0.75rem;
+		font-size: 2rem;
+		font-weight: 600;
+		line-height: 2.5rem;
 	}
 	& h2 {
 		margin-bottom: 0.75rem;
-		font-size: var(--text-sfds-title-lg);
-		line-height: var(--text-sfds-title-lg--line-height);
+		font-size: 1.75rem;
+		font-weight: 500;
+		line-height: 2.25rem;
 	}
 	& h3 {
 		margin-bottom: 0.5rem;
-		font-size: var(--text-sfds-title-xs);
-		line-height: var(--text-sfds-title-xs--line-height);
+		font-size: 1rem;
+		line-height: 1.5rem;
 	}
 
 	& p {
@@ -459,7 +470,8 @@ body {
 
 	& .page-type-eyebrow {
 		margin-bottom: 0.5rem;
-		color: var(--color-sfds-slate-l2);
+		/* slate-l2 #5a7a92 was 4.41:1 on the site's #FCFCFC page -- axe fails it. */
+		color: var(--color-site-ink-secondary);
 		font-size: var(--text-sfds-small);
 		font-weight: 600;
 		line-height: var(--text-sfds-small--line-height);
@@ -468,10 +480,10 @@ body {
 	}
 
 	& .page-summary {
-		margin-bottom: 1.75rem;
-		color: var(--color-sfds-slate-l3);
-		font-size: var(--text-sfds-big-desc);
-		line-height: var(--text-sfds-big-desc--line-height);
+		margin-bottom: 1.25rem;
+		color: var(--color-site-ink);
+		font-size: 1.25rem;
+		line-height: 1.5rem;
 	}
 	& .page-summary p {
 		margin-block: 0;
@@ -483,8 +495,7 @@ body {
 	   not navigate, and a dead anchor is an axe failure. */
 	& .page-primary-agency {
 		margin-bottom: 1.75rem;
-		color: var(--color-sfds-action);
-		font-size: var(--text-sfds-small);
+		color: var(--color-site-action);
 		text-decoration: underline;
 		text-underline-offset: 3px;
 	}
@@ -508,20 +519,21 @@ body {
 	   and move the disclosure onto its own control so the heading stays editable. */
 	& .page-section[data-component='supporting'] {
 		padding-top: 0.75rem;
-		border-top: 1px solid var(--color-sfds-grey-l2);
+		border-top: 1px solid var(--color-site-border);
 	}
 	& .page-section[data-component='supporting'] .section-heading {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
 		gap: 1rem;
-		color: var(--color-sfds-action);
-		font-size: var(--text-sfds-small);
+		color: var(--color-site-action);
+		font-family: var(--site-font-body);
+		font-size: 1rem;
 		font-weight: 700;
 	}
 	& .page-section[data-component='supporting'] .section-heading::after {
 		content: '\2013';
-		color: var(--color-sfds-action);
+		color: var(--color-site-action);
 		font-size: 1.25rem;
 		line-height: 1;
 	}
@@ -529,8 +541,8 @@ body {
 	& .page-audience {
 		margin-bottom: 1.75rem;
 		padding-left: 1rem;
-		border-left: 3px solid var(--color-sfds-grey-l2);
-		color: var(--color-sfds-slate-l3);
+		border-left: 3px solid var(--color-site-border);
+		color: var(--color-site-ink-secondary);
 	}
 	& .page-audience p {
 		margin-block: 0 0.35rem;
@@ -555,18 +567,22 @@ body {
    holds the mobile step. Container queries evaluate the content box, which is
    why the canvas's 809px border box is under the threshold once its 32px
    padding comes off. */
-@container mockup (min-width: 768px) {
+/* Re-measured on live sf.gov 2026-11-22: the type does NOT step at 768. h1 is
+   32/40 at every width up to 1023px and 46/56 from 1024px; h2 28/36 -> 40/52;
+   summary 20/24 -> 24/32; h3 stays 16/24. The nearest `mockup` container here
+   is #mockPage itself, not the frame: at the "Desktop 1024px" preset its
+   content box is 958px (1022px inside the frame border, minus 2rem padding a
+   side) and at "Tablet 768px" it is ~716px. 940px sits between them, so the
+   desktop preset shows the desktop ladder and tablet keeps the mobile one, as
+   on sf.gov. Measured with Playwright at each preset. */
+@container mockup (min-width: 940px) {
 	#mockPage h1 {
-		font-size: 3.75rem;
-		line-height: 4rem;
+		font-size: 2.875rem;
+		line-height: 3.5rem;
 	}
 	#mockPage h2 {
-		font-size: 2.75rem;
+		font-size: 2.5rem;
 		line-height: 3.25rem;
-	}
-	#mockPage h3 {
-		font-size: 1.25rem;
-		line-height: 1.5rem;
 	}
 	#mockPage .page-summary {
 		font-size: 1.5rem;
