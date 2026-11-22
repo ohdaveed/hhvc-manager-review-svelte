@@ -1,5 +1,7 @@
 <script>
 	import EditTarget from '../EditTarget.svelte';
+	import KarlOrphanNotice from '../KarlOrphanNotice.svelte';
+	import { pageStore } from '$lib/stores/pageData.svelte';
 
 	/**
 	 * `section.cards`: a grid of link-style items. 54 sections carry this key
@@ -15,7 +17,22 @@
 	 * interaction, not page navigation.
 	 */
 	let { cards, sectionKey, label } = $props();
+
+	// Only resource tiles are a Karl component with a page-type rule; the other
+	// card sets this renders are not checked. The section is found by the same
+	// key `Section.svelte` derives, since it does not pass `component` in.
+	const activePage = $derived(pageStore.pages.find((p) => p.id === pageStore.activePageId));
+	const isResources = $derived(
+		activePage?.sections?.find(
+			/** @param {{ fieldKey?: string }} s @param {number} i */
+			(s, i) => (s.fieldKey ?? `section-${i}`) === sectionKey
+		)?.component === 'resources'
+	);
 </script>
+
+{#if isResources}
+	<KarlOrphanNotice component="resources" pageType={activePage?.type} />
+{/if}
 
 <ul class="cards-block">
 	{#each cards as card, i (i)}

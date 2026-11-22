@@ -1,5 +1,7 @@
 <script lang="ts">
 	import EditTarget from '../EditTarget.svelte';
+	import KarlOrphanNotice from '../KarlOrphanNotice.svelte';
+	import { pageStore } from '$lib/stores/pageData.svelte';
 
 	/**
 	 * The sf.gov callout, shared by a section's `callout` and a step's.
@@ -33,8 +35,12 @@
 		titleName: string;
 		textName: string;
 	} = $props();
+
+	// The page type is read off the page on screen: neither caller passes it.
+	const pageType = $derived(pageStore.pages.find((p) => p.id === pageStore.activePageId)?.type);
 </script>
 
+<KarlOrphanNotice component="callout" {pageType} />
 <div class="callout">
 	<!-- sf.gov's own info glyph, copied from the live markup (as WhatToKnow). -->
 	<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="callout-icon">
