@@ -29,6 +29,7 @@
 	import { buildWalkthrough } from '$lib/karl/walkthrough';
 	import { reviewRecordFor } from '$lib/karl/reviewRecord';
 	import { pagesByKey } from '$lib/data';
+	import { triggerReviewExportDownload } from '$lib/data/exportReview';
 
 	let { children } = $props();
 
@@ -92,8 +93,8 @@
 	// parked on other pages is the panel's line to make, not a number here.
 	const unsavedCount = $derived(pageStore.acceptedFor(pageData?.id));
 
-	// Where `Export review data` points until export exists: the queue's first
-	// row, by the same order `ReviewQueue` renders.
+	// The toolbar's "First page" link target: the queue's first row,
+	// by the same order `ReviewQueue` renders.
 	//
 	// The chain ends at `$page.params.slug` rather than a literal, because that
 	// is the one value guaranteed routable here -- the router matched it to get
@@ -271,14 +272,16 @@
 			</ScrollArea>
 			<Separator />
 			<div class="flex items-center justify-between px-5 py-3.5">
-				<!-- Export has no page of its own yet, so it goes where the queue
-				     starts rather than to `/review`, which has no `+page.svelte` and
-				     404s. A placeholder destination that lands somewhere real. -->
-				<a
-					href={resolve('/review/[slug]', { slug: firstQueueTarget })}
+				<!-- Client-side export of live review statuses, checks, notes, and
+				     inline edits compiled against the static corpus. -->
+				<button
+					type="button"
 					class="text-[13px] font-semibold text-sfds-action hover:underline"
-					data-testid="export-review-data">Export review data</a
+					data-testid="export-review-data"
+					onclick={() => triggerReviewExportDownload(pageStore.pages, $pagesStore, $editsStore)}
 				>
+					Export review data
+				</button>
 				<!-- No longer dead. It is a view of this same route rather than a
 				     page of its own: the queue and the review panel stay put, so
 				     making it a route would remount both to change the middle column. -->
@@ -349,7 +352,7 @@
 						<Button
 							variant="outline"
 							size="sm"
-							class="narrow-only h-7 flex-none text-xs"
+							class="narrow-only min-h-11 min-w-11 flex-none px-3.5 text-xs font-semibold"
 							onclick={(e: MouseEvent) => openSheet('queue', e)}
 						>
 							Queue
@@ -357,14 +360,13 @@
 						<Button
 							variant="outline"
 							size="sm"
-							class="narrow-only h-7 flex-none text-xs"
+							class="narrow-only min-h-11 min-w-11 flex-none px-3.5 text-xs font-semibold"
 							onclick={(e: MouseEvent) => openSheet('panel', e)}
 						>
 							Review
 						</Button>
-						<!-- Back to the queue's first row, the same target `Export review
-						     data` uses -- one definition, so the two cannot point at
-						     different pages. Left-most because it is the only control here
+						<!-- Back to the queue's first row (`firstQueueTarget`). Left-most
+						     because it is the only control here
 						     that LEAVES the page; everything to its right describes or acts
 						     on the page you are looking at.
 
