@@ -107,7 +107,7 @@
      rails are 52px (design 2a) — the buttons live here, the rail contents are
      the 2a pass. -->
 <div
-	class="review-shell grid h-screen w-full overflow-hidden bg-muted/40"
+	class="review-shell grid h-screen w-full grid-rows-[minmax(0,1fr)] overflow-hidden bg-muted/40"
 	style="grid-template-columns: {pageStore.railCollapsed.queue ? '52px' : '280px'} 1fr {pageStore
 		.railCollapsed.panel
 		? '52px'
