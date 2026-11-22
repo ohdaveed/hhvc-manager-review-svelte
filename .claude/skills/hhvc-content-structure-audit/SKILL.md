@@ -1,7 +1,7 @@
 ---
 name: hhvc-content-structure-audit
-description: 'Systematically audit corpus, schema, and field coverage; document findings in structured form; coordinate cross-session changes; and make informed decisions about content structure — before committing, to understand coverage gaps, constraint violations, content loss, and whether human decisions are needed. Use this skill when preparing to change page types, rename slugs, add schema fields, or refactor content structure in the corpus — before committing, to understand coverage gaps, constraint violations, content loss, and whether human decisions are needed.'
-trigger: 'Use this skill when preparing to change page types, rename slugs, add schema fields, or refactor content structure in the corpus — before committing, to understand coverage gaps, constraint violations, content loss, and whether human decisions are needed.'
+description: "Systematically audit corpus, schema, and field coverage; document findings with recorded reasoning; coordinate cross-session changes with peer verification; and make informed decisions about content structure — before committing, to understand coverage gaps, constraint violations, content loss, and whether human decisions are needed. Use this skill when 'Use this skill when preparing to change page types, rename slugs, add schema fields, or refactor content structure in the corpus — before committing, to understand coverage gaps, constraint violations, content loss, and whether human decisions are needed.'"
+trigger: "'Use this skill when preparing to change page types, rename slugs, add schema fields, or refactor content structure in the corpus — before committing, to understand coverage gaps, constraint violations, content loss, and whether human decisions are needed.'"
 author: arrizon.david
 source_sessions:
   - arrizon.david_arrizon.david's Organization_default_25b29e61-75cd-4d31-af6e-26a6fe717f3e
@@ -11,15 +11,15 @@ source_sessions:
   - arrizon.david_arrizon.david's Organization_default_5e5c87b5-b68c-4201-b4fd-aec6e80a7d75
 contributors:
   - arrizon.david
-version: 2
+version: 3
 created_by_agent: claude_code
 created_at: 2026-08-30T22:21:55.513Z
-updated_at: 2026-09-02T04:42:16.884Z
+updated_at: 2026-09-03T01:28:26.180Z
 ---
 
 # HHVC Content Structure Audit
 
-Before modifying the corpus schema, page types, or content mappings, audit the current state systematically. The audit answers three questions: _What breaks?_ _What content is at risk?_ _What human decisions does this require?_ Document findings in structured form and coordinate with concurrent work.
+Before modifying the corpus schema, page types, or content mappings, audit the current state systematically. The audit answers three questions: _What breaks?_ _What content is at risk?_ _What human decisions does this require?_ Document findings in structured form, coordinate with concurrent work, and verify peer corrections independently.
 
 ## When to Use This Skill
 
@@ -31,6 +31,7 @@ Use this skill when:
 - Modifying Karl field mappings or checking compliance against the CMS form
 - Evaluating whether a schema change has downstream costs in production storage
 - Documenting audit findings to stakeholders or coordinating schema changes across sessions
+- Verifying peer corrections to audit findings and updating the record with evidence
 
 ## The Audit Process
 
@@ -63,11 +64,9 @@ doppler run --project hhvc-svelte --config prd -- \
        WHERE slug IN ('...');"
 ```
 
-If restricted visibility blocks checks, record it as an open gate instead of routing around it.
-
 ### 4. Identify human-facing content decisions
 
-When content has nowhere to land, **stop and surface the decision**, don't guess a migration. Specify the decision and the cost of each option.
+When content has nowhere to land, **stop and surface the decision**, don't guess a migration. Record the decision with: what is blocked, which step is available, the constraint that applies, and how to revisit.
 
 ### 5. Test with pinned assertions
 
@@ -77,10 +76,8 @@ After the change, assert counts that should be stable — don't let drift silent
 const EXPECTED = {
 	calloutTitles: 4,
 	o3Violations: 3,
-	orphans: 5,
-	thingsToKnowOver2: 8
+	orphanCount: 5
 };
-
 test('corpus audits match expectations', () => {
 	const count = allPages.flatMap((p) => p.sections).filter((s) => s.callout?.title).length;
 	expect(count).toBe(EXPECTED.calloutTitles, 'audit baseline drifted; review before updating');
@@ -91,13 +88,9 @@ test('corpus audits match expectations', () => {
 
 When schema or naming is in question, check the source of truth. Precedence: CMS form (live, authoritative) > field map (in-repo) > Help Center (reference only).
 
-### 7. Measure before deciding
-
-When blocked on "will this break something?", audit on paper first. Measure the corpus, not the map.
-
 ## Documenting and Coordinating Audit Findings
 
-### 8. Create structured audit documentation
+### 7. Create structured audit documentation
 
 Package findings so stakeholders can review and future audits can detect drift:
 
@@ -107,9 +100,32 @@ Package findings so stakeholders can review and future audits can detect drift:
 # 62 rows across 14 pages, one row per unit
 ```
 
-Structure should enable automated drift detection: one row per unit, same column count, decision-tracking columns. Example: `docs/karl-transaction-compliance.csv` — 62 rows, 6 fields, measurable against future corpus states.
+Structure should enable automated drift detection: one row per unit, same column count, decision-tracking columns.
 
-### 9. Handle cross-session coordination
+### 8. Record decisions and reasoning durably
+
+For each finding requiring a human choice, record what is blocked and why:
+
+```markdown
+**U27 — Classifier limitation**
+Step 1: Available — KARL_PANELS has 105 structured matchers
+Step 2: Blocked — needs block internals, only available as 110 prose strings
+BlockedOn: Step 1 available now; step 2 is a Karl data-model decision
+```
+
+This prevents the next person from re-opening settled decisions. Include what is actually blocked, which step is available vs. deferred, and the constraint.
+
+### 9. Peer verification workflow
+
+When a peer flags an error in your audit:
+
+1. **Reproduce their measurement independently.** Run the same command they cite, or re-run your own measurement to confirm the delta.
+2. **Check for transcription errors in their report.** A single flag might combine multiple measurements (e.g., scoped vs. corpus-wide git commands); reproduce both forms.
+3. **Verify the causal chain.** If they offer an explanation, check whether it matches the evidence. Two independent checks can reach the same conclusion via different mechanisms.
+4. **Update the audit record with verified evidence.** Include what changed, which measurement was wrong, and the correct figure with its source.
+5. **Acknowledge correction direction and precision.** A peer's simpler explanation of the same event is worth noting.
+
+### 10. Handle cross-session coordination
 
 When multiple sessions work on related changes:
 
@@ -119,9 +135,9 @@ git rev-list --left-right --count main...origin/main
 if main has moved, git merge origin/main  # don't rebase open PRs
 ```
 
-Record decisions and reasoning so concurrent work doesn't re-open settled questions (see step 11).
+Record decisions and reasoning so concurrent work doesn't re-open settled questions.
 
-### 10. Iterate audit findings with verification
+### 11. Iterate audit findings with verification
 
 When feedback surfaces errors, re-measure from the source:
 
@@ -131,39 +147,25 @@ bun run tsx -e "import {allPages} from 'src/lib/data';
   console.log(results)"
 ```
 
-Compare against prior document. Two-way verification (your measurement + peer review) catches more than one-way. Record corrections with evidence — exact file, commit, or grep line.
+Compare against prior document. Two-way verification (your measurement + peer review) catches more than one-way.
 
-### 11. Document decisions and reasoning
+### 12. Live artifact verification
 
-For each finding requiring a human choice, record what is blocked, which step is available, and why:
+After deployment, verify the changes in the real rendered artifact:
 
-```markdown
-**U27 — Classifier limitation**
-Step 1: Available — KARL_PANELS has 105 structured matchers
-Step 2: Blocked — needs block internals, only available as 110 prose strings
-Blocked-on: Step 1 available now; step 2 is a Karl data-model decision
+```bash
+bun run test:unit -- --run
+bun run dev
+# Navigate to the component, inspect in DevTools
 ```
 
-This prevents the next person from re-opening settled decisions. Include: what is actually blocked (not just "needs refactor"), which step is available vs. deferred, the data-model constraint that applies, how to revisit.
+Render before claiming verification. A passing test asserts structure, not appearance.
 
 ## Gotchas
 
 - **Structured documentation is fragile** — row counts validate shape, not semantic correctness. Verify content after splits or merges.
 - **Concurrent sessions invalidate measurements** — re-measure after merges rather than assuming priors hold.
 - **Decisions get inherited by new pages** — pin expected counts in tests, so new pages that violate old decisions turn CI red.
-- **Slack in spec creates ambiguity** — comments might count different things than your audit (page-level vs. section-level). Ask before assuming equivalence.
+- **Cheap proxy checks pass loudest when wrong** — a check that validates shape while content moves silently is worse than no check. Example: pipe count survives a bad split, so splitting on `|` cannot catch semantic misplacement; diff cell contents instead.
+- **Stale documentation gets inherited** — when a corpus import carries unswept defects, nothing catches it until the next measurement. A sweep recorded as complete but incomplete will corrupt the next person's audit.
 - **Restricted visibility on prod checks** — `SUPABASE_DB_URL` and related secrets cannot be read; record this as an open gate rather than routing around it.
-
-## Example: Audit to Decision Workflow
-
-From HHVC #103–#116:
-
-1. **Audit step 1**: Measured 14 Transaction pages, 47 sections — complete census
-2. **Step 7**: Measure before deciding — `things_to_know` cap: editorial or schema-enforced?
-3. **Doc step 8**: Created `docs/karl-transaction-compliance.csv` — 62 rows, 6 fields
-4. **Step 9**: PR opened, cross-session peer merges concurrent work (#97 adds new pages)
-5. **Step 10**: Re-measured — now 16 pages, 51 sections; two findings proved stale
-6. **Step 11**: Recorded that `U27` has two substeps: one available (structured panels), one blocked (data-model decision)
-7. **Step 4 closure**: Decided `things_to_know` is editorial, no publishing blocker
-
-Every decision is on the record with its evidence and causal chain recorded for the next audit.
