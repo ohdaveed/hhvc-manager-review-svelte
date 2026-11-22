@@ -21,8 +21,9 @@
  * outcome, by whether they are done, by anything -- would send them scrolling
  * back up the form.
  */
-import { buildTranscript } from '$lib/legacy-core/karl-transcript.js';
+import { buildTranscript, renderTranscriptMarkdown } from '$lib/legacy-core/karl-transcript.js';
 import { KARL_NAV, panelByRawName } from '$lib/legacy-core/karl-blocks.js';
+import type { ReviewRecord } from './reviewRecord';
 
 /* eslint-disable-next-line @typescript-eslint/no-explicit-any --
    the legacy Karl modules are untyped JS, so this is the boundary where their
@@ -36,15 +37,31 @@ const navFor = (type: string): string =>
 	(KARL_NAV as unknown as Record<string, string>)[type] ?? '';
 const panelFor = (type: string, rawName: string): KarlPanel =>
 	(panelByRawName as unknown as (t: string, r: string) => KarlPanel)(type, rawName);
-/* `buildTranscript` is JSDoc-typed for the legacy caller, which passed a keyed
-   object rather than the corpus array. The runtime only iterates it, so this
-   narrows the call rather than reshaping a 1141-line module around one caller. */
-const transcriptFor = (page: AnyEntry, pages: AnyEntry[]): AnyEntry =>
+/**
+ * The corpus as `buildTranscript` wants it: KEYED BY PAGE KEY.
+ *
+ * Every lookup it does against this map is a TARGET lookup --
+ * `linkRepresentation`, `buttonTarget`, `card.target` -- and a target is a
+ * `pagesByKey` key (`afterReport`). Handed the `allPages` array instead,
+ * `findPageKey` resolves through `Object.entries` and returns an array INDEX,
+ * and no target resolves: measured across the corpus, 130 of the choice labels
+ * degraded from a page title to the raw key and every internal link read
+ * "unresolved target". `tests/helpPanelLinkTargets.test.ts` exists for exactly
+ * this, which is why the type now says so instead of leaving it to the caller.
+ */
+type Corpus = Record<string, AnyEntry>;
+
+/* `buildTranscript` is untyped legacy JS, so this is the boundary where the
+   call is narrowed -- rather than reshaping a 1185-line module around it. */
+const transcriptFor = (page: AnyEntry, pages: Corpus, record: ReviewRecord | null): AnyEntry =>
 	(buildTranscript as unknown as (p: unknown, r: unknown, ps: unknown) => AnyEntry)(
 		page,
-		null,
+		record,
 		pages
 	);
+
+const markdownFor = (transcript: AnyEntry): string =>
+	(renderTranscriptMarkdown as unknown as (t: unknown) => string)(transcript);
 
 /** One copyable value inside a step: a sub-field of the Karl panel. */
 export type StepValue = {
@@ -55,6 +72,40 @@ export type StepValue = {
 	 * markup, no markdown wrapper -- which is the entire point of the feature.
 	 */
 	value: string;
+};
+
+/**
+ * One option in a Karl chooser.
+ *
+ * Kept as a record rather than flattened to a string: `entry.choices` carries
+ * `{ label, pageKey, slug }`, and the drawer was rendering them through
+ * `String(choice)` -- 157 chips reading `[object Object]` across the corpus,
+ * measured. The label is the destination page's own title, so it is what a
+ * reviewer searches Karl for; the key is what the corpus calls it, and is
+ * shown beside the label because the two differ often enough to matter.
+ */
+export type StepChoice = {
+	label: string;
+	/** The corpus page key, where the target resolved to one. */
+	pageKey: string;
+	/** The destination's slug, where it has one. */
+	slug: string;
+};
+
+/**
+ * A link inside a step's text.
+ *
+ * The transcript's instruction about these is explicit and has no equivalent
+ * anywhere else in the drawer: an editor must RECREATE each one with Karl's
+ * Link tool rather than paste the markdown, because pasted markdown is stored
+ * as literal text in a Wagtail rich-text field. 89 of them across the corpus
+ * reached the markdown export and none reached the walkthrough.
+ */
+export type StepLink = {
+	/** The link text as it appears in the copy. */
+	label: string;
+	/** `Internal link -> "Title"`, or the external URL. The transcript's own wording. */
+	representation: string;
 };
 
 /**
@@ -124,7 +175,9 @@ export type WalkthroughStep = {
 	outcome: StepOutcome;
 	values: StepValue[];
 	/** Options when Karl asks the reviewer to choose rather than type. */
-	choices: string[];
+	choices: StepChoice[];
+	/** Links in this step's text, each to be rebuilt with Karl's Link tool. */
+	links: StepLink[];
 	/** The prose behind "Why this mapping", which the design keeps collapsed. */
 	notes: string[];
 	/** Set only when `outcome` is `FLAG`. */
@@ -142,10 +195,27 @@ export type Walkthrough = {
 	/**
 	 * Gaps about the page as a whole rather than one field. The design renders
 	 * these as standalone cards between steps.
+	 *
+	 * `kind` keeps the transcript's two registers apart, because conflating
+	 * them would tell a reviewer the wrong thing to do:
+	 * - `flag`     a value with a known problem to resolve before saving.
+	 * - `unmapped` content with NO documented Karl destination. There is
+	 *   nothing to resolve and nowhere to type it; it is listed because an
+	 *   absence reads as "there was nothing there". 94 across the corpus, and
+	 *   the walkthrough carried none of them.
 	 */
-	gaps: { path: string; reason: string }[];
+	gaps: { path: string; reason: string; kind: 'flag' | 'unmapped' }[];
 	/** How many steps offer something to copy; the header counts against this. */
 	copyableCount: number;
+	/**
+	 * The same transcript as markdown, for the header's Copy and Download.
+	 *
+	 * Free: `buildWalkthrough` has already built the transcript this renders,
+	 * so this is one call rather than a second consumer re-deriving it -- which
+	 * is what the Help tab was doing with its own `buildTranscript` call and
+	 * its own edit fold.
+	 */
+	markdown: string;
 };
 
 /**
@@ -196,13 +266,72 @@ function usableValues(fields: unknown): StepValue[] {
 }
 
 /**
+ * Chooser options, as records.
+ *
+ * A choice with no label is dropped rather than rendered empty: the label is
+ * the only part a reviewer can act on -- it is what they type into Karl's page
+ * chooser -- so a chip carrying just a key is a chip that cannot be followed.
+ */
+function usableChoices(choices: unknown): StepChoice[] {
+	if (!Array.isArray(choices)) return [];
+	const out: StepChoice[] = [];
+	for (const choice of choices) {
+		const label = String(choice?.label ?? '').trim();
+		if (label === '') continue;
+		out.push({
+			label,
+			pageKey: String(choice?.pageKey ?? ''),
+			slug: String(choice?.slug ?? '')
+		});
+	}
+	return out;
+}
+
+/** Links in a step's text, keeping the transcript's own representation string. */
+function usableLinks(links: unknown): StepLink[] {
+	if (!Array.isArray(links)) return [];
+	const out: StepLink[] = [];
+	for (const link of links) {
+		const label = String(link?.label ?? '').trim();
+		const representation = String(link?.representation ?? '').trim();
+		if (label === '' || representation === '') continue;
+		out.push({ label, representation });
+	}
+	return out;
+}
+
+/** The transcript's `flags`/`unmapped` arrays, tagged with which they are. */
+function finding(
+	found: unknown,
+	kind: 'flag' | 'unmapped'
+): { path: string; reason: string; kind: 'flag' | 'unmapped' }[] {
+	if (!Array.isArray(found)) return [];
+	return found.map((f) => ({
+		path: String(f?.path ?? ''),
+		reason: String(f?.reason ?? ''),
+		kind
+	}));
+}
+
+/**
  * Build the walkthrough for one page.
  *
- * `pages` is the full corpus, which `buildTranscript` needs to resolve the
- * page's own key and its cross-references.
+ * @param page the corpus page module.
+ * @param pages the full corpus keyed by page key (`pagesByKey`), which
+ *   `buildTranscript` needs to resolve the page's own key and its
+ *   cross-references. See `Corpus` above for what an array costs.
+ * @param record the reviewer's saved edits and decision, from
+ *   `reviewRecordFor`. **Omitting it transcribes the ORIGINAL mockup copy**:
+ *   the walkthrough's whole job is rebuilding the page a reviewer approved, so
+ *   a caller that has the record and does not pass it walks an editor through
+ *   text the review replaced.
  */
-export function buildWalkthrough(page: AnyEntry, pages: AnyEntry[]): Walkthrough {
-	const transcript = transcriptFor(page, pages);
+export function buildWalkthrough(
+	page: AnyEntry,
+	pages: Corpus,
+	record: ReviewRecord | null = null
+): Walkthrough {
+	const transcript = transcriptFor(page, pages, record);
 	const type = String(transcript.type ?? '');
 	const entries: AnyEntry[] = Array.isArray(transcript.entries) ? transcript.entries : [];
 
@@ -218,7 +347,8 @@ export function buildWalkthrough(page: AnyEntry, pages: AnyEntry[]): Walkthrough
 			rawName,
 			outcome,
 			values: usableValues(entry.fields),
-			choices: Array.isArray(entry.choices) ? entry.choices.map(String) : [],
+			choices: usableChoices(entry.choices),
+			links: usableLinks(entry.links),
 			notes: Array.isArray(entry.notes) ? entry.notes.map(String) : []
 		};
 
@@ -235,12 +365,14 @@ export function buildWalkthrough(page: AnyEntry, pages: AnyEntry[]): Walkthrough
 		navPath: navFor(type),
 		formUrl: karlFormUrl(type),
 		steps,
-		gaps: Array.isArray(transcript.flags)
-			? transcript.flags.map((f: AnyEntry) => ({
-					path: String(f.path ?? ''),
-					reason: String(f.reason ?? '')
-				}))
-			: [],
-		copyableCount: steps.filter((s) => s.values.length > 0).length
+		gaps: [
+			...finding(transcript.flags, 'flag'),
+			// After the flags, deliberately: a flag is work to do before saving,
+			// an unmapped finding is work that has nowhere to go. Reading the
+			// actionable ones first matches the order the markdown prints them in.
+			...finding(transcript.unmapped, 'unmapped')
+		],
+		copyableCount: steps.filter((s) => s.values.length > 0).length,
+		markdown: markdownFor(transcript)
 	};
 }

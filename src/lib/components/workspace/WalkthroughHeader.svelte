@@ -15,6 +15,58 @@
 		copied,
 		onExit
 	}: { walkthrough: Walkthrough; copied: number; onExit: () => void } = $props();
+
+	/**
+	 * The markdown export, which used to be a whole tab called "Help".
+	 *
+	 * It stays because it is the only form of this that leaves the tool -- to
+	 * paste into Teams, to work from on a second screen, to keep beside a page
+	 * someone else rebuilds -- and the only one carrying the "NOT APPROVED — do
+	 * not publish" banner. It does not need a tab: it is one of the Karl
+	 * actions, so it sits with the other Karl actions.
+	 *
+	 * Built in `buildWalkthrough` from the same transcript the steps come from,
+	 * so the file and the drawer cannot disagree.
+	 */
+	let copyState = $state<'idle' | 'done'>('idle');
+	let copyTimer: ReturnType<typeof setTimeout> | undefined;
+
+	async function copyMarkdown() {
+		try {
+			await navigator.clipboard.writeText(walkthrough.markdown);
+			copyState = 'done';
+			clearTimeout(copyTimer);
+			copyTimer = setTimeout(() => (copyState = 'idle'), 1400);
+		} catch {
+			// Clipboard is permission-gated and unavailable over plain http. The
+			// Download button is the fallback and is right beside it, so a failure
+			// here is not a dead end -- and throwing would take the header down
+			// mid-rebuild, the same reasoning as the drawer's Copy.
+			copyState = 'idle';
+		}
+	}
+
+	/**
+	 * Download rather than a data: URL in an `href`.
+	 *
+	 * A `data:` link is blocked as a top-level navigation in Chrome, and the
+	 * file has to be named: `<slug>-karl-transcript.md` is what a reviewer
+	 * handling several pages needs in their Downloads folder. The object URL is
+	 * revoked on the next frame -- not synchronously, which cancels the
+	 * download in Safari.
+	 */
+	function downloadMarkdown() {
+		const name = `${(walkthrough.title || 'page')
+			.toLowerCase()
+			.replace(/[^a-z0-9]+/g, '-')
+			.replace(/^-|-$/g, '')}-karl-transcript.md`;
+		const url = URL.createObjectURL(new Blob([walkthrough.markdown], { type: 'text/markdown' }));
+		const a = document.createElement('a');
+		a.href = url;
+		a.download = name;
+		a.click();
+		setTimeout(() => URL.revokeObjectURL(url), 0);
+	}
 </script>
 
 <nav class="wt-header" aria-label="Walkthrough">
@@ -29,6 +81,10 @@
 		<a class="wt-form" href={walkthrough.formUrl} target="_blank" rel="noreferrer">
 			Open Karl add-page form ↗
 		</a>
+		<button type="button" class="wt-export" onclick={copyMarkdown}>
+			{copyState === 'done' ? 'Copied' : 'Copy markdown'}
+		</button>
+		<button type="button" class="wt-export" onclick={downloadMarkdown}>Download .md</button>
 		<button type="button" class="wt-exit" onclick={onExit}>Exit walkthrough</button>
 	</div>
 </nav>
@@ -87,6 +143,27 @@
 		text-decoration: underline;
 		text-underline-offset: 3px;
 		white-space: nowrap;
+	}
+
+	/* The two export buttons read as secondary to Exit: same height and radius,
+	   but no border, so the bar has one outlined control rather than three
+	   competing for the same weight. */
+	.wt-export {
+		flex: none;
+		height: 28px;
+		padding: 0 10px;
+		border: 0;
+		border-radius: 6px;
+		background: rgba(255, 255, 255, 0.12);
+		color: #ffffff;
+		font-size: 12px;
+		font-weight: 600;
+		white-space: nowrap;
+		cursor: pointer;
+	}
+
+	.wt-export:hover {
+		background: rgba(255, 255, 255, 0.22);
 	}
 
 	.wt-exit {

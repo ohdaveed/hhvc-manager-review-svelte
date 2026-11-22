@@ -15,7 +15,7 @@
 	 *    interaction. Now a real `<button>` does it: Enter and Space, focus
 	 *    order and the accessible role all come free and correct.
 	 * 2. Identity. `fieldId` is the value written to `edits.field_id` and must
-	 *    match `data-rewrite-field` exactly; HelpPanel folds edits by it.
+	 *    match `data-rewrite-field` exactly; `reviewRecordFor` folds edits by it.
 	 * 3. Signed-out. With no session `saveInlineEdit` rolls back and returns,
 	 *    so an editable-looking mockup silently discards work. Signed out, the
 	 *    copy renders as plain text with no affordance.

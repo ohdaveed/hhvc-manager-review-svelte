@@ -159,7 +159,7 @@ RLS is enabled on all four tables and the policies are **scoped per operation**,
 | `edits`    | all    | own    | —      | —      |
 | `comments` | all    | own    | own    | own    |
 
-Two shapes there are deliberate rather than oversights. `edits` has no UPDATE or DELETE policy at all — the table is append-only, last-write-wins, which is how `HelpPanel` folds it, so an UPDATE path would contradict the reader. `pages.status`/`manager_notes` are writable by any reviewer because a decision is a property of the page, not of whoever recorded it.
+Two shapes there are deliberate rather than oversights. `edits` has no UPDATE or DELETE policy at all — the table is append-only, last-write-wins, which is how `$lib/karl/reviewRecord` folds it, so an UPDATE path would contradict the reader. `pages.status`/`manager_notes` are writable by any reviewer because a decision is a property of the page, not of whoever recorded it.
 
 Authorship is recorded and enforced: `edits.user_id` and `comments.user_id` are both `NOT NULL REFERENCES auth.users`, and the own-row policies compare against `(select auth.uid())` — wrapped in a subquery so the initplan runs once per statement rather than once per row.
 
@@ -167,7 +167,7 @@ Authorship is recorded and enforced: `edits.user_id` and `comments.user_id` are 
 
 ### Legacy port
 
-`src/lib/legacy-core/` holds ported vanilla-JS modules still in use (`karl-transcript.js` drives `HelpPanel`, `karl-blocks.js` the Karl field mapping). The old entry point `src/legacy_main.js` is **gone** — it was imported by nothing and its unresolved `./review/*.js` imports were 52 of the 76 `bun run check` errors. The CSS half of that port (`src/css/**`, `src/routes/layout.css`, and the `@sfgov/design-system` dependency they pull) is still retained as reference; see PLAN.md B5.
+`src/lib/legacy-core/` holds ported vanilla-JS modules still in use (`karl-transcript.js` drives the Karl walkthrough via `$lib/karl/walkthrough`, `karl-blocks.js` the Karl field mapping). The old entry point `src/legacy_main.js` is **gone** — it was imported by nothing and its unresolved `./review/*.js` imports were 52 of the 76 `bun run check` errors. The CSS half of that port (`src/css/**`, `src/routes/layout.css`, and the `@sfgov/design-system` dependency they pull) is still retained as reference; see PLAN.md B5.
 
 ## Configuration gotchas
 
@@ -187,7 +187,7 @@ The 4 (5 until `karl-blocks.js`'s `@ts-nocheck` was waived inline, 2026-11-21) r
 
 Clearing it was mostly four root causes, not 23 problems: `tests/reviewQueue.test.ts`'s `row()` fixture took `status: string` instead of `ReviewPage['status']` (12 errors, one line); two test helpers typed a `buildTranscript` argument `unknown` where its JSDoc declares `@param {object}` (3); two `vi.fn()` spies declared no parameters, so `mock.calls[0]` was `[]` and the cast to `[string, RequestInit]` had no overlap (2); and narrowing a `$state` union in markup does not survive an `{:else if}` chain that narrows by **elimination**, which is why `src/routes/sfgov-components/+page.svelte` now discriminates in a `$derived` and the markup checks a plain value (4).
 
-**One of them was not a type problem.** Removing a `@ts-expect-error` in `tests/karlButtonCap.spec.ts` that was reported as unused exposed that the spec passed `allPages` — an array — where `buildTranscript` wants `Record<string, object>`. `findPageKey` resolves it with `Object.entries(...)` and returns the key, so the spec was building transcripts with `pageKey: '0'`, an array index, where `HelpPanel` produces a corpus key. The spec still passes with `pagesByKey`, but it had been exercising a shape the app never builds.
+**One of them was not a type problem.** Removing a `@ts-expect-error` in `tests/karlButtonCap.spec.ts` that was reported as unused exposed that the spec passed `allPages` — an array — where `buildTranscript` wants `Record<string, object>`. `findPageKey` resolves it with `Object.entries(...)` and returns the key, so the spec was building transcripts with `pageKey: '0'`, an array index, where the app produces a corpus key. The spec still passes with `pagesByKey`, but it had been exercising a shape the app never builds.
 
 **`bun run check:ratchet` enforces zero**, as a blocking step inside `test & build` beside `lint:ratchet`. It fails in both directions, so a fixed error has to be banked by lowering the baseline rather than left as slack. The non-blocking `check` in the `review` job stays, for the annotations and the summary table. Raising the baseline is a decision, not a fix.
 

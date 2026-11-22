@@ -24,9 +24,9 @@
 	     put back if the prototype is the standard rather than sf.gov. -->
 	<Breadcrumb partOf={page.partOf} />
 
-	<!-- `title` and `summary` are the exact keys HelpPanel folds on
-	     (src/lib/components/workspace/HelpPanel.svelte) -- anything else lands in
-	     the generic section_edits bucket instead of edited_title/edited_summary. -->
+	<!-- `title` and `summary` are the exact keys the Karl fold splits out
+	     (src/lib/karl/reviewRecord.ts) -- anything else lands in the generic
+	     section_edits bucket instead of edited_title/edited_summary. -->
 	<EditTarget as="h1" class="page-title" name="Title" fieldId="title" value={page.title} />
 
 	{#if page.summary}

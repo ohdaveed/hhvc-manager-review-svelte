@@ -8,7 +8,7 @@
 	import { Separator } from '$lib/components/ui/separator/index.js';
 	import { Switch } from '$lib/components/ui/switch/index.js';
 	import { pageStore } from '$lib/stores/pageData.svelte';
-	import { firstQueuePath, loadReview, pagesStore } from '$lib/stores/reviewState';
+	import { editsStore, firstQueuePath, loadReview, pagesStore } from '$lib/stores/reviewState';
 	import { sessionStore } from '$lib/stores/session.svelte';
 	import { ChevronsLeft, ChevronsRight } from 'lucide-svelte';
 	import ReviewQueue from '$lib/components/workspace/ReviewQueue.svelte';
@@ -19,6 +19,8 @@
 	import WalkthroughDrawer from '$lib/components/workspace/WalkthroughDrawer.svelte';
 	import SiteMapView from '$lib/components/workspace/SiteMapView.svelte';
 	import { buildWalkthrough } from '$lib/karl/walkthrough';
+	import { reviewRecordFor } from '$lib/karl/reviewRecord';
+	import { pagesByKey } from '$lib/data';
 
 	let { children } = $props();
 
@@ -32,9 +34,23 @@
 
 	// Built on demand rather than eagerly: it walks the page against the whole
 	// Karl panel inventory, and 28 of the 29 pages are not the one on screen.
+	//
+	// Two arguments here are the ones to get right, and both were wrong before:
+	//
+	// - `pagesByKey`, NOT `pageStore.pages`. The transcript resolves card and
+	//   link destinations by TARGET KEY; handed the array it resolved none, and
+	//   130 chooser labels across the corpus degraded to raw keys.
+	// - the review record, NOT `null`. The walkthrough rebuilds the page the
+	//   reviewer APPROVED, so it has to transcribe their edits; without it the
+	//   drawer walked an editor through the original mockup copy while the
+	//   Help tab's markdown showed the edited version of the same field.
 	const walkthrough = $derived(
 		pageStore.mode === 'walkthrough' && pageData
-			? buildWalkthrough(pageData, pageStore.pages)
+			? buildWalkthrough(
+					pageData,
+					pagesByKey,
+					reviewRecordFor(pageData.id, $pagesStore, $editsStore)
+				)
 			: null
 	);
 	const copiedHere = $derived(
@@ -43,7 +59,8 @@
 			: 0
 	);
 
-	// `pagesStore` is keyed by the routable id, the same lookup HelpPanel uses.
+	// `pagesStore` is keyed by the routable id, the same lookup `reviewRecordFor`
+	// uses.
 	// No live row means this page is not part of the loaded review (or nothing
 	// loaded at all), so an edit here has nothing to attach itself to. The Fields
 	// tab needs it to persist, so it is resolved once here rather than in three
