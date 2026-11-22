@@ -38,15 +38,16 @@
 import { spawnSync } from 'node:child_process';
 
 /**
- * Measured on 2026-11-22 at the commit that added this script: 18 in test
- * files (`tests/reviewQueue.test.ts` alone accounting for 12, all the same
- * `status: string` vs. the `ReviewPage` union) and 5 in app code — 4 in
- * `src/routes/sfgov-components/+page.svelte`, which is Svelte 5 failing to
- * narrow a `$state` union inside a template rather than a runtime fault, and 1
- * in `src/lib/components/sfgov/ds/TextField.svelte`, a real `string |
- * undefined` widening into `FullAutoFill`.
+ * Zero as of 2026-11-22. It was 23 when this script landed earlier the same
+ * day, and the whole set was cleared in the commit that set this to 0 — so the
+ * ratchet's job now is to keep it there, and any failure is a real regression
+ * rather than a number to renegotiate.
+ *
+ * Raising this is a decision, not a fix. The error that pushes it off zero is
+ * almost certainly cheaper to fix than the reasoning needed to justify
+ * accepting it.
  */
-const BASELINE = 23;
+const BASELINE = 0;
 
 const sync = spawnSync('bunx', ['svelte-kit', 'sync'], { encoding: 'utf-8' });
 if (sync.error) {

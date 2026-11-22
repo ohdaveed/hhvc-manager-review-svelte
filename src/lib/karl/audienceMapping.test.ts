@@ -28,10 +28,13 @@ import { pagesByKey } from '$lib/data/index';
 
 type Unmapped = { path: string; shape: string; reason: string };
 
-const transcriptFor = (page: unknown) =>
+// `object`, not `unknown`: karl-transcript.js documents
+// `@param {object} page`, and checkJs enforces it. Every caller passes a
+// corpus page.
+const transcriptFor = (page: object) =>
 	buildTranscript(page, null, pagesByKey) as { unmapped?: Unmapped[] };
 
-const audienceGap = (page: unknown) =>
+const audienceGap = (page: object) =>
 	(transcriptFor(page).unmapped ?? []).filter((u) => u.path === 'audience');
 
 describe('audience is reported, not suppressed', () => {

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
+	import type { HTMLInputAttributes } from 'svelte/elements';
 	import ErrorMessage from './ErrorMessage.svelte';
 	import { nextFieldId } from './fieldId';
 
@@ -36,7 +37,12 @@
 		mobile?: boolean;
 		id?: string;
 		name?: string;
-		autocomplete?: string;
+		/**
+		 * Typed from the DOM attribute rather than as `string`: `<input
+		 * autocomplete>` is `FullAutoFill`, so a plain `string` here was
+		 * assignable to the prop and not to the element it is spread onto.
+		 */
+		autocomplete?: HTMLInputAttributes['autocomplete'];
 		prefix?: Snippet;
 		suffix?: Snippet;
 		class?: string;

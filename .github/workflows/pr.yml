@@ -163,12 +163,11 @@ jobs:
         continue-on-error: true
         run: bunx eslint .
 
-      # svelte-check carries a documented baseline (23 errors: 18 loose fixture
-      # types in test files, 5 in app code). This run is informational, for the
-      # annotations and the summary table; `check:ratchet` in `test & build` is
-      # what actually gates the number. Before that ratchet existed nothing did,
-      # which is how it drifted to 27 unnoticed. The old ~55-error baseline was
-      # src/legacy_main.js's unresolved imports; that file is gone.
+      # svelte-check is at ZERO errors as of 2026-11-22 (23 that morning, 76
+      # before src/legacy_main.js was removed). This run is informational, for
+      # the annotations and the summary table; `check:ratchet` in `test & build`
+      # is what gates it, and its baseline is 0. Before that ratchet existed
+      # nothing gated the number, which is how it drifted to 27 unnoticed.
       - name: Types (svelte-check)
         id: svelte_check
         continue-on-error: true

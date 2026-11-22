@@ -37,7 +37,10 @@ vi.mock('$app/stores', () => ({
 
 const { pagesStore, editsStore } = await import('../src/lib/stores/reviewState.js');
 
-const row = (path: string, status: string) => ({
+// Typed rather than left as `status: string`: the widened parameter was the
+// single cause of 12 of the 23 svelte-check errors, and it also meant a typo in
+// a status would have produced a row the queue silently never groups.
+const row = (path: string, status: ReviewPage['status']): ReviewPage => ({
 	id: `id-${path}`,
 	review_id: 'r1',
 	path,

@@ -16,7 +16,13 @@ describe('requestGeneration', () => {
 
 	it('sends the signed-in user access token to the endpoint', async () => {
 		getSession.mockResolvedValue({ data: { session: { access_token: 'token-abc' } } });
-		const fetchSpy = vi.fn(
+		// The signature goes on `vi.fn`'s type parameter rather than on the
+		// implementation. `mock.calls[0]` is then typed `[string, RequestInit]`
+		// instead of `[]` -- which is what made the assertion below need a cast
+		// TypeScript rejected for having no overlap with the empty tuple -- and
+		// the implementation declares no parameters it does not use, which
+		// eslint's no-unused-vars would flag (it has no argsIgnorePattern here).
+		const fetchSpy = vi.fn<(url: string, init: RequestInit) => Promise<Response>>(
 			async () =>
 				new Response(JSON.stringify({ result: { rewrittenText: 'tidy' } }), { status: 200 })
 		);
@@ -25,7 +31,7 @@ describe('requestGeneration', () => {
 		const data = await requestGeneration({ task: 'rewrite-field', fieldText: 'hello' });
 
 		expect(data).toEqual({ result: { rewrittenText: 'tidy' } });
-		const [url, init] = fetchSpy.mock.calls[0] as [string, RequestInit];
+		const [url, init] = fetchSpy.mock.calls[0];
 		expect(url).toBe('/api/ai/generate');
 		expect((init.headers as Record<string, string>).Authorization).toBe('Bearer token-abc');
 	});
@@ -41,13 +47,15 @@ describe('requestGeneration', () => {
 
 	it('passes an abort signal to fetch when one is given', async () => {
 		getSession.mockResolvedValue({ data: { session: { access_token: 'token-abc' } } });
-		const fetchSpy = vi.fn(async () => new Response('{}', { status: 200 }));
+		const fetchSpy = vi.fn<(url: string, init: RequestInit) => Promise<Response>>(
+			async () => new Response('{}', { status: 200 })
+		);
 		vi.stubGlobal('fetch', fetchSpy);
 		const controller = new AbortController();
 
 		await requestGeneration({ task: 'rewrite-field', fieldText: 'hi' }, controller.signal);
 
-		const [, init] = fetchSpy.mock.calls[0] as [string, RequestInit];
+		const [, init] = fetchSpy.mock.calls[0];
 		expect(init.signal).toBe(controller.signal);
 	});
 

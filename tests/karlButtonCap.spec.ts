@@ -1,7 +1,8 @@
 import { describe, it, expect } from 'vitest';
-// @ts-expect-error -- legacy-core is untyped JS, ported from the vanilla app.
+// No @ts-expect-error: karl-transcript.js carries JSDoc types, so the import
+// resolves and the directive was reported as unused.
 import { buildTranscript } from '../src/lib/legacy-core/karl-transcript.js';
-import { allPages } from '../src/lib/data/index';
+import { allPages, pagesByKey } from '../src/lib/data/index';
 
 // The Karl Editor Help Center became the source of truth on 2026-08-23
 // (field map, "Precedence, revised 2026-08-23"). Its 25-character button cap
@@ -16,8 +17,13 @@ import { allPages } from '../src/lib/data/index';
 describe('button label cap (O14 / U24)', () => {
 	const article11 = allPages.find((p) => p.slug.includes('health-code-article-11'));
 
-	const notesFor = (page: unknown) => {
-		const t = buildTranscript(page, null, allPages);
+	const notesFor = (page: object) => {
+		// `pagesByKey`, not `allPages`: karl-transcript.js declares
+		// `@param {Record<string, object>} pages` and `findPageKey` resolves it
+		// with `Object.entries(...)`, returning the KEY. Handed an array that
+		// yields `pageKey: '0'` -- an index -- so this built a transcript shape
+		// HelpPanel never builds. It passes `pagesByKey`; so does this now.
+		const t = buildTranscript(page, null, pagesByKey);
 		const out: string[] = [];
 		const walk = (n: unknown) => {
 			if (!n || typeof n !== 'object') return;
