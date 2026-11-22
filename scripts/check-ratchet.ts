@@ -49,6 +49,26 @@ import { spawnSync } from 'node:child_process';
  */
 const BASELINE = 0;
 
+/**
+ * Also zero, as of 2026-11-22. Five of the eight were `state_referenced_locally`
+ * on a deliberately-once-evaluated field id, now stated with `untrack`. One was
+ * a real a11y defect: `aria-invalid` on a bare `<fieldset>`, which is implicitly
+ * `role="group"` and does not support it, so the error state was announced by
+ * nothing.
+ *
+ * The last two are suppressed rather than fixed, and that is the interesting
+ * case: Svelte's `a11y_no_noninteractive_tabindex` and axe's
+ * `scrollable-region-focusable` contradict each other on a focusable scroll
+ * container. Deleting the attribute to satisfy Svelte fails 5 of the 7 specs in
+ * `tests/accessibility.e2e.ts`, measured. axe gates CI, so axe wins, and each
+ * `svelte-ignore` carries that reasoning inline.
+ *
+ * Which is the rule for raising this: a warning may be suppressed, but the
+ * suppression has to carry a justification a later reader can check, not just
+ * silence.
+ */
+const WARNING_BASELINE = 0;
+
 const sync = spawnSync('bunx', ['svelte-kit', 'sync'], { encoding: 'utf-8' });
 if (sync.error) {
 	console.error(`FAIL  could not run svelte-kit sync: ${sync.error.message}`);
@@ -72,14 +92,15 @@ const report = `${run.stdout}\n${run.stderr}`;
 //   <timestamp> COMPLETED <n> FILES <n> ERRORS <n> WARNINGS <n> FILES_WITH_PROBLEMS
 // Read the count from there rather than counting ERROR lines, so a message
 // containing a newline cannot inflate the total.
-const completed = report.match(/COMPLETED\s+\d+\s+FILES\s+(\d+)\s+ERRORS/);
+const completed = report.match(/COMPLETED\s+\d+\s+FILES\s+(\d+)\s+ERRORS\s+(\d+)\s+WARNINGS/);
 if (!completed) {
-	console.error('FAIL  svelte-check produced no parseable COMPLETED line.');
+	console.error('FAIL  svelte-check produced no parsable COMPLETED line.');
 	console.error(report.slice(-2000));
 	process.exit(2);
 }
 
 const total = Number(completed[1]);
+const warnings = Number(completed[2]);
 
 /** `<timestamp> ERROR "<file>" <line>:<col> "<message>"` — file is group 1. */
 function errorsByFile(): Map<string, number> {
@@ -111,4 +132,24 @@ if (total < BASELINE) {
 	process.exit(1);
 }
 
-console.log(`PASS  svelte-check errors ${total}, at baseline.`);
+if (warnings !== WARNING_BASELINE) {
+	const delta =
+		warnings > WARNING_BASELINE
+			? `+${warnings - WARNING_BASELINE}`
+			: `${warnings - WARNING_BASELINE}`;
+	console.error(
+		`FAIL  svelte-check warnings ${warnings}, baseline ${WARNING_BASELINE} (${delta}).`
+	);
+	if (warnings > WARNING_BASELINE) {
+		console.error('      Fix it, or suppress it WITH a justification the next reader can check.');
+		for (const line of report.split('\n')) {
+			const hit = line.match(/^\d+\s+WARNING\s+"([^"]+)"\s+(\S+)/);
+			if (hit) console.error(`      ${hit[1]} ${hit[2]}`);
+		}
+	} else {
+		console.error(`      Good news: lower WARNING_BASELINE to ${warnings}.`);
+	}
+	process.exit(1);
+}
+
+console.log(`PASS  svelte-check errors ${total}, warnings ${warnings}, both at baseline.`);

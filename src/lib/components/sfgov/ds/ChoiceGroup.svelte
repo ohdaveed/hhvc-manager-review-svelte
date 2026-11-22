@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { ChoiceOption } from './types';
+	import { untrack } from 'svelte';
 	import ErrorMessage from './ErrorMessage.svelte';
 	import { nextFieldId } from './fieldId';
 
@@ -49,18 +50,36 @@
 		class: className = ''
 	}: Props = $props();
 
-	const uid = nextFieldId(type);
-	const groupName = name ?? uid;
+	// `untrack` for the id: `nextFieldId` increments a module counter, so
+	// reading `type` reactively would mint a new id on every change and break
+	// label/input pairing and hydration. `groupName` is `$derived` instead --
+	// it is the radio group's `name` attribute, which SHOULD follow the prop.
+	const uid = untrack(() => nextFieldId(type));
+	const groupName = $derived(name ?? uid);
 	const helpId = $derived(help ? `${uid}-help` : undefined);
 	const errorId = $derived(error ? `${uid}-error` : undefined);
 	const describedBy = $derived([helpId, errorId].filter(Boolean).join(' ') || undefined);
 </script>
 
+<!-- Where `aria-invalid` goes depends on the type, because ARIA models the two
+     differently and svelte-check reports each wrong placement separately:
+
+       - radio    -> on the GROUP. `role="radio"` does not support it; a radio
+                     set's validity is a property of the `radiogroup`, so the
+                     fieldset takes that role here and carries the attribute.
+       - checkbox -> on each INPUT. `role="checkbox"` supports it and there is
+                     no "checkboxgroup" role to hold it.
+
+     What it must NOT be is what this was: `aria-invalid` on a bare
+     `<fieldset>`, which is implicitly `role="group"` and does not support the
+     attribute -- so the error state was announced by nothing at all.
+     `aria-describedby` applies to a group either way and is unconditional. -->
 <fieldset
 	class="ds-choice flex flex-col gap-4 {className}"
 	{disabled}
+	role={type === 'radio' ? 'radiogroup' : undefined}
+	aria-invalid={type === 'radio' && error ? 'true' : undefined}
 	aria-describedby={describedBy}
-	aria-invalid={error ? 'true' : undefined}
 >
 	<legend class="ds-legend text-lg leading-7 font-bold">{legend}</legend>
 
@@ -83,6 +102,7 @@
 				<input
 					type="checkbox"
 					class="ds-box ds-check flex-none"
+					aria-invalid={error ? 'true' : undefined}
 					name={groupName}
 					value={option.value}
 					disabled={option.disabled || disabled}

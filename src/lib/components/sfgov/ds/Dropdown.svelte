@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { SelectOption, SelectGroup } from './types';
 	import ErrorMessage from './ErrorMessage.svelte';
+	import { untrack } from 'svelte';
 	import { nextFieldId } from './fieldId';
 
 	/**
@@ -67,7 +68,13 @@
 		class: className = ''
 	}: Props = $props();
 
-	const uid = id ?? nextFieldId('select');
+	// `nextFieldId` increments a module counter, so this must be evaluated ONCE:
+	// read reactively it would mint a new id on every change and break both the
+	// label/input pairing and hydration. `untrack` states that this
+	// non-reactivity is deliberate, which is what `state_referenced_locally` asks
+	// for. The caller's own `id` stays reactive via `$derived`.
+	const fallbackId = untrack(() => nextFieldId('select'));
+	const uid = $derived(id ?? fallbackId);
 	const helpId = $derived(help ? `${uid}-help` : undefined);
 	const errorId = $derived(error ? `${uid}-error` : undefined);
 	const describedBy = $derived([helpId, errorId].filter(Boolean).join(' ') || undefined);
