@@ -36,6 +36,19 @@
 
 	let axeState = $state<AxeState>({ status: 'idle' });
 
+	/**
+	 * The `done` variant's violations, or null in every other state.
+	 *
+	 * Narrowing a `$state` union inside the markup does not survive an
+	 * `{:else if}` chain that narrows by ELIMINATION -- svelte-check reported
+	 * `Property 'violations' does not exist` four times on the tail of this
+	 * chain, while the `{:else if ... === 'unavailable'}` branch above it was
+	 * fine because it tests the discriminant positively. Doing the
+	 * discrimination here keeps it in TypeScript, which narrows properly, and
+	 * leaves the markup checking a plain value.
+	 */
+	const axeViolations = $derived(axeState.status === 'done' ? axeState.violations : null);
+
 	// Demo bindings. Named so the panel below reads as a form, not as noise.
 	let addressValue = $state('');
 	let unitValue = $state('');
@@ -107,16 +120,16 @@
 			<p class="axe-line">Running axe-core against WCAG 2.1 A and AA…</p>
 		{:else if axeState.status === 'unavailable'}
 			<p class="axe-line">{axeState.reason}</p>
-		{:else if axeState.violations.length === 0}
+		{:else if axeViolations && axeViolations.length === 0}
 			<p class="axe-line axe-pass" data-testid="axe-result">
 				No WCAG 2.1 AA violations on this page.
 			</p>
-		{:else}
+		{:else if axeViolations}
 			<p class="axe-line axe-fail" data-testid="axe-result">
-				{axeState.violations.length} violation{axeState.violations.length === 1 ? '' : 's'}:
+				{axeViolations.length} violation{axeViolations.length === 1 ? '' : 's'}:
 			</p>
 			<ul class="axe-list">
-				{#each axeState.violations as violation (violation.id)}
+				{#each axeViolations as violation (violation.id)}
 					<li>
 						<code>{violation.id}</code> ({violation.impact}) ×{violation.nodes} — {violation.help}
 					</li>

@@ -138,9 +138,7 @@ describe('requestRethink', () => {
 			// The response adds backend-only fields in a different key order --
 			// the asymmetry that made the first `otherSections` implementation
 			// fire on every run. A projected comparison has to survive it.
-			requestGeneration.mockResolvedValue(
-				respond([{ karl: 'Step block.', component: 'what-to-do', ...step }])
-			);
+			requestGeneration.mockResolvedValue(respond([{ component: 'what-to-do', ...step }]));
 
 			const result = await requestRethink({
 				page: withSteps,
