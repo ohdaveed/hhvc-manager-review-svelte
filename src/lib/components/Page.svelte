@@ -4,6 +4,8 @@
 	import Breadcrumb from './sfgov/Breadcrumb.svelte';
 	import WhatToKnow from './WhatToKnow.svelte';
 	import SpotlightBlock from './blocks/SpotlightBlock.svelte';
+	import LinkGrid from './blocks/LinkGrid.svelte';
+	import ContactSection from './blocks/ContactSection.svelte';
 
 	let { page } = $props();
 
@@ -71,7 +73,21 @@
 				<Section {section} {index} />
 			{/each}
 		{/if}
+
+		<!-- `partnerAgencies`, after the sections as on live. Inside `.page-content`
+		     so it sits in the same 7/12 reading column live gives it. -->
+		<LinkGrid
+			heading="Partner agencies"
+			items={page.partnerAgencies}
+			fieldPrefix="partnerAgencies"
+			label="Partner agency"
+		/>
 	</div>
+
+	<!-- `contact`: full grid width on live, so outside `.page-content`. No page
+	     carries both `contact` and a page-level `spotlight`, so their order has
+	     no live reference. -->
+	<ContactSection contact={page.contact} />
 
 	<!-- Page-level `spotlight`, which one page carries. Not to be confused with
 	     a SECTION whose `component` is 'spotlight' -- those are ordinary
