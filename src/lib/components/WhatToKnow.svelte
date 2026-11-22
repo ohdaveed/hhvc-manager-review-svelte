@@ -2,10 +2,16 @@
 	import EditTarget from './EditTarget.svelte';
 
 	/**
-	 * The grey "What to know before you start" box: Cost, then Things to know,
-	 * as one unit (design prototype's own `legacyShown` wrapper,
-	 * prototype.dc.html:367-392). Things to know is not a section in its own
-	 * right -- it lives inside this box beside Cost.
+	 * The grey "What to know" box: Cost, then Things to know, as one unit.
+	 * Things to know is not a section in its own right -- it lives inside this
+	 * box beside Cost.
+	 *
+	 * Drawn to the live sf.gov box, measured 2026-11-22 on
+	 * `get-help-vermin-your-building`: #EFF0F0 fill, 8px radius, 28px padding
+	 * and gap, an info glyph beside an h2 reading just "What to know" (Karl's
+	 * grouping is "What to know before you start"; the site prints the short
+	 * form), and each entry's label as its own Slab h3. The site prints no
+	 * "Things to know" heading, so neither does this.
 	 *
 	 * Field ids come straight from `extractCopy` (`$lib/corpus/fields.ts`):
 	 * `whatToKnow.cost`, `whatToKnow.thingsToKnow.{i}.label`/`.text` for the
@@ -45,57 +51,114 @@
 			</div>
 		{/if}
 
-		<h2 class="what-to-know-title">What to know before you start</h2>
+		<div class="what-to-know-heading">
+			<!-- sf.gov's own info glyph, copied from the live markup. -->
+			<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="what-to-know-icon">
+				<path
+					d="M11 7C11 6.44772 11.4477 6 12 6C12.5523 6 13 6.44772 13 7C13 7.55228 12.5523 8 12 8C11.4477 8 11 7.55228 11 7Z"
+				/>
+				<path d="M11 10L11 18H13L13 10H11Z" />
+				<path
+					fill-rule="evenodd"
+					clip-rule="evenodd"
+					d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22ZM12 20C16.4183 20 20 16.4183 20 12C20 7.58172 16.4183 4 12 4C7.58172 4 4 7.58172 4 12C4 16.4183 7.58172 20 12 20Z"
+				/>
+			</svg>
+			<h2 class="what-to-know-title">What to know</h2>
+		</div>
 
 		{#if whatToKnow.cost}
-			<div class="what-to-know-cost">
-				<h3 class="what-to-know-h3">Cost</h3>
+			<section>
+				<h3>Cost</h3>
 				<EditTarget name="Cost" fieldId="whatToKnow.cost" value={whatToKnow.cost} />
-			</div>
+			</section>
 		{/if}
 
 		{#if whatToKnow.thingsToKnow && whatToKnow.thingsToKnow.length > 0}
-			<div class="what-to-know-things">
-				<h3 class="what-to-know-h3">Things to know</h3>
-				<div class="what-to-know-things-list">
-					{#each whatToKnow.thingsToKnow as entry, i (i)}
-						{#if typeof entry === 'string'}
+			{#each whatToKnow.thingsToKnow as entry, i (i)}
+				<section>
+					{#if typeof entry === 'string'}
+						<EditTarget
+							name={`Things to Know [${i + 1}]`}
+							fieldId={`whatToKnow.thingsToKnow.${i}`}
+							value={entry}
+						/>
+					{:else}
+						{#if entry.label}
 							<EditTarget
-								name={`Things to Know [${i + 1}]`}
-								fieldId={`whatToKnow.thingsToKnow.${i}`}
-								value={entry}
+								as="h3"
+								name={`Things to Know [${i + 1}] Label`}
+								fieldId={`whatToKnow.thingsToKnow.${i}.label`}
+								value={entry.label}
 							/>
-						{:else}
-							{#if entry.label}
-								<EditTarget
-									as="h4"
-									class="what-to-know-item-label"
-									name={`Things to Know [${i + 1}] Label`}
-									fieldId={`whatToKnow.thingsToKnow.${i}.label`}
-									value={entry.label}
-								/>
-							{/if}
-							{#if entry.text}
-								<EditTarget
-									name={`Things to Know [${i + 1}] Text`}
-									fieldId={`whatToKnow.thingsToKnow.${i}.text`}
-									value={entry.text}
-								/>
-							{/if}
 						{/if}
-					{/each}
-				</div>
-			</div>
+						{#if entry.text}
+							<EditTarget
+								name={`Things to Know [${i + 1}] Text`}
+								fieldId={`whatToKnow.thingsToKnow.${i}.text`}
+								value={entry.text}
+							/>
+						{/if}
+					{/if}
+				</section>
+			{/each}
 		{/if}
 	</div>
 {/if}
 
 <style>
 	.what-to-know {
-		margin: 0 0 28px;
-		padding: 20px 22px;
-		border-radius: 4px;
-		background: #f0f0f0;
+		display: flex;
+		flex-direction: column;
+		gap: 28px;
+		margin: 0 0 40px;
+		padding: 28px;
+		border-radius: 8px;
+		background: #eff0f0;
+	}
+
+	/* Paragraph margins inside a section would stack on top of the 28px gap. */
+	.what-to-know section > :global(:last-child) {
+		margin-bottom: 0;
+	}
+
+	.what-to-know-heading {
+		display: flex;
+		gap: 8px;
+	}
+
+	.what-to-know-icon {
+		flex: none;
+		width: 24px;
+		height: 24px;
+		margin-top: 6px;
+	}
+
+	/* `#mockPage h2` sets the live h2 ladder (Slab 500, 28/36 -> 40/52), which is
+	   exactly what sf.gov uses here, so only the margin is overridden. */
+	:global(#mockPage) .what-to-know-title {
+		margin: 0;
+	}
+
+	/* `#mockPage h3` is the body-face h3; this box's h3s are Slab, as on the
+	   site. The ID selector is what outranks it. */
+	:global(#mockPage) .what-to-know :global(h3) {
+		margin: 0 0 12px;
+		font-family: var(--site-font-display);
+		font-size: 1.25rem;
+		font-weight: 500;
+		line-height: 1.75rem;
+	}
+
+	@container mockup (min-width: 800px) {
+		.what-to-know-icon {
+			width: 40px;
+			height: 40px;
+		}
+		:global(#mockPage) .what-to-know :global(h3) {
+			font-size: 1.5rem;
+			line-height: 2rem;
+		}
 	}
 
 	.what-to-know-orphan {
@@ -120,32 +183,5 @@
 		font-size: 12px;
 		line-height: 17px;
 		color: #6f4a00;
-	}
-
-	.what-to-know-title {
-		margin: 0 0 14px;
-		font-family: var(--sfds-font-slab);
-		font-size: 28px;
-		line-height: 32px;
-		font-weight: 700;
-		letter-spacing: -1px;
-	}
-
-	.what-to-know-h3 {
-		margin: 0 0 4px;
-		font-size: 15px;
-		font-weight: 700;
-	}
-
-	.what-to-know-cost {
-		margin-bottom: 16px;
-	}
-
-	.what-to-know-things :global(.what-to-know-item-label) {
-		margin-top: 16px;
-	}
-
-	.what-to-know-things-list :global(> *:first-child) {
-		margin-top: 0;
 	}
 </style>

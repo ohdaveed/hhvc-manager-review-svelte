@@ -537,12 +537,12 @@
 					>
 						<SiteHeader />
 
-						<!-- Page specific content. 40px/32px padding around a 760px column
-					     is the design's measure, not the previous uniform 32px: SF.gov
-					     body copy is set to a fixed reading width, and the chrome above
-					     and below is full-bleed, which is why it sits outside here. -->
+						<!-- Page specific content. 1076px is live sf.gov's content grid
+					     (`max-w-xl`, measured 2026-11-22). Title and summary span it;
+					     body copy sits in 7 of its 12 columns (app.css). The chrome
+					     above and below is full-bleed, which is why it sits outside. -->
 						<div id="mockPage" class="mock-page">
-							<div class="mx-auto max-w-[760px]">
+							<div class="mx-auto max-w-[1076px]">
 								{@render children()}
 							</div>
 						</div>
@@ -632,6 +632,17 @@
 	.mock-page {
 		padding-block: clamp(1.25rem, 4cqi, 2.5rem);
 		padding-inline: clamp(1rem, 3.5cqi, 2rem);
+	}
+
+	/* sf.gov's desktop gutter is 96px (`lg:mx-96`) from a 1024px viewport, the
+	   same step as its header and type. The frame's 1px border makes the
+	   "Desktop 1024px" preset a 1022px box, hence 1000. That leaves #mockPage an
+	   830px content box at that preset -- live's 832 -- which is what the
+	   column and type rules in app.css query. */
+	@container mockup (min-width: 1000px) {
+		.mock-page {
+			padding-inline: 96px;
+		}
 	}
 
 	/* The rails are viewport business, not container business, and this is the

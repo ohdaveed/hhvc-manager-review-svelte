@@ -22,18 +22,19 @@ measured 2026-11-22 with Playwright on
 ## Tasks
 
 - [x] 1. Write this plan
-- [x] 2. `#mockPage` reads `--color-site-*` and the measured type ladder; load Slab 500/600; desktop step at 940px of `#mockPage` content box (= the 1024px preset; #mockPage is its own `mockup` container)
+- [x] 2. `#mockPage` reads `--color-site-*` and the measured type ladder; load Slab 500/600; desktop step at 800px of `#mockPage` content box (= the 1024px preset once task 6 set 96px gutters; #mockPage is its own `mockup` container)
 - [x] 3. Inert `SiteHeader` becomes the navy 2026 header (seal, two-line wordmark, English ▾, search, labelled Menu); still all `<span>`s
 - [x] 4. `SiteFooter` on `--color-site-navy`
 - [x] 5. Verify: unit, `check:ratchet`, `lint:ratchet`, e2e (axe); before/after screenshots at phone + desktop frame; `/login` still renders
       Result 2026-11-22: unit 490/490, check:ratchet 0/0, lint:ratchet 4, e2e 30/30. First e2e run caught the type eyebrow at 4.41:1 on #FCFCFC; moved to `--color-site-ink-secondary`.
+- [x] 6. Desktop reading measure: 1076px grid, 96px gutters from a 1000px frame; title + summary span the grid, body copy (What to know, audience, sections) sits in 7/12 columns -- 473px at the 1024 preset, 616px wide, full width below. `tests/mockupResponsive.e2e.ts` now asserts 616 (was 760).
+- [x] 7. What to know box matches live: `#EFF0F0`, 8px radius, 28px padding + gap, sf.gov info glyph, h2 "What to know", each entry label a Slab 500 h3 (20/28 -> 24/32); the "Things to know" heading is gone because sf.gov prints none. The `#DAEBFF` box measured earlier is the Information-page *callout*, a different component -- not done.
+      Result: unit 490/490, check:ratchet 0/0, lint:ratchet 4, e2e 30/30; measured per preset, matches live within 2px.
 
 ## Proposed, not done here (need a reviewer decision)
 
 - **Type eyebrow** (`INFORMATION` above the breadcrumb) does not exist on sf.gov and duplicates the toolbar badge. Removing it is one line in `Page.svelte`.
 - **Audience block** renders as a left-ruled quote; sf.gov does not display audience at all. It is Karl review content, so it stays visible.
-- **Callout / What-to-know restyle** to the measured `#DAEBFF` box — next slice after this one.
-- **Desktop reading measure**: live body column is 616px of a 1076px grid (7/12). Mockup uses 760px.
 
 ## Deliberately skipped
 

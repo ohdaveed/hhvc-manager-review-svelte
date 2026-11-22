@@ -461,10 +461,10 @@ body {
 		margin-bottom: 0.35rem;
 	}
 
-	/* 760px is the vanilla app's --content-max: a reading measure, not an
-	   SFDS token. The mockup frame supplies its own padding. */
+	/* 1076px is live sf.gov's content grid. The reading measure is narrower
+	   and only applies at desktop -- see the container query below. */
 	& .page-body {
-		max-width: 760px;
+		max-width: 1076px;
 		margin: 0 auto;
 	}
 
@@ -571,11 +571,20 @@ body {
    32/40 at every width up to 1023px and 46/56 from 1024px; h2 28/36 -> 40/52;
    summary 20/24 -> 24/32; h3 stays 16/24. The nearest `mockup` container here
    is #mockPage itself, not the frame: at the "Desktop 1024px" preset its
-   content box is 958px (1022px inside the frame border, minus 2rem padding a
-   side) and at "Tablet 768px" it is ~716px. 940px sits between them, so the
-   desktop preset shows the desktop ladder and tablet keeps the mobile one, as
-   on sf.gov. Measured with Playwright at each preset. */
-@container mockup (min-width: 940px) {
+   content box is 830px (96px gutters, src/routes/review/+layout.svelte) -- live
+   sf.gov's is 832 at a 1024px viewport -- and at "Tablet 768px" it is ~712px.
+   800px sits between them, so the desktop preset shows the desktop ladder and
+   tablet keeps the mobile one, as on sf.gov. Measured at each preset.
+
+   The reading measure lives here too. From 1024px sf.gov puts body copy in 7
+   of 12 grid columns with 28px gutters -- 473px at 1024, 616px at 1280 --
+   while the title and summary span the whole grid. Below that, body copy runs
+   the full width. `min(100cqi, 1076px)` is the grid: the container, capped
+   where the page wrapper caps it. */
+@container mockup (min-width: 800px) {
+	#mockPage :is(.what-to-know, .page-audience, .page-content) {
+		max-width: calc((min(100cqi, 1076px) + 28px) * 7 / 12 - 28px);
+	}
 	#mockPage h1 {
 		font-size: 2.875rem;
 		line-height: 3.5rem;
