@@ -86,6 +86,14 @@ jobs:
       - name: eslint ratchet
         run: bun run lint:ratchet
 
+      # Same gate for the other baseline. `check` reported without blocking for
+      # months, so its documented figure (24) and the measured one (27) drifted
+      # apart unnoticed, three of them in app code. Blocking here rather than in
+      # `review` for the same reason the eslint ratchet is: a ratchet that
+      # cannot fail the merge is a report.
+      - name: svelte-check ratchet
+        run: bun run check:ratchet
+
       - name: Check corpus lock
         run: bun run corpus:check
 
@@ -156,9 +164,11 @@ jobs:
         run: bunx eslint .
 
       # svelte-check carries a documented baseline (23 errors: 18 loose fixture
-      # types in test files, 5 in app code). Informational only -- nothing
-      # ratchets it, which is how it drifted to 27 before 2026-11-21. The old ~55-error
-      # baseline was src/legacy_main.js's unresolved imports; that file is gone.
+      # types in test files, 5 in app code). This run is informational, for the
+      # annotations and the summary table; `check:ratchet` in `test & build` is
+      # what actually gates the number. Before that ratchet existed nothing did,
+      # which is how it drifted to 27 unnoticed. The old ~55-error baseline was
+      # src/legacy_main.js's unresolved imports; that file is gone.
       - name: Types (svelte-check)
         id: svelte_check
         continue-on-error: true

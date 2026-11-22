@@ -25,6 +25,8 @@ bun run test:e2e                                # playwright (builds + previews 
 bun run verify           # unit tests + production build, one PASS/FAIL line each
 bun run verify:live      # also probes the deployed site (published commit, root 200, proxy 401s, bundle leak scan)
 bun run audit:privileges # which functions in `public` an anon/authenticated caller can EXECUTE
+bun run lint:ratchet     # asserts the eslint error count is exactly at baseline
+bun run check:ratchet    # asserts the svelte-check error count is exactly at baseline
 
 bun run env:status       # which Supabase target local development points at
 bun run env:local        # point it at the local stack (values read from `supabase status`)
@@ -183,7 +185,9 @@ The 4 (5 until `karl-blocks.js`'s `@ts-nocheck` was waived inline, 2026-11-21) r
 
 **`bun run check` has a pre-existing error baseline of 23** — 24 until 2026-11-21, when `@types/pg`, two snippet-parameter annotations in `Section.svelte` and the misplaced `resolve` key in `vite.config.ts` took four off; 76 before `legacy_main.js` was removed. 18 are loose fixture typing in test files, `tests/reviewQueue.test.ts` alone accounting for 12 of them, all the same `status: string` vs. the `ReviewPage` union. The remaining **5 are app code**: 4 in `src/routes/sfgov-components/+page.svelte`, which is Svelte 5 failing to narrow a `$state` union inside a template rather than a runtime fault, and 1 in `src/lib/components/sfgov/ds/TextField.svelte`, which is a real `string | undefined` widening into `FullAutoFill`. Compare against the baseline rather than expecting zero, and note it is now small enough to be worth driving to zero.
 
-**Nothing enforces that number.** Unlike eslint, which has `lint:ratchet` as a blocking step inside `test & build`, `check` runs non-blocking in the `review` job and the baseline is stated only in prose — here and in a `pr.yml` comment. That is how it reached 27, three of them in app code, before the 2026-11-21 pass. Re-measure rather than trusting this figure.
+**`bun run check:ratchet` enforces that number**, as of 2026-11-22. It fails in both directions — up because new errors are not accepted, down because a baseline nobody tightens only rots — and runs as a blocking step inside `test & build`, beside `lint:ratchet`. The non-blocking `check` in the `review` job stays, for the annotations and the summary table. Until the ratchet existed nothing enforced the figure at all, and it had reached 27 with three in app code against a sentence here claiming none were. If the ratchet fails on your branch, re-measure and move the baseline deliberately rather than editing this paragraph.
+
+The ratchet passes `--tsconfig`, which bounds svelte-check to `.svelte-kit/tsconfig.json`'s `include` allowlist. That is load-bearing: without it svelte-check walks every subdirectory but `node_modules`, which would pull in `supabase/.temp` and make the count depend on whether `supabase start` has been run — the defect that had eslint counting 213 on one machine and 5 on another. `--ignore` is not an alternative; it only applies with `--no-tsconfig`.
 
 **A green test suite does not mean the build passes.** Unit tests don't import the legacy modules, so a broken one there (e.g. duplicate `export { ... }` blocks in `karl-blocks.js`, which rolldown rejects) fails only at build. Run `bun run verify` before claiming a change is good.
 
