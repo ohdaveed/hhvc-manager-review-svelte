@@ -4,6 +4,7 @@
 	import CalloutBlock from './blocks/CalloutBlock.svelte';
 	import CardsBlock from './blocks/CardsBlock.svelte';
 	import FactsBlock from './blocks/FactsBlock.svelte';
+	import LinkGrid from './blocks/LinkGrid.svelte';
 	import StepsBlock from './blocks/StepsBlock.svelte';
 	import TableBlock from './blocks/TableBlock.svelte';
 	import { entryText, entryUnverified } from '$lib/corpus/fieldResolver';
@@ -104,7 +105,16 @@
 			<StepsBlock steps={section.steps} sectionKey={key} {label} />
 		{/if}
 
-		{#if section.cards}
+		<!-- Related renders as sf.gov's 3-column link list, not cards. Same
+		     `sections.<key>.cards.<i>.*` ids and `Card [n]` names as CardsBlock. -->
+		{#if section.cards && section.component === 'related'}
+			<LinkGrid
+				items={section.cards}
+				fieldPrefix={`sections.${key}.cards`}
+				label={`${label} Card`}
+				columns={3}
+			/>
+		{:else if section.cards}
 			<CardsBlock cards={section.cards} sectionKey={key} {label} />
 		{/if}
 
