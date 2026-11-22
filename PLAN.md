@@ -70,8 +70,9 @@ These are content decisions for HHVC, so the mockup should *show* the mismatch w
 - [ ] C3. **Resource tiles on the Agency page:** `departments--healthy-housing-and-vector-control`. The help page's unnamed fifth type may be Agency. Confirm in Karl before flagging.
 
 ### D. Make the rules checkable
-- [ ] D1. Encode the support table above as a page check (Checks panel), so a new mockup gets the C-class flags automatically, with a unit test per row.
-- [ ] D2. Character-limit checks: accordion title 65, button 25, alert 30 / 120. Buttons could not be located in the corpus by a `button` key; find their real field name first.
+- [x] D1. Encode the support table above as a page check (Checks panel), so a new mockup gets the C-class flags automatically, with a unit test per row.
+- [x] D2. Character-limit checks: accordion title 65, button 25, alert 30 / 120. Buttons could not be located in the corpus by a `button` key; find their real field name first.
+      Landed in #151 (`d1db507`). It found 3 extra issues: Related cards linking to a Resource Collection (2 pages) and to the Agency page, which Related cannot hold. Help-center deltas: Alert is Agency + Location; spotlight buttons on Topic/Profile are `unknown`. Follow-up: add component keys to `karlHelp.ts` so component findings can use `Finding.help`.
 
 Suggested order: A1–A3 → B1–B3 → C1–C3 → B4–B5 → D.
 
