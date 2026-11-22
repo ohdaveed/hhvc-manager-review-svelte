@@ -9,7 +9,7 @@ export const supabase = createClient(SVELTE_PUBLIC_SUPABASE_URL, SVELTE_PUBLIC_S
  * that file by hand — both are local-development fixtures, and the password is
  * only ever valid against a Postgres running on this machine.
  */
-const DEV_USER_EMAIL = 'arrizon.david@gmail.com';
+const DEV_USER_EMAIL = 'demo@hhvc.local';
 const DEV_USER_PASSWORD = 'dev-local-only';
 
 let devSignIn: Promise<void> | null = null;

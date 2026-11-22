@@ -1,5 +1,5 @@
 import { browser } from '$app/environment';
-import { supabase } from '$lib/supabase';
+import { ensureDevSession, supabase } from '$lib/supabase';
 
 /**
  * Whether anyone is signed in.
@@ -23,9 +23,13 @@ class SessionStore {
 		// to find and no listener worth attaching.
 		if (!browser) return;
 
-		supabase.auth.getSession().then(({ data }) => {
-			this.signedIn = Boolean(data.session);
-		});
+		// In dev, sign in as the seeded demo user before the first check, so every
+		// route starts signed in. A no-op in production builds.
+		ensureDevSession()
+			.then(() => supabase.auth.getSession())
+			.then(({ data }) => {
+				this.signedIn = Boolean(data.session);
+			});
 
 		supabase.auth.onAuthStateChange((_event, session) => {
 			this.signedIn = Boolean(session);
