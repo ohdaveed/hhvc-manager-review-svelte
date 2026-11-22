@@ -1,5 +1,8 @@
 <script lang="ts">
 	import EditTarget from '../EditTarget.svelte';
+	import { pageStore } from '$lib/stores/pageData.svelte';
+	import KarlOrphanNotice from '../KarlOrphanNotice.svelte';
+	import { pagesByKey } from '$lib/data';
 
 	/**
 	 * sf.gov's link list: "Partner agencies", "Departments" and "Related" all
@@ -25,32 +28,53 @@
 	 * (and `.text` / `.url`), which is the shape `extractCopy` emits for both
 	 * `partnerAgencies` and `sections.<key>.cards`.
 	 *
-	 * Live shows only the title. `text` and `url` are copy too, and a reviewer
-	 * has to see them to review them, so they render under the title in a
-	 * smaller, muted face. No related card in the corpus carries either today;
-	 * every partner agency carries a `url`.
+	 * Live shows only the title. `text` is copy a reviewer has to see, so it
+	 * renders under the title in a smaller, muted face. `url` is copy too, but
+	 * it appears only while one of the item's fields is selected: at rest the
+	 * grid matches sf.gov, and the URL is still one click from editable. No
+	 * related card in the corpus carries either today; every partner agency
+	 * carries a `url`.
 	 */
 	let {
 		items,
 		fieldPrefix,
 		label,
 		columns = 2,
-		heading = undefined
+		heading = undefined,
+		checkRelated = false
 	}: {
-		items: { title?: string; text?: string; url?: string }[] | undefined;
+		items: { title?: string; text?: string; url?: string; target?: string }[] | undefined;
 		fieldPrefix: string;
 		label: string;
 		columns?: 2 | 3;
 		/** A fixed label such as "Partner agencies". Omit it when the caller
 		 *  already renders an (editable) heading, as a Related section does. */
 		heading?: string;
+		/** A Related section: flag cards whose target page type Karl's Related
+		 *  cannot hold. Targets outside the corpus have no known type and are
+		 *  skipped, as the Analysis check skips them. */
+		checkRelated?: boolean;
 	} = $props();
+
+	const targetType = (target: string | undefined) =>
+		target ? (pagesByKey as Record<string, { type?: string }>)[target]?.type : undefined;
 </script>
 
 {#if items && items.length > 0}
 	<section class="link-grid">
 		{#if heading}
 			<h2 class="link-grid-heading">{heading}</h2>
+		{/if}
+		<!-- Above the grid at full width, naming the card: inside a 3-column cell
+		     the notice wrapped to ten lines at the desktop preset. -->
+		{#if checkRelated}
+			{#each items as item, i (i)}
+				<KarlOrphanNotice
+					component="related"
+					pageType={targetType(item.target)}
+					subject={item.title}
+				/>
+			{/each}
 		{/if}
 		<div class="link-grid-list cols-{columns}" class:headed={heading}>
 			{#each items as item, i (i)}
@@ -73,7 +97,9 @@
 							value={item.text}
 						/>
 					{/if}
-					{#if item.url}
+					<!-- Live shows the title only. The URL is copy, so it appears while
+					     the item is being edited and stays out of the page otherwise. -->
+					{#if item.url && pageStore.hasSelectionUnder(`${fieldPrefix}.${i}.`)}
 						<EditTarget
 							as="div"
 							class="link-grid-note link-grid-url"

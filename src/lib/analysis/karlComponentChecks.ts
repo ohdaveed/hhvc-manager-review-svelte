@@ -59,6 +59,8 @@ function usesOn(page: AnyPage): Use[] {
 			where
 		});
 
+	if (page.contact) add('contact', 'Contact us', 'Contact section');
+
 	if (page.spotlight) {
 		add('spotlight', page.spotlight.title, 'Page spotlight');
 		if (page.spotlight.button) add('spotlightButton', page.spotlight.button, 'Page spotlight');

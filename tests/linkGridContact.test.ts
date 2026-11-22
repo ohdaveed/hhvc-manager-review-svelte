@@ -10,6 +10,7 @@
  */
 import { describe, it, expect, beforeEach } from 'vitest';
 import { render } from '@testing-library/svelte';
+import { tick } from 'svelte';
 import Page from '../src/lib/components/Page.svelte';
 import LinkGrid from '../src/lib/components/blocks/LinkGrid.svelte';
 import ContactSection from '../src/lib/components/blocks/ContactSection.svelte';
@@ -64,14 +65,25 @@ describe.each([
 		sessionStore.signedIn = signedIn;
 	});
 
-	it('emits exactly the field ids extractCopy produces', () => {
+	it('emits exactly the field ids extractCopy produces, URLs only once selected', () => {
 		const { container } = render(Page, { props: { page: structuredClone(fixture) } });
-		const expected = Object.keys(extractCopy(structuredClone(fixture)))
+		const all = Object.keys(extractCopy(structuredClone(fixture)))
 			.filter((id) => OWNED.test(id))
 			.sort();
 
-		expect(expected.length).toBe(12);
-		expect(renderedIds(container)).toEqual(expected);
+		expect(all.length).toBe(12);
+		// At rest the page matches sf.gov: every field but the URLs.
+		expect(renderedIds(container)).toEqual(all.filter((id) => !id.endsWith('.url')));
+	});
+
+	it('shows an item’s URL while one of its fields is selected', async () => {
+		const { container } = render(Page, { props: { page: structuredClone(fixture) } });
+		expect(renderedIds(container)).not.toContain('partnerAgencies.0.url');
+
+		pageStore.select('partnerAgencies.0.title', false);
+		await tick();
+		expect(renderedIds(container)).toContain('partnerAgencies.0.url');
+		expect(renderedIds(container)).not.toContain('partnerAgencies.1.url');
 	});
 
 	it('renders no live anchors', () => {

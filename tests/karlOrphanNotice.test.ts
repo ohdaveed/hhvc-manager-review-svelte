@@ -29,6 +29,16 @@ describe('KarlOrphanNotice', () => {
 		expect(container.querySelector('a[href], button, [tabindex]')).toBeNull();
 	});
 
+	it('words a Related card by what it links to', () => {
+		const { container } = render(KarlOrphanNotice, {
+			component: 'related',
+			pageType: 'Resource Collection'
+		});
+		expect(container.textContent).toContain(
+			'Karl’s Related section cannot link to a Resource Collection page.'
+		);
+	});
+
 	it.each([
 		['callout', 'Transaction'], // yes
 		['resources', 'Agency'], // unknown
@@ -82,9 +92,14 @@ describe('the corpus', () => {
 		}
 		expect(found).toEqual({
 			'mosquito-education-workshop': ['callout', 'callout'],
-			'integrated-pest-management-education': ['callout', 'callout'],
+			'integrated-pest-management-education': ['callout', 'callout', 'related'],
 			'report-health-code-article-11-plain-language': ['callout'],
-			'information-integrated-pest-management-for-property-owners-and-managers': ['resources']
+			'information-integrated-pest-management-for-property-owners-and-managers': [
+				'resources',
+				'related',
+				'contact'
+			],
+			'information--article-11-compliance-for-property-owners': ['related', 'contact']
 		});
 	});
 });

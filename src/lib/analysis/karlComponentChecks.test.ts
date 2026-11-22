@@ -35,7 +35,10 @@ describe('Karl component checks on the current corpus', () => {
 				// Related cards linking to types Karl's Related section cannot hold.
 				'sf.gov/information--article-11-compliance-for-property-owners / karl-related / Property owner responsibilities',
 				'sf.gov/information/integrated-pest-management-for-property-owners-and-managers / karl-related / Property owner responsibilities',
-				'sf.gov/integrated-pest-management-education / karl-related / Healthy Housing and Vector Control'
+				'sf.gov/integrated-pest-management-education / karl-related / Healthy Housing and Vector Control',
+				// A Contact section on Information pages, which have no Contact us panel.
+				'sf.gov/information--article-11-compliance-for-property-owners / karl-contact / Contact us',
+				'sf.gov/information/integrated-pest-management-for-property-owners-and-managers / karl-contact / Contact us'
 			].sort()
 		);
 	});

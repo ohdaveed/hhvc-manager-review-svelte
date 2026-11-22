@@ -188,6 +188,12 @@ class PageStore {
 		return this.selectedFieldIds.includes(fieldId);
 	}
 
+	/** Whether any field of one item is selected, e.g. `sections.k.cards.2.`
+	 *  for a card's title, text and url. Link URLs show only while true. */
+	hasSelectionUnder(prefix: string): boolean {
+		return this.selectedFieldIds.some((id) => id.startsWith(prefix));
+	}
+
 	/** 1-based position, or 0 when not selected. This is the badge number. */
 	badgeNumber(fieldId: string): number {
 		return this.selectedFieldIds.indexOf(fieldId) + 1;

@@ -113,6 +113,7 @@
 				fieldPrefix={`sections.${key}.cards`}
 				label={`${label} Card`}
 				columns={3}
+				checkRelated
 			/>
 		{:else if section.cards}
 			<CardsBlock cards={section.cards} sectionKey={key} {label} />
@@ -133,6 +134,7 @@
 				fieldId={`sections.${key}.button`}
 				urlFieldId={`sections.${key}.buttonUrl`}
 				name={`${label} Button`}
+				variant={section.buttonStyle}
 			/>
 		{/if}
 	</div>

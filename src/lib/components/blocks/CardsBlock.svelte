@@ -54,7 +54,9 @@
 					value={card.text}
 				/>
 			{/if}
-			{#if card.url}
+			<!-- sf.gov never prints a card's URL. It is copy, so it appears while
+			     the card is being edited and stays out of the page otherwise. -->
+			{#if card.url && pageStore.hasSelectionUnder(`sections.${sectionKey}.cards.${i}.`)}
 				<EditTarget
 					as="p"
 					class="cards-block-url"

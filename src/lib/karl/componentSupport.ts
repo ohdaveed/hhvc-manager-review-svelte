@@ -31,7 +31,8 @@ export type KarlComponent =
 	| 'resources'
 	| 'related'
 	| 'table'
-	| 'alert';
+	| 'alert'
+	| 'contact';
 
 export type Support = 'yes' | 'no' | 'unknown';
 
@@ -131,6 +132,18 @@ export const COMPONENT_SUPPORT: Record<KarlComponent, ComponentRule> = {
 		helpTitle: 'Related',
 		types: RELATED_PERMITTED_TYPES,
 		instead: 'Link to this page from the body copy instead.'
+	},
+	// The help center's Contact section page lists no content types, so this row
+	// comes from the repo's own Karl field map instead: `KARL_PANELS` in
+	// src/lib/legacy-core/karl-blocks.js gives a "Contact us" panel to
+	// Transaction (`get_help`), Campaign, Agency and Location, and none to
+	// Information (its U22 records the two Information pages that carry one).
+	contact: {
+		label: 'Contact section',
+		url: `${COMPONENTS}/contact-section`,
+		helpTitle: 'Contact section',
+		types: ['Transaction', 'Campaign', 'Agency', 'Location'],
+		instead: 'Put the phone and email in the body copy instead.'
 	},
 	// "Report is the only content type on SF.gov that supports tables."
 	table: {
