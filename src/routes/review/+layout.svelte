@@ -8,7 +8,17 @@
 	import { pageStore } from '$lib/stores/pageData.svelte';
 	import { editsStore, firstQueuePath, loadReview, pagesStore } from '$lib/stores/reviewState';
 	import { sessionStore } from '$lib/stores/session.svelte';
-	import { ArrowLeft, ChevronsLeft, ChevronsRight } from 'lucide-svelte';
+	import {
+		ArrowLeft,
+		ChevronsLeft,
+		ChevronsRight,
+		Maximize2,
+		Monitor,
+		Smartphone,
+		Tablet
+	} from 'lucide-svelte';
+	import * as ToggleGroup from '$lib/components/ui/toggle-group/index.js';
+	import { PREVIEW_WIDTHS, previewBand, type PreviewWidth } from '$lib/stores/pageData.svelte';
 	import ReviewQueue from '$lib/components/workspace/ReviewQueue.svelte';
 	import ReviewWorkspace from '$lib/components/workspace/ReviewWorkspace.svelte';
 	import SiteHeader from '$lib/components/sfgov/SiteHeader.svelte';
@@ -100,11 +110,67 @@
 		pageStore.pages.find((pg) => pg.id === firstQueueTarget)?.title ?? ''
 	);
 
+	/**
+	 * The mockup frame's real rendered width, bound from the element.
+	 *
+	 * Measured rather than derived from the preset, because for `fit` -- the
+	 * default -- there is no preset to derive from, and that is exactly the
+	 * case where the reviewer most needs telling: the frame is whatever the
+	 * pane leaves it, which on a 1440px display is 716px, the tablet
+	 * rendering.
+	 */
+	let frameWidth = $state(0);
+
+	/**
+	 * In sheet mode the rail always shows its contents: a collapsed rail
+	 * inside an overlay would be a 52px strip holding one expand button,
+	 * which is not what opening the sheet asked for.
+	 */
+	const queueCollapsed = $derived(
+		pageStore.railCollapsed.queue && pageStore.mobileSheet !== 'queue'
+	);
+	const panelCollapsed = $derived(
+		pageStore.railCollapsed.panel && pageStore.mobileSheet !== 'panel'
+	);
+
+	/** Returns focus to whichever button opened the sheet. */
+	let sheetOpener: HTMLElement | null = null;
+
+	const openSheet = (which: 'queue' | 'panel', event: MouseEvent) => {
+		sheetOpener = event.currentTarget as HTMLElement;
+		pageStore.openSheet(which);
+	};
+
+	const closeSheet = () => {
+		pageStore.closeSheet();
+		sheetOpener?.focus();
+		sheetOpener = null;
+	};
+
+	const onWindowKeydown = (event: KeyboardEvent) => {
+		if (event.key === 'Escape' && pageStore.mobileSheet !== 'none') closeSheet();
+	};
+
+	const previewOptions: { value: PreviewWidth; label: string; icon: typeof Monitor }[] = [
+		{ value: 'fit', label: 'Fit to pane', icon: Maximize2 },
+		{ value: 'desktop', label: 'Desktop width, 1024px', icon: Monitor },
+		{ value: 'tablet', label: 'Tablet width, 768px', icon: Tablet },
+		{ value: 'phone', label: 'Phone width, 390px', icon: Smartphone }
+	];
+
+	const setPreview = (value: string) => {
+		// ToggleGroup emits '' when the active item is toggled off. There is
+		// always a width, so that is a no-op rather than a write -- the same
+		// trap the decision control fell into.
+		if (value) pageStore.setPreviewWidth(value as PreviewWidth);
+	};
+
 	onMount(() => {
 		// Rail state is per-device chrome in `localStorage`, read here rather than
 		// in the store's constructor: that module is imported during SSR, where
 		// `localStorage` does not exist.
 		pageStore.loadRailState();
+		pageStore.loadPreviewWidth();
 		pageStore.loadCopiedSteps();
 
 		// If the layout is torn down before loadReview resolves -- a slow Supabase
@@ -130,13 +196,24 @@
      80px for the diff cards; the queue needs it for the sub-lines. Collapsed
      rails are 52px (design 2a) — the buttons live here, the rail contents are
      the 2a pass. -->
+<svelte:window onkeydown={onWindowKeydown} />
+
 <div
 	class="review-shell grid h-screen w-full grid-rows-[minmax(0,1fr)] overflow-hidden bg-muted/40"
+	data-sheet={pageStore.mobileSheet}
 	style="grid-template-columns: {pageStore.railCollapsed.queue ? '52px' : '280px'} 1fr {pageStore
 		.railCollapsed.panel
 		? '52px'
 		: '380px'}"
 >
+	<!-- Backdrop for the narrow-viewport sheets. A real element rather than a
+	     giant box-shadow, because it has to take the click that closes the
+	     sheet. Rendered only when one is open. -->
+	{#if pageStore.mobileSheet !== 'none'}
+		<button type="button" class="sheet-backdrop" aria-label="Close panel" onclick={closeSheet}
+		></button>
+	{/if}
+
 	<!-- Skip link. MEASURED before this existed: from a fresh load, 60 Tab
 	     presses never reached Approve/Revise/Blocked. Every edit target in the
 	     mockup is a focus stop and there are 40+ of them on a typical page, all
@@ -149,8 +226,13 @@
 	<a href="#reviewPanel" class="skip-to-panel">Skip to review panel</a>
 
 	<!-- Left Sidebar: Global Navigation & Review Queue -->
-	<aside class="queue-rail flex h-full min-w-0 flex-col border-r bg-background">
-		{#if pageStore.railCollapsed.queue}
+	<aside
+		id="reviewQueueRail"
+		tabindex="-1"
+		aria-label="Review queue"
+		class="queue-rail flex h-full min-w-0 flex-col border-r bg-background"
+	>
+		{#if queueCollapsed}
 			<div class="flex flex-col items-center gap-4 py-3.5">
 				<Button
 					variant="outline"
@@ -257,9 +339,29 @@
 				/>
 			{:else}
 				<nav
-					class="flex h-12 flex-none items-center justify-between border-b border-sfds-grey-l2 bg-background px-5"
+					class="review-toolbar flex h-12 flex-none items-center justify-between border-b border-sfds-grey-l2 bg-background px-5"
 				>
 					<div class="flex min-w-0 items-center gap-2">
+						<!-- The only way to the queue and the panel below 1024px, where
+						     both rails leave the grid. Hidden above it, where the rails
+						     are on screen and these would be a second way to do nothing
+						     new. -->
+						<Button
+							variant="outline"
+							size="sm"
+							class="narrow-only h-7 flex-none text-xs"
+							onclick={(e: MouseEvent) => openSheet('queue', e)}
+						>
+							Queue
+						</Button>
+						<Button
+							variant="outline"
+							size="sm"
+							class="narrow-only h-7 flex-none text-xs"
+							onclick={(e: MouseEvent) => openSheet('panel', e)}
+						>
+							Review
+						</Button>
 						<!-- Back to the queue's first row, the same target `Export review
 						     data` uses -- one definition, so the two cannot point at
 						     different pages. Left-most because it is the only control here
@@ -322,6 +424,39 @@
 								{unsavedCount} unsaved {unsavedCount === 1 ? 'edit' : 'edits'}
 							</span>
 						{/if}
+						<!-- Which rendering is on screen, and how to change it.
+						     Icon-only because the toolbar had zero slack to spend:
+						     four labelled buttons would not fit beside the walkthrough
+						     button at 1280px. Each carries an aria-label and a title. -->
+						<div class="flex flex-none items-center gap-2">
+							<span
+								class="text-[11px] font-semibold text-sfds-slate-l3 tabular-nums"
+								data-testid="preview-width"
+								title="The width the mockup is being rendered at, and the sf.gov layout that width produces"
+							>
+								{frameWidth}px · {previewBand(frameWidth)}
+							</span>
+							<ToggleGroup.Root
+								type="single"
+								variant="outline"
+								size="sm"
+								spacing={0}
+								aria-label="Mockup preview width"
+								value={pageStore.previewWidth}
+								onValueChange={setPreview}
+							>
+								{#each previewOptions as option (option.value)}
+									<ToggleGroup.Item
+										value={option.value}
+										aria-label={option.label}
+										title={option.label}
+										class="size-7"
+									>
+										<option.icon class="size-3.5" />
+									</ToggleGroup.Item>
+								{/each}
+							</ToggleGroup.Root>
+						</div>
 						<!-- The tool's second job, and the only way into it. Entering
 					     collapses both rails; exiting puts them back as they were. -->
 						<Button
@@ -354,8 +489,14 @@
 			     gates CI -- so the warning is suppressed rather than obeyed. Do not
 			     "fix" the warning by deleting the attribute. -->
 				<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
+				<!-- `overflow-x-auto` so a preset wider than the pane can be panned.
+				     Centering moved OFF the flex container and onto the figure's
+				     `mx-auto`: with `justify-content: center`, an overflowing flex
+				     item has its start edge pushed out of the scrollable area and
+				     cannot be scrolled back to. `margin-inline: auto` centres the
+				     same way and keeps both edges reachable. -->
 				<div
-					class="flex flex-1 justify-center overflow-y-auto px-8 pt-7 pb-30"
+					class="flex flex-1 overflow-x-auto overflow-y-auto px-8 pt-7 pb-30"
 					tabindex="0"
 					role="region"
 					aria-label="Mockup preview"
@@ -379,8 +520,18 @@
 				     so a wide monitor shows a wide page instead of a narrow card in
 				     a field of grey. 1440px is the ceiling because beyond it SF.gov
 				     only adds gutter, not layout. -->
+					<!-- A chosen preset sets an explicit width and stops the frame
+					     shrinking to the pane; `fit` leaves both unset and the old
+					     `w-full` / 1440px ceiling applies. `flex-none` so a preset
+					     wider than the pane is not squeezed back down -- the canvas
+					     scrolls horizontally instead, which is honest about the fact
+					     that a 1024px rendering does not fit in a 440px pane. -->
 					<figure
-						class="mockup-frame w-full self-start overflow-hidden rounded-[4px] border border-gray-200 bg-white shadow-[0_2px_4px_rgba(12,20,100,.06),0_4px_12px_rgba(12,20,100,.1)]"
+						bind:clientWidth={frameWidth}
+						style={PREVIEW_WIDTHS[pageStore.previewWidth]
+							? `width:${PREVIEW_WIDTHS[pageStore.previewWidth]}px;max-width:none;flex:none`
+							: ''}
+						class="mockup-frame mx-auto w-full self-start overflow-hidden rounded-[4px] border border-gray-200 bg-white shadow-[0_2px_4px_rgba(12,20,100,.06),0_4px_12px_rgba(12,20,100,.1)]"
 					>
 						<SiteHeader />
 
@@ -410,7 +561,7 @@
 		aria-label="Review panel"
 		class="panel-rail flex h-full min-w-0 flex-col overflow-hidden border-l bg-background"
 	>
-		{#if pageStore.railCollapsed.panel}
+		{#if panelCollapsed}
 			<div class="flex flex-col items-center gap-4 py-3.5">
 				<Button
 					variant="outline"
@@ -491,6 +642,35 @@
 	   Hidden rather than shrunk. Both rails already have toggles
 	   (`pageStore.toggleRail`), so the controls are not lost; a 130px queue
 	   would be neither usable nor honest about the space. */
+	/* The sheet triggers are narrow-viewport only. Declared here as the
+	   default so they are absent at desktop widths, where both rails are
+	   already on screen.
+
+	   This rule has to come BEFORE the media query that turns them on: both
+	   are `:global(.narrow-only)` with identical specificity, so whichever
+	   is later in source order wins, and with the override first the buttons
+	   never appeared at any width. */
+	:global(.narrow-only) {
+		display: none;
+	}
+
+	/* The toolbar wraps rather than overflowing.
+	   It was measured at ZERO slack between 1080px and 1400px even before
+	   anything was added to it -- the page slug was being squeezed to 0px
+	   and the two groups met exactly -- and the preview-width control and
+	   the two sheet triggers both land here. Fixed height and
+	   `justify-between` with no wrap do not degrade, they overlap: at 768px
+	   the right-hand group sat on top of the Queue button and swallowed its
+	   clicks, which is how this was caught. */
+	.review-toolbar {
+		column-gap: 0.75rem;
+		row-gap: 0.5rem;
+		flex-wrap: wrap;
+		height: auto;
+		min-height: 3rem;
+		padding-block: 0.375rem;
+	}
+
 	@media (max-width: 1024px) {
 		/* The grid template is an inline style, because the rail widths are
 		   reactive state (`pageStore.railCollapsed`). `!important` is what
@@ -510,5 +690,44 @@
 		.panel-rail {
 			display: none;
 		}
+
+		/* ...unless one has been asked for. Then it comes back as a full-height
+		   overlay over the canvas, which is the part that was missing: hiding
+		   the rails also hid their own toggles, because those are rendered
+		   inside them, so 19 controls -- the queue, the tabs, the entire
+		   decision control -- had no route back at all. The toolbar's Queue
+		   and Review buttons are that route; this is where they lead. */
+		.review-shell[data-sheet='queue'] .queue-rail,
+		.review-shell[data-sheet='panel'] .panel-rail {
+			position: fixed;
+			z-index: 40;
+			display: flex;
+			inset-block: 0;
+			width: min(88vw, 360px);
+			box-shadow: 0 0 24px rgb(0 0 0 / 0.25);
+		}
+
+		.review-shell[data-sheet='queue'] .queue-rail {
+			inset-inline-start: 0;
+		}
+
+		.review-shell[data-sheet='panel'] .panel-rail {
+			inset-inline-end: 0;
+		}
+
+		/* `:global`, because the class is handed to the shadcn `Button`
+		   component and Svelte's scoping would neither match it nor keep the
+		   rule. */
+		:global(.narrow-only) {
+			display: inline-flex;
+		}
+	}
+
+	.sheet-backdrop {
+		position: fixed;
+		inset: 0;
+		z-index: 30;
+		border: 0;
+		background: rgb(0 0 0 / 0.4);
 	}
 </style>

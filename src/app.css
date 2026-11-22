@@ -322,7 +322,13 @@ body {
 	   overflow design 1b warns about — and it gets worse with a selection ring,
 	   because the ring is drawn at the widened edge. Vertical rhythm is kept by
 	   the padding rather than by pulling the box outward. */
-	@apply relative cursor-pointer rounded-[4px] px-[10px] py-2 transition-all;
+	/* `transition-colors`, NOT `transition-all`. With `all`, the focus ring
+	   below animates in from transparent, so for the first frames of a focus
+	   move there is no visible indicator -- measurably so: a probe reading
+	   the computed style immediately after focus got
+	   `rgba(0,0,0,0) 0 0 0 0 inset`, the start of the interpolation. A focus
+	   indicator should be instant; hover tinting can still ease. */
+	@apply relative cursor-pointer rounded-[4px] px-[10px] py-2 transition-colors;
 	@apply hover:bg-sfds-blue-l1/60;
 	@apply focus-visible:outline-none;
 

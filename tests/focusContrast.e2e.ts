@@ -239,6 +239,14 @@ async function measureFocusIndicators(page: import('@playwright/test').Page) {
 			const restingKeys = new Set(layersOf(getComputedStyle(el)).map((l) => l.key));
 
 			el.focus();
+
+			// Read immediately, on the frame focus arrives. That is deliberate
+			// and it is a second assertion in disguise: a focus indicator that
+			// TRANSITIONS in computes to the start of its interpolation here --
+			// transparent, ratio 1 -- and fails. It should. An indicator that
+			// fades in is absent for the first frames of every focus move, so
+			// `.edit-target` carries `transition-colors` rather than
+			// `transition-all` precisely so its ring is painted at once.
 			const focusedStyle = getComputedStyle(el);
 
 			const outer = backgroundStack(el.parentElement);
