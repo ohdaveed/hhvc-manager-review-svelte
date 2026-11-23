@@ -25,12 +25,23 @@ export function draftPathFor(id: string): string {
 	return `${DRAFT_PATH_PREFIX}${id}`;
 }
 
-export function isDraftPath(path: string): boolean {
-	return path.startsWith(DRAFT_PATH_PREFIX);
+/**
+ * The id a draft path carries, or `undefined` when the path is not a draft.
+ *
+ * An empty id is deliberately NOT a draft. `draft:` on its own is malformed,
+ * and treating it as a draft would make `reviewHrefFor` emit a dangling
+ * `/review/draft/` link. Falling through to the corpus branch instead lets it
+ * 404 at `/review/[slug]`, which is the honest outcome. Do not "fix" this back
+ * to a prefix check: `isDraftPath` and `draftIdFrom` must agree on it.
+ */
+export function draftIdFrom(path: string): string | undefined {
+	if (!path.startsWith(DRAFT_PATH_PREFIX)) return undefined;
+	const id = path.slice(DRAFT_PATH_PREFIX.length);
+	return id === '' ? undefined : id;
 }
 
-export function draftIdFrom(path: string): string | undefined {
-	return isDraftPath(path) ? path.slice(DRAFT_PATH_PREFIX.length) : undefined;
+export function isDraftPath(path: string): boolean {
+	return draftIdFrom(path) !== undefined;
 }
 
 export function reviewHrefFor(path: string): string {
