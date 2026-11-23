@@ -24,10 +24,7 @@
  */
 
 /** `[label](target)`. Global, so `matchAll` and `replace` both work. */
-export const MARKDOWN_LINK = /\[([^\]]+)\]\(([^)]+)\)/g;
-
-/** `**bold**`. Non-greedy over a run with no asterisk, so `**a** and **b**` is two spans. */
-export const MARKDOWN_STRONG = /\*\*([^*]+)\*\*/g;
+const MARKDOWN_LINK = /\[([^\]]+)\]\(([^)]+)\)/g;
 
 /** Both constructs, alternated, for a single left-to-right pass. */
 const MARKDOWN_TOKEN = /\[([^\]]+)\]\(([^)]+)\)|\*\*([^*]+)\*\*/g;

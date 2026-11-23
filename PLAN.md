@@ -9,25 +9,25 @@ the real cut is ~930 lines, ~52 of it code.
 
 ## Cuts
 
-- [ ] **1. Dead code: two declarations with no reader anywhere.**
+- [x] **1. Dead code: two declarations with no reader anywhere.**
       `MARKDOWN_STRONG` (`src/lib/corpus/markdown.ts`) and `__resetFieldIds`
       (`src/lib/components/sfgov/ds/fieldId.ts`). Verified with `git grep` over
       the whole repo, tests included — neither name appears outside the file
       that declares it.
-- [ ] **2. Over-exported internals: drop `export`, keep the code.** Seven names
+- [x] **2. Over-exported internals: drop `export`, keep the code.** Seven names
       are exported and consumed only inside their own module:
       `getModel`, `normalizeUsage`, `DEFAULT_MODEL` (`server/ai/gemini.ts`),
       `addUsage`, `MAX_ATTEMPTS`, `DISCLOSURE` (`server/ai/generate.ts`),
       `MARKDOWN_LINK` (`corpus/markdown.ts`). This removes no lines. The payoff
       is that knip's "unused exports" list stops carrying 7 false leads, so a
       genuinely dead export is visible in it next time.
-- [ ] **3. `src/lib/components/blocks/index.ts` + `ImageBlock.svelte`.** The
+- [x] **3. `src/lib/components/blocks/index.ts` + `ImageBlock.svelte`.** The
       barrel has zero importers — `Section.svelte` and `Page.svelte` import each
       block directly — and `ImageBlock` is reachable only through that barrel.
       No corpus module carries an image section (`component:` values are
       supporting, spotlight, resources, services, related, intro, top-facts,
       body). 45 lines.
-- [ ] **4. `@sveltejs/adapter-auto`.** Referenced nowhere but `package.json` and
+- [x] **4. `@sveltejs/adapter-auto`.** Referenced nowhere but `package.json` and
       the `knip.jsonc` `ignoreDependencies` entry that silences the warning
       about it. `vite.config.ts` selects between adapter-netlify and
       adapter-node. Remove with `bun remove` so `bun.lock` moves too, and drop
@@ -42,7 +42,7 @@ the real cut is ~930 lines, ~52 of it code.
 ## Gates
 
 - [ ] `bun run verify` (unit + build).
-- [ ] `bun run lint:ratchet` and `bun run check:ratchet` — `verify` runs
+- [x] `bun run lint:ratchet` and `bun run check:ratchet` — `verify` runs
       neither, and both fail when the count DROPS as well as rises. The four
       eslint errors live in `scripts/env-target.ts`,
       `src/lib/components/ui/button/button.svelte`,

@@ -20,7 +20,6 @@
         "@eslint/js": "^10.0.1",
         "@internationalized/date": "^3.12.0",
         "@playwright/test": "^1.60.0",
-        "@sveltejs/adapter-auto": "^7.0.1",
         "@sveltejs/adapter-netlify": "^6.0.4",
         "@sveltejs/adapter-node": "^5.2.0",
         "@sveltejs/kit": "^2.63.0",
@@ -555,8 +554,6 @@
     "@supabase/supabase-js": ["@supabase/supabase-js@2.112.3", "", { "dependencies": { "@supabase/auth-js": "2.112.3", "@supabase/functions-js": "2.112.3", "@supabase/postgrest-js": "2.112.3", "@supabase/realtime-js": "2.112.3", "@supabase/storage-js": "2.112.3" }, "peerDependencies": { "@opentelemetry/api": ">=1.0.0" }, "optionalPeers": ["@opentelemetry/api"] }, "sha512-Jv1bxVQmEJNkjvPEhFaKjPzsh+Ozyew6lWGD+SoYcsclDEP1z7yEvKvfUQfzy0DkxRIQnZNxmmWtAzw5XLTQoA=="],
 
     "@sveltejs/acorn-typescript": ["@sveltejs/acorn-typescript@1.0.13", "", { "peerDependencies": { "acorn": "^8.9.0" } }, "sha512-wgKggnhZVL9Bfx1OaKKTrYY9BFRk6C8UAkQNUcIv1+llzYrIqy+RZm5HPKzn0NpEBvTVhTqB4kQyllZywsRBRQ=="],
-
-    "@sveltejs/adapter-auto": ["@sveltejs/adapter-auto@7.0.1", "", { "peerDependencies": { "@sveltejs/kit": "^2.0.0" } }, "sha512-dvuPm1E7M9NI/+canIQ6KKQDU2AkEefEZ2Dp7cY6uKoPq9Z/PhOXABe526UdW2mN986gjVkuSLkOYIBnS/M2LQ=="],
 
     "@sveltejs/adapter-netlify": ["@sveltejs/adapter-netlify@6.0.4", "", { "dependencies": { "@iarna/toml": "^2.2.5", "esbuild": "^0.25.4" }, "peerDependencies": { "@sveltejs/kit": "^2.31.0" } }, "sha512-Ln/vgZc1v/2JFXhl5QiVKJ61a75jKe2rdxMnDO8PPDpQN8Tq/0w4JnBGAMBqENtD+kDACyY00ZTyzP9uTP77wg=="],
 
