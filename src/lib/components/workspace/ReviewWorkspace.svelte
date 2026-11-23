@@ -54,6 +54,12 @@
 	     collapse button stranded beside the first. Re-measured in Chromium at
 	     1440x1000 before this change: 353px of triggers in a 339px strip.
 
+	     Four at `px-2.5` still left only ~8px spare once the Fields count
+	     badge (~29px) showed: 315px of triggers plus 16px list padding in
+	     339px, so a slightly wider font tipped "Analysis" onto a second row.
+	     Triggers are now `px-2` and the list `px-1`: 270px bare, 299px with
+	     the badge, ~32px spare (Chromium, 1440x900).
+
 	     The fifth tab was removable because it was a DUPLICATE, not because
 	     space was tight. "Checks" rendered the same `ReviewPanel` as
 	     "Overview" with `showOnlyChecks`, and Overview already renders Page
@@ -72,9 +78,9 @@
 	<div class="flex items-center gap-1 border-b bg-muted/40 pr-2">
 		<Tabs.List
 			variant="line"
-			class="h-auto! min-w-0 flex-1 flex-wrap justify-start gap-0 border-0 bg-transparent px-2"
+			class="h-auto! min-w-0 flex-1 flex-wrap justify-start gap-0 border-0 bg-transparent px-1"
 		>
-			<Tabs.Trigger value="fields" class="flex-none px-2.5 py-2.5">
+			<Tabs.Trigger value="fields" class="flex-none px-2 py-2.5">
 				Fields
 				{#if pageStore.selectedFieldIds.length > 0}
 					<span
@@ -84,9 +90,9 @@
 					</span>
 				{/if}
 			</Tabs.Trigger>
-			<Tabs.Trigger value="rethink" class="flex-none px-2.5 py-2.5">Rethink</Tabs.Trigger>
-			<Tabs.Trigger value="overview" class="flex-none px-2.5 py-2.5">Decision</Tabs.Trigger>
-			<Tabs.Trigger value="analysis" class="flex-none px-2.5 py-2.5">Analysis</Tabs.Trigger>
+			<Tabs.Trigger value="rethink" class="flex-none px-2 py-2.5">Rethink</Tabs.Trigger>
+			<Tabs.Trigger value="overview" class="flex-none px-2 py-2.5">Decision</Tabs.Trigger>
+			<Tabs.Trigger value="analysis" class="flex-none px-2 py-2.5">Analysis</Tabs.Trigger>
 		</Tabs.List>
 
 		{#if onCollapse}
