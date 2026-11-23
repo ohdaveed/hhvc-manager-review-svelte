@@ -4,6 +4,7 @@
 	import AllPagesList from '$lib/components/landing/AllPagesList.svelte';
 	import HowItWorks from '$lib/components/landing/HowItWorks.svelte';
 	import ProgressSummary from '$lib/components/landing/ProgressSummary.svelte';
+	import ProposePageForm from '$lib/components/landing/ProposePageForm.svelte';
 	import { pageTitleFor } from '$lib/corpus/pageTitle';
 	import { reviewProgress } from '$lib/landing/progress';
 	import { draftsStore } from '$lib/stores/draftPages';
@@ -90,9 +91,9 @@
 	<div class="grid gap-8 md:grid-cols-3">
 		<HowItWorks />
 		<AllPagesList />
-		<!-- Task 7: the propose-a-page form goes in this column. -->
-		<section aria-labelledby="propose-a-page" data-seam="propose-a-page">
+		<section aria-labelledby="propose-a-page">
 			<h2 id="propose-a-page" class="mb-3 text-lg font-semibold text-slate-900">Propose a page</h2>
+			<ProposePageForm />
 		</section>
 	</div>
 </div>
