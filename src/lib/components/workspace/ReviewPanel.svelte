@@ -7,6 +7,9 @@
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
 	import { onDestroy } from 'svelte';
 	import { resolve } from '$app/paths';
+	import { reviewHrefFor } from '$lib/corpus/draftPath';
+	import { draftsStore } from '$lib/stores/draftPages';
+	import { pageTitleFor } from '$lib/corpus/pageTitle';
 	import { ArrowRight } from 'lucide-svelte';
 	import { pageStore } from '$lib/stores/pageData.svelte';
 	import { sessionStore } from '$lib/stores/session.svelte';
@@ -23,7 +26,9 @@
 	// Where "Next undecided" goes. Only meaningful once a review has loaded:
 	// with no live rows (signed out) there is nothing to move on to.
 	const nextPath = $derived(pageData?.id ? nextUndecidedPath($pagesStore, pageData.id) : undefined);
-	const nextTitle = $derived(pageStore.pages.find((p) => p.id === nextPath)?.title ?? '');
+	const nextTitle = $derived(
+		nextPath ? pageTitleFor(nextPath, pageStore.pages, $draftsStore, 'empty') : ''
+	);
 
 	// Find the live record in the store matching the static corpus id
 	let liveRecord = $derived($pagesStore.find((p) => p.path === pageData?.id));
@@ -290,7 +295,7 @@
 
 		{#if nextPath}
 			<a
-				href={resolve('/review/[slug]', { slug: nextPath })}
+				href={resolve(reviewHrefFor(nextPath))}
 				class="flex items-center justify-between gap-3 rounded-md border border-sfds-action/40 px-3 py-2 text-sm font-semibold text-sfds-action hover:bg-sfds-blue-l1/60"
 			>
 				<span class="min-w-0">

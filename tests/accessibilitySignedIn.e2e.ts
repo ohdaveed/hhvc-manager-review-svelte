@@ -3,7 +3,7 @@ import AxeBuilder from '@axe-core/playwright';
 // at runtime, so it cannot bypass the fixture that `test` carries.
 import type { Page } from '@playwright/test';
 import { expect, test } from './fixtures';
-import { gotoSignedIn } from './signedIn';
+import { DRAFT_IDS, gotoSignedIn } from './signedIn';
 
 /**
  * The axe gate, over the surfaces only a signed-in reviewer sees.
@@ -99,3 +99,54 @@ test('no WCAG 2.1 AA violations in the signed-in Karl walkthrough', async ({ pag
 
 	await noViolations(page);
 });
+
+test('no WCAG 2.1 AA violations on the signed-in landing page', async ({ page }) => {
+	await gotoSignedIn(page, '/', { drafts: true });
+
+	// The progress line and Continue link only exist once the review loaded,
+	// and the list only names drafts once `draft_pages` did.
+	await expect(page.getByRole('link', { name: /^Continue to / })).toBeVisible();
+	await expect(
+		page
+			.getByRole('region', { name: 'All pages' })
+			.getByRole('link', { name: 'Report a leaking roof' })
+	).toBeVisible();
+
+	await noViolations(page);
+});
+
+// One scan per banner state: each renders different copy and colours, so the
+// `ready` banner passing says nothing about the failure alert or stale notice.
+const DRAFT_STATES = [
+	['ready', 'requested by you'],
+	['drafting', 'Drafting this page…'],
+	['stale', 'This draft stopped before finishing.'],
+	['failed', 'The draft could not be generated.']
+] as const;
+
+for (const [state, proof] of DRAFT_STATES) {
+	test(`no WCAG 2.1 AA violations on a ${state} draft page`, async ({ page }) => {
+		await gotoSignedIn(page, `/review/draft/${DRAFT_IDS[state]}`, { drafts: true });
+
+		await expect(page.getByRole('complementary', { name: 'AI draft' })).toContainText(proof);
+		if (state === 'ready') await expect(page.getByText('Before you report').first()).toBeVisible();
+
+		await noViolations(page);
+	});
+}
+
+// Pinned by rule, not by enabling best-practice tags wholesale: that would also
+// surface `aria-allowed-role` on a pre-existing element. A draft with no page
+// to render has no content of its own, so the route must supply the heading.
+for (const state of ['drafting', 'stale', 'failed'] as const) {
+	test(`a ${state} draft page has a level-one heading`, async ({ page }) => {
+		await gotoSignedIn(page, `/review/draft/${DRAFT_IDS[state]}`, { drafts: true });
+		await expect(page.getByRole('complementary', { name: 'AI draft' })).toBeVisible();
+
+		const { violations } = await new AxeBuilder({ page })
+			.withRules(['page-has-heading-one'])
+			.analyze();
+		expect(violations.map((v) => `${v.id}: ${v.help}`)).toEqual([]);
+		await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
+	});
+}

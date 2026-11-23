@@ -3,12 +3,19 @@
 	import { resolve } from '$app/paths';
 	import { pagesStore, editsStore, QUEUE_STATUS_ORDER } from '$lib/stores/reviewState';
 	import { pageStore } from '$lib/stores/pageData.svelte';
+	import { reviewHrefFor, routePathFor } from '$lib/corpus/draftPath';
+	import { pageTitleFor } from '$lib/corpus/pageTitle';
+	import { draftsStore } from '$lib/stores/draftPages';
+	import { Badge } from '$lib/components/ui/badge/index.js';
 	import { sessionStore } from '$lib/stores/session.svelte';
 
 	// The pages table has no title column, so a hydrated row carries only `path`.
-	// Titles come from the static corpus, whose derived id is that same path.
+	// Titles come from the static corpus (whose derived id is that same path) or,
+	// for a draft that is not ready, from `draftsStore`. See `pageTitleFor`.
 	const corpusFor = (path: string) => pageStore.pages.find((p) => p.id === path);
-	const titleFor = (path: string) => corpusFor(path)?.title ?? path;
+	const draftFor = (path: string) => $draftsStore.find((d) => d.path === path);
+	const titleFor = (path: string) => pageTitleFor(path, pageStore.pages, $draftsStore);
+	const currentPath = $derived(routePathFor($routePage.params));
 
 	// The store automatically updates via Supabase realtime subscriptions.
 	//
@@ -77,7 +84,7 @@
 	// shell. See WalkthroughDrawer's note 3 for the same trap.
 	let navEl = $state<HTMLElement | null>(null);
 	$effect(() => {
-		void $routePage.params.slug;
+		void currentPath;
 		void $pagesStore;
 		const row = navEl?.querySelector<HTMLElement>('[aria-current="page"]');
 		let box = row?.parentElement ?? null;
@@ -169,14 +176,14 @@
 				</h3>
 				<ul class="space-y-0.5">
 					{#each pages as p (p.path)}
-						{@const isCurrent = $routePage.params.slug === p.path}
+						{@const isCurrent = currentPath === p.path}
 						{@const meta = metaFor(p)}
 						<li>
 							<!-- A left border rather than a filled row: the fill would compete
 							     with the selected-field highlight in the canvas, and there are
 							     two selections on screen at once. -->
 							<a
-								href={resolve('/review/[slug]', { slug: p.path })}
+								href={resolve(reviewHrefFor(p.path))}
 								aria-current={isCurrent ? 'page' : undefined}
 								class="block rounded-[3px] border-l-2 py-1.5 pr-2 pl-2.5 transition-colors hover:bg-sfds-blue-l1/60 {isCurrent
 									? 'border-sfds-action bg-sfds-blue-l1'
@@ -189,6 +196,9 @@
 								>
 									{titleFor(p.path)}
 								</span>
+								{#if draftFor(p.path)}
+									<Badge variant="secondary" class="mt-0.5">AI draft</Badge>
+								{/if}
 								{#if meta}
 									<span class="mt-0.5 block text-[11px] leading-[14px] text-sfds-slate-l3">
 										{meta}
