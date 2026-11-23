@@ -32,7 +32,7 @@ the real cut is ~930 lines, ~52 of it code.
       about it. `vite.config.ts` selects between adapter-netlify and
       adapter-node. Remove with `bun remove` so `bun.lock` moves too, and drop
       the ignore entry.
-- [ ] **5. Three stale root planning docs**, untouched since 2026-08-30:
+- [x] **5. Three stale root planning docs**, untouched since 2026-08-30:
       `PLAN-prototype.md` (376), `REVIEW-structure-pass.md` (419),
       `PLAN-new-pages.md` (85). `git grep` finds no reference to any of them
       from code, CLAUDE.md, CONTEXT.md, docs/ or the skills. Git history is the
@@ -41,15 +41,15 @@ the real cut is ~930 lines, ~52 of it code.
 
 ## Gates
 
-- [ ] `bun run verify` (unit + build).
+- [x] `bun run verify` (unit + build).
 - [x] `bun run lint:ratchet` and `bun run check:ratchet` — `verify` runs
       neither, and both fail when the count DROPS as well as rises. The four
       eslint errors live in `scripts/env-target.ts`,
       `src/lib/components/ui/button/button.svelte`,
       `src/lib/legacy-core/card-inheritance.js` and `karl-transcript.js` —
       none in a file this branch deletes, so the baseline should hold at 4.
-- [ ] `bunx knip` after the cuts: the "Unused files" list should drop from 3 to
-      1 and "Unused exports" from 58 to 49.
+- [x] `bunx knip` after the cuts: the "Unused files" list dropped from 3 to
+      1 and "Unused exports" from 58 to 49. Confirmed on `7e0eeb6`.
 
 ## Rejected, with the evidence
 
