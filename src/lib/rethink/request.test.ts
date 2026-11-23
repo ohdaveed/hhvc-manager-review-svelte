@@ -65,7 +65,7 @@ const unchangedResponseSections = page.sections.map(withoutFieldKey);
 const envelope = (sections: unknown[], resultExtra: object = {}, extra: object = {}) => ({
 	task: 'content',
 	provider: 'gemini',
-	model: 'gemini-pro-latest',
+	model: 'gemini-3.1-flash-lite',
 	attempts: 1,
 	valid: true,
 	issues: [],
@@ -187,7 +187,7 @@ describe('requestRethink', () => {
 	it('carries the model and disclosure through for the record', async () => {
 		requestGeneration.mockResolvedValue(envelope(unchangedResponseSections));
 		const result = await requestRethink({ page, pageId: page.id, sectionKey: 'what-we-do' });
-		expect(result.model).toBe('gemini-pro-latest');
+		expect(result.model).toBe('gemini-3.1-flash-lite');
 		expect(result.disclosure).toBe('Drafted with generative AI.');
 	});
 
@@ -355,7 +355,7 @@ describe('requestRethink', () => {
 			sectionKey: 'what-we-do'
 		});
 
-		expect(result.model).toBe('gemini-pro-latest');
+		expect(result.model).toBe('gemini-3.1-flash-lite');
 	});
 
 	describe('single provider (Gemini)', () => {
