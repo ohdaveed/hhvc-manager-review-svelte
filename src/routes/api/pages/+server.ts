@@ -65,10 +65,10 @@ async function readJsonObject(request: Request): Promise<Record<string, unknown>
 	} catch {
 		throw error(400, 'Invalid JSON body');
 	}
-	if (typeof payload !== 'object' || payload === null || Array.isArray(payload)) {
+	if (!isPlainObject(payload)) {
 		throw error(400, 'Body must be a JSON object');
 	}
-	return payload as Record<string, unknown>;
+	return payload;
 }
 
 /** The reviewer's own words, cut at a word boundary so it fits a queue row. */

@@ -1,9 +1,10 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const getUser = vi.fn();
 const inserts: { table: string; row: Record<string, unknown> }[] = [];
-const deletes: { table: string; id: unknown }[] = [];
-const updates: { table: string; patch: Record<string, unknown>; id: unknown }[] = [];
+const deletes: { table: string; col: string; id: unknown }[] = [];
+const orders: { table: string; col: string; opts: unknown }[] = [];
+const updates: { table: string; patch: Record<string, unknown>; col: string; id: unknown }[] = [];
 
 let reviewRows: { id: string }[] = [];
 let failInsertOn: string | null = null;
@@ -11,22 +12,27 @@ let updateRows: { id: string }[] = [];
 
 function from(table: string) {
 	return {
-		select: () => ({ order: () => ({ limit: async () => ({ data: reviewRows, error: null }) }) }),
+		select: () => ({
+			order: (col: string, opts: unknown) => {
+				orders.push({ table, col, opts });
+				return { limit: async () => ({ data: reviewRows, error: null }) };
+			}
+		}),
 		insert: async (row: Record<string, unknown>) => {
 			if (table === failInsertOn) return { error: new Error('db down at 10.0.0.5') };
 			inserts.push({ table, row });
 			return { error: null };
 		},
 		delete: () => ({
-			eq: async (_col: string, id: unknown) => {
-				deletes.push({ table, id });
+			eq: async (col: string, id: unknown) => {
+				deletes.push({ table, col, id });
 				return { error: null };
 			}
 		}),
 		update: (patch: Record<string, unknown>) => ({
-			eq: (_col: string, id: unknown) => ({
+			eq: (col: string, id: unknown) => ({
 				select: async () => {
-					updates.push({ table, patch, id });
+					updates.push({ table, patch, col, id });
 					return { data: updateRows, error: null };
 				}
 			})
@@ -61,10 +67,15 @@ beforeEach(() => {
 	inserts.length = 0;
 	deletes.length = 0;
 	updates.length = 0;
+	orders.length = 0;
 	reviewRows = [{ id: 'review-1' }];
 	failInsertOn = null;
 	updateRows = [{ id: DRAFT_ID }];
 	privateEnv.SUPABASE_SERVICE_ROLE_KEY = 'k';
+});
+
+afterEach(() => {
+	vi.restoreAllMocks();
 });
 
 describe('POST /api/pages', () => {
@@ -141,6 +152,11 @@ describe('POST /api/pages', () => {
 		for (const w of title.slice(0, -1).split(' ')) expect(words.has(w)).toBe(true);
 	});
 
+	it('joins the newest review: looks it up ordered by created_at descending', async () => {
+		await POST(event('POST', { description: 'a page' }));
+		expect(orders).toEqual([{ table: 'reviews', col: 'created_at', opts: { ascending: false } }]);
+	});
+
 	it('fails with a clear status when there is no review', async () => {
 		reviewRows = [];
 		await expect(POST(event('POST', { description: 'a page' }))).rejects.toMatchObject({
@@ -157,7 +173,7 @@ describe('POST /api/pages', () => {
 			body: { message: expect.not.stringMatching(/10\.0\.0\.5/) }
 		});
 		const draft = inserts.find((i) => i.table === 'draft_pages')!.row;
-		expect(deletes).toEqual([{ table: 'draft_pages', id: draft.id }]);
+		expect(deletes).toEqual([{ table: 'draft_pages', col: 'id', id: draft.id }]);
 	});
 });
 
@@ -173,6 +189,7 @@ describe('PATCH /api/pages', () => {
 		const res = await PATCH(event('PATCH', { id: DRAFT_ID, failed: true }));
 		expect(await res.json()).toEqual({ ok: true });
 		expect(updates).toHaveLength(1);
+		expect(updates[0]).toMatchObject({ table: 'draft_pages', col: 'id', id: DRAFT_ID });
 		expect(updates[0].patch.state).toBe('failed');
 		expect(typeof updates[0].patch.updated_at).toBe('string');
 		expect(updates[0].patch).not.toHaveProperty('content');
