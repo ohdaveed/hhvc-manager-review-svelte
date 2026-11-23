@@ -19,7 +19,7 @@ export const NAME = 'gemini';
  * fastest (7s) but emptied required callouts. The Railway backend's default,
  * gemini-pro-latest, is slower than any of them. Re-measure before changing.
  */
-export const DEFAULT_MODEL = 'gemini-3.1-flash-lite';
+const DEFAULT_MODEL = 'gemini-3.1-flash-lite';
 
 /**
  * Thinking tokens count against `maxOutputTokens` and dominate latency: at the
@@ -81,11 +81,11 @@ export function isConfigured(): boolean {
 	return Boolean(env.GEMINI_API_KEY);
 }
 
-export function getModel(): string {
+function getModel(): string {
 	return env.GEMINI_MODEL || DEFAULT_MODEL;
 }
 
-export function normalizeUsage(usage: Record<string, unknown> | undefined) {
+function normalizeUsage(usage: Record<string, unknown> | undefined) {
 	const input = Number(usage?.promptTokenCount) || 0;
 	const output = Number(usage?.candidatesTokenCount) || 0;
 	const total = Number(usage?.totalTokenCount) || input + output;

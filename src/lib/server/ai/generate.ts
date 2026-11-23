@@ -19,7 +19,7 @@ import { ProviderTimeoutError } from './vendor/errors.js';
  * One retry, not a loop: a second attempt with the failures named fixes most
  * mechanical violations, and a third doubles the worst-case latency for little.
  */
-export const MAX_ATTEMPTS = 2;
+const MAX_ATTEMPTS = 2;
 
 /**
  * Netlify kills a synchronous function at 60 seconds, not configurable
@@ -43,14 +43,14 @@ const MIN_RETRY_BUDGET_MS = 15_000;
  * the HHVC standards manual §1.11 bars an automated agent from approving a
  * page. Rides along with every result so no draft is shown without it.
  */
-export const DISCLOSURE =
+const DISCLOSURE =
 	'AI-assisted draft. Not reviewed, not approved, and not publishable as-is. ' +
 	'Fact-check every claim against HHVC source documents before use.';
 
 type Usage = Record<string, unknown>;
 
 /** Sum numeric usage counters across attempts; a retried request really cost two calls. */
-export function addUsage(total: Usage, next: Usage | undefined): Usage {
+function addUsage(total: Usage, next: Usage | undefined): Usage {
 	if (!next || typeof next !== 'object') return total;
 	for (const [key, value] of Object.entries(next)) {
 		if (typeof value === 'number')

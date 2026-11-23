@@ -22,7 +22,7 @@
 		"src/lib/components/ui/**"
 	],
 
-	"ignoreDependencies": ["@sveltejs/adapter-auto", "@testing-library/jest-dom"],
+	"ignoreDependencies": ["@testing-library/jest-dom"],
 
 	// Windows-interop binaries used only by the `dev:op` script.
 	"ignoreBinaries": ["op", "wsl.exe"]
