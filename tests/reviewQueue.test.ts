@@ -48,6 +48,7 @@ vi.mock('$app/stores', () => ({
 }));
 
 const { pagesStore, editsStore } = await import('../src/lib/stores/reviewState.js');
+const { draftsStore } = await import('../src/lib/stores/draftPages.js');
 
 // Typed rather than left as `status: string`: the widened parameter was the
 // single cause of 12 of the 23 svelte-check errors, and it also meant a typo in
@@ -191,6 +192,51 @@ describe('firstQueuePath', () => {
 
 	it('orders the rendered groups by the same constant', () => {
 		expect([...QUEUE_STATUS_ORDER]).toEqual(['needs-review', 'approved', 'revise', 'blocked']);
+	});
+});
+
+describe('ReviewQueue drafts', () => {
+	beforeEach(() => {
+		currentSlug = 'topic-x--about';
+		editsStore.set([]);
+		pageStore.pages = [];
+		draftsStore.set([]);
+		pagesStore.set([]);
+	});
+
+	const draftRow = (id: string): ReviewPage => ({
+		id: `id-${id}`,
+		review_id: 'r1',
+		path: `draft:${id}`,
+		status: 'needs-review',
+		manager_notes: null,
+		page_checks: null
+	});
+
+	it('links a draft to /review/draft/<id> and badges it', () => {
+		pagesStore.set([draftRow('9f1c')]);
+		draftsStore.set([{ id: '9f1c', path: 'draft:9f1c', title: 'Rat bait stations' } as never]);
+		render(ReviewQueue);
+		const link = screen.getByRole('link', { name: /Rat bait stations/ });
+		expect(link.getAttribute('href')).toBe('/review/draft/9f1c');
+		expect(screen.getByText('AI draft')).toBeTruthy();
+	});
+
+	it("shows the reviewer's words, not the raw path, for a draft with no store page", () => {
+		pagesStore.set([draftRow('9f1c')]);
+		draftsStore.set([{ id: '9f1c', path: 'draft:9f1c', title: 'Words I typed' } as never]);
+		render(ReviewQueue);
+		expect(screen.queryByText('draft:9f1c')).toBeNull();
+		expect(screen.getByText('Words I typed')).toBeTruthy();
+	});
+
+	it('prefers the model title once the draft is ready and in the page store', () => {
+		pagesStore.set([draftRow('9f1c')]);
+		pageStore.pages = [{ id: 'draft:9f1c', title: 'Model title', type: 'topic', sections: [] }];
+		draftsStore.set([{ id: '9f1c', path: 'draft:9f1c', title: 'Words I typed' } as never]);
+		render(ReviewQueue);
+		expect(screen.getByText('Model title')).toBeTruthy();
+		expect(screen.queryByText('Words I typed')).toBeNull();
 	});
 });
 

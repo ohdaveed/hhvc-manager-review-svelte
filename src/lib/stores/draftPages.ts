@@ -65,6 +65,45 @@ function replaceDraft(next: DraftPage) {
 }
 
 /**
+ * The half `createDraft` and `retryDraft` share: call the model for an
+ * existing `drafting` row, PATCH that same row with the outcome, and publish it.
+ */
+async function generateAndRecord(drafting: DraftPage): Promise<DraftPage> {
+	let out: Awaited<ReturnType<typeof requestGeneration>> | null = null;
+	try {
+		out = await requestGeneration({ task: 'content', prompt: drafting.description });
+	} catch (err) {
+		console.error('Draft generation failed:', err);
+	}
+
+	let outcome: DraftPage;
+	let patch: Record<string, unknown>;
+	if (out) {
+		const valid = out.valid === true;
+		const issues: string[] = Array.isArray(out.issues) ? out.issues : [];
+		const model: string | null = typeof out.model === 'string' ? out.model : null;
+		patch = { id: drafting.id, content: out.result, valid, issues, ...(model && { model }) };
+		outcome = {
+			...drafting,
+			state: 'ready',
+			content: out.result,
+			valid,
+			issues,
+			model,
+			updated_at: new Date().toISOString()
+		};
+	} else {
+		patch = { id: drafting.id, failed: true };
+		outcome = { ...drafting, state: 'failed', updated_at: new Date().toISOString() };
+	}
+
+	await authedFetch('PATCH', patch);
+	replaceDraft(outcome);
+	pageStore.mergeDraftPages([outcome]);
+	return outcome;
+}
+
+/**
  * Writes the row first, then calls the model, then records the outcome.
  *
  * The row-first order is required: Netlify kills a function at 60s, and the
@@ -103,36 +142,26 @@ export async function createDraft(description: string): Promise<DraftPage> {
 	};
 	draftsStore.update((all) => [...all, drafting]);
 
-	let out: Awaited<ReturnType<typeof requestGeneration>> | null = null;
-	try {
-		out = await requestGeneration({ task: 'content', prompt: description });
-	} catch (err) {
-		console.error('Draft generation failed:', err);
-	}
+	return generateAndRecord(drafting);
+}
 
-	let outcome: DraftPage;
-	let patch: Record<string, unknown>;
-	if (out) {
-		const valid = out.valid === true;
-		const issues: string[] = Array.isArray(out.issues) ? out.issues : [];
-		const model: string | null = typeof out.model === 'string' ? out.model : null;
-		patch = { id: created.id, content: out.result, valid, issues, ...(model && { model }) };
-		outcome = {
-			...drafting,
-			state: 'ready',
-			content: out.result,
-			valid,
-			issues,
-			model,
-			updated_at: new Date().toISOString()
-		};
-	} else {
-		patch = { id: created.id, failed: true };
-		outcome = { ...drafting, state: 'failed', updated_at: new Date().toISOString() };
-	}
-
-	await authedFetch('PATCH', patch);
-	replaceDraft(outcome);
-	pageStore.mergeDraftPages([outcome]);
-	return outcome;
+/**
+ * Re-runs generation for a stale or failed draft against its EXISTING row.
+ *
+ * Not `createDraft(draft.description)`: that POSTs, minting a new id, path and
+ * queue row beside the one being retried. `description` is the reviewer's
+ * verbatim text and is never rewritten, so it is still there to retry from.
+ */
+export async function retryDraft(draft: DraftPage): Promise<DraftPage> {
+	const drafting: DraftPage = {
+		...draft,
+		state: 'drafting',
+		content: null,
+		valid: null,
+		issues: null,
+		model: null,
+		updated_at: new Date().toISOString()
+	};
+	replaceDraft(drafting);
+	return generateAndRecord(drafting);
 }

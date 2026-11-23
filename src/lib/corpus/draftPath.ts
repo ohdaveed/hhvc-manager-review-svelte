@@ -44,7 +44,16 @@ export function isDraftPath(path: string): boolean {
 	return draftIdFrom(path) !== undefined;
 }
 
-export function reviewHrefFor(path: string): string {
+export function reviewHrefFor(path: string): `/review/${string}` {
 	const id = draftIdFrom(path);
 	return id === undefined ? `/review/${path}` : `/review/draft/${id}`;
+}
+
+/**
+ * The `pages.path` a route's params name: `[slug]` carries one directly and
+ * `draft/[id]` carries the bare id of a draft. The review layout and the queue
+ * both highlight and scope by this value, so they must agree on it.
+ */
+export function routePathFor(params: { slug?: string; id?: string }): string | undefined {
+	return params.id === undefined ? params.slug : draftPathFor(params.id);
 }

@@ -20,6 +20,7 @@ import { deriveFieldKey } from '../src/lib/corpus/fieldKey.js';
 import { pageStore, toStorePage } from '../src/lib/stores/pageData.svelte.js';
 import {
 	createDraft,
+	retryDraft,
 	draftsStore,
 	isStaleDraft,
 	type DraftPage
@@ -181,5 +182,49 @@ describe('isStaleDraft', () => {
 	it('does not treat a fresh or a settled row as stale', () => {
 		expect(isStaleDraft({ state: 'drafting', updated_at: iso(Date.now() - 10_000) })).toBe(false);
 		expect(isStaleDraft({ state: 'ready', updated_at: iso(0) })).toBe(false);
+	});
+});
+
+describe('retryDraft', () => {
+	it('re-generates and PATCHes the existing row without a POST or a new row', async () => {
+		const methods: string[] = [];
+		const bodies: Record<string, unknown>[] = [];
+		vi.stubGlobal(
+			'fetch',
+			vi.fn(async (_url: string, init: RequestInit) => {
+				methods.push(init.method!);
+				bodies.push(JSON.parse(init.body as string));
+				return new Response(JSON.stringify({ ok: true }), { status: 200 });
+			})
+		);
+		const failed = readyDraft({ state: 'failed', content: null, valid: null, issues: null });
+		draftsStore.set([failed]);
+		requestGeneration.mockResolvedValue({ valid: true, issues: [], result: content });
+
+		const out = await retryDraft(failed);
+
+		expect(methods).toEqual(['PATCH']);
+		expect(bodies[0]).toMatchObject({ id: 'abc' });
+		expect(requestGeneration).toHaveBeenCalledWith({ task: 'content', prompt: 'd' });
+		expect(get(draftsStore)).toHaveLength(1);
+		expect(get(draftsStore)[0]).toMatchObject({ id: 'abc', state: 'ready' });
+		expect(out.state).toBe('ready');
+		expect(pageStore.pages.some((p) => p.id === 'draft:abc')).toBe(true);
+	});
+
+	it('shows the row as drafting while the retry runs', async () => {
+		vi.stubGlobal(
+			'fetch',
+			vi.fn(async () => new Response('{}', { status: 200 }))
+		);
+		const failed = readyDraft({ state: 'failed', content: null });
+		draftsStore.set([failed]);
+		let seen: DraftPage | undefined;
+		requestGeneration.mockImplementation(async () => {
+			seen = get(draftsStore)[0];
+			return { valid: true, issues: [], result: content };
+		});
+		await retryDraft(failed);
+		expect(seen?.state).toBe('drafting');
 	});
 });
