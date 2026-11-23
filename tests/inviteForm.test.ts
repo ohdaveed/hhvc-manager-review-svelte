@@ -23,18 +23,25 @@ const Login = (await import('../src/routes/login/+page.svelte')).default;
  * every send, so the token is the thing worth pinning.
  */
 describe('invite form on /login', () => {
+	const ACTION_LINK = 'https://example.test/verify?token=abc';
+
 	let fetchMock: ReturnType<typeof vi.fn>;
 
 	beforeEach(() => {
 		getSession.mockReset();
 		getSession.mockResolvedValue({ data: { session: { access_token: 'tok' } } });
 
-		fetchMock = vi.fn(async () => new Response(JSON.stringify({ email: 'new@sfgov.org' })));
+		fetchMock = vi.fn(
+			async () => new Response(JSON.stringify({ email: 'new@sfgov.org', actionLink: ACTION_LINK }))
+		);
 		vi.stubGlobal('fetch', fetchMock);
 	});
 
+	let lastContainer: HTMLElement;
+
 	async function submitInvite(address: string) {
 		const { container } = render(Login);
+		lastContainer = container;
 		const input = container.querySelector<HTMLInputElement>(
 			'#invite-email input, input#invite-email'
 		);
@@ -53,6 +60,29 @@ describe('invite form on /login', () => {
 		expect(path).toBe('/api/invite');
 		expect((init.headers as Record<string, string>).Authorization).toBe('Bearer tok');
 		expect(JSON.parse(init.body as string)).toEqual({ email: 'new@sfgov.org' });
+	});
+
+	it('shows the generated link for copying', async () => {
+		await submitInvite('new@sfgov.org');
+
+		expect(await screen.findByText(ACTION_LINK)).toBeTruthy();
+	});
+
+	/**
+	 * The link is single-use. If it renders as an anchor and the inviter clicks
+	 * it to check it works, they consume the token, get signed in AS the
+	 * invitee, and the invitee's link is dead before it is sent.
+	 */
+	it('does not render the link as a navigable anchor', async () => {
+		await submitInvite('new@sfgov.org');
+
+		expect(lastContainer.querySelector('a[href*="example.test"]')).toBeNull();
+	});
+
+	it('warns that the link signs the holder in', async () => {
+		await submitInvite('new@sfgov.org');
+
+		expect(await screen.findByText(/signs in as them|treat it like a password/i)).toBeTruthy();
 	});
 
 	it('recovers when the request itself fails', async () => {

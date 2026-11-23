@@ -94,6 +94,8 @@
 	let inviteEmail = $state('');
 	let inviting = $state(false);
 	let invitedTo = $state('');
+	let inviteLink = $state('');
+	let inviteCopied = $state(false);
 	let inviteError = $state('');
 
 	const inviteLooksValid = $derived(EMAIL_PATTERN.test(inviteEmail.trim()));
@@ -105,6 +107,8 @@
 		inviting = true;
 		inviteError = '';
 		invitedTo = '';
+		inviteLink = '';
+		inviteCopied = false;
 
 		const address = inviteEmail.trim();
 
@@ -137,14 +141,28 @@
 				return;
 			}
 
+			const body = await response.json().catch(() => ({}));
 			invitedTo = address;
+			inviteLink = body.actionLink ?? '';
 			// Cleared so a second invitation does not go to the same address by
-			// accident -- the form offers no other signal that the send completed.
+			// accident -- the form offers no other signal that it completed.
 			inviteEmail = '';
 		} catch {
 			inviteError = 'That invitation did not send. Check your connection and try again.';
 		} finally {
 			inviting = false;
+		}
+	}
+
+	async function copyInviteLink() {
+		try {
+			await navigator.clipboard.writeText(inviteLink);
+			inviteCopied = true;
+			setTimeout(() => (inviteCopied = false), 2000);
+		} catch {
+			// Clipboard access can be refused (permissions, insecure context). The
+			// link is on screen and selectable, so there is nothing to recover --
+			// saying "copy failed" over a visible link would only add noise.
 		}
 	}
 </script>
@@ -174,8 +192,25 @@
 
 				{#if invitedTo}
 					<div class="mb-6">
-						<PageAlert kind="success" title="Invitation sent">
-							Invitation sent to <strong>{invitedTo}</strong>.
+						<PageAlert kind="success" title="Send this link to {invitedTo}">
+							<p class="mb-3">
+								Anyone with this link signs in as them. It works once and then expires — treat it
+								like a password.
+							</p>
+							<!--
+								Rendered as `<code>`, never as an `<a>`. The link is single-use:
+								clicking it here would consume the token, sign YOU in as the
+								invitee, and leave them with a dead link.
+							-->
+							<code
+								class="block overflow-x-auto rounded border border-border bg-muted p-3 text-sm break-all"
+								>{inviteLink}</code
+							>
+							<div class="mt-3">
+								<SiteButton variant="secondary" onclick={copyInviteLink}>
+									{inviteCopied ? 'Copied' : 'Copy link'}
+								</SiteButton>
+							</div>
 						</PageAlert>
 					</div>
 				{/if}
