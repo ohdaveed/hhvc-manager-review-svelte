@@ -235,6 +235,94 @@ body {
 }
 
 /* ---------------------------------------------------------------------------
+   On the mockup, every edit-target indicator is drawn OUTSIDE the text.
+
+   The utility's 8px/10px padding put every editable line of the canvas 10px
+   right of and 8px below where sf.gov sets it, signed in -- and signed in is
+   how reviewers see the page. Chosen 2026-11-22 from a side-by-side against
+   live sf.gov: at rest the padding-free text lines up with the live page.
+
+   So the padding goes, and hover, selection and focus become outer shadows:
+   a 6px tint spread, then a 2px ring at 6-8px. Shadows take no layout space
+   and cannot scroll the frame sideways, which is why this does not repeat the
+   old `-mx-1` (see the utility above): that moved the BOX outward, this only
+   paints outside it. Measured: no horizontal overflow at any preset.
+
+   Scoped to #mockPage. `EditTarget` also renders in RethinkPanel, the tool's
+   own chrome, which keeps the padded inset look.
+
+   The field badge has to move with the ring. At the utility's `-top-[11px]`
+   it straddled an edge 8px higher than the text; with the padding gone it
+   sat on the first line of copy -- the text under review. It now sits fully
+   above the ring, and the host gets the room to hold it.
+   --------------------------------------------------------------------------- */
+#mockPage .edit-target {
+	padding: 0;
+}
+#mockPage .edit-target:hover {
+	box-shadow: 0 0 0 6px rgb(237 244 247 / 0.6);
+}
+#mockPage .edit-target-selected,
+#mockPage .edit-target-selected:hover {
+	box-shadow:
+		0 0 0 6px var(--color-sfds-blue-l1),
+		0 0 0 8px var(--color-sfds-action);
+}
+/* A light stop first, so the dark ring reads against any ground. A focused,
+   selected field keeps its tint under the dark ring: still obviously both. */
+#mockPage .edit-target:focus-visible {
+	box-shadow:
+		0 0 0 6px var(--color-site-surface),
+		0 0 0 8px var(--color-sfds-black);
+}
+#mockPage .edit-target-selected:focus-visible {
+	box-shadow:
+		0 0 0 6px var(--color-sfds-blue-l1),
+		0 0 0 8px var(--color-sfds-black);
+}
+#mockPage .edit-target-badge {
+	top: -30px;
+	left: -8px;
+}
+/* Doubled class: `#mockPage .page-summary p` and `.page-audience p` (1,1,1)
+   zero the margin otherwise, and the badge lands on the line above. */
+#mockPage .edit-target-host.edit-target-host {
+	margin-top: 2rem;
+}
+/* A callout's title and text are inline (they run on), so the host margin
+   above cannot open room, and on a phone the "i" glyph sits right where a
+   left-anchored badge lands. Anchored right, it clears the glyph. */
+#mockPage .callout .edit-target-badge {
+	right: -8px;
+	left: auto;
+}
+/* A selected button shows its URL beside it. Room opened on the button alone
+   left the URL level with the badge, so the whole row takes the room. */
+#mockPage .button-block .edit-target-host.edit-target-host {
+	margin-top: 0;
+}
+#mockPage .button-block:has(.edit-target-badge) {
+	padding-top: 2rem;
+}
+/* The URL always takes its own line. Beside the button, a long one wrapped
+   unpredictably: its badge covered the button, or ran off a phone frame.
+   Selected, the row gap opens to hold its badge. */
+#mockPage .button-block-url {
+	flex-basis: 100%;
+}
+#mockPage .button-block:has(.button-block-url .edit-target-badge) {
+	padding-top: 0;
+	row-gap: 2.5rem;
+}
+/* A badge is wider than a 3-column link-grid cell and spilled over the
+   neighbouring column. Capped to the cell; its leading number stays visible. */
+#mockPage .link-grid-cell .edit-target-badge {
+	max-width: calc(100% + 16px);
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/* ---------------------------------------------------------------------------
    SFDS tokens, translated to Tailwind v4.
 
    This replaces `@import '@sfgov/design-system/dist/css/sfds.css'`. That
