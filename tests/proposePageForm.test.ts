@@ -207,7 +207,7 @@ describe('ProposePageForm', () => {
 
 	it('leaves no store subscriber behind after a failed attempt or an unmount', async () => {
 		let active = 0;
-		const original = draftsStore.subscribe.bind(draftsStore);
+		const original = draftsStore.subscribe;
 		vi.spyOn(draftsStore, 'subscribe').mockImplementation((...args) => {
 			active++;
 			const off = original(...args);
