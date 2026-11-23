@@ -5,6 +5,9 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { ScrollArea } from '$lib/components/ui/scroll-area/index.js';
 	import { Separator } from '$lib/components/ui/separator/index.js';
+	import { draftsStore } from '$lib/stores/draftPages';
+	import { pageTitleFor } from '$lib/corpus/pageTitle';
+	import { reviewHrefFor, routePathFor } from '$lib/corpus/draftPath';
 	import { pageStore } from '$lib/stores/pageData.svelte';
 	import { editsStore, firstQueuePath, loadReview, pagesStore } from '$lib/stores/reviewState';
 	import { sessionStore } from '$lib/stores/session.svelte';
@@ -48,7 +51,8 @@
 	// preview-width control, which reviewers can actually use.
 
 	// Dynamically pick the page data based on slug for the workspace
-	const pageData = $derived(pageStore.pages.find((p) => p.id === $page.params.slug));
+	const currentPath = $derived(routePathFor($page.params));
+	const pageData = $derived(pageStore.pages.find((p) => p.id === currentPath));
 
 	// Built on demand rather than eagerly: it walks the page against the whole
 	// Karl panel inventory, and 28 of the 29 pages are not the one on screen.
@@ -108,13 +112,13 @@
 	// to `/review/`, and `/review` has no `+page.svelte`: the fallback for "no
 	// page to point at" was itself the 404 this link exists to avoid.
 	const firstQueueTarget = $derived(
-		firstQueuePath($pagesStore) ?? pageStore.pages[0]?.id ?? $page.params.slug
+		firstQueuePath($pagesStore) ?? pageStore.pages[0]?.id ?? currentPath
 	);
 	/** Already on it: the toolbar says so instead of offering a link to here. */
-	const atQueueStart = $derived(firstQueueTarget === $page.params.slug);
+	const atQueueStart = $derived(firstQueueTarget === currentPath);
 	/** For the link's tooltip -- the queue row's own title, not the slug. */
 	const firstQueueTitle = $derived(
-		pageStore.pages.find((pg) => pg.id === firstQueueTarget)?.title ?? ''
+		pageTitleFor(firstQueueTarget, pageStore.pages, $draftsStore, 'empty')
 	);
 
 	/**
@@ -202,10 +206,17 @@
 		let disposed = false;
 		let cleanup: (() => void) | undefined;
 
-		loadReview().then((fn) => {
-			if (disposed) fn();
-			else cleanup = fn;
-		});
+		loadReview()
+			.then((fn) => {
+				if (disposed) fn();
+				else cleanup = fn;
+			})
+			.catch((err: unknown) => {
+				// A rejection means loadReview returned no cleanup, so there is none to
+				// store and nothing believed subscribed. `warn`, not `error`: the e2e
+				// console gate fails on `console.error` only.
+				console.warn('Review workspace: could not load the review:', err);
+			});
 
 		return () => {
 			disposed = true;
@@ -415,7 +426,7 @@
 							</span>
 						{:else}
 							<a
-								href={resolve('/review/[slug]', { slug: firstQueueTarget })}
+								href={resolve(reviewHrefFor(firstQueueTarget))}
 								class="flex flex-none items-center gap-1 text-[13px] font-semibold text-sfds-action hover:underline"
 								title={firstQueueTitle
 									? `Back to the first page in the queue: ${firstQueueTitle}`
