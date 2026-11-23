@@ -1,265 +1,270 @@
-import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { pagesByKey } from '$lib/data';
+
+const env: Record<string, string | undefined> = {};
+vi.mock('$env/dynamic/private', () => ({ env }));
+vi.mock('$env/static/public', () => ({
+	SVELTE_PUBLIC_SUPABASE_URL: 'https://placeholder.supabase.co',
+	SVELTE_PUBLIC_SUPABASE_ANON_KEY: 'anon'
+}));
 
 const getUser = vi.fn();
-
 vi.mock('@supabase/supabase-js', () => ({
 	createClient: () => ({ auth: { getUser } })
 }));
 
 const { POST } = await import('./+server');
 
-/**
- * Builds a POST event and stubs the platform's global `fetch` to record the
- * upstream call the handler makes.
- *
- * The handler must use the global `fetch`, not SvelteKit's `event.fetch`
- * (see the regression test below), so that is what these tests stub. An
- * `event.fetch` mock is attached too, purely so the regression test can
- * prove the handler never reaches for it.
- */
-function buildEvent(
-	headers: Record<string, string> = {},
-	payload: unknown = { task: 'rewrite-field', fieldText: 'hello' },
-	signal?: AbortSignal
-) {
-	// Typed through the generic rather than by naming parameters the body does
-	// not use: the call sites below read `upstream.mock.calls[0]`, which needs
-	// the signature, and unused-but-declared parameters are an eslint error.
-	const upstream = vi.fn<(url: string, init?: RequestInit) => Promise<Response>>(
-		async () =>
-			new Response(JSON.stringify({ result: { rewrittenText: 'ok' } }), {
-				status: 200,
-				headers: { 'Content-Type': 'application/json' }
-			})
+const fetchMock = vi.fn();
+
+/** A Gemini `generateContent` response carrying `object` as its JSON answer. */
+function geminiReply(object: unknown, extra: object = {}) {
+	return new Response(
+		JSON.stringify({
+			candidates: [
+				{ content: { parts: [{ text: JSON.stringify(object) }] }, finishReason: 'STOP' }
+			],
+			usageMetadata: { promptTokenCount: 10, candidatesTokenCount: 5, totalTokenCount: 15 },
+			modelVersion: 'gemini-test',
+			...extra
+		}),
+		{ status: 200 }
 	);
-	vi.stubGlobal('fetch', upstream);
-
-	const eventFetch = vi.fn();
-
-	const request = new Request('http://localhost/api/ai/generate', {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/json', ...headers },
-		body: JSON.stringify(payload),
-		signal
-	});
-
-	return { event: { request, fetch: eventFetch }, upstream, eventFetch };
 }
 
+/** Calls the route; resolves with the HTTP status and body, thrown HttpErrors included. */
+async function call(body: unknown, { token = 'good' }: { token?: string | null } = {}) {
+	const request = new Request('http://localhost/api/ai/generate', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			...(token ? { Authorization: `Bearer ${token}` } : {})
+		},
+		body: typeof body === 'string' ? body : JSON.stringify(body)
+	});
+	try {
+		const res = await POST({ request } as never);
+		return { status: res.status, body: await res.json() };
+	} catch (err) {
+		const e = err as { status?: number; body?: { message?: string } };
+		if (typeof e?.status !== 'number') throw err;
+		return { status: e.status, body: e.body };
+	}
+}
+
+/** The JSON body of the Nth request sent to Gemini. */
+const sent = (n: number) => JSON.parse(fetchMock.mock.calls[n][1].body as string);
+
+beforeEach(() => {
+	env.GEMINI_API_KEY = 'test-key';
+	delete env.GEMINI_MODEL;
+	getUser.mockResolvedValue({ data: { user: { id: 'u1' } }, error: null });
+	vi.stubGlobal('fetch', fetchMock);
+});
+
+afterEach(() => {
+	fetchMock.mockReset();
+	getUser.mockReset();
+	vi.unstubAllGlobals();
+});
+
 describe('POST /api/ai/generate', () => {
-	beforeEach(() => {
-		getUser.mockReset();
+	it('401s without a bearer token, before calling the model', async () => {
+		const res = await call({ task: 'rewrite-field', fieldText: 'x' }, { token: null });
+		expect(res.status).toBe(401);
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
-	afterEach(() => {
-		vi.unstubAllGlobals();
+	it('401s when Supabase rejects the token', async () => {
+		getUser.mockResolvedValue({ data: { user: null }, error: new Error('bad jwt') });
+		const res = await call({ task: 'rewrite-field', fieldText: 'x' });
+		expect(res.status).toBe(401);
 	});
 
-	it('rejects a request with no Authorization header', async () => {
-		const { event, upstream } = buildEvent();
-
-		await expect(POST(event as never)).rejects.toMatchObject({ status: 401 });
-		expect(upstream).not.toHaveBeenCalled();
+	it('413s on an oversized body', async () => {
+		const res = await call('x'.repeat(64 * 1024 + 1));
+		expect(res.status).toBe(413);
 	});
 
-	it('rejects a bearer token that supabase does not recognise', async () => {
-		getUser.mockResolvedValue({ data: { user: null }, error: { message: 'bad jwt' } });
-		const { event, upstream } = buildEvent({ Authorization: 'Bearer not-a-real-token' });
-
-		await expect(POST(event as never)).rejects.toMatchObject({ status: 401 });
-		expect(upstream).not.toHaveBeenCalled();
+	it('400s on a schema violation and names the field', async () => {
+		const res = await call({ task: 'rewrite-field', fieldText: 'x'.repeat(8001) });
+		expect(res.status).toBe(400);
+		expect(res.body?.message).toMatch(/fieldText/);
 	});
 
-	it('forwards to the backend for an authenticated caller', async () => {
-		getUser.mockResolvedValue({ data: { user: { id: 'user-1' } }, error: null });
-		const { event, upstream } = buildEvent({ Authorization: 'Bearer good-token' });
-
-		const response = await POST(event as never);
-
-		expect(await response.json()).toEqual({ result: { rewrittenText: 'ok' } });
-		expect(upstream).toHaveBeenCalledOnce();
+	it('400s on a provider other than gemini', async () => {
+		const res = await call({ task: 'content', provider: 'claude', prompt: 'x' });
+		expect(res.status).toBe(400);
+		expect(res.body?.message).toMatch(/provider/);
 	});
 
-	it('rejects a body larger than the size cap without forwarding it', async () => {
-		getUser.mockResolvedValue({ data: { user: { id: 'user-1' } }, error: null });
-		const { event, upstream } = buildEvent(
-			{ Authorization: 'Bearer good-token' },
-			{
-				task: 'rewrite-field',
-				fieldText: 'x'.repeat(70 * 1024)
-			}
+	it('501s when no Gemini key is configured', async () => {
+		delete env.GEMINI_API_KEY;
+		const res = await call({ task: 'rewrite-field', fieldText: 'Report rats.' });
+		expect(res.status).toBe(501);
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('rewrites a field through Gemini, grounded and schema-constrained', async () => {
+		fetchMock.mockResolvedValueOnce(geminiReply({ rewrittenText: 'Report rats to 311.' }));
+
+		const res = await call({
+			task: 'rewrite-field',
+			provider: 'gemini',
+			fieldText: 'Please contact us in order to report rats.'
+		});
+
+		expect(res.status).toBe(200);
+		expect(res.body).toMatchObject({
+			task: 'rewrite-field',
+			provider: 'gemini',
+			model: 'gemini-test',
+			attempts: 1,
+			valid: true,
+			result: { rewrittenText: 'Report rats to 311.' }
+		});
+		expect(res.body.disclosure).toMatch(/AI-assisted draft/);
+		expect(res.body.groundedBy).toEqual([
+			'writing-and-style.md',
+			'content-types-and-components.md'
+		]);
+
+		const [url, init] = fetchMock.mock.calls[0];
+		expect(url).toContain('/models/gemini-pro-latest:generateContent');
+		expect(init.headers['x-goog-api-key']).toBe('test-key');
+		const body = sent(0);
+		expect(body.generationConfig.responseMimeType).toBe('application/json');
+		expect(body.generationConfig.responseJsonSchema.required).toEqual(['rewrittenText']);
+		expect(body.systemInstruction.parts[0].text).toContain(
+			'<document name="writing-and-style.md">'
 		);
-
-		await expect(POST(event as never)).rejects.toMatchObject({ status: 413 });
-		expect(upstream).not.toHaveBeenCalled();
 	});
 
-	// The two boundaries below are the BACKEND's schema, mirrored. Pinned AT the
-	// edge rather than well past it: the route allowed 20,000 for `fieldText` and
-	// nothing at all for `instruction`, and a test at 25,000 passed either way --
-	// it could not tell the two limits apart, so it never caught the drift.
-	it('rejects field text one over the cap without forwarding it', async () => {
-		getUser.mockResolvedValue({ data: { user: { id: 'user-1' } }, error: null });
-		const { event, upstream } = buildEvent(
-			{ Authorization: 'Bearer good-token' },
-			{
-				task: 'rewrite-field',
-				fieldText: 'y'.repeat(8_001)
-			}
+	it('honours GEMINI_MODEL', async () => {
+		env.GEMINI_MODEL = 'gemini-flash-latest';
+		fetchMock.mockResolvedValueOnce(geminiReply({ rewrittenText: 'Report rats.' }));
+		await call({ task: 'rewrite-field', fieldText: 'Report the rats.' });
+		expect(fetchMock.mock.calls[0][0]).toContain('/models/gemini-flash-latest:generateContent');
+	});
+
+	it('retries once with the failures named when a draft fails validation', async () => {
+		const fieldText = 'Call [311](https://sf311.org) to report rats.';
+		fetchMock
+			.mockResolvedValueOnce(geminiReply({ rewrittenText: 'Call 311 to report rats.' }))
+			.mockResolvedValueOnce(geminiReply({ rewrittenText: fieldText }));
+
+		const res = await call({ task: 'rewrite-field', fieldText });
+
+		expect(res.status).toBe(200);
+		expect(fetchMock).toHaveBeenCalledTimes(2);
+		expect(res.body).toMatchObject({ attempts: 2, valid: true, issues: [] });
+		expect(res.body.usage.totalTokens).toBe(30);
+		expect(sent(1).contents[0].parts[0].text).toContain('Call 311 to report rats.');
+	});
+
+	it('generates page content and validates it against the corpus', async () => {
+		const [, existing] = Object.entries(pagesByKey)[0];
+		fetchMock.mockResolvedValueOnce(geminiReply(existing));
+
+		const res = await call({ task: 'content', prompt: 'Tighten this page.' });
+
+		expect(res.status).toBe(200);
+		expect(res.body).toMatchObject({ task: 'content', attempts: 1, valid: true });
+		expect(sent(0).generationConfig.responseJsonSchema.type).toBe('object');
+	});
+
+	it('maps a Gemini safety block to 422, without a second model call', async () => {
+		fetchMock.mockResolvedValueOnce(
+			new Response(JSON.stringify({ promptFeedback: { blockReason: 'SAFETY' } }), { status: 200 })
 		);
-
-		await expect(POST(event as never)).rejects.toMatchObject({ status: 400 });
-		expect(upstream).not.toHaveBeenCalled();
+		const res = await call({ task: 'rewrite-field', fieldText: 'Report rats.' });
+		expect(res.status).toBe(422);
+		expect(fetchMock).toHaveBeenCalledTimes(1);
 	});
 
-	it('forwards field text exactly at the cap', async () => {
-		getUser.mockResolvedValue({ data: { user: { id: 'user-1' } }, error: null });
-		const { event, upstream } = buildEvent(
-			{ Authorization: 'Bearer good-token' },
-			{
-				task: 'rewrite-field',
-				fieldText: 'y'.repeat(8_000)
-			}
-		);
-
-		await POST(event as never);
-		expect(upstream).toHaveBeenCalledOnce();
+	it('retries a 429 once, then reports it as a 502 naming the upstream status', async () => {
+		fetchMock
+			.mockResolvedValueOnce(new Response('{}', { status: 429 }))
+			.mockResolvedValueOnce(
+				new Response(JSON.stringify({ error: { message: 'quota' } }), { status: 429 })
+			);
+		const res = await call({ task: 'rewrite-field', fieldText: 'Report rats.' });
+		expect(fetchMock).toHaveBeenCalledTimes(2);
+		expect(res.status).toBe(502);
+		expect(res.body?.message).toMatch(/429/);
 	});
 
-	it('rejects an instruction one over the cap without forwarding it', async () => {
-		getUser.mockResolvedValue({ data: { user: { id: 'user-1' } }, error: null });
-		const { event, upstream } = buildEvent(
-			{ Authorization: 'Bearer good-token' },
-			{
-				task: 'rewrite-field',
-				fieldText: 'short',
-				instruction: 'z'.repeat(2_001)
-			}
-		);
-
-		await expect(POST(event as never)).rejects.toMatchObject({ status: 400 });
-		expect(upstream).not.toHaveBeenCalled();
+	it('does not retry a non-transient provider error', async () => {
+		fetchMock.mockResolvedValueOnce(new Response('{}', { status: 400 }));
+		const res = await call({ task: 'rewrite-field', fieldText: 'Report rats.' });
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+		expect(res.status).toBe(502);
 	});
 
-	it("forwards the backend's own error message when the upstream responds with a JSON error body", async () => {
-		getUser.mockResolvedValue({ data: { user: { id: 'user-1' } }, error: null });
-		const { event } = buildEvent({ Authorization: 'Bearer good-token' });
-		vi.stubGlobal(
-			'fetch',
-			vi.fn(
-				async () =>
-					new Response(
-						JSON.stringify({
-							error: 'invalid_request_error',
-							message:
-								'You have reached your specified API usage limits. You will regain access on 2026-09-01.'
-						}),
-						{ status: 400, headers: { 'Content-Type': 'application/json' } }
-					)
+	it('rejects the compliance-audit task, whose retrieval index did not move here', async () => {
+		const [, existing] = Object.entries(pagesByKey)[0];
+		const res = await call({ task: 'compliance-audit', page: existing });
+		expect(res.status).toBe(400);
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('accepts field text exactly at the 8,000-character cap', async () => {
+		fetchMock.mockResolvedValueOnce(geminiReply({ rewrittenText: 'Short.' }));
+		const res = await call({ task: 'rewrite-field', fieldText: 'a'.repeat(8000) });
+		expect(res.status).not.toBe(400);
+		expect(fetchMock).toHaveBeenCalled();
+	});
+
+	it('rejects an instruction one over the 2,000-character cap', async () => {
+		const res = await call({
+			task: 'rewrite-field',
+			fieldText: 'Report rats.',
+			instruction: 'x'.repeat(2001)
+		});
+		expect(res.status).toBe(400);
+		expect(res.body?.message).toMatch(/instruction/);
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('does not leak a network failure reason to the caller', async () => {
+		const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
+		fetchMock.mockRejectedValue(new Error('connect ECONNREFUSED 10.0.0.4:8080'));
+		const res = await call({ task: 'rewrite-field', fieldText: 'Report rats.' });
+		expect(res).toEqual({ status: 500, body: { message: 'Internal Server Error' } });
+		consoleError.mockRestore();
+	});
+
+	it('reports a truncated answer as a 502 with its explanation', async () => {
+		fetchMock.mockResolvedValueOnce(
+			new Response(
+				JSON.stringify({ candidates: [{ content: { parts: [] }, finishReason: 'MAX_TOKENS' }] }),
+				{ status: 200 }
 			)
 		);
-
-		await expect(POST(event as never)).rejects.toMatchObject({
-			status: 400,
-			body: {
-				message:
-					'You have reached your specified API usage limits. You will regain access on 2026-09-01.'
-			}
-		});
+		const res = await call({ task: 'rewrite-field', fieldText: 'Report rats.' });
+		expect(res.status).toBe(502);
+		expect(res.body?.message).toMatch(/output limit/);
 	});
 
-	it('falls back to the generic message when the upstream error body has none', async () => {
-		getUser.mockResolvedValue({ data: { user: { id: 'user-1' } }, error: null });
-		const { event } = buildEvent({ Authorization: 'Bearer good-token' });
-		vi.stubGlobal(
-			'fetch',
-			vi.fn(
-				async () =>
-					new Response('{}', { status: 503, headers: { 'Content-Type': 'application/json' } })
-			)
-		);
-
-		await expect(POST(event as never)).rejects.toMatchObject({
-			status: 503,
-			body: { message: 'Error communicating with the backend API' }
-		});
+	it('sends no browser Origin to Gemini', async () => {
+		fetchMock.mockResolvedValueOnce(geminiReply({ rewrittenText: 'Report rats.' }));
+		await call({ task: 'rewrite-field', fieldText: 'Report the rats.' });
+		expect(new Headers(fetchMock.mock.calls[0][1].headers).has('origin')).toBe(false);
 	});
 
-	it('does not leak the upstream failure reason to the caller', async () => {
-		getUser.mockResolvedValue({ data: { user: { id: 'user-1' } }, error: null });
-		const { event } = buildEvent({ Authorization: 'Bearer good-token' });
-		vi.stubGlobal(
-			'fetch',
-			vi.fn(async () => {
-				throw new Error('connect ECONNREFUSED 10.0.0.4:8080');
-			})
-		);
-
-		await expect(POST(event as never)).rejects.toMatchObject({
-			status: 500,
-			body: { message: 'Internal Server Error' }
-		});
-	});
-
-	// Regression guard: the upstream hop is server-to-server. It must go
-	// through the platform's global `fetch`, not SvelteKit's `event.fetch` --
-	// `event.fetch` forwards the inbound browser request's headers (including
-	// `Origin`) to the outgoing call, and the Railway backend's origin
-	// allow-list answers a forwarded browser origin with 403. A request with
-	// no `Origin` at all is explicitly permitted by that allow-list.
-	it('calls the global fetch, not event.fetch -- a future revert to event.fetch is what would forward the browser Origin', async () => {
-		getUser.mockResolvedValue({ data: { user: { id: 'user-1' } }, error: null });
-		const { event, upstream, eventFetch } = buildEvent({
-			Authorization: 'Bearer good-token',
-			Origin: 'http://localhost:5173'
-		});
-
-		await POST(event as never);
-
-		expect(upstream).toHaveBeenCalledOnce();
-		// Load-bearing: this is what actually proves no Origin was forwarded,
-		// and what a revert to event.fetch would trip.
-		expect(eventFetch).not.toHaveBeenCalled();
-
-		// NOT load-bearing on its own: the handler always builds an explicit
-		// headers literal (Content-Type, Authorization only), so this passes
-		// under any such implementation regardless of eventFetch. SvelteKit's
-		// Origin injection happens on the Request object event.fetch builds
-		// internally, not on the init.headers a caller passes -- this
-		// assertion documents that shape, it doesn't independently prove
-		// Origin-forwarding didn't happen.
-		const [, init] = upstream.mock.calls[0];
-		expect(new Headers(init?.headers).has('origin')).toBe(false);
-	});
-
-	it("forwards the caller's abort signal to the backend so a Cancel can stop generation", async () => {
-		// The Railway backend budgets generation on `req.signal`
-		// (`AbortSignal.any([req.signal, timeout])`), so a Cancel that stops at
-		// this proxy leaves the provider running and spending quota.
-		getUser.mockResolvedValue({ data: { user: { id: 'user-1' } }, error: null });
-		const controller = new AbortController();
-		const { event, upstream } = buildEvent(
-			{ Authorization: 'Bearer good-token' },
-			{ task: 'rewrite-field', fieldText: 'hello' },
-			controller.signal
-		);
-
-		await POST(event as never);
-
-		const [, init] = upstream.mock.calls[0];
-		expect(init?.signal).toBeInstanceOf(AbortSignal);
-		expect(init?.signal?.aborted).toBe(false);
+	it("passes the caller's abort signal to Gemini, so a Cancel stops generation", async () => {
+		fetchMock.mockResolvedValueOnce(geminiReply({ rewrittenText: 'Report rats.' }));
+		await call({ task: 'rewrite-field', fieldText: 'Report the rats.' });
+		const { signal } = fetchMock.mock.calls[0][1];
+		expect(signal).toBeInstanceOf(AbortSignal);
+		expect(signal.aborted).toBe(false);
 	});
 
 	it('answers a cancelled request with 499, not the catch-all 500', async () => {
-		// An AbortError carries no `status`, so it used to fall through to the
-		// generic 500 -- logging every Cancel as an internal error.
-		getUser.mockResolvedValue({ data: { user: { id: 'user-1' } }, error: null });
-		const { event, upstream } = buildEvent({ Authorization: 'Bearer good-token' });
-		upstream.mockRejectedValue(
+		fetchMock.mockRejectedValue(
 			Object.assign(new Error('The operation was aborted.'), { name: 'AbortError' })
 		);
-
-		await expect(POST(event as never)).rejects.toMatchObject({ status: 499 });
+		const res = await call({ task: 'rewrite-field', fieldText: 'Report rats.' });
+		expect(res.status).toBe(499);
 	});
 });

@@ -1,11 +1,14 @@
-import { env } from '$env/dynamic/private';
 import { SVELTE_PUBLIC_SUPABASE_ANON_KEY, SVELTE_PUBLIC_SUPABASE_URL } from '$env/static/public';
 import { error, json } from '@sveltejs/kit';
 import { createClient } from '@supabase/supabase-js';
+import { isConfigured, ModelOutputError, ProviderHttpError } from '$lib/server/ai/gemini';
+import { generateContent, generateRewrite } from '$lib/server/ai/generate';
+import { ProviderTimeoutError, RefusalError } from '$lib/server/ai/vendor/errors.js';
+import { generateRequestSchema } from '$lib/server/ai/vendor/schemas.js';
 
 /**
  * Verifies the caller's Supabase session. Without this the route is an open
- * relay: it attaches RAILWAY_API_TOKEN to whatever it is handed.
+ * relay: it spends GEMINI_API_KEY on whatever it is handed.
  */
 async function requireUser(request: Request) {
 	const header = request.headers.get('Authorization');
@@ -25,132 +28,83 @@ async function requireUser(request: Request) {
 }
 
 /**
- * Caps on what a single caller can push through to the metered AI backend.
- *
- * The two character limits are the BACKEND's, mirrored here rather than chosen:
- * `build_scripts/ai/schemas.js` in HHVC_manager_review_current_tool_package
- * declares `fieldText: z.string().min(1).max(8000)` and
- * `instruction: z.string().max(2000).optional()`. This route used to allow
- * 20,000 and no instruction check at all, so it forwarded payloads the backend
- * answers with a 400 "Invalid request" -- which reaches the reviewer as a bare
- * `API Error`. Rejecting them here costs a round trip and names the field.
- *
- * `MAX_BODY_BYTES` is this route's own: it bounds the request before parsing,
- * which is the only cap that can apply to a body it has not read yet.
+ * Bounds the request before parsing -- the only cap that can apply to a body
+ * not yet read. Field-level limits (8,000-char `fieldText`/`prompt`, 2,000-char
+ * `instruction`, the grounding page's size and depth) are the vendored
+ * `generateRequestSchema`'s, the same ones the Railway backend enforced.
  */
 const MAX_BODY_BYTES = 64 * 1024;
-const MAX_FIELD_TEXT_CHARS = 8_000;
-const MAX_INSTRUCTION_CHARS = 2_000;
 
-/**
- * Pulls a human-readable message out of the backend's error body, when it has
- * one. Without this, every upstream failure reached the reviewer as the same
- * generic sentence -- including the exact provider-usage-cap text that made
- * this worth fixing ("You have reached your specified API usage limits...").
- * The shape isn't pinned to one schema on purpose: an Anthropic-style
- * envelope nests it under `error.message`, other backends may just say
- * `message`. Falls back to the previous generic text when neither is present
- * or the body isn't JSON at all.
- */
-function extractBackendMessage(errorData: unknown): string {
-	const GENERIC = 'Error communicating with the backend API';
-	if (!errorData || typeof errorData !== 'object') return GENERIC;
-	const data = errorData as Record<string, unknown>;
-	if (typeof data.message === 'string' && data.message) return data.message;
-	if (data.error && typeof data.error === 'object') {
-		const nested = (data.error as Record<string, unknown>).message;
-		if (typeof nested === 'string' && nested) return nested;
-	}
-	if (typeof data.error === 'string' && data.error) return data.error;
-	return GENERIC;
+/** Names the first schema issue, so the reviewer sees which field, not "Invalid request". */
+function describeIssue(issue: { path: (string | number)[]; message: string }): string {
+	const field = issue.path.join('.') || 'request';
+	return `Invalid ${field}: ${issue.message}`;
 }
 
-// `fetch` is deliberately NOT destructured from the event here. SvelteKit's
-// `event.fetch` forwards the inbound browser request's headers -- including
-// `Origin` -- onto requests it makes, which is what you want for same-origin
-// calls made on a visitor's behalf. This call is different: it is a
-// server-to-server hop to the Railway backend, made with a server-held
-// token the browser never sees. The backend's origin allow-list answers a
-// forwarded browser `Origin` with 403 `{"error":"Origin is not allowed."}`,
-// but explicitly permits a request with no `Origin` header at all (its own
-// docs: "requests without Origin are non-browser or same-origin clients").
-// Using the platform's global `fetch` instead of `event.fetch` sends no
-// `Origin`, so the backend accepts it. Do not "tidy" this back to
-// `{ request, fetch }` -- that reintroduces the 403.
+/**
+ * Maps a generation failure to the status the Railway backend used, because
+ * the Rethink panel and FieldsPanel already key their copy on these:
+ * refusal 422, timeout 504, cancel 499, provider HTTP error or unusable
+ * model output 502.
+ */
+function generationError(err: unknown, signal: AbortSignal): never {
+	if (err instanceof RefusalError) throw error(422, (err as Error).message);
+	if (err instanceof ProviderTimeoutError) throw error(504, 'Generation timed out.');
+	const name = (err as { name?: string } | null)?.name;
+	if (signal.aborted || name === 'AbortError') throw error(499, 'Request cancelled');
+	if (name === 'TimeoutError') throw error(504, 'Generation timed out.');
+	if (err instanceof ProviderHttpError) {
+		console.error(`Gemini returned ${err.status}:`, err.message);
+		throw error(502, `The model provider returned ${err.status}.`);
+	}
+	if (err instanceof ModelOutputError) throw error(502, err.message);
+	// Anything else -- a network failure, a bug -- can carry an internal
+	// address or detail, so it is logged here and never echoed to the caller.
+	console.error('AI generate error:', err);
+	throw error(500, 'Internal Server Error');
+}
+
 export async function POST({ request }) {
-	// Outside the try: a thrown HttpError is not an Error instance, so the
-	// catch below would otherwise flatten this 401 into a 500.
+	// Outside any try: a thrown HttpError is not an Error instance, so a
+	// catch-all would otherwise flatten this 401 into a 500.
 	await requireUser(request);
 
-	try {
-		const raw = await request.text();
-		if (new TextEncoder().encode(raw).length > MAX_BODY_BYTES) {
-			throw error(413, 'Request body too large');
-		}
-
-		let payload: Record<string, unknown>;
-		try {
-			payload = JSON.parse(raw);
-		} catch {
-			throw error(400, 'Invalid JSON body');
-		}
-
-		if (typeof payload.fieldText === 'string' && payload.fieldText.length > MAX_FIELD_TEXT_CHARS) {
-			throw error(400, 'Field text too long');
-		}
-
-		if (
-			typeof payload.instruction === 'string' &&
-			payload.instruction.length > MAX_INSTRUCTION_CHARS
-		) {
-			throw error(400, 'Instruction too long');
-		}
-
-		const apiUrl = env.RAILWAY_API_URL || 'https://web-production-9bb3b.up.railway.app';
-		const apiToken = env.RAILWAY_API_TOKEN;
-
-		// Forward the request to the Railway backend.
-		//
-		// `signal` carries the caller's cancellation across the hop. Without
-		// it a Cancel aborted the browser-to-proxy leg only and the backend
-		// generated on regardless -- and that backend budgets its own work on
-		// `req.signal` (`AbortSignal.any([req.signal, timeout])`), so the
-		// abort has to actually arrive for any of that to engage. Whether the
-		// hosting platform propagates a client disconnect into `request.signal`
-		// is its business, not this handler's; forwarding is what this side owes.
-		const railwayResponse = await fetch(`${apiUrl}/api/ai/generate`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				...(apiToken ? { Authorization: `Bearer ${apiToken}` } : {})
-			},
-			body: JSON.stringify(payload),
-			signal: request.signal
-		});
-
-		if (!railwayResponse.ok) {
-			const errorData: unknown = await railwayResponse.json().catch(() => ({}));
-			console.error('Railway API error:', errorData);
-			throw error(railwayResponse.status, extractBackendMessage(errorData));
-		}
-
-		// Return the JSON response directly to the client
-		const data = await railwayResponse.json();
-		return json(data);
-	} catch (err) {
-		// Rethrow deliberate HTTP errors so upstream status codes survive.
-		if (typeof err === 'object' && err !== null && 'status' in err) throw err;
-
-		// A cancelled request is not a fault. An AbortError carries no `status`,
-		// so without this it fell straight through to the 500 below: every
-		// Cancel logged as an internal error and answered with a status that
-		// says the server broke. Checked after the HttpError rethrow so it
-		// cannot shadow a real upstream status from extractBackendMessage.
-		if (typeof err === 'object' && err !== null && (err as Error).name === 'AbortError') {
-			throw error(499, 'Request cancelled');
-		}
-
-		console.error('AI generate API error:', err);
-		throw error(500, 'Internal Server Error');
+	const raw = await request.text();
+	if (new TextEncoder().encode(raw).length > MAX_BODY_BYTES) {
+		throw error(413, 'Request body too large');
 	}
+
+	let body: unknown;
+	try {
+		body = JSON.parse(raw);
+	} catch {
+		throw error(400, 'Invalid JSON body');
+	}
+
+	const parsed = generateRequestSchema.safeParse(body);
+	if (!parsed.success) throw error(400, describeIssue(parsed.error.issues[0]));
+
+	if (!isConfigured()) throw error(501, 'AI assistance is not configured on this server.');
+
+	const signal = request.signal;
+	const input = parsed.data;
+	try {
+		if (input.task === 'content') {
+			return json(await generateContent({ prompt: input.prompt, page: input.page, signal }));
+		}
+		if (input.task === 'rewrite-field') {
+			return json(
+				await generateRewrite({
+					fieldText: input.fieldText,
+					instruction: input.instruction,
+					page: input.page,
+					signal
+				})
+			);
+		}
+	} catch (err) {
+		generationError(err, signal);
+	}
+	// compliance-audit needs the backend's retrieval index, which did not move here.
+	throw error(400, `Task "${input.task}" is not supported.`);
 }

@@ -25,10 +25,9 @@ services:
       - HOST=0.0.0.0
       # `$env/dynamic/private`, read by /api/ai/generate per request, so unlike
       # the public pair above these do take effect on a plain restart. Without
-      # the token the proxy forwards to the Railway backend with no Bearer
-      # header and every AI rewrite comes back 401. RAILWAY_API_URL is optional
-      # -- the route falls back to the production backend.
-      - RAILWAY_API_TOKEN=${RAILWAY_API_TOKEN}
-      - RAILWAY_API_URL=${RAILWAY_API_URL}
+      # the key the route calls no model and every AI request answers 501.
+      # GEMINI_MODEL is optional -- it defaults to gemini-pro-latest.
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - GEMINI_MODEL=${GEMINI_MODEL}
 
     restart: unless-stopped

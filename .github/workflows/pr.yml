@@ -25,7 +25,7 @@ env:
   # scope). These are deliberately placeholders, not secrets — CI is checking
   # that the app builds, not that it can reach Supabase, and placeholders keep
   # the workflow working on fork PRs where secrets are not injected.
-  # RAILWAY_API_TOKEN is $env/dynamic/private and is not needed to build.
+  # GEMINI_API_KEY is $env/dynamic/private and is not needed to build.
   SVELTE_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
   SVELTE_PUBLIC_SUPABASE_ANON_KEY: ci-placeholder-anon-key
 

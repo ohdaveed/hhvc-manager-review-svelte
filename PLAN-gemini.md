@@ -29,15 +29,30 @@ will call Gemini itself.
   fallback is removed and it asks for Gemini directly.
 - Page keys come from this repo's `pagesByKey`, the corpus the app renders.
 
+## Notes from implementation
+
+- **Overwrote the old route test by mistake, then ported it.** `server.test.ts`
+  existed; the still-relevant cases (cap boundaries, no leaked failure reason,
+  no forwarded Origin, abort signal, Cancel -> 499) are carried over.
+- **Unusable model output is a 502 with its message; any other failure is a
+  generic 500.** Echoing `err.message` would leak a network address.
+- **`lint:ratchet` reads 8 locally, 4 in CI.** The extra 4 are in
+  `.claude/worktrees/clever-leavitt-ca3bf2`, which `main`'s `.gitignore` does
+  not exclude yet (`b629045` adds it on `feat/reviewer-invites`). With that dir
+  excluded the count is exactly 4.
+- **`lefthook.yml` typos now passes `--force-exclude`.** typos ignores
+  `extend-exclude` for explicit paths, so the existing `bun.lock`/`.tooling`
+  excludes never applied at commit time either.
+
 ## Tasks
 
 - [x] Vendor the backend modules into `src/lib/server/ai/` as ESM, plus the two style-corpus markdown files
-- [ ] `gemini.ts`: REST `generateObject` (structured JSON, timeout, abort, refusal + MAX_TOKENS handling)
-- [ ] `generate.ts`: `generateContent` / `generateRewrite` with validate-and-retry, ported from `index.js`
-- [ ] `+server.ts` calls `generate.ts`; no Railway hop; request validated by the vendored schema
-- [ ] Rethink sends `provider: 'gemini'` only; Claude fallback removed
-- [ ] Unit tests: rewrite + content happy path, retry-on-invalid, refusal → 422, missing key → 501, auth still 401
-- [ ] `bun run verify`, `check:ratchet`, `lint:ratchet` green
+- [x] `gemini.ts`: REST `generateObject` (structured JSON, timeout, abort, refusal + MAX_TOKENS handling)
+- [x] `generate.ts`: `generateContent` / `generateRewrite` with validate-and-retry, ported from `index.js`
+- [x] `+server.ts` calls `generate.ts`; no Railway hop; request validated by the vendored schema
+- [x] Rethink sends `provider: 'gemini'` only; Claude fallback removed
+- [x] Unit tests: rewrite + content happy path, retry-on-invalid, refusal → 422, missing key → 501, auth still 401
+- [x] `bun run verify`, `check:ratchet`, `lint:ratchet` green
 - [ ] Docs: CLAUDE.md AI-proxy + Deployment sections; `.env.example` if present
 - [ ] Doppler: `GEMINI_API_KEY` in `prd` (set by the user — a value only a human types), referenced from `netlify_prd`; Railway refs dropped
 - [ ] PR open, CI green; ask before merge (merge deploys production)
