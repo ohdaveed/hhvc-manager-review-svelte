@@ -74,3 +74,6 @@ coverage/
 # which catches the ones that land outside `design/` too.
 design/
 *:Zone.Identifier
+
+# Session worktrees created by Claude Code. Scratch checkouts, never content.
+.claude/worktrees/
