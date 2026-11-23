@@ -71,7 +71,7 @@ describe('landing page', () => {
 
 		expect(screen.getByRole('heading', { name: /how it works/i })).toBeTruthy();
 		expect(screen.getAllByRole('listitem').length).toBeGreaterThanOrEqual(4);
-		expect(screen.getByRole('link', { name: /sign in/i }).getAttribute('href')).toBe('/login');
+		expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/login');
 		expect(screen.queryByText(/\d+ of \d+ decided/i)).toBeNull();
 		expect(screen.queryByRole('link', { name: /continue/i })).toBeNull();
 		expect(loadReview).not.toHaveBeenCalled();

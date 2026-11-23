@@ -65,12 +65,20 @@ afterEach(() => {
 });
 
 describe('ProposePageForm', () => {
-	it('explains that sign-in is needed, offers no form and no second sign-in link, when signed out', () => {
+	it('offers no form but an actionable, distinctly named sign-in link when signed out', () => {
 		session.signedIn = false;
 		render(ProposePageForm);
 		expect(screen.queryByRole('textbox')).toBeNull();
-		expect(screen.queryByRole('link', { name: /sign in/i })).toBeNull();
-		expect(screen.getByText(/needs you to sign in/i)).toBeTruthy();
+		expect(
+			screen.getByRole('link', { name: 'Sign in to propose a page' }).getAttribute('href')
+		).toBe('/login');
+	});
+
+	it('shows a neutral line while the session is still resolving', () => {
+		session.signedIn = undefined;
+		render(ProposePageForm);
+		expect(screen.queryByRole('textbox')).toBeNull();
+		expect(screen.getByText(/preparing the form/i)).toBeTruthy();
 	});
 
 	it('disables submit until a non-whitespace description is typed', async () => {
@@ -87,6 +95,8 @@ describe('ProposePageForm', () => {
 		const long = 'x'.repeat(MAX_DESCRIPTION_CHARS + 1);
 		await type(long);
 		expect(field().value).toBe(long);
+		// jsdom does not enforce maxlength, so pin its absence: a real browser would cut pasted text.
+		expect(field().hasAttribute('maxlength')).toBe(false);
 		expect(submit().disabled).toBe(true);
 		expect(screen.getByText(/1 character over/i)).toBeTruthy();
 		expect(field().getAttribute('aria-invalid')).toBe('true');
@@ -161,16 +171,88 @@ describe('ProposePageForm', () => {
 	});
 
 	it('keeps text typed while the row was being created', async () => {
-		createDraft.mockImplementation(async (d: string) => {
-			await Promise.resolve();
-			draftsStore.update((all) => [...all, draft(d)]);
-			return new Promise(() => {});
-		});
+		let land!: () => void;
+		createDraft.mockImplementation(
+			(d: string) =>
+				new Promise(() => {
+					land = () => draftsStore.update((all) => [...all, draft(d)]);
+				})
+		);
 		render(ProposePageForm);
 		await type('First');
 		await fireEvent.click(submit());
+		// The row has NOT landed yet; the reviewer keeps typing, then it lands.
 		await type('First, plus more');
-		await new Promise((r) => setTimeout(r, 0));
+		land();
+		await waitFor(() => expect(screen.getByRole('status').textContent).toMatch(/in your queue/i));
 		expect(field().value).toBe('First, plus more');
+	});
+
+	it('confirms from the resolved draft when the store match never fires', async () => {
+		createDraft.mockResolvedValue(draft('A page about rat bait'));
+		render(ProposePageForm);
+		await type('A page about rat bait');
+		await fireEvent.click(submit());
+		await waitFor(() => expect(field().value).toBe(''));
+		expect(screen.getByRole('status').textContent).toMatch(/in your queue/i);
+	});
+
+	it('keeps the over-limit alert text static so it is not re-announced per keystroke', async () => {
+		render(ProposePageForm);
+		await type('x'.repeat(MAX_DESCRIPTION_CHARS + 1));
+		const before = document.getElementById('propose-over')?.textContent;
+		await type('x'.repeat(MAX_DESCRIPTION_CHARS + 5));
+		expect(document.getElementById('propose-over')?.textContent).toBe(before);
+	});
+
+	it('leaves no store subscriber behind after a failed attempt or an unmount', async () => {
+		let active = 0;
+		const original = draftsStore.subscribe.bind(draftsStore);
+		vi.spyOn(draftsStore, 'subscribe').mockImplementation((...args) => {
+			active++;
+			const off = original(...args);
+			return () => {
+				active--;
+				off();
+			};
+		});
+		createDraft.mockRejectedValueOnce(new Error('boom'));
+		const { unmount } = render(ProposePageForm);
+		await type('A page');
+		await fireEvent.click(submit());
+		await screen.findByRole('alert');
+		expect(active).toBe(0);
+
+		// Retry; the row never lands, so the watcher is live until teardown.
+		createDraft.mockImplementationOnce(() => new Promise(() => {}));
+		await fireEvent.click(submit());
+		expect(active).toBe(1);
+		unmount();
+		expect(active).toBe(0);
+	});
+
+	it('a stale draft failing late does not overwrite the newer draft note', async () => {
+		const fails: ((e: Error) => void)[] = [];
+		let n = 0;
+		createDraft.mockImplementation((d: string) => {
+			const id = `row${++n}`;
+			draftsStore.update((all) => [...all, { ...draft(d), id, path: `draft:${id}` }]);
+			return new Promise((_, rej) => fails.push(rej));
+		});
+		vi.spyOn(console, 'warn').mockImplementation(() => {});
+		render(ProposePageForm);
+		await type('First');
+		await fireEvent.click(submit());
+		await waitFor(() => expect(field().value).toBe(''));
+		await type('Second');
+		await fireEvent.click(submit());
+		await waitFor(() => expect(field().value).toBe(''));
+		fails[0](new Error('late'));
+		await new Promise((r) => setTimeout(r, 0));
+		const status = screen.getByRole('status');
+		expect(status.textContent).not.toMatch(/did not finish/i);
+		expect(screen.getByRole('link', { name: /open the draft/i }).getAttribute('href')).toBe(
+			'/review/draft/row2'
+		);
 	});
 });

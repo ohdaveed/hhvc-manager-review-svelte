@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onDestroy } from 'svelte';
 	import { get } from 'svelte/store';
 	import { resolve } from '$app/paths';
 	import { Button } from '$lib/components/ui/button/index.js';
@@ -26,51 +27,82 @@
 			: `${(MAX_DESCRIPTION_CHARS - description.length).toLocaleString('en-US')} characters left`
 	);
 
+	// Each submission takes a number; only the latest may write form state. An
+	// earlier draft settling late must not overwrite a newer draft's note or
+	// reopen its double-click window. The earlier row is still in the queue and its
+	// own page reports a failed draft, so its late failure is only warned.
+	let latest = 0;
+	let stopWatching = () => {};
+
+	// Teardown: drop the store subscriber and invalidate in-flight handlers, so a
+	// navigation mid-flight leaves nothing writing to a destroyed component.
+	onDestroy(() => {
+		latest++;
+		stopWatching();
+	});
+
 	function submit(event: SubmitEvent) {
 		event.preventDefault();
 		if (!canSubmit) return;
 		const sent = description;
 		const trimmed = sent.trim();
+		const mine = ++latest;
+		const current = () => mine === latest;
 		busy = true;
 		error = '';
 		confirmed = undefined;
+
+		function confirm(path: string) {
+			if (!current() || confirmed) return;
+			// Only clear what was sent: anything typed since is the reviewer's.
+			if (description === sent) description = '';
+			confirmed = { path, failed: false };
+			busy = false;
+		}
 
 		// `createDraft` puts the `drafting` row in `draftsStore` and only then
 		// generates, so its promise settles up to a minute after the row exists.
 		// Watch the store for the row to confirm; never await the promise for that.
 		const known = new Set(get(draftsStore).map((d) => d.id));
 		let row: { path: string } | undefined;
-		let unsubscribe = () => {};
-		let stop = false;
-		const release = () => (stop ? unsubscribe() : (stop = true));
+		let unsubscribe: (() => void) | undefined;
+		let stopped = false;
+		const stop = () => {
+			stopped = true;
+			unsubscribe?.();
+		};
 		unsubscribe = draftsStore.subscribe((rows) => {
 			if (row) return;
-			const mine = rows.find((d) => !known.has(d.id) && d.description === trimmed);
-			if (!mine) return;
-			row = mine;
-			// Only clear what was sent: anything typed since is the reviewer's.
-			if (description === sent) description = '';
-			confirmed = { path: mine.path, failed: false };
-			busy = false;
-			release();
+			const found = rows.find((d) => !known.has(d.id) && d.description === trimmed);
+			if (!found) return;
+			row = found;
+			confirm(found.path);
+			stop();
 		});
-		if (row) release();
+		// The first callback runs synchronously, before `unsubscribe` is assigned.
+		if (stopped) unsubscribe();
+		stopWatching = stop;
 
 		createDraft(trimmed).then(
-			() => {
-				busy = false;
-				release();
+			(done) => {
+				stop();
+				// Fallback if the store match never fired: the resolved row is proof it
+				// exists, and leaving the text in place would invite a duplicate submit.
+				if (!row) {
+					row = done;
+					confirm(done.path);
+				}
 			},
 			(err: unknown) => {
-				release();
-				busy = false;
+				stop();
 				if (row) {
 					// The row is already in the queue and the banner on its page
 					// reports a failed draft and offers a retry. `warn`, not `error`.
 					console.warn('Propose a page: drafting did not finish:', err);
-					confirmed = { path: row.path, failed: true };
-				} else {
+					if (current()) confirmed = { path: row.path, failed: true };
+				} else if (current()) {
 					// Nothing was saved, so the text stays exactly as typed.
+					busy = false;
 					error = 'Nothing was saved. Your description is still here; try again.';
 				}
 			}
@@ -95,9 +127,7 @@
 		/>
 		<p id="propose-count" class="text-sm text-slate-700">{countText}</p>
 		{#if over > 0}
-			<p id="propose-over" role="alert" class="text-sm font-semibold text-red-800">
-				Too long: {over} over the limit.
-			</p>
+			<p id="propose-over" role="alert" class="text-sm font-semibold text-red-800">Too long</p>
 		{/if}
 		{#if error}
 			<p id="propose-error" role="alert" class="text-sm font-semibold text-red-800">{error}</p>
@@ -123,8 +153,12 @@
 		</div>
 	</form>
 {:else if sessionStore.signedIn === false}
-	<!-- No second sign-in link: the header already carries the page's one. -->
 	<p class="text-slate-800">
-		Creating a page needs you to sign in first. Use the sign-in link at the top of this page.
+		Creating a page needs an account.
+		<a href={resolve('/login')} class="font-semibold underline underline-offset-2"
+			>Sign in to propose a page</a
+		>.
 	</p>
+{:else}
+	<p class="text-slate-700">Preparing the form…</p>
 {/if}
