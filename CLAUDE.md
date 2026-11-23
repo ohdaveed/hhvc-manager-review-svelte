@@ -223,7 +223,7 @@ The ratchet passes `--tsconfig`, which bounds svelte-check to `.svelte-kit/tscon
 
 ## Deployment
 
-Netlify, site `hhvc-manager-review`, **Git-connected and deploying automatically**. Merging to `main` publishes production, and every PR gets a deploy preview at `deploy-preview-<n>--hhvc-manager-review.netlify.app` — both build on Netlify, so builds do consume Netlify minutes. Netlify's build settings are overridden by `netlify.toml` in this repo, which is where the command and publish directory actually come from. Env vars are set on the Netlify site; `GEMINI_API_KEY` belongs there as a secret.
+Netlify, site `sfhealthyhousing` (production `https://sfhealthyhousing.netlify.app`), **Git-connected and deploying automatically**. Merging to `main` publishes production, and every PR gets a deploy preview at `deploy-preview-<n>--sfhealthyhousing.netlify.app` — both build on Netlify, so builds do consume Netlify minutes. Netlify's build settings are overridden by `netlify.toml` in this repo, which is where the command and publish directory actually come from. Env vars are set on the Netlify site; `GEMINI_API_KEY` belongs there as a secret.
 
 `netlify deploy --build --prod` still works and builds locally, but it is a manual override, not the normal path: the deploy it uploads carries no `commit_ref`, so it supersedes the commit-linked release and the published deploy can no longer be traced to a SHA. Reach for it only when Netlify's own build is unavailable.
 
@@ -242,6 +242,11 @@ development (`supabase start`, `db reset`) needs no link — `config.toml` is
 enough.
 
 Supabase auth URLs must include any new origin, or magic links redirect to a dead URL. The hosted allow-list covers production, `localhost:5173`, and Netlify preview hostnames; `supabase/config.toml` covers the local stack.
+
+**Renaming the Netlify site is a new origin.** The site was renamed from `hhvc-manager-review` to `sfhealthyhousing` on 2026-11-22, in the Netlify dashboard. Netlify does not redirect a renamed site, so `hhvc-manager-review.netlify.app` returns 404 from that moment. Production's `site_url` and both projects' `uri_allow_list` still named the old host, so a magic link would have fallen back to a dead URL. Two consequences if it is ever renamed again:
+
+- **Update `site_url` and `uri_allow_list` on both Supabase projects** (Dashboard → Authentication → URL Configuration, or `PATCH /v1/projects/<ref>/config/auth`), plus `SITE_URL` in `scripts/verify.sh`. `verify:live` is the one that notices: it probes the old host and gets a 404.
+- **Remove the old host from the allow-lists. Do not just add the new one.** A released `*.netlify.app` name can be claimed by anyone, and magic-link redirects carry the session in the URL fragment, so a stale entry would hand sign-in tokens to whoever registers it.
 
 ### Two hosted Supabase projects, split by deploy context
 
@@ -268,7 +273,7 @@ Two consequences worth knowing before using a preview:
 - **A reviewer needs an invite on the staging project to sign in.** Staging has its own `auth.users`, and `seed.hosted.sql` deliberately creates no identity. A production invite does not work on a preview.
 - **Staging is free-tier and pauses after about 7 days idle.** A preview against a paused project fails to read; wake it from the dashboard.
 
-Staging was built from the repo, not by hand: `supabase db push` applied every migration then in the repo, `supabase/seed.hosted.sql` wrote the review and its 29 page rows, and `bun run corpus:import` wrote the corpus version. Its auth allow-list is `https://*--hhvc-manager-review.netlify.app/**,http://localhost:5173/**` — deliberately **not** the production origin. To rebuild it, repeat those three steps against the staging ref.
+Staging was built from the repo, not by hand: `supabase db push` applied every migration then in the repo, `supabase/seed.hosted.sql` wrote the review and its 29 page rows, and `bun run corpus:import` wrote the corpus version. Its auth allow-list is `https://*--sfhealthyhousing.netlify.app/**,http://localhost:5173/**` — deliberately **not** the production origin. To rebuild it, repeat those three steps against the staging ref.
 
 **`GEMINI_API_KEY` is shared across every context**, so a preview's AI rewrites spend the production key. Unlike the database, that has not been split.
 
