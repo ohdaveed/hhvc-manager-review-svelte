@@ -1,9 +1,12 @@
 /**
- * The backend's cap on `prompt` for the `content` task, mirrored here so a
+ * The server's cap on `prompt` for the `content` task, mirrored here so a
  * request that cannot succeed never leaves the browser. Stated in
- * `build_scripts/ai/schemas.js` as `prompt: z.string().min(1).max(8000)`.
+ * `src/lib/server/ai/vendor/schemas.js`; `server.test.ts` fails if the two
+ * disagree. Was 8,000, inherited from the Railway backend -- but the corpus
+ * index below rides in every prompt, and at 39 pages it alone is ~6,600
+ * chars, so most sections failed before the reviewer typed anything.
  */
-export const MAX_PROMPT_CHARS = 8_000;
+export const MAX_PROMPT_CHARS = 16_000;
 
 type PromptInput = {
 	page: unknown;
