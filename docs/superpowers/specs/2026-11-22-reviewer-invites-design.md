@@ -58,8 +58,12 @@ Verified, not assumed:
 - **Neither project has custom SMTP.** `smtp_host` is `null` on both, so the
   built-in mailer refuses any address that is not a member of the Supabase
   _organisation_ (`email_address_not_authorized`), and caps at
-  `rate_limit_email_sent: 2` per hour, shared with sign-in emails. Without
-  custom SMTP this feature cannot deliver to a new reviewer at all.
+  `rate_limit_email_sent: 2` per hour, shared with sign-in emails. That
+  organisation has exactly one member, so email can reach nobody else.
+  **SUPERSEDED as a blocker** by
+  `2026-11-22-hand-delivered-invite-links-design.md`: the link is returned to
+  the caller and delivered by hand, so no mail is sent and none needs to be.
+  The constraint above remains true; it simply stops mattering.
 - **The service-role key cannot be in the browser**, so this needs a server
   route. The app is otherwise client-side; `src/routes/api/ai/generate/+server.ts`
   is the existing precedent and the shape to copy.
@@ -95,10 +99,11 @@ problem.
 
 ## The design
 
-**Prerequisite, and it is step one.** Configure custom SMTP on both hosted
-projects, then raise `rate_limit_email_sent` off 2. Until this is done the
-feature is only testable against the local stack and addresses inside the
-Supabase organisation.
+**No prerequisite.** This originally required custom SMTP on both hosted
+projects before anything was testable. That was dropped: no email is sent at
+all. The route returns the sign-in link to the caller, who delivers it by hand
+— see `2026-11-22-hand-delivered-invite-links-design.md`, which supersedes this
+section and the one method call it describes.
 
 **Route: `POST /api/invite`.** Body `{ email }`.
 

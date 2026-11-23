@@ -1,7 +1,7 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const getUser = vi.fn();
-const inviteUserByEmail = vi.fn();
+const generateLink = vi.fn();
 
 /**
  * One spy serves both clients the route builds. That is what lets the first
@@ -9,7 +9,7 @@ const inviteUserByEmail = vi.fn();
  * constructed for a caller who was not verified -- the property that keeps
  * this route from being an open invite relay.
  */
-const createClient = vi.fn(() => ({ auth: { getUser, admin: { inviteUserByEmail } } }));
+const createClient = vi.fn(() => ({ auth: { getUser, admin: { generateLink } } }));
 
 vi.mock('@supabase/supabase-js', () => ({ createClient }));
 
@@ -26,6 +26,7 @@ const { POST } = await import('./+server');
 
 const ORIGIN = 'https://deploy-preview-9--sfhealthyhousing.netlify.app';
 const AUTHED = { Authorization: 'Bearer good-token' };
+const ACTION_LINK = 'https://example.test/verify?token=abc';
 
 function buildEvent(
 	headers: Record<string, string> = {},
@@ -43,14 +44,21 @@ describe('POST /api/invite', () => {
 	beforeEach(() => {
 		createClient.mockClear();
 		getUser.mockReset();
-		inviteUserByEmail.mockReset();
+		generateLink.mockReset();
 		privateEnv.SUPABASE_SERVICE_ROLE_KEY = 'test-service-key';
 
 		getUser.mockResolvedValue({
 			data: { user: { id: 'u1', email: 'reviewer@sfgov.org' } },
 			error: null
 		});
-		inviteUserByEmail.mockResolvedValue({ data: { user: { id: 'u2' } }, error: null });
+		generateLink.mockResolvedValue({
+			data: { properties: { action_link: ACTION_LINK } },
+			error: null
+		});
+	});
+
+	afterEach(() => {
+		vi.restoreAllMocks();
 	});
 
 	it('rejects a request with no Authorization header', async () => {
@@ -59,34 +67,106 @@ describe('POST /api/invite', () => {
 		// client. A service-role client built before the caller is verified is
 		// the escalation this route must not have.
 		expect(createClient).not.toHaveBeenCalled();
-		expect(inviteUserByEmail).not.toHaveBeenCalled();
+		expect(generateLink).not.toHaveBeenCalled();
 	});
 
 	it('rejects a bearer token supabase does not recognise', async () => {
 		getUser.mockResolvedValue({ data: { user: null }, error: { message: 'bad jwt' } });
 
 		await expect(POST(buildEvent(AUTHED) as never)).rejects.toMatchObject({ status: 401 });
-		expect(inviteUserByEmail).not.toHaveBeenCalled();
+		expect(generateLink).not.toHaveBeenCalled();
 	});
 
 	it('rejects a malformed email address', async () => {
 		await expect(
 			POST(buildEvent(AUTHED, { email: 'not-an-email' }) as never)
 		).rejects.toMatchObject({ status: 400 });
-		expect(inviteUserByEmail).not.toHaveBeenCalled();
+		expect(generateLink).not.toHaveBeenCalled();
 	});
 
-	it('invites the address and redirects back to the requesting origin', async () => {
+	/**
+	 * The single most important assertion in this file. A `magiclink` for an
+	 * address that ALREADY has an account returns a link that signs the holder
+	 * in AS that person -- and any signed-in reviewer can call this route. That
+	 * would put impersonating the manager one request away. `invite` refuses a
+	 * confirmed address instead, which is the control.
+	 *
+	 * Asserted on the ARGUMENT, not the response: a response-shaped assertion
+	 * passes identically under either type while the hole is wide open.
+	 */
+	it('generates an invite link, never a magic link', async () => {
+		await POST(buildEvent(AUTHED) as never);
+
+		expect(generateLink).toHaveBeenCalledWith(expect.objectContaining({ type: 'invite' }));
+		expect(JSON.stringify(generateLink.mock.calls[0])).not.toContain('magiclink');
+	});
+
+	it('returns the action link to the caller', async () => {
 		const response = await POST(buildEvent(AUTHED) as never);
 
 		expect(response.status).toBe(200);
-		expect(inviteUserByEmail).toHaveBeenCalledWith('new@sfgov.org', {
-			redirectTo: `${ORIGIN}/login`
+		await expect(response.json()).resolves.toEqual({
+			email: 'new@sfgov.org',
+			actionLink: ACTION_LINK
 		});
 	});
 
+	it('points the link back at the requesting origin', async () => {
+		await POST(buildEvent(AUTHED) as never);
+
+		expect(generateLink).toHaveBeenCalledWith(
+			expect.objectContaining({
+				email: 'new@sfgov.org',
+				options: { redirectTo: `${ORIGIN}/login` }
+			})
+		);
+	});
+
+	/**
+	 * The response body is a credential now. A Netlify function log is not a
+	 * place for one, and neither is Sentry.
+	 */
+	it('never logs the link', async () => {
+		const log = vi.spyOn(console, 'log').mockImplementation(() => {});
+		const info = vi.spyOn(console, 'info').mockImplementation(() => {});
+		const err = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+		const response = await POST(buildEvent(AUTHED) as never);
+		expect(response.status).toBe(200);
+
+		// Joined into one string and asserted unconditionally. Looping over the
+		// calls and asserting inside the loop runs ZERO assertions in the normal
+		// case -- nothing is logged -- so it would pass without testing anything.
+		const logged = [log, info, err]
+			.flatMap((spy) => spy.mock.calls)
+			.map((call) => JSON.stringify(call))
+			.join(' ');
+		expect(logged).not.toContain('example.test');
+	});
+
+	/**
+	 * The built-in mailer refuses any address outside the Supabase organisation.
+	 * With links delivered by hand that refusal is expected and irrelevant --
+	 * the link is what the caller needs, and it was produced.
+	 */
+	it('succeeds when the mailer refuses the address but a link was produced', async () => {
+		generateLink.mockResolvedValue({
+			data: { properties: { action_link: ACTION_LINK } },
+			error: {
+				status: 422,
+				code: 'email_address_not_authorized',
+				message: 'Email address not authorized'
+			}
+		});
+
+		const response = await POST(buildEvent(AUTHED) as never);
+
+		expect(response.status).toBe(200);
+		await expect(response.json()).resolves.toMatchObject({ actionLink: ACTION_LINK });
+	});
+
 	it('maps an existing confirmed account to 409', async () => {
-		inviteUserByEmail.mockResolvedValue({
+		generateLink.mockResolvedValue({
 			data: null,
 			error: {
 				status: 422,
@@ -98,8 +178,8 @@ describe('POST /api/invite', () => {
 		await expect(POST(buildEvent(AUTHED) as never)).rejects.toMatchObject({ status: 409 });
 	});
 
-	it('passes through an address the mailer will not deliver to', async () => {
-		inviteUserByEmail.mockResolvedValue({
+	it('passes through a failure that produced no link', async () => {
+		generateLink.mockResolvedValue({
 			data: null,
 			error: {
 				status: 422,
@@ -114,24 +194,8 @@ describe('POST /api/invite', () => {
 		});
 	});
 
-	it('passes through the mailer rate limit', async () => {
-		inviteUserByEmail.mockResolvedValue({
-			data: null,
-			error: {
-				status: 429,
-				code: 'over_email_send_rate_limit',
-				message: 'email rate limit exceeded'
-			}
-		});
-
-		await expect(POST(buildEvent(AUTHED) as never)).rejects.toMatchObject({
-			status: 429,
-			body: { message: expect.stringContaining('email rate limit exceeded') }
-		});
-	});
-
 	it('names the hourly cap when the mailer refuses on rate limit', async () => {
-		inviteUserByEmail.mockResolvedValue({
+		generateLink.mockResolvedValue({
 			data: null,
 			error: {
 				status: 429,
@@ -140,9 +204,6 @@ describe('POST /api/invite', () => {
 			}
 		});
 
-		// The raw GoTrue message says nothing about the cap being shared with
-		// sign-in links, which is the part that explains why two invitations in a
-		// row fail. The spec requires the limit be named.
 		await expect(POST(buildEvent(AUTHED) as never)).rejects.toMatchObject({
 			status: 429,
 			body: { message: expect.stringContaining('shared with sign-in') }
@@ -150,11 +211,7 @@ describe('POST /api/invite', () => {
 	});
 
 	it('does not report a bad service-role key as the caller’s problem', async () => {
-		// A key that is PRESENT but wrong -- rotated, revoked, or production's key
-		// on a staging-targeted preview. Forwarding GoTrue's 401 would tell the
-		// reviewer their own session was bad, which is the exact misdiagnosis the
-		// missing-key guard exists to prevent.
-		inviteUserByEmail.mockResolvedValue({
+		generateLink.mockResolvedValue({
 			data: null,
 			error: { status: 401, code: 'bad_jwt', message: 'Invalid API key' }
 		});
@@ -174,6 +231,6 @@ describe('POST /api/invite', () => {
 		});
 		// Anon client built for the auth check; admin client never attempted.
 		expect(createClient).toHaveBeenCalledTimes(1);
-		expect(inviteUserByEmail).not.toHaveBeenCalled();
+		expect(generateLink).not.toHaveBeenCalled();
 	});
 });

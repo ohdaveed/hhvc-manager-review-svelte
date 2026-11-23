@@ -31,7 +31,7 @@ Five failure modes the spec implies; each has a test in the task that owns the c
 
 ---
 
-### Task 1: Close local signup, configure custom SMTP
+### Task 1: Close local signup
 
 Brings the local stack in line with both hosted projects, and removes the constraint that makes the feature undeliverable. The SMTP half has no test — it is remote configuration — so it is verified by reading the value back.
 
@@ -79,19 +79,7 @@ Leave the surrounding comments intact.
 Run: `bun run test:unit -- --run tests/localSignupDisabled.spec.ts`
 Expected: PASS
 
-- [ ] **Step 5: Configure custom SMTP on both hosted projects**
-
-Dashboard → Authentication → SMTP Settings, or `PATCH /v1/projects/<ref>/config/auth`, for `kiynekyzqxneepjipqhg` (production) and `aplbsgacqnxhzjuquvft` (staging). Then raise `rate_limit_email_sent` off 2. **Do not commit any SMTP credential to the repo.**
-
-- [ ] **Step 6: Read the values back**
-
-Run, for each ref:
-
-```bash
-curl -s -H "Authorization: Bearer $(cat ~/.supabase/access-token)" "https://api.supabase.com/v1/projects/<ref>/config/auth" | jq '{smtp_host, rate_limit_email_sent}'
-```
-
-Expected: `smtp_host` non-null on both, `rate_limit_email_sent` above 2. A success message from the dashboard is not evidence; this read is.
+**Steps 5 and 6 are REMOVED.** They configured custom SMTP on both hosted projects and read the values back. No email is sent any more — the route returns the link and it is delivered by hand — so SMTP is not a prerequisite for anything here. See `docs/superpowers/plans/2026-11-22-hand-delivered-invite-links-plan.md`. The `enable_signup` work in steps 1–4 above is unrelated and still correct.
 
 - [ ] **Step 7: Commit**
 

@@ -86,11 +86,30 @@ export async function POST({ request, url }) {
 		// invite back to that preview, not to production. Both projects'
 		// `uri_allow_list` cover the wildcard, and a redirectTo outside the list
 		// is silently ignored in favour of Site URL rather than refused.
-		const { error: inviteError } = await admin.auth.admin.inviteUserByEmail(email, {
-			redirectTo: `${url.origin}/login`
+		//
+		// `type: 'invite'` is LOAD-BEARING and must never become `'magiclink'`.
+		// Supabase documents `generateLink` as producing links "to be sent via a
+		// custom email provider" -- it hands the URL back instead of mailing it,
+		// which is the whole point here, since the built-in mailer refuses every
+		// address outside the Supabase organisation. But a `magiclink` for an
+		// address that ALREADY has an account returns a link that signs its
+		// holder in AS that person. Any signed-in reviewer can call this route,
+		// so `magiclink` would put impersonating the manager one request away.
+		// `invite` refuses a confirmed address (422 `email_exists`, mapped to 409
+		// below), and that refusal is the control. A test asserts the argument.
+		const { data, error: inviteError } = await admin.auth.admin.generateLink({
+			type: 'invite',
+			email,
+			options: { redirectTo: `${url.origin}/login` }
 		});
 
-		if (inviteError) {
+		const actionLink = data?.properties?.action_link;
+
+		// A link and an error together is the EXPECTED case on a project with no
+		// custom SMTP: the account and link are made, then the built-in mailer
+		// refuses to deliver to an address outside the organisation. The caller
+		// delivers it by hand, so that refusal is not this route's failure.
+		if (inviteError && !actionLink) {
 			// GoTrue answers 422 `email_exists` for an address that already has a
 			// confirmed account. The caller here is authenticated, so there is no
 			// reason to be coy about it the way the sign-in form has to be.
@@ -132,7 +151,16 @@ export async function POST({ request, url }) {
 			throw error(status, inviteError.message);
 		}
 
-		return json({ email });
+		if (!actionLink) {
+			// No link and no error should be impossible, but a silent 200 with
+			// nothing to deliver would leave the caller believing an invitation
+			// went out.
+			throw error(500, 'Supabase returned no invite link.');
+		}
+
+		// Deliberately not logged. From here the response body carries a
+		// credential: whoever holds this URL becomes that user.
+		return json({ email, actionLink });
 	} catch (err) {
 		// Rethrow deliberate HTTP errors so upstream status codes survive.
 		if (typeof err === 'object' && err !== null && 'status' in err) throw err;
