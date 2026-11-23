@@ -165,26 +165,13 @@ describe('POST /api/invite', () => {
 	});
 
 	/**
-	 * The built-in mailer refuses any address outside the Supabase organisation.
-	 * With links delivered by hand that refusal is expected and irrelevant --
-	 * the link is what the caller needs, and it was produced.
+	 * There is deliberately no test for "an error AND a link together". That
+	 * shape does not exist: `@supabase/auth-js` sets `error: null` on success
+	 * and `properties: null` on failure, and a no-SMTP invite measured against a
+	 * real project returned 200 with a link and no error at all. A test for it
+	 * would pass while exercising something the system never builds -- the same
+	 * defect CLAUDE.md records for `karlButtonCap.spec.ts`.
 	 */
-	it('succeeds when the mailer refuses the address but a link was produced', async () => {
-		generateLink.mockResolvedValue({
-			data: { properties: { action_link: ACTION_LINK } },
-			error: {
-				status: 422,
-				code: 'email_address_not_authorized',
-				message: 'Email address not authorized'
-			}
-		});
-
-		const response = await POST(buildEvent(AUTHED) as never);
-
-		expect(response.status).toBe(200);
-		await expect(response.json()).resolves.toMatchObject({ actionLink: ACTION_LINK });
-	});
-
 	it('maps an existing confirmed account to 409', async () => {
 		generateLink.mockResolvedValue({
 			data: null,

@@ -39,8 +39,21 @@ author pastes it to the reviewer over whatever channel they already use.
 - No storage of generated links, no list of outstanding invites, no resend.
 - No roles or permission tiers. Everyone who gets in can still edit copy and
   change review decisions on all 29 pages.
-- No self-service recovery. A reviewer who loses their session asks for a new
-  link.
+- No self-service recovery — and this is sharper than it first reads, so it is
+  written out rather than left as a phrase. Once a reviewer has signed in once,
+  their address is CONFIRMED, and from then on `/api/invite` refuses it with
+  409 while `/login`'s `signInWithOtp` mails a link the built-in mailer will
+  not deliver. So a reviewer who signs out, clears site data, or opens the tool
+  on a second machine cannot get back in through the app at all, and the
+  **"Sign out" button is a one-way door**. Recovery requires someone holding
+  the service-role key or dashboard access to mint a link out of band. Deleting
+  and recreating the account is not an option either: `edits.user_id` and
+  `comments.user_id` are `NOT NULL REFERENCES auth.users(id)`.
+
+  `type: 'magiclink'` is explicitly NOT the fix — it would reintroduce exactly
+  the impersonation the anti-goals below rule out. A real fix means either a
+  recovery path that proves address ownership some other way, or accepting that
+  onboarding is operator-assisted. Not built; flagged.
 
 ## Anti-goals
 

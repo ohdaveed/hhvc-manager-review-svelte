@@ -80,6 +80,14 @@
 		await supabase.auth.signOut();
 		sent = false;
 		email = '';
+		// The invite state holds a live credential. The signed-in branch unmounts
+		// so nothing renders it, but leaving a usable sign-in link in component
+		// state after the session ends is not a thing to do.
+		invitedTo = '';
+		inviteLink = '';
+		inviteCopied = false;
+		inviteCopyError = '';
+		inviteEmail = '';
 	}
 
 	/**
@@ -87,7 +95,8 @@
 	 * is off on both hosted projects, so this is the only way a new reviewer
 	 * gets an account without dashboard access.
 	 *
-	 * Any signed-in reviewer may send one, and nothing records who did -- so the
+	 * Any signed-in reviewer may create one, and the route logs who asked and for
+	 * whom (never the link) -- so the
 	 * help text says plainly what an invitation grants rather than leaving it to
 	 * be discovered.
 	 */
@@ -96,6 +105,7 @@
 	let invitedTo = $state('');
 	let inviteLink = $state('');
 	let inviteCopied = $state(false);
+	let inviteCopyError = $state('');
 	let inviteError = $state('');
 
 	const inviteLooksValid = $derived(EMAIL_PATTERN.test(inviteEmail.trim()));
@@ -155,14 +165,20 @@
 	}
 
 	async function copyInviteLink() {
+		inviteCopyError = '';
 		try {
 			await navigator.clipboard.writeText(inviteLink);
 			inviteCopied = true;
 			setTimeout(() => (inviteCopied = false), 2000);
 		} catch {
-			// Clipboard access can be refused (permissions, insecure context). The
-			// link is on screen and selectable, so there is nothing to recover --
-			// saying "copy failed" over a visible link would only add noise.
+			// Saying nothing here is not neutral. A refused write (permissions, a
+			// non-secure context, an unfocused document) leaves the clipboard
+			// holding whatever was copied last -- plausibly the PREVIOUS invitee's
+			// link. Pasting that to the new person signs them in as someone else,
+			// which is the attribution forgery this feature's design names as its
+			// core harm, reached by accident. The only signal would otherwise be
+			// the button not changing to "Copied".
+			inviteCopyError = 'Could not copy it — select the link and copy it by hand.';
 		}
 	}
 </script>
@@ -192,32 +208,42 @@
 
 				{#if invitedTo}
 					<div class="mb-6">
+						<!--
+							The link and its button sit OUTSIDE PageAlert deliberately.
+							PageAlert renders `children` inside a `<p>`, and a `<button>` or a
+							block `<code>` inside a paragraph is invalid HTML -- the parser
+							closes the `<p>` early and scatters the content. Text-matching
+							tests passed over that malformed DOM; querying the button by role
+							is what exposed it.
+						-->
 						<PageAlert kind="success" title="Send this link to {invitedTo}">
-							<p class="mb-3">
-								Anyone with this link signs in as them. It works once and then expires — treat it
-								like a password.
-							</p>
-							<!--
-								Rendered as `<code>`, never as an `<a>`. The link is single-use:
-								clicking it here would consume the token, sign YOU in as the
-								invitee, and leave them with a dead link.
-							-->
-							<code
-								class="block overflow-x-auto rounded border border-border bg-muted p-3 text-sm break-all"
-								>{inviteLink}</code
-							>
-							<div class="mt-3">
-								<SiteButton variant="secondary" onclick={copyInviteLink}>
-									{inviteCopied ? 'Copied' : 'Copy link'}
-								</SiteButton>
-							</div>
+							Anyone with this link signs in as them. It works once and then expires — treat it like
+							a password.
 						</PageAlert>
+
+						<!--
+							Rendered as `<code>`, never as an `<a>`. The link is single-use:
+							clicking it here would consume the token, sign YOU in as the
+							invitee, and leave them with a dead link.
+						-->
+						<code
+							class="mt-3 block overflow-x-auto rounded border border-border bg-muted p-3 text-sm break-all"
+							>{inviteLink}</code
+						>
+						<div class="mt-3 flex items-center gap-3">
+							<SiteButton variant="secondary" onclick={copyInviteLink}>
+								{inviteCopied ? 'Copied' : 'Copy link'}
+							</SiteButton>
+							{#if inviteCopyError}
+								<span class="text-sm text-destructive">{inviteCopyError}</span>
+							{/if}
+						</div>
 					</div>
 				{/if}
 
 				{#if inviteError}
 					<div class="mb-6">
-						<PageAlert kind="danger" title="That did not send">{inviteError}</PageAlert>
+						<PageAlert kind="danger" title="That did not work">{inviteError}</PageAlert>
 					</div>
 				{/if}
 
@@ -225,7 +251,7 @@
 					<TextField
 						id="invite-email"
 						label="Email address"
-						help="They will get an email with a sign-in link. Anyone you invite can edit copy and change review decisions on every page."
+						help="You will get a link to send them yourself — no email goes out. Anyone you invite can edit copy and change review decisions on every page."
 						type="email"
 						name="invite-email"
 						autocomplete="off"
@@ -236,7 +262,7 @@
 					/>
 					<div class="mt-6">
 						<SiteButton type="submit" disabled={!inviteLooksValid || inviting}>
-							{inviting ? 'Sending…' : 'Send invitation'}
+							{inviting ? 'Creating…' : 'Create invite link'}
 						</SiteButton>
 					</div>
 				</form>

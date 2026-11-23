@@ -76,6 +76,10 @@ describe('invite form on /login', () => {
 	it('does not render the link as a navigable anchor', async () => {
 		await submitInvite('new@sfgov.org');
 
+		// Wait for the success state FIRST. Querying straight after submit reads
+		// a DOM where the request has not resolved, so the assertion would hold
+		// trivially over a page that never rendered the link at all.
+		expect(await screen.findByText(ACTION_LINK)).toBeTruthy();
 		expect(lastContainer.querySelector('a[href*="example.test"]')).toBeNull();
 	});
 
@@ -83,6 +87,29 @@ describe('invite form on /login', () => {
 		await submitInvite('new@sfgov.org');
 
 		expect(await screen.findByText(/signs in as them|treat it like a password/i)).toBeTruthy();
+	});
+
+	/**
+	 * A silent clipboard failure is worse than no copy button. The clipboard
+	 * still holds whatever was copied last -- plausibly the PREVIOUS invitee's
+	 * link -- so the inviter pastes it to the new person, who signs in as
+	 * someone else. That is the attribution forgery this feature's design names
+	 * as its core harm, reached by accident instead of malice.
+	 */
+	it('says so when the link could not be copied', async () => {
+		Object.assign(navigator, {
+			clipboard: { writeText: vi.fn().mockRejectedValue(new Error('denied')) }
+		});
+
+		await submitInvite('new@sfgov.org');
+		// `findBy*`, not `getBy*`: the submit handler awaits getSession() and
+		// fetch(), so the success state is still a microtask away when
+		// fireEvent.submit returns. A synchronous query here reads a DOM whose
+		// button still says "Sending…".
+		const button = await screen.findByRole('button', { name: /copy link/i });
+		await fireEvent.click(button);
+
+		expect(await screen.findByText(/copy it by hand|could not be copied/i)).toBeTruthy();
 	});
 
 	it('recovers when the request itself fails', async () => {

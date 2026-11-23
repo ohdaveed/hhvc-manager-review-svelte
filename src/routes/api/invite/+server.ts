@@ -105,11 +105,18 @@ export async function POST({ request, url }) {
 
 		const actionLink = data?.properties?.action_link;
 
-		// A link and an error together is the EXPECTED case on a project with no
-		// custom SMTP: the account and link are made, then the built-in mailer
-		// refuses to deliver to an address outside the organisation. The caller
-		// delivers it by hand, so that refusal is not this route's failure.
-		if (inviteError && !actionLink) {
+		// An error is handled BEFORE the link is considered, and that ordering is
+		// the point. An earlier version preferred the link whenever one came back,
+		// on the theory that the built-in mailer would refuse the address and
+		// return an error alongside a usable link. It does not: measured against a
+		// real project, a no-SMTP invite returns 200 with a link and NO error, and
+		// `@supabase/auth-js` never builds the both-at-once shape anyway -- its
+		// success transform always sets `error: null` and its error path always
+		// sets `properties: null`. Keeping that branch made the `email_exists`
+		// refusal below -- the control this whole route rests on -- conditional on
+		// a library implementation detail. Letting the error win unconditionally
+		// is what makes it a control rather than a coincidence.
+		if (inviteError) {
 			// GoTrue answers 422 `email_exists` for an address that already has a
 			// confirmed account. The caller here is authenticated, so there is no
 			// reason to be coy about it the way the sign-in form has to be.
@@ -133,7 +140,7 @@ export async function POST({ request, url }) {
 			if (inviteError.code === 'over_email_send_rate_limit') {
 				throw error(
 					429,
-					`${inviteError.message} — this project’s hourly email cap is shared with sign-in links. Wait, or raise it once custom SMTP is configured.`
+					`${inviteError.message} — this project’s hourly email cap is shared with sign-in links. Wait and try again.`
 				);
 			}
 
@@ -178,6 +185,6 @@ export async function POST({ request, url }) {
 		if (typeof err === 'object' && err !== null && 'status' in err) throw err;
 
 		console.error('Invite failed:', err);
-		throw error(500, 'Could not send the invitation');
+		throw error(500, 'Could not create the invite link');
 	}
 }
