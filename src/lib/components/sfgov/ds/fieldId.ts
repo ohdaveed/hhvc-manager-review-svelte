@@ -15,8 +15,3 @@ export function nextFieldId(prefix = 'ds'): string {
 	n += 1;
 	return `${prefix}-${n}`;
 }
-
-/** Test-only. Resets the counter so ids are stable across test cases. */
-export function __resetFieldIds(): void {
-	n = 0;
-}
