@@ -64,10 +64,13 @@ else
 fi
 
 # Everything that should never leave the server, searched across the WHOLE
-# published bundle -- every file under netlify.toml's `publish` dir, not a
-# crawl of the two chunks the root HTML happens to name (see the live gate's
-# note). Complete by construction: the build just ran, so these files are what
-# Netlify will serve.
+# published bundle -- every file under netlify.toml's `publish` dir, whether or
+# not the module graph reaches it. Complete by construction: the build just
+# ran, so these files are what Netlify will serve.
+#
+# The live gate crawls the served module graph, which is complete in a
+# different direction: it covers what a browser can load, from the deploy
+# rather than from disk. Neither subsumes the other -- keep both.
 #
 # `sb_secret_` must be followed by key-shaped characters: supabase-js carries
 # the bare prefix in its own `e.startsWith('sb_secret_')` format check, so the
@@ -216,21 +219,104 @@ done
 
 # Walk the deployed bundle for anything that should never leave the server.
 #
-# NOTE ON REACH: this reads only the chunks the root HTML names -- two of them,
-# `start.*.js` and `app.*.js`. Everything else is loaded through paths the
-# entry chunks construct at runtime, so no grep over their text finds the
-# names. Measured against production: 2 chunks crawled, 27 emitted. The
-# COMPLETE scan is `served bundle` in the local section above, which reads the
-# build output on disk; this one is kept for the property that it reads what is
-# actually being served, and should not be read as covering the bundle.
-leak=$(
-	curl -s --max-time 30 "$SITE_URL/" |
-		grep -oE '\./_app/immutable/[^"]+\.js' |
-		while read -r chunk; do curl -s --max-time 30 "$SITE_URL/${chunk#./}"; done |
-		grep -coE "$LEAK_PATTERN"
-)
-[ "$leak" = "0" ] && pass "no server-only values in client bundle" ||
-	fail "$leak server-only reference(s) in client bundle"
+# COMPLETE, and measurably so: this follows the served module graph
+# transitively from the chunks the root HTML names, so it reads every JS file
+# the browser can load rather than the two entry chunks the HTML happens to
+# list.
+#
+# The crawl this replaces read only those two, and its note claimed that
+# following their imports "adds nothing". That was an artifact of the regex
+# used to look: `\./_app/immutable/[^"]+\.js` cannot match `../chunks/X.js`,
+# which is the form a chunk actually uses to name its siblings. Measured
+# against production: the old crawl reached 2 of the 27 emitted files and never
+# saw the Supabase project ref, which is certainly in the served JS. This one
+# reaches all of them, and does.
+#
+# Accepting all three quote characters is load-bearing rather than defensive.
+# Static imports are double-quoted, but the Sentry release chunk is reached
+# only through a backtick-quoted dynamic `import(...)`. Measured against the
+# build on disk, where the answer is checkable against `find`: double quotes
+# alone reach 26 of 27 files, all three reach 27 of 27.
+#
+# Three properties worth keeping if this is ever changed:
+#
+#   - A non-200 is a FAILURE, not a skipped file. Netlify answers an unknown
+#     path with an HTML 404 page, which scans clean -- so treating a miss as
+#     "nothing found here" is exactly how a crawl shrinks back towards
+#     vacuity without saying so.
+#   - The reach is printed on every run, and a crawl that reaches 2 files or
+#     fewer fails outright. The original defect was not that the gate was
+#     wrong; it was that the gate was silent about how little it covered.
+#   - `-l` not `-o`, as in the local gate: on failure this prints served
+#     PATHS, never the matching line.
+#
+# This still does not subsume the local scan. It covers what a browser can
+# load; the local gate covers every file under `publish`, including any the
+# module graph does not reach.
+work=$(mktemp -d "${TMPDIR:-/tmp}/hhvc-served.XXXXXX")
+trap 'rm -rf "$work"' EXIT
+served="$work/site"
+queue="$work/queue"
+seen="$work/seen"
+mkdir -p "$served"
+: >"$queue"
+: >"$seen"
+
+# The three quote characters, built with printf so no literal backtick appears
+# in this script -- inside double quotes one would open a command substitution.
+quotes=$(printf '"\047\140')
+
+curl -s --max-time 30 "$SITE_URL/" -o "$served/index.html"
+grep -oE '_app/immutable/[A-Za-z0-9._/-]+\.js' "$served/index.html" 2>/dev/null |
+	sort -u >>"$queue"
+
+unreachable=''
+while :; do
+	next=$(grep -vxF -f "$seen" "$queue" 2>/dev/null | head -1)
+	[ -z "$next" ] && break
+	printf '%s\n' "$next" >>"$seen"
+
+	# A runaway crawl is a bug, not a thorough one. 500 is ~18x the bundle.
+	[ "$(wc -l <"$seen")" -gt 500 ] && {
+		unreachable="$unreachable crawl-exceeded-500-files"
+		break
+	}
+
+	mkdir -p "$served/$(dirname "$next")"
+	code=$(curl -s --max-time 30 -w '%{http_code}' "$SITE_URL/$next" -o "$served/$next")
+	[ "$code" = '200' ] || unreachable="$unreachable $next($code)"
+
+	dir=$(dirname "$next")
+	grep -ohE "[$quotes][^$quotes]*\.js[$quotes]" "$served/$next" 2>/dev/null |
+		tr -d "$quotes" |
+		while read -r spec; do
+			case "$spec" in
+			./* | ../*) printf '%s\n' "$dir/$spec" ;;
+			/*) printf '%s\n' "${spec#/}" ;;
+			*) ;;
+			esac
+		done |
+		sed -E ':a;s|[^/]+/\.\./||;ta;s|/\./|/|g' >>"$queue"
+done
+
+chunks=$(sort -u "$seen" | wc -l)
+leaked=$(grep -rlE "$LEAK_PATTERN" "$served" 2>/dev/null || true)
+if [ -n "${SUPABASE_SERVICE_ROLE_KEY:-}" ]; then
+	literal=$(printf '%s\n' "$SUPABASE_SERVICE_ROLE_KEY" |
+		grep -rlF -f - "$served" 2>/dev/null || true)
+	leaked=$(printf '%s\n%s' "$leaked" "$literal" | grep -v '^$' | sort -u || true)
+fi
+
+if [ -n "$unreachable" ]; then
+	fail "served bundle — not fetchable:$unreachable"
+elif [ "$chunks" -le 2 ]; then
+	fail "served bundle — crawl reached $chunks chunk(s); it is finding no imports"
+elif [ -n "$leaked" ]; then
+	fail "server-only value(s) in served bundle: $(printf '%s' "$leaked" |
+		sed "s|^$served/||" | tr '\n' ' ')"
+else
+	pass "no server-only values across $chunks served chunks"
+fi
 
 echo
 if [ "$failures" -eq 0 ]; then
