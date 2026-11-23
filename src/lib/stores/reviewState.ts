@@ -61,6 +61,31 @@ export function firstQueuePath(pages: ReviewPage[]): string | undefined {
 }
 
 /**
+ * `firstQueuePath` for the latest review, fetched without `loadReview`'s side
+ * effects: no realtime channel, no edits hydration, no store writes, no console
+ * error when signed out. For the root redirect, which needs one path and nothing
+ * else (the review layout loads the review properly once it mounts).
+ *
+ * Same two queries as `loadReview`, with no ORDER BY, so the rows come back in
+ * the order the queue shows them.
+ */
+export async function fetchFirstQueuePath(): Promise<string | undefined> {
+	await ensureDevSession();
+	const { data: reviews } = await supabase
+		.from('reviews')
+		.select('id')
+		.order('created_at', { ascending: false })
+		.limit(1);
+	const reviewId = reviews?.[0]?.id;
+	if (!reviewId) return undefined;
+	const { data: pages } = await supabase
+		.from('pages')
+		.select('path, status')
+		.eq('review_id', reviewId);
+	return firstQueuePath((pages ?? []) as ReviewPage[]);
+}
+
+/**
  * The page after `current` that still has no decision, so a reviewer can move on
  * without going back to the sidebar.
  *
