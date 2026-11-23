@@ -58,7 +58,7 @@ gh pr create
 Monitor:
 
 - **Required status checks** (`test & build`, `e2e`) per repo ruleset
-- **Netlify deploy preview** (https://deploy-preview-<n>--hhvc-manager-review.netlify.app)
+- **Netlify deploy preview** (https://deploy-preview-<n>--sfhealthyhousing.netlify.app)
 - **Review bot findings** (CodeRabbit, Qodo) that post automatically
 
 Do not proceed until CI is green. If merge is blocked, see Troubleshooting below.
@@ -175,10 +175,10 @@ Verify secret updates by calling the service that uses it (e.g., hit `/api/ai/ge
 Verify **at the live artifact**, not the build logs:
 
 ```sh
-curl -I https://hhvc-manager-review.netlify.app/
+curl -I https://sfhealthyhousing.netlify.app/
 # HTTP 200 expected
 
-curl -I https://hhvc-manager-review.netlify.app/api/ai/generate
+curl -I https://sfhealthyhousing.netlify.app/api/ai/generate
 # HTTP 401 expected (unauthenticated proxy call)
 ```
 
@@ -264,7 +264,7 @@ If output shows pending migrations, run step 5a before re-deploying previews.
 CI passing does not guarantee the deployed version works. Always verify beyond the logs:
 
 ```bash
-curl -I https://deploy-preview-<n>--hhvc-manager-review.netlify.app/
+curl -I https://deploy-preview-<n>--sfhealthyhousing.netlify.app/
 # HTTP 200 expected
 
 git show origin/<branch>:src/file.ts | grep "expected_string"
