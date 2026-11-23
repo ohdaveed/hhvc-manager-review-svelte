@@ -154,8 +154,34 @@ describe('ReviewPanel', () => {
 			for (const r of radios()) expect(r.getAttribute('data-state')).toBe('off');
 		});
 
-		it('signed in: says there is no review record instead of asking to sign in', () => {
+		it('signed in, review still loading: disabled, and no "no record" message yet', () => {
 			pagesStore.set([]);
+			render(ReviewPanel, { pageData: { id: PATH } });
+			for (const r of radios()) expect(r.disabled).toBe(true);
+			expect(screen.queryByText('No review record exists for this page')).toBeNull();
+			expect(screen.queryByRole('link', { name: 'Sign in' })).toBeNull();
+		});
+
+		it('session not yet known: neither message', () => {
+			Object.assign(session, { signedIn: undefined, knownSignedOut: false });
+			pagesStore.set([]);
+			render(ReviewPanel, { pageData: { id: PATH } });
+			for (const r of radios()) expect(r.disabled).toBe(true);
+			expect(screen.queryByText('No review record exists for this page')).toBeNull();
+			expect(screen.queryByText(/to record a decision/)).toBeNull();
+		});
+
+		it('signed in, review loaded without this page: says there is no review record', () => {
+			pagesStore.set([
+				{
+					id: 'row-9',
+					review_id: 'r1',
+					path: 'some-other-page',
+					status: 'needs-review',
+					manager_notes: null,
+					page_checks: null
+				}
+			]);
 			render(ReviewPanel, { pageData: { id: PATH } });
 			for (const r of radios()) expect(r.disabled).toBe(true);
 			expect(screen.getByText('No review record exists for this page')).toBeTruthy();

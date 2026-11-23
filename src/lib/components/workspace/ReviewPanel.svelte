@@ -224,7 +224,9 @@
 							class="font-semibold text-sfds-action underline underline-offset-2">Sign in</a
 						> to record a decision
 					</span>
-				{:else if !liveRecord && sessionStore.signedIn}
+				{:else if !liveRecord && sessionStore.signedIn && $pagesStore.length > 0}
+					<!-- Only once the review has loaded: an empty store while signed in
+					     is still loading, and saying "no record" then is a false alarm. -->
 					<span class="text-xs text-sfds-slate-l3">No review record exists for this page</span>
 				{/if}
 				{#if decisionError}
