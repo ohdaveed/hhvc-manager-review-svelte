@@ -15,12 +15,19 @@ import type { ReviewPage } from '$lib/stores/reviewState';
 export function reviewProgress(pages: ReviewPage[]): {
 	decided: number;
 	total: number;
+	nextPath: string | undefined;
 	nextHref: `/review/${string}` | undefined;
 } {
+	// Deliberately NOT `firstQueuePath`. That loops QUEUE_STATUS_ORDER, whose
+	// first entry is `needs-review`, so while any undecided page exists the two
+	// are identical. They differ only when everything is decided: there
+	// `firstQueuePath` falls through to an APPROVED page, and Continue would
+	// point at a page with nothing left to resume. `undefined` is right.
 	const next = pages.find((p) => p.status === 'needs-review');
 	return {
 		decided: pages.filter((p) => p.status !== 'needs-review').length,
 		total: pages.length,
+		nextPath: next?.path,
 		nextHref: next ? reviewHrefFor(next.path) : undefined
 	};
 }

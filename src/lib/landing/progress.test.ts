@@ -36,11 +36,22 @@ describe('reviewProgress', () => {
 		expect(reviewProgress([p('needs-review', 'draft:abc')]).nextHref).toBe('/review/draft/abc');
 	});
 
+	it('names the next path as well as its href', () => {
+		expect(reviewProgress([p('approved', 'a'), p('needs-review', 'draft:b')]).nextPath).toBe(
+			'draft:b'
+		);
+	});
+
 	it('has no next href once every page is decided', () => {
 		expect(reviewProgress([p('approved'), p('blocked')]).nextHref).toBeUndefined();
 	});
 
 	it('reports nothing for an empty review', () => {
-		expect(reviewProgress([])).toEqual({ decided: 0, total: 0, nextHref: undefined });
+		expect(reviewProgress([])).toEqual({
+			decided: 0,
+			total: 0,
+			nextPath: undefined,
+			nextHref: undefined
+		});
 	});
 });

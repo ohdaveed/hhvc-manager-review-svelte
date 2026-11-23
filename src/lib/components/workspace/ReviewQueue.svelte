@@ -4,18 +4,17 @@
 	import { pagesStore, editsStore, QUEUE_STATUS_ORDER } from '$lib/stores/reviewState';
 	import { pageStore } from '$lib/stores/pageData.svelte';
 	import { reviewHrefFor, routePathFor } from '$lib/corpus/draftPath';
+	import { pageTitleFor } from '$lib/corpus/pageTitle';
 	import { draftsStore } from '$lib/stores/draftPages';
 	import { Badge } from '$lib/components/ui/badge/index.js';
 	import { sessionStore } from '$lib/stores/session.svelte';
 
 	// The pages table has no title column, so a hydrated row carries only `path`.
-	// Titles come from the static corpus, whose derived id is that same path.
+	// Titles come from the static corpus (whose derived id is that same path) or,
+	// for a draft that is not ready, from `draftsStore`. See `pageTitleFor`.
 	const corpusFor = (path: string) => pageStore.pages.find((p) => p.id === path);
-	// A ready draft has a store entry with the model's real title; a drafting or
-	// failed one has none, so `draftsStore` (the reviewer's truncated words) is
-	// the only source. Neither, and the raw path is all there is.
 	const draftFor = (path: string) => $draftsStore.find((d) => d.path === path);
-	const titleFor = (path: string) => corpusFor(path)?.title ?? draftFor(path)?.title ?? path;
+	const titleFor = (path: string) => pageTitleFor(path, pageStore.pages, $draftsStore);
 	const currentPath = $derived(routePathFor($routePage.params));
 
 	// The store automatically updates via Supabase realtime subscriptions.

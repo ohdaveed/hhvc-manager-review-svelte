@@ -1,20 +1,18 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { reviewHrefFor } from '$lib/corpus/draftPath';
+	import { pageTitleFor } from '$lib/corpus/pageTitle';
 	import { draftsStore } from '$lib/stores/draftPages';
 	import { pageStore } from '$lib/stores/pageData.svelte';
 
-	// A ready draft is in `pageStore` under its `draft.path`, with the model's
-	// real title. A drafting or failed one is not (`mergeDraftPages` skips it),
-	// so `draftsStore` is the only source of its name. Corpus pages first, then
-	// those drafts, each named by the same lookup the queue uses.
-	const corpusFor = (path: string) => pageStore.pages.find((p) => p.id === path);
-	const draftFor = (path: string) => $draftsStore.find((d) => d.path === path);
-	const titleFor = (path: string) => corpusFor(path)?.title ?? draftFor(path)?.title ?? path;
+	// Corpus pages first, then drafts not in `pageStore` (drafting or failed),
+	// each named by `pageTitleFor`.
+	const titleFor = (path: string) => pageTitleFor(path, pageStore.pages, $draftsStore);
+	const inCorpus = (path: string) => pageStore.pages.some((p) => p.id === path);
 
 	const paths = $derived([
 		...pageStore.pages.map((p) => p.id),
-		...$draftsStore.map((d) => d.path).filter((path) => !corpusFor(path))
+		...$draftsStore.map((d) => d.path).filter((path) => !inCorpus(path))
 	]);
 </script>
 

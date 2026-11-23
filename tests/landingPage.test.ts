@@ -82,7 +82,17 @@ describe('landing page', () => {
 		session.signedIn = undefined;
 		render(Page);
 		expect(screen.queryByText(/\d+ of \d+ decided/i)).toBeNull();
+		// Neutral text, not the sign-in link: the visitor may well be signed in.
 		expect(screen.queryByRole('link', { name: /sign in/i })).toBeNull();
+		expect(screen.getByText(/checking your session/i)).toBeTruthy();
+	});
+
+	it('claims no progress between sign-in and the review load resolving', () => {
+		session.signedIn = true;
+		loadReview.mockImplementationOnce(() => new Promise(() => {}));
+		render(Page);
+		expect(screen.queryByText(/\d+ of \d+ decided/i)).toBeNull();
+		expect(screen.getByText(/loading your progress/i)).toBeTruthy();
 	});
 
 	it('does not redirect', async () => {
@@ -93,31 +103,32 @@ describe('landing page', () => {
 		expect(goto).not.toHaveBeenCalled();
 	});
 
-	it('shows progress and a continue link when signed in', () => {
+	it('shows progress and a continue link when signed in', async () => {
 		session.signedIn = true;
 		pagesStore.set([row('topic-x--about', 'approved'), row('topic-x--report', 'needs-review')]);
 		render(Page);
 
-		expect(screen.getByText(/1 of 2 decided/i)).toBeTruthy();
-		const cont = screen.getByRole('link', { name: /continue/i });
+		expect(await screen.findByText(/1 of 2 decided/i)).toBeTruthy();
+		const cont = screen.getByRole('link', { name: 'Continue to Report a problem' });
 		expect(cont.getAttribute('href')).toBe('/review/topic-x--report');
 		expect(loadReview).toHaveBeenCalledOnce();
 	});
 
-	it('links a draft that is first in the queue to its draft route, not a 404', () => {
+	it('links a draft that is first in the queue to its draft route, not a 404', async () => {
 		session.signedIn = true;
 		pagesStore.set([row('draft:abc', 'needs-review')]);
 		render(Page);
-		expect(screen.getByRole('link', { name: /continue/i }).getAttribute('href')).toBe(
+		// Not in pageStore, not in draftsStore: the path is the last-resort name.
+		expect((await screen.findByRole('link', { name: /continue/i })).getAttribute('href')).toBe(
 			'/review/draft/abc'
 		);
 	});
 
-	it('counts drafts in the total', () => {
+	it('counts drafts in the total', async () => {
 		session.signedIn = true;
 		pagesStore.set([row('topic-x--about', 'approved'), row('draft:abc', 'needs-review')]);
 		render(Page);
-		expect(screen.getByText(/1 of 2 decided/i)).toBeTruthy();
+		expect(await screen.findByText(/1 of 2 decided/i)).toBeTruthy();
 	});
 
 	it('names a drafting draft by its stored title in All pages', () => {
