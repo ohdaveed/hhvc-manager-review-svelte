@@ -39,6 +39,25 @@
 			if (key) activeTab = 'rethink';
 		}
 	});
+
+	// The tab row scrolls rather than wraps, so the active tab could sit
+	// scrolled out of view after a switch from outside (the two effects above)
+	// or after the row's layout changes (font size, panel width). Keyboard
+	// focus scrolls itself; this covers the rest.
+	let tabList = $state<HTMLElement | null>(null);
+	$effect(() => {
+		void activeTab;
+		const list = tabList;
+		if (!list) return;
+		const reveal = () =>
+			list
+				.querySelector('[role="tab"][aria-selected="true"]')
+				?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+		reveal();
+		const observer = new ResizeObserver(reveal);
+		observer.observe(list);
+		return () => observer.disconnect();
+	});
 </script>
 
 <Tabs.Root
@@ -54,6 +73,11 @@
 	     collapse button stranded beside the first. Re-measured in Chromium at
 	     1440x1000 before this change: 353px of triggers in a 339px strip.
 
+	     Four at 16px still WRAP for a reviewer whose browser font size is
+	     "Large" (20px root): text, padding and the Fields badge are all rem,
+	     so they scale by 1.25 together and no padding trim can win. The row
+	     therefore scrolls instead of wrapping -- see below.
+
 	     The fifth tab was removable because it was a DUPLICATE, not because
 	     space was tight. "Checks" rendered the same `ReviewPanel` as
 	     "Overview" with `showOnlyChecks`, and Overview already renders Page
@@ -62,19 +86,22 @@
 	     where they are most useful: under the decision they inform. Overview
 	     is now called "Decision", which is what it holds.
 
-	     `flex-wrap` and `h-auto!` are KEPT deliberately. They are the
-	     safeguard for the next tab someone adds, and `h-auto!` needs the
-	     important modifier because the `line` variant pins the list to `h-8`
-	     via `group-data-horizontal/tabs:h-8`, which outranks a plain
-	     `h-auto`; without it a wrapped second row paints 20px over the panel
-	     content below. Wrapping beats horizontal scrolling either way: a tab
-	     nobody can see is a tab nobody opens. -->
+	     The list is `flex-nowrap overflow-x-auto`. `overflow-x` forces
+	     `overflow-y` to auto, and the line variant's active underline sits 5px
+	     below the trigger (`after:bottom-[-5px]`) while the list's own bottom
+	     padding is 3px, so `pb-[5px]` gives it room and `overflow-y-hidden`
+	     stops a stray 2px vertical scroll. The scrollbar is hidden: a cut-off
+	     tab is the affordance, keyboard focus scrolls itself, and the effect
+	     in the script scrolls a programmatically selected tab into view.
+	     `h-auto!` is still needed: the `line` variant pins the list to `h-8`
+	     via `group-data-horizontal/tabs:h-8`, which outranks a plain `h-auto`. -->
 	<div class="flex items-center gap-1 border-b bg-muted/40 pr-2">
 		<Tabs.List
 			variant="line"
-			class="h-auto! min-w-0 flex-1 flex-wrap justify-start gap-0 border-0 bg-transparent px-2"
+			bind:ref={tabList}
+			class="h-auto! min-w-0 flex-1 [scrollbar-width:none] flex-nowrap justify-start gap-0 overflow-x-auto overflow-y-hidden border-0 bg-transparent px-1 pb-[5px]"
 		>
-			<Tabs.Trigger value="fields" class="flex-none px-2.5 py-2.5">
+			<Tabs.Trigger value="fields" class="flex-none px-2 py-2.5">
 				Fields
 				{#if pageStore.selectedFieldIds.length > 0}
 					<span
@@ -84,9 +111,9 @@
 					</span>
 				{/if}
 			</Tabs.Trigger>
-			<Tabs.Trigger value="rethink" class="flex-none px-2.5 py-2.5">Rethink</Tabs.Trigger>
-			<Tabs.Trigger value="overview" class="flex-none px-2.5 py-2.5">Decision</Tabs.Trigger>
-			<Tabs.Trigger value="analysis" class="flex-none px-2.5 py-2.5">Analysis</Tabs.Trigger>
+			<Tabs.Trigger value="rethink" class="flex-none px-2 py-2.5">Rethink</Tabs.Trigger>
+			<Tabs.Trigger value="overview" class="flex-none px-2 py-2.5">Decision</Tabs.Trigger>
+			<Tabs.Trigger value="analysis" class="flex-none px-2 py-2.5">Analysis</Tabs.Trigger>
 		</Tabs.List>
 
 		{#if onCollapse}
