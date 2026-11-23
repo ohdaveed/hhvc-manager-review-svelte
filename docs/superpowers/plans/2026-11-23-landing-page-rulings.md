@@ -189,3 +189,43 @@ is what makes the dropped-filter mutation fail.
 Two optional coverage gaps, both Minor and both recorded rather than fixed: no test
 covers the new PATCH shape check or the layout's `.catch` (both verified by reading), and
 the regression test does not assert that the skipped draft's path was logged.
+
+## Deferred backlog
+
+The 24 Minor findings deliberately deferred during the task reviews. The final
+whole-branch review triaged all of them and ruled that none blocked the merge (R39);
+four were struck as closed by measurement rather than deferred. Kept here because the
+execution ledger that held them is scratch and has been removed.
+
+**Do first:** a direct test for `routePathFor`, and one pinning that a draft route
+highlights its queue row — `currentPath` is literally the line that was resolved by hand
+in the merge conflict.
+
+**Do not "fix":** the stub treating a missing `review_id` as "return all rows". The
+foreign-review decoy row is what makes the dropped-filter mutation fail, and a stricter
+stub would weaken that signal.
+
+- **Task 4** — `getSession` is called twice in `createDraft` (draftPages.ts:106-108).
+- **Task 4** — the 90s `isStaleDraft` boundary is untested (91s and 10s are covered).
+- **Task 5** — `<aside>` inside the layout's `<main>` may trip
+- **Task 5** — `text-sfds-red` on `bg-sfds-blue-l1` is unmeasured contrast
+- **Task 5** — a draft id absent from `draftsStore` shows "Loading draft…" with no
+- **Task 5** — `routePathFor` has no direct test; the queue mock exercises only the
+- **Task 5** — no coverage for `retryDraft` where generation throws again
+- **Task 5** — ⚠️ unverified — how `ReviewWorkspace` behaves when `pageData` is
+- **Task 6** — `loaded` never resets, so signed-in → out → in shows stale
+- **Task 6** — no test for a signed-in `loadReview` rejection, nor for the effect's
+- **Task 6** — the brief suggested shadcn `Card`/`Separator`; only `Button` is used.
+- **Task 6** — `text-sfds-action` link contrast on the slate/white background is
+- **Task 7** — no boundary test at exactly 2000 chars, so `over <= 0` vs `< 0` is
+- **Task 7** — the `<label>` is a two-sentence paragraph, so the textarea's
+- **Task 7** — if `supabase.auth.getSession()` throws AFTER a successful POST
+- **Task 7** — 5 of 8 tests were observed failing only for "module not found"
+- **Task 7** — a superseded draft's late failure is only `console.warn`ed; the form
+- **Task 8** — `aria-allowed-role` on `.cursor-default`, pre-existing across all
+- **Task 8** — duplicated fixture facts — the four draft titles are retyped at
+- **Task 8** — `gotoSignedIn` branches on `path === '/'`, so `/?x=1` falls through to
+- **Task 8** — `signedIn.ts` is ~300 lines mixing the session shim, the routes and the
+- **Task 8** — axe reports obscured or unresolvable contrast as `incomplete` rather
+- **Task 8** — the stub treats a MISSING `review_id` param as "return all rows",
+- **Task 8** — no mutation was run for dropping `updated_at` from the store's select,
