@@ -23,10 +23,10 @@
 	// anything that needs to name the queue's first page cannot disagree about
 	// which row that is.
 	const PRESENTATION = {
-		'needs-review': { heading: 'Needs review', dot: 'bg-sfds-action', bar: 'bg-sfds-grey-l2' },
-		approved: { heading: 'Approved', dot: 'bg-sfds-green', bar: 'bg-sfds-green' },
-		revise: { heading: 'Needs revision', dot: 'bg-sfds-amber', bar: 'bg-sfds-amber' },
-		blocked: { heading: 'Blocked', dot: 'bg-sfds-red', bar: 'bg-sfds-red' }
+		'needs-review': { heading: 'Needs review', bar: 'bg-sfds-grey-l2' },
+		approved: { heading: 'Approved', bar: 'bg-sfds-green' },
+		revise: { heading: 'Needs revision', bar: 'bg-sfds-amber' },
+		blocked: { heading: 'Blocked', bar: 'bg-sfds-red' }
 	};
 
 	const groups = QUEUE_STATUS_ORDER.map((status) => ({ status, ...PRESENTATION[status] }));
@@ -41,6 +41,34 @@
 	// One edit row per (page, field) -- `saveInlineEdit` replaces rather than
 	// appends locally, so this counts fields touched, not saves made.
 	const editCount = (pageId: string) => $editsStore.filter((e) => e.page_id === pageId).length;
+
+	// Filters the rows only. Progress above stays computed on every page, since
+	// "N of M decided" describes the review, not the current search.
+	let query = $state('');
+	const needle = $derived(query.trim().toLowerCase());
+	const shown = $derived(
+		needle === ''
+			? $pagesStore
+			: $pagesStore.filter(
+					(p) =>
+						titleFor(p.path).toLowerCase().includes(needle) || p.path.toLowerCase().includes(needle)
+				)
+	);
+
+	// The row's second line, as text. There used to be a coloured dot here, but
+	// inside a status group it only repeated the group's colour and said nothing
+	// about the row. Notes and edits are the per-row facts worth a glance, and
+	// as words they need no colour key (WCAG 1.4.1).
+	const metaFor = (p: (typeof $pagesStore)[number]) => {
+		const edits = editCount(p.id);
+		return [
+			corpusFor(p.path)?.type,
+			edits > 0 && `${edits} edited ${edits === 1 ? 'field' : 'fields'}`,
+			p.manager_notes?.trim() && 'has notes'
+		]
+			.filter(Boolean)
+			.join(' · ');
+	};
 
 	const share = (status: string) =>
 		total === 0 ? 0 : ($pagesStore.filter((p) => p.status === status).length / total) * 100;
@@ -115,8 +143,25 @@
 		</section>
 	{/if}
 
+	{#if total > 0}
+		<div>
+			<label for="queue-filter" class="sr-only">Filter pages</label>
+			<input
+				id="queue-filter"
+				type="search"
+				bind:value={query}
+				placeholder="Filter by title or path"
+				autocomplete="off"
+				class="w-full rounded-[3px] border border-sfds-grey-l2 bg-white px-2.5 py-1.5 text-[13px] text-sfds-black placeholder:text-sfds-slate-l3 focus:border-sfds-action focus:ring-1 focus:ring-sfds-action focus:outline-none"
+			/>
+		</div>
+		{#if shown.length === 0}
+			<p role="status" class="text-sm text-sfds-slate-l3">No pages match “{query.trim()}”.</p>
+		{/if}
+	{/if}
+
 	{#each groups as group (group.status)}
-		{@const pages = $pagesStore.filter((p) => p.status === group.status)}
+		{@const pages = shown.filter((p) => p.status === group.status)}
 		{#if pages.length > 0}
 			<section>
 				<h3 class="mb-2 flex items-center justify-between">
@@ -132,7 +177,7 @@
 				<ul class="space-y-0.5">
 					{#each pages as p (p.path)}
 						{@const isCurrent = currentPath === p.path}
-						{@const edits = editCount(p.id)}
+						{@const meta = metaFor(p)}
 						<li>
 							<!-- A left border rather than a filled row: the fill would compete
 							     with the selected-field highlight in the canvas, and there are
@@ -144,33 +189,21 @@
 									? 'border-sfds-action bg-sfds-blue-l1'
 									: 'border-transparent'}"
 							>
-								<span class="flex items-start gap-2">
-									<span
-										class="mt-1.5 inline-block size-2 shrink-0 rounded-full {group.dot}"
-										aria-hidden="true"
-									></span>
-									<span class="min-w-0">
-										<span
-											class="block text-[13px] leading-[18px] text-sfds-black {isCurrent
-												? 'font-semibold'
-												: ''}"
-										>
-											{titleFor(p.path)}
-										</span>
-										{#if draftFor(p.path)}
-											<Badge variant="secondary" class="mt-0.5">AI draft</Badge>
-										{/if}
-										{#if corpusFor(p.path)?.type || edits > 0}
-											<span class="mt-0.5 block text-[11px] leading-[14px] text-sfds-slate-l3">
-												{corpusFor(p.path)?.type ?? ''}{corpusFor(p.path)?.type && edits > 0
-													? ' · '
-													: ''}{edits > 0
-													? `${edits} edited ${edits === 1 ? 'field' : 'fields'}`
-													: ''}
-											</span>
-										{/if}
-									</span>
+								<span
+									class="block text-[13px] leading-[18px] text-sfds-black {isCurrent
+										? 'font-semibold'
+										: ''}"
+								>
+									{titleFor(p.path)}
 								</span>
+								{#if draftFor(p.path)}
+									<Badge variant="secondary" class="mt-0.5">AI draft</Badge>
+								{/if}
+								{#if meta}
+									<span class="mt-0.5 block text-[11px] leading-[14px] text-sfds-slate-l3">
+										{meta}
+									</span>
+								{/if}
 							</a>
 						</li>
 					{/each}

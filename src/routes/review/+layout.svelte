@@ -14,13 +14,19 @@
 		ArrowLeft,
 		ChevronsLeft,
 		ChevronsRight,
+		Download,
 		Maximize2,
 		Monitor,
 		Smartphone,
 		Tablet
 	} from 'lucide-svelte';
 	import * as ToggleGroup from '$lib/components/ui/toggle-group/index.js';
-	import { PREVIEW_WIDTHS, previewBand, type PreviewWidth } from '$lib/stores/pageData.svelte';
+	import {
+		PREVIEW_WIDTHS,
+		fitFrame,
+		previewBand,
+		type PreviewWidth
+	} from '$lib/stores/pageData.svelte';
 	import ReviewQueue from '$lib/components/workspace/ReviewQueue.svelte';
 	import ReviewWorkspace from '$lib/components/workspace/ReviewWorkspace.svelte';
 	import SiteHeader from '$lib/components/sfgov/SiteHeader.svelte';
@@ -126,6 +132,21 @@
 	 * rendering.
 	 */
 	let frameWidth = $state(0);
+
+	/**
+	 * Under Fit, how far the frame is zoomed down so the page keeps its desktop
+	 * layout in a pane narrower than 1024px (see `fitScale`). 1 means no zoom.
+	 * `paneBox` is the canvas's content box: its width minus padding and scrollbar.
+	 */
+	let paneBox = $state<DOMRectReadOnly | undefined>();
+	const fit = $derived(pageStore.previewWidth === 'fit' ? fitFrame(paneBox?.width ?? 0) : null);
+	const scale = $derived(fit?.scale ?? 1);
+	const frameStyle = $derived.by(() => {
+		const preset = PREVIEW_WIDTHS[pageStore.previewWidth];
+		if (preset) return `width:${preset}px;max-width:none;flex:none`;
+		if (fit) return `width:${fit.width}px;max-width:none;flex:none;zoom:${fit.scale}`;
+		return '';
+	});
 
 	/**
 	 * In sheet mode the rail always shows its contents: a collapsed rail
@@ -252,12 +273,14 @@
 				</Button>
 			</div>
 		{:else}
-			<div class="flex items-start gap-2 px-3 pt-5 pb-4 pl-5">
+			<!-- Compact: the two-line heading took ~15% of the rail's height,
+			     space the queue rows below need more. -->
+			<div class="flex items-center gap-2 px-3 py-2.5 pl-5">
 				<div class="min-w-0 flex-1">
-					<div class="text-[11px] font-bold tracking-[0.1em] text-sfds-slate-l3 uppercase">
+					<div class="text-[10px] font-bold tracking-[0.1em] text-sfds-slate-l3 uppercase">
 						SFDS rebuild
 					</div>
-					<h2 class="mt-1.5 font-heading text-xl leading-[26px] font-bold text-sfds-black">
+					<h2 class="font-heading text-base leading-5 font-bold text-sfds-black">
 						HHVC mockup review
 					</h2>
 				</div>
@@ -276,25 +299,31 @@
 				<ReviewQueue />
 			</ScrollArea>
 			<Separator />
-			<div class="flex items-center justify-between px-5 py-3.5">
-				<!-- Client-side export of live review statuses, checks, notes, and
-				     inline edits compiled against the static corpus. -->
+			<div class="flex items-center justify-between gap-2 px-5 py-3">
+				<!-- No longer dead. It is a view of this same route rather than a
+				     page of its own: the queue and the review panel stay put, so
+				     making it a route would remount both to change the middle column.
+				     Styled as a nav link because that is what it does; still a
+				     button, since it switches a mode rather than loading a URL. -->
 				<button
 					type="button"
-					class="text-[13px] font-semibold text-sfds-action hover:underline"
+					class="text-[13px] font-semibold text-sfds-action underline-offset-2 hover:underline"
+					onclick={() => pageStore.showSitemap()}>Site map</button
+				>
+				<!-- Client-side export of live review statuses, checks, notes, and
+				     inline edits compiled against the static corpus. A secondary
+				     button with a download icon, so it reads as producing a file
+				     rather than as another place to go. -->
+				<Button
+					variant="outline"
+					size="sm"
+					class="h-7 gap-1.5 px-2.5 text-xs"
 					data-testid="export-review-data"
 					onclick={() => triggerReviewExportDownload(pageStore.pages, $pagesStore, $editsStore)}
 				>
+					<Download class="size-3.5" aria-hidden="true" />
 					Export review data
-				</button>
-				<!-- No longer dead. It is a view of this same route rather than a
-				     page of its own: the queue and the review panel stay put, so
-				     making it a route would remount both to change the middle column. -->
-				<button
-					type="button"
-					class="text-[13px] font-semibold text-sfds-action hover:underline"
-					onclick={() => pageStore.showSitemap()}>Site map</button
-				>
+				</Button>
 			</div>
 		{/if}
 	</aside>
@@ -347,9 +376,12 @@
 				/>
 			{:else}
 				<nav
-					class="review-toolbar flex h-12 flex-none items-center justify-between border-b border-sfds-grey-l2 bg-background px-5"
+					class="review-toolbar flex h-12 flex-none items-center justify-between border-b border-sfds-grey-l2 bg-background px-3 sm:px-5"
 				>
-					<div class="flex min-w-0 items-center gap-2">
+					<!-- `grow` with no `min-w-0`: the group never shrinks below its
+					     fixed controls, so a narrow bar wraps the right-hand group
+					     onto a second row instead of overlapping it. -->
+					<div class="flex grow items-center gap-2">
 						<!-- The only way to the queue and the panel below 1024px, where
 						     both rails leave the grid. Hidden above it, where the rails
 						     are on screen and these would be a second way to do nothing
@@ -399,30 +431,33 @@
 								First page
 							</a>
 						{/if}
-						<span class="h-4 w-px flex-none bg-sfds-grey-l2" aria-hidden="true"></span>
-						{#if pageData?.type}
-							<span
-								class="inline-flex h-[22px] flex-none items-center rounded-[4px] bg-sfds-grey-l2/60 px-2 text-[11px] font-bold tracking-[0.08em] text-sfds-black uppercase"
-							>
-								{pageData.type}
-							</span>
-						{/if}
+						<span class="h-4 w-px flex-none bg-sfds-grey-l2 max-sm:hidden" aria-hidden="true"
+						></span>
+						<!-- No page-type badge: the queue row already names the type,
+						     and the badge's ~100px was what pushed this bar onto a
+						     second row at 1440px with both rails open. -->
 						<!-- When the queue is collapsed it no longer shows the page title, so
 					     the toolbar absorbs it (design 2a). Restored to the queue on expand. -->
 						{#if pageStore.railCollapsed.queue && pageData?.title}
-							<span class="truncate text-sm font-semibold text-sfds-black">{pageData.title}</span>
+							<span class="w-0 grow truncate text-sm font-semibold text-sfds-black"
+								>{pageData.title}</span
+							>
 						{/if}
 						<!-- slate-l3, not slate-l2. MEASURED on the built app: #5a7a92 on
 						     white is 4.53:1, which clears WCAG AA's 4.5 floor by 0.03 and
 						     reads washed out at 12px; #1d4d70 is 8.94:1 and is already in
 						     the SFDS palette, so this is a token swap rather than a new
 						     colour. Same swap on the Karl tags label below. -->
-						<span class="truncate font-mono text-xs text-sfds-slate-l3">
+						<!-- `w-0 grow`: the slug fills whatever the row leaves and
+						     truncates, instead of its full ~48 characters counting
+						     toward where flex-wrap breaks the line. Hidden on a phone,
+						     where the row has nothing to spare for it. -->
+						<span class="w-0 grow truncate font-mono text-xs text-sfds-slate-l3 max-sm:hidden">
 							{pageData?.slug ?? 'https://sf.gov/'}
 						</span>
 					</div>
 
-					<div class="flex flex-none items-center gap-4 text-sm">
+					<div class="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-sm">
 						{#if unsavedCount > 0}
 							<span
 								class="inline-flex items-center rounded-full border border-violet-200 bg-violet-50 px-2.5 py-[3px] text-xs font-semibold text-violet-900"
@@ -441,7 +476,9 @@
 								data-testid="preview-width"
 								title="The width the mockup is being rendered at, and the sf.gov layout that width produces"
 							>
-								{frameWidth}px · {previewBand(frameWidth)}
+								{frameWidth}px · {previewBand(frameWidth)}{scale < 1
+									? ` · ${Math.round(scale * 100)}%`
+									: ''}
 							</span>
 							<ToggleGroup.Root
 								type="single"
@@ -472,7 +509,11 @@
 							class="h-7 flex-none text-xs"
 							onclick={() => pageStore.enterWalkthrough()}
 						>
-							Open Karl walkthrough
+							<!-- "Karl" alone on a phone keeps the bar to two rows; the
+							     hidden words keep the accessible name, which tests and
+							     screen readers both use, unchanged. -->
+							<span class="max-sm:sr-only">Open</span> Karl
+							<span class="max-sm:sr-only">walkthrough</span>
 						</Button>
 					</div>
 				</nav>
@@ -503,7 +544,8 @@
 				     cannot be scrolled back to. `margin-inline: auto` centres the
 				     same way and keeps both edges reachable. -->
 				<div
-					class="flex flex-1 overflow-x-auto overflow-y-auto px-8 pt-7 pb-30"
+					class="flex flex-1 overflow-x-auto overflow-y-auto px-3 pt-4 pb-30 sm:px-8 sm:pt-7"
+					bind:contentRect={paneBox}
 					tabindex="0"
 					role="region"
 					aria-label="Mockup preview"
@@ -532,12 +574,14 @@
 					     `w-full` / 1440px ceiling applies. `flex-none` so a preset
 					     wider than the pane is not squeezed back down -- the canvas
 					     scrolls horizontally instead, which is honest about the fact
-					     that a 1024px rendering does not fit in a 440px pane. -->
+					     that a 1024px rendering does not fit in a 440px pane.
+					     Under `fit`, a pane narrower than 1024px gets a 1024px frame
+					     zoomed down to fit (`frameStyle`), so the container query
+					     still sees desktop width and the reviewer sees the desktop
+					     layout, not the tablet one. -->
 					<figure
 						bind:clientWidth={frameWidth}
-						style={PREVIEW_WIDTHS[pageStore.previewWidth]
-							? `width:${PREVIEW_WIDTHS[pageStore.previewWidth]}px;max-width:none;flex:none`
-							: ''}
+						style={frameStyle}
 						class="mockup-frame mx-auto w-full self-start overflow-hidden rounded-[4px] border border-gray-200 bg-site-surface shadow-[0_2px_4px_rgba(12,20,100,.06),0_4px_12px_rgba(12,20,100,.1)]"
 					>
 						<SiteHeader />

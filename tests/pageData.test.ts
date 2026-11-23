@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { pageStore } from '../src/lib/stores/pageData.svelte.js';
+import { fitFrame, pageStore } from '../src/lib/stores/pageData.svelte.js';
 
 describe('Page Data Store', () => {
 	it('should initialize with all ported pages', () => {
@@ -162,5 +162,34 @@ describe('section selection and rethink state', () => {
 
 		pageStore.setOpAccepted('rewrite:heading:0', false);
 		expect(pageStore.acceptedOpCount()).toBe(1);
+	});
+});
+
+describe('fitFrame', () => {
+	it('scales a desktop layout down to a pane narrower than 1024px', () => {
+		const frame = fitFrame(683);
+		expect(frame?.width).toBe(1024);
+		expect(frame?.scale).toBeCloseTo(683 / 1024);
+	});
+
+	it('sets no frame when the pane already fits a desktop layout', () => {
+		expect(fitFrame(1024)).toBeNull();
+		expect(fitFrame(1300)).toBeNull();
+	});
+
+	it('reflows below half desktop size while the pane is still phone-wide', () => {
+		expect(fitFrame(512)).toEqual({ width: 1024, scale: 0.5 });
+		expect(fitFrame(511)).toBeNull();
+		expect(fitFrame(390)).toBeNull();
+	});
+
+	it('zooms a real phone width into a pane narrower than any phone', () => {
+		const frame = fitFrame(278);
+		expect(frame?.width).toBe(390);
+		expect(frame?.scale).toBeCloseTo(278 / 390);
+	});
+
+	it('sets no frame before the pane has been measured', () => {
+		expect(fitFrame(0)).toBeNull();
 	});
 });

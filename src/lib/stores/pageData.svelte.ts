@@ -90,6 +90,36 @@ export function previewBand(width: number): 'Desktop' | 'Tablet' | 'Phone' {
 	if (width > 560) return 'Tablet';
 	return 'Phone';
 }
+
+/** The width "Fit" lays the page out at whenever the pane is narrower. */
+export const FIT_LAYOUT_WIDTH = PREVIEW_WIDTHS.desktop;
+/** Below this scale the desktop layout is too small to read. */
+const FIT_MIN_SCALE = 0.5;
+
+/**
+ * The frame "Fit" lays out for a pane `paneWidth` px wide: the width the page
+ * is laid out at, and how far it is zoomed to fit. `null` means no fixed frame
+ * -- the frame takes the pane's width.
+ *
+ * The frame is a size container, so letting it shrink to the pane reflows
+ * sf.gov into its tablet layout. On a 1440px display with both rails open the
+ * pane is ~683px, and reviewers were approving the tablet rendering without
+ * knowing it. Instead, Fit keeps the layout at 1024px and zooms it down.
+ *
+ * Below `FIT_MIN_SCALE` that zoom is unreadable, so the phone layout is shown
+ * instead. A pane narrower than a real phone (278px on a 375px window) lays
+ * out at `PREVIEW_WIDTHS.phone` and zooms down too: reflowing at 278px showed a
+ * page no phone renders, and clipped the sf.gov header's language picker.
+ * Between 390px and half-desktop the pane is itself a phone width, so it
+ * reflows. Unmeasured (0) and desktop-wide panes need no frame.
+ */
+export function fitFrame(paneWidth: number): { width: number; scale: number } | null {
+	if (paneWidth <= 0 || paneWidth >= FIT_LAYOUT_WIDTH) return null;
+	const desktop = paneWidth / FIT_LAYOUT_WIDTH;
+	if (desktop >= FIT_MIN_SCALE) return { width: FIT_LAYOUT_WIDTH, scale: desktop };
+	const phone = PREVIEW_WIDTHS.phone;
+	return paneWidth < phone ? { width: phone, scale: paneWidth / phone } : null;
+}
 const COPIED_KEY = 'hhvc:walkthroughCopied';
 
 /**

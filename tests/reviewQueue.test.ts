@@ -11,7 +11,7 @@
  */
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { readable } from 'svelte/store';
-import { render, screen } from '@testing-library/svelte';
+import { fireEvent, render, screen } from '@testing-library/svelte';
 import ReviewQueue from '../src/lib/components/workspace/ReviewQueue.svelte';
 import { pageStore } from '../src/lib/stores/pageData.svelte.js';
 import {
@@ -156,6 +156,71 @@ describe('ReviewQueue', () => {
 		expect(screen.queryByText('Blocked')).toBeNull();
 		// The count pill sits beside the heading it belongs to.
 		expect(screen.getByText('Approved').parentElement?.textContent).toContain('2');
+	});
+
+	it('says in words when a page has decision notes, with no colour-only marker', () => {
+		pagesStore.set([
+			{ ...row('topic-x--about', 'needs-review'), manager_notes: 'Check the hours' },
+			{ ...row('topic-x--report', 'needs-review'), manager_notes: '   ' }
+		]);
+		const { container } = render(ReviewQueue);
+
+		expect(screen.getByText('About us · has notes')).toBeTruthy();
+		// Whitespace-only notes are not notes.
+		expect(screen.getByText('Transaction')).toBeTruthy();
+		// The per-row status dot only repeated the group's colour; it is gone.
+		expect(container.querySelector('li .rounded-full')).toBeNull();
+	});
+
+	describe('filter', () => {
+		const filterTo = async (text: string) => {
+			const box = screen.getByRole('searchbox', { name: 'Filter pages' });
+			await fireEvent.input(box, { target: { value: text } });
+		};
+
+		beforeEach(() => {
+			pagesStore.set([
+				row('topic-x--about', 'approved'),
+				row('topic-x--report', 'needs-review'),
+				row('topic-x--third', 'needs-review')
+			]);
+		});
+
+		it('matches titles case-insensitively, and recounts and hides groups', async () => {
+			render(ReviewQueue);
+			await filterTo('REPORT a');
+
+			expect(screen.getAllByRole('link').map((a) => a.getAttribute('href'))).toEqual([
+				'/review/topic-x--report'
+			]);
+			expect(screen.getByText('Needs review').parentElement?.textContent).toContain('1');
+			expect(screen.queryByText('Approved')).toBeNull();
+		});
+
+		it('matches the path too', async () => {
+			render(ReviewQueue);
+			await filterTo('x--third');
+
+			expect(screen.getAllByRole('link').map((a) => a.getAttribute('href'))).toEqual([
+				'/review/topic-x--third'
+			]);
+		});
+
+		it('says when nothing matches, and keeps progress on every page', async () => {
+			render(ReviewQueue);
+			await filterTo('zzz');
+
+			expect(screen.getByRole('status').textContent).toMatch(/No pages match/);
+			expect(screen.queryAllByRole('link')).toHaveLength(0);
+			expect(screen.getByText('1 of 3 decided')).toBeTruthy();
+		});
+
+		it('is not offered when there are no pages to filter', () => {
+			pagesStore.set([]);
+			render(ReviewQueue);
+
+			expect(screen.queryByRole('searchbox')).toBeNull();
+		});
 	});
 });
 
