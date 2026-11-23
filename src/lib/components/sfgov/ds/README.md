@@ -33,13 +33,17 @@ components are the opposite by design — real links, a real `<select>`, a real
 Demand would have to come from the tool's own non-canvas surfaces, and those are
 shadcn (`$lib/components/ui/**`) everywhere except `/login`.
 
-The twelve were **kept deliberately** when a repo-wide audit proposed cutting
-them (2026-11-22, `df0448e`). The carrying cost measured at roughly one
-incidental commit a month — three repo-wide hygiene sweeps have touched this
-directory and no feature or design work has since 2026-08-30 — deleting stays
-available at any time with git holding the conversion, and what a later
-re-derivation would lose is not the markup but the per-component WCAG reasoning
-recorded below. Revisit if real functional SF.gov pages are ruled out.
+**Whether to keep the twelve is an open question, not a settled one.** A
+repo-wide audit proposed cutting them on 2026-11-22; the cuts that landed
+(`df0448e`) left them in place pending a decision. The measured trade: keeping
+costs roughly one incidental commit a month — three repo-wide hygiene sweeps
+have touched this directory, and no feature or design work has since
+2026-08-30 — and stays reversible at any time, because git holds the
+conversion. Cutting removes that tax, and the axe gate over these patterns with
+it; what a later re-derivation would lose is not the markup but the
+per-component WCAG reasoning recorded below. The deciding question is not the
+line count. It is whether this tool's own non-canvas surfaces will be
+SF.gov-styled beyond `/login` or stay shadcn, and nobody has ruled on that.
 
 ## Design source of truth: Figma
 
