@@ -11,15 +11,23 @@ were. Once a decision was recorded nothing moved you on: the toolbar only offers
 - [x] `nextUndecidedPath(pages, current)` in `reviewState.ts`: the next
       `needs-review` page after `current` in store order, wrapping, never `current`;
       `undefined` when nothing is left. Unit tests in `tests/reviewQueue.test.ts`.
-- [ ] Decision panel shows a "Next undecided page →" link under the notes, or
+- [x] Decision panel shows a "Next undecided page →" link under the notes, or
       "Every page has a decision" when none are left.
-- [ ] The queue scrolls the `aria-current` row into view (`block: 'nearest'`)
+- [x] The queue scrolls the `aria-current` row into view (`block: 'nearest'`)
       whenever the slug changes.
-- [ ] `/` redirects to the queue's first row (`firstQueuePath`), falling back to
+- [x] `/` redirects to the queue's first row (`firstQueuePath`), falling back to
       corpus order when no review loads (signed out). It runs `loadReview()` and
       disposes the realtime channel right away, so no subscription leaks.
-- [ ] Gates: `test:unit --run`, `check:ratchet`, `build`. Browser check at 1440:
+- [x] Gates: `test:unit --run`, `check:ratchet`, `build`. Browser check at 1440:
       landing row visible, Next link moves to the right page.
 
 Deliberately skipped: `j`/`k` keyboard shortcuts and jumping to the next page
 automatically after a decision. Add them if reviewers want them.
+
+## Result
+
+Gates: 621/621 unit, svelte-check 0/0, eslint at baseline 4, build green.
+Browser at 1440 (local stack): `/` lands on row 1 with "First page" marked current;
+a deep link to row 38 scrolls it into view without moving the shell; Next goes to
+row 39; console clean. The queue scrolls by `scrollTop`, not `scrollIntoView`
+(WalkthroughDrawer note 3).

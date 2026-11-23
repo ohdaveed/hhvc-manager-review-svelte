@@ -6,14 +6,23 @@
 	import * as ToggleGroup from '$lib/components/ui/toggle-group/index.js';
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
 	import { onDestroy } from 'svelte';
+	import { resolve } from '$app/paths';
+	import { ArrowRight } from 'lucide-svelte';
+	import { pageStore } from '$lib/stores/pageData.svelte';
 	import {
 		updatePageStatus,
 		updatePageNotes,
+		nextUndecidedPath,
 		pagesStore,
 		type PageCheck
 	} from '$lib/stores/reviewState';
 
 	let { pageData } = $props();
+
+	// Where "Next undecided" goes. Only meaningful once a review has loaded:
+	// with no live rows (signed out) there is nothing to move on to.
+	const nextPath = $derived(pageData?.id ? nextUndecidedPath($pagesStore, pageData.id) : undefined);
+	const nextTitle = $derived(pageStore.pages.find((p) => p.id === nextPath)?.title ?? '');
 
 	// Find the live record in the store matching the static corpus id
 	let liveRecord = $derived($pagesStore.find((p) => p.path === pageData?.id));
@@ -207,6 +216,25 @@
 				oninput={onNotesInput}
 			/>
 		</div>
+
+		{#if nextPath}
+			<a
+				href={resolve('/review/[slug]', { slug: nextPath })}
+				class="flex items-center justify-between gap-3 rounded-md border border-sfds-action/40 px-3 py-2 text-sm font-semibold text-sfds-action hover:bg-sfds-blue-l1/60"
+			>
+				<span class="min-w-0">
+					<span class="block">Next undecided page</span>
+					<span class="block truncate text-xs font-normal text-sfds-slate-l3">{nextTitle}</span>
+				</span>
+				<ArrowRight class="size-4 shrink-0" aria-hidden="true" />
+			</a>
+		{:else if liveRecord}
+			<p class="text-sm text-sfds-slate-l3">
+				{liveRecord.status === 'needs-review'
+					? 'This is the last page without a decision.'
+					: 'Every page has a decision.'}
+			</p>
+		{/if}
 	</div>
 
 	<Separator />

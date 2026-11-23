@@ -37,9 +37,32 @@
 
 	const share = (status: string) =>
 		total === 0 ? 0 : ($pagesStore.filter((p) => p.status === status).length / total) * 100;
+
+	// Keep the current row on screen. Without this, landing on a page near the
+	// bottom of the queue left the sidebar showing 30 other rows and not the one
+	// being reviewed. Re-runs on navigation and on hydration (the row only
+	// exists once `pagesStore` has loaded).
+	//
+	// Sets `scrollTop` on the nearest scrolling ancestor, not `scrollIntoView`:
+	// the queue sits in a nested scroll area inside a fixed grid, and
+	// `scrollIntoView` scrolls whatever ancestor it picks, dragging the whole
+	// shell. See WalkthroughDrawer's note 3 for the same trap.
+	let navEl = $state<HTMLElement | null>(null);
+	$effect(() => {
+		void $routePage.params.slug;
+		void $pagesStore;
+		const row = navEl?.querySelector<HTMLElement>('[aria-current="page"]');
+		let box = row?.parentElement ?? null;
+		while (box && box.scrollHeight <= box.clientHeight) box = box.parentElement;
+		if (!row || !box) return;
+		const r = row.getBoundingClientRect();
+		const b = box.getBoundingClientRect();
+		if (r.top < b.top) box.scrollTop += r.top - b.top - 8;
+		else if (r.bottom > b.bottom) box.scrollTop += r.bottom - b.bottom + 8;
+	});
 </script>
 
-<nav class="space-y-5 px-5 pt-4 pb-6" aria-label="Review queue">
+<nav bind:this={navEl} class="space-y-5 px-5 pt-4 pb-6" aria-label="Review queue">
 	<!-- The empty state is not a loading state, and saying so was misleading.
 	     An empty `pagesStore` here means one of two things, and the old
 	     "No pages loaded. (Waiting for Supabase data)" described neither: it

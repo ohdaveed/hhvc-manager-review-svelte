@@ -1,21 +1,34 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { get } from 'svelte/store';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { pageStore } from '$lib/stores/pageData.svelte';
+	import { firstQueuePath, loadReview, pagesStore } from '$lib/stores/reviewState';
 
-	onMount(() => {
-		// There is no landing page yet: the root sends you to the first mockup.
+	onMount(async () => {
+		// There is no landing page yet: the root sends you to the queue's first
+		// row, the same page the toolbar's "First page" link names.
 		//
-		// This used to fall back to the literal `'agency-service-grouping'`, which
-		// is a FILENAME in `$lib/data`, not a routable id -- that module's page
-		// derives `departments--healthy-housing-and-vector-control` from its `slug`, so
-		// the fallback redirected to a 404. There is nothing to fall back to
-		// anyway: `pageStore.pages` is built at construction from the 29 compiled
-		// corpus modules, so an empty one means the corpus itself failed to load
-		// and no slug would help. Redirecting nowhere beats redirecting to a 404.
-		const first = pageStore.pages[0]?.id;
-		if (first) goto(resolve('/review/[slug]', { slug: first }));
+		// This used to go to `pageStore.pages[0]`, which is CORPUS order -- row 38
+		// of 39 in the queue, below the fold, so the sidebar never showed the page
+		// being reviewed. The queue's order only exists once the review has
+		// loaded, so load it here and drop the realtime channel straight away; the
+		// review layout loads its own.
+		//
+		// Signed out, or Supabase unreachable, the review is empty and corpus order
+		// is the only order there is. An empty corpus means the corpus itself
+		// failed to load, and redirecting nowhere beats redirecting to a 404.
+		let first: string | undefined;
+		try {
+			const dispose = await loadReview();
+			dispose();
+			first = firstQueuePath(get(pagesStore));
+		} catch {
+			// Fall through to corpus order.
+		}
+		first ??= pageStore.pages[0]?.id;
+		if (first) goto(resolve('/review/[slug]', { slug: first }), { replaceState: true });
 	});
 </script>
 
