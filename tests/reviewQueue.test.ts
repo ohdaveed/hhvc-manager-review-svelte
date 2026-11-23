@@ -14,7 +14,12 @@ import { readable } from 'svelte/store';
 import { render, screen } from '@testing-library/svelte';
 import ReviewQueue from '../src/lib/components/workspace/ReviewQueue.svelte';
 import { pageStore } from '../src/lib/stores/pageData.svelte.js';
-import { firstQueuePath, QUEUE_STATUS_ORDER, type ReviewPage } from '../src/lib/stores/reviewState';
+import {
+	firstQueuePath,
+	nextUndecidedPath,
+	QUEUE_STATUS_ORDER,
+	type ReviewPage
+} from '../src/lib/stores/reviewState';
 
 // `ensureDevSession` is required because ReviewQueue now reads `sessionStore`
 // to tell "signed out" from "this review is empty" in its empty state, and
@@ -186,5 +191,45 @@ describe('firstQueuePath', () => {
 
 	it('orders the rendered groups by the same constant', () => {
 		expect([...QUEUE_STATUS_ORDER]).toEqual(['needs-review', 'approved', 'revise', 'blocked']);
+	});
+});
+
+describe('nextUndecidedPath', () => {
+	const row = (path: string, status: ReviewPage['status']): ReviewPage => ({
+		id: `id-${path}`,
+		review_id: 'r1',
+		path,
+		status,
+		manager_notes: null,
+		page_checks: null
+	});
+
+	it('names the next undecided row after the current one, skipping decided rows', () => {
+		const pages = [row('a', 'needs-review'), row('b', 'approved'), row('c', 'needs-review')];
+		expect(nextUndecidedPath(pages, 'a')).toBe('c');
+	});
+
+	it('still means "the row after" once the current page has been decided', () => {
+		// Deciding `b` moves it out of the needs-review group, but the store keeps
+		// its position, so "next" is still `c` rather than jumping back to `a`.
+		const pages = [row('a', 'needs-review'), row('b', 'revise'), row('c', 'needs-review')];
+		expect(nextUndecidedPath(pages, 'b')).toBe('c');
+	});
+
+	it('wraps round to the start of the queue', () => {
+		const pages = [row('a', 'needs-review'), row('b', 'needs-review')];
+		expect(nextUndecidedPath(pages, 'b')).toBe('a');
+	});
+
+	it('never names the current page, and is undefined when nothing else is left', () => {
+		expect(
+			nextUndecidedPath([row('a', 'needs-review'), row('b', 'approved')], 'a')
+		).toBeUndefined();
+		expect(nextUndecidedPath([], 'a')).toBeUndefined();
+	});
+
+	it('starts from the top when the current page is not in the review', () => {
+		const pages = [row('a', 'approved'), row('b', 'needs-review')];
+		expect(nextUndecidedPath(pages, 'not-loaded')).toBe('b');
 	});
 });

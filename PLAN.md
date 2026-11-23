@@ -8,7 +8,7 @@ order). The current row was below the fold, so the sidebar never showed where yo
 were. Once a decision was recorded nothing moved you on: the toolbar only offers
 "First page", so all 39 pages meant a trip back to the sidebar each time.
 
-- [ ] `nextUndecidedPath(pages, current)` in `reviewState.ts`: the next
+- [x] `nextUndecidedPath(pages, current)` in `reviewState.ts`: the next
       `needs-review` page after `current` in store order, wrapping, never `current`;
       `undefined` when nothing is left. Unit tests in `tests/reviewQueue.test.ts`.
 - [ ] Decision panel shows a "Next undecided page →" link under the notes, or
