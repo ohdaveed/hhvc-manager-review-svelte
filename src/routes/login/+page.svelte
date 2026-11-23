@@ -29,7 +29,9 @@
 	let sent = $state(false);
 	let errorMessage = $state('');
 
-	const emailLooksValid = $derived(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()));
+	const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+	const emailLooksValid = $derived(EMAIL_PATTERN.test(email.trim()));
 
 	/** With `shouldCreateUser: false`, an address with no account comes back as a
 	 *  refusal rather than a silent success. Treated as success on purpose. */
@@ -79,6 +81,61 @@
 		sent = false;
 		email = '';
 	}
+
+	/**
+	 * Inviting creates the `auth.users` row a magic link requires. Public signup
+	 * is off on both hosted projects, so this is the only way a new reviewer
+	 * gets an account without dashboard access.
+	 *
+	 * Any signed-in reviewer may send one, and nothing records who did -- so the
+	 * help text says plainly what an invitation grants rather than leaving it to
+	 * be discovered.
+	 */
+	let inviteEmail = $state('');
+	let inviting = $state(false);
+	let invitedTo = $state('');
+	let inviteError = $state('');
+
+	const inviteLooksValid = $derived(EMAIL_PATTERN.test(inviteEmail.trim()));
+
+	async function sendInvite(event: SubmitEvent) {
+		event.preventDefault();
+		if (!inviteLooksValid || inviting) return;
+
+		inviting = true;
+		inviteError = '';
+		invitedTo = '';
+
+		const address = inviteEmail.trim();
+		const {
+			data: { session }
+		} = await supabase.auth.getSession();
+
+		const response = await fetch('/api/invite', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${session?.access_token ?? ''}`
+			},
+			body: JSON.stringify({ email: address })
+		});
+
+		inviting = false;
+
+		if (!response.ok) {
+			// The route names its own causes better than anything generic here --
+			// an address that already has an account, the mailer's hourly cap, an
+			// address the mailer will not deliver to.
+			const body = await response.json().catch(() => ({}));
+			inviteError = body.message || 'That invitation did not send.';
+			return;
+		}
+
+		invitedTo = address;
+		// Cleared so a second invitation does not go to the same address by
+		// accident -- the form offers no other signal that the send completed.
+		inviteEmail = '';
+	}
 </script>
 
 <svelte:head>
@@ -100,6 +157,44 @@
 				<SiteButton onclick={() => (window.location.href = '/')}>Go to the review queue</SiteButton>
 				<SiteButton variant="secondary" onclick={signOut}>Sign out</SiteButton>
 			</div>
+
+			<section class="mt-12 border-t border-border pt-8">
+				<h2 class="mb-6 text-xl font-bold text-foreground">Invite a reviewer</h2>
+
+				{#if invitedTo}
+					<div class="mb-6">
+						<PageAlert kind="success" title="Invitation sent">
+							Invitation sent to <strong>{invitedTo}</strong>.
+						</PageAlert>
+					</div>
+				{/if}
+
+				{#if inviteError}
+					<div class="mb-6">
+						<PageAlert kind="danger" title="That did not send">{inviteError}</PageAlert>
+					</div>
+				{/if}
+
+				<form onsubmit={sendInvite} novalidate>
+					<TextField
+						id="invite-email"
+						label="Email address"
+						help="They will get an email with a sign-in link. Anyone you invite can edit copy and change review decisions on every page."
+						type="email"
+						name="invite-email"
+						autocomplete="off"
+						placeholder="colleague@sfgov.org"
+						bind:value={inviteEmail}
+						disabled={inviting}
+						required
+					/>
+					<div class="mt-6">
+						<SiteButton type="submit" disabled={!inviteLooksValid || inviting}>
+							{inviting ? 'Sending…' : 'Send invitation'}
+						</SiteButton>
+					</div>
+				</form>
+			</section>
 		{:else if sent}
 			<PageAlert kind="success" title="Check your email">
 				If <strong>{email}</strong> has an account, a sign-in link is on its way. Open it on this device
