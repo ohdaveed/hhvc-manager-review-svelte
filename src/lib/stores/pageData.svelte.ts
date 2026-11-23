@@ -2,6 +2,7 @@
 import { allPages } from '$lib/data';
 import { deriveFieldKey } from '$lib/corpus/fieldKey.js';
 import { routableId } from '$lib/corpus/pageId';
+import type { DraftPage } from './draftPages';
 import type { Op } from '$lib/rethink/diff';
 import type { RethinkResult } from '$lib/rethink/request';
 
@@ -113,6 +114,26 @@ function withFieldKey(section: Record<string, unknown>, index: number) {
 	return { ...section, fieldKey: deriveFieldKey(section, index) };
 }
 
+/**
+ * The one mapping from a corpus-shaped page object to a store page.
+ *
+ * Shared by the constructor and `mergeDraftPages`. A second, parallel mapping
+ * is the defect `withFieldKey` warns about: field keys must be computed once,
+ * from the pristine data, by one rule, or saved edits orphan.
+ */
+export function toStorePage(page: object): Page {
+	const p = page as { sections?: Record<string, unknown>[] };
+	return {
+		...(page as Page),
+		// `routableId` rather than the expression inlined here before: an
+		// internal markdown link resolves a `pagesByKey` key to the route its
+		// page renders at, and two copies of this rule would drift into a link
+		// that 404s with nothing to report it.
+		id: routableId(page),
+		sections: (p.sections ?? []).map(withFieldKey)
+	};
+}
+
 class PageStore {
 	pages = $state<Page[]>([]);
 
@@ -161,18 +182,25 @@ class PageStore {
 	railCollapsed = $state<{ queue: boolean; panel: boolean }>({ queue: false, panel: false });
 
 	constructor() {
-		// Map the legacy objects to include an 'id' (from their 'slug' or a generated one)
-		this.pages = allPages.map((p) => {
-			// `routableId` rather than the expression inlined here before: an
-			// internal markdown link resolves a `pagesByKey` key to the route its
-			// page renders at, and two copies of this rule would drift into a link
-			// that 404s with nothing to report it.
-			return {
-				...p,
-				id: routableId(p),
-				sections: (p.sections ?? []).map(withFieldKey)
-			};
-		});
+		this.pages = allPages.map(toStorePage);
+	}
+
+	/**
+	 * Merges ready AI drafts into the page list.
+	 *
+	 * A draft's store id is its `pages.path` (`draft:<uuid>`), not the routable
+	 * id `toStorePage` derives from its title, so it matches the queue row.
+	 * Re-merging replaces in place. Drafts still drafting or failed have no
+	 * content to show and are skipped.
+	 */
+	mergeDraftPages(drafts: DraftPage[]): void {
+		for (const draft of drafts) {
+			if (draft.state !== 'ready' || !draft.content) continue;
+			const page = { ...toStorePage(draft.content), id: draft.path };
+			const at = this.pages.findIndex((p) => p.id === draft.path);
+			if (at === -1) this.pages.push(page);
+			else this.pages[at] = page;
+		}
 	}
 
 	addPage(page: Page) {

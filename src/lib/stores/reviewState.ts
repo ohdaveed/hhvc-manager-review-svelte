@@ -1,5 +1,6 @@
 import { writable, get } from 'svelte/store';
 import { supabase, ensureDevSession } from '$lib/supabase';
+import { loadDrafts } from './draftPages';
 
 // Define the shape of our data
 export type PageCheck = { status: string; message: string };
@@ -151,6 +152,9 @@ export async function loadReview(): Promise<() => void> {
 			editsStore.set((edits as Edit[]) ?? []);
 		}
 	}
+
+	// Drafts join the page store before buffered events replay against them.
+	await loadDrafts(reviewId);
 
 	// Snapshot is in; replay anything that arrived while it was in flight.
 	channel.applyHydration();
