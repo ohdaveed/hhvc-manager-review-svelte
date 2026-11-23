@@ -189,7 +189,7 @@ class PageStore {
 	 * Merges ready AI drafts into the page list.
 	 *
 	 * A draft's store id is its `pages.path` (`draft:<uuid>`), not the routable
-	 * id `toStorePage` derives from its title, so it matches the queue row.
+	 * id `toStorePage` derives from the page's slug (or title if it has none), so it matches the queue row.
 	 * Re-merging replaces in place. Drafts still drafting or failed have no
 	 * content to show and are skipped.
 	 */

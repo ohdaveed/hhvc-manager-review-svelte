@@ -1,4 +1,4 @@
-import { writable, get } from 'svelte/store';
+import { writable } from 'svelte/store';
 import { supabase } from '$lib/supabase';
 import { requestGeneration } from '$lib/ai/generate';
 import { pageStore } from './pageData.svelte';
@@ -103,10 +103,16 @@ export async function createDraft(description: string): Promise<DraftPage> {
 	};
 	draftsStore.update((all) => [...all, drafting]);
 
+	let out: Awaited<ReturnType<typeof requestGeneration>> | null = null;
+	try {
+		out = await requestGeneration({ task: 'content', prompt: description });
+	} catch (err) {
+		console.error('Draft generation failed:', err);
+	}
+
 	let outcome: DraftPage;
 	let patch: Record<string, unknown>;
-	try {
-		const out = await requestGeneration({ task: 'content', prompt: description });
+	if (out) {
 		const valid = out.valid === true;
 		const issues: string[] = Array.isArray(out.issues) ? out.issues : [];
 		const model: string | null = typeof out.model === 'string' ? out.model : null;
@@ -120,13 +126,13 @@ export async function createDraft(description: string): Promise<DraftPage> {
 			model,
 			updated_at: new Date().toISOString()
 		};
-	} catch {
+	} else {
 		patch = { id: created.id, failed: true };
 		outcome = { ...drafting, state: 'failed', updated_at: new Date().toISOString() };
 	}
 
 	await authedFetch('PATCH', patch);
 	replaceDraft(outcome);
-	pageStore.mergeDraftPages(get(draftsStore));
+	pageStore.mergeDraftPages([outcome]);
 	return outcome;
 }

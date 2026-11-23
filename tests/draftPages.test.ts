@@ -16,7 +16,8 @@ vi.mock('$lib/supabase', () => ({
 	}
 }));
 
-import { pageStore } from '../src/lib/stores/pageData.svelte.js';
+import { deriveFieldKey } from '../src/lib/corpus/fieldKey.js';
+import { pageStore, toStorePage } from '../src/lib/stores/pageData.svelte.js';
 import {
 	createDraft,
 	draftsStore,
@@ -67,9 +68,11 @@ describe('mergeDraftPages', () => {
 	it('derives section field keys the same way the corpus does', () => {
 		pageStore.mergeDraftPages([readyDraft()]);
 		const page = pageStore.pages.find((p) => p.id === 'draft:abc')!;
-		expect(page.sections.every((s: { fieldKey?: string }) => !!s.fieldKey)).toBe(true);
-		const corpus = pageStore.pages.find((p) => !p.id.startsWith('draft:'))!;
-		expect(corpus.sections.every((s: { fieldKey?: string }) => !!s.fieldKey)).toBe(true);
+		// The second fixture section has no heading: the index-fallback case.
+		content.sections.forEach((section, i) => {
+			expect(page.sections[i].fieldKey).toBe(deriveFieldKey(section, i));
+		});
+		expect(page.sections).toEqual(toStorePage(content).sections);
 	});
 
 	it('replaces a draft on re-merge instead of appending it twice', () => {
@@ -82,7 +85,7 @@ describe('mergeDraftPages', () => {
 
 	it('does not merge a draft that is still drafting or failed', () => {
 		pageStore.mergeDraftPages([
-			readyDraft({ path: 'draft:d1', state: 'drafting', content: null }),
+			readyDraft({ path: 'draft:d1', state: 'drafting' }),
 			readyDraft({ path: 'draft:f1', state: 'failed', content: null })
 		]);
 		expect(pageStore.pages.some((p) => p.id.startsWith('draft:'))).toBe(false);
@@ -109,6 +112,13 @@ describe('createDraft', () => {
 		);
 		return calls;
 	}
+
+	it('leaves the row drafting and rethrows when the PATCH fails', async () => {
+		stubFetch([], true);
+		requestGeneration.mockResolvedValue({ valid: true, issues: [], result: content });
+		await expect(createDraft('a page')).rejects.toThrow(/status 500/);
+		expect(get(draftsStore)[0].state).toBe('drafting');
+	});
 
 	it('keeps an invalid draft and its issues', async () => {
 		const order: string[] = [];
