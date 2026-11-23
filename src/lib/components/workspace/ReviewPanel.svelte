@@ -8,6 +8,7 @@
 	import { onDestroy } from 'svelte';
 	import { resolve } from '$app/paths';
 	import { reviewHrefFor } from '$lib/corpus/draftPath';
+	import { draftsStore } from '$lib/stores/draftPages';
 	import { ArrowRight } from 'lucide-svelte';
 	import { pageStore } from '$lib/stores/pageData.svelte';
 	import {
@@ -23,7 +24,11 @@
 	// Where "Next undecided" goes. Only meaningful once a review has loaded:
 	// with no live rows (signed out) there is nothing to move on to.
 	const nextPath = $derived(pageData?.id ? nextUndecidedPath($pagesStore, pageData.id) : undefined);
-	const nextTitle = $derived(pageStore.pages.find((p) => p.id === nextPath)?.title ?? '');
+	const nextTitle = $derived(
+		pageStore.pages.find((p) => p.id === nextPath)?.title ??
+			$draftsStore.find((d) => d.path === nextPath)?.title ??
+			''
+	);
 
 	// Find the live record in the store matching the static corpus id
 	let liveRecord = $derived($pagesStore.find((p) => p.path === pageData?.id));

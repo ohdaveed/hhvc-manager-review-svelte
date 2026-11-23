@@ -36,7 +36,9 @@ const draft = (over: Partial<DraftPage> = {}): DraftPage => ({
 	...over
 });
 
-beforeEach(() => retryDraft.mockReset());
+beforeEach(() => {
+	retryDraft.mockReset();
+});
 
 describe('DraftBanner', () => {
 	it('names the description and model and says it is an AI draft', () => {
@@ -61,14 +63,14 @@ describe('DraftBanner', () => {
 
 	it('shows progress, not a retry, for a fresh drafting row', () => {
 		render(DraftBanner, { draft: draft({ state: 'drafting', content: null }) });
-		expect(screen.getByRole('status')).toBeTruthy();
+		expect(screen.getByRole('status').textContent).toMatch(/drafting this page/i);
 		expect(screen.queryByRole('button', { name: /retry/i })).toBeNull();
 	});
 
 	it('shows a retry instead of a spinner for a drafting row abandoned past the stale window', () => {
 		const old = new Date(Date.now() - 120_000).toISOString();
 		render(DraftBanner, { draft: draft({ state: 'drafting', content: null, updated_at: old }) });
-		expect(screen.queryByRole('status')).toBeNull();
+		expect(screen.getByRole('status').textContent).not.toMatch(/drafting this page/i);
 		expect(screen.getByRole('button', { name: /retry/i })).toBeTruthy();
 	});
 
@@ -78,6 +80,30 @@ describe('DraftBanner', () => {
 		render(DraftBanner, { draft: failed });
 		await fireEvent.click(screen.getByRole('button', { name: /retry/i }));
 		expect(retryDraft).toHaveBeenCalledWith(failed);
+	});
+
+	it('offers the retry again when a retry could not be saved', async () => {
+		vi.spyOn(console, 'error').mockImplementation(() => {});
+		const failed = draft({ state: 'failed', content: null });
+		const { rerender } = render(DraftBanner, { draft: failed });
+		// `retryDraft` puts the row back to a FRESH `drafting` before its PATCH,
+		// and leaves it there when the PATCH throws -- so staleness cannot be
+		// what brings the button back.
+		let fail!: (e: Error) => void;
+		retryDraft.mockImplementation(() => new Promise((_, reject) => (fail = reject)));
+		await fireEvent.click(screen.getByRole('button', { name: /retry/i }));
+		await rerender({
+			draft: { ...failed, state: 'drafting', updated_at: new Date().toISOString() }
+		});
+		fail(new Error('PATCH failed'));
+		expect(await screen.findByText(/could not be saved/i)).toBeTruthy();
+		expect(screen.getByRole('button', { name: /retry/i })).toBeTruthy();
+		expect(screen.getByRole('status').textContent).not.toMatch(/drafting this page/i);
+	});
+
+	it('warns when a draft is invalid even if no issues were recorded', () => {
+		render(DraftBanner, { draft: draft({ valid: false, issues: [] }) });
+		expect(screen.getByText(/did not pass validation/i)).toBeTruthy();
 	});
 
 	it('says "requested by you" only for the signed-in author', async () => {

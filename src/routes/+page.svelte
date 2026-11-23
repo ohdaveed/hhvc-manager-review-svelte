@@ -3,6 +3,7 @@
 	import { get } from 'svelte/store';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
+	import { reviewHrefFor } from '$lib/corpus/draftPath';
 	import { pageStore } from '$lib/stores/pageData.svelte';
 	import { firstQueuePath, loadReview, pagesStore } from '$lib/stores/reviewState';
 
@@ -28,7 +29,7 @@
 			// Fall through to corpus order.
 		}
 		first ??= pageStore.pages[0]?.id;
-		if (first) goto(resolve('/review/[slug]', { slug: first }), { replaceState: true });
+		if (first) goto(resolve(reviewHrefFor(first)), { replaceState: true });
 	});
 </script>
 

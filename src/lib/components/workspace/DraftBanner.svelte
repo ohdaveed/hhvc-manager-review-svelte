@@ -20,10 +20,12 @@
 	});
 
 	const stale = $derived(isStaleDraft(draft, now));
-	const inProgress = $derived(draft.state === 'drafting' && !stale && !retrying);
+	const inProgress = $derived((draft.state === 'drafting' && !stale && !retryError) || retrying);
 	// Never for `ready`: the route would accept the flip to `failed`, the
 	// interface should not invite it.
-	const canRetry = $derived(draft.state === 'failed' || stale);
+	// A retry whose save failed leaves a fresh `drafting` row, so the error that
+	// names the retry has to bring the button back rather than wait out staleness.
+	const canRetry = $derived(draft.state === 'failed' || stale || retryError);
 	// No user-id-to-name lookup exists, so only the author's own drafts say who asked.
 	const mine = $derived(userId !== undefined && draft.created_by === userId);
 
@@ -57,22 +59,29 @@
 		<p class="text-xs text-sfds-slate-l3">Model: {draft.model}</p>
 	{/if}
 
-	{#if inProgress || retrying}
-		<p role="status" class="font-semibold">Drafting this page…</p>
-	{:else if draft.state === 'failed'}
-		<p role="alert" class="font-semibold text-sfds-red">The draft could not be generated.</p>
-	{:else if stale}
-		<p class="font-semibold">This draft stopped before finishing.</p>
+	<!-- Persistent live region: one inserted already populated is announced
+	     unreliably, so the element stays and only its text changes. -->
+	<p role="status" class="font-semibold">
+		{#if inProgress}Drafting this page…{/if}
+	</p>
+	{#if !inProgress}
+		{#if draft.state === 'failed'}
+			<p role="alert" class="font-semibold text-sfds-red">The draft could not be generated.</p>
+		{:else if stale}
+			<p class="font-semibold">This draft stopped before finishing.</p>
+		{/if}
 	{/if}
 
-	{#if draft.state === 'ready' && draft.valid === false && draft.issues?.length}
+	{#if draft.state === 'ready' && draft.valid === false}
 		<div>
 			<p class="font-semibold">This draft did not pass validation. Edit it before approving.</p>
-			<ul class="list-disc pl-5">
-				{#each draft.issues as issue (issue)}
-					<li>{issue}</li>
-				{/each}
-			</ul>
+			{#if draft.issues?.length}
+				<ul class="list-disc pl-5">
+					{#each draft.issues as issue (issue)}
+						<li>{issue}</li>
+					{/each}
+				</ul>
+			{/if}
 		</div>
 	{/if}
 
