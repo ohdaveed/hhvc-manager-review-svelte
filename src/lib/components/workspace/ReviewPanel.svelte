@@ -12,6 +12,7 @@
 	import { pageTitleFor } from '$lib/corpus/pageTitle';
 	import { ArrowRight } from 'lucide-svelte';
 	import { pageStore } from '$lib/stores/pageData.svelte';
+	import { sessionStore } from '$lib/stores/session.svelte';
 	import {
 		updatePageStatus,
 		updatePageNotes,
@@ -139,7 +140,12 @@
 	let decisionError = $state(false);
 
 	const handleDecision = async (status: string) => {
-		if (!liveRecord) return;
+		// No row to write to (signed out, or no review record). The controls are
+		// disabled then, but never let the bound value show an unsaved choice.
+		if (!liveRecord) {
+			decision = '';
+			return;
+		}
 		// Toggling the active item off. There is no unset decision, so put the
 		// control back where the record is instead of writing an empty status.
 		if (!status) {
@@ -216,6 +222,25 @@
 		<div class="@container/decision space-y-2">
 			<div class="flex items-baseline justify-between gap-2">
 				<span id="decision-label" class="text-sm font-medium">Decision</span>
+				{#if !liveRecord && sessionStore.knownSignedOut}
+					<span class="text-xs text-sfds-slate-l3">
+						<a
+							href={resolve('/login')}
+							class="font-semibold text-sfds-action underline underline-offset-2">Sign in</a
+						> to record a decision
+					</span>
+				{:else if !liveRecord && pageData && sessionStore.signedIn && $pagesStore.length > 0}
+					<!-- Only once the review has loaded: an empty store while signed in
+					     is still loading, and saying "no record" then is a false alarm.
+
+					     `pageData` is required because `liveRecord` is looked up by
+					     `pageData?.id`. On a drafting, stale or failed draft there is no
+					     corpus entry, so the lookup misses even though a `pages` row for
+					     that `draft:<uuid>` does exist -- and claiming otherwise would be
+					     false. With no page to name, say nothing: the draft banner above
+					     already explains the state. -->
+					<span class="text-xs text-sfds-slate-l3">No review record exists for this page</span>
+				{/if}
 				{#if decisionError}
 					<span class="text-xs text-destructive" role="alert">Not saved — try again</span>
 				{/if}
@@ -229,12 +254,13 @@
 				aria-labelledby="decision-label"
 				bind:value={decision}
 				onValueChange={handleDecision}
+				disabled={!liveRecord}
 			>
 				{#each decisions as decision (decision.value)}
 					<ToggleGroup.Item
 						value={decision.value}
 						aria-label={decision.label}
-						class="h-auto min-h-7 min-w-0 flex-1 shrink px-0! py-1 leading-tight whitespace-normal data-[state=on]:text-white data-[state=on]:hover:text-white @max-[18rem]/decision:rounded-md! @max-[18rem]/decision:border-l! {decision.tone}"
+						class="h-auto min-h-7 min-w-0 flex-1 shrink px-0! py-1 leading-tight whitespace-normal disabled:text-sfds-slate-l2 disabled:opacity-100 data-[state=on]:text-white data-[state=on]:hover:text-white @max-[18rem]/decision:rounded-md! @max-[18rem]/decision:border-l! {decision.tone}"
 					>
 						{decision.label}
 					</ToggleGroup.Item>
@@ -269,6 +295,8 @@
 				value={notesValue}
 				aria-invalid={notesError}
 				oninput={onNotesInput}
+				disabled={!liveRecord}
+				class="disabled:opacity-100"
 			/>
 		</div>
 
