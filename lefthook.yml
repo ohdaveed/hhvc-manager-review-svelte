@@ -46,7 +46,9 @@ pre-commit:
     # defect that ships looking deliberate.
     typos:
       glob: '*.{js,ts,svelte,md,json,jsonc,yml,yaml,css}'
-      run: bash scripts/local-tool.sh typos {staged_files}
+      # --force-exclude: typos skips _typos.toml's extend-exclude for paths
+      # passed explicitly, which is every path lefthook hands it.
+      run: bash scripts/local-tool.sh typos --force-exclude {staged_files}
     knip:
       run: bunx knip --no-exit-code
 

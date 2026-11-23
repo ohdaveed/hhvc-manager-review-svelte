@@ -31,7 +31,7 @@ will call Gemini itself.
 
 ## Tasks
 
-- [ ] Vendor the backend modules into `src/lib/server/ai/` as ESM, plus the two style-corpus markdown files
+- [x] Vendor the backend modules into `src/lib/server/ai/` as ESM, plus the two style-corpus markdown files
 - [ ] `gemini.ts`: REST `generateObject` (structured JSON, timeout, abort, refusal + MAX_TOKENS handling)
 - [ ] `generate.ts`: `generateContent` / `generateRewrite` with validate-and-retry, ported from `index.js`
 - [ ] `+server.ts` calls `generate.ts`; no Railway hop; request validated by the vendored schema
