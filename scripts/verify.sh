@@ -63,6 +63,44 @@ else
 	fail "production build — see $LOG"
 fi
 
+# Everything that should never leave the server, searched across the WHOLE
+# published bundle -- every file under netlify.toml's `publish` dir, not a
+# crawl of the two chunks the root HTML happens to name (see the live gate's
+# note). Complete by construction: the build just ran, so these files are what
+# Netlify will serve.
+#
+# `sb_secret_` must be followed by key-shaped characters: supabase-js carries
+# the bare prefix in its own `e.startsWith('sb_secret_')` format check, so the
+# prefix alone matches the library on every build. Measured: bare prefix hits 1
+# file, the key-shaped form hits 0 and still catches a real key.
+# `/api/invite` reads SUPABASE_SERVICE_ROLE_KEY from `$env/dynamic/private`,
+# which is never inlined, and SvelteKit refuses at build time to import private
+# env into client code -- that refusal is the real control. This backstops the
+# two ways around it: renaming the key to a `SVELTE_PUBLIC_*` variable, or
+# hardcoding the value.
+#
+# `-l` not `-o`: on failure this prints FILE NAMES, never the matching line,
+# so a leaked secret is never written to the terminal or to $LOG. `.map` files
+# are excluded because they are not served (verified: 404) and their
+# `sourcesContent` carries comments that merely name these variables.
+LEAK_PATTERN='RAILWAY_API_TOKEN|web-production-9bb3b|arrizon\.david|demo@hhvc\.local|dev-local-only|sb_secret_[A-Za-z0-9_-]{20,}'
+leaked=$(grep -rlE --exclude='*.map' "$LEAK_PATTERN" build/ 2>/dev/null || true)
+
+# The literal key, when this shell has it. A legacy service-role key is a JWT
+# with no greppable marker, so the value itself is the only check that finds
+# one. `-f -` keeps it out of argv, and `-F` needs no escaping.
+if [ -n "${SUPABASE_SERVICE_ROLE_KEY:-}" ]; then
+	literal=$(printf '%s\n' "$SUPABASE_SERVICE_ROLE_KEY" |
+		grep -rlF --exclude='*.map' -f - build/ 2>/dev/null || true)
+	leaked=$(printf '%s\n%s' "$leaked" "$literal" | grep -v '^$' | sort -u || true)
+fi
+
+if [ -z "$leaked" ]; then
+	pass 'no server-only values in the published bundle'
+else
+	fail "server-only value(s) in the published bundle: $(printf '%s' "$leaked" | tr '\n' ' ')"
+fi
+
 # Invariants in config files -- the gap every other gate leaves open.
 #
 # Nothing imports a Dockerfile and no test renders docker-compose.yml, so the
@@ -162,11 +200,19 @@ for label in 'no auth header' 'bad bearer token'; do
 done
 
 # Walk the deployed bundle for anything that should never leave the server.
+#
+# NOTE ON REACH: this reads only the chunks the root HTML names -- two of them,
+# `start.*.js` and `app.*.js`. Everything else is loaded through paths the
+# entry chunks construct at runtime, so no grep over their text finds the
+# names. Measured against production: 2 chunks crawled, 27 emitted. The
+# COMPLETE scan is `served bundle` in the local section above, which reads the
+# build output on disk; this one is kept for the property that it reads what is
+# actually being served, and should not be read as covering the bundle.
 leak=$(
 	curl -s --max-time 30 "$SITE_URL/" |
 		grep -oE '\./_app/immutable/[^"]+\.js' |
 		while read -r chunk; do curl -s --max-time 30 "$SITE_URL/${chunk#./}"; done |
-		grep -coE 'RAILWAY_API_TOKEN|web-production-9bb3b|arrizon\.david|demo@hhvc\.local|dev-local-only'
+		grep -coE "$LEAK_PATTERN"
 )
 [ "$leak" = "0" ] && pass "no server-only values in client bundle" ||
 	fail "$leak server-only reference(s) in client bundle"
