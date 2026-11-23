@@ -72,6 +72,15 @@ export default defineConfig(
 							name: '$env/static/private',
 							message:
 								'Private env is server-only; outside src/routes/api this ships a secret to the browser.'
+						},
+						// `lucide-svelte` is the declared icon set. `@lucide/svelte` is not in
+						// package.json, so vite-plugin-svelte never adds it to ssr.noExternal:
+						// SSR hands its raw `.svelte` files to Node, which throws `Unknown file
+						// extension ".svelte"` and 500s the page (JAVASCRIPT-SVELTEKIT-C).
+						{
+							name: '@lucide/svelte',
+							message:
+								"Import icons from 'lucide-svelte', the project's declared icon set. '@lucide/svelte' is undeclared and breaks SSR with Unknown file extension \".svelte\"."
 						}
 					]
 				}
