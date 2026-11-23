@@ -1,7 +1,7 @@
 /**
  * @vitest-environment jsdom
  */
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/svelte';
 
 const retryDraft = vi.fn();
@@ -38,6 +38,10 @@ const draft = (over: Partial<DraftPage> = {}): DraftPage => ({
 
 beforeEach(() => {
 	retryDraft.mockReset();
+});
+
+afterEach(() => {
+	vi.restoreAllMocks();
 });
 
 describe('DraftBanner', () => {
@@ -99,6 +103,17 @@ describe('DraftBanner', () => {
 		expect(await screen.findByText(/could not be saved/i)).toBeTruthy();
 		expect(screen.getByRole('button', { name: /retry/i })).toBeTruthy();
 		expect(screen.getByRole('status').textContent).not.toMatch(/drafting this page/i);
+	});
+
+	it('drops the retry once a draft that failed to retry becomes ready', async () => {
+		vi.spyOn(console, 'error').mockImplementation(() => {});
+		const failed = draft({ state: 'failed', content: null });
+		const { rerender } = render(DraftBanner, { draft: failed });
+		retryDraft.mockRejectedValue(new Error('PATCH failed'));
+		await fireEvent.click(screen.getByRole('button', { name: /retry/i }));
+		await screen.findByText(/could not be saved/i);
+		await rerender({ draft: draft() });
+		expect(screen.queryByRole('button', { name: /retry/i })).toBeNull();
 	});
 
 	it('warns when a draft is invalid even if no issues were recorded', () => {

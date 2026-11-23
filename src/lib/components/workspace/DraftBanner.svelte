@@ -25,7 +25,9 @@
 	// interface should not invite it.
 	// A retry whose save failed leaves a fresh `drafting` row, so the error that
 	// names the retry has to bring the button back rather than wait out staleness.
-	const canRetry = $derived(draft.state === 'failed' || stale || retryError);
+	const canRetry = $derived(
+		draft.state !== 'ready' && (draft.state === 'failed' || stale || retryError)
+	);
 	// No user-id-to-name lookup exists, so only the author's own drafts say who asked.
 	const mine = $derived(userId !== undefined && draft.created_by === userId);
 
