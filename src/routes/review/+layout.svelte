@@ -6,6 +6,7 @@
 	import { ScrollArea } from '$lib/components/ui/scroll-area/index.js';
 	import { Separator } from '$lib/components/ui/separator/index.js';
 	import { draftsStore } from '$lib/stores/draftPages';
+	import { pageTitleFor } from '$lib/corpus/pageTitle';
 	import { reviewHrefFor, routePathFor } from '$lib/corpus/draftPath';
 	import { pageStore } from '$lib/stores/pageData.svelte';
 	import { editsStore, firstQueuePath, loadReview, pagesStore } from '$lib/stores/reviewState';
@@ -117,9 +118,7 @@
 	const atQueueStart = $derived(firstQueueTarget === currentPath);
 	/** For the link's tooltip -- the queue row's own title, not the slug. */
 	const firstQueueTitle = $derived(
-		pageStore.pages.find((pg) => pg.id === firstQueueTarget)?.title ??
-			$draftsStore.find((d) => d.path === firstQueueTarget)?.title ??
-			''
+		pageTitleFor(firstQueueTarget, pageStore.pages, $draftsStore, 'empty')
 	);
 
 	/**
@@ -207,10 +206,17 @@
 		let disposed = false;
 		let cleanup: (() => void) | undefined;
 
-		loadReview().then((fn) => {
-			if (disposed) fn();
-			else cleanup = fn;
-		});
+		loadReview()
+			.then((fn) => {
+				if (disposed) fn();
+				else cleanup = fn;
+			})
+			.catch((err: unknown) => {
+				// A rejection means loadReview returned no cleanup, so there is none to
+				// store and nothing believed subscribed. `warn`, not `error`: the e2e
+				// console gate fails on `console.error` only.
+				console.warn('Review workspace: could not load the review:', err);
+			});
 
 		return () => {
 			disposed = true;

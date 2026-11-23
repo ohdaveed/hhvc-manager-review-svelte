@@ -174,6 +174,18 @@ export async function PATCH({ request }) {
 		if (payload.content !== undefined && !isPlainObject(payload.content)) {
 			throw error(400, 'content must be an object');
 		}
+		// A string or a null entry here would throw when the draft is merged into
+		// the page store, so it is refused at the door rather than stored.
+		if (
+			payload.content !== undefined &&
+			(payload.content as Record<string, unknown>).sections !== undefined &&
+			!(
+				Array.isArray((payload.content as Record<string, unknown>).sections) &&
+				((payload.content as Record<string, unknown>).sections as unknown[]).every(isPlainObject)
+			)
+		) {
+			throw error(400, 'content.sections must be an array of objects');
+		}
 		if (payload.valid !== undefined && typeof payload.valid !== 'boolean') {
 			throw error(400, 'valid must be a boolean');
 		}

@@ -226,10 +226,16 @@ class PageStore {
 	mergeDraftPages(drafts: DraftPage[]): void {
 		for (const draft of drafts) {
 			if (draft.state !== 'ready' || !draft.content) continue;
-			const page = { ...toStorePage(draft.content), id: draft.path };
-			const at = this.pages.findIndex((p) => p.id === draft.path);
-			if (at === -1) this.pages.push(page);
-			else this.pages[at] = page;
+			// One malformed row (a non-array `sections`, a null entry) must not cost
+			// the rest of the merge, nor reject `loadReview`. Skipped and named.
+			try {
+				const page = { ...toStorePage(draft.content), id: draft.path };
+				const at = this.pages.findIndex((p) => p.id === draft.path);
+				if (at === -1) this.pages.push(page);
+				else this.pages[at] = page;
+			} catch (err) {
+				console.error(`Skipped malformed draft ${draft.path}:`, err);
+			}
 		}
 	}
 

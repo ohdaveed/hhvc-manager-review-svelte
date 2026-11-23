@@ -9,6 +9,7 @@
 	import { resolve } from '$app/paths';
 	import { reviewHrefFor } from '$lib/corpus/draftPath';
 	import { draftsStore } from '$lib/stores/draftPages';
+	import { pageTitleFor } from '$lib/corpus/pageTitle';
 	import { ArrowRight } from 'lucide-svelte';
 	import { pageStore } from '$lib/stores/pageData.svelte';
 	import {
@@ -25,9 +26,7 @@
 	// with no live rows (signed out) there is nothing to move on to.
 	const nextPath = $derived(pageData?.id ? nextUndecidedPath($pagesStore, pageData.id) : undefined);
 	const nextTitle = $derived(
-		pageStore.pages.find((p) => p.id === nextPath)?.title ??
-			$draftsStore.find((d) => d.path === nextPath)?.title ??
-			''
+		nextPath ? pageTitleFor(nextPath, pageStore.pages, $draftsStore, 'empty') : ''
 	);
 
 	// Find the live record in the store matching the static corpus id

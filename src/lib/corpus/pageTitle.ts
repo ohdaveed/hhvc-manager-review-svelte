@@ -9,13 +9,23 @@
  *
  * Takes both lists as arguments, so a caller reading `$draftsStore` stays
  * reactive.
+ *
+ * `fallback` is what to show when neither source knows the path. A queue row
+ * or list entry is the only label its row has, so it falls back to the `path`
+ * (`'path'`, the default): something identifying beats a blank. A subtitle
+ * (a tooltip or "Next undecided" line) sits beside a link that is already
+ * there, and `draft:9f1c...` is noise rather than a name, so it falls back to
+ * `''` (`'empty'`).
  */
 export function pageTitleFor(
 	path: string,
 	corpus: readonly { id: string; title: string }[],
-	drafts: readonly { path: string; title: string }[]
+	drafts: readonly { path: string; title: string }[],
+	fallback: 'path' | 'empty' = 'path'
 ): string {
 	return (
-		corpus.find((p) => p.id === path)?.title ?? drafts.find((d) => d.path === path)?.title ?? path
+		corpus.find((p) => p.id === path)?.title ??
+		drafts.find((d) => d.path === path)?.title ??
+		(fallback === 'path' ? path : '')
 	);
 }

@@ -28,5 +28,9 @@ describe('draft_pages migration', () => {
 	it('states its table privileges rather than inheriting them', () => {
 		expect(sql).toMatch(/GRANT SELECT ON draft_pages TO authenticated/);
 		expect(sql).not.toMatch(/GRANT (INSERT|UPDATE|DELETE|ALL)/);
+		// Every GRANT names authenticated as its grantee, never anon or public.
+		const grants = sql.match(/GRANT [^;]+;/g) ?? [];
+		expect(grants.length).toBeGreaterThan(0);
+		for (const g of grants) expect(g).toMatch(/ TO authenticated\s*;/);
 	});
 });
