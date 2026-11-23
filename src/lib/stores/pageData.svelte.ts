@@ -93,7 +93,7 @@ export function previewBand(width: number): 'Desktop' | 'Tablet' | 'Phone' {
 /** The width "Fit" lays the page out at whenever the pane is narrower. */
 export const FIT_LAYOUT_WIDTH = PREVIEW_WIDTHS.desktop;
 /** Below this scale the page is too small to read, so Fit reflows instead. */
-export const FIT_MIN_SCALE = 0.5;
+const FIT_MIN_SCALE = 0.5;
 
 /**
  * How far "Fit" scales the frame down for a pane `paneWidth` px wide.
