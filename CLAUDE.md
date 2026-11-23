@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-A review tool for SF.gov Healthy Housing and Vector Control (HHVC) page mockups. Reviewers sign in with a Supabase magic link, browse mockup pages rendered from static content modules, and edit copy inline with AI rewrite assistance. It is a port of a vanilla-JS app; parts of that app are still in the tree as porting reference.
+A review tool for SF.gov Healthy Housing and Vector Control (HHVC) page mockups. Reviewers sign in with a Supabase magic link, land on a page that resumes their review, browse mockup pages rendered from static content modules, and edit copy inline with AI rewrite assistance. They can also describe a page that does not exist yet and have it drafted by AI. It is a port of a vanilla-JS app; parts of that app are still in the tree as porting reference.
 
 ## Commands
 
@@ -122,6 +122,16 @@ Three properties worth keeping:
 
 It does **not** test RLS. The policies live in the database; `supabase/migrations` is where they are asserted. This fixture is about what the signed-in UI renders.
 
+### Landing page and AI-drafted pages
+
+`/` is a page, not a redirect: signed in, it leads with the reviewer's resume point, the progress denominator and the propose-a-page form, then lists every page; signed out, it explains the tool and offers sign-in. The old root redirect is gone, so nothing should assume `/` forwards anywhere.
+
+A drafted page is not in the static corpus, so its content lives in `draft_pages` (`supabase/migrations/20261123100000_draft_pages.sql`): title, description, `content` jsonb, and a `state` of `drafting`, `ready` or `failed`. **The table has only a SELECT policy** (and only `GRANT SELECT`) — every write goes through `POST`/`PATCH /api/pages`, which verifies the caller's bearer token first and then writes with the service-role key. The review decision (status, manager notes, checks) stays on `pages`; the two rows share a `path`.
+
+That `path` is the reserved form `draft:<uuid>`, not a derived slug, so a draft cannot collide with a corpus slug or with another draft. **`reviewHrefFor` in `$lib/corpus/draftPath` is the single place a `pages.path` becomes a link** — it sends `draft:<uuid>` to `/review/draft/<uuid>` and everything else to `/review/<slug>`. Build review links through it rather than interpolating a path, or a draft will 404 under `/review/[slug]`.
+
+`/review/draft/[id]` is the **one route with `ssr = false`**, and it is only that one on purpose. A draft is `TO authenticated` and sessions live in the browser, so a server render has no session and would report a good draft as missing. Opting this single route out is what leaves `/review/[slug]`'s pure, static 404 guard — and `tests/reviewSlug404.spec.ts` — untouched for the thirty-nine corpus pages; making `[slug]` fall back to a database read would have turned that guard into a network call. A draft renders under a provenance banner that says whether it is drafting, ready, stale or failed.
+
 ## Architecture
 
 ### Content pipeline
@@ -173,14 +183,15 @@ of inheriting them. The hosted project gets those grants from Supabase's own
 the app worked against the hosted database and could not work against a local
 one.
 
-RLS is enabled on all four tables and the policies are **scoped per operation**, not blanket. `20260822030000_scope_rls_policies.sql` replaced the original `FOR ALL TO authenticated USING (true)` set; the model is read-everything, write-only-your-own:
+RLS is enabled on all five tables (`reviews`, `pages`, `edits`, `comments`, `draft_pages`) and the policies are **scoped per operation**, not blanket. `20260822030000_scope_rls_policies.sql` replaced the original `FOR ALL TO authenticated USING (true)` set; the model is read-everything, write-only-your-own:
 
-| Table      | SELECT | INSERT | UPDATE | DELETE |
-| ---------- | ------ | ------ | ------ | ------ |
-| `reviews`  | all    | —      | —      | —      |
-| `pages`    | all    | —      | any    | —      |
-| `edits`    | all    | own    | —      | —      |
-| `comments` | all    | own    | own    | own    |
+| Table         | SELECT | INSERT | UPDATE | DELETE |
+| ------------- | ------ | ------ | ------ | ------ |
+| `reviews`     | all    | —      | —      | —      |
+| `pages`       | all    | —      | any    | —      |
+| `edits`       | all    | own    | —      | —      |
+| `comments`    | all    | own    | own    | own    |
+| `draft_pages` | all    | —      | —      | —      |
 
 Two shapes there are deliberate rather than oversights. `edits` has no UPDATE or DELETE policy at all — the table is append-only, last-write-wins, which is how `$lib/karl/reviewRecord` folds it, so an UPDATE path would contradict the reader. `pages.status`/`manager_notes` are writable by any reviewer because a decision is a property of the page, not of whoever recorded it.
 

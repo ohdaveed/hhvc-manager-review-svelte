@@ -1,5 +1,6 @@
 import { writable, get } from 'svelte/store';
 import { supabase, ensureDevSession } from '$lib/supabase';
+import { loadDrafts } from './draftPages';
 
 // Define the shape of our data
 export type PageCheck = { status: string; message: string };
@@ -58,31 +59,6 @@ export function firstQueuePath(pages: ReviewPage[]): string | undefined {
 		if (first) return first.path;
 	}
 	return undefined;
-}
-
-/**
- * `firstQueuePath` for the latest review, fetched without `loadReview`'s side
- * effects: no realtime channel, no edits hydration, no store writes, no console
- * error when signed out. For the root redirect, which needs one path and nothing
- * else (the review layout loads the review properly once it mounts).
- *
- * Same two queries as `loadReview`, with no ORDER BY, so the rows come back in
- * the order the queue shows them.
- */
-export async function fetchFirstQueuePath(): Promise<string | undefined> {
-	await ensureDevSession();
-	const { data: reviews } = await supabase
-		.from('reviews')
-		.select('id')
-		.order('created_at', { ascending: false })
-		.limit(1);
-	const reviewId = reviews?.[0]?.id;
-	if (!reviewId) return undefined;
-	const { data: pages } = await supabase
-		.from('pages')
-		.select('path, status')
-		.eq('review_id', reviewId);
-	return firstQueuePath((pages ?? []) as ReviewPage[]);
 }
 
 /**
@@ -182,6 +158,9 @@ export async function loadReview(): Promise<() => void> {
 			editsStore.set((edits as Edit[]) ?? []);
 		}
 	}
+
+	// Drafts join the page store before buffered events replay against them.
+	await loadDrafts(reviewId);
 
 	// Snapshot is in; replay anything that arrived while it was in flight.
 	channel.applyHydration();

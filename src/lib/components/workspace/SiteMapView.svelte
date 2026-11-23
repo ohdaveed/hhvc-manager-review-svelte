@@ -1,11 +1,14 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { resolve } from '$app/paths';
 	import { buildSitemap, typeBreakdown, type Publishes } from '$lib/karl/sitemap';
+	import { resolve } from '$app/paths';
+	import { isDraftPath, reviewHrefFor } from '$lib/corpus/draftPath';
 	import { pageStore } from '$lib/stores/pageData.svelte';
 
 	/**
-	 * All 29 pages and what they link to.
+	 * The corpus's pages and what they link to. Drafts are left out: a draft is
+	 * unpublished and nothing links to it, so counting it would inflate the page
+	 * and type totals and add cards with no links in or out.
 	 *
 	 * Linked from the queue footer in every design frame and never built, so
 	 * that link went nowhere. The reason it is worth having is NOT that it draws
@@ -20,8 +23,9 @@
 	 */
 	let { onExit }: { onExit: () => void } = $props();
 
-	const entries = $derived(buildSitemap(pageStore.pages));
-	const breakdown = $derived(typeBreakdown(pageStore.pages));
+	const corpusPages = $derived(pageStore.pages.filter((p) => !isDraftPath(p.id)));
+	const entries = $derived(buildSitemap(corpusPages));
+	const breakdown = $derived(typeBreakdown(corpusPages));
 
 	/** What Karl does with the card text the referring page wrote. */
 	const PUBLISHES: Record<Publishes, string> = {
@@ -35,7 +39,7 @@
 		if (!id) return;
 		// The layout renders this view while mode is 'sitemap', whatever the URL.
 		pageStore.showReview();
-		goto(resolve('/review/[slug]', { slug: id }));
+		goto(resolve(reviewHrefFor(id)));
 	}
 </script>
 
