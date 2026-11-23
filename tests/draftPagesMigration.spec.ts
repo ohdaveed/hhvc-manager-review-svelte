@@ -6,10 +6,11 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 
+// Comments stripped: the assertions are about statements, not prose.
 const sql = readFileSync(
 	new URL('../supabase/migrations/20261123100000_draft_pages.sql', import.meta.url),
 	'utf8'
-);
+).replace(/--.*$/gm, '');
 
 describe('draft_pages migration', () => {
 	it('enables RLS and grants only SELECT to authenticated', () => {
@@ -17,7 +18,7 @@ describe('draft_pages migration', () => {
 		expect(sql).toMatch(
 			/CREATE POLICY "draft_pages_select" ON draft_pages\s+FOR SELECT TO authenticated/
 		);
-		expect(sql).not.toMatch(/FOR (INSERT|UPDATE|DELETE)/);
+		expect(sql).not.toMatch(/FOR (ALL|INSERT|UPDATE|DELETE)/);
 	});
 
 	it('constrains state to the three values the client branches on', () => {
