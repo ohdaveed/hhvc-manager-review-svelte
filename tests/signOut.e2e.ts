@@ -9,8 +9,7 @@ import { signedIn } from './signedIn';
 const PAGE = '/review/report-garbage-filth-vegetation';
 
 test('shows the signed-in address and signs out in place', async ({ page }) => {
-	// Wide enough that the queue rail, which holds the control, starts open.
-	await page.setViewportSize({ width: 1700, height: 900 });
+	await page.setViewportSize({ width: 1440, height: 900 });
 	await signedIn(page);
 	await page.goto(PAGE);
 
@@ -35,15 +34,35 @@ test('the queue sheet carries the sign-out control on a phone', async ({ page })
 	await expect(page.getByRole('button', { name: 'Sign out' })).toBeVisible();
 });
 
-test('starts the queue collapsed at 1440 until the reviewer chooses', async ({ page }) => {
+test('a long address truncates instead of widening the rail', async ({ page }) => {
+	const long = 'a.very.long.reviewer.address.for.testing@example.test';
 	await page.setViewportSize({ width: 1440, height: 900 });
+	await signedIn(page);
+	// Wraps the stub's session shim and swaps in a longer fake address.
+	await page.addInitScript((email) => {
+		const read = Storage.prototype.getItem;
+		Storage.prototype.getItem = function (key: string) {
+			const value = read.call(this, key);
+			if (!value || !/^sb-.*-auth-token$/.test(key)) return value;
+			const session = JSON.parse(value);
+			session.user.email = email;
+			return JSON.stringify(session);
+		};
+	}, long);
 	await page.goto(PAGE);
-	const rail = page.locator('.queue-rail');
-	await expect(rail.getByRole('button', { name: 'Expand queue' })).toBeVisible();
 
-	await rail.getByRole('button', { name: 'Expand queue' }).click();
-	await expect(rail.getByRole('button', { name: 'Collapse queue' })).toBeVisible();
-
-	await page.reload();
-	await expect(rail.getByRole('button', { name: 'Collapse queue' })).toBeVisible();
+	const email = page.getByTestId('signed-in-email');
+	await expect(email).toHaveAttribute('title', long);
+	const m = await email.evaluate((el) => {
+		const rail = el.closest('.queue-rail') as HTMLElement;
+		return {
+			emailScroll: el.scrollWidth,
+			emailClient: el.clientWidth,
+			railScroll: rail.scrollWidth,
+			railClient: rail.clientWidth
+		};
+	});
+	expect(m.emailScroll).toBeGreaterThan(m.emailClient);
+	expect(m.railScroll).toBeLessThanOrEqual(m.railClient);
+	await expect(page.getByRole('button', { name: 'Sign out' })).toBeInViewport();
 });
