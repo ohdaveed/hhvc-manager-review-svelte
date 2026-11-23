@@ -48,6 +48,18 @@
 				)
 	);
 
+	// Signed out, the review data is unreadable but the corpus is not, so the
+	// queue lists the mockups in corpus order. No status, notes or progress:
+	// those are review data.
+	const browsing = $derived(total === 0 && sessionStore.knownSignedOut);
+	const corpusShown = $derived(
+		needle === ''
+			? pageStore.pages
+			: pageStore.pages.filter(
+					(p) => p.title.toLowerCase().includes(needle) || p.id.toLowerCase().includes(needle)
+				)
+	);
+
 	// The row's second line, as text. There used to be a coloured dot here, but
 	// inside a status group it only repeated the group's colour and said nothing
 	// about the row. Notes and edits are the per-row facts worth a glance, and
@@ -79,6 +91,7 @@
 	$effect(() => {
 		void $routePage.params.slug;
 		void $pagesStore;
+		void browsing;
 		const row = navEl?.querySelector<HTMLElement>('[aria-current="page"]');
 		let box = row?.parentElement ?? null;
 		while (box && box.scrollHeight <= box.clientHeight) box = box.parentElement;
@@ -89,6 +102,31 @@
 		else if (r.bottom > b.bottom) box.scrollTop += r.bottom - b.bottom + 8;
 	});
 </script>
+
+{#snippet queueLink(path: string, title: string, meta: string | undefined)}
+	{@const isCurrent = $routePage.params.slug === path}
+	<!-- A left border rather than a filled row: the fill would compete
+	     with the selected-field highlight in the canvas, and there are
+	     two selections on screen at once. -->
+	<a
+		href={resolve('/review/[slug]', { slug: path })}
+		aria-current={isCurrent ? 'page' : undefined}
+		class="block rounded-[3px] border-l-2 py-1.5 pr-2 pl-2.5 transition-colors hover:bg-sfds-blue-l1/60 {isCurrent
+			? 'border-sfds-action bg-sfds-blue-l1'
+			: 'border-transparent'}"
+	>
+		<span
+			class="block text-[13px] leading-[18px] text-sfds-black {isCurrent ? 'font-semibold' : ''}"
+		>
+			{title}
+		</span>
+		{#if meta}
+			<span class="mt-0.5 block text-[11px] leading-[14px] text-sfds-slate-l3">
+				{meta}
+			</span>
+		{/if}
+	</a>
+{/snippet}
 
 <nav bind:this={navEl} class="space-y-5 px-5 pt-4 pb-6" aria-label="Review queue">
 	<!-- The empty state is not a loading state, and saying so was misleading.
@@ -136,7 +174,7 @@
 		</section>
 	{/if}
 
-	{#if total > 0}
+	{#if total > 0 || browsing}
 		<div>
 			<label for="queue-filter" class="sr-only">Filter pages</label>
 			<input
@@ -148,9 +186,17 @@
 				class="w-full rounded-[3px] border border-sfds-grey-l2 bg-white px-2.5 py-1.5 text-[13px] text-sfds-black placeholder:text-sfds-slate-l3 focus:border-sfds-action focus:ring-1 focus:ring-sfds-action focus:outline-none"
 			/>
 		</div>
-		{#if shown.length === 0}
+		{#if (browsing ? corpusShown : shown).length === 0}
 			<p role="status" class="text-sm text-sfds-slate-l3">No pages match “{query.trim()}”.</p>
 		{/if}
+	{/if}
+
+	{#if browsing}
+		<ul class="space-y-0.5">
+			{#each corpusShown as p (p.id)}
+				<li>{@render queueLink(p.id, p.title, p.type)}</li>
+			{/each}
+		</ul>
 	{/if}
 
 	{#each groups as group (group.status)}
@@ -169,33 +215,8 @@
 				</h3>
 				<ul class="space-y-0.5">
 					{#each pages as p (p.path)}
-						{@const isCurrent = $routePage.params.slug === p.path}
 						{@const meta = metaFor(p)}
-						<li>
-							<!-- A left border rather than a filled row: the fill would compete
-							     with the selected-field highlight in the canvas, and there are
-							     two selections on screen at once. -->
-							<a
-								href={resolve('/review/[slug]', { slug: p.path })}
-								aria-current={isCurrent ? 'page' : undefined}
-								class="block rounded-[3px] border-l-2 py-1.5 pr-2 pl-2.5 transition-colors hover:bg-sfds-blue-l1/60 {isCurrent
-									? 'border-sfds-action bg-sfds-blue-l1'
-									: 'border-transparent'}"
-							>
-								<span
-									class="block text-[13px] leading-[18px] text-sfds-black {isCurrent
-										? 'font-semibold'
-										: ''}"
-								>
-									{titleFor(p.path)}
-								</span>
-								{#if meta}
-									<span class="mt-0.5 block text-[11px] leading-[14px] text-sfds-slate-l3">
-										{meta}
-									</span>
-								{/if}
-							</a>
-						</li>
+						<li>{@render queueLink(p.path, titleFor(p.path), meta)}</li>
 					{/each}
 				</ul>
 			</section>

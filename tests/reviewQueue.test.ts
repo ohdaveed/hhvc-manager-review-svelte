@@ -14,6 +14,7 @@ import { readable } from 'svelte/store';
 import { fireEvent, render, screen } from '@testing-library/svelte';
 import ReviewQueue from '../src/lib/components/workspace/ReviewQueue.svelte';
 import { pageStore } from '../src/lib/stores/pageData.svelte.js';
+import { sessionStore } from '../src/lib/stores/session.svelte.js';
 import {
 	firstQueuePath,
 	nextUndecidedPath,
@@ -94,6 +95,38 @@ describe('ReviewQueue', () => {
 
 		// The old copy must not come back.
 		expect(screen.queryByText(/Waiting for Supabase data/)).toBeNull();
+	});
+
+	// The corpus renders without a session, so signed out the queue still lists
+	// it -- otherwise Site map was the only way to browse.
+	it('lists every corpus page when signed out, without review data', async () => {
+		pagesStore.set([]);
+		currentSlug = 'topic-x--report';
+		render(ReviewQueue);
+
+		await screen.findByRole('link', { name: 'Sign in' });
+		const about = screen.getByRole('link', { name: /About vector control/ });
+		const report = screen.getByRole('link', { name: /Report a problem/ });
+		expect(about.getAttribute('href')).toBe('/review/topic-x--about');
+		expect(report.getAttribute('href')).toBe('/review/topic-x--report');
+		expect(report.getAttribute('aria-current')).toBe('page');
+		expect(about.getAttribute('aria-current')).toBeNull();
+		expect(screen.getByText('Transaction')).toBeTruthy();
+
+		expect(screen.queryByRole('region', { name: 'Review progress' })).toBeNull();
+		expect(screen.queryByText(/decided/)).toBeNull();
+		expect(screen.queryByText('Needs review')).toBeNull();
+	});
+
+	it('filters the signed-out corpus list', async () => {
+		pagesStore.set([]);
+		render(ReviewQueue);
+
+		await fireEvent.input(await screen.findByLabelText('Filter pages'), {
+			target: { value: 'report' }
+		});
+		expect(screen.getByRole('link', { name: /Report a problem/ })).toBeTruthy();
+		expect(screen.queryByRole('link', { name: /About vector control/ })).toBeNull();
 	});
 
 	it('counts decisions, not rows', () => {
@@ -214,11 +247,14 @@ describe('ReviewQueue', () => {
 			expect(screen.getByText('1 of 3 decided')).toBeTruthy();
 		});
 
+		// Signed in to an empty review. Signed out, the corpus list is filterable.
 		it('is not offered when there are no pages to filter', () => {
 			pagesStore.set([]);
+			sessionStore.signedIn = true;
 			render(ReviewQueue);
 
 			expect(screen.queryByRole('searchbox')).toBeNull();
+			sessionStore.signedIn = false;
 		});
 	});
 });

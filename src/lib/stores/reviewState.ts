@@ -124,8 +124,14 @@ export async function loadReview(): Promise<() => void> {
 		.order('created_at', { ascending: false })
 		.limit(1);
 
-	if (reviewsError || !reviews || reviews.length === 0) {
+	// No error and no rows is the normal signed-out state (RLS hides every
+	// review), not a failure, so only a real error is logged as one.
+	if (reviewsError) {
 		console.error('No review found:', reviewsError);
+		return () => {};
+	}
+	if (!reviews || reviews.length === 0) {
+		console.info('No review visible (signed out, or none exists).');
 		return () => {};
 	}
 
