@@ -299,6 +299,16 @@ describe('POST /api/ai/generate', () => {
 		expect(fetchMock).toHaveBeenCalled();
 	});
 
+	it("states the same prompt cap as the browser's mirror", async () => {
+		const { MAX_PROMPT_CHARS } = await import('$lib/rethink/prompt');
+		fetchMock.mockResolvedValueOnce(geminiReply({}));
+		const atCap = await call({ task: 'content', prompt: 'x'.repeat(MAX_PROMPT_CHARS) });
+		expect(atCap.status).not.toBe(400);
+		const over = await call({ task: 'content', prompt: 'x'.repeat(MAX_PROMPT_CHARS + 1) });
+		expect(over.status).toBe(400);
+		expect(over.body?.message).toMatch(/prompt/);
+	});
+
 	it('rejects an instruction one over the 2,000-character cap', async () => {
 		const res = await call({
 			task: 'rewrite-field',

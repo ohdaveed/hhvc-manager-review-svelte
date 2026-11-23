@@ -1,5 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { buildRethinkPrompt, MAX_PROMPT_CHARS } from './prompt';
+import { buildCorpusIndex } from './corpusIndex';
+import { pagesByKey } from '$lib/data';
+import { pageStore } from '$lib/stores/pageData.svelte';
 
 const page = {
 	title: 'About vector control',
@@ -86,5 +89,26 @@ describe('buildRethinkPrompt', () => {
 		expect(() =>
 			buildRethinkPrompt({ ...args, corpusIndex: 'x'.repeat(MAX_PROMPT_CHARS) })
 		).toThrow(new RegExp(`${MAX_PROMPT_CHARS.toLocaleString()}`));
+	});
+
+	// The regression that made Rethink unusable: the corpus index rides in every
+	// prompt, so each new page shrinks the room left for everything else. Every
+	// real section must fit with a maximum-length (2,000-char) instruction. When
+	// this fails, the corpus has outgrown the cap -- raise it on both sides.
+	it('fits every corpus section with a maximum-length instruction', () => {
+		const corpusIndex = buildCorpusIndex(pagesByKey);
+		const instruction = 'x'.repeat(2_000);
+		const sections = pageStore.pages.flatMap((p) =>
+			((p.sections ?? []) as { fieldKey: string }[]).map((s) => ({
+				page: p,
+				sectionKey: s.fieldKey
+			}))
+		);
+		expect(sections.length).toBeGreaterThan(100);
+		for (const { page, sectionKey } of sections) {
+			expect(() =>
+				buildRethinkPrompt({ page, sectionKey, instruction, corpusIndex })
+			).not.toThrow();
+		}
 	});
 });

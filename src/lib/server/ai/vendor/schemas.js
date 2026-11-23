@@ -260,7 +260,7 @@ const COMPLIANCE_AUDIT_OUTPUT_SCHEMA = {
 /**
  * Caps on the `page` grounding object.
  *
- * `prompt` is capped at 8000 characters, but `page` used to be an unbounded
+ * `prompt` is capped at 16000 characters, but `page` used to be an unbounded
  * `z.record(z.unknown())` — and it is serialized wholesale into the provider
  * prompt. That made the character cap decorative: an authenticated client could
  * send a megabyte of nested JSON and have the server pay for tokenizing it.
@@ -392,7 +392,12 @@ const generateRequestSchema = z.discriminatedUnion('task', [
 	z.object({
 		task: z.literal('content'),
 		provider: z.enum(['gemini']).optional(),
-		prompt: z.string().min(1).max(8000),
+		// DIVERGES FROM UPSTREAM (8000): Rethink's prompt carries an index of every
+		// page, which alone reached 6,637 chars at 39 pages and pushed 107 of 178
+		// sections over 8000 before any instruction (measured 2026-11-22).
+		// Mirrored by MAX_PROMPT_CHARS in src/lib/rethink/prompt.ts; a test pins
+		// the two together.
+		prompt: z.string().min(1).max(16000),
 		page: groundingPageSchema.optional()
 	}),
 	z.object({
