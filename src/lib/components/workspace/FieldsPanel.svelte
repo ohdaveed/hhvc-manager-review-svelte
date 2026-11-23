@@ -310,8 +310,8 @@
 <div class="flex h-full min-h-0 flex-col">
 	<div class="min-h-0 flex-1 overflow-y-auto">
 		{#if selected.length === 0}
-			<div class="px-5 py-6 text-sm text-sfds-slate-l3">
-				<p class="font-semibold text-sfds-black">No field selected</p>
+			<div class="text-sfds-slate-l3 px-5 py-6 text-sm">
+				<p class="text-sfds-black font-semibold">No field selected</p>
 				<p class="mt-1.5 leading-[20px]">
 					Click any piece of copy in the mockup to select it. Shift-click to add more, and the
 					assistant will rewrite them together.
@@ -320,7 +320,7 @@
 		{:else}
 			<!-- Selection header -->
 			<div class="flex items-center justify-between gap-2 border-b px-5 py-3">
-				<span class="text-[13px] font-semibold text-sfds-black">
+				<span class="text-sfds-black text-[13px] font-semibold">
 					{selected.length}
 					{selected.length === 1 ? 'field' : 'fields'} selected
 				</span>
@@ -338,18 +338,18 @@
 				{#each selected as { fieldId, field }, i (fieldId)}
 					<li class="flex items-start gap-2 text-[13px]">
 						<span
-							class="mt-px inline-flex size-[18px] flex-none items-center justify-center rounded-[3px] bg-sfds-action text-[11px] font-bold text-white"
+							class="bg-sfds-action mt-px inline-flex size-[18px] flex-none items-center justify-center rounded-[3px] text-[11px] font-bold text-white"
 						>
 							{i + 1}
 						</span>
-						<span class="min-w-0 truncate text-sfds-slate-l3">{field.name}</span>
+						<span class="text-sfds-slate-l3 min-w-0 truncate">{field.name}</span>
 					</li>
 				{/each}
 			</ol>
 
 			{#if stale.length > 0}
 				<p
-					class="mx-5 rounded-[4px] border-l-2 border-sfds-red bg-sfds-red-l1 px-3 py-2 text-[12px] text-sfds-red"
+					class="border-sfds-red bg-sfds-red-l1 text-sfds-red mx-5 rounded-[4px] border-l-2 px-3 py-2 text-[12px]"
 				>
 					{stale.length}
 					{stale.length === 1 ? 'selection is' : 'selections are'} no longer on this page and will be
@@ -359,17 +359,17 @@
 
 			{#if unverified.length > 0}
 				<div
-					class="mx-5 mt-3 rounded-[4px] border-l-2 border-sfds-amber bg-sfds-amber-l1 px-3 py-2"
+					class="border-sfds-amber bg-sfds-amber-l1 mx-5 mt-3 rounded-[4px] border-l-2 px-3 py-2"
 				>
-					<p class="text-[12px] font-bold tracking-[0.06em] text-sfds-amber uppercase">
+					<p class="text-sfds-amber text-[12px] font-bold tracking-[0.06em] uppercase">
 						Unverified copy
 					</p>
-					<p class="mt-1 text-[12px] leading-[17px] text-sfds-black">
+					<p class="text-sfds-black mt-1 text-[12px] leading-[17px]">
 						{unverified.length}
 						{unverified.length === 1 ? 'field has' : 'fields have'} no confirmed source. HHVC has to confirm
 						the facts before this ships, whatever the wording.
 					</p>
-					<ul class="mt-1.5 list-disc space-y-0.5 pl-4 text-[12px] text-sfds-black">
+					<ul class="text-sfds-black mt-1.5 list-disc space-y-0.5 pl-4 text-[12px]">
 						{#each unverified as { fieldId, field } (fieldId)}
 							<li>{field.name}{field.unverifiedReason ? ` — ${field.unverifiedReason}` : ''}</li>
 						{/each}
@@ -380,7 +380,7 @@
 			<!-- Agent recommendation -->
 			<section class="mx-5 mt-4 rounded-[4px] border p-3" aria-label="Assistant recommendation">
 				<div class="flex items-center justify-between gap-2">
-					<span class="text-[12px] font-bold tracking-[0.06em] text-sfds-black uppercase">
+					<span class="text-sfds-black text-[12px] font-bold tracking-[0.06em] uppercase">
 						What to change
 					</span>
 					<Button
@@ -395,17 +395,17 @@
 				</div>
 
 				{#if pageStore.agentRec.state === 'idle'}
-					<p class="mt-2 text-[12px] leading-[17px] text-sfds-slate-l3">
+					<p class="text-sfds-slate-l3 mt-2 text-[12px] leading-[17px]">
 						Ask the assistant what it would change about the selected copy before rewriting it.
 					</p>
 				{:else if pageStore.agentRec.state === 'loading'}
-					<p class="mt-2 text-[12px] text-sfds-slate-l3" role="status">Reading the selection…</p>
+					<p class="text-sfds-slate-l3 mt-2 text-[12px]" role="status">Reading the selection…</p>
 				{:else if pageStore.agentRec.state === 'error'}
-					<p class="mt-2 text-[12px] leading-[17px] text-sfds-red" role="alert">
+					<p class="text-sfds-red mt-2 text-[12px] leading-[17px]" role="alert">
 						{pageStore.agentRec.text}
 					</p>
 				{:else}
-					<p class="mt-2 text-[13px] leading-[19px] text-sfds-black">{pageStore.agentRec.text}</p>
+					<p class="text-sfds-black mt-2 text-[13px] leading-[19px]">{pageStore.agentRec.text}</p>
 				{/if}
 			</section>
 
@@ -434,7 +434,7 @@
 					placeholder="Or describe the change in your own words…"
 				/>
 				{#if instructionError}
-					<p class="mt-1.5 text-[12px] leading-[17px] text-sfds-red" role="alert">
+					<p class="text-sfds-red mt-1.5 text-[12px] leading-[17px]" role="alert">
 						{instructionError}
 					</p>
 				{/if}
@@ -454,7 +454,7 @@
 			{#if cards.length > 0}
 				<section class="mt-5" aria-label="Suggestions">
 					<div class="flex items-center justify-between px-5">
-						<span class="text-[12px] font-bold tracking-[0.06em] text-sfds-black uppercase">
+						<span class="text-sfds-black text-[12px] font-bold tracking-[0.06em] uppercase">
 							Suggestions
 						</span>
 						<span class="flex gap-1">
@@ -480,7 +480,7 @@
 								<Button
 									variant="ghost"
 									size="sm"
-									class="h-7 px-2 text-[12px] text-sfds-action"
+									class="text-sfds-action h-7 px-2 text-[12px]"
 									onclick={() => decideAll('accepted')}>Accept all</Button
 								>
 							{/if}
@@ -494,23 +494,23 @@
 								<div class="flex items-center gap-2">
 									{#if badge > 0}
 										<span
-											class="inline-flex size-[18px] flex-none items-center justify-center rounded-[3px] bg-sfds-action text-[11px] font-bold text-white"
+											class="bg-sfds-action inline-flex size-[18px] flex-none items-center justify-center rounded-[3px] text-[11px] font-bold text-white"
 										>
 											{badge}
 										</span>
 									{/if}
-									<span class="min-w-0 flex-1 truncate text-[12px] text-sfds-slate-l3">
+									<span class="text-sfds-slate-l3 min-w-0 flex-1 truncate text-[12px]">
 										{resolveFields(pageData as never, [fieldId])[0]?.field.name ?? fieldId}
 									</span>
 									{#if suggestion.status === 'accepted'}
-										<span class="text-[11px] font-bold text-sfds-green uppercase">Accepted</span>
+										<span class="text-sfds-green text-[11px] font-bold uppercase">Accepted</span>
 									{:else if suggestion.status === 'rejected'}
-										<span class="text-[11px] font-bold text-sfds-slate-l3 uppercase">Rejected</span>
+										<span class="text-sfds-slate-l3 text-[11px] font-bold uppercase">Rejected</span>
 									{/if}
 								</div>
 
 								{#if suggestion.status === 'error'}
-									<p class="mt-2 text-[12px] leading-[17px] text-sfds-red" role="alert">
+									<p class="text-sfds-red mt-2 text-[12px] leading-[17px]" role="alert">
 										{suggestion.message}
 									</p>
 								{:else}
@@ -518,12 +518,12 @@
 									     interleaved: these are two different sentences, and an
 									     inline word-diff of prose reads as neither of them. -->
 									<p
-										class="mt-2 rounded-[3px] bg-sfds-red-l1 px-2 py-1.5 text-[13px] leading-[19px] text-sfds-black line-through decoration-1"
+										class="bg-sfds-red-l1 text-sfds-black mt-2 rounded-[3px] px-2 py-1.5 text-[13px] leading-[19px] line-through decoration-1"
 									>
 										{suggestion.original}
 									</p>
 									<p
-										class="mt-1.5 rounded-[3px] bg-sfds-green-l1 px-2 py-1.5 text-[13px] leading-[19px] text-sfds-black"
+										class="bg-sfds-green-l1 text-sfds-black mt-1.5 rounded-[3px] px-2 py-1.5 text-[13px] leading-[19px]"
 									>
 										{suggestion.suggested}
 									</p>
@@ -577,14 +577,14 @@
 		     cannot save it, and a number the button disagrees with is worse than
 		     no number. -->
 		{#if acceptedElsewhere > 0}
-			<p class="mb-2 text-[12px] leading-[17px] text-sfds-amber" role="status">
+			<p class="text-sfds-amber mb-2 text-[12px] leading-[17px]" role="status">
 				{acceptedElsewhere} accepted {acceptedElsewhere === 1 ? 'edit' : 'edits'} on other pages
 				{acceptedElsewhere === 1 ? 'is' : 'are'} still unsaved. Open that page to save
 				{acceptedElsewhere === 1 ? 'it' : 'them'}.
 			</p>
 		{/if}
 		{#if saveError}
-			<p class="mb-2 text-[12px] leading-[17px] text-sfds-amber" role="status">{saveError}</p>
+			<p class="text-sfds-amber mb-2 text-[12px] leading-[17px]" role="status">{saveError}</p>
 		{/if}
 		<Button class="w-full" disabled={acceptedCount === 0 || saving} onclick={saveAccepted}>
 			{saving ? 'Saving…' : `Save ${acceptedCount} ${acceptedCount === 1 ? 'edit' : 'edits'}`}
