@@ -8,6 +8,7 @@
 	import { pageStore } from '$lib/stores/pageData.svelte';
 	import { editsStore, firstQueuePath, loadReview, pagesStore } from '$lib/stores/reviewState';
 	import { sessionStore } from '$lib/stores/session.svelte';
+	import { supabase } from '$lib/supabase';
 	import {
 		ArrowLeft,
 		ChevronsLeft,
@@ -169,6 +170,15 @@
 		sheetOpener = null;
 	};
 
+	/** Stays on this page: the banner and read-only mode follow
+	 *  `onAuthStateChange`, so there is nowhere to send anyone. */
+	let signOutError = $state('');
+	const signOut = async () => {
+		signOutError = '';
+		const { error } = await supabase.auth.signOut();
+		if (error) signOutError = 'Could not sign out. Try again.';
+	};
+
 	const onWindowKeydown = (event: KeyboardEvent) => {
 		if (event.key === 'Escape' && pageStore.mobileSheet !== 'none') closeSheet();
 	};
@@ -278,6 +288,25 @@
 					<h2 class="font-heading text-base leading-5 font-bold text-sfds-black">
 						HHVC mockup review
 					</h2>
+					<!-- Who is signed in, and the way out. In the rail header so the
+					     queue sheet carries it too below 1024px. -->
+					{#if sessionStore.signedIn && sessionStore.email}
+						<div class="mt-1 flex min-w-0 items-center gap-2 text-xs">
+							<span
+								class="min-w-0 truncate text-sfds-slate-l3"
+								title={sessionStore.email}
+								data-testid="signed-in-email">{sessionStore.email}</span
+							>
+							<button
+								type="button"
+								class="min-h-6 flex-none font-semibold text-sfds-action underline-offset-2 hover:underline"
+								onclick={signOut}>Sign out</button
+							>
+						</div>
+						{#if signOutError}
+							<p class="mt-1 text-xs text-red-700" role="alert">{signOutError}</p>
+						{/if}
+					{/if}
 				</div>
 				<Button
 					variant="outline"
@@ -380,11 +409,12 @@
 						<!-- The only way to the queue and the panel below 1024px, where
 						     both rails leave the grid. Hidden above it, where the rails
 						     are on screen and these would be a second way to do nothing
-						     new. -->
+						     new. `h-7` like the bar's other controls: 28px still clears
+						     WCAG 2.5.8's 24px target. -->
 						<Button
 							variant="outline"
 							size="sm"
-							class="narrow-only min-h-11 min-w-11 flex-none px-3.5 text-xs font-semibold"
+							class="narrow-only h-7 flex-none px-2.5 text-xs font-semibold"
 							onclick={(e: MouseEvent) => openSheet('queue', e)}
 						>
 							Queue
@@ -392,7 +422,7 @@
 						<Button
 							variant="outline"
 							size="sm"
-							class="narrow-only min-h-11 min-w-11 flex-none px-3.5 text-xs font-semibold"
+							class="narrow-only h-7 flex-none px-2.5 text-xs font-semibold"
 							onclick={(e: MouseEvent) => openSheet('panel', e)}
 						>
 							Review

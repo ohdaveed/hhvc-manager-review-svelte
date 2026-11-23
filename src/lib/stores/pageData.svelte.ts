@@ -396,7 +396,16 @@ class PageStore {
 	loadRailState() {
 		try {
 			const raw = localStorage.getItem(RAIL_KEY);
-			if (!raw) return;
+			if (!raw) {
+				// No saved choice: start the queue collapsed between the sheet
+				// breakpoint and 1600px. MEASURED at 1440x900 with both rails open,
+				// Fit zoomed the 1024px frame to ~70%, so 16px body copy read at
+				// ~11px. Below 1024px the rails are sheets and this would only
+				// change the toolbar. Any toggle saves a choice, which then wins.
+				const w = window.innerWidth;
+				if (w > 1024 && w < 1600) this.railCollapsed = { ...this.railCollapsed, queue: true };
+				return;
+			}
 			const parsed = JSON.parse(raw);
 			this.railCollapsed = {
 				queue: parsed?.queue === true,

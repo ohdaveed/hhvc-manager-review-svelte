@@ -1,4 +1,5 @@
 import { browser } from '$app/environment';
+import type { Session } from '@supabase/supabase-js';
 import { ensureDevSession, supabase } from '$lib/supabase';
 
 /**
@@ -18,6 +19,10 @@ class SessionStore {
 	 *  signed-out banner at a reviewer who is in fact signed in. */
 	signedIn = $state<boolean | undefined>(undefined);
 
+	/** The signed-in user's address, for the workspace's "signed in as" line.
+	 *  Null whenever `signedIn` is not true. Never logged. */
+	email = $state<string | null>(null);
+
 	constructor() {
 		// getSession touches browser storage; on the server there is no session
 		// to find and no listener worth attaching.
@@ -27,13 +32,14 @@ class SessionStore {
 		// route starts signed in. A no-op in production builds.
 		ensureDevSession()
 			.then(() => supabase.auth.getSession())
-			.then(({ data }) => {
-				this.signedIn = Boolean(data.session);
-			});
+			.then(({ data }) => this.#apply(data.session));
 
-		supabase.auth.onAuthStateChange((_event, session) => {
-			this.signedIn = Boolean(session);
-		});
+		supabase.auth.onAuthStateChange((_event, session) => this.#apply(session));
+	}
+
+	#apply(session: Session | null) {
+		this.signedIn = Boolean(session);
+		this.email = session?.user.email ?? null;
 	}
 
 	/** True only once we know there is no session — never during the initial

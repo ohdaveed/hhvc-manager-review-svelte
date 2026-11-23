@@ -193,3 +193,36 @@ describe('fitFrame', () => {
 		expect(fitFrame(0)).toBeNull();
 	});
 });
+
+describe('rail default', () => {
+	const load = (width: number, saved?: object) => {
+		localStorage.clear();
+		if (saved) localStorage.setItem('hhvc:railCollapsed', JSON.stringify(saved));
+		window.innerWidth = width;
+		pageStore.railCollapsed = { queue: false, panel: false };
+		pageStore.loadRailState();
+		return pageStore.railCollapsed;
+	};
+
+	it('collapses the queue between the sheet breakpoint and 1600px with no saved choice', () => {
+		expect(load(1440)).toEqual({ queue: true, panel: false });
+		expect(load(1280)).toEqual({ queue: true, panel: false });
+	});
+
+	it('leaves it open at 1600px and above, and in sheet mode', () => {
+		expect(load(1600)).toEqual({ queue: false, panel: false });
+		expect(load(1024)).toEqual({ queue: false, panel: false });
+	});
+
+	it('lets a saved choice win over the default', () => {
+		expect(load(1440, { queue: false, panel: false })).toEqual({ queue: false, panel: false });
+	});
+
+	it('saves an expand, so it survives the next load', () => {
+		load(1440);
+		pageStore.toggleRail('queue');
+		pageStore.railCollapsed = { queue: true, panel: false };
+		pageStore.loadRailState();
+		expect(pageStore.railCollapsed.queue).toBe(false);
+	});
+});
