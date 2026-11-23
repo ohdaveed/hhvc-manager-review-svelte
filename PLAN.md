@@ -15,10 +15,25 @@ and only a small `683px · Tablet` readout said so.
 the old reflow, because a quarter-size page is unreadable. The readout shows the
 scale.
 
-- [ ] `fitScale(paneWidth)` helper in `pageData.svelte.ts` plus unit tests.
-- [ ] Layout measures the pane, applies `width:1024px; zoom:<scale>` under Fit, and
+- [x] `fitScale(paneWidth)` helper in `pageData.svelte.ts` plus unit tests.
+- [x] Layout measures the pane, applies `width:1024px; zoom:<scale>` under Fit, and
       the readout shows `1024px · Desktop · 67%`.
-- [ ] Browser check at 1440 with both rails open: desktop header (no hamburger),
+- [x] Browser check at 1440 with both rails open: desktop header (no hamburger),
       readout correct, clicking copy still selects the field (edit targets work
       under zoom), and the footer can still be reached by scrolling.
-- [ ] Gates: `test:unit --run`, `check:ratchet`, `build`; e2e runs in CI.
+- [x] Gates: `test:unit --run`, `check:ratchet`, `build`; e2e runs in CI.
+
+## Result
+
+Gates: 625/625 unit (4 new), svelte-check 0/0, eslint at baseline 4, build green.
+Browser at 1440 with both rails open (local stack): readout `1021px · Desktop · 67%`,
+full desktop header and nav (no hamburger), no horizontal overflow (scrollWidth equals
+clientWidth), clicking the title selects it and the ring lines up, footer reachable.
+At 375px the scale would fall below 50%, so it falls back to reflow (`278px · Phone`).
+
+A first attempt subtracted a hardcoded 64px for `px-8`. In this theme that is 40px a
+side, which left a horizontal scrollbar. It now binds the pane's `contentRect`, so
+there is no constant to drift.
+
+Trade-off: at 67% the body copy is about 11px on screen. Desktop (1024) is still one
+click away for reading at full size.

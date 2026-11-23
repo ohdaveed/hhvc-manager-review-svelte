@@ -89,6 +89,29 @@ export function previewBand(width: number): 'Desktop' | 'Tablet' | 'Phone' {
 	if (width > 560) return 'Tablet';
 	return 'Phone';
 }
+
+/** The width "Fit" lays the page out at whenever the pane is narrower. */
+export const FIT_LAYOUT_WIDTH = PREVIEW_WIDTHS.desktop;
+/** Below this scale the page is too small to read, so Fit reflows instead. */
+export const FIT_MIN_SCALE = 0.5;
+
+/**
+ * How far "Fit" scales the frame down for a pane `paneWidth` px wide.
+ *
+ * The frame is a size container, so letting it shrink to the pane reflows
+ * sf.gov into its tablet layout. On a 1440px display with both rails open the
+ * pane is ~683px, and reviewers were approving the tablet rendering without
+ * knowing it. Instead, Fit keeps the layout at 1024px and zooms it down.
+ *
+ * Returns 1 when the pane already fits a desktop layout (no scaling needed),
+ * or when scaling would go below `FIT_MIN_SCALE` (a phone-sized window, where
+ * the old reflow is the readable option). Otherwise returns the scale.
+ */
+export function fitScale(paneWidth: number): number {
+	if (paneWidth <= 0 || paneWidth >= FIT_LAYOUT_WIDTH) return 1;
+	const scale = paneWidth / FIT_LAYOUT_WIDTH;
+	return scale < FIT_MIN_SCALE ? 1 : scale;
+}
 const COPIED_KEY = 'hhvc:walkthroughCopied';
 
 /**

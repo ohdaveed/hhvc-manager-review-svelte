@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { pageStore } from '../src/lib/stores/pageData.svelte.js';
+import { fitScale, pageStore } from '../src/lib/stores/pageData.svelte.js';
 
 describe('Page Data Store', () => {
 	it('should initialize with all ported pages', () => {
@@ -162,5 +162,26 @@ describe('section selection and rethink state', () => {
 
 		pageStore.setOpAccepted('rewrite:heading:0', false);
 		expect(pageStore.acceptedOpCount()).toBe(1);
+	});
+});
+
+describe('fitScale', () => {
+	it('scales a desktop layout down to a pane narrower than 1024px', () => {
+		expect(fitScale(683)).toBeCloseTo(683 / 1024);
+	});
+
+	it('does not scale when the pane already fits a desktop layout', () => {
+		expect(fitScale(1024)).toBe(1);
+		expect(fitScale(1300)).toBe(1);
+	});
+
+	it('falls back to reflowing below half size, where the page is unreadable', () => {
+		expect(fitScale(512)).toBe(0.5);
+		expect(fitScale(511)).toBe(1);
+		expect(fitScale(278)).toBe(1);
+	});
+
+	it('does not scale before the pane has been measured', () => {
+		expect(fitScale(0)).toBe(1);
 	});
 });
