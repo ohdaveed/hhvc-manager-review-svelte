@@ -11,13 +11,13 @@
 # do, set EXPECT_COMMIT=... to match, or the published-commit gate will compare
 # that deploy against origin/main and correctly report a mismatch:
 #
-#   SITE_URL=https://deploy-preview-54--hhvc-manager-review.netlify.app \
+#   SITE_URL=https://deploy-preview-54--sfhealthyhousing.netlify.app \
 #   EXPECT_COMMIT=$(git rev-parse HEAD) bun run verify:live
 
 set -uo pipefail
 cd "$(dirname "$0")/.."
 
-SITE_URL="${SITE_URL:-https://hhvc-manager-review.netlify.app}"
+SITE_URL="${SITE_URL:-https://sfhealthyhousing.netlify.app}"
 LOG="${TMPDIR:-/tmp}/hhvc-verify.log"
 : >"$LOG"
 
