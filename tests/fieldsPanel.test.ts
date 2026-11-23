@@ -24,6 +24,8 @@ vi.mock('$lib/ai/generate', () => ({ requestGeneration: (p: unknown) => requestG
 vi.mock('$lib/stores/reviewState', () => ({
 	saveInlineEdit: (...args: unknown[]) => saveInlineEdit(...args)
 }));
+const session = vi.hoisted(() => ({ knownSignedOut: false }));
+vi.mock('$lib/stores/session.svelte', () => ({ sessionStore: session }));
 
 const fixture = () => ({
 	id: 'topic-x--about',
@@ -55,6 +57,20 @@ describe('FieldsPanel', () => {
 		// database, and a bare `vi.fn()` returns undefined -- which the panel now
 		// correctly reads as a failed save.
 		saveInlineEdit.mockResolvedValue(true);
+		session.knownSignedOut = false;
+	});
+
+	it('disables Save signed out and says why, even with an accepted edit', () => {
+		session.knownSignedOut = true;
+		pageStore.selectedFieldIds = ['title'];
+		pageStore.suggestions = {
+			title: { pageId: 'topic-x--about', original: 'a', suggested: 'b', status: 'accepted' }
+		};
+		render(FieldsPanel, { props: { pageData: fixture(), livePageId: 'live-1' } });
+
+		expect(screen.getByRole('button', { name: 'Save 1 edit' }).hasAttribute('disabled')).toBe(true);
+		expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/login');
+		expect(screen.getByText(/to save edits/)).toBeTruthy();
 	});
 
 	it('says what to do when nothing is selected', () => {
