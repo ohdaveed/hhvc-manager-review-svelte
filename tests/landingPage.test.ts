@@ -95,6 +95,20 @@ describe('landing page', () => {
 		expect(screen.getByText(/loading your progress/i)).toBeTruthy();
 	});
 
+	it('says so when the review fails to load, and does not log an error', async () => {
+		session.signedIn = true;
+		const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+		loadReview.mockRejectedValueOnce(new Error('network down'));
+		render(Page);
+
+		expect(await screen.findByText(/progress could not be loaded/i)).toBeTruthy();
+		expect(screen.queryByText(/loading your progress/i)).toBeNull();
+		expect(warnSpy).toHaveBeenCalledOnce();
+		expect(errorSpy).not.toHaveBeenCalled();
+		// Everything else on the page is unaffected.
+		expect(screen.getByRole('heading', { name: /how it works/i })).toBeTruthy();
+	});
+
 	it('does not redirect', async () => {
 		session.signedIn = true;
 		render(Page);

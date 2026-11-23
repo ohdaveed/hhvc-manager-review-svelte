@@ -27,6 +27,7 @@
 	// `ready` gates the progress line: before the load resolves the store is
 	// empty, and "0 of 0 decided" would be a claim the page does not yet have.
 	let ready = $state(false);
+	let failed = $state(false);
 	let loaded = false;
 	let disposed = false;
 	let cleanup: (() => void) | undefined;
@@ -42,10 +43,15 @@
 				else cleanup = fn;
 				ready = true;
 			})
-			.catch(() => {
-				// A rejected load (dev sign-in, network) leaves the page without
-				// progress, the same as signed out. Not logged: the console gate counts
-				// a console error, and the review layout reports its own load.
+			.catch((err: unknown) => {
+				// A rejected load (dev sign-in, network) must not leave "Loading your
+				// progress" up forever. `warn`, not `error`: it stays visible to a
+				// developer, and the e2e console gate fails on `console.error` only.
+				// `loaded` stays set on purpose: clearing it would not loop (it is not
+				// reactive) but nothing re-runs the effect either, so a retry would
+				// need a session change; a reload is the honest recourse.
+				console.warn('Landing page: could not load review progress:', err);
+				failed = true;
 			});
 	});
 
@@ -58,7 +64,9 @@
 <div class="mx-auto max-w-6xl space-y-8 px-4 py-8">
 	<header class="min-h-20 space-y-4">
 		<h1 class="text-2xl font-bold text-slate-900">HHVC mockup review</h1>
-		{#if sessionStore.signedIn === true && ready && progress.total > 0}
+		{#if sessionStore.signedIn === true && failed}
+			<p class="text-slate-800">Your progress could not be loaded. Reload the page to try again.</p>
+		{:else if sessionStore.signedIn === true && ready && progress.total > 0}
 			<ProgressSummary
 				decided={progress.decided}
 				total={progress.total}
