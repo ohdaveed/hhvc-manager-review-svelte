@@ -76,8 +76,8 @@ Things that would make this a failure even if links worked:
   them. No permissions are gained (every authenticated user already has the
   same ones); what is forgeable is **attribution**, which is what this tool
   exists to record. Closing it means either refusing every existing address —
-  which also breaks re-inviting someone whose link expired, and with
-  `mailer_otp_exp` at 3600s that is a real need — or recording an inviter per
+  which also breaks re-inviting someone whose link expired, still a real need
+  even at a 24h `mailer_otp_exp` — or recording an inviter per
   account and allowing only them to re-invite. Neither was built. The route
   logs who asked and for whom instead, so the window is traceable rather than
   silent. **This is a decision to revisit, not a settled design.**
@@ -92,8 +92,11 @@ Things that would make this a failure even if links worked:
 ## Constraints
 
 - The link is a bearer credential: whoever holds it becomes that user. It is
-  single-use and expires — `mailer_otp_exp` currently reads 3600s on both
-  projects.
+  single-use and expires — `mailer_otp_exp` reads **86400s (24h)** on both
+  projects, raised from 3600s on 2026-11-22 so a link handed over on a Friday
+  afternoon still works when the recipient opens it. That is a deliberate
+  trade: a longer window for a credential sitting in someone's chat history,
+  bought to stop the common failure (an expired link nobody can redeem).
 - A Supabase session refreshes indefinitely once established, which is what
   makes a one-time handoff sufficient.
 - `disable_signup` stays `true` on both projects. `generateLink` is an admin
@@ -156,10 +159,11 @@ and one line of warning: that it signs the holder in as that person, that it
 works once, and that it expires. The link is rendered as text to be copied, not
 as an anchor — nothing on this page should navigate to it.
 
-**Supabase config.** Consider raising `mailer_otp_exp` above 3600s on both
-projects, so a link pasted into a chat on Friday still works when the reviewer
-opens it. This is the author's call; 24h is a reasonable ceiling for a link that
-is already single-use.
+**Supabase config — done.** `mailer_otp_exp` was raised from 3600s to 86400s
+(24h) on both projects on 2026-11-22, so a link pasted into a chat on Friday
+still works when the reviewer opens it. Verified by reading the value back from
+`/v1/projects/<ref>/config/auth` on each, not from the dashboard's own
+confirmation.
 
 **Consequence for PR #158.** Custom SMTP stops being a prerequisite. Its design
 doc and plan both name SMTP as step one; both need amending, and the plan's
