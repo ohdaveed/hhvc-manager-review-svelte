@@ -145,6 +145,26 @@ describe('POST /api/invite', () => {
 	});
 
 	/**
+	 * Any signed-in reviewer can mint a link, and GoTrue re-invites an existing
+	 * UNCONFIRMED address rather than refusing it (measured against a real
+	 * project: two `generate_link` calls for the same pending invitee both
+	 * returned 200 with a link). So a reviewer can obtain a working link for a
+	 * colleague who has not signed in yet and act as them. The permissions are
+	 * identical either way; what is forgeable is ATTRIBUTION, which in a review
+	 * tool is the product. A log line is what makes that traceable.
+	 */
+	it('records who asked for a link and for whom, without the link', async () => {
+		const log = vi.spyOn(console, 'log').mockImplementation(() => {});
+
+		await POST(buildEvent(AUTHED) as never);
+
+		const logged = log.mock.calls.map((call) => JSON.stringify(call)).join(' ');
+		expect(logged).toContain('u1');
+		expect(logged).toContain('new@sfgov.org');
+		expect(logged).not.toContain('example.test');
+	});
+
+	/**
 	 * The built-in mailer refuses any address outside the Supabase organisation.
 	 * With links delivered by hand that refusal is expected and irrelevant --
 	 * the link is what the caller needs, and it was produced.

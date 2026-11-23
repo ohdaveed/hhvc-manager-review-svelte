@@ -53,9 +53,27 @@ Things that would make this a failure even if links worked:
   (GoTrue returns 422 `email_exists`, which the route already maps to 409), and
   that refusal is the control. This is the single most important line in the
   document.
+
+  **That control is partial, and the gap is measured, not assumed.** It covers
+  CONFIRMED addresses only. GoTrue re-invites an existing UNCONFIRMED address
+  rather than refusing it — two `generate_link` calls for the same pending
+  invitee both returned 200 with a link, verified against a real project on
+  2026-11-22. So between the moment someone is invited and the moment they
+  first sign in, any reviewer can obtain a working link for them and act as
+  them. No permissions are gained (every authenticated user already has the
+  same ones); what is forgeable is **attribution**, which is what this tool
+  exists to record. Closing it means either refusing every existing address —
+  which also breaks re-inviting someone whose link expired, and with
+  `mailer_otp_exp` at 3600s that is a real need — or recording an inviter per
+  account and allowing only them to re-invite. Neither was built. The route
+  logs who asked and for whom instead, so the window is traceable rather than
+  silent. **This is a decision to revisit, not a settled design.**
+
 - **The link reaching a log, Sentry, or a URL.** The response body now carries a
   credential. It must not be `console.log`ged, must not be put in a query
-  string, and must not end up in an error report.
+  string, and must not end up in an error report. The audit line above logs the
+  caller's id and the target address and nothing else; a test asserts the link
+  is absent from it.
 - Re-enabling public signup, or weakening any RLS policy, to make this simpler.
 
 ## Constraints
