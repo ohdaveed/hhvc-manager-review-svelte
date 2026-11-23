@@ -147,6 +147,16 @@ describe('POST /api/ai/generate', () => {
 		expect(fetchMock.mock.calls[0][0]).toContain('/models/gemini-flash-latest:generateContent');
 	});
 
+	it('honours GEMINI_BASE_URL, so a local stub can stand in for Gemini', async () => {
+		env.GEMINI_BASE_URL = 'http://127.0.0.1:5299';
+		fetchMock.mockResolvedValueOnce(geminiReply({ rewrittenText: 'Report rats.' }));
+		await call({ task: 'rewrite-field', fieldText: 'Report the rats.' });
+		expect(fetchMock.mock.calls[0][0]).toBe(
+			'http://127.0.0.1:5299/models/gemini-pro-latest:generateContent'
+		);
+		delete env.GEMINI_BASE_URL;
+	});
+
 	it('retries once with the failures named when a draft fails validation', async () => {
 		const fieldText = 'Call [311](https://sf311.org) to report rats.';
 		fetchMock

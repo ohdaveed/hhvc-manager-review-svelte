@@ -12,7 +12,11 @@ import { numberFromEnv } from './vendor/env.js';
 export const NAME = 'gemini';
 export const DEFAULT_MODEL = 'gemini-pro-latest';
 const MAX_OUTPUT_TOKENS = 16_000;
-const API_BASE = 'https://generativelanguage.googleapis.com/v1beta';
+/**
+ * `GEMINI_BASE_URL` points the route at a local stub (the backend honoured the
+ * same variable), so the whole chain can be driven without spending quota.
+ */
+const DEFAULT_API_BASE = 'https://generativelanguage.googleapis.com/v1beta';
 
 /** Finish reasons that mean the model declined, not that it broke. */
 const REFUSAL_FINISH_REASONS = new Set(['SAFETY', 'PROHIBITED_CONTENT', 'BLOCKLIST', 'SPII']);
@@ -114,7 +118,8 @@ export async function generateObject({
 	const model = getModel();
 	const maxAttempts = numberFromEnv('GEMINI_MAX_ATTEMPTS', 2, { min: 1, max: 10 });
 	const timeoutMs = numberFromEnv('GEMINI_TIMEOUT_MS', 150_000, { max: 3_600_000 });
-	const url = `${API_BASE}/models/${encodeURIComponent(model)}:generateContent`;
+	const base = env.GEMINI_BASE_URL || DEFAULT_API_BASE;
+	const url = `${base}/models/${encodeURIComponent(model)}:generateContent`;
 	const body = JSON.stringify({
 		systemInstruction: { parts: [{ text: system }] },
 		contents: [{ role: 'user', parts: [{ text: userPrompt }] }],

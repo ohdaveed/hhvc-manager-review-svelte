@@ -139,11 +139,19 @@ These are unrelated and easy to confuse:
 
 ### AI proxy
 
-Browser never holds the backend token. `ActionBar.svelte` calls `$lib/ai/generate`'s `requestGeneration()`, which attaches the caller's Supabase access token; `src/routes/api/ai/generate/+server.ts` verifies that token, enforces payload caps (64KB body → 413, 20k-char `fieldText` → 400), then forwards to the Railway backend with `RAILWAY_API_TOKEN` server-side.
+Browser never holds the model key. `FieldsPanel.svelte` and the Rethink panel call `$lib/ai/generate`'s `requestGeneration()`, which attaches the caller's Supabase access token; `src/routes/api/ai/generate/+server.ts` verifies that token, caps the body at 64KB (413), validates it against `generateRequestSchema` (8,000-char `fieldText`/`prompt`, 2,000-char `instruction` → 400 naming the field), then calls **Gemini directly** with `GEMINI_API_KEY` server-side. No key → 501.
+
+**There is no Railway backend any more.** The route used to forward to one (`web-production-9bb3b.up.railway.app`); that service went dark (Railway's 404 `Application not found`, measured 2026-11-22) and was retired rather than revived. Its AI layer now lives in `src/lib/server/ai/`:
+
+- `vendor/` — the backend's prompts, request/output schemas, `validate-output` and the plain-language standards it depends on, **converted CommonJS → ESM mechanically and kept diffable** against `HHVC_manager_review_current_tool_package`. Fix them upstream-first or note the divergence; don't restyle them. `style/` is the 28 KB SF.gov style corpus the system prompts inline, bundled with `?raw` because a Netlify function has no `docs/` to read.
+- `gemini.ts` — REST `generateContent` (no `@google/genai`): structured JSON via `responseJsonSchema`, one retry on 408/429/5xx, `GEMINI_TIMEOUT_MS` (150s), the caller's abort signal passed through. `GEMINI_MODEL` picks the model; `GEMINI_BASE_URL` points it at a stub.
+- `generate.ts` — validate each draft and retry once with the failures named, exactly as the backend's `index.js` did. Responses keep the backend's envelope (`result`, `valid`, `issues`, `attempts`, `model`, `disclosure`).
+
+Gemini is the only provider: the request schema rejects `provider: 'claude'`, and Rethink's old Claude-first fallback is gone. `compliance-audit` answers 400 — it needed the backend's retrieval index, which did not move.
 
 Call the endpoint through `requestGeneration()`. A bare `fetch('/api/ai/generate')` will 401.
 
-Note the error handling: `HttpError`s are rethrown so upstream status codes survive, and the auth check sits _outside_ the try — a SvelteKit `HttpError` is not an `Error` instance, so a catch-all would flatten a 401 into a 500.
+Note the error handling: failures map to the statuses the backend used and the panels key on — refusal 422, timeout 504, Cancel 499, a Gemini HTTP error or unusable output 502 — and anything else is a **generic** 500, because echoing `err.message` would leak a network address. The auth check sits _outside_ the try — a SvelteKit `HttpError` is not an `Error` instance, so a catch-all would flatten a 401 into a 500.
 
 ### Supabase
 
@@ -189,7 +197,7 @@ Authorship is recorded and enforced: `edits.user_id` and `comments.user_id` are 
 
 **Public env vars use the `SVELTE_PUBLIC_` prefix**, set by `env.publicPrefix` in that same block. A `PUBLIC_`-prefixed variable is treated as _private_ and will not reach `$env/static/public`. These are inlined at build time, so they must exist before the build runs, not just at runtime.
 
-Locally they come from `.env.local` (untracked). **CI has no `.env.local`, so `pr.yml` sets placeholders** — `SVELTE_PUBLIC_SUPABASE_URL=https://placeholder.supabase.co` and `SVELTE_PUBLIC_SUPABASE_ANON_KEY=ci-placeholder-anon-key`. They are deliberately not secrets: the build fails without _some_ value because `src/lib/supabase.ts` calls `createClient` at module scope, but CI is checking that the app builds, not that it reaches Supabase, and placeholders keep the workflow working on fork PRs where secrets are not injected. `RAILWAY_API_TOKEN` is `$env/dynamic/private` and is not needed to build. A CI job that genuinely needs to talk to Supabase would need real values added as repo secrets first — no job does today.
+Locally they come from `.env.local` (untracked). **CI has no `.env.local`, so `pr.yml` sets placeholders** — `SVELTE_PUBLIC_SUPABASE_URL=https://placeholder.supabase.co` and `SVELTE_PUBLIC_SUPABASE_ANON_KEY=ci-placeholder-anon-key`. They are deliberately not secrets: the build fails without _some_ value because `src/lib/supabase.ts` calls `createClient` at module scope, but CI is checking that the app builds, not that it reaches Supabase, and placeholders keep the workflow working on fork PRs where secrets are not injected. `GEMINI_API_KEY` is `$env/dynamic/private` and is not needed to build. A CI job that genuinely needs to talk to Supabase would need real values added as repo secrets first — no job does today.
 
 **`bun run lint` is red on the current tree**, both halves: `prettier --check .` on 98 files (the figure drifts as files are touched) and `eslint .` on **4** errors. Because the script is `prettier && eslint`, a prettier failure means eslint never runs — so anything that needs eslint must invoke it directly. This is why CI reports lint without blocking on it. Do not "fix" it by reformatting the tree as a side effect of unrelated work.
 
@@ -215,7 +223,7 @@ The ratchet passes `--tsconfig`, which bounds svelte-check to `.svelte-kit/tscon
 
 ## Deployment
 
-Netlify, site `hhvc-manager-review`, **Git-connected and deploying automatically**. Merging to `main` publishes production, and every PR gets a deploy preview at `deploy-preview-<n>--hhvc-manager-review.netlify.app` — both build on Netlify, so builds do consume Netlify minutes. Netlify's build settings are overridden by `netlify.toml` in this repo, which is where the command and publish directory actually come from. Env vars are set on the Netlify site; `RAILWAY_API_TOKEN` is marked secret.
+Netlify, site `hhvc-manager-review`, **Git-connected and deploying automatically**. Merging to `main` publishes production, and every PR gets a deploy preview at `deploy-preview-<n>--hhvc-manager-review.netlify.app` — both build on Netlify, so builds do consume Netlify minutes. Netlify's build settings are overridden by `netlify.toml` in this repo, which is where the command and publish directory actually come from. Env vars are set on the Netlify site; `GEMINI_API_KEY` belongs there as a secret.
 
 `netlify deploy --build --prod` still works and builds locally, but it is a manual override, not the normal path: the deploy it uploads carries no `commit_ref`, so it supersedes the commit-linked release and the published deploy can no longer be traced to a SHA. Reach for it only when Netlify's own build is unavailable.
 
@@ -262,7 +270,7 @@ Two consequences worth knowing before using a preview:
 
 Staging was built from the repo, not by hand: `supabase db push` applied every migration then in the repo, `supabase/seed.hosted.sql` wrote the review and its 29 page rows, and `bun run corpus:import` wrote the corpus version. Its auth allow-list is `https://*--hhvc-manager-review.netlify.app/**,http://localhost:5173/**` — deliberately **not** the production origin. To rebuild it, repeat those three steps against the staging ref.
 
-**`RAILWAY_API_TOKEN` and `RAILWAY_API_URL` are still shared across every context**, so a preview's AI rewrites hit the production backend and spend real money. Unlike the database, that has not been split.
+**`GEMINI_API_KEY` is shared across every context**, so a preview's AI rewrites spend the production key. Unlike the database, that has not been split.
 
 ### Merging to `main` applies migrations to production
 

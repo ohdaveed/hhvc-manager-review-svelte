@@ -53,6 +53,15 @@ will call Gemini itself.
 - [x] Rethink sends `provider: 'gemini'` only; Claude fallback removed
 - [x] Unit tests: rewrite + content happy path, retry-on-invalid, refusal → 422, missing key → 501, auth still 401
 - [x] `bun run verify`, `check:ratchet`, `lint:ratchet` green
-- [ ] Docs: CLAUDE.md AI-proxy + Deployment sections; `.env.example` if present
+- [x] Docs: CLAUDE.md AI-proxy + Deployment sections; `.env.example` if present
 - [ ] Doppler: `GEMINI_API_KEY` in `prd` (set by the user — a value only a human types), referenced from `netlify_prd`; Railway refs dropped
+  - Done except the key itself. `prd` and `netlify_prd` reference
+    `${hhvc-manager-review.prd.GEMINI_API_KEY}` (Doppler refuses chained
+    references, so `netlify_prd` points at the source, not at `prd`);
+    `netlify_prd`'s Railway refs are deleted.
+  - **BLOCKER: that value is not a Gemini key.** It is 43 chars and does not
+    start with `AIza`; a live `generateContent` call with it answered
+    `400 API key not valid` (2026-11-22). The user must create a key in Google
+    AI Studio and set it in `hhvc-manager-review/prd` (both refs follow).
+    `GEMINI_MODEL` there is `gemini-3.7-flash`.
 - [ ] PR open, CI green; ask before merge (merge deploys production)
