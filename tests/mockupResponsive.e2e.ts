@@ -23,7 +23,9 @@ import { expect, test } from './fixtures';
  *
  * Under the default "Fit", a pane narrower than 1024px no longer reflows: the
  * frame lays out at 1024px and zooms down (`fitScale`), so the reviewer sees
- * the desktop layout. Below half scale (a phone window) it reflows as before.
+ * the desktop layout. Below half scale (a phone window) it shows the phone
+ * layout instead, and a pane narrower than a real phone lays out at 390px and
+ * zooms down (`fitFrame`) rather than reflowing at a width no phone has.
  */
 const PAGE = '/review/report-garbage-filth-vegetation';
 
@@ -97,6 +99,9 @@ test.describe('the mockup scales with the space it has', () => {
 		// template stopped collapsing.
 		expect(await frameWidth(page)).toBeGreaterThan(280);
 		expect(await footerColumnCount(page)).toBe(1);
+		// The pane is narrower than 390px, so Fit zooms a real phone width into
+		// it; the readout must say so rather than report a reflow.
+		await expect(page.getByTestId('preview-width')).toContainText(/Phone · \d+%/);
 		expect(await overflows(page)).toBe(false);
 	});
 });
