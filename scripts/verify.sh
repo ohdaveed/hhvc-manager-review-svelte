@@ -205,17 +205,47 @@ else
 fi
 
 # The AI proxy must refuse unauthenticated callers: it spends real money.
+#
+# Assert the BODY, not only the status. A bare 401 check passes vacuously
+# behind anything that fronts the whole site with a blanket 401 — measured
+# 2026-11-23, when Netlify team SSO visitor access answered 401 on every path
+# and both of these gates printed PASS beside three real failures, having
+# tested nothing about the route. They are the gates that exist to show
+# GEMINI_API_KEY cannot be spent by a stranger, so a PASS that an unrelated
+# edge gate can manufacture is worse than no gate at all: it reads green while
+# sitting next to red, which is where a reader is least likely to doubt it.
+#
+# The route's `error(401, 'Unauthorized')` answers application/json with
+# {"message":"Unauthorized"}; the SSO gate answered a text/html "Login
+# Redirect" stub. Matching that message is what separates the route's own
+# refusal from a stranger's. Both 401 paths in the route — missing token and
+# rejected token — raise the same message, so one expected body covers both
+# probes. Match it exactly rather than sniffing for JSON: if SvelteKit ever
+# changes its error envelope this gate fails loudly, which is the direction an
+# auth check should break in.
+probe_body=$(mktemp "${TMPDIR:-/tmp}/hhvc-proxy.XXXXXX")
 for label in 'no auth header' 'bad bearer token'; do
 	if [ "$label" = 'no auth header' ]; then
 		auth=()
 	else
 		auth=(-H 'Authorization: Bearer not-a-real-token')
 	fi
-	code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 -X POST \
+	code=$(curl -s -o "$probe_body" -w '%{http_code}' --max-time 30 -X POST \
 		-H 'Content-Type: application/json' "${auth[@]}" \
 		-d '{"task":"rewrite-field","fieldText":"probe"}' "$SITE_URL/api/ai/generate")
-	[ "$code" = "401" ] && pass "proxy rejects $label -> 401" || fail "proxy $label -> $code (want 401)"
+	# Newlines stripped so an HTML body cannot break the FAIL line across
+	# several lines; the route's own body is a single line of 26 bytes, so
+	# this cannot turn a mismatch into a match.
+	body=$(tr -d '\r\n' <"$probe_body")
+	if [ "$code" != '401' ]; then
+		fail "proxy $label -> $code (want 401)"
+	elif [ "$body" != '{"message":"Unauthorized"}' ]; then
+		fail "proxy $label -> 401, but not from the route (body: ${body:0:60})"
+	else
+		pass "proxy rejects $label -> 401"
+	fi
 done
+rm -f "$probe_body"
 
 # Walk the deployed bundle for anything that should never leave the server.
 #
