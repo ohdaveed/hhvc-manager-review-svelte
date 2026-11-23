@@ -10,7 +10,24 @@ import { numberFromEnv } from './vendor/env.js';
  */
 
 export const NAME = 'gemini';
-export const DEFAULT_MODEL = 'gemini-pro-latest';
+/**
+ * Chosen by measurement, not by tier (2026-11-22, whole-page Rethink, thinking
+ * `low`). gemini-3.1-flash-lite: 9-16s over four runs, every draft valid with
+ * every section kept. gemini-3.8-flash: 27s, 55s, 103s and 28s, once
+ * ballooning to 15.9k output tokens -- half those runs overrun the 55s budget
+ * `generate.ts` must keep under Netlify's 60s limit. gemini-3.5-flash-lite was
+ * fastest (7s) but emptied required callouts. The Railway backend's default,
+ * gemini-pro-latest, is slower than any of them. Re-measure before changing.
+ */
+export const DEFAULT_MODEL = 'gemini-3.1-flash-lite';
+
+/**
+ * Thinking tokens count against `maxOutputTokens` and dominate latency: at the
+ * model's default level a Rethink spent 13.5k tokens thinking, took 138s and
+ * was cut off at MAX_TOKENS. `GEMINI_THINKING_LEVEL` overrides; set it to
+ * `default` to send no thinking config at all (for a model that rejects one).
+ */
+const DEFAULT_THINKING_LEVEL = 'low';
 const MAX_OUTPUT_TOKENS = 16_000;
 /**
  * `GEMINI_BASE_URL` points the route at a local stub (the backend honoured the
@@ -130,13 +147,15 @@ export async function generateObject({
 	};
 	const base = env.GEMINI_BASE_URL || DEFAULT_API_BASE;
 	const url = `${base}/models/${encodeURIComponent(model)}:generateContent`;
+	const thinkingLevel = env.GEMINI_THINKING_LEVEL || DEFAULT_THINKING_LEVEL;
 	const body = JSON.stringify({
 		systemInstruction: { parts: [{ text: system }] },
 		contents: [{ role: 'user', parts: [{ text: userPrompt }] }],
 		generationConfig: {
 			maxOutputTokens: MAX_OUTPUT_TOKENS,
 			responseMimeType: 'application/json',
-			responseJsonSchema: jsonSchema
+			responseJsonSchema: jsonSchema,
+			...(thinkingLevel === 'default' ? {} : { thinkingConfig: { thinkingLevel } })
 		}
 	});
 

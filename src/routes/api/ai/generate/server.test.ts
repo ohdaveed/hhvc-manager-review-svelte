@@ -130,7 +130,7 @@ describe('POST /api/ai/generate', () => {
 		]);
 
 		const [url, init] = fetchMock.mock.calls[0];
-		expect(url).toContain('/models/gemini-pro-latest:generateContent');
+		expect(url).toContain('/models/gemini-3.1-flash-lite:generateContent');
 		expect(init.headers['x-goog-api-key']).toBe('test-key');
 		const body = sent(0);
 		expect(body.generationConfig.responseMimeType).toBe('application/json');
@@ -138,6 +138,25 @@ describe('POST /api/ai/generate', () => {
 		expect(body.systemInstruction.parts[0].text).toContain(
 			'<document name="writing-and-style.md">'
 		);
+	});
+
+	it('asks for low thinking by default -- default thinking overran the 60s limit', async () => {
+		fetchMock.mockResolvedValueOnce(geminiReply({ rewrittenText: 'Report rats.' }));
+		await call({ task: 'rewrite-field', fieldText: 'Report the rats.' });
+		expect(sent(0).generationConfig.thinkingConfig).toEqual({ thinkingLevel: 'low' });
+	});
+
+	it('honours GEMINI_THINKING_LEVEL, and sends no thinking config for "default"', async () => {
+		env.GEMINI_THINKING_LEVEL = 'high';
+		fetchMock.mockResolvedValueOnce(geminiReply({ rewrittenText: 'Report rats.' }));
+		await call({ task: 'rewrite-field', fieldText: 'Report the rats.' });
+		expect(sent(0).generationConfig.thinkingConfig).toEqual({ thinkingLevel: 'high' });
+
+		env.GEMINI_THINKING_LEVEL = 'default';
+		fetchMock.mockResolvedValueOnce(geminiReply({ rewrittenText: 'Report rats.' }));
+		await call({ task: 'rewrite-field', fieldText: 'Report the rats.' });
+		expect(sent(1).generationConfig).not.toHaveProperty('thinkingConfig');
+		delete env.GEMINI_THINKING_LEVEL;
 	});
 
 	it('honours GEMINI_MODEL', async () => {
@@ -152,7 +171,7 @@ describe('POST /api/ai/generate', () => {
 		fetchMock.mockResolvedValueOnce(geminiReply({ rewrittenText: 'Report rats.' }));
 		await call({ task: 'rewrite-field', fieldText: 'Report the rats.' });
 		expect(fetchMock.mock.calls[0][0]).toBe(
-			'http://127.0.0.1:5299/models/gemini-pro-latest:generateContent'
+			'http://127.0.0.1:5299/models/gemini-3.1-flash-lite:generateContent'
 		);
 		delete env.GEMINI_BASE_URL;
 	});
