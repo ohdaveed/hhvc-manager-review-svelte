@@ -1,7 +1,8 @@
 # SF.gov design-system components (Svelte)
 
-Sixteen Svelte 5 components for building **public SF.gov pages**, converted from
-the React JSX in the design system's `design-system/components/sfgov-*` folders.
+Sixteen Svelte 5 components for building **public SF.gov pages** — four of them in
+use today, see Status below — converted from the React JSX in the design
+system's `design-system/components/sfgov-*` folders.
 
 ```
 src/lib/components/sfgov/ds/
@@ -11,6 +12,38 @@ src/lib/components/sfgov/ds/
   SiteHeader  OnThisPage
   types.ts  fieldId.ts
 ```
+
+## Status: four of these sixteen reach the app
+
+Measured 2026-11-23. **`SiteButton`, `TextField` and `PageAlert` are the only
+components a user of this app can reach**, all three on `/login`, and
+`ErrorMessage`, `types.ts` and `fieldId.ts` come with them. The other twelve —
+`Icon`, `Breadcrumbs`, `TextAreaField`, `ChoiceGroup`, `Dropdown`, `PageHeader`,
+`ListItem`, `Spotlight`, `DataTable`, `SiteFooter`, `SiteHeader`, `OnThisPage` —
+are rendered only by `/sfgov-components`, the specimen route that axe-tests
+them. They are staged, not shipped.
+
+**A mockup page cannot use them, and that is structural rather than pending
+work.** The review canvas renders `src/lib/data/` modules through
+`$lib/components/blocks/*` and the deliberately INERT `$lib/components/sfgov/*`
+chrome, where nav items and the search box are `<span>`s because a
+non-functional control exposed as a real one fails the axe gate. These
+components are the opposite by design — real links, a real `<select>`, a real
+`<form>` — so adding or consolidating mockup pages creates no demand for them.
+Demand would have to come from the tool's own non-canvas surfaces, and those are
+shadcn (`$lib/components/ui/**`) everywhere except `/login`.
+
+**Whether to keep the twelve is an open question, not a settled one.** A
+repo-wide audit proposed cutting them on 2026-11-22; the cuts that landed
+(`df0448e`) left them in place pending a decision. The measured trade: keeping
+costs roughly one incidental commit a month — three repo-wide hygiene sweeps
+have touched this directory, and no feature or design work has since
+2026-08-30 — and stays reversible at any time, because git holds the
+conversion. Cutting removes that tax, and the axe gate over these patterns with
+it; what a later re-derivation would lose is not the markup but the
+per-component WCAG reasoning recorded below. The deciding question is not the
+line count. It is whether this tool's own non-canvas surfaces will be
+SF.gov-styled beyond `/login` or stay shadcn, and nobody has ruled on that.
 
 ## Design source of truth: Figma
 
