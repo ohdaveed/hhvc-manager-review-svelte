@@ -229,9 +229,16 @@
 							class="font-semibold text-sfds-action underline underline-offset-2">Sign in</a
 						> to record a decision
 					</span>
-				{:else if !liveRecord && sessionStore.signedIn && $pagesStore.length > 0}
+				{:else if !liveRecord && pageData && sessionStore.signedIn && $pagesStore.length > 0}
 					<!-- Only once the review has loaded: an empty store while signed in
-					     is still loading, and saying "no record" then is a false alarm. -->
+					     is still loading, and saying "no record" then is a false alarm.
+
+					     `pageData` is required because `liveRecord` is looked up by
+					     `pageData?.id`. On a drafting, stale or failed draft there is no
+					     corpus entry, so the lookup misses even though a `pages` row for
+					     that `draft:<uuid>` does exist -- and claiming otherwise would be
+					     false. With no page to name, say nothing: the draft banner above
+					     already explains the state. -->
 					<span class="text-xs text-sfds-slate-l3">No review record exists for this page</span>
 				{/if}
 				{#if decisionError}

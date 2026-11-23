@@ -187,6 +187,26 @@ describe('ReviewPanel', () => {
 			expect(screen.getByText('No review record exists for this page')).toBeTruthy();
 			expect(screen.queryByRole('link', { name: 'Sign in' })).toBeNull();
 		});
+
+		it('signed in on a non-ready draft: disabled, but claims no missing record', () => {
+			// A drafting, stale or failed draft has no corpus entry, so the layout
+			// passes no `pageData` and the `pageData?.id` lookup misses -- but a
+			// `pages` row for that `draft:<uuid>` does exist, so "no review record
+			// exists" would be false. The draft banner explains the state instead.
+			pagesStore.set([
+				{
+					id: 'row-draft',
+					review_id: 'r1',
+					path: 'draft:11111111-1111-4111-8111-111111111111',
+					status: 'needs-review',
+					manager_notes: null,
+					page_checks: null
+				}
+			]);
+			render(ReviewPanel, { pageData: undefined });
+			for (const r of radios()) expect(r.disabled).toBe(true);
+			expect(screen.queryByText('No review record exists for this page')).toBeNull();
+		});
 	});
 
 	it('signed in with a record: controls are enabled and a decision writes', async () => {
