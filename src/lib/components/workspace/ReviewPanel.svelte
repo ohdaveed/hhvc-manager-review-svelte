@@ -202,7 +202,13 @@
 	<div class="space-y-4 p-6">
 		<h2 class="font-heading text-lg font-bold">Manager Review</h2>
 
-		<div class="space-y-2">
+		<!-- A container, so the decisions can drop to a 2x2 grid when four
+		     buttons no longer fit one row. Font size decides that, not the
+		     viewport: at a 20px root, "Approved" can't fit a quarter of the
+		     panel. Labels also wrap inside their button. The `!` utilities beat
+		     the toggle group's `data-[spacing=0]` padding, border and radius
+		     rules, which outrank a plain class. -->
+		<div class="@container/decision space-y-2">
 			<div class="flex items-baseline justify-between gap-2">
 				<span id="decision-label" class="text-sm font-medium">Decision</span>
 				{#if decisionError}
@@ -214,7 +220,7 @@
 				variant="outline"
 				size="sm"
 				spacing={0}
-				class="w-full"
+				class="grid w-full grid-cols-2 items-stretch gap-1 @min-[18rem]/decision:flex @min-[18rem]/decision:gap-0"
 				aria-labelledby="decision-label"
 				bind:value={decision}
 				onValueChange={handleDecision}
@@ -223,7 +229,7 @@
 					<ToggleGroup.Item
 						value={decision.value}
 						aria-label={decision.label}
-						class="min-w-0 flex-1 shrink px-1 whitespace-nowrap data-[state=on]:text-white data-[state=on]:hover:text-white {decision.tone}"
+						class="h-auto min-h-7 min-w-0 flex-1 shrink px-0! py-1 leading-tight whitespace-normal data-[state=on]:text-white data-[state=on]:hover:text-white @max-[18rem]/decision:rounded-md! @max-[18rem]/decision:border-l! {decision.tone}"
 					>
 						{decision.label}
 					</ToggleGroup.Item>
