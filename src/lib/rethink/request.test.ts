@@ -6,8 +6,8 @@ const requestGeneration = vi.fn();
 // `$lib/supabase`, which does `createClient(...)` at module scope, so
 // `importOriginal` here would drag that into every run. `request.ts` imports
 // `GenerationError` from `$lib/ai/generate` too, and that import resolves to
-// THIS mock in tests, so the `instanceof` check on the fallback path lines up
-// against the same class reference.
+// THIS mock in tests, so error fixtures carry the same class reference the
+// app code sees.
 vi.mock('$lib/ai/generate', () => {
 	class GenerationError extends Error {
 		status: number;
@@ -64,8 +64,8 @@ const unchangedResponseSections = page.sections.map(withoutFieldKey);
 
 const envelope = (sections: unknown[], resultExtra: object = {}, extra: object = {}) => ({
 	task: 'content',
-	provider: 'claude',
-	model: 'claude-opus-5',
+	provider: 'gemini',
+	model: 'gemini-pro-latest',
 	attempts: 1,
 	valid: true,
 	issues: [],
@@ -84,14 +84,14 @@ const envelope = (sections: unknown[], resultExtra: object = {}, extra: object =
 describe('requestRethink', () => {
 	beforeEach(() => requestGeneration.mockReset());
 
-	it('asks for the content task from Claude, grounded on the live page', async () => {
+	it('asks for the content task from Gemini, grounded on the live page', async () => {
 		requestGeneration.mockResolvedValue(envelope(unchangedResponseSections));
 
 		await requestRethink({ page, pageId: page.id, sectionKey: 'what-we-do' });
 
 		const [payload] = requestGeneration.mock.calls[0];
 		expect(payload.task).toBe('content');
-		expect(payload.provider).toBe('claude');
+		expect(payload.provider).toBe('gemini');
 		expect(payload.page).toBe(page);
 		expect(payload.prompt).toContain('What we do');
 	});
@@ -187,7 +187,7 @@ describe('requestRethink', () => {
 	it('carries the model and disclosure through for the record', async () => {
 		requestGeneration.mockResolvedValue(envelope(unchangedResponseSections));
 		const result = await requestRethink({ page, pageId: page.id, sectionKey: 'what-we-do' });
-		expect(result.model).toBe('claude-opus-5');
+		expect(result.model).toBe('gemini-pro-latest');
 		expect(result.disclosure).toBe('Drafted with generative AI.');
 	});
 
@@ -355,79 +355,32 @@ describe('requestRethink', () => {
 			sectionKey: 'what-we-do'
 		});
 
-		expect(result.model).toBe('claude-opus-5');
+		expect(result.model).toBe('gemini-pro-latest');
 	});
 
-	describe('provider fallback (Claude first, Gemini once on a provider failure)', () => {
-		it('does not call Gemini when Claude succeeds', async () => {
+	describe('single provider (Gemini)', () => {
+		it('makes exactly one request, to Gemini', async () => {
 			requestGeneration.mockResolvedValue(envelope(unchangedResponseSections));
 			await requestRethink({ page, pageId: page.id, sectionKey: 'what-we-do' });
 			expect(requestGeneration).toHaveBeenCalledTimes(1);
-			expect(requestGeneration.mock.calls[0][0].provider).toBe('claude');
+			expect(requestGeneration.mock.calls[0][0].provider).toBe('gemini');
 		});
 
-		it('retries once with Gemini when Claude fails with a provider-level 400, and reports the model that actually answered', async () => {
-			requestGeneration
-				.mockRejectedValueOnce(
-					new GenerationError(
-						400,
-						'You have reached your specified API usage limits. You will regain access on 2026-09-01.'
-					)
-				)
-				.mockResolvedValueOnce({
-					...envelope(unchangedResponseSections),
-					provider: 'gemini',
-					model: 'gemini-3.7-flash'
-				});
-
-			const result = await requestRethink({ page, pageId: page.id, sectionKey: 'what-we-do' });
-
-			expect(requestGeneration).toHaveBeenCalledTimes(2);
-			expect(requestGeneration.mock.calls[1][0].provider).toBe('gemini');
-			expect(result.model).toBe('gemini-3.7-flash');
-		});
-
-		it('retries once with Gemini when Claude fails at the provider level with a 5xx', async () => {
-			requestGeneration
-				.mockRejectedValueOnce(new GenerationError(503, 'Service unavailable'))
-				.mockResolvedValueOnce(envelope(unchangedResponseSections));
-
-			await requestRethink({ page, pageId: page.id, sectionKey: 'what-we-do' });
-
-			expect(requestGeneration).toHaveBeenCalledTimes(2);
-			expect(requestGeneration.mock.calls[1][0].provider).toBe('gemini');
-		});
-
-		it('does not fall back on a 422 content refusal -- the error surfaces as-is', async () => {
-			requestGeneration.mockRejectedValueOnce(
-				new GenerationError(422, 'Refused on content grounds')
-			);
+		it.each([
+			[503, 'Service unavailable'],
+			[422, 'Refused on content grounds'],
+			[413, 'Request body too large'],
+			[401, 'Unauthorized']
+		])('surfaces a %i as-is, with no second request', async (status, message) => {
+			requestGeneration.mockRejectedValueOnce(new GenerationError(status, message));
 
 			await expect(
 				requestRethink({ page, pageId: page.id, sectionKey: 'what-we-do' })
-			).rejects.toThrow(/refused on content grounds/i);
+			).rejects.toThrow(message);
 			expect(requestGeneration).toHaveBeenCalledTimes(1);
 		});
 
-		it('does not fall back on a proxy 413 -- the payload is wrong regardless of provider', async () => {
-			requestGeneration.mockRejectedValueOnce(new GenerationError(413, 'Request body too large'));
-
-			await expect(
-				requestRethink({ page, pageId: page.id, sectionKey: 'what-we-do' })
-			).rejects.toThrow(/request body too large/i);
-			expect(requestGeneration).toHaveBeenCalledTimes(1);
-		});
-
-		it('does not fall back on a 401 -- the caller is not signed in', async () => {
-			requestGeneration.mockRejectedValueOnce(new GenerationError(401, 'Unauthorized'));
-
-			await expect(
-				requestRethink({ page, pageId: page.id, sectionKey: 'what-we-do' })
-			).rejects.toThrow(/unauthorized/i);
-			expect(requestGeneration).toHaveBeenCalledTimes(1);
-		});
-
-		it('does not fall back, and rethrows as-is, when Claude fails with a non-GenerationError (e.g. Cancel)', async () => {
+		it('rethrows a Cancel as-is', async () => {
 			const abortError = Object.assign(new Error('Aborted'), { name: 'AbortError' });
 			requestGeneration.mockRejectedValueOnce(abortError);
 

@@ -51,13 +51,14 @@ export default defineConfig(
 	// them firing before a commit exists rather than after it is pushed.
 	{
 		files: ['src/**/*.ts', 'src/**/*.js', 'src/**/*.svelte'],
-		ignores: ['src/routes/api/**'],
+		ignores: ['src/routes/api/**', 'src/lib/server/**'],
 		rules: {
 			// Private env is server-only. This app has no `hooks.server.ts` doing
-			// auth and no `event.locals`; the only server surface is
-			// `src/routes/api/**`, which is ignored above. `RAILWAY_API_TOKEN` is
-			// read there via `$env/dynamic/private` and must never reach a client
-			// bundle.
+			// auth and no `event.locals`; the server surfaces are
+			// `src/routes/api/**` and `src/lib/server/**`, both ignored above --
+			// SvelteKit itself fails the build if client code imports the
+			// latter. `GEMINI_API_KEY` is read there via `$env/dynamic/private`
+			// and must never reach a client bundle.
 			'no-restricted-imports': [
 				'error',
 				{

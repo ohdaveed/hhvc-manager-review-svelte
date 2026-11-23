@@ -1,4 +1,4 @@
-import { requestGeneration, GenerationError } from '$lib/ai/generate';
+import { requestGeneration } from '$lib/ai/generate';
 import { pagesByKey } from '$lib/data';
 import { buildCorpusIndex } from './corpusIndex';
 import { buildRethinkPrompt } from './prompt';
@@ -201,42 +201,17 @@ export async function requestRethink({
 		corpusIndex: buildCorpusIndex(pagesByKey)
 	});
 
-	const ask = (provider: 'claude' | 'gemini') =>
-		requestGeneration({ task: 'content', provider, prompt, page }, signal);
+	// Gemini is the only provider since /api/ai/generate stopped forwarding to
+	// the Railway backend, so the old Claude-first fallback has nothing to fall
+	// back from. Retrying transient provider faults happens server-side.
+	const data = await requestGeneration(
+		{ task: 'content', provider: 'gemini', prompt, page },
+		signal
+	);
 
-	// Provider fallback (decision 15, plus the ruling that followed it once
-	// the backend's Anthropic key hit its usage cap): try Claude, and on a
-	// PROVIDER-level failure -- the backend's 5xx, or the 400 it raises when
-	// the model itself rejected the call -- retry once with Gemini.
-	//
-	// Never on 422 (a content refusal: a different model declining
-	// differently is not an improvement, and shopping for one that will
-	// comply is the wrong behaviour on a government content tool), 401 (the
-	// caller isn't signed in -- a different model answers nothing), or 413
-	// (the payload is too big regardless of which model receives it). A 400
-	// the PROXY itself raises for a bad payload would be just as
-	// indiscriminate to retry -- but this caller only ever sends `prompt` and
-	// `page`, never the `fieldText`/`instruction` fields the proxy's own 400
-	// checks inspect, so a 400 reaching this catch can only be the backend's.
-	//
-	// A backend 400 is itself ambiguous, though: it can be the model provider
-	// rejecting the call, or the backend's own Zod validation failing on the
-	// grounding page passed in `prompt`. The second case wastes one Gemini
-	// call before failing identically -- not revisited, since distinguishing
-	// the two would need message-sniffing that is not worth building.
-	let data;
-	try {
-		data = await ask('claude');
-	} catch (e) {
-		const status = e instanceof GenerationError ? e.status : undefined;
-		const isProviderFailure = status !== undefined && (status >= 500 || status === 400);
-		if (!isProviderFailure) throw e;
-		data = await ask('gemini');
-	}
-
-	// `valid: false` means the backend's own Zod validation still failed after
-	// its retry. Its `issues` name what is wrong; showing them beats a diff
-	// computed from a page the backend already rejected.
+	// `valid: false` means the server's own validation still failed after its
+	// retry. Its `issues` name what is wrong; showing them beats a diff
+	// computed from a page the server already rejected.
 	if (data?.valid === false) {
 		const issues = Array.isArray(data.issues) ? data.issues.join('; ') : 'unknown validation error';
 		throw new Error(`The assistant's draft did not validate: ${issues}`);

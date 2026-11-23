@@ -58,7 +58,7 @@ gh pr create
 Monitor:
 
 - **Required status checks** (`test & build`, `e2e`) per repo ruleset
-- **Netlify deploy preview** (https://deploy-preview-<n>--hhvc-manager-review.netlify.app)
+- **Netlify deploy preview** (https://deploy-preview-<n>--sfhealthyhousing.netlify.app)
 - **Review bot findings** (CodeRabbit, Qodo) that post automatically
 
 Do not proceed until CI is green. If merge is blocked, see Troubleshooting below.
@@ -154,16 +154,16 @@ lose track of one.
 
 #### 5b. Sync Multi-Context Environment Variables (if credentials changed)
 
-Netlify variables with multiple contexts (`production`, `deploy-preview`, `branch-deploy`) do not sync automatically. `RAILWAY_API_TOKEN` has three separate contexts; updating production does not update previews.
+Netlify variables with multiple contexts (`production`, `deploy-preview`, `branch-deploy`) do not sync automatically. `GEMINI_API_KEY` has three separate contexts; updating production does not update previews.
 
 `--secret` is **not sticky across a set**: omitting it silently downgrades a
 secret variable to readable, and `netlify env:get` returns a mask either way so
 the downgrade is invisible afterwards.
 
 ```sh
-netlify env:set RAILWAY_API_TOKEN <new-value> --secret --context production
-netlify env:set RAILWAY_API_TOKEN <new-value> --secret --context deploy-preview
-netlify env:set RAILWAY_API_TOKEN <new-value> --secret --context branch-deploy
+netlify env:set GEMINI_API_KEY <new-value> --secret --context production
+netlify env:set GEMINI_API_KEY <new-value> --secret --context deploy-preview
+netlify env:set GEMINI_API_KEY <new-value> --secret --context branch-deploy
 ```
 
 **Why:** The Netlify UI shows one context at a time. Secret variables do not expose `updated_at` timestamps, so you cannot verify whether the old value persists without hitting the backend service.
@@ -175,10 +175,10 @@ Verify secret updates by calling the service that uses it (e.g., hit `/api/ai/ge
 Verify **at the live artifact**, not the build logs:
 
 ```sh
-curl -I https://hhvc-manager-review.netlify.app/
+curl -I https://sfhealthyhousing.netlify.app/
 # HTTP 200 expected
 
-curl -I https://hhvc-manager-review.netlify.app/api/ai/generate
+curl -I https://sfhealthyhousing.netlify.app/api/ai/generate
 # HTTP 401 expected (unauthenticated proxy call)
 ```
 
@@ -264,7 +264,7 @@ If output shows pending migrations, run step 5a before re-deploying previews.
 CI passing does not guarantee the deployed version works. Always verify beyond the logs:
 
 ```bash
-curl -I https://deploy-preview-<n>--hhvc-manager-review.netlify.app/
+curl -I https://deploy-preview-<n>--sfhealthyhousing.netlify.app/
 # HTTP 200 expected
 
 git show origin/<branch>:src/file.ts | grep "expected_string"
@@ -281,7 +281,7 @@ git show origin/<branch>:src/file.ts | grep "expected_string"
 - **Commit messages may be mislabeled by concurrent sessions** — verify author and message intent before merge.
 - **Workflow approval gates are GitHub security, not a build failure** — bot-pushed branches require manual approval even if CI would pass.
 - **Supabase migrations apply to production only** — staging needs manual sync or deploy previews break silently.
-- **Netlify env var contexts don't sync automatically** — multi-context variables (like `RAILWAY_API_TOKEN`) require separate updates per context, and old values persist invisibly.
+- **Netlify env var contexts don't sync automatically** — multi-context variables (like `GEMINI_API_KEY`) require separate updates per context, and old values persist invisibly.
 - **Secret value updates cannot be verified by reading the env var** — test by calling the backend service, not by checking Netlify's API.
 
 ## Example: Multi-Cycle Review with Post-Merge Schema Changes

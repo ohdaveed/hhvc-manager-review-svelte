@@ -15,6 +15,10 @@ extend-exclude = [
 	# Generated or vendored.
 	"bun.lock",
 	".tooling/**",
+	# Copied from HHVC_manager_review_current_tool_package and kept diffable
+	# against it; its regexes spell ordinal suffixes (`st|nd|rd|th`). Typo
+	# fixes belong upstream.
+	"src/lib/server/ai/vendor/**",
 ]
 
 [default.extend-words]

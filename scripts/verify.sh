@@ -11,13 +11,13 @@
 # do, set EXPECT_COMMIT=... to match, or the published-commit gate will compare
 # that deploy against origin/main and correctly report a mismatch:
 #
-#   SITE_URL=https://deploy-preview-54--hhvc-manager-review.netlify.app \
+#   SITE_URL=https://deploy-preview-54--sfhealthyhousing.netlify.app \
 #   EXPECT_COMMIT=$(git rev-parse HEAD) bun run verify:live
 
 set -uo pipefail
 cd "$(dirname "$0")/.."
 
-SITE_URL="${SITE_URL:-https://hhvc-manager-review.netlify.app}"
+SITE_URL="${SITE_URL:-https://sfhealthyhousing.netlify.app}"
 LOG="${TMPDIR:-/tmp}/hhvc-verify.log"
 : >"$LOG"
 
@@ -89,7 +89,7 @@ fi
 # publishes `build/` wholesale. A map is the WORST file to skip: code behind
 # `import.meta.env.DEV` is tree-shaken out of the `.js` and survives verbatim in
 # `sourcesContent`, which is exactly the shape a hardcoded key would take.
-LEAK_PATTERN='RAILWAY_API_TOKEN|web-production-9bb3b|arrizon\.david|demo@hhvc\.local|dev-local-only|sb_secret_[A-Za-z0-9_-]{20,}'
+LEAK_PATTERN='GEMINI_API_KEY|AIza[0-9A-Za-z_-]{35}|RAILWAY_API_TOKEN|web-production-9bb3b|arrizon\.david|demo@hhvc\.local|dev-local-only|sb_secret_[A-Za-z0-9_-]{20,}'
 
 if [ ! -d build ]; then
 	# Without this the greps below return nothing and the gate prints PASS over
@@ -142,8 +142,8 @@ require docker-compose.yml 'args:' \
 	'the public pair passed as build args'
 forbid docker-compose.yml '- SVELTE_PUBLIC_SUPABASE_URL=' \
 	'the public pair back under environment:, where Compose sets it and the bundle ignores it'
-require docker-compose.yml 'RAILWAY_API_TOKEN' \
-	'the AI proxy credential, without which every rewrite 401s'
+require docker-compose.yml 'GEMINI_API_KEY' \
+	'the Gemini key, without which every AI request answers 501'
 require vite.config.ts ': adapterNetlify' \
 	'netlify as the default adapter, so CI builds the one production ships'
 
