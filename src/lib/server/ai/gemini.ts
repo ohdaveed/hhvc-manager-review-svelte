@@ -108,16 +108,26 @@ export async function generateObject({
 	system,
 	userPrompt,
 	jsonSchema,
-	signal
+	signal,
+	deadline
 }: {
 	system: string;
 	userPrompt: string;
 	jsonSchema: object;
 	signal?: AbortSignal;
+	/** Epoch ms past which no call may run -- the caller's whole-request budget. */
+	deadline?: number;
 }) {
 	const model = getModel();
 	const maxAttempts = numberFromEnv('GEMINI_MAX_ATTEMPTS', 2, { min: 1, max: 10 });
-	const timeoutMs = numberFromEnv('GEMINI_TIMEOUT_MS', 150_000, { max: 3_600_000 });
+	const perCallMs = numberFromEnv('GEMINI_TIMEOUT_MS', 150_000, { max: 3_600_000 });
+	// Each HTTP attempt gets the smaller of its own cap and what is left of the
+	// caller's budget, so a transient-fault retry cannot outlive the request.
+	const timeoutMs = () => {
+		const ms = deadline === undefined ? perCallMs : Math.min(perCallMs, deadline - Date.now());
+		if (ms <= 0) throw new ProviderTimeoutError(NAME);
+		return ms;
+	};
 	const base = env.GEMINI_BASE_URL || DEFAULT_API_BASE;
 	const url = `${base}/models/${encodeURIComponent(model)}:generateContent`;
 	const body = JSON.stringify({
@@ -132,7 +142,7 @@ export async function generateObject({
 
 	let res: Response | undefined;
 	for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
-		res = await post(url, body, signal, timeoutMs);
+		res = await post(url, body, signal, timeoutMs());
 		if (res.ok || !RETRYABLE_STATUSES.has(res.status) || attempt === maxAttempts) break;
 		await res.body?.cancel();
 	}

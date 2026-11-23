@@ -8,6 +8,8 @@ import {
 } from './vendor/prompts.js';
 import { PAGE_OUTPUT_SCHEMA, REWRITE_OUTPUT_SCHEMA } from './vendor/schemas.js';
 import { validateGeneratedPage, validateRewrite } from './vendor/validate-output.js';
+import { numberFromEnv } from './vendor/env.js';
+import { ProviderTimeoutError } from './vendor/errors.js';
 
 /**
  * Generate, validate, retry once -- ported from the Railway backend's
@@ -18,6 +20,23 @@ import { validateGeneratedPage, validateRewrite } from './vendor/validate-output
  * mechanical violations, and a third doubles the worst-case latency for little.
  */
 export const MAX_ATTEMPTS = 2;
+
+/**
+ * Netlify kills a synchronous function at 60 seconds, not configurable
+ * (docs.netlify.com, functions configuration). A killed request reaches the
+ * reviewer as Netlify's own error with no draft, so the whole generate --
+ * every attempt -- has to finish inside this budget. 55s leaves room for
+ * auth, parsing and the response. `GEMINI_DEADLINE_MS` overrides it.
+ */
+const DEFAULT_DEADLINE_MS = 55_000;
+
+/**
+ * A retry is only started with at least this much budget left. Measured
+ * 2026-11-22 on gemini-3.8-flash: a field rewrite took ~10s, a whole-page
+ * content draft ~46s -- so a page retry rarely fits, and the first draft is
+ * returned with its issues listed instead of being lost to a timeout.
+ */
+const MIN_RETRY_BUDGET_MS = 15_000;
 
 /**
  * SF.gov's AI guidelines require disclosure of generative AI in output, and
@@ -73,15 +92,28 @@ async function generateValidated({
 	const usage: Usage = {};
 	const usageByAttempt: Usage[] = [];
 
+	const deadline = Date.now() + numberFromEnv('GEMINI_DEADLINE_MS', DEFAULT_DEADLINE_MS);
+
 	while (attempts < MAX_ATTEMPTS) {
+		if (generated && deadline - Date.now() < MIN_RETRY_BUDGET_MS) break;
 		const retry = generated ? { issues, previousDraft: previous(generated.object) } : undefined;
+		let next: Generated;
+		try {
+			next = await gemini.generateObject({
+				system,
+				userPrompt: userPrompt(retry),
+				jsonSchema,
+				signal,
+				deadline
+			});
+		} catch (err) {
+			// A retry that runs out of budget keeps the first draft and its
+			// issues; only a FIRST attempt's timeout has nothing to fall back on.
+			if (generated && err instanceof ProviderTimeoutError) break;
+			throw err;
+		}
 		attempts += 1;
-		generated = await gemini.generateObject({
-			system,
-			userPrompt: userPrompt(retry),
-			jsonSchema,
-			signal
-		});
+		generated = next;
 		addUsage(usage, generated.usage);
 		usageByAttempt.push(generated.rawUsage);
 

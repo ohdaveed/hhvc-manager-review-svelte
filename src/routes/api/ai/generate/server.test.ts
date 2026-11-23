@@ -172,6 +172,80 @@ describe('POST /api/ai/generate', () => {
 		expect(sent(1).contents[0].parts[0].text).toContain('Call 311 to report rats.');
 	});
 
+	describe('the 55s request budget (Netlify kills functions at 60s)', () => {
+		const fieldText = 'Call [311](https://sf311.org) to report rats.';
+		const invalidDraft = () => geminiReply({ rewrittenText: 'Call 311 to report rats.' });
+		let offset = 0;
+		const advance = (ms: number) => {
+			offset = ms;
+		};
+
+		beforeEach(() => {
+			offset = 0;
+			const realNow = Date.now.bind(Date);
+			const start = realNow();
+			vi.spyOn(Date, 'now').mockImplementation(() => start + offset + (realNow() - start));
+		});
+		afterEach(() => vi.restoreAllMocks());
+
+		it('skips the retry when too little budget is left, returning the first draft with its issues', async () => {
+			fetchMock.mockImplementationOnce(async () => {
+				advance(42_000); // 13s left: under the 15s a retry needs
+				return invalidDraft();
+			});
+
+			const res = await call({ task: 'rewrite-field', fieldText });
+
+			expect(res.status).toBe(200);
+			expect(fetchMock).toHaveBeenCalledTimes(1);
+			expect(res.body).toMatchObject({ attempts: 1, valid: false });
+			expect(res.body.issues.length).toBeGreaterThan(0);
+		});
+
+		it('keeps the first draft when the retry runs out of budget', async () => {
+			fetchMock
+				.mockImplementationOnce(async () => {
+					advance(30_000); // 25s left: a retry starts
+					return invalidDraft();
+				})
+				.mockImplementationOnce(async () => {
+					advance(56_000); // the retry's 503 lands past the deadline
+					return new Response('{}', { status: 503 });
+				});
+
+			const res = await call({ task: 'rewrite-field', fieldText });
+
+			expect(res.status).toBe(200);
+			expect(fetchMock).toHaveBeenCalledTimes(2);
+			expect(res.body).toMatchObject({
+				attempts: 1,
+				valid: false,
+				result: { rewrittenText: 'Call 311 to report rats.' }
+			});
+		});
+
+		it('answers 504 when the first attempt itself runs out of budget', async () => {
+			fetchMock.mockImplementationOnce(async () => {
+				advance(56_000);
+				return new Response('{}', { status: 503 });
+			});
+
+			const res = await call({ task: 'rewrite-field', fieldText });
+
+			expect(res.status).toBe(504);
+			expect(fetchMock).toHaveBeenCalledTimes(1);
+		});
+
+		it('gives each HTTP call no more than the remaining budget', async () => {
+			const timeoutSpy = vi.spyOn(AbortSignal, 'timeout');
+			fetchMock.mockResolvedValueOnce(geminiReply({ rewrittenText: fieldText }));
+
+			await call({ task: 'rewrite-field', fieldText });
+
+			expect(timeoutSpy.mock.calls[0][0]).toBeLessThanOrEqual(55_000);
+		});
+	});
+
 	it('generates page content and validates it against the corpus', async () => {
 		const [, existing] = Object.entries(pagesByKey)[0];
 		fetchMock.mockResolvedValueOnce(geminiReply(existing));
