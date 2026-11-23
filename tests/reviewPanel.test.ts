@@ -24,11 +24,19 @@ vi.mock('$lib/supabase', () => ({
 
 vi.mock('$lib/stores/reviewState', async (importOriginal) => ({
 	...(await importOriginal<typeof import('$lib/stores/reviewState')>()),
-	updatePageNotes: vi.fn()
+	updatePageNotes: vi.fn(),
+	updatePageStatus: vi.fn()
 }));
 
-const { pagesStore, updatePageNotes } = await import('$lib/stores/reviewState');
+const session = vi.hoisted(() => ({
+	signedIn: true as boolean | undefined,
+	knownSignedOut: false
+}));
+vi.mock('$lib/stores/session.svelte', () => ({ sessionStore: session }));
+
+const { pagesStore, updatePageNotes, updatePageStatus } = await import('$lib/stores/reviewState');
 const saveNotes = vi.mocked(updatePageNotes);
+const saveStatus = vi.mocked(updatePageStatus);
 
 const PATH = 'topic-x--about';
 const setRow = (page_checks: Record<string, PageCheck> | null = null) =>
@@ -50,6 +58,8 @@ describe('ReviewPanel', () => {
 	beforeEach(() => {
 		vi.useFakeTimers();
 		saveNotes.mockReset();
+		saveStatus.mockReset();
+		Object.assign(session, { signedIn: true, knownSignedOut: false });
 		setRow();
 	});
 	afterEach(() => vi.useRealTimers());
@@ -122,5 +132,93 @@ describe('ReviewPanel', () => {
 		render(ReviewPanel, { pageData: { id: PATH } });
 		expect(screen.getByRole('heading', { name: 'Page checks' })).toBeTruthy();
 		expect(screen.getByText('Title present')).toBeTruthy();
+	});
+
+	describe('with no live record', () => {
+		const radios = () => screen.getAllByRole('radio') as HTMLButtonElement[];
+
+		it('signed out: disables the decision and notes, says to sign in, writes nothing', async () => {
+			Object.assign(session, { signedIn: false, knownSignedOut: true });
+			pagesStore.set([]);
+			render(ReviewPanel, { pageData: { id: PATH } });
+
+			expect(radios()).toHaveLength(4);
+			for (const r of radios()) expect(r.disabled).toBe(true);
+			expect((screen.getByLabelText('Decision notes') as HTMLTextAreaElement).disabled).toBe(true);
+			expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/login');
+			expect(screen.getByText(/to record a decision/)).toBeTruthy();
+
+			await fireEvent.click(screen.getByRole('radio', { name: 'Approved' }));
+			await vi.advanceTimersByTimeAsync(0);
+			expect(saveStatus).not.toHaveBeenCalled();
+			for (const r of radios()) expect(r.getAttribute('data-state')).toBe('off');
+		});
+
+		it('signed in, review still loading: disabled, and no "no record" message yet', () => {
+			pagesStore.set([]);
+			render(ReviewPanel, { pageData: { id: PATH } });
+			for (const r of radios()) expect(r.disabled).toBe(true);
+			expect(screen.queryByText('No review record exists for this page')).toBeNull();
+			expect(screen.queryByRole('link', { name: 'Sign in' })).toBeNull();
+		});
+
+		it('session not yet known: neither message', () => {
+			Object.assign(session, { signedIn: undefined, knownSignedOut: false });
+			pagesStore.set([]);
+			render(ReviewPanel, { pageData: { id: PATH } });
+			for (const r of radios()) expect(r.disabled).toBe(true);
+			expect(screen.queryByText('No review record exists for this page')).toBeNull();
+			expect(screen.queryByText(/to record a decision/)).toBeNull();
+		});
+
+		it('signed in, review loaded without this page: says there is no review record', () => {
+			pagesStore.set([
+				{
+					id: 'row-9',
+					review_id: 'r1',
+					path: 'some-other-page',
+					status: 'needs-review',
+					manager_notes: null,
+					page_checks: null
+				}
+			]);
+			render(ReviewPanel, { pageData: { id: PATH } });
+			for (const r of radios()) expect(r.disabled).toBe(true);
+			expect(screen.getByText('No review record exists for this page')).toBeTruthy();
+			expect(screen.queryByRole('link', { name: 'Sign in' })).toBeNull();
+		});
+
+		it('signed in on a non-ready draft: disabled, but claims no missing record', () => {
+			// A drafting, stale or failed draft has no corpus entry, so the layout
+			// passes no `pageData` and the `pageData?.id` lookup misses -- but a
+			// `pages` row for that `draft:<uuid>` does exist, so "no review record
+			// exists" would be false. The draft banner explains the state instead.
+			pagesStore.set([
+				{
+					id: 'row-draft',
+					review_id: 'r1',
+					path: 'draft:11111111-1111-4111-8111-111111111111',
+					status: 'needs-review',
+					manager_notes: null,
+					page_checks: null
+				}
+			]);
+			render(ReviewPanel, { pageData: undefined });
+			for (const r of radios()) expect(r.disabled).toBe(true);
+			expect(screen.queryByText('No review record exists for this page')).toBeNull();
+		});
+	});
+
+	it('signed in with a record: controls are enabled and a decision writes', async () => {
+		saveStatus.mockResolvedValue(true);
+		render(ReviewPanel, { pageData: { id: PATH } });
+		const radios = screen.getAllByRole('radio') as HTMLButtonElement[];
+		for (const r of radios) expect(r.disabled).toBe(false);
+		expect((screen.getByLabelText('Decision notes') as HTMLTextAreaElement).disabled).toBe(false);
+		expect(screen.queryByText(/to record a decision/)).toBeNull();
+
+		await fireEvent.click(screen.getByRole('radio', { name: 'Approved' }));
+		await vi.advanceTimersByTimeAsync(0);
+		expect(saveStatus).toHaveBeenCalledWith('row-1', 'approved');
 	});
 });
