@@ -193,3 +193,13 @@ describe('fitFrame', () => {
 		expect(fitFrame(0)).toBeNull();
 	});
 });
+
+describe('rail default', () => {
+	it('opens the queue on a fresh load at 1440 -- no viewport-based default', () => {
+		localStorage.clear();
+		window.innerWidth = 1440;
+		pageStore.railCollapsed = { queue: false, panel: false };
+		pageStore.loadRailState();
+		expect(pageStore.railCollapsed).toEqual({ queue: false, panel: false });
+	});
+});
