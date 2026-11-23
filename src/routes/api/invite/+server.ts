@@ -97,11 +97,39 @@ export async function POST({ request, url }) {
 			if (inviteError.code === 'email_exists') {
 				throw error(409, 'That address already has an account.');
 			}
-			// Everything else keeps its own status and wording: the mailer's
-			// `email_address_not_authorized` and `over_email_send_rate_limit` are
-			// the two a reviewer will actually meet, and both name their own cause
-			// better than anything generic written here.
-			throw error(inviteError.status ?? 500, inviteError.message);
+
+			// A key that is PRESENT but wrong -- rotated, revoked, or production's
+			// key on a preview built against staging. GoTrue answers 401/403, and
+			// forwarding that verbatim tells the reviewer THEIR session is bad,
+			// which is the same misdiagnosis the missing-key guard above exists to
+			// prevent -- and the likelier of the two once the variable is set.
+			if (inviteError.status === 401 || inviteError.status === 403) {
+				console.error('Invite rejected by Supabase admin API:', inviteError.message);
+				throw error(500, 'The invite service is misconfigured for this deploy.');
+			}
+
+			// The hourly cap is shared with sign-in links, so a reviewer who sends
+			// two invitations hits it immediately and GoTrue's bare "email rate
+			// limit exceeded" does not explain why.
+			if (inviteError.code === 'over_email_send_rate_limit') {
+				throw error(
+					429,
+					`${inviteError.message} — this project’s hourly email cap is shared with sign-in links. Wait, or raise it once custom SMTP is configured.`
+				);
+			}
+
+			// Everything else keeps its own status and wording. The mailer's
+			// `email_address_not_authorized` is the one a reviewer will actually
+			// meet, and it names its own cause better than anything generic here.
+			// `status` is range-checked because auth-js builds a retryable fetch
+			// error with status 0, which `error()` rejects outright.
+			const status =
+				typeof inviteError.status === 'number' &&
+				inviteError.status >= 400 &&
+				inviteError.status <= 599
+					? inviteError.status
+					: 500;
+			throw error(status, inviteError.message);
 		}
 
 		return json({ email });

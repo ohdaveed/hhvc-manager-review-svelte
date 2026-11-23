@@ -126,7 +126,42 @@ describe('POST /api/invite', () => {
 
 		await expect(POST(buildEvent(AUTHED) as never)).rejects.toMatchObject({
 			status: 429,
-			body: { message: 'email rate limit exceeded' }
+			body: { message: expect.stringContaining('email rate limit exceeded') }
+		});
+	});
+
+	it('names the hourly cap when the mailer refuses on rate limit', async () => {
+		inviteUserByEmail.mockResolvedValue({
+			data: null,
+			error: {
+				status: 429,
+				code: 'over_email_send_rate_limit',
+				message: 'email rate limit exceeded'
+			}
+		});
+
+		// The raw GoTrue message says nothing about the cap being shared with
+		// sign-in links, which is the part that explains why two invitations in a
+		// row fail. The spec requires the limit be named.
+		await expect(POST(buildEvent(AUTHED) as never)).rejects.toMatchObject({
+			status: 429,
+			body: { message: expect.stringContaining('shared with sign-in') }
+		});
+	});
+
+	it('does not report a bad service-role key as the caller’s problem', async () => {
+		// A key that is PRESENT but wrong -- rotated, revoked, or production's key
+		// on a staging-targeted preview. Forwarding GoTrue's 401 would tell the
+		// reviewer their own session was bad, which is the exact misdiagnosis the
+		// missing-key guard exists to prevent.
+		inviteUserByEmail.mockResolvedValue({
+			data: null,
+			error: { status: 401, code: 'bad_jwt', message: 'Invalid API key' }
+		});
+
+		await expect(POST(buildEvent(AUTHED) as never)).rejects.toMatchObject({
+			status: 500,
+			body: { message: expect.stringContaining('misconfigured') }
 		});
 	});
 

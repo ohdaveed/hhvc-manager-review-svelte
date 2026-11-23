@@ -80,25 +80,40 @@ fi
 # hardcoding the value.
 #
 # `-l` not `-o`: on failure this prints FILE NAMES, never the matching line,
-# so a leaked secret is never written to the terminal or to $LOG. `.map` files
-# are excluded because they are not served (verified: 404) and their
-# `sourcesContent` carries comments that merely name these variables.
+# so a leaked secret is never written to the terminal or to $LOG.
+#
+# SOURCEMAPS ARE SCANNED, and that is load-bearing. An earlier version excluded
+# `*.map` on the belief they were not served; the probe behind that belief used
+# a chunk hash that did not exist on production, so it 404'd for the wrong
+# reason. Measured properly, `app.<hash>.js.map` returns 200 -- netlify.toml
+# publishes `build/` wholesale. A map is the WORST file to skip: code behind
+# `import.meta.env.DEV` is tree-shaken out of the `.js` and survives verbatim in
+# `sourcesContent`, which is exactly the shape a hardcoded key would take.
 LEAK_PATTERN='RAILWAY_API_TOKEN|web-production-9bb3b|arrizon\.david|demo@hhvc\.local|dev-local-only|sb_secret_[A-Za-z0-9_-]{20,}'
-leaked=$(grep -rlE --exclude='*.map' "$LEAK_PATTERN" build/ 2>/dev/null || true)
 
-# The literal key, when this shell has it. A legacy service-role key is a JWT
-# with no greppable marker, so the value itself is the only check that finds
-# one. `-f -` keeps it out of argv, and `-F` needs no escaping.
-if [ -n "${SUPABASE_SERVICE_ROLE_KEY:-}" ]; then
-	literal=$(printf '%s\n' "$SUPABASE_SERVICE_ROLE_KEY" |
-		grep -rlF --exclude='*.map' -f - build/ 2>/dev/null || true)
-	leaked=$(printf '%s\n%s' "$leaked" "$literal" | grep -v '^$' | sort -u || true)
-fi
-
-if [ -z "$leaked" ]; then
-	pass 'no server-only values in the published bundle'
+if [ ! -d build ]; then
+	# Without this the greps below return nothing and the gate prints PASS over
+	# a directory it never read -- a security line reading green on no evidence.
+	fail 'no build output to scan for server-only values'
 else
-	fail "server-only value(s) in the published bundle: $(printf '%s' "$leaked" | tr '\n' ' ')"
+	leaked=$(grep -rlE "$LEAK_PATTERN" build/ 2>/dev/null || true)
+
+	# The literal key, when this shell has it. A legacy service-role key is a JWT
+	# with no greppable marker, so the value itself is the only check that finds
+	# one. `-f -` keeps it out of argv, and `-F` needs no escaping. Trailing
+	# whitespace is stripped: a value ending in a newline would reach grep as two
+	# patterns, the second empty, and an empty pattern matches every file.
+	key_trimmed=$(printf '%s' "${SUPABASE_SERVICE_ROLE_KEY:-}" | tr -d '[:space:]')
+	if [ -n "$key_trimmed" ]; then
+		literal=$(printf '%s\n' "$key_trimmed" | grep -rlF -f - build/ 2>/dev/null || true)
+		leaked=$(printf '%s\n%s' "$leaked" "$literal" | grep -v '^$' | sort -u || true)
+	fi
+
+	if [ -z "$leaked" ]; then
+		pass 'no server-only values in the published bundle'
+	else
+		fail "server-only value(s) in the published bundle: $(printf '%s' "$leaked" | tr '\n' ' ')"
+	fi
 fi
 
 # Invariants in config files -- the gap every other gate leaves open.

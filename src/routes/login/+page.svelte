@@ -107,34 +107,45 @@
 		invitedTo = '';
 
 		const address = inviteEmail.trim();
-		const {
-			data: { session }
-		} = await supabase.auth.getSession();
 
-		const response = await fetch('/api/invite', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: `Bearer ${session?.access_token ?? ''}`
-			},
-			body: JSON.stringify({ email: address })
-		});
+		// `fetch` REJECTS on a network failure rather than resolving a non-ok
+		// Response, and so does `getSession`. The sign-in half of this page needs
+		// no try because `signInWithOtp` returns `{ error }` instead of throwing.
+		// Without the `finally`, one dropped connection leaves `inviting` true
+		// for good: the field stays disabled, the button stays on "Sending…",
+		// and nothing is ever shown. Only a reload recovers.
+		try {
+			const {
+				data: { session }
+			} = await supabase.auth.getSession();
 
-		inviting = false;
+			const response = await fetch('/api/invite', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${session?.access_token ?? ''}`
+				},
+				body: JSON.stringify({ email: address })
+			});
 
-		if (!response.ok) {
-			// The route names its own causes better than anything generic here --
-			// an address that already has an account, the mailer's hourly cap, an
-			// address the mailer will not deliver to.
-			const body = await response.json().catch(() => ({}));
-			inviteError = body.message || 'That invitation did not send.';
-			return;
+			if (!response.ok) {
+				// The route names its own causes better than anything generic here --
+				// an address that already has an account, the mailer's hourly cap, an
+				// address the mailer will not deliver to.
+				const body = await response.json().catch(() => ({}));
+				inviteError = body.message || 'That invitation did not send.';
+				return;
+			}
+
+			invitedTo = address;
+			// Cleared so a second invitation does not go to the same address by
+			// accident -- the form offers no other signal that the send completed.
+			inviteEmail = '';
+		} catch {
+			inviteError = 'That invitation did not send. Check your connection and try again.';
+		} finally {
+			inviting = false;
 		}
-
-		invitedTo = address;
-		// Cleared so a second invitation does not go to the same address by
-		// accident -- the form offers no other signal that the send completed.
-		inviteEmail = '';
 	}
 </script>
 

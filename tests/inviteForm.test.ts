@@ -42,6 +42,7 @@ describe('invite form on /login', () => {
 
 		await fireEvent.input(input, { target: { value: address } });
 		await fireEvent.submit(input.closest('form')!);
+		return input;
 	}
 
 	it('sends the invite with the caller’s access token', async () => {
@@ -52,6 +53,22 @@ describe('invite form on /login', () => {
 		expect(path).toBe('/api/invite');
 		expect((init.headers as Record<string, string>).Authorization).toBe('Bearer tok');
 		expect(JSON.parse(init.body as string)).toEqual({ email: 'new@sfgov.org' });
+	});
+
+	it('recovers when the request itself fails', async () => {
+		// `fetch` REJECTS on a network failure -- it does not resolve a non-ok
+		// Response. The sign-in half of this page is safe from that only because
+		// `signInWithOtp` returns `{ error }` instead of throwing. Without a
+		// `finally`, `inviting` stays true: the field stays disabled, the button
+		// stays on "Sending…", and nothing is ever shown to the reviewer.
+		fetchMock.mockRejectedValue(new TypeError('Failed to fetch'));
+
+		const input = await submitInvite('new@sfgov.org');
+
+		expect(input.disabled).toBe(false);
+		// Matched on the body, not the alert title: "That did not send" is the
+		// shared title of every failure, so it appears twice.
+		expect(await screen.findByText(/Check your connection/i)).toBeTruthy();
 	});
 
 	it('shows the route’s message when the invite is refused', async () => {

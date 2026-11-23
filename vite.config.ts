@@ -71,7 +71,26 @@ export default defineConfig({
 	plugins: [
 		sentrySvelteKit({
 			org: 'glycolysis',
-			project: 'javascript-sveltekit'
+			project: 'javascript-sveltekit',
+			/**
+			 * The plugin turns sourcemaps on so it can upload them. It never did:
+			 * every build logs `No auth token provided. Will not upload source
+			 * maps.` -- so the maps were emitted into `build/`, which netlify.toml
+			 * publishes wholesale, and served to browsers while reaching Sentry
+			 * not at all. `app.<hash>.js.map` returns 200 in production.
+			 *
+			 * That is not free. Code behind `import.meta.env.DEV` is tree-shaken
+			 * out of the `.js` and survives verbatim in `sourcesContent`: the
+			 * local seed credentials (`demo@hhvc.local`, `dev-local-only`) ship in
+			 * a map today while appearing in no chunk. `verify`'s published-bundle
+			 * scan now reads maps and catches exactly this.
+			 *
+			 * Set this back to `true` ONLY together with a `SENTRY_AUTH_TOKEN` in
+			 * the Netlify build environment and
+			 * `sourceMapsUploadOptions.sourcemaps.filesToDeleteAfterUpload`, so
+			 * Sentry gets the maps and visitors do not.
+			 */
+			autoUploadSourceMaps: false
 		}),
 		tailwindcss(),
 		sveltekit({
