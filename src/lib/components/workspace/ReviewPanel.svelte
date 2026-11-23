@@ -26,11 +26,22 @@
 
 	// Find the live record in the store matching the static corpus id
 	let liveRecord = $derived($pagesStore.find((p) => p.path === pageData?.id));
+	const checks = $derived(Object.entries(liveRecord?.page_checks ?? {}));
 
 	let notesValue = $state('');
 	let debounceTimeout: ReturnType<typeof setTimeout> | undefined;
 	let lastRecordId = $state<string | undefined>(undefined);
 	let notesError = $state(false);
+	// Success feedback for the autosave. Failures already had `notesError`;
+	// before this a successful save showed nothing at all.
+	let notesStatus = $state<'idle' | 'saving' | 'saved'>('idle');
+	let savedTimeout: ReturnType<typeof setTimeout> | undefined;
+
+	const markSaved = () => {
+		notesStatus = 'saved';
+		clearTimeout(savedTimeout);
+		savedTimeout = setTimeout(() => (notesStatus = 'idle'), 3000);
+	};
 
 	// Cancelling on teardown silently threw away whatever the reviewer had typed
 	// in the last 500ms before navigating. Flush it instead.
@@ -38,6 +49,7 @@
 
 	onDestroy(() => {
 		clearTimeout(debounceTimeout);
+		clearTimeout(savedTimeout);
 		if (pendingNote) updatePageNotes(pendingNote.pageId, pendingNote.value);
 	});
 
@@ -49,13 +61,21 @@
 			notesValue = liveRecord?.manager_notes ?? '';
 			notesError = false;
 			pendingNote = null;
+			// A write still in flight for the page just left must not report
+			// "Saved" here; the guards below also check `lastRecordId`.
+			clearTimeout(savedTimeout);
+			notesStatus = 'idle';
 		}
 	});
 
 	type Decision = 'needs-review' | 'approved' | 'blocked' | 'revise';
 
-	// `tone` keeps the traffic-light reading the hand-rolled pills had. Only the
-	// blocked end of it maps onto a shadcn token; the others are tinted rings.
+	// `tone` keeps the traffic-light reading the hand-rolled pills had, as a
+	// FILLED selected state: a faint ring was the only cue before, and in a
+	// ~380px panel it was easy to miss. Each fill carries white text at >=4.5:1
+	// (sfds-action 5.5, emerald-700 5.4, amber-700 5.0, destructive 4.8), and
+	// the hover override keeps the outline variant's `hover:bg-muted` from
+	// washing out the selected item.
 	//
 	// FOUR options, not three. `needs-review` is a real state -- it is what
 	// every seeded row starts as -- and leaving it off the control made a
@@ -74,14 +94,22 @@
 		{
 			value: 'needs-review',
 			label: 'Needs review',
-			tone: 'data-[state=on]:ring-2 ring-sfds-action/60'
+			tone: 'data-[state=on]:border-sfds-action data-[state=on]:bg-sfds-action data-[state=on]:hover:bg-sfds-action'
 		},
-		{ value: 'approved', label: 'Approved', tone: 'data-[state=on]:ring-2 ring-emerald-500/60' },
-		{ value: 'revise', label: 'Revise', tone: 'data-[state=on]:ring-2 ring-amber-500/60' },
+		{
+			value: 'approved',
+			label: 'Approved',
+			tone: 'data-[state=on]:border-emerald-700 data-[state=on]:bg-emerald-700 data-[state=on]:hover:bg-emerald-700'
+		},
+		{
+			value: 'revise',
+			label: 'Revise',
+			tone: 'data-[state=on]:border-amber-700 data-[state=on]:bg-amber-700 data-[state=on]:hover:bg-amber-700'
+		},
 		{
 			value: 'blocked',
 			label: 'Blocked',
-			tone: 'text-destructive data-[state=on]:ring-2 ring-destructive/60'
+			tone: 'text-destructive data-[state=on]:border-destructive data-[state=on]:bg-destructive data-[state=on]:hover:bg-destructive'
 		}
 	];
 
@@ -127,8 +155,14 @@
 		const id = liveRecord?.id;
 		if (!id) return;
 		notesError = false;
+		notesStatus = 'saving';
 		const saved = await updatePageNotes(id, notesValue);
-		if (!saved && lastRecordId === id) notesError = true;
+		if (lastRecordId !== id) return;
+		if (saved) markSaved();
+		else {
+			notesError = true;
+			notesStatus = 'idle';
+		}
 	};
 
 	const onNotesInput = (e: Event) => {
@@ -141,6 +175,8 @@
 		const capturedValue = notesValue;
 		if (!capturedId) return;
 		clearTimeout(debounceTimeout);
+		clearTimeout(savedTimeout);
+		notesStatus = 'saving';
 		pendingNote = { pageId: capturedId, value: capturedValue };
 		debounceTimeout = setTimeout(async () => {
 			if (!capturedId) return;
@@ -149,8 +185,13 @@
 			const saved = await updatePageNotes(capturedId, capturedValue);
 			// Only surface the failure if this is still the page on screen and the
 			// reviewer has not typed since; otherwise a newer write owns the field.
-			if (!saved && lastRecordId === capturedId && notesValue === capturedValue) {
-				notesError = true;
+			// The same guard decides whether "Saved" is ours to announce.
+			if (lastRecordId === capturedId && notesValue === capturedValue) {
+				if (saved) markSaved();
+				else {
+					notesError = true;
+					notesStatus = 'idle';
+				}
 			}
 		}, 500);
 	};
@@ -161,7 +202,13 @@
 	<div class="space-y-4 p-6">
 		<h2 class="font-heading text-lg font-bold">Manager Review</h2>
 
-		<div class="space-y-2">
+		<!-- A container, so the decisions can drop to a 2x2 grid when four
+		     buttons no longer fit one row. Font size decides that, not the
+		     viewport: at a 20px root, "Approved" can't fit a quarter of the
+		     panel. Labels also wrap inside their button. The `!` utilities beat
+		     the toggle group's `data-[spacing=0]` padding, border and radius
+		     rules, which outrank a plain class. -->
+		<div class="@container/decision space-y-2">
 			<div class="flex items-baseline justify-between gap-2">
 				<span id="decision-label" class="text-sm font-medium">Decision</span>
 				{#if decisionError}
@@ -172,8 +219,8 @@
 				type="single"
 				variant="outline"
 				size="sm"
-				spacing={2}
-				class="flex-wrap"
+				spacing={0}
+				class="grid w-full grid-cols-2 items-stretch gap-1 @min-[18rem]/decision:flex @min-[18rem]/decision:gap-0"
 				aria-labelledby="decision-label"
 				bind:value={decision}
 				onValueChange={handleDecision}
@@ -182,7 +229,7 @@
 					<ToggleGroup.Item
 						value={decision.value}
 						aria-label={decision.label}
-						class="rounded-4xl {decision.tone}"
+						class="h-auto min-h-7 min-w-0 flex-1 shrink px-0! py-1 leading-tight whitespace-normal data-[state=on]:text-white data-[state=on]:hover:text-white @max-[18rem]/decision:rounded-md! @max-[18rem]/decision:border-l! {decision.tone}"
 					>
 						{decision.label}
 					</ToggleGroup.Item>
@@ -193,6 +240,9 @@
 		<div class="space-y-2">
 			<div class="flex items-baseline justify-between gap-2">
 				<Label for="notes">Decision notes</Label>
+				<span aria-live="polite" class="text-xs text-sfds-slate-l3">
+					{notesStatus === 'saving' ? 'Saving…' : notesStatus === 'saved' ? 'Saved' : ''}
+				</span>
 				{#if notesError}
 					<!-- Was a `<span>` reading "Not saved — retry": it named an
 						     action the UI did not offer, leaving the reviewer to
@@ -237,19 +287,19 @@
 		{/if}
 	</div>
 
-	<Separator />
+	{#if checks.length > 0}
+		<Separator />
 
-	<!-- Bottom: the checks that inform it. These used to ALSO be reachable
+		<!-- Bottom: the checks that inform it. These used to ALSO be reachable
 	     through a "Checks" tab rendering this same component with
 	     `showOnlyChecks`, which made one tab a strict subset of another. The
 	     tab is gone; this is the single home for them, directly under the
 	     decision they bear on. -->
-	<div class="flex-1 overflow-y-auto bg-muted/40 p-6">
-		<h3 class="mb-4 text-sm font-bold">Page checks</h3>
+		<div class="flex-1 overflow-y-auto bg-muted/40 p-6">
+			<h3 class="mb-4 text-sm font-bold">Page checks</h3>
 
-		{#if liveRecord?.page_checks && Object.keys(liveRecord.page_checks).length > 0}
 			<div class="space-y-3">
-				{#each Object.entries(liveRecord.page_checks) as [checkId, raw] (checkId)}
+				{#each checks as [checkId, raw] (checkId)}
 					{@const check = raw as PageCheck}
 					<Card.Root size="sm">
 						<Card.Content class="flex items-start gap-3">
@@ -266,8 +316,6 @@
 					</Card.Root>
 				{/each}
 			</div>
-		{:else}
-			<p class="text-sm text-muted-foreground">No checks available for this page.</p>
-		{/if}
-	</div>
+		</div>
+	{/if}
 </div>
