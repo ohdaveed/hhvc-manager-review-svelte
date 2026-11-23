@@ -60,6 +60,25 @@ export function firstQueuePath(pages: ReviewPage[]): string | undefined {
 	return undefined;
 }
 
+/**
+ * The page after `current` that still has no decision, so a reviewer can move on
+ * without going back to the sidebar.
+ *
+ * Searches in store order (the order rows appear in inside the queue's
+ * needs-review group), starting after `current` and wrapping round. Store order
+ * rather than group order is deliberate: a decision moves the row to another
+ * group, and "next" should still mean the row that came after it. Never returns
+ * `current`; `undefined` once every page has a decision.
+ */
+export function nextUndecidedPath(pages: ReviewPage[], current: string): string | undefined {
+	const start = pages.findIndex((p) => p.path === current) + 1;
+	for (let i = 0; i < pages.length; i++) {
+		const p = pages[(start + i) % pages.length];
+		if (p.status === 'needs-review' && p.path !== current) return p.path;
+	}
+	return undefined;
+}
+
 export const pagesStore = writable<ReviewPage[]>([]);
 export const editsStore = writable<Edit[]>([]);
 
