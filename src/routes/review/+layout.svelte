@@ -18,7 +18,13 @@
 		Tablet
 	} from 'lucide-svelte';
 	import * as ToggleGroup from '$lib/components/ui/toggle-group/index.js';
-	import { PREVIEW_WIDTHS, previewBand, type PreviewWidth } from '$lib/stores/pageData.svelte';
+	import {
+		FIT_LAYOUT_WIDTH,
+		PREVIEW_WIDTHS,
+		fitScale,
+		previewBand,
+		type PreviewWidth
+	} from '$lib/stores/pageData.svelte';
 	import ReviewQueue from '$lib/components/workspace/ReviewQueue.svelte';
 	import ReviewWorkspace from '$lib/components/workspace/ReviewWorkspace.svelte';
 	import SiteHeader from '$lib/components/sfgov/SiteHeader.svelte';
@@ -121,6 +127,20 @@
 	 * rendering.
 	 */
 	let frameWidth = $state(0);
+
+	/**
+	 * Under Fit, how far the frame is zoomed down so the page keeps its desktop
+	 * layout in a pane narrower than 1024px (see `fitScale`). 1 means no zoom.
+	 * `paneBox` is the canvas's content box: its width minus padding and scrollbar.
+	 */
+	let paneBox = $state<DOMRectReadOnly | undefined>();
+	const scale = $derived(pageStore.previewWidth === 'fit' ? fitScale(paneBox?.width ?? 0) : 1);
+	const frameStyle = $derived.by(() => {
+		const preset = PREVIEW_WIDTHS[pageStore.previewWidth];
+		if (preset) return `width:${preset}px;max-width:none;flex:none`;
+		if (scale < 1) return `width:${FIT_LAYOUT_WIDTH}px;max-width:none;flex:none;zoom:${scale}`;
+		return '';
+	});
 
 	/**
 	 * In sheet mode the rail always shows its contents: a collapsed rail
@@ -436,7 +456,9 @@
 								data-testid="preview-width"
 								title="The width the mockup is being rendered at, and the sf.gov layout that width produces"
 							>
-								{frameWidth}px · {previewBand(frameWidth)}
+								{frameWidth}px · {previewBand(frameWidth)}{scale < 1
+									? ` · ${Math.round(scale * 100)}%`
+									: ''}
 							</span>
 							<ToggleGroup.Root
 								type="single"
@@ -499,6 +521,7 @@
 				     same way and keeps both edges reachable. -->
 				<div
 					class="flex flex-1 overflow-x-auto overflow-y-auto px-8 pt-7 pb-30"
+					bind:contentRect={paneBox}
 					tabindex="0"
 					role="region"
 					aria-label="Mockup preview"
@@ -527,12 +550,14 @@
 					     `w-full` / 1440px ceiling applies. `flex-none` so a preset
 					     wider than the pane is not squeezed back down -- the canvas
 					     scrolls horizontally instead, which is honest about the fact
-					     that a 1024px rendering does not fit in a 440px pane. -->
+					     that a 1024px rendering does not fit in a 440px pane.
+					     Under `fit`, a pane narrower than 1024px gets a 1024px frame
+					     zoomed down to fit (`frameStyle`), so the container query
+					     still sees desktop width and the reviewer sees the desktop
+					     layout, not the tablet one. -->
 					<figure
 						bind:clientWidth={frameWidth}
-						style={PREVIEW_WIDTHS[pageStore.previewWidth]
-							? `width:${PREVIEW_WIDTHS[pageStore.previewWidth]}px;max-width:none;flex:none`
-							: ''}
+						style={frameStyle}
 						class="mockup-frame mx-auto w-full self-start overflow-hidden rounded-[4px] border border-gray-200 bg-site-surface shadow-[0_2px_4px_rgba(12,20,100,.06),0_4px_12px_rgba(12,20,100,.1)]"
 					>
 						<SiteHeader />
