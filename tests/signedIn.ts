@@ -104,6 +104,110 @@ const EDIT_ROWS = [
 	}
 ];
 
+/**
+ * AI-drafted pages. A draft is two rows: a `pages` row in the queue
+ * (`path: draft:<id>`) and a `draft_pages` row carrying the state, which is what
+ * the banner and the landing page's "All pages" list read.
+ *
+ * One of each state the banner renders differently, because a banner that only
+ * ever scanned its `ready` form would leave the failure and stale copy -- the
+ * parts with their own colours -- outside the axe gate, which is the blind spot
+ * this file exists to close.
+ *
+ * `STALE` is stale by construction rather than by waiting: its `updated_at` is
+ * older than `DRAFT_STALE_MS` (90s), the same pure function of the clock the app
+ * evaluates. `DRAFTING` is fresh, stamped at module load.
+ */
+const DRAFT_IDS = {
+	ready: '9f1c2f0e-0000-4000-8000-000000000001',
+	drafting: '9f1c2f0e-0000-4000-8000-000000000002',
+	stale: '9f1c2f0e-0000-4000-8000-000000000003',
+	failed: '9f1c2f0e-0000-4000-8000-000000000004'
+} as const;
+
+const DRAFT_BASE = {
+	review_id: REVIEW_ID,
+	created_by: USER.id,
+	valid: null,
+	issues: null,
+	model: null,
+	content: null,
+	created_at: '2026-01-01T00:00:00Z'
+};
+
+const DRAFT_ROWS = [
+	{
+		...DRAFT_BASE,
+		id: DRAFT_IDS.ready,
+		path: `draft:${DRAFT_IDS.ready}`,
+		title: 'Report a noisy construction site',
+		description: 'How to report construction noise outside permitted hours.',
+		state: 'ready',
+		valid: true,
+		model: 'gemini-stub',
+		updated_at: '2026-01-01T00:00:00Z',
+		content: {
+			slug: 'sf.gov/draft-report-a-noisy-construction-site',
+			type: 'Transaction',
+			title: 'Report a noisy construction site',
+			summary: 'Tell us about construction noise outside permitted hours.',
+			audience: ['A resident bothered by construction noise'],
+			sections: [
+				{
+					heading: 'Before you report',
+					karl: 'Body copy.',
+					kind: 'body',
+					paragraphs: ['Check the permitted hours for your neighborhood first.'],
+					bullets: ['The address of the site', 'The time the noise started']
+				}
+			]
+		}
+	},
+	{
+		...DRAFT_BASE,
+		id: DRAFT_IDS.drafting,
+		path: `draft:${DRAFT_IDS.drafting}`,
+		title: 'Report a leaking roof',
+		description: 'A page about reporting a leaking roof to the landlord.',
+		state: 'drafting',
+		updated_at: new Date().toISOString()
+	},
+	{
+		...DRAFT_BASE,
+		id: DRAFT_IDS.stale,
+		path: `draft:${DRAFT_IDS.stale}`,
+		title: 'Report a broken heater',
+		description: 'A page about reporting a broken heater.',
+		state: 'drafting',
+		updated_at: '2026-01-01T00:00:00Z'
+	},
+	{
+		...DRAFT_BASE,
+		id: DRAFT_IDS.failed,
+		path: `draft:${DRAFT_IDS.failed}`,
+		title: 'Report a pest problem',
+		description: 'A page about reporting pests.',
+		state: 'failed',
+		updated_at: '2026-01-01T00:00:00Z'
+	}
+];
+
+const DRAFT_PAGE_ROWS = DRAFT_ROWS.map((draft, i) => ({
+	id: `00000000-0000-4000-8000-00000000030${i}`,
+	review_id: REVIEW_ID,
+	path: draft.path,
+	status: 'needs-review',
+	manager_notes: null,
+	page_checks: null
+}));
+
+export type SignedInOptions = {
+	/** Add the four draft states to the queue and `draft_pages`. */
+	drafts?: boolean;
+	/** Put the draft rows BEFORE the corpus rows, so the first undecided page is a draft. */
+	draftsFirst?: boolean;
+};
+
 const json = (body: unknown) => ({
 	status: 200,
 	contentType: 'application/json',
@@ -119,7 +223,15 @@ const json = (body: unknown) => ({
  * signed-out page, which is the exact failure this helper exists to end, so it
  * is turned into a loud one here.
  */
-export async function signedIn(page: Page): Promise<void> {
+export async function signedIn(page: Page, options: SignedInOptions = {}): Promise<void> {
+	const withDrafts = options.drafts === true || options.draftsFirst === true;
+	const pageRows = !withDrafts
+		? PAGE_ROWS
+		: options.draftsFirst
+			? [...DRAFT_PAGE_ROWS, ...PAGE_ROWS]
+			: [...PAGE_ROWS, ...DRAFT_PAGE_ROWS];
+	const draftRows = withDrafts ? DRAFT_ROWS : [];
+
 	// The storage key is `sb-<project-ref>-auth-token`, and the ref comes from
 	// whatever SVELTE_PUBLIC_SUPABASE_URL the bundle was built with -- a
 	// placeholder in CI, possibly a real project on a developer's machine. So
@@ -144,7 +256,8 @@ export async function signedIn(page: Page): Promise<void> {
 	await page.route('**/rest/v1/**', (route) => {
 		const path = new URL(route.request().url()).pathname;
 		if (path.endsWith('/reviews')) return route.fulfill(json([{ id: REVIEW_ID }]));
-		if (path.endsWith('/pages')) return route.fulfill(json(PAGE_ROWS));
+		if (path.endsWith('/pages')) return route.fulfill(json(pageRows));
+		if (path.endsWith('/draft_pages')) return route.fulfill(json(draftRows));
 		if (path.endsWith('/latest_edits')) return route.fulfill(json(EDIT_ROWS));
 		// Anything else PostgREST would serve: an empty set, never a network error.
 		return route.fulfill(json([]));
@@ -163,15 +276,27 @@ export async function signedIn(page: Page): Promise<void> {
 }
 
 /** The signed-in review route, loaded and proven populated. */
-export async function gotoSignedIn(page: Page, path: string): Promise<void> {
-	await signedIn(page);
+export async function gotoSignedIn(
+	page: Page,
+	path: string,
+	options: SignedInOptions = {}
+): Promise<void> {
+	await signedIn(page, options);
 	await page.goto(path);
 	await page.waitForLoadState('networkidle');
 
 	// The guard. Without rows the panels render their empty states and an axe
 	// pass over them would be the blind spot wearing a new name.
-	await expect(page.locator('nav[aria-label="Review queue"] a')).toHaveCount(PAGE_ROWS.length);
+	const withDrafts = options.drafts === true || options.draftsFirst === true;
+	const total = PAGE_ROWS.length + (withDrafts ? DRAFT_PAGE_ROWS.length : 0);
+	if (path === '/') {
+		// The landing page has no queue. Its proof of a populated, signed-in
+		// render is the progress line, whose total is the number of review rows.
+		await expect(page.getByText(new RegExp(`^\\d+ of ${total} decided$`))).toBeVisible();
+		return;
+	}
+	await expect(page.locator('nav[aria-label="Review queue"] a')).toHaveCount(total);
 	await expect(page.getByText('Viewing signed out.')).toHaveCount(0);
 }
 
-export { PAGE_ROWS, REVIEW_ID };
+export { DRAFT_IDS, DRAFT_PAGE_ROWS, PAGE_ROWS, REVIEW_ID };
