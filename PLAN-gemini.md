@@ -64,4 +64,4 @@ will call Gemini itself.
     `400 API key not valid` (2026-11-22). The user must create a key in Google
     AI Studio and set it in `hhvc-manager-review/prd` (both refs follow).
     `GEMINI_MODEL` there is `gemini-3.7-flash`.
-- [ ] PR open, CI green; ask before merge (merge deploys production)
+- [x] PR open (#160), CI green; ask before merge (merge deploys production)
