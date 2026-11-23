@@ -1,6 +1,6 @@
 # Landing page, and AI-drafted pages in the review queue
 
-Status: awaiting approval
+Status: implemented
 Date: 2026-11-23
 
 ## Intent
