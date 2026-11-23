@@ -212,7 +212,8 @@ done
 # The crawl this replaces read only those two, and its note claimed that
 # following their imports "adds nothing". That was an artifact of the regex
 # used to look: `\./_app/immutable/[^"]+\.js` cannot match `../chunks/X.js`,
-# which is the form a chunk actually uses to name its siblings. Measured
+# which is how the entry and node files name the chunks they import. (Chunks
+# name their own siblings `./X.js`, which it misses too.) Measured
 # against production: the old crawl reached 2 of the 27 emitted files and never
 # saw the Supabase project ref, which is certainly in the served JS. This one
 # reaches all of them, and does.
@@ -220,8 +221,9 @@ done
 # Accepting all three quote characters is load-bearing rather than defensive.
 # Static imports are double-quoted, but the Sentry release chunk is reached
 # only through a backtick-quoted dynamic `import(...)`. Measured against the
-# build on disk, where the answer is checkable against `find`: double quotes
-# alone reach 26 of 27 files, all three reach 27 of 27.
+# build on disk, where `find` gives the ground truth: the two quoted forms
+# together reach 26 of the 27 emitted files, and adding the backtick form
+# reaches 27 of 27.
 #
 # Three properties worth keeping if this is ever changed:
 #
@@ -240,10 +242,13 @@ done
 # module graph does not reach.
 work=$(mktemp -d "${TMPDIR:-/tmp}/hhvc-served.XXXXXX")
 trap 'rm -rf "$work"' EXIT
-served="$work/site"
+# `site_dir`, not `served`: the published-commit gate above holds the deployed
+# SHA in `served`, and a second meaning for that name is how the next gate
+# added here ends up with a directory where it expects a commit.
+site_dir="$work/site"
 queue="$work/queue"
 seen="$work/seen"
-mkdir -p "$served"
+mkdir -p "$site_dir"
 : >"$queue"
 : >"$seen"
 
@@ -251,8 +256,8 @@ mkdir -p "$served"
 # in this script -- inside double quotes one would open a command substitution.
 quotes=$(printf '"\047\140')
 
-curl -s --max-time 30 "$SITE_URL/" -o "$served/index.html"
-grep -oE '_app/immutable/[A-Za-z0-9._/-]+\.js' "$served/index.html" 2>/dev/null |
+curl -s --max-time 30 "$SITE_URL/" -o "$site_dir/index.html"
+grep -oE '_app/immutable/[A-Za-z0-9._/-]+\.js' "$site_dir/index.html" 2>/dev/null |
 	sort -u >>"$queue"
 
 unreachable=''
@@ -267,12 +272,12 @@ while :; do
 		break
 	}
 
-	mkdir -p "$served/$(dirname "$next")"
-	code=$(curl -s --max-time 30 -w '%{http_code}' "$SITE_URL/$next" -o "$served/$next")
+	mkdir -p "$site_dir/$(dirname "$next")"
+	code=$(curl -s --max-time 30 -w '%{http_code}' "$SITE_URL/$next" -o "$site_dir/$next")
 	[ "$code" = '200' ] || unreachable="$unreachable $next($code)"
 
 	dir=$(dirname "$next")
-	grep -ohE "[$quotes][^$quotes]*\.js[$quotes]" "$served/$next" 2>/dev/null |
+	grep -ohE "[$quotes][^$quotes]*\.js[$quotes]" "$site_dir/$next" 2>/dev/null |
 		tr -d "$quotes" |
 		while read -r spec; do
 			case "$spec" in
@@ -285,10 +290,10 @@ while :; do
 done
 
 chunks=$(sort -u "$seen" | wc -l)
-leaked=$(grep -rlE "$LEAK_PATTERN" "$served" 2>/dev/null || true)
+leaked=$(grep -rlE "$LEAK_PATTERN" "$site_dir" 2>/dev/null || true)
 if [ -n "${SUPABASE_SERVICE_ROLE_KEY:-}" ]; then
 	literal=$(printf '%s\n' "$SUPABASE_SERVICE_ROLE_KEY" |
-		grep -rlF -f - "$served" 2>/dev/null || true)
+		grep -rlF -f - "$site_dir" 2>/dev/null || true)
 	leaked=$(printf '%s\n%s' "$leaked" "$literal" | grep -v '^$' | sort -u || true)
 fi
 
@@ -298,7 +303,7 @@ elif [ "$chunks" -le 2 ]; then
 	fail "served bundle — crawl reached $chunks chunk(s); it is finding no imports"
 elif [ -n "$leaked" ]; then
 	fail "server-only value(s) in served bundle: $(printf '%s' "$leaked" |
-		sed "s|^$served/||" | tr '\n' ' ')"
+		sed "s|^$site_dir/||" | tr '\n' ' ')"
 else
 	pass "no server-only values across $chunks served chunks"
 fi
