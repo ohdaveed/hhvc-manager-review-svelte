@@ -17,6 +17,9 @@
 	<DraftBanner {draft} />
 	{#if pageData}
 		<Page page={pageData} />
+	{:else}
+		<!-- No page to carry a heading yet, so without this the route has none. -->
+		<h1 class="px-5 pt-4 text-xl font-bold text-sfds-black">{draft.title}</h1>
 	{/if}
 {:else}
 	<p class="p-6 text-sm text-sfds-slate-l3">

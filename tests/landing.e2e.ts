@@ -1,3 +1,4 @@
+import type { Page } from '@playwright/test';
 import { expect, test } from './fixtures';
 import { DRAFT_IDS, gotoSignedIn } from './signedIn';
 
@@ -12,14 +13,16 @@ import { DRAFT_IDS, gotoSignedIn } from './signedIn';
  * not log an error" needs no assertion of its own -- it is the gate.
  */
 
+const banner = (page: Page) => page.getByRole('complementary', { name: 'AI draft' });
 const draftUrl = (id: string) => `/review/draft/${id}`;
 
 test.describe('signed in', () => {
 	test('the landing page resumes the review in one click', async ({ page }) => {
-		await gotoSignedIn(page, '/');
+		await gotoSignedIn(page, '/', { decidedFirst: true });
 
 		await expect(page.getByText(/\d+ of \d+ decided/)).toBeVisible();
-		// The first `needs-review` row in the fixture, named by its corpus title.
+		// The first `needs-review` row, NOT the first row: `decidedFirst` puts
+		// decided pages ahead of it, so only a status-aware Continue lands here.
 		const next = page.getByRole('link', { name: /^Continue to / });
 		await expect(next).toHaveAttribute('href', '/review/report-garbage-filth-vegetation');
 		await next.click();
@@ -31,7 +34,7 @@ test.describe('signed in', () => {
 	test('Continue to a draft goes to the draft route, never a draft: URL', async ({ page }) => {
 		// Drafts first, so the next undecided page IS a draft: `pages.path` is
 		// `draft:<uuid>`, which `/review/[slug]` would hard-404.
-		await gotoSignedIn(page, '/', { draftsFirst: true });
+		await gotoSignedIn(page, '/', { draftsFirst: true, decidedFirst: true });
 
 		const next = page.getByRole('link', { name: /^Continue to / });
 		await expect(next).toHaveAttribute('href', draftUrl(DRAFT_IDS.ready));
@@ -57,6 +60,8 @@ test.describe('signed in', () => {
 			await expect(list.getByRole('link', { name: title, exact: true })).toBeVisible();
 		}
 
+		await expect(list.getByRole('link', { name: 'A draft from another review' })).toHaveCount(0);
+
 		const hrefs = await page
 			.locator('a[href]')
 			.evaluateAll((as) => as.map((a) => a.getAttribute('href') ?? ''));
@@ -65,7 +70,7 @@ test.describe('signed in', () => {
 
 		await list.getByRole('link', { name: 'Report a leaking roof' }).click();
 		await expect(page).toHaveURL(new RegExp(`${draftUrl(DRAFT_IDS.drafting)}$`));
-		await expect(page.getByRole('status')).toHaveText('Drafting this page…');
+		await expect(banner(page).getByRole('status')).toHaveText('Drafting this page…');
 	});
 });
 
@@ -88,13 +93,13 @@ test.describe('the draft route', () => {
 	test('a ready draft opens in the workspace with its banner and its page', async ({ page }) => {
 		await gotoSignedIn(page, draftUrl(DRAFT_IDS.ready), { drafts: true });
 
-		const banner = page.getByRole('complementary', { name: 'AI draft' });
-		await expect(banner).toBeVisible();
-		await expect(banner).toContainText('requested by you');
-		await expect(banner).toContainText('How to report construction noise');
+		const top = banner(page);
+		await expect(top).toBeVisible();
+		await expect(top).toContainText('requested by you');
+		await expect(top).toContainText('How to report construction noise');
 		// The page itself, not just the chrome around it.
 		await expect(page.getByText('Before you report').first()).toBeVisible();
-		await expect(banner.getByRole('button', { name: 'Retry' })).toHaveCount(0);
+		await expect(top.getByRole('button', { name: 'Retry' })).toHaveCount(0);
 	});
 
 	test('a fresh drafting row shows progress and no retry, without logging an error', async ({
@@ -105,7 +110,7 @@ test.describe('the draft route', () => {
 		// fixture fails this test on a console error or an uncaught exception.
 		await gotoSignedIn(page, draftUrl(DRAFT_IDS.drafting), { drafts: true });
 
-		await expect(page.getByRole('status')).toHaveText('Drafting this page…');
+		await expect(banner(page).getByRole('status')).toHaveText('Drafting this page…');
 		await expect(page.getByRole('button', { name: 'Retry' })).toHaveCount(0);
 		await expect(page.getByText('This draft stopped before finishing.')).toHaveCount(0);
 	});
@@ -124,7 +129,7 @@ test.describe('the draft route', () => {
 		// waited on, so the swap from spinner to retry is observed without a reload.
 		await page.clock.install({ time: new Date() });
 		await gotoSignedIn(page, draftUrl(DRAFT_IDS.drafting), { drafts: true });
-		await expect(page.getByRole('status')).toHaveText('Drafting this page…');
+		await expect(banner(page).getByRole('status')).toHaveText('Drafting this page…');
 
 		await page.clock.fastForward(120_000);
 
@@ -135,7 +140,7 @@ test.describe('the draft route', () => {
 	test('a failed draft names the failure and offers a retry', async ({ page }) => {
 		await gotoSignedIn(page, draftUrl(DRAFT_IDS.failed), { drafts: true });
 
-		await expect(page.getByRole('alert')).toHaveText('The draft could not be generated.');
+		await expect(banner(page).getByRole('alert')).toHaveText('The draft could not be generated.');
 		await expect(page.getByRole('button', { name: 'Retry' })).toBeVisible();
 	});
 });

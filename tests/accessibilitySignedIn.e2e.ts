@@ -134,3 +134,19 @@ for (const [state, proof] of DRAFT_STATES) {
 		await noViolations(page);
 	});
 }
+
+// Pinned by rule, not by enabling best-practice tags wholesale: that would also
+// surface `aria-allowed-role` on a pre-existing element. A draft with no page
+// to render has no content of its own, so the route must supply the heading.
+for (const state of ['drafting', 'stale', 'failed'] as const) {
+	test(`a ${state} draft page has a level-one heading`, async ({ page }) => {
+		await gotoSignedIn(page, `/review/draft/${DRAFT_IDS[state]}`, { drafts: true });
+		await expect(page.getByRole('complementary', { name: 'AI draft' })).toBeVisible();
+
+		const { violations } = await new AxeBuilder({ page })
+			.withRules(['page-has-heading-one'])
+			.analyze();
+		expect(violations.map((v) => `${v.id}: ${v.help}`)).toEqual([]);
+		await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
+	});
+}

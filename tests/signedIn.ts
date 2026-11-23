@@ -125,6 +125,8 @@ const DRAFT_IDS = {
 	failed: '9f1c2f0e-0000-4000-8000-000000000004'
 } as const;
 
+const FOREIGN_DRAFT_ID = '9f1c2f0e-0000-4000-8000-0000000000ff';
+
 const DRAFT_BASE = {
 	review_id: REVIEW_ID,
 	created_by: USER.id,
@@ -135,7 +137,12 @@ const DRAFT_BASE = {
 	created_at: '2026-01-01T00:00:00Z'
 };
 
-const DRAFT_ROWS = [
+/**
+ * A function, not a constant: the fresh `drafting` row is stamped when it is
+ * SERVED, so it is `DRAFT_STALE_MS` from stale at the moment each test loads it
+ * rather than at module load, which a slow worker could outrun.
+ */
+const draftRowsNow = () => [
 	{
 		...DRAFT_BASE,
 		id: DRAFT_IDS.ready,
@@ -189,23 +196,44 @@ const DRAFT_ROWS = [
 		description: 'A page about reporting pests.',
 		state: 'failed',
 		updated_at: '2026-01-01T00:00:00Z'
+	},
+	{
+		// Another review's draft: PostgREST would never return it for the
+		// `review_id=eq.` filter the store sends, so the stub must not either.
+		// If the store dropped that filter it would surface in the list.
+		...DRAFT_BASE,
+		id: FOREIGN_DRAFT_ID,
+		review_id: '00000000-0000-4000-8000-0000000000ff',
+		path: `draft:${FOREIGN_DRAFT_ID}`,
+		title: 'A draft from another review',
+		description: 'Belongs to a different review.',
+		state: 'failed',
+		updated_at: '2026-01-01T00:00:00Z'
 	}
 ];
 
-const DRAFT_PAGE_ROWS = DRAFT_ROWS.map((draft, i) => ({
-	id: `00000000-0000-4000-8000-00000000030${i}`,
-	review_id: REVIEW_ID,
-	path: draft.path,
-	status: 'needs-review',
-	manager_notes: null,
-	page_checks: null
-}));
+const DRAFT_PAGE_ROWS = draftRowsNow()
+	.filter((draft) => draft.id !== FOREIGN_DRAFT_ID)
+	.map((draft, i) => ({
+		id: `00000000-0000-4000-8000-00000000030${i}`,
+		review_id: REVIEW_ID,
+		path: draft.path,
+		status: 'needs-review',
+		manager_notes: null,
+		page_checks: null
+	}));
 
 export type SignedInOptions = {
 	/** Add the four draft states to the queue and `draft_pages`. */
 	drafts?: boolean;
 	/** Put the draft rows BEFORE the corpus rows, so the first undecided page is a draft. */
 	draftsFirst?: boolean;
+	/**
+	 * Put the decided rows ahead of the first undecided one, so "the first row"
+	 * and "the first undecided row" are different rows. Without it the first
+	 * fixture row is both, and a `reviewProgress` that ignored status would pass.
+	 */
+	decidedFirst?: boolean;
 };
 
 const json = (body: unknown) => ({
@@ -225,12 +253,11 @@ const json = (body: unknown) => ({
  */
 export async function signedIn(page: Page, options: SignedInOptions = {}): Promise<void> {
 	const withDrafts = options.drafts === true || options.draftsFirst === true;
-	const pageRows = !withDrafts
-		? PAGE_ROWS
-		: options.draftsFirst
-			? [...DRAFT_PAGE_ROWS, ...PAGE_ROWS]
-			: [...PAGE_ROWS, ...DRAFT_PAGE_ROWS];
-	const draftRows = withDrafts ? DRAFT_ROWS : [];
+	const decided = options.decidedFirst ? PAGE_ROWS.filter((r) => r.status !== 'needs-review') : [];
+	const body = PAGE_ROWS.filter((r) => !decided.includes(r));
+	const pageRows = options.draftsFirst
+		? [...decided, ...DRAFT_PAGE_ROWS, ...body]
+		: [...decided, ...body, ...(withDrafts ? DRAFT_PAGE_ROWS : [])];
 
 	// The storage key is `sb-<project-ref>-auth-token`, and the ref comes from
 	// whatever SVELTE_PUBLIC_SUPABASE_URL the bundle was built with -- a
@@ -257,7 +284,27 @@ export async function signedIn(page: Page, options: SignedInOptions = {}): Promi
 		const path = new URL(route.request().url()).pathname;
 		if (path.endsWith('/reviews')) return route.fulfill(json([{ id: REVIEW_ID }]));
 		if (path.endsWith('/pages')) return route.fulfill(json(pageRows));
-		if (path.endsWith('/draft_pages')) return route.fulfill(json(draftRows));
+		if (path.endsWith('/draft_pages')) {
+			// Model the two PostgREST behaviours the store's correctness depends on:
+			// the `review_id=eq.` filter and `select=` column projection. A stub that
+			// served every column of every row would pass a store that dropped
+			// `updated_at` from its select (staleness silently never fires) or the
+			// review filter.
+			const params = new URL(route.request().url()).searchParams;
+			const review = params.get('review_id');
+			const select = params.get('select') ?? '*';
+			const columns = select === '*' ? undefined : select.split(',').map((c) => c.trim());
+			const rows = withDrafts
+				? draftRowsNow()
+						.filter((row) => (review?.startsWith('eq.') ? row.review_id === review.slice(3) : true))
+						.map((row) =>
+							columns
+								? Object.fromEntries(Object.entries(row).filter(([key]) => columns.includes(key)))
+								: row
+						)
+				: [];
+			return route.fulfill(json(rows));
+		}
 		if (path.endsWith('/latest_edits')) return route.fulfill(json(EDIT_ROWS));
 		// Anything else PostgREST would serve: an empty set, never a network error.
 		return route.fulfill(json([]));
