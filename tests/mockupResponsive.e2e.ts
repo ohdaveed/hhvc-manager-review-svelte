@@ -20,6 +20,10 @@ import { expect, test } from './fixtures';
  *    CSS grid whose template is an INLINE style, so `display: none` removed the
  *    rails while their grid TRACKS still reserved width — at 390px the canvas
  *    measured 280px and the frame 201px. The template has to collapse too.
+ *
+ * Under the default "Fit", a pane narrower than 1024px no longer reflows: the
+ * frame lays out at 1024px and zooms down (`fitScale`), so the reviewer sees
+ * the desktop layout. Below half scale (a phone window) it reflows as before.
  */
 const PAGE = '/review/report-garbage-filth-vegetation';
 
@@ -53,14 +57,29 @@ test.describe('the mockup scales with the space it has', () => {
 		expect(await overflows(page)).toBe(false);
 	});
 
-	test('reaches the tablet layout when the pane narrows, not when the window does', async ({
+	test('keeps the desktop layout under Fit, scaled down, when the pane is under 1024px', async ({
 		page
 	}) => {
 		await page.setViewportSize({ width: 834, height: 1112 });
 		await page.goto(PAGE);
 
-		// The window is 834px, but what decides the layout is the frame.
-		expect(await footerColumnCount(page)).toBe(2);
+		// The pane is ~754px. Letting the frame shrink to it used to reflow into
+		// the tablet layout, so reviewers approved tablet without knowing. Fit now
+		// lays out at 1024px and zooms down, and the readout says so.
+		expect(await footerColumnCount(page)).toBe(4);
+		await expect(page.getByTestId('preview-width')).toContainText(/Desktop · \d+%/);
+		expect(await overflows(page)).toBe(false);
+	});
+
+	test('reaches the tablet layout when the frame is tablet width, not when the window is', async ({
+		page
+	}) => {
+		await page.setViewportSize({ width: 834, height: 1112 });
+		await page.goto(PAGE);
+		await page.getByRole('radio', { name: 'Tablet width, 768px' }).click();
+
+		// The window is 834px either way; what decides the layout is the frame.
+		await expect.poll(() => footerColumnCount(page)).toBe(2);
 		expect(await overflows(page)).toBe(false);
 	});
 

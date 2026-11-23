@@ -1,99 +1,39 @@
-# PLAN — ponytail audit cuts
+# PLAN — "Fit" shows the desktop layout (UX review finding 1)
 
-Branch `chore/ponytail-cuts`, cut from `main` at `2e234a2`.
+Branch `fix/preview-fit-desktop`, cut from `origin/main` at `2e234a2`, in worktree
+`~/wt-preview-fit` (the main checkout belongs to another session on
+`chore/ponytail-cuts`).
 
-A repo-wide over-engineering audit produced ten findings. Five survived
-verification; five did not, and the reasons are recorded below so nobody
-re-proposes them. The headline figure in the audit (~4,000 lines) was wrong:
-the real cut is ~930 lines, ~52 of it code.
+**Problem, measured 2026-11-22:** at a 1440px viewport with both rails open, "Fit
+to pane" (the default) gives a 683px frame. The frame is a size container, so sf.gov
+reflows into its **tablet** layout. Reviewers were approving the tablet rendering,
+and only a small `683px · Tablet` readout said so.
 
-## Cuts
+**Fix:** when the pane is narrower than 1024px, "Fit" keeps the layout at 1024px
+(desktop) and scales the frame down with CSS `zoom`. Container queries still see
+1024px, so the layout stays desktop. Below a 50% scale (phones) it falls back to
+the old reflow, because a quarter-size page is unreadable. The readout shows the
+scale.
 
-- [x] **1. Dead code: two declarations with no reader anywhere.**
-      `MARKDOWN_STRONG` (`src/lib/corpus/markdown.ts`) and `__resetFieldIds`
-      (`src/lib/components/sfgov/ds/fieldId.ts`). Verified with `git grep` over
-      the whole repo, tests included — neither name appears outside the file
-      that declares it.
-- [x] **2. Over-exported internals: drop `export`, keep the code.** Seven names
-      are exported and consumed only inside their own module:
-      `getModel`, `normalizeUsage`, `DEFAULT_MODEL` (`server/ai/gemini.ts`),
-      `addUsage`, `MAX_ATTEMPTS`, `DISCLOSURE` (`server/ai/generate.ts`),
-      `MARKDOWN_LINK` (`corpus/markdown.ts`). This removes no lines. The payoff
-      is that knip's "unused exports" list stops carrying 7 false leads, so a
-      genuinely dead export is visible in it next time.
-- [x] **3. `src/lib/components/blocks/index.ts` + `ImageBlock.svelte`.** The
-      barrel has zero importers — `Section.svelte` and `Page.svelte` import each
-      block directly — and `ImageBlock` is reachable only through that barrel.
-      No corpus module carries an image section (`component:` values are
-      supporting, spotlight, resources, services, related, intro, top-facts,
-      body). 45 lines.
-- [x] **4. `@sveltejs/adapter-auto`.** Referenced nowhere but `package.json` and
-      the `knip.jsonc` `ignoreDependencies` entry that silences the warning
-      about it. `vite.config.ts` selects between adapter-netlify and
-      adapter-node. Remove with `bun remove` so `bun.lock` moves too, and drop
-      the ignore entry.
-- [x] **5. Three stale root planning docs**, untouched since 2026-08-30:
-      `PLAN-prototype.md` (376), `REVIEW-structure-pass.md` (419),
-      `PLAN-new-pages.md` (85). `git grep` finds no reference to any of them
-      from code, CLAUDE.md, CONTEXT.md, docs/ or the skills. Git history is the
-      archive. **Own commit**, so it can be dropped from the PR without
-      touching the code cuts.
+- [x] `fitScale(paneWidth)` helper in `pageData.svelte.ts` plus unit tests.
+- [x] Layout measures the pane, applies `width:1024px; zoom:<scale>` under Fit, and
+      the readout shows `1024px · Desktop · 67%`.
+- [x] Browser check at 1440 with both rails open: desktop header (no hamburger),
+      readout correct, clicking copy still selects the field (edit targets work
+      under zoom), and the footer can still be reached by scrolling.
+- [x] Gates: `test:unit --run`, `check:ratchet`, `build`; e2e runs in CI.
 
-## Gates
+## Result
 
-- [x] `bun run verify` (unit + build).
-- [x] `bun run lint:ratchet` and `bun run check:ratchet` — `verify` runs
-      neither, and both fail when the count DROPS as well as rises. The four
-      eslint errors live in `scripts/env-target.ts`,
-      `src/lib/components/ui/button/button.svelte`,
-      `src/lib/legacy-core/card-inheritance.js` and `karl-transcript.js` —
-      none in a file this branch deletes, so the baseline should hold at 4.
-- [x] `bunx knip` after the cuts: the "Unused files" list dropped from 3 to
-      1 and "Unused exports" from 58 to 49. Confirmed on `7e0eeb6`.
+Gates: 625/625 unit (4 new), svelte-check 0/0, eslint at baseline 4, build green.
+Browser at 1440 with both rails open (local stack): readout `1021px · Desktop · 67%`,
+full desktop header and nav (no hamburger), no horizontal overflow (scrollWidth equals
+clientWidth), clicking the title selects it and the ring lines up, footer reachable.
+At 375px the scale would fall below 50%, so it falls back to reflow (`278px · Phone`).
 
-## Rejected, with the evidence
+A first attempt subtracted a hardcoded 64px for `px-8`. In this theme that is 40px a
+side, which left a horizontal scrollbar. It now binds the pane's `contentRect`, so
+there is no constant to drift.
 
-Each of these was in the audit report and should not be re-proposed without new
-evidence.
-
-1. **The 13 `src/lib/components/sfgov/ds/*` components imported only by the
-   specimen route (~2,100 lines) — NOT CUT, judgment call left to the owner.**
-   Only `SiteButton`, `TextField` and `PageAlert` reach the app (the login
-   page); the other thirteen are rendered only by
-   `src/routes/sfgov-components/+page.svelte`, which exists to axe-test them.
-   That reads as a library built ahead of need, but `ds/README.md` states the
-   purpose as "building public SF.gov pages" and names Figma as the design
-   source, so it is inventory for planned work rather than debt. Deleting it is
-   a product decision, not a cleanup.
-
-2. **`ds/SiteHeader`, `ds/SiteFooter`, `ds/OnThisPage` as duplicates of the
-   `sfgov/` components — WITHDRAWN, the audit was wrong.** They are not copies.
-   The `sfgov/` versions are deliberately INERT — every nav item, the language
-   control and the search box are `<span>`s, because the review canvas shows a
-   picture of a header and a fake control exposed as a real one fails the axe
-   gate. The `ds/` versions are the functional counterparts: real links, a real
-   `<select>`, a real `<form>`. Both are needed and each file says so in its own
-   header comment. Collapsing them would break the axe gate.
-
-3. **`src/lib/corpus/oneToOne.ts` (128 lines) — KEEP, it is a live CI gate.**
-   The audit called it dead because its only importer is its own test. That test
-   imports `allPages` and asserts `findOneToOneViolations(allPages)` equals `[]`
-   — a content invariant over the real corpus, guarding that no mockup carries
-   an element Karl has no field for. Deleting it would silently remove a
-   corpus guard. knip cannot see this because it treats tests as entry points.
-
-4. **`src/lib/components/sfgov/OnThisPage.svelte` (72 lines) — KEEP,
-   deliberately unwired.** `#102` removed it from `Page.svelte` with a recorded
-   reason: three live sf.gov pages captured 2026-08-30 carry no such nav, so the
-   prototype's TOC is not rendered. That commit states the component is kept on
-   purpose and is "one line to put back if the prototype is the standard rather
-   than sf.gov."
-
-5. **`scripts/sync-checks.ts` (225 lines) — KEEP.** It has no `package.json`
-   entry, but CLAUDE.md documents it as the service-role script whose
-   credentials `env-target.ts` switches. Unlisted, not orphaned.
-
-Also not done: shrinking `scripts/env-target.ts` (513 lines for a four-variable
-rewriter — a real target, but a rewrite rather than a cut), and the ~35 unused
-exports in `src/lib/server/ai/vendor/**`, which CLAUDE.md requires to stay
-mechanically diffable against the upstream package.
+Trade-off: at 67% the body copy is about 11px on screen. Desktop (1024) is still one
+click away for reading at full size.
