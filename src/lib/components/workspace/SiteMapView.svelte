@@ -32,7 +32,10 @@
 	};
 
 	function open(id: string | undefined) {
-		if (id) goto(resolve('/review/[slug]', { slug: id }));
+		if (!id) return;
+		// The layout renders this view while mode is 'sitemap', whatever the URL.
+		pageStore.showReview();
+		goto(resolve('/review/[slug]', { slug: id }));
 	}
 </script>
 
