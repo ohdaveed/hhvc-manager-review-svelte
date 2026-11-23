@@ -41,7 +41,11 @@ test('states the position instead of linking when already on that page', async (
 	await page.goto(FIRST);
 
 	await expect(page.getByTestId('queue-start')).toHaveCount(0);
-	await expect(page.locator('nav [aria-current="page"]')).toHaveText('First page');
+	// Scoped to the toolbar. "First page" is the toolbar's own fixed label, not a
+	// page title, and the queue's current row carries `aria-current` too -- so a
+	// bare `nav [aria-current]` matched one element only while the queue rendered
+	// no rows signed out, which it no longer does.
+	await expect(page.locator('.review-toolbar [aria-current="page"]')).toHaveText('First page');
 });
 
 test('renders the export review data button in the queue footer', async ({ page }) => {
