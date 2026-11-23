@@ -79,7 +79,8 @@
 		"@sentry/sveltekit": "^10",
 		"@supabase/supabase-js": "^2.112.3",
 		"bits-ui": "^2.19.0",
-		"pg": "^8.23.0"
+		"pg": "^8.23.0",
+		"zod": "3.24.1"
 	},
 	"type": "module"
 }

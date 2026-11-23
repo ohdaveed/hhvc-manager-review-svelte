@@ -43,18 +43,19 @@ bun run dev --port 5199
 
 ## Faking the AI backend
 
-`RAILWAY_API_TOKEN` is not in `.env.local`, so `/api/ai/generate` proxies to
-the real Railway host and gets a 403 — the panel shows `API Error` cards.
-The proxy honours **`RAILWAY_API_URL`** (`$env/dynamic/private`), so point it
-at a local stub instead of intercepting network calls in the browser. That
-keeps the whole real chain — `requestGeneration` → bearer token → the route's
-Supabase `getUser` check → fetch — intact and fakes only the upstream:
+Without `GEMINI_API_KEY` in `.env.local`, `/api/ai/generate` answers 501 and
+the panel shows error cards. The route honours **`GEMINI_BASE_URL`**
+(`$env/dynamic/private`), so point it at a local stub instead of intercepting
+network calls in the browser. That keeps the whole real chain —
+`requestGeneration` → bearer token → the route's Supabase `getUser` check →
+prompts → validation — intact and fakes only Gemini:
 
 ```sh
-RAILWAY_API_URL=http://127.0.0.1:5299 RAILWAY_API_TOKEN=stub-token bun run dev --port 5199
+GEMINI_BASE_URL=http://127.0.0.1:5299 GEMINI_API_KEY=stub-key bun run dev --port 5199
 ```
 
-Stub returns `{"result":{"rewrittenText":"..."}}`. Note it must also answer
+Stub answers `POST /models/<model>:generateContent` with Gemini's shape —
+`{"candidates":[{"content":{"parts":[{"text":"{\"rewrittenText\":\"...\"}"}]},"finishReason":"STOP"}]}`. Note it must also answer
 the "recommendation" call, which reuses `task: 'rewrite-field'` with a
 "Do not rewrite this text" instruction.
 

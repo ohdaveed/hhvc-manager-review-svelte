@@ -64,28 +64,19 @@ projects:
       # carries its own auth.users, so a production invite does not sign anyone
       # in on a preview.
       #
-      # RAILWAY_API_* are deliberately absent here: unlike the database, they
-      # are still SHARED across every deploy context, so a preview's AI
-      # rewrites hit the production backend. Listing them under stg would
-      # assert a split that does not exist.
+      # GEMINI_API_KEY is deliberately absent here: it is SHARED across every
+      # deploy context, so a preview's AI rewrites spend the production key.
+      # Listing it under stg would assert a split that does not exist.
       stg:
         SVELTE_PUBLIC_SUPABASE_URL: ''
         SVELTE_PUBLIC_SUPABASE_ANON_KEY: ''
         SUPABASE_SERVICE_ROLE_KEY: ''
-      # prd targets the hosted Supabase project. RAILWAY_API_* address the live
-      # mockup-tool deploy; RAILWAY_API_TOKEN is a REVIEW_API_TOKEN for that
-      # service, so it is the SAME credential class held in the
-      # hhvc-manager-review project. Rotating it means updating both places
-      # unless a Doppler secret reference is used to make one canonical.
-      #
-      # Deliberately absent from dev: a local build talking to the production
-      # API is the mistake worth designing out. Point a local RAILWAY_API_URL
-      # at http://127.0.0.1:8080 and pair it with the dev REVIEW_API_TOKEN from
-      # the hhvc-manager-review project instead.
+      # prd targets the hosted Supabase project. GEMINI_API_KEY is what
+      # /api/ai/generate calls Gemini with; it reaches Netlify through the
+      # netlify_prd config, which references it rather than copying it.
       prd:
         SVELTE_PUBLIC_SUPABASE_URL: ''
         SVELTE_PUBLIC_SUPABASE_ANON_KEY: ''
         SUPABASE_SERVICE_ROLE_KEY: ''
-        RAILWAY_API_URL: ''
-        RAILWAY_API_TOKEN: ''
+        GEMINI_API_KEY: ''
       ci-cd: {}

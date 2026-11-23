@@ -89,8 +89,8 @@ require docker-compose.yml 'args:' \
 	'the public pair passed as build args'
 forbid docker-compose.yml '- SVELTE_PUBLIC_SUPABASE_URL=' \
 	'the public pair back under environment:, where Compose sets it and the bundle ignores it'
-require docker-compose.yml 'RAILWAY_API_TOKEN' \
-	'the AI proxy credential, without which every rewrite 401s'
+require docker-compose.yml 'GEMINI_API_KEY' \
+	'the Gemini key, without which every AI request answers 501'
 require vite.config.ts ': adapterNetlify' \
 	'netlify as the default adapter, so CI builds the one production ships'
 
@@ -166,7 +166,7 @@ leak=$(
 	curl -s --max-time 30 "$SITE_URL/" |
 		grep -oE '\./_app/immutable/[^"]+\.js' |
 		while read -r chunk; do curl -s --max-time 30 "$SITE_URL/${chunk#./}"; done |
-		grep -coE 'RAILWAY_API_TOKEN|web-production-9bb3b|arrizon\.david|demo@hhvc\.local|dev-local-only'
+		grep -coE 'GEMINI_API_KEY|AIza[0-9A-Za-z_-]{35}|RAILWAY_API_TOKEN|web-production-9bb3b|arrizon\.david|demo@hhvc\.local|dev-local-only'
 )
 [ "$leak" = "0" ] && pass "no server-only values in client bundle" ||
 	fail "$leak server-only reference(s) in client bundle"
