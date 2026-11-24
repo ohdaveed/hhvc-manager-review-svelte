@@ -84,10 +84,31 @@ const PILOTS = [
 		first: ['title', 'date', 'primary_agency', 'spotlight', 'content'],
 		empty: ['Primary agency (empty)', 'Print version (empty)'],
 		tray: 2
+	},
+	{
+		slug: 'departments--healthy-housing-and-vector-control',
+		first: ['title', 'show_agency_list', 'description', 'logo', 'main_image'],
+		empty: ['Logo (empty)', 'Public records (empty)'],
+		tray: 5
 	}
 ] as const;
 
 test.describe('Blueprint', () => {
+	test('Agency: the two Subsection panels are named by their section, titles keep their pre-fill', async ({
+		page
+	}) => {
+		await gotoSignedIn(page, '/review/departments--healthy-housing-and-vector-control');
+		await openBlueprint(page);
+		await expect(
+			page.locator('[data-karl-panel="services"]').getByRole('heading', { level: 3 })
+		).toHaveText('Services · Subsection');
+		await expect(
+			page.locator('[data-karl-panel="resources"]').getByRole('heading', { level: 3 })
+		).toHaveText('Resources · Subsection');
+		await expect(page.locator('[data-karl-panel="resources_title"]')).toContainText('Resources');
+		await expect(page.locator('[data-karl-panel="resources"] .bp-caveat')).toHaveCount(1);
+	});
+
 	test('Report: tables are named, and table text not being translated is Good to know', async ({
 		page
 	}) => {

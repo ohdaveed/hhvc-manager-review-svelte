@@ -4125,11 +4125,15 @@ _Required, and the Help Center is wrong that it defaults to blank — the form p
 
 **Section title 1:**
 
-Get help with pests, mold, or trash
+Services
 
 ### Subsection — \`services\` [TYPE] — page not approved
 
 _This block publishes the destination page’s title AND its summary. Choose the page and type no description — anything typed here cannot appear._
+
+**Subsection — Title:**
+
+Get help with pests, mold, or trash
 
 **External link 1 — Title:**
 
@@ -4142,10 +4146,6 @@ https://www.sf.gov/topics--311-online-services
 **External link 1 — Description:**
 
 Start a City service request when you are not sure which Healthy Housing and Vector Control report fits.
-
-**Text:**
-
-Report a pest, mold, trash, or housing health issue through 311. If you know the type of condition, choose a focused reporting path below.
 
 1. Choose page: "Report rats, mice, and other four-legged problems" (\`rodentsReport\` → /sf.gov/report-rats-mice-four-legged-problems)
 2. Choose page: "Report cockroaches, mosquitoes, and other insects" (\`insectsReport\` → /sf.gov/report-cockroaches-mosquitoes-insects)
@@ -4161,39 +4161,15 @@ _Required, same as Section title 1. An editor may rename it but not empty it._
 
 **Section title 2:**
 
-If you rent
-
-### Section title 2 — \`resources_title\` [TYPE] — page not approved
-
-_Required, same as Section title 1. An editor may rename it but not empty it._
-
-**Section title 2:**
-
-If you own or manage a building
-
-### Section title 2 — \`resources_title\` [TYPE] — page not approved
-
-_Required, same as Section title 1. An editor may rename it but not empty it._
-
-**Section title 2:**
-
-Look up records and rules
-
-### Section title 2 — \`resources_title\` [TYPE] — page not approved
-
-_Required, same as Section title 1. An editor may rename it but not empty it._
-
-**Section title 2:**
-
-Other City housing services
+Resources
 
 ### Subsection — \`resources\` [CHOOSE] — page not approved
 
 _This block publishes the destination page’s title AND its summary. Choose the page and type no description — anything typed here cannot appear._
 
-**Text:**
+**Subsection — Title:**
 
-You can ask the City for help with housing health problems. Learn how to report, what may happen next, and where to get tenant support.
+If you rent
 
 1. Choose page: "Tenant rights when reporting housing conditions" (\`tenantRights\` → /sf.gov/information/tenant-rights-and-reporting-housing-conditions)
 2. Choose page: "What happens after you report a housing or pest problem" (\`afterReport\` → /sf.gov/information/what-happens-after-you-report-housing-pest-problem)
@@ -4203,9 +4179,9 @@ You can ask the City for help with housing health problems. Learn how to report,
 
 _This block publishes the destination page’s title AND its summary. Choose the page and type no description — anything typed here cannot appear._
 
-**Text:**
+**Subsection — Title:**
 
-Use these resources to prevent pest problems, meet Article 11 responsibilities, and respond to a notice or fee.
+If you own or manage a building
 
 1. Choose page: "Property owner responsibilities" (\`ownerHub\` → /sf.gov/property-owner-responsibilities-hhvc)
 2. Choose page: "Integrated pest management for property owners and managers" (\`ownerGuidance\` → /sf.gov/information/integrated-pest-management-for-property-owners-and-managers)
@@ -4214,6 +4190,10 @@ Use these resources to prevent pest problems, meet Article 11 responsibilities, 
 ### Subsection — \`resources\` [CHOOSE] — page not approved
 
 _This block publishes the destination page’s title AND its summary. Choose the page and type no description — anything typed here cannot appear._
+
+**Subsection — Title:**
+
+Look up records and rules
 
 **External link 3 — Title:**
 
@@ -4246,6 +4226,10 @@ Read the City rules on communicable-disease prevention and rodent control.
 ### Subsection — \`resources\` [TYPE] — page not approved
 
 _This block publishes the destination page’s title AND its summary. Choose the page and type no description — anything typed here cannot appear._
+
+**Subsection — Title:**
+
+Other City housing services
 
 **External link 1 — Title:**
 
@@ -4282,10 +4266,6 @@ https://www.sf.gov/report-residential-building-concern
 **External link 3 — Description:**
 
 Report problems with a building or living conditions in a residential building or single room occupancy (SRO) hotel.
-
-**Text:**
-
-Lead safety, water service, noise, asbestos, and structural construction concerns may be handled by another City program.
 
 ### About — \`about_description\` [TYPE] — page not approved
 
@@ -4336,6 +4316,10 @@ Report pest, vector, and housing health problems, get tenant help, and find owne
 Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
 
 - \`audience\` — The page carries \`audience\`, and the panel SF.gov puts it in is not on this type. Agency has no \`things_to_know\` panel — it is Transaction-only — and no free-text intro either, so the audience has to move into the body copy or be dropped deliberately. Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list.
+- \`sections.0.paragraphs\` — U20 — an Agency Services/Resources Subsection carries a single optional Title and a links list. There is no description field, so this prose has nowhere to go.
+- \`sections.1.paragraphs\` — U20 — an Agency Services/Resources Subsection carries a single optional Title and a links list. There is no description field, so this prose has nowhere to go.
+- \`sections.2.paragraphs\` — U20 — an Agency Services/Resources Subsection carries a single optional Title and a links list. There is no description field, so this prose has nowhere to go.
+- \`sections.4.paragraphs\` — U20 — an Agency Services/Resources Subsection carries a single optional Title and a links list. There is no description field, so this prose has nowhere to go.
 "
 `;
 

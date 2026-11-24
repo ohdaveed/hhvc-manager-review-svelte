@@ -125,7 +125,8 @@ export const SCHEMA_TYPES = [
 	'Step by step',
 	'Topic',
 	'Campaign',
-	'Report'
+	'Report',
+	'Agency'
 ] as const;
 
 /** A panel's label as Karl's form shows it: the inventory's label without its trailing note. */
@@ -359,6 +360,40 @@ const RULES: Record<SchemaType, TypeRules> = {
 						helpTitle: 'How a Step by step page works; Topic; Topics',
 						url: `${TYPES}/step-by-step/how-a-step-by-step-page-works`,
 						says: 'Step by step page: "You can add a topic, but the step by step will not automatically show on the topic page." Topic page: "Transaction and step by step pages tagged to the topic will automatically appear under the heading More services."'
+					}
+				}
+			]
+		}
+	},
+	Agency: {
+		// The URLs page gives `sf.gov/department-[slug]`; the Agency page gives
+		// `sf.gov/departments/title-of-department`.
+		url: {
+			pattern: 'sf.gov/department-[slug] or sf.gov/departments/[slug]',
+			status: 'unconfirmed',
+			cite: {
+				helpTitle: 'URLs; Agency',
+				url: `${HC}/components/urls`,
+				says: 'URLs page: "Agency - sf.gov/department-[slug]". Agency page: "URL structure sf.gov/departments/title-of-department".'
+			}
+		},
+		// No Related panel in the live form's inventory.
+		relatedTargets: null,
+		rules: {
+			title: [TITLE],
+			description: [DESCRIPTION],
+			spotlight_1: [SPOTLIGHT_BUTTON],
+			spotlight_2: [SPOTLIGHT_BUTTON],
+			resources: [
+				{
+					kind: 'caveat',
+					plain:
+						'Karl’s own pages disagree on whether an Agency page can show resource tiles; its editing form offers a list of links here.',
+					status: 'unconfirmed',
+					cite: {
+						helpTitle: 'Resources; Resources on an Agency page',
+						url: COMPONENT_SUPPORT.resources.url,
+						says: 'Resources page: "5 content types support resource tiles" — then lists About, Campaign, Resource collection, Topic. Resources on an Agency page: "Add a subsection Title … Add an SF.gov page or External link".'
 					}
 				}
 			]

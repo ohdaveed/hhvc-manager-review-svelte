@@ -70,6 +70,13 @@ const PILOTS = [
 		summary:
 			'6 sections: 5 go into Karl, 1 needs a fix. 18 details need a fix. 2 things won’t carry over to Karl.',
 		sections: { placed: 5, 'needs-fix': 1 }
+	},
+	{
+		// Rollout step 5: Agency. Four Subsection intro paragraphs have no field
+		// (U20); the sections themselves place.
+		slug: 'departments--healthy-housing-and-vector-control',
+		summary: '6 sections: 6 go into Karl. 5 things won’t carry over to Karl.',
+		sections: { placed: 6 }
 	}
 ] as const;
 
