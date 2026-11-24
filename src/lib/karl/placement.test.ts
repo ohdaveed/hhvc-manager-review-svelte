@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { pagesByKey } from '$lib/data/index';
-import { placementsFor, worstOf } from './placement';
+import { outlineSummary, placementsFor, plainReason, worstOf } from './placement';
 import type { ReviewRecord } from './reviewRecord';
 import { toStorePage } from '$lib/stores/pageData.svelte';
 
@@ -98,7 +98,7 @@ describe('what happens after you report (Information pilot)', () => {
 	it('reports the steps section as unplaced (U3), heading included', () => {
 		const s = p.sections.get('how-a-report-moves-through-the-city');
 		expect(s?.status).toBe('unplaced');
-		expect(s?.reasons[0]).toMatch(/^U3/);
+		expect(s?.reasons[0]).toBe('Steps on an Information page.');
 		expect(statusOf(p, 'sections.how-a-report-moves-through-the-city.heading')).toBe('unplaced');
 		const tray = p.unplaced.find((u) => u.subject.includes('How a report moves'));
 		expect(tray?.fieldIds[0]).toBe('sections.how-a-report-moves-through-the-city.heading');
@@ -206,4 +206,47 @@ describe('the page object the app renders', () => {
 			expect([...fromStore.sections.keys()]).toEqual([...fromCorpus.sections.keys()]);
 		}
 	);
+});
+
+describe('outline summary', () => {
+	it('counts sections and things that will not carry over, not strings', () => {
+		expect(outlineSummary(of('rodentsReport'))).toBe(
+			'5 sections: 3 go into Karl, 2 unconfirmed. 2 things won’t carry over to Karl.'
+		);
+		expect(outlineSummary(of('afterReport'))).toBe(
+			'5 sections: 5 go into Karl. 2 things won’t carry over to Karl.'
+		);
+		expect(outlineSummary(of('recordsHub'))).toBe(
+			'4 sections: 3 go into Karl, 1 needs a fix. 1 thing won’t carry over to Karl.'
+		);
+	});
+});
+
+describe('what a chip shows', () => {
+	it('turns an editor-facing reason into one plain sentence', () => {
+		expect(plainReason('U1 — a section-level button outside any step. Transaction’s only…')).toBe(
+			'A section-level button outside any step.'
+		);
+		expect(plainReason('The page carries `audience`, and **Karl** has a home. More.')).toBe(
+			'The page carries audience, and Karl has a home.'
+		);
+	});
+
+	it('chips page-level blocks and own reasons, not every string', () => {
+		const p = of('rodentsReport');
+		expect(p.fields.get('title')).toMatchObject({ chip: true, label: 'Page title' });
+		expect(p.fields.get('summary')).toMatchObject({ chip: true, label: 'Description' });
+		expect(p.fields.get('primaryAgency')).toMatchObject({ chip: true, label: 'Primary agency' });
+		expect(p.fields.get('audience.0')?.chip).toBe(true);
+		expect(p.fields.get('audience.1')?.chip).toBe(false);
+		expect(p.fields.get('sections.what-to-do.steps.0.title')?.chip).toBe(false);
+	});
+
+	it('chips the What to know box once, as its two panels', () => {
+		expect(of('rodentsReport').whatToKnow).toMatchObject({
+			label: 'Cost · Things to Know',
+			status: 'placed'
+		});
+		expect(of('recordsHub').whatToKnow).toBeNull();
+	});
 });

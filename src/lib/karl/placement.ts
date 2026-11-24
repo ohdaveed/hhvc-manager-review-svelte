@@ -50,8 +50,14 @@ export type Placement = {
 	label: string;
 	/** This field's status, including what it inherits from its section. */
 	status: PlacementStatus;
-	/** Reasons that are this field's own, not its section's. A chip is drawn only when there are some. */
+	/** Reasons that are this field's own, not its section's, as one plain sentence each. */
 	reasons: string[];
+	/**
+	 * Whether this field gets its own chip: when it has reasons of its own, or
+	 * when it is a page-level block (title, description, agency) that no section
+	 * chip speaks for.
+	 */
+	chip: boolean;
 };
 
 export type SectionPlacement = {
@@ -91,6 +97,8 @@ export type PagePlacements = {
 	type: string;
 	fields: Map<string, Placement>;
 	sections: Map<string, SectionPlacement>;
+	/** The What to know box, which holds two panels and is chipped as one block. */
+	whatToKnow: SectionPlacement | null;
 	unplaced: UnplacedItem[];
 	panels: PanelFill[];
 	url: { pattern: string; status: PlacementStatus; says: string } | null;
@@ -153,6 +161,24 @@ function subLabel(rest: string): string {
 const HAS_PLACEHOLDER = /PLACEHOLDER/;
 const RELATED_HEADING = /^\s*related\b/i;
 const RELATED_PANELS = new Set(['related', 'related_links']);
+
+/** Page-level fields that are a block of their own on the rendered page. */
+const PAGE_BLOCKS = new Set(['title', 'summary', 'primaryAgency']);
+
+/**
+ * A transcript reason as a chip can show it: the first sentence, with the
+ * register id and the markdown stripped. The transcript writes for a Karl
+ * editor; a chip is read by a manager who is not one. The whole reason stays
+ * available in the Blueprint's tray.
+ */
+export function plainReason(reason: string): string {
+	const text = reason
+		.replace(/^U\d+\s*[—-]\s*/, '')
+		.replace(/\*\*|`|__/g, '')
+		.trim();
+	const first = text.match(/^.*?[.!?](?=\s|$)/)?.[0] ?? text;
+	return first.charAt(0).toUpperCase() + first.slice(1);
+}
 
 /**
  * The placements for one page.
@@ -249,7 +275,9 @@ export function placementsFor(
 		if (!claimant || (ids.length > 0 && unplacedIds.length === ids.length)) {
 			status = 'unplaced';
 			reasons.push(
-				sectionUnmapped[0]?.reason ?? 'No Karl panel on this page type takes this section.'
+				sectionUnmapped[0]
+					? plainReason(sectionUnmapped[0].reason)
+					: 'No Karl panel on this page type takes this section.'
 			);
 		} else {
 			if (inferredSections.has(key)) {
@@ -310,9 +338,16 @@ export function placementsFor(
 		if (unplaced) {
 			if (gap && section?.status !== 'unplaced' && !reportedGaps.has(gap.id)) {
 				reportedGaps.add(gap.id);
-				reasons.push(gap.reason);
+				reasons.push(plainReason(gap.reason));
 			}
-			fields.set(id, { fieldId: id, rawName: null, label: '', status: 'unplaced', reasons });
+			fields.set(id, {
+				fieldId: id,
+				rawName: null,
+				label: '',
+				status: 'unplaced',
+				reasons,
+				chip: reasons.length > 0
+			});
 			continue;
 		}
 		if (!claim) continue; // not migrated by design: nothing to say
@@ -369,7 +404,8 @@ export function placementsFor(
 			rawName: raw,
 			label,
 			status: worstOf([own, section?.status ?? 'placed']),
-			reasons
+			reasons,
+			chip: reasons.length > 0 || PAGE_BLOCKS.has(id)
 		});
 	}
 
@@ -389,7 +425,7 @@ export function placementsFor(
 					: heading
 						? `“${heading}”${/\.button(Url)?$/.test(u.id) ? ' — its button' : ''}`
 						: u.id;
-		return { subject, reason: u.reason, fieldIds };
+		return { subject, reason: u.reason.replace(/\*\*|`|__/g, ''), fieldIds };
 	});
 	// A button and its URL are two transcript findings about one thing a reader
 	// sees; merge items naming the same subject.
@@ -452,10 +488,24 @@ export function placementsFor(
 		});
 	}
 
+	const wtkFields = [...fields.values()].filter((f) => f.fieldId.startsWith('whatToKnow.'));
+	const wtkPanels = [...new Set(wtkFields.map((f) => f.rawName).filter(Boolean))] as string[];
+	const whatToKnow: SectionPlacement | null = wtkFields.length
+		? {
+				sectionKey: 'whatToKnow',
+				heading: 'What to know',
+				rawName: wtkPanels[0] ?? null,
+				label: wtkPanels.map((raw) => panelLabel(type, raw)).join(' · '),
+				status: worstOf(wtkFields.map((f) => f.status)),
+				reasons: []
+			}
+		: null;
+
 	return {
 		type,
 		fields,
 		sections: sectionPlacements,
+		whatToKnow,
 		unplaced: unplacedItems,
 		panels,
 		url: schema
@@ -466,4 +516,29 @@ export function placementsFor(
 				}
 			: null
 	};
+}
+
+/**
+ * The outline's one-line summary, in findings a manager can count: sections,
+ * plus the things that won't carry over -- never leaf strings, which would
+ * report "61 placed" for a page of five sections.
+ */
+export function outlineSummary(placements: PagePlacements): string {
+	const sections = [...placements.sections.values()].filter((s) => s.status !== 'unplaced');
+	const count = (status: PlacementStatus) => sections.filter((s) => s.status === status).length;
+	const parts = (
+		[
+			['placed', 'goes into Karl', 'go into Karl'],
+			['needs-fix', 'needs a fix', 'need a fix'],
+			['unconfirmed', 'unconfirmed', 'unconfirmed']
+		] as const
+	)
+		.map(([status, one, many]) => [count(status), one, many] as const)
+		.filter(([n]) => n > 0)
+		.map(([n, one, many]) => `${n} ${n === 1 ? one : many}`);
+	const lead = `${sections.length} ${sections.length === 1 ? 'section' : 'sections'}${parts.length ? `: ${parts.join(', ')}` : ''}.`;
+	const gaps = placements.unplaced.length;
+	return gaps
+		? `${lead} ${gaps} ${gaps === 1 ? 'thing won’t' : 'things won’t'} carry over to Karl.`
+		: lead;
 }

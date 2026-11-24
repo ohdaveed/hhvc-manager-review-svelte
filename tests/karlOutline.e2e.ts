@@ -1,0 +1,127 @@
+/**
+ * The Karl outline, in the real renderer.
+ *
+ * Unit tests pin what `placementsFor` decides; these check what a reviewer
+ * actually gets: the switch reachable by keyboard, chips and outlines on the
+ * three pilot pages, no WCAG 2.1 AA violation with the outline ON (its tints
+ * and outlines are new colour on the page), the switch surviving a reload,
+ * a signed-out reader still able to use it, and no outline on a draft.
+ *
+ * Screenshots go to `KARL_SHOTS` when it is set, so a person can look at them;
+ * they assert nothing.
+ */
+import AxeBuilder from '@axe-core/playwright';
+import type { Page } from '@playwright/test';
+import { expect, test } from './fixtures';
+import { DRAFT_IDS, gotoSignedIn } from './signedIn';
+
+const RULES = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];
+
+const PILOTS = [
+	{
+		slug: 'report-rats-mice-four-legged-problems',
+		summary: '5 sections: 3 go into Karl, 2 unconfirmed. 2 things won’t carry over to Karl.',
+		sections: { placed: 4, unconfirmed: 2 }
+	},
+	{
+		slug: 'information-what-happens-after-you-report-housing-pest-problem',
+		summary: '5 sections: 5 go into Karl. 2 things won’t carry over to Karl.',
+		sections: { placed: 5, unplaced: 1 }
+	},
+	{
+		slug: 'look-up-building-records',
+		summary: '4 sections: 3 go into Karl, 1 needs a fix. 1 thing won’t carry over to Karl.',
+		sections: { placed: 3, 'needs-fix': 1 }
+	}
+] as const;
+
+const noViolations = async (page: Page) => {
+	const { violations } = await new AxeBuilder({ page }).withTags(RULES).analyze();
+	expect(
+		violations,
+		violations.map((v) => `${v.id} (${v.impact}) x${v.nodes.length}: ${v.help}`).join('\n')
+	).toEqual([]);
+};
+
+/** Turn the outline on the way a keyboard user would. */
+async function switchOnByKeyboard(page: Page) {
+	const trigger = page.getByRole('button', { name: 'Karl views' });
+	await trigger.focus();
+	await page.keyboard.press('Enter');
+	const toggle = page.getByRole('switch', { name: 'Show Karl fields' });
+	await expect(toggle).toBeVisible();
+	await toggle.focus();
+	await page.keyboard.press('Space');
+	await expect(toggle).toBeChecked();
+	await page.keyboard.press('Escape');
+	await expect(toggle).toBeHidden();
+	await expect(trigger).toBeFocused();
+}
+
+const shoot = async (page: Page, name: string) => {
+	const dir = process.env.KARL_SHOTS;
+	if (dir) await page.screenshot({ path: `${dir}/${name}.png`, fullPage: true });
+};
+
+test.describe('Karl outline', () => {
+	for (const pilot of PILOTS) {
+		test(`${pilot.slug}: chips, outlines and summary, AA at 1280 and 375`, async ({ page }) => {
+			await page.setViewportSize({ width: 1280, height: 900 });
+			await gotoSignedIn(page, `/review/${pilot.slug}`);
+			await expect(page.locator('.karl-outline-summary')).toHaveCount(0);
+
+			await switchOnByKeyboard(page);
+
+			await expect(page.locator('.karl-outline-summary')).toHaveText(
+				`Karl outline: ${pilot.summary}`
+			);
+			for (const [status, n] of Object.entries(pilot.sections)) {
+				await expect(
+					page.locator(`#mockPage [data-karl-section][data-karl-status="${status}"]`)
+				).toHaveCount(n);
+			}
+			await noViolations(page);
+			await shoot(page, `karl-outline-${pilot.slug}-1280`);
+
+			await page.setViewportSize({ width: 375, height: 812 });
+			await expect(page.locator('.karl-outline-summary')).toBeVisible();
+			await noViolations(page);
+			await shoot(page, `karl-outline-${pilot.slug}-375`);
+		});
+	}
+
+	test('a field with a reason of its own describes it to a screen reader', async ({ page }) => {
+		await gotoSignedIn(page, '/review/report-rats-mice-four-legged-problems');
+		await switchOnByKeyboard(page);
+		// The "View Article 11" button has no Karl home (U1).
+		const target = page.locator(
+			'button[data-rewrite-field="sections.how-your-report-is-processed.button"]'
+		);
+		await expect(target).toHaveAccessibleDescription(/Won’t carry over to Karl/);
+		// The audience list is one finding, so one chip, not four.
+		await expect(page.locator('.page-audience [data-karl-chip="unplaced"]')).toHaveCount(1);
+	});
+
+	test('stays on across pages and a reload', async ({ page }) => {
+		await gotoSignedIn(page, '/review/report-rats-mice-four-legged-problems');
+		await switchOnByKeyboard(page);
+		await page.reload();
+		await page.waitForLoadState('networkidle');
+		await expect(page.locator('.karl-outline-summary')).toBeVisible();
+	});
+
+	test('works signed out, from the base copy', async ({ page }) => {
+		await page.goto('/review/look-up-building-records');
+		await page.waitForLoadState('networkidle');
+		await switchOnByKeyboard(page);
+		await expect(page.locator('.karl-outline-summary')).toContainText('1 needs a fix');
+		await noViolations(page);
+	});
+
+	test('is not offered on an AI-drafted page', async ({ page }) => {
+		await gotoSignedIn(page, `/review/draft/${DRAFT_IDS.ready}`, { drafts: true });
+		await expect(page.getByRole('button', { name: 'Karl views' })).toHaveCount(0);
+		await expect(page.getByRole('button', { name: 'Open Karl walkthrough' })).toBeVisible();
+		await expect(page.locator('[data-karl-status]')).toHaveCount(0);
+	});
+});

@@ -36,7 +36,7 @@ test('fits a 375px phone window: no overflow, every control on screen', async ({
 	await page.goto(PAGE);
 
 	const nav = page.locator('nav.review-toolbar');
-	await expect(nav.getByRole('button', { name: 'Open Karl walkthrough' })).toBeVisible();
+	await expect(nav.getByRole('button', { name: 'Karl views' })).toBeVisible();
 
 	expect(
 		await page.evaluate(
@@ -62,7 +62,7 @@ test('keeps every toolbar control on one row at 1440x900 with both rails open', 
 	await expect(page.locator('.queue-rail')).toBeVisible();
 	await expect(page.locator('.panel-rail')).toBeVisible();
 	await expect(
-		page.locator('nav.review-toolbar').getByRole('button', { name: 'Open Karl walkthrough' })
+		page.locator('nav.review-toolbar').getByRole('button', { name: 'Karl views' })
 	).toBeVisible();
 
 	const controls = await toolbarControls(page);

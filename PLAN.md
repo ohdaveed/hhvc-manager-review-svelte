@@ -18,7 +18,7 @@ Pilot pages: `report-rats-mice-four-legged-problems` (Transaction),
       that every rule has a citation.
 - [x] **4. `src/lib/karl/placement.ts`** `placementsFor(page, record)` returns a status and label per
       field id. Unit tests pin the pilot statuses, including a pinned `fieldKey` section.
-- [ ] **5. Karl outline UI.** Karl menu replacing the walkthrough button, `EditTarget` and `Section`
+- [x] **5. Karl outline UI.** Karl menu replacing the walkthrough button, `EditTarget` and `Section`
       chips, the persisted switch, and `aria-describedby`. Off on draft routes.
 - [ ] **6. Blueprint mode.** Slots in Karl order, dashed empty slots, the "Won't carry over" tray,
       and jump-to-element.

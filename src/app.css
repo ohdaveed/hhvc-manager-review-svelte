@@ -933,3 +933,88 @@ body {
 	--site-text-lede-lh: 30px;
 	--site-eyebrow-ls: 0.5px;
 }
+
+/* ---------------------------------------------------------------------------
+   Karl outline: where each part of the mockup lands in Karl.
+
+   Review-tool chrome, drawn only while `.karl-outline-on` is set on #mockPage.
+   Never colour alone: each status has its own outline STYLE (solid, dashed,
+   dotted, double) as well as its own icon and word in the chip. Text pairs are
+   chosen for AA at 12px; the needs-fix pair is KarlOrphanNotice's, already
+   passing axe. Outlines sit outside the box (`outline-offset`) so they never
+   shift layout, and survive `overflow: hidden` on the section bodies.
+   --------------------------------------------------------------------------- */
+.karl-outline-on [data-karl-section],
+.karl-outline-on [data-karl-flag] {
+	outline-offset: 3px;
+	border-radius: 2px;
+}
+.karl-outline-on [data-karl-section][data-karl-status='placed'] {
+	outline: 2px solid #2e7d32;
+}
+.karl-outline-on [data-karl-status='needs-fix']:is([data-karl-section], [data-karl-flag]) {
+	outline: 2px dashed #8a5a00;
+}
+.karl-outline-on [data-karl-status='unconfirmed']:is([data-karl-section], [data-karl-flag]) {
+	outline: 2px dotted #545b64;
+}
+.karl-outline-on [data-karl-status='unplaced']:is([data-karl-section], [data-karl-flag]) {
+	outline: 4px double #b3261e;
+}
+
+.karl-chip {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	width: fit-content;
+	max-width: 100%;
+	margin: 4px 0 8px;
+	padding: 4px 8px;
+	border-radius: 4px;
+	font-family: 'Roboto Flex Variable', system-ui, sans-serif;
+	font-size: 12px;
+	font-weight: 400;
+	line-height: 16px;
+	letter-spacing: 0;
+	text-transform: none;
+}
+.karl-chip-head {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+}
+.karl-chip-icon {
+	flex: none;
+	width: 14px;
+	height: 14px;
+}
+.karl-chip-reason {
+	display: block;
+}
+.karl-chip[data-karl-chip='placed'] {
+	color: #1b5e20;
+	background: #e8f5e9;
+}
+.karl-chip[data-karl-chip='needs-fix'] {
+	color: #6f4a00;
+	background: #fff7e6;
+}
+.karl-chip[data-karl-chip='unconfirmed'] {
+	color: #3d4551;
+	background: #eef0f3;
+}
+.karl-chip[data-karl-chip='unplaced'] {
+	color: #8c1d18;
+	background: #fdecea;
+}
+
+.karl-outline-summary {
+	max-width: 1076px;
+	margin: 0 auto;
+	padding: 8px 16px;
+	border-bottom: 1px solid #d0d7de;
+	background: #f5f7fa;
+	color: #1c2b39;
+	font-size: 13px;
+	line-height: 18px;
+}

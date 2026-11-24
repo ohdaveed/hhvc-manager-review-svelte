@@ -2,12 +2,14 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import { resolve } from '$app/paths';
-	import { Button } from '$lib/components/ui/button/index.js';
+	import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
+	import { Switch } from '$lib/components/ui/switch/index.js';
+	import { Popover } from 'bits-ui';
 	import { ScrollArea } from '$lib/components/ui/scroll-area/index.js';
 	import { Separator } from '$lib/components/ui/separator/index.js';
 	import { draftsStore } from '$lib/stores/draftPages';
 	import { pageTitleFor } from '$lib/corpus/pageTitle';
-	import { reviewHrefFor, routePathFor } from '$lib/corpus/draftPath';
+	import { isDraftPath, reviewHrefFor, routePathFor } from '$lib/corpus/draftPath';
 	import { pageStore } from '$lib/stores/pageData.svelte';
 	import { editsStore, firstQueuePath, loadReview, pagesStore } from '$lib/stores/reviewState';
 	import { sessionStore } from '$lib/stores/session.svelte';
@@ -38,6 +40,8 @@
 	import SiteMapView from '$lib/components/workspace/SiteMapView.svelte';
 	import { buildWalkthrough } from '$lib/karl/walkthrough';
 	import { reviewRecordFor } from '$lib/karl/reviewRecord';
+	import { outlineSummary, placementsFor } from '$lib/karl/placement';
+	import { setOutlineContext } from '$lib/karl/outlineContext';
 	import { pagesByKey } from '$lib/data';
 	import { triggerReviewExportDownload } from '$lib/data/exportReview';
 
@@ -76,6 +80,27 @@
 				)
 			: null
 	);
+	// The Karl outline (decisions in docs/plans/2026-11-23-karl-field-mapping-layer.md).
+	// Off on draft routes by an explicit check, not by `pageData` being absent:
+	// a draft IS in `pageStore.pages`, and its content type is the model's guess,
+	// so a placement there would read as more settled than it is (decision 12).
+	const onDraft = $derived(Boolean(currentPath && isDraftPath(currentPath)));
+	const outlinePlacements = $derived(
+		pageStore.karlOutline && pageData && !onDraft
+			? placementsFor(
+					pageData as unknown as Parameters<typeof placementsFor>[0],
+					reviewRecordFor(pageData.id, $pagesStore, $editsStore),
+					pagesByKey
+				)
+			: null
+	);
+	setOutlineContext({
+		get placements() {
+			return outlinePlacements;
+		}
+	});
+	let karlMenuOpen = $state(false);
+
 	const copiedHere = $derived(
 		walkthrough && pageData
 			? walkthrough.steps.filter((s) => pageStore.isCopied(pageData.id, s.id)).length
@@ -207,6 +232,7 @@
 		// `localStorage` does not exist.
 		pageStore.loadRailState();
 		pageStore.loadPreviewWidth();
+		pageStore.loadKarlOutline();
 		pageStore.loadCopiedSteps();
 
 		// If the layout is torn down before loadReview resolves -- a slow Supabase
@@ -539,18 +565,65 @@
 						</div>
 						<!-- The tool's second job, and the only way into it. Entering
 					     collapses both rails; exiting puts them back as they were. -->
-						<Button
-							variant="outline"
-							size="sm"
-							class="h-7 flex-none text-xs"
-							onclick={() => pageStore.enterWalkthrough()}
-						>
-							<!-- "Karl" alone on a phone keeps the bar to two rows; the
-							     hidden words keep the accessible name, which tests and
-							     screen readers both use, unchanged. -->
-							<span class="max-sm:sr-only">Open</span> Karl
-							<span class="max-sm:sr-only">walkthrough</span>
-						</Button>
+						{#if onDraft}
+							<Button
+								variant="outline"
+								size="sm"
+								class="h-7 flex-none text-xs"
+								onclick={() => pageStore.enterWalkthrough()}
+							>
+								<!-- "Karl" alone on a phone keeps the bar to two rows; the
+								     hidden words keep the accessible name, which tests and
+								     screen readers both use, unchanged. -->
+								<span class="max-sm:sr-only">Open</span> Karl
+								<span class="max-sm:sr-only">walkthrough</span>
+							</Button>
+						{:else}
+							<!-- The Karl views, in the walkthrough button's old slot so the
+							     toolbar -- measured at zero slack between 1080px and 1400px --
+							     gains no width. A disclosure of plain buttons and a switch,
+							     NOT `role="menu"`: the walkthrough keeps its exact name and
+							     role, and Popover handles Escape, outside clicks and focus
+							     return. -->
+							<Popover.Root bind:open={karlMenuOpen}>
+								<Popover.Trigger
+									class="{buttonVariants({ variant: 'outline', size: 'sm' })} h-7 flex-none text-xs"
+									aria-label="Karl views"
+								>
+									Karl
+								</Popover.Trigger>
+								<Popover.Portal>
+									<Popover.Content
+										align="end"
+										sideOffset={6}
+										class="karl-menu z-50 flex w-64 flex-col gap-2 rounded-md border border-sfds-grey-l2 bg-background p-3 shadow-md"
+									>
+										<label class="flex items-center justify-between gap-3 text-sm font-medium">
+											Show Karl fields
+											<Switch
+												checked={pageStore.karlOutline}
+												onCheckedChange={(on: boolean) => pageStore.setKarlOutline(on)}
+											/>
+										</label>
+										<p class="text-sfds-slate text-xs">
+											Marks where each part of the page goes in Karl, and what won’t carry over.
+										</p>
+										<Separator />
+										<Button
+											variant="outline"
+											size="sm"
+											class="h-8 justify-start text-xs"
+											onclick={() => {
+												karlMenuOpen = false;
+												pageStore.enterWalkthrough();
+											}}
+										>
+											Open Karl walkthrough
+										</Button>
+									</Popover.Content>
+								</Popover.Portal>
+							</Popover.Root>
+						{/if}
 					</div>
 				</nav>
 			{/if}
@@ -626,7 +699,15 @@
 					     (`max-w-xl`, measured 2026-11-22). Title and summary span it;
 					     body copy sits in 7 of its 12 columns (app.css). The chrome
 					     above and below is full-bleed, which is why it sits outside. -->
-						<div id="mockPage" class="mock-page">
+						<div id="mockPage" class="mock-page" class:karl-outline-on={outlinePlacements}>
+							{#if outlinePlacements}
+								<!-- Review-tool chrome, like the Karl notices inside sections: the
+								     one-line count a reviewer reads before the chips. -->
+								<p class="karl-outline-summary" role="status">
+									<strong>Karl outline:</strong>
+									{outlineSummary(outlinePlacements)}
+								</p>
+							{/if}
 							<div class="mx-auto max-w-[1076px]">
 								{@render children()}
 							</div>

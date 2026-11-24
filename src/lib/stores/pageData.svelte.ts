@@ -60,6 +60,7 @@ export type RethinkState =
 
 const RAIL_KEY = 'hhvc:railCollapsed';
 const PREVIEW_WIDTH_KEY = 'hhvc:previewWidth';
+const KARL_OUTLINE_KEY = 'hhvc:karlOutline';
 
 /**
  * The widths the mockup can be previewed at, in CSS pixels.
@@ -516,6 +517,34 @@ class PageStore {
 		try {
 			const raw = localStorage.getItem(PREVIEW_WIDTH_KEY);
 			if (raw && raw in PREVIEW_WIDTHS) this.previewWidth = raw as PreviewWidth;
+		} catch {
+			// As above.
+		}
+	}
+
+	/**
+	 * Whether the Karl outline is drawn over the mockup.
+	 *
+	 * Off on a first visit, so the default view needs no Karl knowledge. Once a
+	 * reviewer turns it on it stays on across pages and visits (decision 17):
+	 * someone checking Karl fit works down the queue, and re-enabling it on
+	 * every page is friction. Persisted like `previewWidth`, for the same reason.
+	 */
+	karlOutline = $state(false);
+
+	setKarlOutline(on: boolean) {
+		this.karlOutline = on;
+		try {
+			localStorage.setItem(KARL_OUTLINE_KEY, on ? '1' : '0');
+		} catch {
+			// As with the rails: a chrome preference, not worth failing over.
+		}
+	}
+
+	/** Same reason as `loadRailState`: called from the layout, never on import. */
+	loadKarlOutline() {
+		try {
+			this.karlOutline = localStorage.getItem(KARL_OUTLINE_KEY) === '1';
 		} catch {
 			// As above.
 		}

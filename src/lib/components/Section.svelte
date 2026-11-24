@@ -7,6 +7,8 @@
 	import LinkGrid from './blocks/LinkGrid.svelte';
 	import StepsBlock from './blocks/StepsBlock.svelte';
 	import TableBlock from './blocks/TableBlock.svelte';
+	import KarlChip from './KarlChip.svelte';
+	import { outlineContext } from '$lib/karl/outlineContext';
 	import { entryText, entryUnverified } from '$lib/corpus/fieldResolver';
 	import { pageStore } from '$lib/stores/pageData.svelte';
 	import { sessionStore } from '$lib/stores/session.svelte';
@@ -43,9 +45,22 @@
 	// `EditTarget` follows.
 	const editable = $derived(!sessionStore.knownSignedOut);
 	const sectionSelected = $derived(pageStore.selectedSectionKey === key);
+
+	// The Karl outline: where this section lands, read out before its heading so
+	// it is part of the reading order without renaming the heading.
+	const outline = outlineContext();
+	const karl = $derived(outline?.placements?.sections.get(key));
 </script>
 
-<div class="page-section {section.kind || 'body'}" data-component={section.component}>
+<div
+	class="page-section {section.kind || 'body'}"
+	data-component={section.component}
+	data-karl-section={karl ? (karl.rawName ?? 'unplaced') : undefined}
+	data-karl-status={karl?.status}
+>
+	{#if karl}
+		<KarlChip as="p" status={karl.status} label={karl.label} reasons={karl.reasons} />
+	{/if}
 	{#if editable}
 		<div class="page-section-chrome">
 			<button
