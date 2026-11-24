@@ -588,6 +588,7 @@ export function placementsFor(
 		}
 
 		if (HAS_PLACEHOLDER.test(text)) fail('Still holds PLACEHOLDER text.');
+		if (/\.buttonUrl$/.test(id) && text.trim() === '#') fail("Button link goes nowhere ('#').");
 		// A callout on a type Karl offers none on: the transcript folds its text
 		// into the block, so the words survive but not as a callout -- the same
 		// shape as a Related list landing as Resource tiles. The in-mockup

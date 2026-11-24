@@ -98,3 +98,32 @@ describe('the Analysis panel reads the same placements as the Karl outline', () 
 		expect(analysis.placementFindings.map((f) => f.id)).toContain('karl-unplaced');
 	});
 });
+
+describe('dead button links', () => {
+	const edit = (field_id: string, value: string) =>
+		[{ field_id, new_content: value, created_at: '2026-11-24T00:00:00Z' }] as never;
+
+	it('flags a placed button whose URL is "#"', () => {
+		const finding = byId('article11Guide', 'karl-needs-fix', edit('spotlight.buttonUrl', '#'));
+		expect(finding.status).toBe('issue');
+		expect(finding.items.map((i) => i.detail).join('\n')).toMatch(
+			/Button link goes nowhere \('#'\)\./
+		);
+	});
+
+	it('says nothing about the same button with a real URL', () => {
+		const details = byId('article11Guide', 'karl-needs-fix')
+			.items.map((i) => i.detail)
+			.join('\n');
+		expect(details).not.toMatch(/goes nowhere/);
+	});
+
+	// Decision 14 (docs/plans/2026-11-23-karl-field-mapping-layer.md): PLACEHOLDER
+	// is the literal uppercase string only. The inspector lookup's "#" button sits
+	// outside any step, so it is reported under copy that won't carry over.
+	it('reports the inspector lookup’s unplaced "#" button as copy that won’t carry over', () => {
+		const unplaced = byId('inspectorLookup', 'karl-unplaced');
+		expect(unplaced.status).toBe('issue');
+		expect(unplaced.items.map((i) => i.text)).toContain('“Open the lookup tool” — its button');
+	});
+});

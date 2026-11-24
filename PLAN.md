@@ -9,8 +9,8 @@ Production has 0 edits and 0 comments on any page (measured 2026-11-24). Re-coun
 
 ## Track A — Analysis panel (one PR)
 
-- [ ] **A1.** The Related target check runs on sections placed in Related, so the annual fee page's Resource Collection card reports an issue.
-- [ ] **A2.** `karl-needs-fix` catches "placeholder" in any case in page copy, but not in `karl` notes, and catches `#` button links.
+- [x] **A1.** The Related target check runs on sections placed in Related, so the annual fee page's Resource Collection card reports an issue.
+- [x] **A2.** A placed button whose URL is `#` needs a fix. PLACEHOLDER stays uppercase-only (decision 14 of the field-mapping plan); the inspector lookup's unplaced `#` button was already reported under `karl-unplaced`.
 - [ ] **A3.** A `description-title-reuse` finding lists the title words repeated in the description.
 - [ ] **A4.** `karl-url-pattern` flags `a`/`an`/`the` in a slug.
 - [ ] **A5.** A `karl-transaction-action` finding flags a Transaction with no button and no Contact us.
