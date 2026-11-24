@@ -11,8 +11,8 @@ Pilot pages: `report-rats-mice-four-legged-problems` (Transaction),
 - [x] **1. Claims in the transcript.** `buildTranscript` records which panel claimed each path
       (`transcript.claims`). `renderTranscriptMarkdown` output must be byte-identical for all 39
       pages, checked against a snapshot taken before the change.
-- [ ] **2. Primary agency source.** `primary_agency` reads `primaryAgency` as a CHOOSE on every type
-      that has the panel. The snapshot diff shows only those steps changing.
+- [x] **2. Primary agency source.** `primary_agency` reads `primaryAgency` as a CHOOSE on Transaction,
+      the only type that carries it (U6, narrowed). The snapshot diff shows only those 16 steps changing.
 - [ ] **3. `src/lib/karl/schema.ts`** for Transaction, Information and Resource Collection, with
       cited rules. A test checks that every key exists in `KARL_PANELS`, that the order matches, and
       that every rule has a citation.

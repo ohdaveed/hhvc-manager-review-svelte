@@ -247,9 +247,11 @@ Question a Notice of Violation
 
 Talk to the investigator named on your notice if you disagree with what it says.
 
-### Primary agency — \`primary_agency\` [FLAG] — page not approved
+### Primary agency — \`primary_agency\` [CHOOSE] — page not approved
 
-_U6 — the mockup has no primary_agency field, and Karl requires it. Supply the parent Agency page by hand: HHVC was approved for its own Agency page (sf.gov/departments--healthy-housing-and-vector-control), so that is the value for HHVC pages rather than Environmental Health or DPH. Those two remain Partner agencies._
+_U6, narrowed — the mockup names the agency as text, not as a page reference, and Karl requires a page. Choose the parent Agency page: HHVC was approved for its own Agency page (sf.gov/departments--healthy-housing-and-vector-control), so that is the value for HHVC pages rather than Environmental Health or DPH. Those two remain Partner agencies._
+
+1. Choose page: "Healthy Housing and Vector Control"
 
 ### Cost — \`cost\` [TYPE] — page not approved
 
@@ -357,7 +359,6 @@ Talk to the investigator named on your notice if you disagree with a Healthy Hou
 Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
 
 - \`audience\` — The page carries \`audience\`, and Karl does have a home for it: a **Things to know** entry titled "Who this information is for". Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list. What blocks it is the budget, not the field: the Help Center caps Things to know at 2 entries, and most Transaction pages here already spend both, so placing the audience means deciding which existing entry it replaces. That is a content call, not a missing panel.
-- \`primaryAgency\` — The page carries \`primaryAgency\`, and no Transaction panel documented in the field map accepts it.
 - \`sections.1.cards\` — \`cards\` on this section reached no panel in the Transaction inventory.
 "
 `;
@@ -986,9 +987,11 @@ Report garbage, mold, and overgrown vegetation
 
 Report garbage, clutter, mold, animal waste, or overgrown plants that may attract pests.
 
-### Primary agency — \`primary_agency\` [FLAG] — page not approved
+### Primary agency — \`primary_agency\` [CHOOSE] — page not approved
 
-_U6 — the mockup has no primary_agency field, and Karl requires it. Supply the parent Agency page by hand: HHVC was approved for its own Agency page (sf.gov/departments--healthy-housing-and-vector-control), so that is the value for HHVC pages rather than Environmental Health or DPH. Those two remain Partner agencies._
+_U6, narrowed — the mockup names the agency as text, not as a page reference, and Karl requires a page. Choose the parent Agency page: HHVC was approved for its own Agency page (sf.gov/departments--healthy-housing-and-vector-control), so that is the value for HHVC pages rather than Environmental Health or DPH. Those two remain Partner agencies._
+
+1. Choose page: "Healthy Housing and Vector Control"
 
 ### Cost — \`cost\` [TYPE] — page not approved
 
@@ -1195,7 +1198,6 @@ Report garbage, clutter, mold, animal waste, pigeon problems, or overgrown veget
 
 Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
 
-- \`primaryAgency\` — The page carries \`primaryAgency\`, and no Transaction panel documented in the field map accepts it.
 - \`audience\` — The page carries \`audience\`, and Karl does have a home for it: a **Things to know** entry titled "Who this information is for". Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list. What blocks it is the budget, not the field: the Help Center caps Things to know at 2 entries, and most Transaction pages here already spend both, so placing the audience means deciding which existing entry it replaces. That is a content call, not a missing panel.
 - \`sections.3.button\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
 - \`sections.3.buttonUrl\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
@@ -1225,9 +1227,11 @@ Find residential hotel and shelter records
 
 Look up inspection and program records for SROs, residential hotels, and emergency shelters.
 
-### Primary agency — \`primary_agency\` [FLAG] — page not approved
+### Primary agency — \`primary_agency\` [CHOOSE] — page not approved
 
-_U6 — the mockup has no primary_agency field, and Karl requires it. Supply the parent Agency page by hand: HHVC was approved for its own Agency page (sf.gov/departments--healthy-housing-and-vector-control), so that is the value for HHVC pages rather than Environmental Health or DPH. Those two remain Partner agencies._
+_U6, narrowed — the mockup names the agency as text, not as a page reference, and Karl requires a page. Choose the parent Agency page: HHVC was approved for its own Agency page (sf.gov/departments--healthy-housing-and-vector-control), so that is the value for HHVC pages rather than Environmental Health or DPH. Those two remain Partner agencies._
+
+1. Choose page: "Healthy Housing and Vector Control"
 
 ### Cost — \`cost\` [TYPE] — page not approved
 
@@ -1331,7 +1335,6 @@ Look up Environmental Health records for San Francisco residential hotels, SROs,
 
 Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
 
-- \`primaryAgency\` — The page carries \`primaryAgency\`, and no Transaction panel documented in the field map accepts it.
 - \`audience\` — The page carries \`audience\`, and Karl does have a home for it: a **Things to know** entry titled "Who this information is for". Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list. What blocks it is the budget, not the field: the Help Center caps Things to know at 2 entries, and most Transaction pages here already spend both, so placing the audience means deciding which existing entry it replaces. That is a content call, not a missing panel.
 - \`sections.1.button\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
 - \`sections.1.buttonUrl\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
@@ -1361,9 +1364,11 @@ Find complaints and inspection records
 
 Search Environmental Health complaint and inspection history for a San Francisco address or location.
 
-### Primary agency — \`primary_agency\` [FLAG] — page not approved
+### Primary agency — \`primary_agency\` [CHOOSE] — page not approved
 
-_U6 — the mockup has no primary_agency field, and Karl requires it. Supply the parent Agency page by hand: HHVC was approved for its own Agency page (sf.gov/departments--healthy-housing-and-vector-control), so that is the value for HHVC pages rather than Environmental Health or DPH. Those two remain Partner agencies._
+_U6, narrowed — the mockup names the agency as text, not as a page reference, and Karl requires a page. Choose the parent Agency page: HHVC was approved for its own Agency page (sf.gov/departments--healthy-housing-and-vector-control), so that is the value for HHVC pages rather than Environmental Health or DPH. Those two remain Partner agencies._
+
+1. Choose page: "Healthy Housing and Vector Control"
 
 ### Cost — \`cost\` [TYPE] — page not approved
 
@@ -1479,7 +1484,6 @@ Search Environmental Health complaint and inspection records for a San Francisco
 
 Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
 
-- \`primaryAgency\` — The page carries \`primaryAgency\`, and no Transaction panel documented in the field map accepts it.
 - \`audience\` — The page carries \`audience\`, and Karl does have a home for it: a **Things to know** entry titled "Who this information is for". Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list. What blocks it is the budget, not the field: the Help Center caps Things to know at 2 entries, and most Transaction pages here already spend both, so placing the audience means deciding which existing entry it replaces. That is a content call, not a missing panel.
 - \`sections.1.button\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
 - \`sections.1.buttonUrl\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
@@ -1509,9 +1513,11 @@ Look up residential health code violations
 
 Search violation and inspection history for residential buildings under the SF Health Code.
 
-### Primary agency — \`primary_agency\` [FLAG] — page not approved
+### Primary agency — \`primary_agency\` [CHOOSE] — page not approved
 
-_U6 — the mockup has no primary_agency field, and Karl requires it. Supply the parent Agency page by hand: HHVC was approved for its own Agency page (sf.gov/departments--healthy-housing-and-vector-control), so that is the value for HHVC pages rather than Environmental Health or DPH. Those two remain Partner agencies._
+_U6, narrowed — the mockup names the agency as text, not as a page reference, and Karl requires a page. Choose the parent Agency page: HHVC was approved for its own Agency page (sf.gov/departments--healthy-housing-and-vector-control), so that is the value for HHVC pages rather than Environmental Health or DPH. Those two remain Partner agencies._
+
+1. Choose page: "Healthy Housing and Vector Control"
 
 ### Cost — \`cost\` [TYPE] — page not approved
 
@@ -1611,7 +1617,6 @@ Search residential health code violations and inspection history for San Francis
 
 Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
 
-- \`primaryAgency\` — The page carries \`primaryAgency\`, and no Transaction panel documented in the field map accepts it.
 - \`audience\` — The page carries \`audience\`, and Karl does have a home for it: a **Things to know** entry titled "Who this information is for". Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list. What blocks it is the budget, not the field: the Help Center caps Things to know at 2 entries, and most Transaction pages here already spend both, so placing the audience means deciding which existing entry it replaces. That is a content call, not a missing panel.
 - \`sections.1.button\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
 - \`sections.1.buttonUrl\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
@@ -1748,9 +1753,11 @@ Report cockroaches, mosquitoes, and other insects
 
 Report cockroaches, bed bugs, mosquitoes, or other insects in a home, building, yard, or shared area.
 
-### Primary agency — \`primary_agency\` [FLAG] — page not approved
+### Primary agency — \`primary_agency\` [CHOOSE] — page not approved
 
-_U6 — the mockup has no primary_agency field, and Karl requires it. Supply the parent Agency page by hand: HHVC was approved for its own Agency page (sf.gov/departments--healthy-housing-and-vector-control), so that is the value for HHVC pages rather than Environmental Health or DPH. Those two remain Partner agencies._
+_U6, narrowed — the mockup names the agency as text, not as a page reference, and Karl requires a page. Choose the parent Agency page: HHVC was approved for its own Agency page (sf.gov/departments--healthy-housing-and-vector-control), so that is the value for HHVC pages rather than Environmental Health or DPH. Those two remain Partner agencies._
+
+1. Choose page: "Healthy Housing and Vector Control"
 
 ### Cost — \`cost\` [TYPE] — page not approved
 
@@ -1945,7 +1952,6 @@ Report cockroaches, bed bugs, mosquitoes, flies, wasps, or other insect problems
 
 Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
 
-- \`primaryAgency\` — The page carries \`primaryAgency\`, and no Transaction panel documented in the field map accepts it.
 - \`audience\` — The page carries \`audience\`, and Karl does have a home for it: a **Things to know** entry titled "Who this information is for". Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list. What blocks it is the budget, not the field: the Help Center caps Things to know at 2 entries, and most Transaction pages here already spend both, so placing the audience means deciding which existing entry it replaces. That is a content call, not a missing panel.
 - \`sections.3.button\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
 - \`sections.3.buttonUrl\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
@@ -1975,9 +1981,11 @@ Get ready for a follow-up inspection
 
 Prepare for a Healthy Housing and Vector Control follow-up inspection after a Notice of Violation.
 
-### Primary agency — \`primary_agency\` [FLAG] — page not approved
+### Primary agency — \`primary_agency\` [CHOOSE] — page not approved
 
-_U6 — the mockup has no primary_agency field, and Karl requires it. Supply the parent Agency page by hand: HHVC was approved for its own Agency page (sf.gov/departments--healthy-housing-and-vector-control), so that is the value for HHVC pages rather than Environmental Health or DPH. Those two remain Partner agencies._
+_U6, narrowed — the mockup names the agency as text, not as a page reference, and Karl requires a page. Choose the parent Agency page: HHVC was approved for its own Agency page (sf.gov/departments--healthy-housing-and-vector-control), so that is the value for HHVC pages rather than Environmental Health or DPH. Those two remain Partner agencies._
+
+1. Choose page: "Healthy Housing and Vector Control"
 
 ### Cost — \`cost\` [TYPE] — page not approved
 
@@ -2091,7 +2099,6 @@ Prepare for a Healthy Housing and Vector Control follow-up inspection after a No
 
 Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
 
-- \`primaryAgency\` — The page carries \`primaryAgency\`, and no Transaction panel documented in the field map accepts it.
 - \`audience\` — The page carries \`audience\`, and Karl does have a home for it: a **Things to know** entry titled "Who this information is for". Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list. What blocks it is the budget, not the field: the Help Center caps Things to know at 2 entries, and most Transaction pages here already spend both, so placing the audience means deciding which existing entry it replaces. That is a content call, not a missing panel.
 "
 `;
@@ -2119,9 +2126,11 @@ Get ready for a housing inspection after you report
 
 Prepare for a Healthy Housing and Vector Control inspection after you file a 311 report.
 
-### Primary agency — \`primary_agency\` [FLAG] — page not approved
+### Primary agency — \`primary_agency\` [CHOOSE] — page not approved
 
-_U6 — the mockup has no primary_agency field, and Karl requires it. Supply the parent Agency page by hand: HHVC was approved for its own Agency page (sf.gov/departments--healthy-housing-and-vector-control), so that is the value for HHVC pages rather than Environmental Health or DPH. Those two remain Partner agencies._
+_U6, narrowed — the mockup names the agency as text, not as a page reference, and Karl requires a page. Choose the parent Agency page: HHVC was approved for its own Agency page (sf.gov/departments--healthy-housing-and-vector-control), so that is the value for HHVC pages rather than Environmental Health or DPH. Those two remain Partner agencies._
+
+1. Choose page: "Healthy Housing and Vector Control"
 
 ### Cost — \`cost\` [TYPE] — page not approved
 
@@ -2240,7 +2249,6 @@ Prepare for a Healthy Housing and Vector Control inspection after you file a 311
 
 Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
 
-- \`primaryAgency\` — The page carries \`primaryAgency\`, and no Transaction panel documented in the field map accepts it.
 - \`audience\` — The page carries \`audience\`, and Karl does have a home for it: a **Things to know** entry titled "Who this information is for". Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list. What blocks it is the budget, not the field: the Help Center caps Things to know at 2 entries, and most Transaction pages here already spend both, so placing the audience means deciding which existing entry it replaces. That is a content call, not a missing panel.
 "
 `;
@@ -2421,9 +2429,11 @@ Find your Healthy Housing inspector by neighborhood
 
 Look up which Healthy Housing and Vector Control inspector covers your neighborhood.
 
-### Primary agency — \`primary_agency\` [FLAG] — page not approved
+### Primary agency — \`primary_agency\` [CHOOSE] — page not approved
 
-_U6 — the mockup has no primary_agency field, and Karl requires it. Supply the parent Agency page by hand: HHVC was approved for its own Agency page (sf.gov/departments--healthy-housing-and-vector-control), so that is the value for HHVC pages rather than Environmental Health or DPH. Those two remain Partner agencies._
+_U6, narrowed — the mockup names the agency as text, not as a page reference, and Karl requires a page. Choose the parent Agency page: HHVC was approved for its own Agency page (sf.gov/departments--healthy-housing-and-vector-control), so that is the value for HHVC pages rather than Environmental Health or DPH. Those two remain Partner agencies._
+
+1. Choose page: "Healthy Housing and Vector Control"
 
 ### Cost — \`cost\` [TYPE] — page not approved
 
@@ -2512,7 +2522,6 @@ Look up which Healthy Housing and Vector Control inspector covers your San Franc
 
 Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
 
-- \`primaryAgency\` — The page carries \`primaryAgency\`, and no Transaction panel documented in the field map accepts it.
 - \`audience\` — The page carries \`audience\`, and Karl does have a home for it: a **Things to know** entry titled "Who this information is for". Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list. What blocks it is the budget, not the field: the Help Center caps Things to know at 2 entries, and most Transaction pages here already spend both, so placing the audience means deciding which existing entry it replaces. That is a content call, not a missing panel.
 - \`sections.1.button\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
 - \`sections.1.buttonUrl\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
@@ -3186,9 +3195,11 @@ Fix your Healthy Housing and Vector Control violation
 
 Follow your Notice of Violation and work with our inspectors to correct a housing or pest problem.
 
-### Primary agency — \`primary_agency\` [FLAG] — page not approved
+### Primary agency — \`primary_agency\` [CHOOSE] — page not approved
 
-_U6 — the mockup has no primary_agency field, and Karl requires it. Supply the parent Agency page by hand: HHVC was approved for its own Agency page (sf.gov/departments--healthy-housing-and-vector-control), so that is the value for HHVC pages rather than Environmental Health or DPH. Those two remain Partner agencies._
+_U6, narrowed — the mockup names the agency as text, not as a page reference, and Karl requires a page. Choose the parent Agency page: HHVC was approved for its own Agency page (sf.gov/departments--healthy-housing-and-vector-control), so that is the value for HHVC pages rather than Environmental Health or DPH. Those two remain Partner agencies._
+
+1. Choose page: "Healthy Housing and Vector Control"
 
 ### Cost — \`cost\` [TYPE] — page not approved
 
@@ -3334,7 +3345,6 @@ Follow a Healthy Housing and Vector Control Notice of Violation to correct housi
 
 Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
 
-- \`primaryAgency\` — The page carries \`primaryAgency\`, and no Transaction panel documented in the field map accepts it.
 - \`audience\` — The page carries \`audience\`, and Karl does have a home for it: a **Things to know** entry titled "Who this information is for". Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list. What blocks it is the budget, not the field: the Help Center caps Things to know at 2 entries, and most Transaction pages here already spend both, so placing the audience means deciding which existing entry it replaces. That is a content call, not a missing panel.
 "
 `;
@@ -3724,9 +3734,11 @@ Pay a Healthy Housing citation
 
 Pay a penalty issued after an uncorrected Notice of Violation or a missed re-inspection.
 
-### Primary agency — \`primary_agency\` [FLAG] — page not approved
+### Primary agency — \`primary_agency\` [CHOOSE] — page not approved
 
-_U6 — the mockup has no primary_agency field, and Karl requires it. Supply the parent Agency page by hand: HHVC was approved for its own Agency page (sf.gov/departments--healthy-housing-and-vector-control), so that is the value for HHVC pages rather than Environmental Health or DPH. Those two remain Partner agencies._
+_U6, narrowed — the mockup names the agency as text, not as a page reference, and Karl requires a page. Choose the parent Agency page: HHVC was approved for its own Agency page (sf.gov/departments--healthy-housing-and-vector-control), so that is the value for HHVC pages rather than Environmental Health or DPH. Those two remain Partner agencies._
+
+1. Choose page: "Healthy Housing and Vector Control"
 
 ### Cost — \`cost\` [TYPE] — page not approved
 
@@ -3847,7 +3859,6 @@ Pay a penalty issued after an uncorrected Notice of Violation or a missed re-ins
 Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
 
 - \`audience\` — The page carries \`audience\`, and Karl does have a home for it: a **Things to know** entry titled "Who this information is for". Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list. What blocks it is the budget, not the field: the Help Center caps Things to know at 2 entries, and most Transaction pages here already spend both, so placing the audience means deciding which existing entry it replaces. That is a content call, not a missing panel.
-- \`primaryAgency\` — The page carries \`primaryAgency\`, and no Transaction panel documented in the field map accepts it.
 - \`sections.1.cards\` — \`cards\` on this section reached no panel in the Transaction inventory.
 "
 `;
@@ -3875,9 +3886,11 @@ Pay your annual Healthy Housing fee for apartment buildings
 
 Pay your annual Healthy Housing fee if you own an apartment building with 3 or more rental units.
 
-### Primary agency — \`primary_agency\` [FLAG] — page not approved
+### Primary agency — \`primary_agency\` [CHOOSE] — page not approved
 
-_U6 — the mockup has no primary_agency field, and Karl requires it. Supply the parent Agency page by hand: HHVC was approved for its own Agency page (sf.gov/departments--healthy-housing-and-vector-control), so that is the value for HHVC pages rather than Environmental Health or DPH. Those two remain Partner agencies._
+_U6, narrowed — the mockup names the agency as text, not as a page reference, and Karl requires a page. Choose the parent Agency page: HHVC was approved for its own Agency page (sf.gov/departments--healthy-housing-and-vector-control), so that is the value for HHVC pages rather than Environmental Health or DPH. Those two remain Partner agencies._
+
+1. Choose page: "Healthy Housing and Vector Control"
 
 ### Cost — \`cost\` [FLAG] — page not approved
 
@@ -4040,7 +4053,6 @@ Pay your annual Healthy Housing fee for a San Francisco apartment building with 
 
 Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
 
-- \`primaryAgency\` — The page carries \`primaryAgency\`, and no Transaction panel documented in the field map accepts it.
 - \`audience\` — The page carries \`audience\`, and Karl does have a home for it: a **Things to know** entry titled "Who this information is for". Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list. What blocks it is the budget, not the field: the Help Center caps Things to know at 2 entries, and most Transaction pages here already spend both, so placing the audience means deciding which existing entry it replaces. That is a content call, not a missing panel.
 "
 `;
@@ -4311,9 +4323,11 @@ Make a public records request
 
 Request Environmental Health inspection, complaint, or enforcement records that are not in the online lookups.
 
-### Primary agency — \`primary_agency\` [FLAG] — page not approved
+### Primary agency — \`primary_agency\` [CHOOSE] — page not approved
 
-_U6 — the mockup has no primary_agency field, and Karl requires it. Supply the parent Agency page by hand: HHVC was approved for its own Agency page (sf.gov/departments--healthy-housing-and-vector-control), so that is the value for HHVC pages rather than Environmental Health or DPH. Those two remain Partner agencies._
+_U6, narrowed — the mockup names the agency as text, not as a page reference, and Karl requires a page. Choose the parent Agency page: HHVC was approved for its own Agency page (sf.gov/departments--healthy-housing-and-vector-control), so that is the value for HHVC pages rather than Environmental Health or DPH. Those two remain Partner agencies._
+
+1. Choose page: "Healthy Housing and Vector Control"
 
 ### Cost — \`cost\` [TYPE] — page not approved
 
@@ -4416,7 +4430,6 @@ Request Environmental Health public records through the citywide San Francisco p
 
 Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
 
-- \`primaryAgency\` — The page carries \`primaryAgency\`, and no Transaction panel documented in the field map accepts it.
 - \`audience\` — The page carries \`audience\`, and Karl does have a home for it: a **Things to know** entry titled "Who this information is for". Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list. What blocks it is the budget, not the field: the Help Center caps Things to know at 2 entries, and most Transaction pages here already spend both, so placing the audience means deciding which existing entry it replaces. That is a content call, not a missing panel.
 - \`sections.1.button\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
 - \`sections.1.buttonUrl\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
@@ -4689,9 +4702,11 @@ Report rats, mice, and other four-legged problems
 
 Report rats, mice, raccoons, bats, or other four-legged pests in a home, building, yard, or shared area.
 
-### Primary agency — \`primary_agency\` [FLAG] — page not approved
+### Primary agency — \`primary_agency\` [CHOOSE] — page not approved
 
-_U6 — the mockup has no primary_agency field, and Karl requires it. Supply the parent Agency page by hand: HHVC was approved for its own Agency page (sf.gov/departments--healthy-housing-and-vector-control), so that is the value for HHVC pages rather than Environmental Health or DPH. Those two remain Partner agencies._
+_U6, narrowed — the mockup names the agency as text, not as a page reference, and Karl requires a page. Choose the parent Agency page: HHVC was approved for its own Agency page (sf.gov/departments--healthy-housing-and-vector-control), so that is the value for HHVC pages rather than Environmental Health or DPH. Those two remain Partner agencies._
+
+1. Choose page: "Healthy Housing and Vector Control"
 
 ### Cost — \`cost\` [TYPE] — page not approved
 
@@ -4879,7 +4894,6 @@ Report rats, mice, raccoons, bats, or other four-legged pest problems in San Fra
 
 Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
 
-- \`primaryAgency\` — The page carries \`primaryAgency\`, and no Transaction panel documented in the field map accepts it.
 - \`audience\` — The page carries \`audience\`, and Karl does have a home for it: a **Things to know** entry titled "Who this information is for". Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list. What blocks it is the budget, not the field: the Help Center caps Things to know at 2 entries, and most Transaction pages here already spend both, so placing the audience means deciding which existing entry it replaces. That is a content call, not a missing panel.
 - \`sections.3.button\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
 - \`sections.3.buttonUrl\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
@@ -5067,9 +5081,11 @@ Report a problem in an SRO or hotel
 
 Report a pest, garbage, or housing health problem in a single room occupancy (SRO) hotel or residential hotel.
 
-### Primary agency — \`primary_agency\` [FLAG] — page not approved
+### Primary agency — \`primary_agency\` [CHOOSE] — page not approved
 
-_U6 — the mockup has no primary_agency field, and Karl requires it. Supply the parent Agency page by hand: HHVC was approved for its own Agency page (sf.gov/departments--healthy-housing-and-vector-control), so that is the value for HHVC pages rather than Environmental Health or DPH. Those two remain Partner agencies._
+_U6, narrowed — the mockup names the agency as text, not as a page reference, and Karl requires a page. Choose the parent Agency page: HHVC was approved for its own Agency page (sf.gov/departments--healthy-housing-and-vector-control), so that is the value for HHVC pages rather than Environmental Health or DPH. Those two remain Partner agencies._
+
+1. Choose page: "Healthy Housing and Vector Control"
 
 ### Cost — \`cost\` [TYPE] — page not approved
 
@@ -5185,7 +5201,6 @@ Report a pest, garbage, or housing health problem in a San Francisco SRO, reside
 
 Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
 
-- \`primaryAgency\` — The page carries \`primaryAgency\`, and no Transaction panel documented in the field map accepts it.
 - \`audience\` — The page carries \`audience\`, and Karl does have a home for it: a **Things to know** entry titled "Who this information is for". Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list. What blocks it is the budget, not the field: the Help Center caps Things to know at 2 entries, and most Transaction pages here already spend both, so placing the audience means deciding which existing entry it replaces. That is a content call, not a missing panel.
 "
 `;
@@ -5734,9 +5749,11 @@ What tenants need to do after a Notice of Violation
 
 Learn what to do if a Notice of Violation lists corrective actions for your unit or building.
 
-### Primary agency — \`primary_agency\` [FLAG] — page not approved
+### Primary agency — \`primary_agency\` [CHOOSE] — page not approved
 
-_U6 — the mockup has no primary_agency field, and Karl requires it. Supply the parent Agency page by hand: HHVC was approved for its own Agency page (sf.gov/departments--healthy-housing-and-vector-control), so that is the value for HHVC pages rather than Environmental Health or DPH. Those two remain Partner agencies._
+_U6, narrowed — the mockup names the agency as text, not as a page reference, and Karl requires a page. Choose the parent Agency page: HHVC was approved for its own Agency page (sf.gov/departments--healthy-housing-and-vector-control), so that is the value for HHVC pages rather than Environmental Health or DPH. Those two remain Partner agencies._
+
+1. Choose page: "Healthy Housing and Vector Control"
 
 ### Cost — \`cost\` [TYPE] — page not approved
 
@@ -5873,7 +5890,6 @@ Learn what to do as a tenant after a Healthy Housing and Vector Control Notice o
 
 Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
 
-- \`primaryAgency\` — The page carries \`primaryAgency\`, and no Transaction panel documented in the field map accepts it.
 - \`audience\` — The page carries \`audience\`, and Karl does have a home for it: a **Things to know** entry titled "Who this information is for". Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list. What blocks it is the budget, not the field: the Help Center caps Things to know at 2 entries, and most Transaction pages here already spend both, so placing the audience means deciding which existing entry it replaces. That is a content call, not a missing panel.
 "
 `;

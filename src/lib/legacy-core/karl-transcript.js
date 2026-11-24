@@ -547,6 +547,16 @@ function emitPathPanel(context, panel, source) {
 		return;
 	}
 
+	if (usedPath === 'primaryAgency') {
+		// A label, not a reference (U6, narrowed): the editor picks the Agency page
+		// this names, so it is a CHOOSE with the label as the search term rather
+		// than a value to type.
+		entry.outcome = 'CHOOSE';
+		entry.choices.push({ label: String(value), pageKey: '', slug: '' });
+		context.transcript.entries.push(entry);
+		return;
+	}
+
 	if (usedPath === 'partnerAgencies') {
 		entry.outcome = 'CHOOSE';
 		entry.notes.push(

@@ -403,12 +403,17 @@ const KARL_PANELS = {
 			requiredDoc: 'yes',
 			repeatableDoc: 'single',
 			blockTypesDoc: 'page chooser → Agency only',
-			sourceDoc: '— (no mockup field; U6)',
+			// The field map's row reads "`primaryAgency` — 16/16, but a **label**, not
+			// an Agency page reference (`U6`, narrowed)". This entry still said "no
+			// mockup field" after that narrowing, so the agency every Transaction
+			// renders reached no panel and was reported as unmapped.
+			sourceDoc: '`primaryAgency` — a label, not an Agency page reference (U6, narrowed)',
 			source: {
-				kind: 'none'
+				kind: 'path',
+				path: 'primaryAgency'
 			},
 			docLine: 307,
-			note: 'U6 — the mockup has no primary_agency field, and Karl requires it. Supply the parent Agency page by hand: HHVC was approved for its own Agency page (sf.gov/departments--healthy-housing-and-vector-control), so that is the value for HHVC pages rather than Environmental Health or DPH. Those two remain Partner agencies.'
+			note: 'U6, narrowed — the mockup names the agency as text, not as a page reference, and Karl requires a page. Choose the parent Agency page: HHVC was approved for its own Agency page (sf.gov/departments--healthy-housing-and-vector-control), so that is the value for HHVC pages rather than Environmental Health or DPH. Those two remain Partner agencies.'
 		},
 		{
 			uiLabel: 'Cost',
