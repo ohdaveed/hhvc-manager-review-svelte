@@ -14,7 +14,7 @@ Production has 0 edits and 0 comments on any page (measured 2026-11-24). Re-coun
 - [x] **A3.** A `karl-description-reuse` finding lists the title words repeated in the description (issue at 2 or more).
 - [x] **A4.** `karl-url-pattern` flags `a`/`an`/`the` in a slug.
 - [x] **A5.** A `karl-transaction-action` finding flags a Transaction with no button and no Contact us.
-- [ ] **A-ship.** Gates and ratchets green, signed-in axe e2e green, screenshot of the panel looked at, PR open. Ask before merging.
+- [x] **A-ship.** verify all green; eslint, svelte-check and prettier ratchets at baseline; full e2e 101/101; Analysis panel screenshots of the fee and citation pages checked by eye; whole-branch review done. PR open; merge waits for approval.
 
 ## Track B — Decided copy changes
 

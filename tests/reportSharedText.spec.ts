@@ -32,4 +32,11 @@ describe('shared report text', () => {
 		const targets = pages[key].sections.flatMap((s) => s.cards ?? []).map((c) => c.target);
 		expect(targets).toContain('afterReport');
 	});
+
+	it.each(REPORT_PAGES)('%s says in its karl note that the section was cut', (key) => {
+		const section = (pages[key].sections as { heading?: string; karl?: string }[]).find(
+			(s) => s.heading === 'What the Health Code requires'
+		);
+		expect(section?.karl).toMatch(/2026-11-24: renamed from "How your report is processed"/);
+	});
 });
