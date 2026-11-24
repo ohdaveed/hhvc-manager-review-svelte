@@ -47,6 +47,6 @@ one field. The field map rows change with it.
 - [x] **2. Schema and placement.** Agency in `schema.ts` (Title, Description, ≤2 spotlights, the
       resource-tiles caveat, unconfirmed URL). Labels `Services · Subsection` and
       `Resources · Subsection N`. Unit tests pin the page.
-- [ ] **3. e2e.** The Agency page joins both specs, with axe at 1280px and 375px; screenshots
+- [x] **3. e2e.** The Agency page joins both specs, with axe at 1280px and 375px; screenshots
       looked at.
 - [ ] **4. Ship.** `verify` and the ratchets, then a PR. Ask before merging.
