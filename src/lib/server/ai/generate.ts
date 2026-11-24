@@ -10,6 +10,18 @@ import { PAGE_OUTPUT_SCHEMA, REWRITE_OUTPUT_SCHEMA } from './vendor/schemas.js';
 import { validateGeneratedPage, validateRewrite } from './vendor/validate-output.js';
 import { numberFromEnv } from './vendor/env.js';
 import { ProviderTimeoutError } from './vendor/errors.js';
+import { FACTS_DOCUMENT_NAME, factsPromptBlock } from '$lib/facts/prompt';
+
+/**
+ * Append HHVC's verified facts and open questions to a vendor system prompt.
+ * Done here, not in `vendor/prompts.js`, which stays diffable against upstream.
+ */
+function withFacts({ system, groundedBy }: { system: string; groundedBy: string[] }) {
+	const block = factsPromptBlock();
+	return block
+		? { system: `${system}\n\n${block}`, groundedBy: [...groundedBy, FACTS_DOCUMENT_NAME] }
+		: { system, groundedBy };
+}
 
 /**
  * Generate, validate, retry once -- ported from the Railway backend's
@@ -146,7 +158,7 @@ export function generateContent({
 	page?: object;
 	signal?: AbortSignal;
 }) {
-	const { system, groundedBy } = buildContentSystemPrompt(Object.keys(pagesByKey));
+	const { system, groundedBy } = withFacts(buildContentSystemPrompt(Object.keys(pagesByKey)));
 	return generateValidated({
 		task: 'content',
 		system,
@@ -176,7 +188,7 @@ export function generateRewrite({
 	page?: { type?: string };
 	signal?: AbortSignal;
 }) {
-	const { system, groundedBy } = buildRewriteSystemPrompt();
+	const { system, groundedBy } = withFacts(buildRewriteSystemPrompt());
 	return generateValidated({
 		task: 'rewrite-field',
 		system,
