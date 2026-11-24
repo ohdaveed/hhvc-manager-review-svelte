@@ -12,13 +12,19 @@ interesting path (edit targets, FieldsPanel, ReviewQueue) requires a
 
 ## Handle: local Supabase stack + dev server
 
-The CLI is not installed globally; `bunx supabase@latest` works. Docker is
-required and available.
+The CLI is not installed globally, but it is a devDependency (`supabase` in
+`package.json`), so `bunx supabase` runs the repo's pinned version. Prefer it
+over `@latest`, which can drift from the version the migrations were written
+against. Docker is required and available.
 
 ```sh
-bunx supabase@latest start      # ~GBs of images on first run; run backgrounded
-bunx supabase@latest db reset   # applies migrations + supabase/seed.sql (29 pages)
+bunx supabase start      # ~GBs of images on first run; run backgrounded
+bunx supabase db reset   # applies migrations + supabase/seed.sql (39 pages)
 ```
+
+`bun run env:status` says which Supabase target `.env.local` points at. Check it
+before trusting a signed-out-looking app: pointed at the hosted project, the
+local seed password is rejected and every review read silently returns nothing.
 
 That is all. Both blockers that used to need hand-patching after a reset — the
 seed's NULL `confirmation_token` (GoTrue 500 `Database error querying schema`)
@@ -80,7 +86,8 @@ the "recommendation" call, which reuses `task: 'rewrite-field'` with a
 - Screenshots must stay under the repo root or `.playwright-mcp/` — the MCP
   server refuses paths outside them. `.playwright-mcp/` is gitignored; the
   repo root is not.
-- `supabase/.temp/` is **tracked**, and `supabase start` writes a new
-  `start-secrets/` directory into it. Check `git status` before committing.
+- `supabase/.temp/` is **not tracked**: the CLI's own `supabase/.gitignore`
+  excludes it. That matters because `supabase start` writes `start-secrets/`
+  there (service-role key, DB URL, JWT secret). Never force-add it.
 - A saved edit does not re-render on reload: nothing hydrates `pageStore`
   from `editsStore`, so the mockup always shows the static corpus copy.
