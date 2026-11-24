@@ -301,6 +301,14 @@ export function placementsFor(
 		if (!seen.includes(key)) seen.push(key);
 		instances.set(raw, seen);
 	}
+	// On Information the transcript makes the audience list the first
+	// Information section block, so it takes instance 1 and pushes every
+	// authored section down one.
+	const AUDIENCE_KEY = 'audience';
+	const audienceRaw = claims.find(([id]) => id === AUDIENCE_KEY)?.[1];
+	if (audienceRaw === 'information_section') {
+		instances.set(audienceRaw, [AUDIENCE_KEY, ...(instances.get(audienceRaw) ?? [])]);
+	}
 	const componentOf = new Map(
 		sections.map((section, index) => [
 			keyOf(index),
@@ -510,6 +518,8 @@ export function placementsFor(
 			const rest = id.slice(`sections.${sectionKey}.`.length);
 			const sub = raw === 'what_to_do' && rest === 'heading' ? 'Heading' : subLabel(rest, type);
 			label = [instanceLabel(raw, sectionKey), sub].filter(Boolean).join(' · ');
+		} else if (raw === 'information_section' && id.startsWith(`${AUDIENCE_KEY}.`)) {
+			label = `${instanceLabel(raw, AUDIENCE_KEY)} · Text`;
 		} else {
 			const ttk = id.match(/^whatToKnow\.thingsToKnow\.(\d+)\.(label|text)$/);
 			if (ttk)

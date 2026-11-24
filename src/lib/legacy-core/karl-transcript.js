@@ -75,6 +75,9 @@ const NOT_MIGRATED_PAGE_FIELDS = new Set([
  * SF.gov has nowhere to put "who this is for", which is false and would get the
  * line deleted rather than placed.
  */
+/** The title the live pattern gives an audience list; the mockup renders none. */
+const AUDIENCE_TITLE = 'Who this information is for';
+
 const PAGE_FIELD_REASONS = {
 	audience: (type) => {
 		const live =
@@ -447,6 +450,7 @@ function findPageKey(page, pages) {
  * @param {object[]} sources
  */
 function emitPanelSources(context, panel, sources) {
+	if (panel.rawName === 'information_section') emitAudienceBlock(context, panel);
 	const bySectionIndex = new Map();
 	for (const source of sources) {
 		if (!source || source.kind !== 'sections') {
@@ -463,6 +467,42 @@ function emitPanelSources(context, panel, sources) {
 		if (source.field) emitSectionField(context, panel, source, section, index);
 		else emitSection(context, panel, source, section, index);
 	}
+}
+
+/**
+ * The audience list as an Information page's first Information section block.
+ *
+ * Information has no `things_to_know` (where the live pattern puts it) and no
+ * `intro`, but its body stream takes any number of Title-and-text blocks. So
+ * the list goes first in that stream, titled as the published page titles it.
+ * Every other type keeps reporting the line as a gap through PAGE_FIELD_REASONS.
+ *
+ * Each line resolves on its own `audience.<n>` path, the id the mockup edits it
+ * under, so the editor types the reviewed list.
+ */
+function emitAudienceBlock(context, panel) {
+	const authored = context.page.audience;
+	if (!Array.isArray(authored) || !authored.length) return;
+	const lines = authored.map((_, index) =>
+		resolveValue(context.page, context.reviewRecord, `audience.${index}`)
+	);
+	const text = foldTextAndBullets(
+		[],
+		lines.map((line) => (line.value === undefined || line.value === null ? '' : line.value))
+	);
+	claim(context, 'audience');
+	if (!text) return;
+	const entry = newEntry(panel, 'TYPE');
+	entry.overlaid = lines.some((line) => line.overlaid);
+	entry.fields.push({ label: 'Title', value: AUDIENCE_TITLE });
+	entry.fields.push({ label: 'Text', value: text });
+	entry.notes.push(
+		`The Title "${AUDIENCE_TITLE}" is not in the mockup — this tool supplies it, matching ` +
+			'sf.gov/manage-covid-19-schools-childcare-and-youth-programs, which renders the audience as an ' +
+			'H3 with that title over a bulleted list. Add this block first, so every authored section below ' +
+			'is one Information section block later than its place among the mockup sections.'
+	);
+	context.transcript.entries.push(entry);
 }
 
 /** Dispatch one non-section panel/source pair to the right emitter. */

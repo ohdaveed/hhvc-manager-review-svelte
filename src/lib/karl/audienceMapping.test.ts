@@ -21,6 +21,13 @@
  * rather than resolved into a panel. The Help Center caps Things to know at 2
  * entries and 15 of the 16 pages carrying it already spend both, so placing an
  * audience means deciding which existing entry it replaces.
+ *
+ * Information is the exception, and the one type where the transcript PLACES
+ * the line rather than reporting it. Information has neither `things_to_know`
+ * nor an `intro`, but its body is `information_section`, a repeatable stream of
+ * Title-and-text blocks with no cap. So the audience becomes that stream's first
+ * block, titled as the live page titles it — the same H3-plus-bullets shape, in
+ * the only free-text home the type has. Every other type keeps its gap.
  */
 import { describe, it, expect } from 'vitest';
 import { buildTranscript } from '$lib/legacy-core/karl-transcript.js';
@@ -38,9 +45,11 @@ const audienceGap = (page: object) =>
 	(transcriptFor(page).unmapped ?? []).filter((u) => u.path === 'audience');
 
 describe('audience is reported, not suppressed', () => {
-	it('reports the gap on every page that carries an audience', () => {
-		const pages = Object.values(pagesByKey) as { audience?: unknown[] }[];
-		const carrying = pages.filter((p) => Array.isArray(p.audience) && p.audience.length > 0);
+	it('reports the gap on every non-Information page that carries an audience', () => {
+		const pages = Object.values(pagesByKey) as { audience?: unknown[]; type?: string }[];
+		const carrying = pages.filter(
+			(p) => p.type !== 'Information' && Array.isArray(p.audience) && p.audience.length > 0
+		);
 
 		expect(carrying.length, 'the corpus should still have audience lines to place').toBeGreaterThan(
 			0
@@ -115,9 +124,74 @@ describe('audience is reported, not suppressed', () => {
 
 	it('still cites the live pattern on both branches', () => {
 		const transaction = audienceGap(pagesByKey.filthReport)[0];
-		const information = audienceGap(pagesByKey.afterReport)[0];
-		for (const gap of [transaction, information]) {
+		const otherType = (Object.values(pagesByKey) as { type?: string; audience?: unknown[] }[]).find(
+			(p) =>
+				p.type !== 'Transaction' &&
+				p.type !== 'Information' &&
+				Array.isArray(p.audience) &&
+				p.audience.length > 0
+		);
+		expect(otherType, 'the corpus should still have a non-Transaction audience').toBeDefined();
+		const other = audienceGap(otherType!)[0];
+		for (const gap of [transaction, other]) {
 			expect(gap.reason).toContain('Who this information is for');
 		}
+	});
+});
+
+type Entry = {
+	rawName: string;
+	fields: { label: string; value: string }[];
+	notes: string[];
+	overlaid: boolean;
+};
+const fullTranscript = (page: object, record: object | null = null) =>
+	buildTranscript(page, record, pagesByKey) as {
+		entries: Entry[];
+		claims: Record<string, string>;
+		unmapped: Unmapped[];
+	};
+
+describe('on an Information page, audience is the first Information section block', () => {
+	const information = (
+		Object.values(pagesByKey) as { type?: string; audience?: string[] }[]
+	).filter((p) => p.type === 'Information' && Array.isArray(p.audience) && p.audience.length > 0);
+
+	it('applies to every Information page that carries one', () => {
+		expect(
+			information.length,
+			'the corpus should still have Information audiences'
+		).toBeGreaterThan(0);
+		for (const page of information) {
+			const t = fullTranscript(page);
+			// Placement, not merely absence: a dropped line also has no gap.
+			expect(t.claims.audience, `${page.type}`).toBe('information_section');
+			expect(t.unmapped.filter((u) => u.path === 'audience')).toEqual([]);
+			const first = t.entries.find((e) => e.rawName === 'information_section');
+			expect(first?.fields).toEqual([
+				{ label: 'Title', value: 'Who this information is for' },
+				{ label: 'Text', value: page.audience!.map((a) => `- ${a}`).join('\n') }
+			]);
+		}
+	});
+
+	it('says the title is supplied, not reviewed copy', () => {
+		const first = fullTranscript(pagesByKey.afterReport).entries.find(
+			(e) => e.rawName === 'information_section'
+		);
+		expect(first?.notes.join(' ')).toMatch(/not in the mockup/);
+		expect(first?.notes.join(' ')).toContain(
+			'sf.gov/manage-covid-19-schools-childcare-and-youth-programs'
+		);
+	});
+
+	it('types the reviewed audience, not the authored one', () => {
+		const t = fullTranscript(pagesByKey.afterReport, {
+			section_edits: { 'audience.0': 'Edited audience' },
+			decision: 'Needs review'
+		});
+		const first = t.entries.find((e) => e.rawName === 'information_section');
+		expect(first?.overlaid).toBe(true);
+		expect(first?.fields[1].value.split('\n')[0]).toBe('- Edited audience');
 	});
 });
