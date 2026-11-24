@@ -132,7 +132,7 @@ prose-matching classifier in U27. There are four steps:
    claims across 39 pages. Its first run leaked Promote paths into `redirect_url`, which is why the
    reset is part of the change. The walkthrough and Markdown output stay byte-identical, asserted
    against current output.
-2. **Join to rendered ids** in the new `src/lib/karl/fieldMap.ts`:
+2. **Join to rendered ids** in the new `src/lib/karl/placement.ts`:
    `placementsFor(page) → Map<fieldId, Placement>`. It converts `sections.<index>` to
    `sections.<deriveFieldKey>`, then takes the longest-prefix match against claims and against
    `unmapped`. Claims are container-level (`…steps.0.text`) and ids are leaf-level
@@ -157,10 +157,11 @@ Nothing is written anywhere. `edits.field_id`, `latest_edits`, the review record
 `exportReview.ts` don't change, because a placement is computed per render from the page plus its
 review record.
 
-**Fix in the same slice:** `primary_agency` has `source: {kind:'none'}`, so the rendered
-`primaryAgency` string reads **red** on every page that has one, and on the rats page too. Give it
-`{kind:'path', path:'primaryAgency'}` as a CHOOSE. That changes the walkthrough step from FLAG to
-CHOOSE, which is correct: the page names the agency.
+**Fix in the same slice:** `primary_agency` had `source: {kind:'none'}`, so the rendered
+`primaryAgency` string read **red** on every page that has one. **Corrected while building (`f1277d6`):**
+only the 16 Transaction pages carry `primaryAgency`, as a label rather than a page reference (the
+field map's U6, "narrowed, not closed"). So the source is `{kind:'path', path:'primaryAgency'}` as
+a CHOOSE **on Transaction only**; the other types carry no value and keep the FLAG.
 
 ### 2c. Mode 1: Karl outline
 
@@ -516,9 +517,11 @@ Steps, each test-first:
    before the change).
 2. `primary_agency` source fix. Update the walkthrough test (FLAG → CHOOSE).
 3. `schema.ts` (3 types) + test: keys ⊂ `KARL_PANELS`, order matches, every rule has a `cite`.
-4. `fieldMap.ts` `placementsFor()` + `src/lib/karl/fieldMap.test.ts` (server project). Expected pilot statuses (from the
-   prototype):
-   - rats: 2 red groups (audience, U1 button), rest green
+4. `placement.ts` `placementsFor()` + `src/lib/karl/placement.test.ts` (server project). Expected pilot statuses (from the
+   prototype, **corrected by the built code**):
+   - rats: 2 red groups (audience, U1 button). **The two Custom Sections are Unconfirmed, not
+     green**: `custom_section` reaches a plain body section through an `inferred: true` mapping, and
+     the transcript already tells editors to verify it. The rest is Placed.
    - after-report: red audience + the `how-a-report-moves-through-the-city` steps section (U3) and
      its heading. URL `sf.gov/information/…` is **gray** (Karl contradicts itself). Empty: Part of,
      Partner agencies, Topics.
@@ -529,7 +532,7 @@ Steps, each test-first:
 
 **Verification.**
 
-- `bun run verify` (unit + build), `bun run check:ratchet` (0), `lint:ratchet` (4),
+- `bun run verify` (unit + build), `bun run check:ratchet` (0), `lint:ratchet` (3),
   `format:ratchet` (50).
 - New `tests/karlOutline.e2e.ts` and `tests/karlBlueprint.e2e.ts`, importing `test` from
   `./fixtures` and signing in with `tests/signedIn.ts`. Per pilot page they:

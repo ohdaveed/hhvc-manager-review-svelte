@@ -20,7 +20,7 @@ Pilot pages: `report-rats-mice-four-legged-problems` (Transaction),
       field id. Unit tests pin the pilot statuses, including a pinned `fieldKey` section.
 - [x] **5. Karl outline UI.** Karl menu replacing the walkthrough button, `EditTarget` and `Section`
       chips, the persisted switch, and `aria-describedby`. Off on draft routes.
-- [ ] **6. Blueprint mode.** Slots in Karl order, dashed empty slots, the "Won't carry over" tray,
+- [x] **6. Blueprint mode.** Slots in Karl order, dashed empty slots, the "Won't carry over" tray,
       and jump-to-element.
 - [ ] **7. Verify.** `bun run verify`, the ratchets, new e2e specs with axe with the outline on and in
       Blueprint at 1280px and 375px, and 12 screenshots that I look at.

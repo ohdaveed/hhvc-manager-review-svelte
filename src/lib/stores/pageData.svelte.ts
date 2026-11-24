@@ -559,7 +559,7 @@ class PageStore {
 	 * and leaving restores them -- that is a view mode, not a preference, so it
 	 * should not survive a reload and strand someone in a drawer.
 	 */
-	mode = $state<'review' | 'walkthrough' | 'sitemap'>('review');
+	mode = $state<'review' | 'walkthrough' | 'sitemap' | 'blueprint'>('review');
 
 	/** Index into the current page's step list. Per page, per session. */
 	stepIndex = $state(0);
@@ -632,6 +632,11 @@ class PageStore {
 
 	showSitemap() {
 		this.mode = 'sitemap';
+	}
+
+	/** The page redrawn as its Karl form. A view, like the site map: not persisted. */
+	showBlueprint() {
+		this.mode = 'blueprint';
 	}
 
 	showReview() {

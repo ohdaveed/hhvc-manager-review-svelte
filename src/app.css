@@ -1018,3 +1018,10 @@ body {
 	font-size: 13px;
 	line-height: 18px;
 }
+
+/* Blueprint → page: a brief mark on the field the reviewer asked to see. The
+   focus ring says the same thing, so this is reinforcement, not the only cue. */
+.karl-jump-highlight {
+	box-shadow: 0 0 0 4px #ffbe2e;
+	transition: box-shadow 0.2s;
+}

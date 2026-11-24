@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, tick } from 'svelte';
 	import { page } from '$app/stores';
 	import { resolve } from '$app/paths';
 	import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
@@ -38,6 +38,7 @@
 	import WalkthroughHeader from '$lib/components/workspace/WalkthroughHeader.svelte';
 	import WalkthroughDrawer from '$lib/components/workspace/WalkthroughDrawer.svelte';
 	import SiteMapView from '$lib/components/workspace/SiteMapView.svelte';
+	import BlueprintView from '$lib/components/workspace/BlueprintView.svelte';
 	import { buildWalkthrough } from '$lib/karl/walkthrough';
 	import { reviewRecordFor } from '$lib/karl/reviewRecord';
 	import { outlineSummary, placementsFor } from '$lib/karl/placement';
@@ -85,8 +86,10 @@
 	// a draft IS in `pageStore.pages`, and its content type is the model's guess,
 	// so a placement there would read as more settled than it is (decision 12).
 	const onDraft = $derived(Boolean(currentPath && isDraftPath(currentPath)));
-	const outlinePlacements = $derived(
-		pageStore.karlOutline && pageData && !onDraft
+	// Built once for both Karl views: the outline over the mockup and the
+	// Blueprint. Neither is built while neither is showing.
+	const placementsHere = $derived(
+		(pageStore.karlOutline || pageStore.mode === 'blueprint') && pageData && !onDraft
 			? placementsFor(
 					pageData as unknown as Parameters<typeof placementsFor>[0],
 					reviewRecordFor(pageData.id, $pagesStore, $editsStore),
@@ -94,6 +97,34 @@
 				)
 			: null
 	);
+	const outlinePlacements = $derived(pageStore.karlOutline ? placementsHere : null);
+	const blueprintPlacements = $derived(pageStore.mode === 'blueprint' ? placementsHere : null);
+
+	/**
+	 * Blueprint → page: back to the mockup with the outline on, the field
+	 * scrolled into the preview and focused, and a brief highlight.
+	 *
+	 * `scrollTop` on the preview region, not `scrollIntoView`, for the reason the
+	 * walkthrough drawer gives: the preview is a nested scroll container inside a
+	 * fixed-height grid, and `scrollIntoView` scrolls every ancestor too. Signed
+	 * out, the field is plain text, so it gets `tabindex="-1"` to take focus.
+	 */
+	async function showOnPage(fieldId: string) {
+		pageStore.setKarlOutline(true);
+		pageStore.showReview();
+		await tick();
+		const region = document.querySelector<HTMLElement>(
+			'[role="region"][aria-label="Mockup preview"]'
+		);
+		const el = region?.querySelector<HTMLElement>(`[data-rewrite-field="${CSS.escape(fieldId)}"]`);
+		if (!region || !el) return;
+		region.scrollTop += el.getBoundingClientRect().top - region.getBoundingClientRect().top - 32;
+		if (el.tagName !== 'BUTTON') el.setAttribute('tabindex', '-1');
+		el.focus({ preventScroll: true });
+		el.classList.add('karl-jump-highlight');
+		setTimeout(() => el.classList.remove('karl-jump-highlight'), 2000);
+	}
+
 	setOutlineContext({
 		get placements() {
 			return outlinePlacements;
@@ -426,6 +457,13 @@
 		<!-- Toolbar (Top) -->
 		{#if pageStore.mode === 'sitemap'}
 			<SiteMapView onExit={() => pageStore.showReview()} />
+		{:else if pageStore.mode === 'blueprint' && blueprintPlacements && pageData}
+			<BlueprintView
+				placements={blueprintPlacements}
+				title={String(pageData.title ?? '')}
+				onExit={() => pageStore.showReview()}
+				onShow={showOnPage}
+			/>
 		{:else}
 			{#if pageStore.mode === 'walkthrough' && walkthrough}
 				<!-- The navy bar replaces the canvas toolbar while rebuilding, and
@@ -609,6 +647,17 @@
 											Marks where each part of the page goes in Karl, and what won’t carry over.
 										</p>
 										<Separator />
+										<Button
+											variant="outline"
+											size="sm"
+											class="h-8 justify-start text-xs"
+											onclick={() => {
+												karlMenuOpen = false;
+												pageStore.showBlueprint();
+											}}
+										>
+											Show Blueprint
+										</Button>
 										<Button
 											variant="outline"
 											size="sm"
