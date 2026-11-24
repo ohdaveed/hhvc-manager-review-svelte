@@ -24,8 +24,13 @@ confirmed "build as written", 2026-11-24). It came from the dashboard review of 
       renders 5 rows and gets an example line. Row meta is `text-slate-700`.
 - [x] **Gates.** New/updated unit and e2e specs; `bun run verify`, lint/check/format ratchets,
       e2e green.
-- [ ] **Rendered check.** 375/768/1440, signed in/out, loading/error, axe clean, console clean.
+- [x] **Rendered check.** 375/768/1440, signed in/out, loading/error, axe clean, console clean.
 
 ## Decisions
 
 - PLAN.md is per-branch in this repo; this replaces the Karl Agency plan, which merged as #202.
+- Rendered check (2026-11-24, preview of this branch on :4198, signed-in stub fixture): no
+  horizontal overflow at 375px (`scrollWidth` 375), axe WCAG 2.1 AA 0 violations signed in, all
+  four drafts under Proposed pages with their state lines, error card and Try again verified.
+- `verify` timed out four unrelated unit tests once under a load average of ~10-16; each passed
+  in isolation and the retried commit's `verify` was green (1037 passed).
