@@ -127,7 +127,8 @@ export const SCHEMA_TYPES = [
 	'Campaign',
 	'Report',
 	'Agency',
-	'Location'
+	'Location',
+	'About us'
 ] as const;
 
 /** A panel's label as Karl's form shows it: the inventory's label without its trailing note. */
@@ -361,6 +362,49 @@ const RULES: Record<SchemaType, TypeRules> = {
 						helpTitle: 'How a Step by step page works; Topic; Topics',
 						url: `${TYPES}/step-by-step/how-a-step-by-step-page-works`,
 						says: 'Step by step page: "You can add a topic, but the step by step will not automatically show on the topic page." Topic page: "Transaction and step by step pages tagged to the topic will automatically appear under the heading More services."'
+					}
+				}
+			]
+		}
+	},
+	'About us': {
+		// The URLs page gives `sf.gov/about-[department name]`; the About page
+		// gives `sf.gov/departments/name-of-department/about`.
+		url: {
+			pattern: 'sf.gov/about-[department] or sf.gov/departments/[department]/about',
+			status: 'unconfirmed',
+			cite: {
+				helpTitle: 'URLs; About',
+				url: `${HC}/components/urls`,
+				says: 'URLs page: "About - sf.gov/about-[department name]". About page: "Url structure sf.gov/departments/name-of-department/about".'
+			}
+		},
+		// No Related panel in the live form's inventory.
+		relatedTargets: null,
+		pageCaveats: [
+			{
+				plain:
+					'Karl adds a button to this department’s Agency page that links here automatically, once this page is tagged with that Agency.',
+				status: 'confirmed',
+				cite: {
+					helpTitle: 'How an About page works',
+					url: `${TYPES}/about/how-an-about-page-works`,
+					says: 'Create an About page and tag an existing Agency. A button linking to the About page will automatically be added from the About section of that Agency page.'
+				}
+			}
+		],
+		rules: {
+			title: [TITLE],
+			about_info: [
+				{
+					kind: 'caveat',
+					plain:
+						'About pages don’t take images. Put an organization chart on a separate Information page and link to it.',
+					status: 'confirmed',
+					cite: {
+						helpTitle: 'Information (About page)',
+						url: `${TYPES}/about/information`,
+						says: "If you have an image of an organizational chart, add that to the info page of your division. About pages don't take images."
 					}
 				}
 			]

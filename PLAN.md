@@ -25,7 +25,7 @@ is Unplaced; Primary agency is empty. No About rule is checked yet.
 
 ## Checklist
 
-- [ ] **1. Schema and placement.** About us in `schema.ts`: Title, the Agency-button page note,
+- [x] **1. Schema and placement.** About us in `schema.ts`: Title, the Agency-button page note,
       the no-images note, an unconfirmed URL, no Related. Unit tests pin the page.
 - [ ] **2. e2e.** The About us page joins both specs, with axe at 1280px and 375px; screenshots
       looked at.
