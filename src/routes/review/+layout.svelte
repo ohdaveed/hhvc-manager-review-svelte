@@ -1,13 +1,15 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, tick } from 'svelte';
 	import { page } from '$app/stores';
 	import { resolve } from '$app/paths';
-	import { Button } from '$lib/components/ui/button/index.js';
+	import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
+	import { Switch } from '$lib/components/ui/switch/index.js';
+	import { Popover } from 'bits-ui';
 	import { ScrollArea } from '$lib/components/ui/scroll-area/index.js';
 	import { Separator } from '$lib/components/ui/separator/index.js';
 	import { draftsStore } from '$lib/stores/draftPages';
 	import { pageTitleFor } from '$lib/corpus/pageTitle';
-	import { reviewHrefFor, routePathFor } from '$lib/corpus/draftPath';
+	import { isDraftPath, reviewHrefFor, routePathFor } from '$lib/corpus/draftPath';
 	import { pageStore } from '$lib/stores/pageData.svelte';
 	import { editsStore, firstQueuePath, loadReview, pagesStore } from '$lib/stores/reviewState';
 	import { sessionStore } from '$lib/stores/session.svelte';
@@ -36,8 +38,11 @@
 	import WalkthroughHeader from '$lib/components/workspace/WalkthroughHeader.svelte';
 	import WalkthroughDrawer from '$lib/components/workspace/WalkthroughDrawer.svelte';
 	import SiteMapView from '$lib/components/workspace/SiteMapView.svelte';
+	import BlueprintView from '$lib/components/workspace/BlueprintView.svelte';
 	import { buildWalkthrough } from '$lib/karl/walkthrough';
 	import { reviewRecordFor } from '$lib/karl/reviewRecord';
+	import { outlineSummary, placementsFor } from '$lib/karl/placement';
+	import { setOutlineContext } from '$lib/karl/outlineContext';
 	import { pagesByKey } from '$lib/data';
 	import { triggerReviewExportDownload } from '$lib/data/exportReview';
 
@@ -76,6 +81,57 @@
 				)
 			: null
 	);
+	// The Karl outline (decisions in docs/plans/2026-11-23-karl-field-mapping-layer.md).
+	// Off on draft routes by an explicit check, not by `pageData` being absent:
+	// a draft IS in `pageStore.pages`, and its content type is the model's guess,
+	// so a placement there would read as more settled than it is (decision 12).
+	const onDraft = $derived(Boolean(currentPath && isDraftPath(currentPath)));
+	// Built once for both Karl views: the outline over the mockup and the
+	// Blueprint. Neither is built while neither is showing.
+	const placementsHere = $derived(
+		(pageStore.karlOutline || pageStore.mode === 'blueprint') && pageData && !onDraft
+			? placementsFor(
+					pageData as unknown as Parameters<typeof placementsFor>[0],
+					reviewRecordFor(pageData.id, $pagesStore, $editsStore),
+					pagesByKey
+				)
+			: null
+	);
+	const outlinePlacements = $derived(pageStore.karlOutline ? placementsHere : null);
+	const blueprintPlacements = $derived(pageStore.mode === 'blueprint' ? placementsHere : null);
+
+	/**
+	 * Blueprint → page: back to the mockup with the outline on, the field
+	 * scrolled into the preview and focused, and a brief highlight.
+	 *
+	 * `scrollTop` on the preview region, not `scrollIntoView`, for the reason the
+	 * walkthrough drawer gives: the preview is a nested scroll container inside a
+	 * fixed-height grid, and `scrollIntoView` scrolls every ancestor too. Signed
+	 * out, the field is plain text, so it gets `tabindex="-1"` to take focus.
+	 */
+	async function showOnPage(fieldId: string) {
+		pageStore.setKarlOutline(true);
+		pageStore.showReview();
+		await tick();
+		const region = document.querySelector<HTMLElement>(
+			'[role="region"][aria-label="Mockup preview"]'
+		);
+		const el = region?.querySelector<HTMLElement>(`[data-rewrite-field="${CSS.escape(fieldId)}"]`);
+		if (!region || !el) return;
+		region.scrollTop += el.getBoundingClientRect().top - region.getBoundingClientRect().top - 32;
+		if (el.tagName !== 'BUTTON') el.setAttribute('tabindex', '-1');
+		el.focus({ preventScroll: true });
+		el.classList.add('karl-jump-highlight');
+		setTimeout(() => el.classList.remove('karl-jump-highlight'), 2000);
+	}
+
+	setOutlineContext({
+		get placements() {
+			return outlinePlacements;
+		}
+	});
+	let karlMenuOpen = $state(false);
+
 	const copiedHere = $derived(
 		walkthrough && pageData
 			? walkthrough.steps.filter((s) => pageStore.isCopied(pageData.id, s.id)).length
@@ -207,6 +263,7 @@
 		// `localStorage` does not exist.
 		pageStore.loadRailState();
 		pageStore.loadPreviewWidth();
+		pageStore.loadKarlOutline();
 		pageStore.loadCopiedSteps();
 
 		// If the layout is torn down before loadReview resolves -- a slow Supabase
@@ -400,6 +457,13 @@
 		<!-- Toolbar (Top) -->
 		{#if pageStore.mode === 'sitemap'}
 			<SiteMapView onExit={() => pageStore.showReview()} />
+		{:else if pageStore.mode === 'blueprint' && blueprintPlacements && pageData}
+			<BlueprintView
+				placements={blueprintPlacements}
+				title={String(pageData.title ?? '')}
+				onExit={() => pageStore.showReview()}
+				onShow={showOnPage}
+			/>
 		{:else}
 			{#if pageStore.mode === 'walkthrough' && walkthrough}
 				<!-- The navy bar replaces the canvas toolbar while rebuilding, and
@@ -539,18 +603,76 @@
 						</div>
 						<!-- The tool's second job, and the only way into it. Entering
 					     collapses both rails; exiting puts them back as they were. -->
-						<Button
-							variant="outline"
-							size="sm"
-							class="h-7 flex-none text-xs"
-							onclick={() => pageStore.enterWalkthrough()}
-						>
-							<!-- "Karl" alone on a phone keeps the bar to two rows; the
-							     hidden words keep the accessible name, which tests and
-							     screen readers both use, unchanged. -->
-							<span class="max-sm:sr-only">Open</span> Karl
-							<span class="max-sm:sr-only">walkthrough</span>
-						</Button>
+						{#if onDraft}
+							<Button
+								variant="outline"
+								size="sm"
+								class="h-7 flex-none text-xs"
+								onclick={() => pageStore.enterWalkthrough()}
+							>
+								<!-- "Karl" alone on a phone keeps the bar to two rows; the
+								     hidden words keep the accessible name, which tests and
+								     screen readers both use, unchanged. -->
+								<span class="max-sm:sr-only">Open</span> Karl
+								<span class="max-sm:sr-only">walkthrough</span>
+							</Button>
+						{:else}
+							<!-- The Karl views, in the walkthrough button's old slot so the
+							     toolbar -- measured at zero slack between 1080px and 1400px --
+							     gains no width. A disclosure of plain buttons and a switch,
+							     NOT `role="menu"`: the walkthrough keeps its exact name and
+							     role, and Popover handles Escape, outside clicks and focus
+							     return. -->
+							<Popover.Root bind:open={karlMenuOpen}>
+								<Popover.Trigger
+									class="{buttonVariants({ variant: 'outline', size: 'sm' })} h-7 flex-none text-xs"
+									aria-label="Karl views"
+								>
+									Karl
+								</Popover.Trigger>
+								<Popover.Portal>
+									<Popover.Content
+										align="end"
+										sideOffset={6}
+										class="karl-menu z-50 flex w-64 flex-col gap-2 rounded-md border border-sfds-grey-l2 bg-background p-3 shadow-md"
+									>
+										<label class="flex items-center justify-between gap-3 text-sm font-medium">
+											Show Karl fields
+											<Switch
+												checked={pageStore.karlOutline}
+												onCheckedChange={(on: boolean) => pageStore.setKarlOutline(on)}
+											/>
+										</label>
+										<p class="text-sfds-slate text-xs">
+											Marks where each part of the page goes in Karl, and what won’t carry over.
+										</p>
+										<Separator />
+										<Button
+											variant="outline"
+											size="sm"
+											class="h-8 justify-start text-xs"
+											onclick={() => {
+												karlMenuOpen = false;
+												pageStore.showBlueprint();
+											}}
+										>
+											Show Blueprint
+										</Button>
+										<Button
+											variant="outline"
+											size="sm"
+											class="h-8 justify-start text-xs"
+											onclick={() => {
+												karlMenuOpen = false;
+												pageStore.enterWalkthrough();
+											}}
+										>
+											Open Karl walkthrough
+										</Button>
+									</Popover.Content>
+								</Popover.Portal>
+							</Popover.Root>
+						{/if}
 					</div>
 				</nav>
 			{/if}
@@ -626,7 +748,15 @@
 					     (`max-w-xl`, measured 2026-11-22). Title and summary span it;
 					     body copy sits in 7 of its 12 columns (app.css). The chrome
 					     above and below is full-bleed, which is why it sits outside. -->
-						<div id="mockPage" class="mock-page">
+						<div id="mockPage" class="mock-page" class:karl-outline-on={outlinePlacements}>
+							{#if outlinePlacements}
+								<!-- Review-tool chrome, like the Karl notices inside sections: the
+								     one-line count a reviewer reads before the chips. -->
+								<p class="karl-outline-summary" role="status">
+									<strong>Karl outline:</strong>
+									{outlineSummary(outlinePlacements)}
+								</p>
+							{/if}
 							<div class="mx-auto max-w-[1076px]">
 								{@render children()}
 							</div>

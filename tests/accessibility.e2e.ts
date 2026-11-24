@@ -59,13 +59,16 @@ for (const path of PAGES) {
  * what those two features render.
  */
 for (const view of [
-	{ name: 'Karl walkthrough', open: 'Open Karl walkthrough', ready: '.drawer' },
-	{ name: 'site map', open: 'Site map', ready: '.sitemap' }
+	// The walkthrough lives in the Karl views disclosure, so it takes the
+	// trigger first; its own button keeps its name and role.
+	{ name: 'Karl walkthrough', via: 'Karl views', open: 'Open Karl walkthrough', ready: '.drawer' },
+	{ name: 'site map', via: null, open: 'Site map', ready: '.sitemap' }
 ]) {
 	test(`no WCAG 2.1 AA violations in the ${view.name}`, async ({ page }) => {
 		await page.goto('/review/report-garbage-filth-vegetation');
 		await page.waitForLoadState('networkidle');
 
+		if (view.via) await page.getByRole('button', { name: view.via }).click();
 		await page.getByRole('button', { name: view.open }).click();
 		await page.waitForSelector(view.ready);
 

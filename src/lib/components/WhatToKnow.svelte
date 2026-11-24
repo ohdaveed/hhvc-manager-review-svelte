@@ -1,4 +1,6 @@
 <script lang="ts">
+	import KarlChip from './KarlChip.svelte';
+	import { outlineContext } from '$lib/karl/outlineContext';
 	import EditTarget from './EditTarget.svelte';
 
 	/**
@@ -37,10 +39,22 @@
 		};
 		type?: string;
 	} = $props();
+
+	// The Karl outline: the box holds two panels (Cost, Things to know), so it is
+	// chipped once as a block rather than per string.
+	const outline = outlineContext();
+	const karl = $derived(outline?.placements?.whatToKnow ?? undefined);
 </script>
 
 {#if whatToKnow}
-	<div class="what-to-know">
+	<div
+		class="what-to-know"
+		data-karl-section={karl ? (karl.rawName ?? 'unplaced') : undefined}
+		data-karl-status={karl?.status}
+	>
+		{#if karl}
+			<KarlChip as="p" status={karl.status} label={karl.label} reasons={karl.reasons} />
+		{/if}
 		{#if type !== 'Transaction'}
 			<div class="what-to-know-orphan">
 				<span class="what-to-know-orphan-icon" aria-hidden="true">!</span>

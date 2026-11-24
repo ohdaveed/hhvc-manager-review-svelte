@@ -1,0 +1,122 @@
+/**
+ * The Blueprint view, in the real renderer: the page as its Karl form, empty
+ * panels shown as empty, everything unplaced in one tray, and "Show on page"
+ * landing on the right element with the outline on. axe runs in the view at a
+ * desktop and a phone width. Screenshots go to `KARL_SHOTS` when set.
+ */
+import AxeBuilder from '@axe-core/playwright';
+import type { Page } from '@playwright/test';
+import { expect, test } from './fixtures';
+import { gotoSignedIn } from './signedIn';
+
+const RULES = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];
+
+const noViolations = async (page: Page) => {
+	const { violations } = await new AxeBuilder({ page }).withTags(RULES).analyze();
+	expect(
+		violations,
+		violations.map((v) => `${v.id} (${v.impact}) x${v.nodes.length}: ${v.help}`).join('\n')
+	).toEqual([]);
+};
+
+const shoot = async (page: Page, name: string) => {
+	const dir = process.env.KARL_SHOTS;
+	if (dir) await page.screenshot({ path: `${dir}/${name}.png`, fullPage: true });
+};
+
+async function openBlueprint(page: Page) {
+	await page.getByRole('button', { name: 'Karl views' }).click();
+	await page.getByRole('button', { name: 'Show Blueprint' }).click();
+	await expect(page.getByRole('heading', { name: 'Blueprint', level: 2 })).toBeVisible();
+}
+
+const panelOrder = (page: Page) =>
+	page
+		.locator('[data-karl-panel]')
+		.evaluateAll((els) => els.map((e) => e.getAttribute('data-karl-panel')));
+
+const PILOTS = [
+	{
+		slug: 'report-rats-mice-four-legged-problems',
+		first: ['title', 'description', 'primary_agency', 'cost', 'things_to_know', 'what_to_do'],
+		empty: ['Contact us (empty)', 'Topics (empty)'],
+		tray: 2
+	},
+	{
+		slug: 'information-what-happens-after-you-report-housing-pest-problem',
+		first: ['title', 'description', 'primary_agency', 'part_of', 'information_section'],
+		empty: ['Primary agency (empty)', 'Part of (empty)'],
+		tray: 2
+	},
+	{
+		slug: 'look-up-building-records',
+		first: [
+			'title',
+			'description',
+			'primary_agency',
+			'data_dashboard',
+			'introductory_text',
+			'body'
+		],
+		empty: ['Data dashboard (empty)', 'Custom section (empty)'],
+		tray: 1
+	}
+] as const;
+
+test.describe('Blueprint', () => {
+	for (const pilot of PILOTS) {
+		test(`${pilot.slug}: Karl order, empty panels, tray, AA at 1280 and 375`, async ({ page }) => {
+			await page.setViewportSize({ width: 1280, height: 900 });
+			await gotoSignedIn(page, `/review/${pilot.slug}`);
+			await openBlueprint(page);
+
+			expect((await panelOrder(page)).slice(0, pilot.first.length)).toEqual(pilot.first);
+			// Disabled-by-design panels get no slot.
+			expect(await panelOrder(page)).not.toContain('redirect_url');
+			for (const empty of pilot.empty) {
+				await expect(page.getByRole('heading', { name: empty, level: 3 })).toBeVisible();
+			}
+			await expect(page.locator('.bp-tray-item')).toHaveCount(pilot.tray);
+
+			await noViolations(page);
+			await shoot(page, `karl-blueprint-${pilot.slug}-1280`);
+			await page.setViewportSize({ width: 375, height: 812 });
+			await noViolations(page);
+			await shoot(page, `karl-blueprint-${pilot.slug}-375`);
+		});
+	}
+
+	test('a required empty panel says Karl will not save without it', async ({ page }) => {
+		await gotoSignedIn(
+			page,
+			'/review/information-what-happens-after-you-report-housing-pest-problem'
+		);
+		await openBlueprint(page);
+		await expect(
+			page.locator('[data-karl-panel="primary_agency"]').getByText(/Karl won’t save the page/)
+		).toBeVisible();
+	});
+
+	test('"Show on page" lands on the field, focused, with the outline on', async ({ page }) => {
+		await gotoSignedIn(page, '/review/report-rats-mice-four-legged-problems');
+		await openBlueprint(page);
+		await page
+			.getByRole('button', { name: 'Show on page: “How your report is processed” — its button' })
+			.click();
+
+		await expect(page.getByRole('heading', { name: 'Blueprint', level: 2 })).toHaveCount(0);
+		await expect(page.locator('.karl-outline-summary')).toBeVisible();
+		const field = page.locator(
+			'[data-rewrite-field="sections.how-your-report-is-processed.button"]'
+		);
+		await expect(field).toBeFocused();
+		await expect(field).toBeInViewport();
+	});
+
+	test('Back to review returns to the mockup', async ({ page }) => {
+		await gotoSignedIn(page, '/review/look-up-building-records');
+		await openBlueprint(page);
+		await page.getByRole('button', { name: 'Back to review' }).click();
+		await expect(page.getByRole('region', { name: 'Mockup preview' })).toBeVisible();
+	});
+});

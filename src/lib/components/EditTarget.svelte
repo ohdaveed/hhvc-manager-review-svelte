@@ -2,6 +2,8 @@
 	import { pageStore } from '$lib/stores/pageData.svelte';
 	import { sessionStore } from '$lib/stores/session.svelte';
 	import MarkdownText from './MarkdownText.svelte';
+	import KarlChip from './KarlChip.svelte';
+	import { outlineContext } from '$lib/karl/outlineContext';
 
 	/**
 	 * One editable piece of mockup copy.
@@ -54,6 +56,32 @@
 	// signed-in reviewer never sees the controls flicker out and back.
 	const editable = $derived(!sessionStore.knownSignedOut);
 
+	// The Karl outline (see `$lib/karl/outlineContext`). `placement` is undefined
+	// when the outline is off, so every attribute below drops away with it.
+	const outline = outlineContext();
+	const placement = $derived(outline?.placements?.fields.get(fieldId));
+	const karlStatus = $derived(placement?.status);
+	const karlField = $derived(placement ? (placement.rawName ?? 'unplaced') : undefined);
+	// A chip only where this field has something of its own to say, or is a
+	// page-level block no section chip speaks for (`placement.chip`). A field
+	// that merely shares its section's status is covered by the section's chip.
+	const chip = $derived(placement?.chip ? placement : undefined);
+	// Outlined on its own only when it says something its section does not:
+	// placed strings inside a placed section stay quiet (decision 9).
+	// Inside an unplaced SECTION the section's own outline and chip already say
+	// it; outlining every string again only buries the page in red.
+	const sectionUnplaced = $derived(
+		outline?.placements?.sections.get(fieldId.match(/^sections\.([^.]+)\./)?.[1] ?? '')?.status ===
+			'unplaced'
+	);
+	const karlFlag = $derived(
+		chip || (karlStatus === 'unplaced' && !sectionUnplaced) ? '' : undefined
+	);
+	const chipId = $derived(`karl-chip-${fieldId.replace(/[^a-zA-Z0-9_-]/g, '-')}`);
+	// Text inside a heading becomes part of its name, so a chip there is never
+	// read inline -- signed in, the button's description carries it.
+	const inHeading = $derived(/^h[1-6]$/.test(as));
+
 	const selected = $derived(pageStore.isSelected(fieldId));
 	const badge = $derived(pageStore.badgeNumber(fieldId));
 
@@ -67,13 +95,21 @@
 </script>
 
 {#if editable}
-	<svelte:element this={as} {id} class="{className} {selected ? 'edit-target-host' : ''}">
+	<svelte:element
+		this={as}
+		{id}
+		class="{className} {selected ? 'edit-target-host' : ''}"
+		data-karl-status={karlStatus}
+		data-karl-field={karlField}
+		data-karl-flag={karlFlag}
+	>
 		<button
 			type="button"
 			class="edit-target {selected ? 'edit-target-selected' : ''}"
 			data-rewrite-field={fieldId}
 			aria-pressed={selected}
 			aria-label={selected ? `${name}, selected, field ${badge}` : name}
+			aria-describedby={chip ? chipId : undefined}
 			onclick={select}
 		>
 			{#if selected}
@@ -88,6 +124,12 @@
 			     panel and what any rewrite writes back. -->
 			<MarkdownText {value} interactive={false} />
 		</button>
+		{#if chip}
+			<!-- Inside the host, never beside it: the host may be an `li`, `dt` or
+			     `dd`, where a sibling would be invalid markup. Hidden, because the
+			     button's `aria-describedby` already reads it out. -->
+			<KarlChip id={chipId} status={chip.status} label={chip.label} reasons={chip.reasons} hidden />
+		{/if}
 	</svelte:element>
 {:else}
 	<!-- No button, no tabindex, no pointer affordance: signed out, this is
@@ -98,7 +140,15 @@
 		class={className}
 		data-rewrite-field={fieldId}
 		data-unverified={unverified || undefined}
+		data-karl-status={karlStatus}
+		data-karl-field={karlField}
+		data-karl-flag={karlFlag}
 	>
 		<MarkdownText {value} />
+		{#if chip}
+			<!-- Signed out there is no button to describe, so the chip is read
+			     inline -- except inside a heading, where it would rename it. -->
+			<KarlChip status={chip.status} label={chip.label} reasons={chip.reasons} hidden={inHeading} />
+		{/if}
 	</svelte:element>
 {/if}

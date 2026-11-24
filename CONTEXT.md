@@ -97,4 +97,33 @@ pages someone will later build there.
 
 **Karl mapping** — a section's note describing which Karl field or content block
 it becomes. A restructure Karl cannot express is not publishable, whatever its
-merits as copy.
+merits as copy. Commentary written by a person, as opposed to a placement.
+
+**Karl panel** — one slot on a Karl content type's editing form, such as _What
+to do_ or _Contact us_, in the order the form presents it. Interface copy for a
+manager may say "Karl field"; nothing else does, because **Field** already means
+an addressed piece of our copy.
+_Avoid_: Karl field (outside interface copy), Wagtail field
+
+**Placement** — the Karl panel a field lands in, computed from the panel
+inventory for the page's content type. Where a placement and a Karl mapping
+disagree, the placement is what the tool reports.
+_Avoid_: karlField, mapping (for the computed answer)
+
+**Placed** — copy with a placement that breaks none of Karl's rules for that
+panel.
+
+**Needs a fix** — copy with a placement that breaks one of Karl's rules for that
+panel, such as a length limit, or that still holds placeholder text.
+
+**Unplaced** — copy that no Karl panel on its page's content type accepts, so it
+will not carry over to Karl as written. The most serious of the four statuses.
+_Avoid_: orphan (reserved for edits whose field id no longer resolves)
+
+**Unconfirmed** — copy whose placement or rule rests on something Karl's own
+documentation leaves unsettled or contradicts.
+_Avoid_: unknown, gray
+
+**Karl outline** — the view of a mockup page that marks each section with its
+placement and status. Shown on top of the rendered page, not instead of it.
+_Avoid_: overlay (reserved for accepted edits), Karl tags
