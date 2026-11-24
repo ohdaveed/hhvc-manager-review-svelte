@@ -16,23 +16,27 @@ review of `/review/[slug]` rendered at 1440/1280/768/375. Independent of PR #205
 
 ## Tasks
 
-- [ ] **Header band.** Queue rail header is one 48px row: "All pages" link to `/` + collapse.
+- [x] **Header band.** Queue rail header is one 48px row: "All pages" link to `/` + collapse.
       Toolbar: previous/next page in queue order, the page title (slug in its tooltip), a status
       badge, then unsaved count, preview width ("Desktop · 54%", px in tooltip) and Karl. Panel tab
       strip on white. All three share one bottom border line.
-- [ ] **Queue order helper.** `queueOrder(pages)` in `reviewState` (groups in
+- [x] **Queue order helper.** `queueOrder(pages)` in `reviewState` (groups in
       `QUEUE_STATUS_ORDER`, store order within), corpus order when no review is loaded; unit-tested.
-- [ ] **Account to footer.** Email + Sign out move to the queue footer beside Site map / Export;
+- [x] **Account to footer.** Email + Sign out move to the queue footer beside Site map / Export;
       the eyebrow goes.
-- [ ] **Panel.** Tabs ordered Decision, Fields, Rethink, Analysis; "Manager Review" heading removed.
-- [ ] **Decision when hidden.** Collapsed panel strip shows a status dot with an accessible label;
+- [x] **Panel.** Tabs ordered Decision, Fields, Rethink, Analysis; "Manager Review" heading removed.
+- [x] **Decision when hidden.** Collapsed panel strip shows a status dot with an accessible label;
       the phone Review button carries the status.
-- [ ] **Tests and gates.** Replace `toolbarQueueStart.e2e.ts` with prev/next coverage; update
+- [x] **Tests and gates.** Replace `toolbarQueueStart.e2e.ts` with prev/next coverage; update
       specs that pin the old header; `verify`, ratchets, affected e2e green.
-- [ ] **Rendered check.** 1440/1280/768/375, collapsed, signed out; keyboard order; axe.
+- [x] **Rendered check.** 1440/1280/768/375, collapsed, signed out; keyboard order; axe.
 
 ## Decisions
 
 - Toolbar badge uses the workspace vocabulary (`queueHeading`: "Needs review"), matching the
   queue groups beside it. Unifying with the landing page's "Undecided" is follow-up F1 in
   `src/lib/review/statusLabels.ts`, deliberately not done here.
+- Rendered check (2026-11-24, preview of this branch on :4197, signed-in stub): the queue header,
+  canvas toolbar and panel tab strip all end at y=48 at 1440 and 1280; no overflow at 375; the
+  collapsed panel shows the decision ring; the phone Review button reads "Review (Needs review)".
+  Full e2e 92/93 then the one failure (that accessible name) fixed and re-run green.

@@ -62,6 +62,21 @@ export function firstQueuePath(pages: ReviewPage[]): string | undefined {
 }
 
 /**
+ * Every path in the order the queue renders its rows: groups in
+ * `QUEUE_STATUS_ORDER`, store order within a group. The toolbar's previous and
+ * next buttons step through this, so they move to the row above or below the
+ * current one -- the same rows the reviewer sees in the sidebar.
+ *
+ * Empty when no review is loaded; callers fall back to corpus order, which is
+ * what the queue lists while browsing signed out.
+ */
+export function queueOrder(pages: ReviewPage[]): string[] {
+	return QUEUE_STATUS_ORDER.flatMap((status) =>
+		pages.filter((p) => p.status === status).map((p) => p.path)
+	);
+}
+
+/**
  * The page after `current` that still has no decision, so a reviewer can move on
  * without going back to the sidebar.
  *

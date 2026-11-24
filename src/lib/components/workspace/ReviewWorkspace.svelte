@@ -95,12 +95,20 @@
 	     in the script scrolls a programmatically selected tab into view.
 	     `h-auto!` is still needed: the `line` variant pins the list to `h-8`
 	     via `group-data-horizontal/tabs:h-8`, which outranks a plain `h-auto`. -->
-	<div class="flex items-center gap-1 border-b bg-muted/40 pr-2">
+	<!-- `h-12`, white, `border-sfds-grey-l2`: the strip is the panel's slice of
+	     the workspace's one 48px header band, level with the queue's top row and
+	     the canvas toolbar. It used to sit on a grey tint at its own height.
+	     Decision comes FIRST: it is what the panel opens on and what the tool
+	     exists to record, and it was third. -->
+	<div
+		class="flex h-12 flex-none items-center gap-1 border-b border-sfds-grey-l2 bg-background pr-2"
+	>
 		<Tabs.List
 			variant="line"
 			bind:ref={tabList}
 			class="h-auto! min-w-0 flex-1 [scrollbar-width:none] flex-nowrap justify-start gap-0 overflow-x-auto overflow-y-hidden border-0 bg-transparent px-1 pb-[5px]"
 		>
+			<Tabs.Trigger value="overview" class="flex-none px-2 py-2.5">Decision</Tabs.Trigger>
 			<Tabs.Trigger value="fields" class="flex-none px-2 py-2.5">
 				Fields
 				{#if pageStore.selectedFieldIds.length > 0}
@@ -112,7 +120,6 @@
 				{/if}
 			</Tabs.Trigger>
 			<Tabs.Trigger value="rethink" class="flex-none px-2 py-2.5">Rethink</Tabs.Trigger>
-			<Tabs.Trigger value="overview" class="flex-none px-2 py-2.5">Decision</Tabs.Trigger>
 			<Tabs.Trigger value="analysis" class="flex-none px-2 py-2.5">Analysis</Tabs.Trigger>
 		</Tabs.List>
 
