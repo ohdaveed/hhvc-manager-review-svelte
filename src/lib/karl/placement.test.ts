@@ -596,3 +596,38 @@ describe('Location', () => {
 		expect(p.url?.status).toBe('unconfirmed');
 	});
 });
+
+describe('About us', () => {
+	const p = of('aboutHhvcTeam');
+
+	it('places the Information and Resources sections', () => {
+		expect([...p.sections.values()].map((s) => [s.label, s.status])).toEqual([
+			['Information 1', 'placed'],
+			['Information 2', 'placed'],
+			['Information 3', 'placed'],
+			['Resources', 'placed']
+		]);
+	});
+
+	it('says how readers reach it: Karl links it from the Agency page', () => {
+		expect(p.pageCaveats).toEqual([
+			'Karl adds a button to this department’s Agency page that links here automatically, once this page is tagged with that Agency.'
+		]);
+	});
+
+	it('notes that About pages take no images, as Good to know', () => {
+		const info = p.panels.find((x) => x.rawName === 'about_info');
+		expect(info?.notes).toEqual([
+			'About pages don’t take images. Put an organization chart on a separate Information page and link to it.'
+		]);
+		expect(info?.caveats).toEqual([]);
+	});
+
+	it('keeps the summary unplaced (no Description, U21) and the URL unconfirmed', () => {
+		expect(p.unplaced.map((u) => u.subject)).toContain('The summary under the title');
+		expect(p.url?.status).toBe('unconfirmed');
+		expect(outlineSummary(p)).toBe(
+			'4 sections: 4 go into Karl. 2 things won’t carry over to Karl.'
+		);
+	});
+});

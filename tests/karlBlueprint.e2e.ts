@@ -96,6 +96,12 @@ const PILOTS = [
 		first: ['title', 'primary_agency', 'description', 'alert', 'image', 'body', 'intro'],
 		empty: ['Primary agency (empty)', 'Alert (empty)'],
 		tray: 1
+	},
+	{
+		slug: 'departments--healthy-housing-and-vector-control--about',
+		first: ['title', 'primary_agency', 'about_info', 'resources'],
+		empty: ['Primary agency (empty)'],
+		tray: 2
 	}
 ] as const;
 
