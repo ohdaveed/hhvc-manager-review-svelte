@@ -1,52 +1,31 @@
-# PLAN — Karl outline rollout: Agency
+# PLAN — Landing page fixes
 
-Branch `feat/karl-agency`, cut from `origin/main` at `cac772a` (Report, PR #201, verified live).
-The plan and vocabulary are in `docs/plans/2026-11-23-karl-field-mapping-layer.md` (§5, rollout
-step 5) and `CONTEXT.md`.
+Branch `feat/landing-fixes`, cut from `origin/main` at `0046900`, in worktree `../wt-landing-fixes`.
+The confirmed design is `docs/superpowers/specs/2026-11-24-landing-page-fixes-brief.md` (user
+confirmed "build as written", 2026-11-24). It came from the dashboard review of the same day.
 
-One page: `pestsTopic` (`sf.gov/departments--healthy-housing-and-vector-control`). One Services
-section and four Resources sections, each a heading, an intro paragraph (three of the four) and
-link cards, plus an About section.
+## Tasks
 
-## Measured before starting
+- [ ] **loadReview rejects on a query error.** A `/reviews` error rejects instead of resolving to
+      a no-op, so the landing page's `failed` branch is reachable; "no review visible" stays a
+      resolve. The review layout's handling of a rejection is checked and still works.
+- [ ] **Status card.** One card in the header slot in every state: skeleton (loading), signed out
+      (Sign in), in progress / none decided / all decided, load failed (Try again re-runs the
+      load), and signed in with no review. A "Next up" row holds the title; the button reads
+      Continue/Start with the accessible name `Continue to <title>` / `Start with <title>`. No
+      horizontal overflow at 375px.
+- [ ] **Status shortcuts.** Legend entries (plus "N undecided") are buttons that set the list's
+      status filter and move focus to the list heading.
+- [ ] **Drafts.** `isDraftPath` pages are always under Proposed pages; a draft's meta line shows
+      Drafting… / Draft ready / Drafting stalled / Draft failed.
+- [ ] **Empty search.** The message names the query and the active status, plus a "Clear search
+      and filter" button that resets both and focuses the search box.
+- [ ] **Polish.** How it works opens when nothing is decided yet. The propose textarea really
+      renders 5 rows and gets an example line. Row meta is `text-slate-700`.
+- [ ] **Gates.** New/updated unit and e2e specs; `bun run verify`, lint/check/format ratchets,
+      e2e green.
+- [ ] **Rendered check.** 375/768/1440, signed in/out, loading/error, axe clean, console clean.
 
-- **The walkthrough is wrong in two places, and the outline inherits both.**
-  - It emits each Services and Resources intro paragraph into the Subsection as "Text". Karl's
-    Subsection has only a Title and a links list ("Add a subsection Title … Add an SF.gov page or
-    External link"; field map E1), which is what register entry **U20** records: "a direct mapping
-    loses the paragraph". The outline therefore calls lost copy Placed.
-  - It emits "Section title 2" (one required field) four times, once per Resources heading.
-- Labels: Agency's form has two panels both called "Subsection", so the outline shows "Subsection"
-  beside "Subsection 1–4".
-- Audience is Unplaced; About is Placed. Public records is required and empty, but shows as
-  optional, because Agency has no schema yet.
+## Decisions
 
-## Decision (user, 2026-11-24)
-
-Each Services/Resources heading becomes **its own Subsection's Title**. Section title 1 and 2 keep
-the values the form pre-fills ("Services", "Resources"). This replaces the field map's documented
-mapping ("the resources sections' heading" → Section title 2), which cannot hold four headings in
-one field. The field map rows change with it.
-
-## Karl, read 2026-11-24
-
-- Resources on an Agency page: "Add a subsection Title … Add an SF.gov page or External link …
-  You can create more subsections."
-- Resource tiles on Agency: the Resources component says "5 content types support resource
-  tiles" and lists four, without Agency. The form offers a list of links here. **Unconfirmed.**
-- Spotlight: Agency allows up to 2. None on this page.
-- URL: `sf.gov/department-[slug]` (URLs) vs `sf.gov/departments/title-of-department` (Agency).
-  **Unconfirmed.**
-
-## Checklist
-
-- [x] **1. Transcript.** On Agency, a Services/Resources section's heading is its Subsection's
-      Title, and its intro paragraphs are not emitted (the sweep reports them as U20). Section title
-      1 and 2 emit their pre-filled values once each. The field map rows are updated. The snapshot
-      diff is `pestsTopic` only.
-- [x] **2. Schema and placement.** Agency in `schema.ts` (Title, Description, ≤2 spotlights, the
-      resource-tiles caveat, unconfirmed URL). Labels `Services · Subsection` and
-      `Resources · Subsection N`. Unit tests pin the page.
-- [x] **3. e2e.** The Agency page joins both specs, with axe at 1280px and 375px; screenshots
-      looked at.
-- [x] **4. Ship.** `verify` and the ratchets, then a PR. Ask before merging.
+- PLAN.md is per-branch in this repo; this replaces the Karl Agency plan, which merged as #202.
