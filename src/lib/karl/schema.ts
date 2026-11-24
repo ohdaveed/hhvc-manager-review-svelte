@@ -60,7 +60,14 @@ export type FieldRule =
 			cite: Cite;
 	  }
 	/** Karl's own guidance below its hard limit: reported, but it does not make copy need a fix. */
-	| { kind: 'targetItems'; target: number; status: RuleStatus; cite: Cite }
+	| {
+			kind: 'targetItems';
+			target: number;
+			/** Counted over the panel's blocks of one kind, e.g. Campaign's accordions. */
+			block?: string;
+			status: RuleStatus;
+			cite: Cite;
+	  }
 	/** A sub-field Karl marks required, e.g. each step's Title. */
 	| { kind: 'required'; sub: string; status: RuleStatus; cite: Cite }
 	| { kind: 'fixedHeading'; heading: string; status: RuleStatus; cite: Cite }
@@ -114,7 +121,8 @@ export const SCHEMA_TYPES = [
 	'Information',
 	'Resource Collection',
 	'Step by step',
-	'Topic'
+	'Topic',
+	'Campaign'
 ] as const;
 
 /** A panel's label as Karl's form shows it: the inventory's label without its trailing note. */
@@ -142,6 +150,20 @@ const DESCRIPTION: FieldRule = {
 		helpTitle: 'Description',
 		url: `${HC}/components/description`,
 		says: 'You have up to 110 characters.'
+	}
+};
+
+/** A spotlight's button: allowed on Campaign, Agency and Report, at 25 characters. */
+const SPOTLIGHT_BUTTON: FieldRule = {
+	kind: 'maxChars',
+	sub: 'Button',
+	max: KARL_FLAGS.buttonLabelMaxChars,
+	strict: false,
+	status: 'confirmed',
+	cite: {
+		helpTitle: COMPONENT_SUPPORT.button.helpTitle,
+		url: COMPONENT_SUPPORT.button.url,
+		says: 'You can add a button as part of a Spotlight on: Agency, Campaign, Report. … Buttons can only be 25 characters long.'
 	}
 };
 
@@ -334,6 +356,53 @@ const RULES: Record<SchemaType, TypeRules> = {
 						helpTitle: 'How a Step by step page works; Topic; Topics',
 						url: `${TYPES}/step-by-step/how-a-step-by-step-page-works`,
 						says: 'Step by step page: "You can add a topic, but the step by step will not automatically show on the topic page." Topic page: "Transaction and step by step pages tagged to the topic will automatically appear under the heading More services."'
+					}
+				}
+			]
+		}
+	},
+	Campaign: {
+		// Both pages agree: the URLs page and the Campaign page.
+		url: {
+			pattern: 'sf.gov/[slug]',
+			status: 'confirmed',
+			cite: {
+				helpTitle: 'URLs; Campaign',
+				url: `${HC}/components/urls`,
+				says: 'URLs page: "Campaign - sf.gov/[slug]". Campaign page: "URL sf.gov/title-of-campaign".'
+			}
+		},
+		relatedTargets: RELATED_PERMITTED_TYPES,
+		rules: {
+			title: [TITLE],
+			spotlight_1: [SPOTLIGHT_BUTTON],
+			spotlight_2: [SPOTLIGHT_BUTTON],
+			additional_content: [
+				{
+					kind: 'targetItems',
+					target: 5,
+					block: 'supporting',
+					status: 'confirmed',
+					cite: {
+						helpTitle: 'Accordions on a Campaign page',
+						url: `${TYPES}/campaign/additional-content/accordions-on-a-campaign-page`,
+						says: 'Ideally, you should have a maximum of 5 accordions.'
+					}
+				}
+			],
+			// The live form has a Contact us panel; the help center's list of a
+			// Campaign page's sections does not. Under the field map's precedence
+			// (O14, help center first) that is a disagreement, not a settled field.
+			contact: [
+				{
+					kind: 'caveat',
+					plain:
+						'Karl’s guide to Campaign pages does not list a Contact us section, though the editing form has one.',
+					status: 'unconfirmed',
+					cite: {
+						helpTitle: 'How a Campaign page works',
+						url: `${TYPES}/campaign/how-a-campaign-page-works`,
+						says: "Create a Campaign page. You'll have the following sections: Title, Primary agency, Logo, Background header image, Color theme, Spotlight 1, Top facts, Additional content, Spotlight 2, About, Partner agencies, Related"
 					}
 				}
 			]

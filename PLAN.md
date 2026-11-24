@@ -43,7 +43,7 @@ Pages: `mosquitoWorkshop`, `ipmEducation`, `ratFreeBlocks`.
       `partner_agencies` to `partnerAgencies` and `about_campaign` to a `component: 'about'`
       section, tagging `ratFreeBlocks`' "About this campaign" (no render change), and update the
       field map rows. The snapshot diff is limited to `ratFreeBlocks`.
-- [ ] **2. Schema.** Campaign in `schema.ts`: Title, spotlight button ≤25, accordions aim ≤5
+- [x] **2. Schema.** Campaign in `schema.ts`: Title, spotlight button ≤25, accordions aim ≤5
       (advisory), Contact us caveat, confirmed URL, Related targets. All cited.
 - [ ] **3. Placement.** A callout on a type Karl offers none on needs a fix (any type, as the
       in-mockup notice already says); spotlight button length; accordion advice; Contact us
