@@ -74,7 +74,9 @@
 	// Karl component findings sit beside the Karl Jr. ones, sorted into the same
 	// three groups. They carry their help link inline rather than as a key.
 	const allFindings = $derived<(Finding | ComponentFinding)[]>(
-		analysis ? [...analysis.findings, ...analysis.componentFindings] : []
+		analysis
+			? [...analysis.findings, ...analysis.componentFindings, ...analysis.contentTypeFindings]
+			: []
 	);
 	const issues = $derived(allFindings.filter((f) => f.status === 'issue'));
 	const passes = $derived(allFindings.filter((f) => f.status === 'pass'));

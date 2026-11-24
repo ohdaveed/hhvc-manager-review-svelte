@@ -13,6 +13,7 @@
 	import { ArrowRight } from '@lucide/svelte';
 	import { pageStore } from '$lib/stores/pageData.svelte';
 	import { sessionStore } from '$lib/stores/session.svelte';
+	import { STATUS_LABELS } from '$lib/review/statusLabels';
 	import {
 		updatePageStatus,
 		updatePageNotes,
@@ -96,28 +97,32 @@
 	// misclick, and there is no longer an unrepresentable state to deselect
 	// into. Labels are all noun-phrases describing the state the page is IN,
 	// rather than the old mix of two verbs and an adjective.
-	const decisions: { value: Decision; label: string; tone: string }[] = [
-		{
-			value: 'needs-review',
-			label: 'Needs review',
-			tone: 'data-[state=on]:border-sfds-action data-[state=on]:bg-sfds-action data-[state=on]:hover:bg-sfds-action'
-		},
-		{
-			value: 'approved',
-			label: 'Approved',
-			tone: 'data-[state=on]:border-emerald-700 data-[state=on]:bg-emerald-700 data-[state=on]:hover:bg-emerald-700'
-		},
-		{
-			value: 'revise',
-			label: 'Revise',
-			tone: 'data-[state=on]:border-amber-700 data-[state=on]:bg-amber-700 data-[state=on]:hover:bg-amber-700'
-		},
-		{
-			value: 'blocked',
-			label: 'Blocked',
-			tone: 'text-destructive data-[state=on]:border-destructive data-[state=on]:bg-destructive data-[state=on]:hover:bg-destructive'
-		}
-	];
+	//
+	// The LABELS are `STATUS_LABELS[].decisionLabel`, shared with the queue and
+	// the landing page. `tone` stays here: it is the toggle's filled selected
+	// state, written against `data-[state=on]` and this control's hover
+	// override, and it is not the badge colour (white on a solid fill, where a
+	// badge is a solid foreground on a tint).
+	const decisions: { value: Decision; label: string; tone: string }[] = (
+		[
+			{
+				value: 'needs-review',
+				tone: 'data-[state=on]:border-sfds-action data-[state=on]:bg-sfds-action data-[state=on]:hover:bg-sfds-action'
+			},
+			{
+				value: 'approved',
+				tone: 'data-[state=on]:border-emerald-700 data-[state=on]:bg-emerald-700 data-[state=on]:hover:bg-emerald-700'
+			},
+			{
+				value: 'revise',
+				tone: 'data-[state=on]:border-amber-700 data-[state=on]:bg-amber-700 data-[state=on]:hover:bg-amber-700'
+			},
+			{
+				value: 'blocked',
+				tone: 'text-destructive data-[state=on]:border-destructive data-[state=on]:bg-destructive data-[state=on]:hover:bg-destructive'
+			}
+		] satisfies { value: Decision; tone: string }[]
+	).map((d) => ({ ...d, label: STATUS_LABELS[d.value].decisionLabel }));
 
 	// The RENDERED decision, kept in step with the stored row.
 	//
