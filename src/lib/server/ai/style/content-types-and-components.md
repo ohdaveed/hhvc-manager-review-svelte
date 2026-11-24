@@ -1,13 +1,16 @@
 # Karl content types and components
 
-Captured 2026-07-30 from the SF.gov and Karl Editor Help Center. See
-`README.md` for provenance.
+Captured 2026-07-30 from the SF.gov and Karl Editor Help Center. Provenance is
+in `docs/source/sfgov-style/README.md` in `HHVC_manager_review_current_tool_package`,
+where this file originated.
 
 This is the _editor-facing_ view: what a content type is for and which
 components exist. For the _field-level_ view of what each Karl form actually
-contains, see `docs/wagtail-content-mapping.md` (verified against the live Karl
-add-page forms) and `karl-content-type-field-reference.md` in this directory's
-parent. The three are complementary and were captured from different sources.
+contains, see `docs/karl-export-field-map.md` (current, and authoritative where
+the sources disagree), `docs/wagtail-content-mapping.md` (verified against the
+live Karl add-page forms) and
+`docs/source/hhvc-policy/karl-content-type-field-reference.md`. They are
+complementary and were captured from different sources.
 
 ---
 
@@ -65,11 +68,12 @@ Also present in Karl's page-type chooser but not in the editor-facing grouping:
 
 ### How this maps to the HHVC mockup
 
-`pages/*.js` uses six of these: `Agency`, `Transaction`, `Information`,
-`Resource Collection`, `Campaign`, and `Report`. **Step by step** is unused and
-is the most likely gap — several HHVC Transaction pages carry `steps[]` arrays
-that run long enough to be their own overview page. Worth raising when the AI
-assist sitemap task starts proposing structures.
+The mockup corpus (`src/lib/data/*.ts`, 39 pages) uses ten of these:
+`Transaction` (16), `Information` (7), `Resource Collection` (4), `Campaign`
+(3), `Step by step` (3), `Report` (2), `Topic`, `Agency`, `About us` and
+`Location` (1 each). Re-measured 2026-11-23; the earlier list of six omitted
+`Topic` and `About us` and called `Step by step` unused. `Location` is mapped
+only to panel names so far, so treat its block details as unverified.
 
 ---
 
