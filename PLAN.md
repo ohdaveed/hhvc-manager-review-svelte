@@ -23,7 +23,7 @@ Karl, read 2026-11-24:
 - URL: `sf.gov/step-by-step/title-of-step-by-step` (Step by step) vs `sf.gov/[slug]` (URLs).
   **Unconfirmed.**
 
-- [ ] **1. Step labels in the transcript.** On Step by step, steps read `Step N — Title` and
+- [x] **1. Step labels in the transcript.** On Step by step, steps read `Step N — Title` and
       `Step N — Step description`. The snapshot diff is exactly the three Step by step pages.
 - [ ] **2. Schema.** Step by step in `schema.ts`: Title, Description, steps ≤15 (confirmed), aim for
       5 (advisory, no status change), step Title required, one Transaction link per step

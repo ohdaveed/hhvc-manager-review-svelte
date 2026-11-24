@@ -970,11 +970,32 @@ function emitCardChoices(context, entry, section, index, cardClass) {
 
 /** A section's steps, as Karl what_to_do Section blocks. */
 function emitSteps(context, entry, section, index) {
+	// Step by step's steps are Step blocks, not Transaction's what_to_do
+	// Sections: "Each step has: Title*, Cost, Time the step takes, Step
+	// description, Optional: Link to a transaction" (Karl help: Steps), and
+	// "Each step can link to one or no transaction" (How a Step by step page
+	// works). Using Transaction's labels there sent an editor looking for
+	// "Section specifics" on a form that has none.
+	const stepByStep = context.type === 'Step by step';
+	const label = (n, field) =>
+		stepByStep
+			? {
+					title: `Step ${n} — Title`,
+					text: `Step ${n} — Step description`,
+					linkText: `Step ${n} — Transaction link (choose the Transaction page)`,
+					destination: `Step ${n} — Transaction link → page`
+				}[field]
+			: {
+					title: `Section ${n} — Section title`,
+					text: `Section ${n} — Section specifics → Text`,
+					linkText: `Section ${n} — Section specifics → Button link → Link text`,
+					destination: `Section ${n} — Button link → destination`
+				}[field];
 	section.steps.forEach((step, stepIndex) => {
 		const base = `sections.${index}.steps.${stepIndex}`;
 		const title = resolveValue(context.page, context.reviewRecord, `${base}.title`);
 		entry.fields.push({
-			label: `Section ${stepIndex + 1} — Section title`,
+			label: label(stepIndex + 1, 'title'),
 			value: String(title.value || '')
 		});
 		claim(context, `${base}.title`);
@@ -984,7 +1005,7 @@ function emitSteps(context, entry, section, index) {
 		const folded = foldTextAndBullets(text.value, bullets.value);
 		if (folded) {
 			entry.fields.push({
-				label: `Section ${stepIndex + 1} — Section specifics → Text`,
+				label: label(stepIndex + 1, 'text'),
 				value: folded
 			});
 			collectLinks(context, entry, folded);
@@ -995,11 +1016,11 @@ function emitSteps(context, entry, section, index) {
 
 		if (step.button) {
 			entry.fields.push({
-				label: `Section ${stepIndex + 1} — Section specifics → Button link → Link text`,
+				label: label(stepIndex + 1, 'linkText'),
 				value: step.button
 			});
 			entry.fields.push({
-				label: `Section ${stepIndex + 1} — Button link → destination`,
+				label: label(stepIndex + 1, 'destination'),
 				value: buttonDestination(context, step)
 			});
 			noteButtonLength(entry, step.button);
@@ -1011,7 +1032,9 @@ function emitSteps(context, entry, section, index) {
 	});
 	claim(context, `sections.${index}.steps`);
 	entry.notes.push(
-		'A step with text, a button and a callout becomes ONE Section block whose Section specifics holds a Text, a Button link and a Callout as siblings — not fields on the step.'
+		stepByStep
+			? 'Each step is one Step block: its Title, then its Step description (text and bullets together). A step can link to one Transaction page or none, chosen with the page chooser rather than typed.'
+			: 'A step with text, a button and a callout becomes ONE Section block whose Section specifics holds a Text, a Button link and a Callout as siblings — not fields on the step.'
 	);
 }
 
