@@ -3,11 +3,14 @@
 	import { resolve } from '$app/paths';
 	import { pagesStore, editsStore, QUEUE_STATUS_ORDER } from '$lib/stores/reviewState';
 	import { pageStore } from '$lib/stores/pageData.svelte';
-	import { reviewHrefFor, routePathFor } from '$lib/corpus/draftPath';
+	import { routePathFor } from '$lib/corpus/draftPath';
 	import { pageTitleFor } from '$lib/corpus/pageTitle';
 	import { draftsStore } from '$lib/stores/draftPages';
 	import { Badge } from '$lib/components/ui/badge/index.js';
 	import { sessionStore } from '$lib/stores/session.svelte';
+	import { STATUS_LABELS, type ReviewStatus } from '$lib/review/statusLabels';
+	import StatusBar from '$lib/components/review/StatusBar.svelte';
+	import PageRow from '$lib/components/review/PageRow.svelte';
 
 	// The pages table has no title column, so a hydrated row carries only `path`.
 	// Titles come from the static corpus (whose derived id is that same path) or,
@@ -19,17 +22,14 @@
 
 	// The store automatically updates via Supabase realtime subscriptions.
 	//
-	// Presentation only. The ORDER comes from `QUEUE_STATUS_ORDER`, so this and
-	// anything that needs to name the queue's first page cannot disagree about
-	// which row that is.
-	const PRESENTATION = {
-		'needs-review': { heading: 'Needs review', bar: 'bg-sfds-grey-l2' },
-		approved: { heading: 'Approved', bar: 'bg-sfds-green' },
-		revise: { heading: 'Needs revision', bar: 'bg-sfds-amber' },
-		blocked: { heading: 'Blocked', bar: 'bg-sfds-red' }
-	};
-
-	const groups = QUEUE_STATUS_ORDER.map((status) => ({ status, ...PRESENTATION[status] }));
+	// Presentation only, and not held here: the words and tones come from
+	// `STATUS_LABELS`, shared with the decision panel and the landing page. The
+	// ORDER comes from `QUEUE_STATUS_ORDER`, so this and anything that needs to
+	// name the queue's first page cannot disagree about which row that is.
+	const groups = QUEUE_STATUS_ORDER.map((status) => ({
+		status,
+		heading: STATUS_LABELS[status].queueHeading
+	}));
 
 	// Decided = anything a reviewer has ruled on. `needs-review` is the initial
 	// status every seeded row carries, so it is the only one that is not a
@@ -82,8 +82,11 @@
 			.join(' · ');
 	};
 
-	const share = (status: string) =>
-		total === 0 ? 0 : ($pagesStore.filter((p) => p.status === status).length / total) * 100;
+	const counts = $derived.by(() => {
+		const tally: Partial<Record<ReviewStatus, number>> = {};
+		for (const p of $pagesStore) tally[p.status] = (tally[p.status] ?? 0) + 1;
+		return tally;
+	});
 
 	// Keep the current row on screen. Without this, landing on a page near the
 	// bottom of the queue left the sidebar showing 30 other rows and not the one
@@ -110,32 +113,19 @@
 	});
 </script>
 
+{#snippet draftBadge()}
+	<Badge variant="secondary" class="mt-0.5">AI draft</Badge>
+{/snippet}
+
 {#snippet queueLink(path: string, title: string, meta: string | undefined)}
-	{@const isCurrent = currentPath === path}
-	<!-- A left border rather than a filled row: the fill would compete
-	     with the selected-field highlight in the canvas, and there are
-	     two selections on screen at once. -->
-	<a
-		href={resolve(reviewHrefFor(path))}
-		aria-current={isCurrent ? 'page' : undefined}
-		class="block rounded-[3px] border-l-2 py-1.5 pr-2 pl-2.5 transition-colors hover:bg-sfds-blue-l1/60 {isCurrent
-			? 'border-sfds-action bg-sfds-blue-l1'
-			: 'border-transparent'}"
-	>
-		<span
-			class="block text-[13px] leading-[18px] text-sfds-black {isCurrent ? 'font-semibold' : ''}"
-		>
-			{title}
-		</span>
-		{#if draftFor(path)}
-			<Badge variant="secondary" class="mt-0.5">AI draft</Badge>
-		{/if}
-		{#if meta}
-			<span class="mt-0.5 block text-[11px] leading-[14px] text-sfds-slate-l3">
-				{meta}
-			</span>
-		{/if}
-	</a>
+	<PageRow
+		density="compact"
+		{path}
+		{title}
+		{meta}
+		current={currentPath === path}
+		badge={draftFor(path) ? draftBadge : undefined}
+	/>
 {/snippet}
 
 <nav bind:this={navEl} class="space-y-5 px-5 pt-4 pb-6" aria-label="Review queue">
@@ -169,17 +159,8 @@
 				<span class="text-[13px] font-semibold text-sfds-slate-l3 tabular-nums">{pct}%</span>
 			</div>
 
-			<!-- Three segments over a grey track, so the shape of the remaining work
-			     is visible rather than just its size. `role="img"` with a label:
-			     a bar split by colour alone says nothing to a screen reader. -->
-			<div
-				class="mt-2 flex h-1.5 w-full overflow-hidden rounded-full bg-sfds-grey-l2"
-				role="img"
-				aria-label="{decided} of {total} pages decided, {pct} percent"
-			>
-				{#each groups.filter((g) => g.status !== 'needs-review') as g (g.status)}
-					<div class={g.bar} style="width: {share(g.status)}%"></div>
-				{/each}
+			<div class="mt-2">
+				<StatusBar size="sm" {counts} {total} />
 			</div>
 		</section>
 	{/if}
