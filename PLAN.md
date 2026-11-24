@@ -45,7 +45,7 @@ Pages: `mosquitoWorkshop`, `ipmEducation`, `ratFreeBlocks`.
       field map rows. The snapshot diff is limited to `ratFreeBlocks`.
 - [x] **2. Schema.** Campaign in `schema.ts`: Title, spotlight button ≤25, accordions aim ≤5
       (advisory), Contact us caveat, confirmed URL, Related targets. All cited.
-- [ ] **3. Placement.** A callout on a type Karl offers none on needs a fix (any type, as the
+- [x] **3. Placement.** A callout on a type Karl offers none on needs a fix (any type, as the
       in-mockup notice already says); spotlight button length; accordion advice; Contact us
       Unconfirmed. Unit tests pin all three pages.
 - [ ] **4. e2e.** `ratFreeBlocks` and `ipmEducation` join the outline spec, and `ratFreeBlocks`
