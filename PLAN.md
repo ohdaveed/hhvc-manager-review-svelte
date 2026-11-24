@@ -32,5 +32,5 @@ Karl, read 2026-11-24:
       Title`); the Topics caveat shown on the Blueprint slot. Unit tests pin the three pages.
 - [x] **4. e2e.** A Step by step page joins the outline and Blueprint specs, with axe at 1280px and
       375px; screenshots looked at.
-- [ ] **5. Ship.** `verify` and the ratchets, PR, merge on green, and `verify:live` against the
+- [x] **5. Ship.** `verify` and the ratchets, PR, merge on green, and `verify:live` against the
       published commit.
