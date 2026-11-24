@@ -1441,13 +1441,13 @@ const KARL_PANELS = {
 			requiredDoc: 'yes',
 			repeatableDoc: 'single',
 			blockTypesDoc: 'plain text',
-			sourceDoc: "the services section's heading — see below",
+			// Decided 2026-11-24: a Services section's heading is its Subsection's
+			// Title, not this field, which keeps the value the form pre-fills.
+			sourceDoc:
+				'pre-filled "Services"; each services section\'s heading is its Subsection\'s Title',
 			source: {
-				kind: 'sections',
-				match: {
-					component: 'services'
-				},
-				field: 'heading'
+				kind: 'default',
+				value: 'Services'
 			},
 			docLine: 534,
 			note: 'Required, and the Help Center is wrong that it defaults to blank — the form pre-fills "Services" and refuses an empty value.'
@@ -1524,13 +1524,13 @@ const KARL_PANELS = {
 			requiredDoc: 'yes',
 			repeatableDoc: 'single',
 			blockTypesDoc: 'plain text',
-			sourceDoc: "the resources sections' heading",
+			// Decided 2026-11-24: ONE field cannot hold four Resources headings; each
+			// heading is its own Subsection's Title, and this keeps the pre-fill.
+			sourceDoc:
+				'pre-filled "Resources"; each resources section\'s heading is its Subsection\'s Title',
 			source: {
-				kind: 'sections',
-				match: {
-					component: 'resources'
-				},
-				field: 'heading'
+				kind: 'default',
+				value: 'Resources'
 			},
 			docLine: 539,
 			note: 'Required, same as Section title 1. An editor may rename it but not empty it.'

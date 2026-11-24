@@ -40,7 +40,7 @@ one field. The field map rows change with it.
 
 ## Checklist
 
-- [ ] **1. Transcript.** On Agency, a Services/Resources section's heading is its Subsection's
+- [x] **1. Transcript.** On Agency, a Services/Resources section's heading is its Subsection's
       Title, and its intro paragraphs are not emitted (the sweep reports them as U20). Section title
       1 and 2 emit their pre-filled values once each. The field map rows are updated. The snapshot
       diff is `pestsTopic` only.

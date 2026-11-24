@@ -469,6 +469,20 @@ function emitPanelSources(context, panel, sources) {
 function emitPanel(context, panel, source) {
 	if (!source || source.kind === 'none') return emitEmptyPanel(context, panel);
 	if (source.kind === 'path') return emitPathPanel(context, panel, source);
+	if (source.kind === 'default') return emitDefaultPanel(context, panel, source);
+}
+
+/**
+ * A required panel the form pre-fills, which the mockup supplies no value for
+ * on purpose: Agency's Section title 1 and 2 ("Services", "Resources"). The
+ * instruction is to keep the pre-fill, so it reads as a value, not a gap --
+ * an empty-panel FLAG would tell the editor Karl cannot save without it.
+ */
+function emitDefaultPanel(context, panel, source) {
+	const entry = newEntry(panel, 'TYPE');
+	entry.fields.push({ label: panel.uiLabel, value: String(source.value) });
+	if (panel.note) entry.notes.push(panel.note);
+	context.transcript.entries.push(entry);
 }
 
 /**
@@ -766,8 +780,18 @@ function emitSection(context, panel, source, section, index) {
 		if (scope === 'cards' && heading.value) {
 			entry.fields.push({ label: 'Resource section — Title', value: String(heading.value) });
 		}
+		// Agency's Services and Resources Subsections hold a Title and a links
+		// list, nothing else ("Add a subsection Title ... Add an SF.gov page or
+		// External link"; field map E1). So the heading is the Subsection's
+		// Title, and the intro prose is NOT emitted: left unconsumed, the sweep
+		// reports it as U20 rather than this transcript inventing a Text field.
+		const subsection =
+			context.type === 'Agency' && (panel.rawName === 'services' || panel.rawName === 'resources');
+		if (subsection && heading.value) {
+			entry.fields.push({ label: 'Subsection — Title', value: String(heading.value) });
+		}
 		emitCardChoices(context, entry, section, index, cardClass);
-		if (scope === 'all') emitSectionProse(context, entry, section, index, {});
+		if (scope === 'all' && !subsection) emitSectionProse(context, entry, section, index, {});
 		context.transcript.entries.push(entry);
 		return;
 	}
