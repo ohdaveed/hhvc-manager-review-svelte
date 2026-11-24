@@ -47,4 +47,4 @@ location, People, Related locations, Contact us.
 - [x] **2. Field map.** U26 gains the help-center reading. The inventory keeps its 14 captured fields.
 - [x] **3. e2e.** The Location page joins both specs, with axe at 1280px and 375px; screenshots
       looked at.
-- [ ] **4. Ship.** `verify` and the ratchets, then a PR. Ask before merging.
+- [x] **4. Ship.** `verify` and the ratchets, then a PR. Ask before merging.
