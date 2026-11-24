@@ -8,7 +8,7 @@ export const insectsReport = {
 	audience: [
 		'A tenant affected by cockroaches, bed bugs, mosquitoes, or other insects',
 		'A friend, family member, advocate, or helper reporting for a tenant',
-		'A person reporting a problem in a shared area, SRO, hotel, or workplace',
+		'A person reporting a problem in a shared area, single room occupancy (SRO) hotel, or workplace',
 		'An employee reporting an insect problem at work'
 	],
 	reading: 'Grade 6',

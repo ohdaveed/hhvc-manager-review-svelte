@@ -71,7 +71,7 @@ export const payFee = {
 						'More than 30 units: $808'
 					],
 					callout: {
-						text: '**Annual fee and reinspection fees are different.** The annual fee supports Healthy Housing inspections. If an inspection finds an uncorrected violation, a separate reinspection fee may apply: $256 per hour for an Environmental Health Inspector or $234 per hour for an Environmental Health Technician. Additional half-hours cost $128 and $115.',
+						text: '**Annual fee and reinspection fees are different:** the annual fee supports Healthy Housing inspections. If an inspection finds an uncorrected violation, a separate reinspection fee may apply: $256 per hour for an Environmental Health Inspector or $234 per hour for an Environmental Health Technician. Additional half-hours cost $128 and $115.',
 						karl: 'Callout inside the Transaction Step rich-text description. Keep the reinspection rates separate from the annual tier list so a reviewer does not mistake a potential enforcement cost for the amount due on the annual invoice. Rates are from the FY 2026-27 Environmental Health Branch fee schedule.'
 					},
 					karl: 'what_to_do -> Section. Section title: "Confirm your annual fee". Section specifics: one Text block (intro plus seven fee-tier bullets) + one Callout block. The Callout is a single rich text field with no separate title field like this mockup callout has, and the distinction is the bolded lead-in of that one field -- retype it exactly, bold included. The tier rates are from the FY 2026-27 Environmental Health Branch fee schedule; recheck against a newly certified schedule before publication.'

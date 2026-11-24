@@ -48,16 +48,16 @@ export const article11Compliance = {
 			]
 		},
 		{
-			heading: "What you're required to do",
+			heading: 'What you must do',
 			karl: "Maps to a third Title and text block: Title = this heading, Text = the intro paragraph plus the bulleted list below. Condensed from the owner-responsibility and PCO-requirement content in `article11Guide` (Director's Rules §V.2 and related citations) — not a full restatement; links out to the complete table. The vermin-log bullet and the 72-hour bullet above it are the two halves of ONE Director's Rules sentence (Residential Building Owner/Operator Guidelines for Vector Control, item 2) — the pest list is quoted from it verbatim, so do not trim it to a shorter set. It is deliberately separate from the 2-year records bullet that follows: that one is retention of complaints/inspections/treatments for DPH, this one is a running log handed to the PCO. Flag for Digital Services: the log-template link points at the live SF.gov resource page rather than a mockup page key, because no equivalent page exists in this set.",
 			kind: 'body',
 			paragraphs: [
-				"These requirements come from Article 11 and the SFDPH Director's Rules and Regulations."
+				"These requirements come from Article 11 and the San Francisco Department of Public Health (SFDPH) Director's Rules and Regulations."
 			],
 			bullets: [
 				'Investigate tenant pest reports within 72 hours of receiving them.',
 				"Keep a written log of every report or sign of vermin: rodents, fleas, flies, bedbugs, spiders, cockroaches, wasps, and mosquitoes. Give the log to your pest control operator. You can use the City's [complaint forms and log template](https://www.sf.gov/resource/2024/healthy-housing-and-pest-information).",
-				'Keep records of complaints, inspections, and pest control services for at least 2 years, and make them available to DPH on request.',
+				'Keep records of complaints, inspections, and pest control services for at least 2 years, and make them available to the Department of Public Health on request.',
 				'Hire only licensed pest control operators (PCOs) to apply pesticides or trap rats — never unlicensed staff or over-the-counter treatments for significant infestations.',
 				'Give tenants written notice before pesticide application, including the product name, date, and safety information.',
 				'Complete pest-management training if the Director requires it after repeat violations.',

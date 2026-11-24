@@ -32,7 +32,7 @@ export const scopeInfo = {
 				'You can make an HHVC report through 311. Having these details ready helps 311 send it to the right program.'
 			],
 			bullets: [
-				'The address and type of property, such as an apartment, SRO, business, or shared area',
+				'The address and type of property, such as an apartment, single room occupancy (SRO) hotel, business, or shared area',
 				'What you saw, where it is, and how long it has been happening',
 				'Your contact information if you want an inspector to contact you with questions'
 			]

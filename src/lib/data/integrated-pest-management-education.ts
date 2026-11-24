@@ -48,7 +48,7 @@ export const ipmEducation = {
 			]
 		},
 		{
-			heading: "What you'll learn",
+			heading: 'What the session covers',
 			karl: 'Maps to a second Additional content → Accordion section block: Title = this heading, Accordion sidebar = the paragraph below, each bullet below becomes one Accordion item (topic name as Title, elaboration as Body). Renders as a collapsible accordion.',
 			kind: 'body',
 			component: 'supporting',

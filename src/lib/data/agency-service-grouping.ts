@@ -154,7 +154,7 @@ export const pestsTopic = {
 			]
 		},
 		{
-			heading: 'Need another City housing service?',
+			heading: 'Other City housing services',
 			component: 'resources',
 			karl: 'Agency -> Resources. Use a final Resources subsection for out-of-scope referrals. These are a few external links rather than a parallel directory, so the HHVC page remains limited to Article 11 while still giving a visitor a clear next destination. Keep it that way: each addition here is a scope claim in reverse, and a section that grows past a handful stops reading as "not us, try here" and starts reading as a second, worse copy of the Citywide topic.',
 			kind: 'body',

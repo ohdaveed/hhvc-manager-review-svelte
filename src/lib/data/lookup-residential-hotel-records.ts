@@ -6,7 +6,7 @@ export const findHotelRecords = {
 		'Look up inspection and program records for SROs, residential hotels, and emergency shelters.',
 	primaryAgency: 'Healthy Housing and Vector Control',
 	audience: [
-		'A resident of an SRO or residential hotel',
+		'A resident of a single room occupancy (SRO) hotel or residential hotel',
 		'A shelter resident or advocate',
 		'A property owner or operator of a residential hotel or shelter',
 		'A tenant representative researching program inspection history'

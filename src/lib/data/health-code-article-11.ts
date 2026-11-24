@@ -28,7 +28,7 @@ export const article11Guide = {
 			karl: 'Report Content -> Title and text block. Keep this disclaimer before the reference tables so a reader understands that the page translates, but does not replace, the legal code.',
 			kind: 'body',
 			paragraphs: [
-				'Healthy Housing and Vector Control enforces Health Code Article 11, the City rules about public health nuisances. This guide explains the sections most often used for housing, pest, mold, garbage, and animal-related conditions.',
+				'Healthy Housing and Vector Control (HHVC) enforces Health Code Article 11, the City rules about public health nuisances. This guide explains the sections most often used for housing, pest, mold, garbage, and animal-related conditions.',
 				'The left column names the code section. The right column explains what that rule means in everyday language. A condition may involve more than one section, and an inspector reviews the facts of each case.'
 			],
 			callout: {

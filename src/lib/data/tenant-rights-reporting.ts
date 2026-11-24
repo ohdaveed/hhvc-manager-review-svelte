@@ -37,7 +37,7 @@ export const tenantRights = {
 				'**Reduce clutter:** Clutter gives pests places to hide and makes inspections and treatments less effective.'
 			],
 			callout: {
-				text: 'Notify your property owner or manager first. Allow at least 72 hours for them to begin addressing the issue. If the problem continues or the owner does not respond, report the issue through 311. Do not delay reporting immediate health or safety hazards.',
+				text: 'Notify your property owner or manager first, and allow at least 72 hours for them to begin fixing it. If the problem continues or the owner does not respond, report the issue through 311. Do not delay reporting immediate health or safety hazards.',
 				karl: 'Callout block: standard 72-hour tenant notification and reporting pattern for tenant-facing pages.'
 			}
 		},
