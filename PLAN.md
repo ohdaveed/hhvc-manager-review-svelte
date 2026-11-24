@@ -32,7 +32,7 @@ Karl, read 2026-11-24:
 - [x] **2. Placement.** Topic blocks labelled `Child topics · Spotlight block` (etc.); a spotlight
       count over 1 needs a fix; the spotlight button Unconfirmed; the page caveat shown in the
       Blueprint header and the outline summary. Unit tests pin the page.
-- [ ] **3. e2e.** The Topic page joins the outline and Blueprint specs, with axe at 1280px and 375px;
+- [x] **3. e2e.** The Topic page joins the outline and Blueprint specs, with axe at 1280px and 375px;
       screenshots looked at.
 - [ ] **4. Ship.** `verify` and the ratchets, PR, merge on green, and `verify:live` against the
       published commit.
