@@ -77,3 +77,14 @@ design/
 
 # Session worktrees created by Claude Code. Scratch checkouts, never content.
 .claude/worktrees/
+
+# Agent tooling scratch. Both are written inside the repo by skills that treat
+# them as throwaway -- superpowers' SDD workspace (ledger, briefs, review
+# packages) and impeccable's hook cache. Ignored here rather than left
+# untracked because untracked-but-not-ignored is the worst of both: a
+# `git add -A` sweeps them into a commit, and `prettier --check .` counted 28
+# of them, so the tree-wide figure moved with whichever skill had last run.
+# `.impeccable/hook.cache.json` was excluded only by `.git/info/exclude`, which
+# is machine-local, so nobody else had that exclusion.
+.superpowers/
+.impeccable/
