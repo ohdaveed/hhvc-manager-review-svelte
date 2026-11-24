@@ -45,6 +45,6 @@ location, People, Related locations, Contact us.
       transport information, which an audience line may not be. The absorbed Related list's reason
       names Related locations. Unit tests pin the page.
 - [x] **2. Field map.** U26 gains the help-center reading. The inventory keeps its 14 captured fields.
-- [ ] **3. e2e.** The Location page joins both specs, with axe at 1280px and 375px; screenshots
+- [x] **3. e2e.** The Location page joins both specs, with axe at 1280px and 375px; screenshots
       looked at.
 - [ ] **4. Ship.** `verify` and the ratchets, then a PR. Ask before merging.

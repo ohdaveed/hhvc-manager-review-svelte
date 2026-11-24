@@ -90,10 +90,28 @@ const PILOTS = [
 		first: ['title', 'show_agency_list', 'description', 'logo', 'main_image'],
 		empty: ['Logo (empty)', 'Public records (empty)'],
 		tray: 5
+	},
+	{
+		slug: 'location-environmental-health-office',
+		first: ['title', 'primary_agency', 'description', 'alert', 'image', 'body', 'intro'],
+		empty: ['Primary agency (empty)', 'Alert (empty)'],
+		tray: 1
 	}
 ] as const;
 
 test.describe('Blueprint', () => {
+	test('Location: Karl’s groups name the fields, and both page notes lead', async ({ page }) => {
+		await gotoSignedIn(page, '/review/location-environmental-health-office');
+		await openBlueprint(page);
+		await expect(page.locator('.bp-page-caveat')).toHaveCount(2);
+		await expect(
+			page.locator('[data-karl-panel="body"]').getByRole('heading', { level: 3 })
+		).toHaveText('Essential information · Body');
+		await expect(
+			page.locator('[data-karl-panel="intro"]').getByRole('heading', { level: 3 })
+		).toHaveText('Getting here · Intro');
+	});
+
 	test('Agency: the two Subsection panels are named by their section, titles keep their pre-fill', async ({
 		page
 	}) => {

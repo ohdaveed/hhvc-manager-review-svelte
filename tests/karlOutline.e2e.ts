@@ -77,6 +77,15 @@ const PILOTS = [
 		slug: 'departments--healthy-housing-and-vector-control',
 		summary: '6 sections: 6 go into Karl. 5 things won’t carry over to Karl.',
 		sections: { placed: 6 }
+	},
+	{
+		// Rollout step 6: Location. Every mapping is inferred (U26); the address
+		// and hours are placeholders, and belong in the Address snippet.
+		slug: 'location-environmental-health-office',
+		summary:
+			'5 sections: 1 needs a fix, 4 unconfirmed. 5 details need a fix. 1 thing won’t carry over to Karl.',
+		caveat: 'A Location’s address and opening hours come from its Address snippet',
+		sections: { 'needs-fix': 1, unconfirmed: 4 }
 	}
 ] as const;
 
