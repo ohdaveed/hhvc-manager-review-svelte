@@ -28,9 +28,9 @@ Production has 0 edits and 0 comments on any page (measured 2026-11-24). Re-coun
 ## Track D — Docs
 
 - [x] **D1.** The two review files are in `docs/reviews/`, each with a dated status note.
-- [ ] **D2.** The review's stale Analysis-gap line is annotated with what #208 and A1–A5 fixed.
-- [ ] **D3.** `docs/karl-transaction-compliance.csv` is updated alongside B1–B2.
-- [ ] **D4.** CLAUDE.md is confirmed to need no change (grep re-run after A).
+- [x] **D2.** The review's stale Analysis-gap line is annotated with what #208 and A1–A5 fixed.
+- [x] **D3.** `docs/karl-transaction-compliance.csv` is updated alongside B1–B2.
+- [x] **D4.** CLAUDE.md needs no change: re-run after track A, the grep matches only the review files, the plans, and the field-mapping plan, whose line 572 (`karlComponentFindings` keeps the Related target type) still holds.
 
 ## Deliberately out of scope
 

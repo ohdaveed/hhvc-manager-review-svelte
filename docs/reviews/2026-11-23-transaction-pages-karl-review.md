@@ -97,6 +97,8 @@ _Make a public records request_ (remove the duplicated "check the lookup tools f
 
 ## Gaps in the Analysis panel
 
+> **Status, 2026-11-24:** "What to do section: Pass on every page" was fixed by #208, which reads the placement instead of note prose. The rest are closed on branch `docs/plan-transaction-review-fixes`: Related link types now checked on sections placed in Related (A1), title words in the description (A3), articles in slugs (A4), and a Transaction with no button and no Contact us (A5). More than 2 Things to know was already checked. "PLACEHOLDER" stays uppercase-only by an earlier decision; a placed button linking to `#` is now flagged (A2), and the inspector lookup's `#` button already shows under "Copy that won't carry over".
+
 These checks would have caught most of the above:
 
 - **"What to do section: Pass"** shows on every page, including the seven without that heading. It's likely reading a data field, not the rendered page.
