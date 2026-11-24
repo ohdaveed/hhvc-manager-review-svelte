@@ -32,6 +32,13 @@ const PILOTS = [
 		slug: 'look-up-building-records',
 		summary: '4 sections: 3 go into Karl, 1 needs a fix. 1 thing won’t carry over to Karl.',
 		sections: { placed: 3, 'needs-fix': 1 }
+	},
+	{
+		// Rollout step 1: Step by step. Intro is an inferred mapping, and Step by
+		// step has no Related panel.
+		slug: 'step-by-step-report-a-pest-problem',
+		summary: '2 sections: 1 goes into Karl, 1 unconfirmed. 2 things won’t carry over to Karl.',
+		sections: { placed: 1, unconfirmed: 1, unplaced: 1 }
 	}
 ] as const;
 
