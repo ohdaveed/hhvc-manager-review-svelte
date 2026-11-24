@@ -81,6 +81,19 @@ describe('CardsBlock', () => {
 });
 
 describe('the corpus', () => {
+	// 20s, not vitest's default 5s. This test mounts `Page.svelte` once per
+	// corpus page -- 39 today, 29 when it was written -- so its cost grows with
+	// the corpus while the default does not. Run alone the body takes ~1s; under
+	// lefthook's pre-commit, where `verify` runs the suite beside eslint, knip
+	// and a production build, it has been measured at 5.6s, 5.8s, 6.4s, 6.8s and
+	// 7.1s, failing each time and passing on retry. A gate that fails on how busy
+	// the machine is teaches people to re-run rather than to read it.
+	//
+	// Raised here rather than as a global `testTimeout` on purpose: this is the
+	// one test whose work scales with content, and every other test keeps the
+	// strict default, where a 5s unit test is a genuine problem worth reporting
+	// fast. If a second corpus-wide render test appears, give it its own value
+	// rather than loosening the default for all 750.
 	it('flags exactly the expected pages', () => {
 		const found: Record<string, string[]> = {};
 		for (const p of pageStore.pages) {
@@ -101,5 +114,5 @@ describe('the corpus', () => {
 			],
 			'information--article-11-compliance-for-property-owners': ['related', 'contact']
 		});
-	});
+	}, 20_000);
 });
