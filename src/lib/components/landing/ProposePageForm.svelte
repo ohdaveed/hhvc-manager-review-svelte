@@ -116,12 +116,25 @@
 			Describe a page in plain words and an AI will draft it into the review queue. The draft takes
 			up to a minute, and you can leave this page while it works.
 		</label>
+		<p id="propose-example" class="text-sm text-slate-700">
+			For example: “A page explaining how tenants report bed bugs, and what happens after.”
+		</p>
+		<!-- `min-h-30`: the shadcn Textarea is `field-sizing-content`, which ignores
+		     `rows`, and its `min-h-16` rendered an empty box two lines tall -- too
+		     small to invite a paragraph. 7.5rem is five lines of 20px plus padding.
+		     It still grows with the text. -->
 		<Textarea
 			id="propose-description"
 			bind:value={description}
 			rows={5}
+			class="min-h-30"
 			aria-invalid={invalid ? 'true' : undefined}
-			aria-describedby={['propose-count', over > 0 && 'propose-over', error && 'propose-error']
+			aria-describedby={[
+				'propose-example',
+				'propose-count',
+				over > 0 && 'propose-over',
+				error && 'propose-error'
+			]
 				.filter(Boolean)
 				.join(' ')}
 		/>

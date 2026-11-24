@@ -11,11 +11,14 @@
 	import { pageTitleFor } from '$lib/corpus/pageTitle';
 	import { isDraftPath, reviewHrefFor, routePathFor } from '$lib/corpus/draftPath';
 	import { pageStore } from '$lib/stores/pageData.svelte';
-	import { editsStore, firstQueuePath, loadReview, pagesStore } from '$lib/stores/reviewState';
+	import { editsStore, loadReview, pagesStore, queueOrder } from '$lib/stores/reviewState';
+	import { STATUS_LABELS } from '$lib/review/statusLabels';
 	import { sessionStore } from '$lib/stores/session.svelte';
 	import { supabase } from '$lib/supabase';
 	import {
 		ArrowLeft,
+		ChevronLeft,
+		ChevronRight,
 		ChevronsLeft,
 		ChevronsRight,
 		Download,
@@ -160,23 +163,27 @@
 	// parked on other pages is the panel's line to make, not a number here.
 	const unsavedCount = $derived(pageStore.acceptedFor(pageData?.id));
 
-	// The toolbar's "First page" link target: the queue's first row,
-	// by the same order `ReviewQueue` renders.
-	//
-	// The chain ends at `$page.params.slug` rather than a literal, because that
-	// is the one value guaranteed routable here -- the router matched it to get
-	// this layout on screen. An earlier version ended in `?? ''`, which resolves
-	// to `/review/`, and `/review` has no `+page.svelte`: the fallback for "no
-	// page to point at" was itself the 404 this link exists to avoid.
-	const firstQueueTarget = $derived(
-		firstQueuePath($pagesStore) ?? pageStore.pages[0]?.id ?? currentPath
-	);
-	/** Already on it: the toolbar says so instead of offering a link to here. */
-	const atQueueStart = $derived(firstQueueTarget === currentPath);
-	/** For the link's tooltip -- the queue row's own title, not the slug. */
-	const firstQueueTitle = $derived(
-		pageTitleFor(firstQueueTarget, pageStore.pages, $draftsStore, 'empty')
-	);
+	// The toolbar's previous / next buttons step through the queue in the order
+	// the sidebar renders it, so they land on the row above or below the current
+	// one. Signed out the queue lists the corpus, so the fallback is corpus order.
+	// (They replace a single "First page" link, which jumped to the queue's top
+	// and was the toolbar's only navigation.)
+	const order = $derived.by(() => {
+		const queued = queueOrder($pagesStore);
+		return queued.length > 0 ? queued : pageStore.pages.map((p) => p.id);
+	});
+	const at = $derived(currentPath ? order.indexOf(currentPath) : -1);
+	const prevPath = $derived(at > 0 ? order[at - 1] : undefined);
+	const nextPath = $derived(at >= 0 && at < order.length - 1 ? order[at + 1] : undefined);
+	const titleOf = (path: string) => pageTitleFor(path, pageStore.pages, $draftsStore, 'empty');
+
+	/**
+	 * This page's recorded decision, for the toolbar badge, the collapsed panel's
+	 * dot and the phone Review button. Undefined with no review row (signed out),
+	 * when there is no decision to show.
+	 */
+	const status = $derived($pagesStore.find((p) => p.path === currentPath)?.status);
+	const statusLabel = $derived(status ? STATUS_LABELS[status].queueHeading : '');
 
 	/**
 	 * The mockup frame's real rendered width, bound from the element.
@@ -298,6 +305,19 @@
      the 2a pass. -->
 <svelte:window onkeydown={onWindowKeydown} />
 
+<!-- The decision as a dot: the bar colour for a decided status, a ring for
+     "Needs review" (an empty slot, as the queue's progress bar shows it).
+     Decorative wherever it appears beside the words; the collapsed panel
+     gives its own a label. -->
+{#snippet statusDot(s: NonNullable<typeof status>)}
+	<span
+		class="inline-block size-2.5 flex-none rounded-full {s === 'needs-review'
+			? 'border border-sfds-slate-l2 bg-white'
+			: STATUS_LABELS[s].bar}"
+		aria-hidden="true"
+	></span>
+{/snippet}
+
 <div
 	class="review-shell grid h-screen w-full grid-rows-[minmax(0,1fr)] overflow-hidden bg-muted/40"
 	data-sheet={pageStore.mobileSheet}
@@ -332,50 +352,48 @@
 		aria-label="Review queue"
 		class="queue-rail flex h-full min-w-0 flex-col border-r bg-background"
 	>
+		<!-- Every column's top row is `h-12` with a bottom border, so the queue,
+		     the canvas toolbar and the panel's tabs share one 48px band and one
+		     border line. They used to be 83px, 48px and 48px-on-grey: three tops
+		     that read as three unrelated strips. -->
 		{#if queueCollapsed}
-			<div class="flex flex-col items-center gap-4 py-3.5">
-				<Button
-					variant="outline"
-					size="icon"
-					class="size-7"
-					title="Expand queue"
-					aria-label="Expand queue"
-					onclick={() => pageStore.toggleRail('queue')}
+			<div class="flex flex-col items-center">
+				<div class="flex h-12 w-full items-center justify-center border-b border-sfds-grey-l2">
+					<Button
+						variant="outline"
+						size="icon"
+						class="size-7"
+						title="Expand queue"
+						aria-label="Expand queue"
+						onclick={() => pageStore.toggleRail('queue')}
+					>
+						<ChevronsRight class="size-3.5" />
+					</Button>
+				</div>
+				<a
+					href={resolve('/')}
+					class="mt-3 flex size-7 items-center justify-center rounded-md border border-sfds-grey-l2 text-sfds-action hover:bg-sfds-blue-l1/60"
+					title="All pages"
+					aria-label="All pages"
 				>
-					<ChevronsRight class="size-3.5" />
-				</Button>
+					<ArrowLeft class="size-3.5" aria-hidden="true" />
+				</a>
 			</div>
 		{:else}
-			<!-- Compact: the two-line heading took ~15% of the rail's height,
-			     space the queue rows below need more. -->
-			<div class="flex items-center gap-2 px-3 py-2.5 pl-5">
-				<div class="min-w-0 flex-1">
-					<div class="text-[10px] font-bold tracking-[0.1em] text-sfds-slate-l3 uppercase">
-						SFDS rebuild
-					</div>
-					<h2 class="font-heading text-base leading-5 font-bold text-sfds-black">
-						HHVC mockup review
-					</h2>
-					<!-- Who is signed in, and the way out. In the rail header so the
-					     queue sheet carries it too below 1024px. -->
-					{#if sessionStore.signedIn && sessionStore.email}
-						<div class="mt-1 flex min-w-0 items-center gap-2 text-xs">
-							<span
-								class="min-w-0 truncate text-sfds-slate-l3"
-								title={sessionStore.email}
-								data-testid="signed-in-email">{sessionStore.email}</span
-							>
-							<button
-								type="button"
-								class="min-h-6 flex-none font-semibold text-sfds-action underline-offset-2 hover:underline"
-								onclick={signOut}>Sign out</button
-							>
-						</div>
-						{#if signOutError}
-							<p class="mt-1 text-xs text-red-700" role="alert">{signOutError}</p>
-						{/if}
-					{/if}
-				</div>
+			<!-- The way back to `/`, which nothing in the workspace offered before:
+			     the landing page (progress, propose a page, every page) was a dead
+			     end once a reviewer left it. The app name and the account moved
+			     out of this row -- the name to the link's destination, the account
+			     to the rail footer -- so the queue starts 35px higher. -->
+			<div class="flex h-12 flex-none items-center gap-2 border-b border-sfds-grey-l2 pr-3 pl-5">
+				<a
+					href={resolve('/')}
+					class="flex min-w-0 flex-1 items-center gap-1.5 text-[13px] font-semibold text-sfds-action hover:underline"
+					data-testid="all-pages-link"
+				>
+					<ArrowLeft class="size-3.5 flex-none" aria-hidden="true" />
+					All pages
+				</a>
 				<Button
 					variant="outline"
 					size="icon"
@@ -391,6 +409,26 @@
 				<ReviewQueue />
 			</ScrollArea>
 			<Separator />
+			<!-- Who is signed in, and the way out: account business, so it sits with
+			     the rail's other utilities rather than above the work. Still inside
+			     the rail, so the queue sheet carries it below 1024px. -->
+			{#if sessionStore.signedIn && sessionStore.email}
+				<div class="flex min-w-0 items-center gap-2 px-5 pt-3 text-xs">
+					<span
+						class="min-w-0 truncate text-sfds-slate-l3"
+						title={sessionStore.email}
+						data-testid="signed-in-email">{sessionStore.email}</span
+					>
+					<button
+						type="button"
+						class="min-h-6 flex-none font-semibold text-sfds-action underline-offset-2 hover:underline"
+						onclick={signOut}>Sign out</button
+					>
+				</div>
+				{#if signOutError}
+					<p class="px-5 pt-1 text-xs text-red-700" role="alert">{signOutError}</p>
+				{/if}
+			{/if}
 			<div class="flex items-center justify-between gap-2 px-5 py-3">
 				<!-- No longer dead. It is a view of this same route rather than a
 				     page of its own: the queue and the review panel stay put, so
@@ -480,7 +518,7 @@
 					<!-- `grow` with no `min-w-0`: the group never shrinks below its
 					     fixed controls, so a narrow bar wraps the right-hand group
 					     onto a second row instead of overlapping it. -->
-					<div class="flex grow items-center gap-2">
+					<div class="flex min-w-0 grow items-center gap-2">
 						<!-- The only way to the queue and the panel below 1024px, where
 						     both rails leave the grid. Hidden above it, where the rails
 						     are on screen and these would be a second way to do nothing
@@ -494,67 +532,73 @@
 						>
 							Queue
 						</Button>
+						<!-- Below 1024px the panel is off screen, so this button carries the
+						     decision: a dot, and the status in the accessible name after
+						     the visible "Review", as "Review (Needs review)" (WCAG 2.5.3). -->
 						<Button
 							variant="outline"
 							size="sm"
-							class="narrow-only h-7 flex-none px-2.5 text-xs font-semibold"
+							class="narrow-only h-7 flex-none gap-1.5 px-2.5 text-xs font-semibold"
 							onclick={(e: MouseEvent) => openSheet('panel', e)}
 						>
-							Review
+							Review{#if status}<span class="sr-only">({statusLabel})</span>
+								{@render statusDot(status)}{/if}
 						</Button>
-						<!-- Back to the queue's first row (`firstQueueTarget`). Left-most
-						     because it is the only control here
-						     that LEAVES the page; everything to its right describes or acts
-						     on the page you are looking at.
-
-						     On that page already, it renders as plain text rather than a
-						     link: a link that reloads the page you are on reads as broken,
-						     and hiding it instead would shift the whole bar sideways as you
-						     move through the queue. -->
-						{#if atQueueStart}
+						<!-- Previous / next in queue order. An end of the queue renders an
+						     inert placeholder of the same size rather than nothing, so the
+						     title beside them does not shift as the reviewer steps through. -->
+						<div class="flex flex-none items-center gap-1">
+							{#if prevPath}
+								<a
+									href={resolve(reviewHrefFor(prevPath))}
+									class="{buttonVariants({ variant: 'outline', size: 'icon' })} size-7"
+									aria-label="Previous page: {titleOf(prevPath)}"
+									title="Previous page: {titleOf(prevPath)}"
+									data-testid="prev-page"
+								>
+									<ChevronLeft class="size-3.5" aria-hidden="true" />
+								</a>
+							{:else}
+								<span
+									class="flex size-7 items-center justify-center text-sfds-grey-l2"
+									aria-hidden="true"><ChevronLeft class="size-3.5" /></span
+								>
+							{/if}
+							{#if nextPath}
+								<a
+									href={resolve(reviewHrefFor(nextPath))}
+									class="{buttonVariants({ variant: 'outline', size: 'icon' })} size-7"
+									aria-label="Next page: {titleOf(nextPath)}"
+									title="Next page: {titleOf(nextPath)}"
+									data-testid="next-page"
+								>
+									<ChevronRight class="size-3.5" aria-hidden="true" />
+								</a>
+							{:else}
+								<span
+									class="flex size-7 items-center justify-center text-sfds-grey-l2"
+									aria-hidden="true"><ChevronRight class="size-3.5" /></span
+								>
+							{/if}
+						</div>
+						<!-- The page itself, not its URL: the title always (it used to show
+						     only with the queue collapsed, the slug otherwise), the slug in
+						     its tooltip. `w-0 grow` truncates instead of letting a long
+						     title decide where the bar wraps. Hidden on a phone, where the
+						     mockup's own heading is the first thing under the bar. -->
+						<span
+							class="w-0 grow truncate text-sm font-semibold text-sfds-black max-sm:hidden"
+							title={pageData?.slug ?? ''}
+							data-testid="toolbar-title">{pageData?.title ?? titleOf(currentPath ?? '')}</span
+						>
+						{#if status}
 							<span
-								class="flex-none text-[13px] font-semibold text-sfds-slate-l3"
-								aria-current="page"
-							>
-								First page
-							</span>
-						{:else}
-							<a
-								href={resolve(reviewHrefFor(firstQueueTarget))}
-								class="flex flex-none items-center gap-1 text-[13px] font-semibold text-sfds-action hover:underline"
-								title={firstQueueTitle
-									? `Back to the first page in the queue: ${firstQueueTitle}`
-									: 'Back to the first page in the queue'}
-								data-testid="queue-start"
-							>
-								<ArrowLeft class="size-3.5" aria-hidden="true" />
-								First page
-							</a>
-						{/if}
-						<span class="h-4 w-px flex-none bg-sfds-grey-l2 max-sm:hidden" aria-hidden="true"
-						></span>
-						<!-- No page-type badge: the queue row already names the type,
-						     and the badge's ~100px was what pushed this bar onto a
-						     second row at 1440px with both rails open. -->
-						<!-- When the queue is collapsed it no longer shows the page title, so
-					     the toolbar absorbs it (design 2a). Restored to the queue on expand. -->
-						{#if pageStore.railCollapsed.queue && pageData?.title}
-							<span class="w-0 grow truncate text-sm font-semibold text-sfds-black"
-								>{pageData.title}</span
+								class="inline-flex flex-none items-center rounded-full border px-2 py-0.5 text-xs font-medium max-sm:hidden {STATUS_LABELS[
+									status
+								].badge}"
+								data-testid="toolbar-status">{statusLabel}</span
 							>
 						{/if}
-						<!-- slate-l3, not slate-l2. MEASURED on the built app: #5a7a92 on
-						     white is 4.53:1, which clears WCAG AA's 4.5 floor by 0.03 and
-						     reads washed out at 12px; #1d4d70 is 8.94:1 and is already in
-						     the SFDS palette, so this is a token swap rather than a new
-						     colour. Same swap on the Karl tags label below. -->
-						<!-- `w-0 grow`: the slug fills whatever the row leaves and
-						     truncates, instead of its full ~48 characters counting
-						     toward where flex-wrap breaks the line. Hidden on a phone,
-						     where the row has nothing to spare for it. -->
-						<span class="w-0 grow truncate font-mono text-xs text-sfds-slate-l3 max-sm:hidden">
-							{pageData?.slug ?? 'https://sf.gov/'}
-						</span>
 					</div>
 
 					<div class="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-sm">
@@ -574,11 +618,13 @@
 							<span
 								class="text-[11px] font-semibold text-sfds-slate-l3 tabular-nums"
 								data-testid="preview-width"
-								title="The width the mockup is being rendered at, and the sf.gov layout that width produces"
+								title="Rendered at {frameWidth}px: the sf.gov {previewBand(
+									frameWidth
+								).toLowerCase()} layout"
 							>
-								{frameWidth}px · {previewBand(frameWidth)}{scale < 1
-									? ` · ${Math.round(scale * 100)}%`
-									: ''}
+								<!-- The layout and the zoom are what a reviewer reads off this;
+								     the pixel width is a detail, so it moved to the tooltip. -->
+								{previewBand(frameWidth)}{scale < 1 ? ` · ${Math.round(scale * 100)}%` : ''}
 							</span>
 							<ToggleGroup.Root
 								type="single"
@@ -782,17 +828,31 @@
 		class="panel-rail flex h-full min-w-0 flex-col overflow-hidden border-l bg-background"
 	>
 		{#if panelCollapsed}
-			<div class="flex flex-col items-center gap-4 py-3.5">
-				<Button
-					variant="outline"
-					size="icon"
-					class="size-7"
-					title="Expand review panel"
-					aria-label="Expand review panel"
-					onclick={() => pageStore.toggleRail('panel')}
-				>
-					<ChevronsLeft class="size-3.5" />
-				</Button>
+			<div class="flex flex-col items-center gap-4">
+				<div class="flex h-12 w-full items-center justify-center border-b border-sfds-grey-l2">
+					<Button
+						variant="outline"
+						size="icon"
+						class="size-7"
+						title="Expand review panel"
+						aria-label="Expand review panel"
+						onclick={() => pageStore.toggleRail('panel')}
+					>
+						<ChevronsLeft class="size-3.5" />
+					</Button>
+				</div>
+				<!-- Collapsed, the panel hid the one thing it exists for. The dot keeps
+				     the decision on screen; its label carries it for a screen reader. -->
+				{#if status}
+					<span
+						role="img"
+						aria-label="Decision: {statusLabel}"
+						title="Decision: {statusLabel}"
+						class="flex size-7 items-center justify-center"
+					>
+						{@render statusDot(status)}
+					</span>
+				{/if}
 				<!-- Collapsed, the panel is the only place the unsaved count lives, so
 				     it is repeated here rather than hidden with the tabs. -->
 				{#if unsavedCount > 0}

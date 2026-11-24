@@ -216,7 +216,10 @@
 <div class="flex h-full flex-col">
 	<!-- Top: the decision itself -->
 	<div class="space-y-4 p-6">
-		<h2 class="font-heading text-lg font-bold">Manager Review</h2>
+		<!-- Screen-reader only: the tab above already says "Decision", and a
+		     visible "Manager Review" under it was the same thing twice. The
+		     heading stays in the outline for heading navigation. -->
+		<h2 class="sr-only">Decision</h2>
 
 		<!-- A container, so the decisions can drop to a 2x2 grid when four
 		     buttons no longer fit one row. Font size decides that, not the
