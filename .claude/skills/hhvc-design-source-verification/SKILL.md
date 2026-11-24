@@ -138,11 +138,18 @@ echo "*:Zone.Identifier" >> .gitignore  # Windows download noise
 2. CSS tokens (transcribed from Figma; subject to transcription error)
 3. Rendered page (should match CSS, but may not if CSS is stale)
 
-**For content field mapping (Karl CMS):**
+**For content field mapping (Karl CMS):** three questions, each with its own
+authority.
 
-1. Live published page (what users actually see)
-2. Field map documentation (how a type should build)
-3. Help Center docs (authoring intent; reference only)
+- **How a page should be built** (limits, which components a type offers,
+  editorial rules): the **Karl Editor Help Center**. This was reversed on
+  2026-08-23 (field map `O14`), so a rule the live form fails to enforce is still
+  a rule. Where the Help Center contradicts itself, mark the rule unconfirmed.
+- **What the editing form contains** (field names, order, required flags): the
+  **live CMS form**, transcribed in `docs/karl-export-field-map.md` and
+  `KARL_PANELS`.
+- **What a published page actually renders**: the **live sf.gov page**. Use it
+  as evidence of behaviour, not as permission to break a Help Center rule.
 
 **For page structure and routing:**
 
