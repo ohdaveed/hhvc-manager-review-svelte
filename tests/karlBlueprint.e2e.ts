@@ -46,7 +46,7 @@ const PILOTS = [
 		slug: 'information-what-happens-after-you-report-housing-pest-problem',
 		first: ['title', 'description', 'primary_agency', 'part_of', 'information_section'],
 		empty: ['Primary agency (empty)', 'Part of (empty)'],
-		tray: 2
+		tray: 1
 	},
 	{
 		slug: 'look-up-building-records',
