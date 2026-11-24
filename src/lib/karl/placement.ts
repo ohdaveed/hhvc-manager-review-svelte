@@ -93,6 +93,8 @@ export type PanelFill = {
 	status: PlacementStatus;
 	/** Why a slot is not simply placed, prefixed with the section it comes from. */
 	reasons: string[];
+	/** What Karl's own pages disagree on about how this panel behaves. */
+	caveats: string[];
 };
 
 export type PagePlacements = {
@@ -139,9 +141,23 @@ const panelLabel = (type: string, rawName: string): string => {
 	return panel?.uiLabel ?? rawName;
 };
 
-/** The part of a field id after its section key, as Karl's form names it. */
-function subLabel(rest: string): string {
+/**
+ * The part of a field id after its section key, as Karl's form names it.
+ *
+ * Steps are named by type: on Step by step they are Step blocks (Title, Step
+ * description, Transaction link); everywhere else they are Transaction's
+ * what_to_do Sections. Same split as the transcript's `emitSteps`.
+ */
+function subLabel(rest: string, stepByStep = false): string {
 	const step = rest.match(/^steps\.(\d+)\.(.+)$/);
+	if (step && stepByStep) {
+		const n = Number(step[1]) + 1;
+		const field = step[2];
+		if (field === 'title') return `Step ${n} · Title`;
+		if (/^(text|bullets)\.\d+$/.test(field)) return `Step ${n} · Step description`;
+		if (field === 'button' || field === 'buttonUrl') return `Step ${n} · Transaction link`;
+		return `Step ${n}`;
+	}
 	if (step) {
 		const n = Number(step[1]) + 1;
 		const field = step[2];
@@ -163,6 +179,15 @@ function subLabel(rest: string): string {
 const HAS_PLACEHOLDER = /PLACEHOLDER/;
 const RELATED_HEADING = /^\s*related\b/i;
 const RELATED_PANELS = new Set(['related', 'related_links']);
+
+/**
+ * A caveat in words a manager can read. The schema keeps Karl's verbatim
+ * quotes as the citation; this is the one-line version the Blueprint shows.
+ */
+const CAVEAT_TEXT: Record<string, string> = {
+	'Step by step.topics':
+		'Karl’s own pages disagree on whether this page then shows up on that Topic page automatically.'
+};
 
 /** Page-level fields that are a block of their own on the rendered page. */
 const PAGE_BLOCKS = new Set(['title', 'summary', 'primaryAgency']);
@@ -294,7 +319,35 @@ export function placementsFor(
 					`This page type has no Related panel, so these links go into ${panelLabel(type, claimant)} instead.`
 				);
 			}
+			// Step count and step titles: judged on the section, since a missing
+			// title has no string of its own to hang a chip on.
+			const steps = (section as { steps?: unknown[] }).steps;
+			const stepCount = Array.isArray(steps) ? steps.length : 0;
 			for (const rule of rulesOf(claimant)) {
+				if (stepCount && rule.kind === 'maxItems' && !rule.per && stepCount > rule.max) {
+					status = worstOf([status, 'needs-fix']);
+					reasons.push(`This page has ${stepCount} steps; Karl allows up to ${rule.max}.`);
+				}
+				// Advisory: Karl's "aim for" is reported, but it is not a rule the
+				// copy breaks, so the status does not change.
+				if (stepCount && rule.kind === 'targetItems' && stepCount > rule.target) {
+					reasons.push(
+						`This page has ${stepCount} steps; Karl suggests aiming for no more than ${rule.target}.`
+					);
+				}
+				if (stepCount && rule.kind === 'required' && rule.sub === 'Title') {
+					const untitled = Array.from({ length: stepCount }, (_, i) => i).filter(
+						(i) => !(copy[`${prefix}.steps.${i}.title`] ?? '').trim()
+					);
+					if (untitled.length) {
+						status = worstOf([status, 'needs-fix']);
+						reasons.push(
+							`${untitled.map((i) => `Step ${i + 1}`).join(', ')} ${untitled.length === 1 ? 'has' : 'have'} no title; Karl requires one on every step.`
+						);
+					}
+				}
+				// One Transaction link per step (`per: 'step'`) cannot be exceeded:
+				// a corpus step holds a single `button`, so there is nothing to count.
 				if (
 					rule.kind === 'fixedHeading' &&
 					heading.trim().toLowerCase() !== rule.heading.toLowerCase()
@@ -358,7 +411,10 @@ export function placementsFor(
 		let label = panelLabel(type, raw);
 		if (sectionKey) {
 			const rest = id.slice(`sections.${sectionKey}.`.length);
-			const sub = raw === 'what_to_do' && rest === 'heading' ? 'Heading' : subLabel(rest);
+			const sub =
+				raw === 'what_to_do' && rest === 'heading'
+					? 'Heading'
+					: subLabel(rest, type === 'Step by step');
 			label = [instanceLabel(raw, sectionKey), sub].filter(Boolean).join(' · ');
 		} else {
 			const ttk = id.match(/^whatToKnow\.thingsToKnow\.(\d+)\.(label|text)$/);
@@ -492,11 +548,14 @@ export function placementsFor(
 			reasons: [
 				...new Set([
 					...[...sectionPlacements.values()]
-						.filter((s) => s.rawName === panel.rawName && s.status !== 'placed')
+						.filter((s) => s.rawName === panel.rawName && s.reasons.length > 0)
 						.flatMap((s) => s.reasons.map((r) => (s.heading ? `“${s.heading}”: ${r}` : r))),
 					...fieldIds.flatMap((id) => fields.get(id)!.reasons)
 				])
-			]
+			],
+			caveats: rulesOf(panel.rawName)
+				.filter((rule) => rule.kind === 'caveat')
+				.map((rule) => CAVEAT_TEXT[`${type}.${panel.rawName}`] ?? rule.cite.says)
 		});
 	}
 

@@ -100,6 +100,12 @@
 							<p class="bp-required">Required: Karl won’t save the page without this.</p>
 						{/if}
 					{/if}
+					{#each slot.caveats as caveat, i (i)}
+						<p class="bp-caveat">
+							<strong>Karl’s rule unconfirmed:</strong>
+							{caveat}
+						</p>
+					{/each}
 				</li>
 			{/each}
 		</ol>
@@ -264,6 +270,12 @@
 		margin: 6px 0 0;
 		font-size: 13px;
 		color: #6f4a00;
+	}
+
+	.bp-caveat {
+		margin: 6px 0 0;
+		font-size: 13px;
+		color: #3d4551;
 	}
 
 	.bp-required {
