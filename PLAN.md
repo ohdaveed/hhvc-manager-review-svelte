@@ -1,52 +1,50 @@
-# PLAN — Karl outline rollout: Agency
+# PLAN — Karl outline rollout: Location
 
-Branch `feat/karl-agency`, cut from `origin/main` at `cac772a` (Report, PR #201, verified live).
+Branch `feat/karl-location`, cut from `origin/main` at `0046900` (Agency, PR #202, verified live).
 The plan and vocabulary are in `docs/plans/2026-11-23-karl-field-mapping-layer.md` (§5, rollout
-step 5) and `CONTEXT.md`.
+step 6) and `CONTEXT.md`.
 
-One page: `pestsTopic` (`sf.gov/departments--healthy-housing-and-vector-control`). One Services
-section and four Resources sections, each a heading, an intro paragraph (three of the four) and
-link cards, plus an About section.
+One page: `ehOffice` (`sf.gov/location/environmental-health-office`), a proposed page with
+placeholder address and hours.
 
 ## Measured before starting
 
-- **The walkthrough is wrong in two places, and the outline inherits both.**
-  - It emits each Services and Resources intro paragraph into the Subsection as "Text". Karl's
-    Subsection has only a Title and a links list ("Add a subsection Title … Add an SF.gov page or
-    External link"; field map E1), which is what register entry **U20** records: "a direct mapping
-    loses the paragraph". The outline therefore calls lost copy Placed.
-  - It emits "Section title 2" (one required field) four times, once per Resources heading.
-- Labels: Agency's form has two panels both called "Subsection", so the outline shows "Subsection"
-  beside "Subsection 1–4".
-- Audience is Unplaced; About is Placed. Public records is required and empty, but shows as
-  optional, because Agency has no schema yet.
-
-## Decision (user, 2026-11-24)
-
-Each Services/Resources heading becomes **its own Subsection's Title**. Section title 1 and 2 keep
-the values the form pre-fills ("Services", "Resources"). This replaces the field map's documented
-mapping ("the resources sections' heading" → Section title 2), which cannot hold four headings in
-one field. The field map rows change with it.
+"5 sections: 1 needs a fix, 4 unconfirmed." Every mapping is inferred, because the live form was
+captured only to panel names (field map E2, register **U26**): `title`, `primary_agency`,
+`description`, `alert`, `image`, `body`, `intro`, `services`, `about_location`, `partner_agencies`,
+`at_this_location`, `people`, `related_locations`, `contact`. Labels read "Body 1–3" and "Intro" with
+no hint of where they sit on the page.
 
 ## Karl, read 2026-11-24
 
-- Resources on an Agency page: "Add a subsection Title … Add an SF.gov page or External link …
-  You can create more subsections."
-- Resource tiles on Agency: the Resources component says "5 content types support resource
-  tiles" and lists four, without Agency. The form offers a list of links here. **Unconfirmed.**
-- Spotlight: Agency allows up to 2. None on this page.
-- URL: `sf.gov/department-[slug]` (URLs) vs `sf.gov/departments/title-of-department` (Agency).
-  **Unconfirmed.**
+"How a Location page works" lists 21 sections: Title, Description, Primary Agency, Alert, **Essential
+information** (Image, Body), **Getting here** (Intro, Parking, Accessibility, Public
+transportation, Accordions), Services, About, Partner agencies, **Additional location info**, At this
+location, People, Related locations, Contact us.
+
+- These are not 21 fields. "Essential information" ("includes an Image and a Body section for
+  text") and "Getting here" ("Basic information about transportation … The 'Getting here'
+  subheading cannot be changed") are **groups** over the captured `image`/`body` and `intro`.
+- **Parking, Accessibility, Public transportation, Accordions and Additional location info have no
+  field in the capture.** They probably sit inside fields nobody expanded (U26). They are not
+  invented here; they are shown as one Unconfirmed note.
+- A Location "is based on an Address", and the Address snippet carries Line 1, City, State and Zip
+  (all required) plus **Hours and days open**. The page's own note already says its address and hours
+  "belong with the page's address fields". This is a **confirmed** Good-to-know note.
+- Related locations takes other **Location** pages only; At this location takes Agency or Location
+  pages; Contact us is listed, so it is **confirmed** (unlike Campaign).
+- Alert: title ≤30 and description ≤120 characters (Alert component).
+- URL: `sf.gov/[slug]` (URLs) vs `sf.gov/location/name-of-location` (Location). **Unconfirmed.**
 
 ## Checklist
 
-- [x] **1. Transcript.** On Agency, a Services/Resources section's heading is its Subsection's
-      Title, and its intro paragraphs are not emitted (the sweep reports them as U20). Section title
-      1 and 2 emit their pre-filled values once each. The field map rows are updated. The snapshot
-      diff is `pestsTopic` only.
-- [x] **2. Schema and placement.** Agency in `schema.ts` (Title, Description, ≤2 spotlights, the
-      resource-tiles caveat, unconfirmed URL). Labels `Services · Subsection` and
-      `Resources · Subsection N`. Unit tests pin the page.
-- [x] **3. e2e.** The Agency page joins both specs, with axe at 1280px and 375px; screenshots
+- [x] **1. Schema and placement.** Location in `schema.ts`: Title, Description, alert limits, the
+      Address-snippet note, the uncaptured-sections caveat (U26), Related locations (Location pages
+      only), and an unconfirmed URL. Labels carry the help center's groups (`Essential information ·
+      Body`, `Getting here · Intro`). The intro gets a reason: Karl describes Getting here as
+      transport information, which an audience line may not be. The absorbed Related list's reason
+      names Related locations. Unit tests pin the page.
+- [x] **2. Field map.** U26 gains the help-center reading. The inventory keeps its 14 captured fields.
+- [x] **3. e2e.** The Location page joins both specs, with axe at 1280px and 375px; screenshots
       looked at.
 - [x] **4. Ship.** `verify` and the ratchets, then a PR. Ask before merging.

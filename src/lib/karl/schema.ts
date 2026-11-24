@@ -126,7 +126,8 @@ export const SCHEMA_TYPES = [
 	'Topic',
 	'Campaign',
 	'Report',
-	'Agency'
+	'Agency',
+	'Location'
 ] as const;
 
 /** A panel's label as Karl's form shows it: the inventory's label without its trailing note. */
@@ -360,6 +361,91 @@ const RULES: Record<SchemaType, TypeRules> = {
 						helpTitle: 'How a Step by step page works; Topic; Topics',
 						url: `${TYPES}/step-by-step/how-a-step-by-step-page-works`,
 						says: 'Step by step page: "You can add a topic, but the step by step will not automatically show on the topic page." Topic page: "Transaction and step by step pages tagged to the topic will automatically appear under the heading More services."'
+					}
+				}
+			]
+		}
+	},
+	Location: {
+		// The URLs page gives `sf.gov/[slug]`; the Location page gives
+		// `sf.gov/location/name-of-location`.
+		url: {
+			pattern: 'sf.gov/[slug] or sf.gov/location/[slug]',
+			status: 'unconfirmed',
+			cite: {
+				helpTitle: 'URLs; Location',
+				url: `${HC}/components/urls`,
+				says: 'URLs page: "Location - sf.gov/[slug]". Location page: "URL sf.gov/location/name-of-location".'
+			}
+		},
+		// Location's related field takes other Location pages only.
+		relatedTargets: ['Location'],
+		pageCaveats: [
+			{
+				plain:
+					'A Location’s address and opening hours come from its Address snippet (street, city, state, ZIP, and hours and days open), not from text typed on the page.',
+				status: 'confirmed',
+				cite: {
+					helpTitle: 'How a Location page works; Address',
+					url: `${TYPES}/location/how-a-location-page-works`,
+					says: 'How a Location page works: "Locations are based on an Address". Address: "Line 1 (required) … City (required) … State (required) … Zip (required) … Hours and days open".'
+				}
+			},
+			// U26: the live form was captured to panel names only, so these
+			// help-center sections have no recorded field. Shown, not invented.
+			{
+				plain:
+					'Karl’s guide also lists Parking, Accessibility, Public transportation, Accordions and Additional location info. Where they sit on the editing form has never been recorded, so this page does not place anything in them.',
+				status: 'unconfirmed',
+				cite: {
+					helpTitle: 'How a Location page works; field map U26',
+					url: `${TYPES}/location/how-a-location-page-works`,
+					says: 'Sections: … Getting here, Intro, Parking, Accessibility, Public transportation, Accordions, … Additional location info … (the E2 capture lists none of these five as a field).'
+				}
+			}
+		],
+		rules: {
+			title: [TITLE],
+			description: [DESCRIPTION],
+			alert: [
+				{
+					kind: 'maxChars',
+					sub: 'Title',
+					max: COMPONENT_SUPPORT.alert.maxChars?.title ?? 30,
+					strict: false,
+					status: 'confirmed',
+					cite: {
+						helpTitle: COMPONENT_SUPPORT.alert.helpTitle,
+						url: COMPONENT_SUPPORT.alert.url,
+						says: 'Title … 30 characters maximum.'
+					}
+				},
+				{
+					kind: 'maxChars',
+					sub: 'Description',
+					max: COMPONENT_SUPPORT.alert.maxChars?.description ?? 120,
+					strict: false,
+					status: 'confirmed',
+					cite: {
+						helpTitle: COMPONENT_SUPPORT.alert.helpTitle,
+						url: COMPONENT_SUPPORT.alert.url,
+						says: 'Description … 120 characters maximum.'
+					}
+				}
+			],
+			// A section placed in Getting here's Intro: Karl describes Getting
+			// here as transport information, which other text may not be.
+			intro: [
+				{
+					kind: 'caveat',
+					sub: 'Section',
+					plain:
+						'Karl puts Intro under “Getting here”, which is for transportation and getting to the location; check this text belongs there.',
+					status: 'unconfirmed',
+					cite: {
+						helpTitle: 'Getting here',
+						url: `${TYPES}/location/getting-here`,
+						says: 'Basic information about transportation and getting to the location. The "Getting here" subheading cannot be changed. … Intro, Parking, Accessibility, Public transportation, Accordions (write your own)'
 					}
 				}
 			]
