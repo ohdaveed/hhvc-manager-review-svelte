@@ -154,7 +154,12 @@ export const pestsTopic = {
 			]
 		},
 		{
-			heading: 'Need another City housing service?',
+			heading: 'Other City housing services',
+			// Pinned: this heading was reworded by the plain-language audit, and the
+			// derived key is a slug of the heading -- so leaving it derived would have
+			// re-keyed every `sections.<key>.*` id below and orphaned any edit or
+			// comment saved against them. The key is the ORIGINAL slug on purpose.
+			fieldKey: 'need-another-city-housing-service',
 			component: 'resources',
 			karl: 'Agency -> Resources. Use a final Resources subsection for out-of-scope referrals. These are a few external links rather than a parallel directory, so the HHVC page remains limited to Article 11 while still giving a visitor a clear next destination. Keep it that way: each addition here is a scope claim in reverse, and a section that grows past a handful stops reading as "not us, try here" and starts reading as a second, worse copy of the Citywide topic.',
 			kind: 'body',
@@ -189,7 +194,7 @@ export const pestsTopic = {
 			kind: 'body',
 			bullets: ['[About Healthy Housing and Vector Control](aboutHhvcTeam)'],
 			paragraphs: [
-				'Healthy Housing and Vector Control is part of Environmental Health at the San Francisco Department of Public Health. We address pests, vectors, garbage, filth, animal waste, overgrown vegetation, and mold from humidity or condensation under Health Code Article 11.'
+				'Healthy Housing and Vector Control is part of Environmental Health at the San Francisco Department of Public Health. We address pests, vectors, garbage, filth, animal waste, overgrown vegetation, and mold from humidity or condensation. Health Code Article 11 covers this.'
 			]
 		}
 	]

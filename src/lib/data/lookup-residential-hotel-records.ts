@@ -6,7 +6,7 @@ export const findHotelRecords = {
 		'Look up inspection and program records for SROs, residential hotels, and emergency shelters.',
 	primaryAgency: 'Healthy Housing and Vector Control',
 	audience: [
-		'A resident of an SRO or residential hotel',
+		'A resident of a single room occupancy (SRO) hotel or residential hotel',
 		'A shelter resident or advocate',
 		'A property owner or operator of a residential hotel or shelter',
 		'A tenant representative researching program inspection history'
@@ -38,7 +38,7 @@ export const findHotelRecords = {
 			kind: 'body',
 			paragraphs: [
 				'Environmental Health inspects residential hotels, SROs, shelters, and related housing programs under separate datasets from the general residential complaint search.',
-				'Use this page when you need records for a residential hotel, SRO, or shelter rather than a standard apartment or mixed-use building.'
+				'Use this page for records about a residential hotel, SRO, or shelter. For a standard apartment or mixed-use building, use the general lookup.'
 			],
 			bullets: [
 				'**Note:** If you are staying at a regular tourist hotel, you may still use the general complaints and inspection lookup. Residential hotel and shelter records use a different program dataset.'

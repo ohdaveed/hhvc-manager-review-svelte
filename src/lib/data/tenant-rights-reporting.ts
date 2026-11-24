@@ -31,13 +31,13 @@ export const tenantRights = {
 			],
 			bullets: [
 				'**Keep your home clean:** Regular cleaning, taking out trash, and not letting food or garbage build up helps prevent pests.',
-				'**Report pest signs early:** Tell your landlord in writing as soon as you see droppings, gnaw marks, live pests, or damage.',
+				'**Report pest signs early:** Tell your landlord in writing when you see droppings, gnaw marks, live pests, or damage.',
 				'**Cooperate with inspections and treatments:** Allow reasonable access for pest control professionals, inspectors, and maintenance workers when scheduled.',
-				'**Prepare for treatment:** Follow preparation instructions from the pest control operator before treatment — move furniture, cover food, and clear access areas.',
+				"**Prepare for treatment:** Follow the pest control operator's instructions before treatment. Move furniture, cover food, and clear access areas.",
 				'**Reduce clutter:** Clutter gives pests places to hide and makes inspections and treatments less effective.'
 			],
 			callout: {
-				text: 'Notify your property owner or manager first. Allow at least 72 hours for them to begin addressing the issue. If the problem continues or the owner does not respond, report the issue through 311. Do not delay reporting immediate health or safety hazards.',
+				text: 'Notify your property owner or manager first, and allow at least 72 hours for them to begin fixing it. If the problem continues or the owner does not respond, report the issue through 311. Do not delay reporting immediate health or safety hazards.',
 				karl: 'Callout block: standard 72-hour tenant notification and reporting pattern for tenant-facing pages.'
 			}
 		},

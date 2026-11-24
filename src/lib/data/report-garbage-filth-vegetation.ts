@@ -22,7 +22,7 @@ export const filthReport = {
 		thingsToKnow: [
 			{
 				label: 'Reporting anonymously',
-				text: 'You can report anonymously — 311 does not require your name, and HHVC does not share your identity with the property owner or manager.'
+				text: 'You can report anonymously. 311 does not require your name, and HHVC does not share your identity with the owner or manager.'
 			},
 			{
 				label: 'Mold review threshold',
@@ -53,7 +53,7 @@ export const filthReport = {
 					title: 'If you rent, give 72 hours when possible',
 					text: ['Tell the property owner or manager about the condition.'],
 					bullets: [
-						'If they do not respond or start fixing it within 72 hours, submit your report right away so it can be assigned for review.',
+						'If they do not respond or start fixing it within 72 hours, submit your report. It can then be assigned for review.',
 						'Do not wait 72 hours if there is an urgent health or safety concern.'
 					],
 					karl: 'what_to_do -> Section. Section title: "If you rent, give 72 hours when possible". Section specifics: one Text block containing the intro sentence plus the bulleted list below. Conditional 72-hour tenant notice + timeline expectation.'
@@ -65,7 +65,7 @@ export const filthReport = {
 						'Tell the property owner or manager in writing as soon as you find a leak. Include the date, where the mold is, and where you think the moisture is coming from. Keep a copy of your message.'
 					],
 					bullets: [
-						'For mold on a wall or ceiling, describe the size of the affected area and whether it is growing or spreading.',
+						'For mold on a wall or ceiling, describe the size of the area and whether it is spreading.',
 						{
 							text: 'Do not rely on a third-party mold test kit when you report. Describe the visible condition and moisture source instead.',
 							unverified: true,
@@ -80,7 +80,7 @@ export const filthReport = {
 					text: ['Include only the details that apply:'],
 					bullets: [
 						'The address or location',
-						'Whether the condition is garbage, debris, clutter, stored items, animal waste, pigeon droppings or roosting, overgrown plants and brush, or mold',
+						'The condition: garbage, debris, clutter, stored items, animal waste, pigeon droppings or roosting, overgrown plants and brush, or mold',
 						'Whether it is inside, outside, or in a shared area',
 						'How long it has been happening',
 						'Whether you told the property owner or manager, if you rent',
@@ -162,12 +162,12 @@ export const filthReport = {
 			karl: 'custom_section -> title_and_text. Title = this heading, Text = the copy below. MOVED OUT OF things_to_know 2026-08-31, option (b): with this section the page claimed 4 things_to_know entries against the Help Center\'s two-item guidance, and the panel already holds the 2 What-to-know entries. custom_section is the same title_and_text block, repeatable with no recorded cap, so every word is kept and nothing is cut. PLACEMENT CONSEQUENCE, for the editor to judge: custom_section renders AFTER what_to_do and supporting_information, so this section now sits below them rather than above — things_to_know would have placed it above what_to_do. If that reading order matters more than the guidance, revert to option (a) and let the panel run to 4. PRIOR MAPPING, kept for the record: Best real-schema fit: a second things_to_know entry. Title: "How your report is processed". Text: the bulleted list below (after-report expectations, weekday processing note, enforcement statement, tenant rights note, and the Health Code Article 11 property-owner-obligation summary required by HHVC content standards Ch. 8.7.1). Same ordering caveat as the section above — things_to_know sits before what_to_do on the real form. Secondary Button link block ("View Article 11") citing the municipal code per Ch. 8.7.2.',
 			kind: 'body',
 			bullets: [
-				'**Review time:** It can take a few weekdays for 311 to send your report to Environmental Health and assign an inspector.',
+				'**Review time:** 311 sends your report to Environmental Health, which assigns an inspector. This can take a few weekdays.',
 				'**If you gave contact information:** An inspector may reach out to ask questions or schedule a visit.',
-				'**If you reported anonymously:** An inspector may still visit the property without notice—especially if there is an urgent safety or health risk.',
+				'**If you reported anonymously:** An inspector may still visit without notice. This is more likely with an urgent safety or health risk.',
 				'**If we find a problem:** The City can order the property owner or responsible party to fix the violation.',
 				'**Note:** Tenants have rights to safe and habitable housing. A property owner or manager cannot retaliate because a tenant reports housing conditions to the City.',
-				'Under San Francisco Health Code Article 11, property owners must not let trash, filth, animal waste, or overgrown plants build up in a way that shelters pests or creates a health hazard.'
+				'San Francisco Health Code Article 11 covers this. Property owners must not let trash, filth, animal waste, or overgrown plants build up. Build-up that shelters pests or creates a health hazard is a violation.'
 			],
 			button: 'View Article 11',
 			buttonUrl: 'https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890',

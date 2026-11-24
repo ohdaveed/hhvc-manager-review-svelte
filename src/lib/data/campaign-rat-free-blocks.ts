@@ -53,7 +53,7 @@ export const ratFreeBlocks = {
 			karl: 'Maps to Additional content → Title and text block. The bullets fold into the same rich text field; the Link tool carries the internal links.',
 			kind: 'body',
 			paragraphs: [
-				'A coordinated week does more than a year of single properties acting alone. Neighbours do not need permission from the City to organise one.'
+				'A coordinated week does more than a year of single properties acting alone. Neighbors do not need permission from the City to organize one.'
 			],
 			bullets: [
 				'Agree a week when everyone clears clutter and checks their bins.',
@@ -69,7 +69,7 @@ export const ratFreeBlocks = {
 			kind: 'body',
 			component: 'spotlight',
 			paragraphs: [
-				'Rodent conditions on a property you own or manage are yours to correct under Article 11, whether or not anyone has reported them.'
+				'Under Article 11, rodent conditions on a property you own or manage are yours to correct. This applies whether or not anyone has reported them.'
 			],
 			button: 'See owner responsibilities',
 			buttonTarget: 'ownerHub'

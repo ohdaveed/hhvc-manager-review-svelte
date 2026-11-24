@@ -36,7 +36,7 @@ export const publicRecords = {
 			kind: 'body',
 			paragraphs: [
 				'Many complaint and inspection records are already available through the online lookup tools.',
-				'Use a formal public records request when you need certified copies, a broader record set, or records not available in the public lookup tools.'
+				'Use a formal public records request for certified copies or a broader record set. It also covers records the public lookup tools do not have.'
 			],
 			bullets: [
 				'Property address or complaint number',

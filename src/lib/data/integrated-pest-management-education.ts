@@ -24,8 +24,8 @@ export const ipmEducation = {
 			kind: 'body',
 			component: 'spotlight',
 			paragraphs: [
-				'Healthy Housing and Vector Control offers free integrated pest management (IPM) education sessions for tenants, resident groups, and community organizations in San Francisco.',
-				'IPM is a prevention-first approach. Instead of relying on heavy pesticide use, it focuses on sealing entry points, removing food and water sources, and catching problems early.'
+				'Healthy Housing and Vector Control offers free integrated pest management (IPM) education sessions in San Francisco. They are for tenants, resident groups, and community organizations.',
+				'IPM is a prevention-first approach. Instead of relying on heavy pesticide use, it focuses on sealing entry points and removing food and water sources. It also catches problems early.'
 			],
 			callout: {
 				karl: 'Spotlight has no callout field — fold this "free program" note into the Spotlight description as a bolded lead-in, or flag for Digital Services if a distinct callout is needed.',
@@ -48,7 +48,12 @@ export const ipmEducation = {
 			]
 		},
 		{
-			heading: "What you'll learn",
+			heading: 'What the session covers',
+			// Pinned: this heading was reworded by the plain-language audit, and the
+			// derived key is a slug of the heading -- so leaving it derived would have
+			// re-keyed every `sections.<key>.*` id below and orphaned any edit or
+			// comment saved against them. The key is the ORIGINAL slug on purpose.
+			fieldKey: 'what-you-ll-learn',
 			karl: 'Maps to a second Additional content → Accordion section block: Title = this heading, Accordion sidebar = the paragraph below, each bullet below becomes one Accordion item (topic name as Title, elaboration as Body). Renders as a collapsible accordion.',
 			kind: 'body',
 			component: 'supporting',
@@ -69,7 +74,7 @@ export const ipmEducation = {
 			kind: 'body',
 			component: 'supporting',
 			paragraphs: [
-				'Session content follows the same integrated pest management guidance HHVC recommends to property owners and managers under Article 11 of the San Francisco Health Code.'
+				'Session content follows the same integrated pest management guidance HHVC recommends to property owners and managers. That guidance sits under Article 11 of the San Francisco Health Code.'
 			],
 			bullets: [
 				'University of California Statewide IPM Program (UC IPM) prevention practices',

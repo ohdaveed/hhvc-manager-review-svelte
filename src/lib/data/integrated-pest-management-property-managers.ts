@@ -21,13 +21,13 @@ export const ownerGuidance = {
 			karl: 'Maps to an "Information section" → Title and text block: Title = this heading, Text = the two paragraphs below (cross-vector health-harm framing for owners/managers, placed first to motivate prevention). Verify disease-risk specifics with SFDPH vector program before publication.',
 			kind: 'body',
 			paragraphs: [
-				"Unmanaged pests don't just damage a building — they put residents' health at risk. Rodents can spread Hantavirus and Leptospirosis, cockroach allergens can trigger asthma, bed bug and mite bites cause skin irritation and stress, and bird droppings can carry fungal spores that affect breathing.",
-				"These risks tend to compound the longer they go unaddressed — a small rodent problem can turn into a mite outbreak, and untreated moisture or clutter can support multiple pests at once. Prevention protects both residents' health and the owner's ability to meet Article 11 requirements."
+				"Unmanaged pests do not just damage a building — they put residents' health at risk. Rodents can spread Hantavirus and Leptospirosis. Cockroach allergens can trigger asthma. Bed bug and mite bites cause skin irritation and stress. Bird droppings can carry fungal spores that affect breathing.",
+				"These risks compound the longer they go unaddressed. A small rodent problem can turn into a mite outbreak. Untreated moisture or clutter can support several pests at once. Prevention protects both residents' health and the owner's ability to meet Article 11 requirements."
 			],
 			callout: {
 				karl: "Maps to its own Callout stream item (a sibling of the Title and text item above, not nested inside it — Information section's three block types are top-level stream siblings). Single rich text field only, no separate title field, which this mockup callout already lacks, so no mismatch here.",
 				variant: 'warning',
-				text: 'The residents most at risk from unmanaged pests are often children, older adults, and people with existing health conditions or weakened immune systems.'
+				text: 'Children, older adults, and people with existing health conditions or weakened immune systems are most at risk from unmanaged pests.'
 			}
 		},
 		{
@@ -36,7 +36,7 @@ export const ownerGuidance = {
 			kind: 'body',
 			paragraphs: [
 				'Property owners, managers, and building operators must keep buildings free of vermin under San Francisco health and housing rules.',
-				'Integrated Pest Management (IPM) is a prevention-first approach. It uses inspection, maintenance, sanitation, exclusion, monitoring, and targeted treatment to reduce pests and limit heavy pesticide use under Article 11 of the San Francisco Health Code.'
+				'Integrated Pest Management (IPM) is a prevention-first approach. It uses inspection, maintenance, sanitation, exclusion, monitoring, and targeted treatment to reduce pests and limit heavy pesticide use. This sits under Article 11 of the San Francisco Health Code.'
 			],
 			bullets: [
 				'Prevent pests before infestations spread',
@@ -57,7 +57,7 @@ export const ownerGuidance = {
 			cards: [
 				{
 					title: 'UC IPM: Guide for property managers',
-					text: 'Start here for the full UC ANR integrated pest management guide for multi-unit housing, including policies, prevention, monitoring, and resident outreach.',
+					text: 'Start here for the full UC ANR guide to integrated pest management in multi-unit housing. It covers policies, prevention, monitoring, and resident outreach.',
 					url: 'https://ipm.ucanr.edu/home-and-landscape/guide-for-property-managers/',
 					karl: 'This card links to an external URL, not an internal page — it does not fit the verified "Related" field (an unrestricted but internal-only Page chooser; no external-URL support observed). No block type in the verified Information schema holds a card-style external link with its own title/description. Best option: fold this in as a Link-tool External link within this block\'s own Title and text rich text — flag for Digital Services rather than assuming a dedicated field.'
 				},
@@ -99,7 +99,7 @@ export const ownerGuidance = {
 			karl: "Maps to a fifth Title and text block: Title = this heading, Text = the paragraph plus the bulleted list below (SFDPH Director's Rules and Regulations requirements).",
 			kind: 'body',
 			paragraphs: [
-				"The San Francisco Department of Public Health (SFDPH) Director's Rules and Regulations set specific legal requirements for rental property owners and managers to prevent and control rodents and other vectors."
+				"San Francisco Department of Public Health (SFDPH) Director's Rules and Regulations set legal requirements for owners and managers. These apply to rental property and cover preventing and controlling rodents and other vectors."
 			],
 			bullets: [
 				"Investigate reports: Investigate any tenant reports of pest activity within 72 hours (Director's Rules §V.2).",
@@ -143,9 +143,9 @@ export const ownerGuidance = {
 				'[UC IPM: Pest prevention](https://ipm.ucanr.edu/home-and-landscape/guide-for-property-managers/pest-prevention/)',
 				'[SF Environment: Pest Prevention by Design](https://sfenvironment.org/download/pest-prevention-by-design-guidelines)',
 				'Seal gaps larger than 1/4 inch around doors, windows, pipes, vents, and utility openings with rodent-proof materials. Examples include hardware cloth, copper mesh, sheet metal, concrete, mortar, or steel wool backed by sealant.',
-				"Maintain tree and shrub branches at least 6 feet away from walls or roofs to prevent rodents from climbing onto structures (Pest Prevention by Design). Director's Rules require at least 3 feet for enforcement inspections.",
+				"Keep tree and shrub branches at least 6 feet from walls or roofs. This stops rodents climbing onto structures (Pest Prevention by Design). Director's Rules require at least 3 feet for enforcement inspections.",
 				'Keep a 24-inch clear space along fences and exterior walls to reduce rodent movement and allow visibility.',
-				'Apply gravel around foundations to prevent burrowing. Store wood piles, lumber, and other materials at least 6 inches off the ground and 6 inches away from any wall or fence, so rub marks and runways stay visible during an inspection.',
+				'Apply gravel around foundations to prevent burrowing. Store wood piles, lumber, and other materials at least 6 inches off the ground. Keep them 6 inches from any wall or fence, so rub marks and runways stay visible during an inspection.',
 				'Build pest-proofing into repair, remodeling, and construction work.'
 			]
 		},
@@ -158,9 +158,9 @@ export const ownerGuidance = {
 				'[UC IPM: Pest monitoring and recordkeeping](https://ipm.ucanr.edu/home-and-landscape/guide-for-property-managers/pest-monitoring-and-recordkeeping/)'
 			],
 			bullets: [
-				'Use one system to log complaints, repairs, sanitation work, and contractor visits. Keeping a written log of vermin reports is required, not just good practice — see [Article 11 compliance for property owners](article11Compliance).',
+				'Use one system to log complaints, repairs, sanitation work, and contractor visits. A written log of vermin reports is required, not just good practice. See [Article 11 compliance for property owners](article11Compliance).',
 				'Ensure the PCO conducts a complete inspection and identifies the type and level of infestation.',
-				"Inspect adjacent units: When an infestation is reported, the PCO must inspect all adjacent units and treat them if necessary (Director's Rules §VI.6).",
+				"Inspect adjacent units: When an infestation is reported, the PCO must inspect every adjacent unit. Treat them if needed (Director's Rules §VI.6).",
 				'Use least-toxic methods: Prioritize non-chemical methods (vacuuming, heat, steam, freezing) and gel baits over chemical sprays.',
 				'Review records regularly to find repeated or building-wide problems.'
 			]
@@ -176,7 +176,7 @@ export const ownerGuidance = {
 			bullets: [
 				'Explain how residents should report pest activity in writing.',
 				'Give proper written notice before pesticide treatments, following state laws.',
-				'Provide assistance to tenants who cannot safely prepare their unit for treatment due to a disability or medical need by contacting support services.',
+				'Help tenants who cannot safely prepare their unit for treatment because of a disability or medical need. Contact support services for them.',
 				'Use translated materials to share simple food storage, garbage, and clutter prevention steps.'
 			]
 		},

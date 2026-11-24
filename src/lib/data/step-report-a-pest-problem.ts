@@ -69,7 +69,7 @@ export const stepPestReport = {
 				{
 					title: 'Read what the inspection found',
 					text: [
-						'After the visit you find out whether a violation was written, what it covers, and who is responsible for correcting it.'
+						'After the visit you find out whether a violation was written. You also learn what it covers and who must correct it.'
 					],
 					bullets: [
 						'[What happens after you report a housing or pest problem](afterReport)',

@@ -87,7 +87,11 @@ describe('TableBlock', () => {
 	it('gives the scroll container an accessible name so it is keyboard reachable', () => {
 		renderPage();
 
-		const region = screen.getByRole('region', { name: /table/i });
+		// The name is the SECTION HEADING, not the positional `Section [1] table`
+		// this once asserted. Phase D of the findings audit gave the table a real
+		// `<caption>` and reused it as the region's name, so a screen reader hears
+		// what the table is about rather than where it sits on the page.
+		const region = screen.getByRole('region', { name: 'Sections at a glance' });
 		expect(region.getAttribute('tabindex')).toBe('0');
 	});
 

@@ -51,7 +51,7 @@ export const stepPrepUnit = {
 					bullets: [
 						'Wash bedding, curtains, and clothing on the hottest setting the fabric allows, then dry them fully.',
 						'Seal everything you have washed in bags and keep it sealed until treatment is finished.',
-						'Do not move sealed bags to another unit — that is how an infestation spreads to a neighbour.'
+						'Do not move sealed bags to another unit — that is how an infestation spreads to a neighbor.'
 					],
 					karl: 'Step 2. No temperature in degrees and no dryer time: both are product- and fabric-specific, and neither is confirmed anywhere in the corpus.'
 				},
