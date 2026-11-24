@@ -13,6 +13,16 @@
 	import { sessionStore } from '$lib/stores/session.svelte';
 
 	const progress = $derived(reviewProgress($pagesStore));
+
+	// Per-status counts for the hero bar and its legend. Computed here rather
+	// than added to `reviewProgress`, whose contract is "how far through, and
+	// where next" and is tested as such.
+	const counts = $derived(
+		$pagesStore.reduce<Partial<Record<(typeof $pagesStore)[number]['status'], number>>>(
+			(acc, p) => ({ ...acc, [p.status]: (acc[p.status] ?? 0) + 1 }),
+			{}
+		)
+	);
 	const nextTitle = $derived(
 		progress.nextPath === undefined
 			? undefined
@@ -63,7 +73,11 @@
 </script>
 
 <div class="mx-auto max-w-6xl space-y-8 px-4 py-8">
-	<header class="min-h-20 space-y-4">
+	<!-- `min-h-44` reserves the hero card's height, not a line's. The header used
+	     to hold one line of text and `min-h-20`; a card is much taller, and
+	     without the taller reservation every signed-in load shifted the whole
+	     page down the moment `ready` flipped. -->
+	<header class="min-h-44 space-y-4">
 		<h1 class="text-2xl font-bold text-slate-900">HHVC mockup review</h1>
 		{#if sessionStore.signedIn === true && failed}
 			<p class="text-slate-800">Your progress could not be loaded. Reload the page to try again.</p>
@@ -71,6 +85,7 @@
 			<ProgressSummary
 				decided={progress.decided}
 				total={progress.total}
+				{counts}
 				nextHref={progress.nextHref}
 				{nextTitle}
 			/>
@@ -88,12 +103,18 @@
 		{/if}
 	</header>
 
-	<div class="grid gap-8 md:grid-cols-3">
+	<!-- How it works and Propose a page share a row above the list; the list
+	     itself needs the full width, because a search box, five filter chips and
+	     six disclosure sections do not fit a third of it. Collapsing How it works
+	     is what makes the row work: it is a summary line beside a short form
+	     rather than four paragraphs against a textarea. -->
+	<div class="grid gap-8 md:grid-cols-2">
 		<HowItWorks />
-		<AllPagesList />
 		<section aria-labelledby="propose-a-page">
 			<h2 id="propose-a-page" class="mb-3 text-lg font-semibold text-slate-900">Propose a page</h2>
 			<ProposePageForm />
 		</section>
 	</div>
+
+	<AllPagesList />
 </div>

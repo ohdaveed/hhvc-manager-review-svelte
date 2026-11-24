@@ -76,14 +76,21 @@
 		: 'border-transparent'}"
 >
 	{#if comfortable}
-		<!-- Badge trailing the title, so a column of them can be scanned. -->
+		<!-- The badge sits in the title's own row, right-aligned, so a column of
+		     them can be scanned down the list -- and it comes BEFORE the meta line
+		     in the DOM, matching that visual order. The whole row is one anchor, so
+		     DOM order is the order a screen reader announces the name in: putting
+		     the badge after the meta would have it read "title, type, status" while
+		     the eye reads "title, status, type" (WCAG 1.3.2). -->
 		<span class="block min-w-0 flex-1">
-			{@render titleLine()}
+			<span class="flex items-start justify-between gap-3">
+				<span class="block min-w-0 flex-1">{@render titleLine()}</span>
+				{#if badge}
+					<span data-slot="page-row-badge" class="shrink-0">{@render badge()}</span>
+				{/if}
+			</span>
 			{@render metaLine()}
 		</span>
-		{#if badge}
-			<span data-slot="page-row-badge" class="shrink-0">{@render badge()}</span>
-		{/if}
 	{:else}
 		<!-- Stacked: the sidebar is too narrow to spare a column for it. -->
 		{@render titleLine()}
