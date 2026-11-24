@@ -164,6 +164,16 @@ const PAGE_FIELD_NAMES: Record<string, string> = {
 /** What a block kind is called when it is counted. */
 const BLOCK_NOUNS: Record<string, string> = { supporting: 'accordion', spotlight: 'spotlight' };
 
+/**
+ * Agency's form has two panels both labelled "Subsection": one under Section
+ * title 1 (Services) and one under Section title 2 (Resources). The section
+ * they belong to is what tells them apart.
+ */
+const AGENCY_SUBSECTIONS: Record<string, string> = {
+	services: 'Services · Subsection',
+	resources: 'Resources · Subsection'
+};
+
 const TOPIC_BLOCKS: Record<string, string> = {
 	spotlight: 'Spotlight block',
 	services: 'Services block',
@@ -309,6 +319,8 @@ export function placementsFor(
 			return `${panelLabel(type, raw)} · ${block}${same.length > 1 ? ` ${same.indexOf(key) + 1}` : ''}`;
 		}
 		const seen = instances.get(raw) ?? [];
+		if (type === 'Agency' && AGENCY_SUBSECTIONS[raw])
+			return `${AGENCY_SUBSECTIONS[raw]}${seen.length > 1 ? ` ${seen.indexOf(key) + 1}` : ''}`;
 		return raw !== 'what_to_do' && seen.length > 1
 			? `${panelLabel(type, raw)} ${seen.indexOf(key) + 1}`
 			: panelLabel(type, raw);
@@ -648,7 +660,7 @@ export function placementsFor(
 			.map((f) => f.fieldId);
 		panels.push({
 			rawName: panel.rawName,
-			label: panel.label,
+			label: (type === 'Agency' && AGENCY_SUBSECTIONS[panel.rawName]) || panel.label,
 			required: panel.required,
 			inert: panel.inert,
 			filled: values.length > 0,

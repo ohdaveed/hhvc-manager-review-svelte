@@ -44,7 +44,7 @@ one field. The field map rows change with it.
       Title, and its intro paragraphs are not emitted (the sweep reports them as U20). Section title
       1 and 2 emit their pre-filled values once each. The field map rows are updated. The snapshot
       diff is `pestsTopic` only.
-- [ ] **2. Schema and placement.** Agency in `schema.ts` (Title, Description, ≤2 spotlights, the
+- [x] **2. Schema and placement.** Agency in `schema.ts` (Title, Description, ≤2 spotlights, the
       resource-tiles caveat, unconfirmed URL). Labels `Services · Subsection` and
       `Resources · Subsection N`. Unit tests pin the page.
 - [ ] **3. e2e.** The Agency page joins both specs, with axe at 1280px and 375px; screenshots
