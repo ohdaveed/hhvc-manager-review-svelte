@@ -112,6 +112,29 @@ test('no WCAG 2.1 AA violations on the signed-in landing page', async ({ page })
 			.getByRole('link', { name: 'Report a leaking roof' })
 	).toBeVisible();
 
+	// The proof above is NOT sufficient on its own any more, and that is the
+	// point of these three blocks. A badgeless list under an all-grey bar would
+	// satisfy a Continue link and a draft row and still scan perfectly clean --
+	// the blind spot wearing a new name. What this file exists to measure is now
+	// colour-coded: a badge per row and a bar whose segments carry meaning. So
+	// each of those elements has to be ON the page before axe looks at it.
+	//
+	// The bar is proven by its segments rather than its container: `needs-review`
+	// has no segment by design, so these three are all there are to find.
+	const bar = page.getByRole('img', { name: /pages decided/ }).first();
+	for (const status of ['approved', 'revise', 'blocked']) {
+		await expect(bar.locator(`[data-status="${status}"]`)).toHaveCount(1);
+	}
+
+	// One badge of every status the fixture records -- it carries all four on
+	// purpose -- so every badge colour pair is in the page axe measures.
+	for (const label of ['Undecided', 'Approved', 'Needs revision', 'Blocked']) {
+		await expect(page.getByText(label, { exact: true }).first()).toBeVisible();
+	}
+
+	// A themed section, so the disclosure summaries are scanned too.
+	await expect(page.getByText('Report a problem', { exact: true })).toBeVisible();
+
 	await noViolations(page);
 });
 
@@ -150,3 +173,17 @@ for (const state of ['drafting', 'stale', 'failed'] as const) {
 		await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
 	});
 }
+
+test('the landing page filter and search stay accessible once used', async ({ page }) => {
+	await gotoSignedIn(page, '/', { drafts: true });
+
+	// Scanning the FILTERED state too: the toggle's selected item carries its own
+	// colours, and `aria-live` regions only exist once something has changed.
+	await page.getByRole('radio', { name: /^Approved/ }).click();
+	await expect(page.getByText(/of \d+ pages$/)).toBeVisible();
+	await noViolations(page);
+
+	await page.getByLabel('Search pages').fill('inspection');
+	await expect(page.getByText(/of \d+ pages$/)).toBeVisible();
+	await noViolations(page);
+});

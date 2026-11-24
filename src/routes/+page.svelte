@@ -108,7 +108,10 @@
 	     six disclosure sections do not fit a third of it. Collapsing How it works
 	     is what makes the row work: it is a summary line beside a short form
 	     rather than four paragraphs against a textarea. -->
-	<div class="grid gap-8 md:grid-cols-2">
+	<!-- `items-start`: the grid would otherwise stretch both children to the
+	     taller one's height, and a collapsed How it works became a bordered box
+	     of empty space as tall as the propose form. -->
+	<div class="grid items-start gap-8 md:grid-cols-2">
 		<HowItWorks />
 		<section aria-labelledby="propose-a-page">
 			<h2 id="propose-a-page" class="mb-3 text-lg font-semibold text-slate-900">Propose a page</h2>

@@ -82,10 +82,23 @@
 	const totalPages = $derived(sections.reduce((n, s) => n + s.paths.length, 0));
 	const filtering = $derived(query.trim() !== '' || status !== 'all');
 
-	// Counts for the filter chips, over every page rather than the current view,
-	// so a chip reads the same whatever is already filtered.
+	/**
+	 * A chip's count is how many rows clicking it shows -- nothing else.
+	 *
+	 * It is therefore computed over the listed paths with `statusOf`, NOT over
+	 * `$pagesStore`. Those two differ whenever the review has no row for a listed
+	 * page, and the first version of this counted `All` one way (listed pages)
+	 * and each status the other (review rows), so the chips read `All 43` beside
+	 * `6 · 2 · 1 · 1` and did not add up. A reviewer reads a row of counts as
+	 * parts of a whole and will try to sum them.
+	 *
+	 * They still need not sum to `All`, and that is honest: the difference is
+	 * exactly the pages with no review row, which belong to no status. The query
+	 * is deliberately ignored, so a chip reads the same whatever is typed.
+	 */
+	const allPaths = $derived(sections.flatMap((s) => s.paths));
 	const countFor = (s: StatusFilter) =>
-		s === 'all' ? totalPages : $pagesStore.filter((p) => p.status === s).length;
+		s === 'all' ? allPaths.length : allPaths.filter((p) => statusOf(p) === s).length;
 
 	const FILTERS = $derived([
 		{ value: 'all' as StatusFilter, label: 'All' },
@@ -136,10 +149,24 @@
 				aria-label="Filter by status"
 				bind:value={status}
 			>
+				<!-- The selected chip is FILLED, not ringed. The outline variant's
+				     default on-state was too faint to find at a glance in a row of
+				     five, so there was no way to tell which filter was running --
+				     seen on screen, not in a test. White on `sfds-action` is 5.5:1,
+				     the pair `ReviewPanel`'s selected decision pill already uses. The
+				     count inherits the fill's foreground so it does not stay grey on
+				     blue. -->
 				{#each FILTERS as f (f.value)}
-					<ToggleGroup.Item value={f.value} class="rounded-md! border-l! px-2.5">
+					<ToggleGroup.Item
+						value={f.value}
+						class="group/chip rounded-md! border-l! px-2.5 data-[state=on]:border-sfds-action data-[state=on]:bg-sfds-action data-[state=on]:text-white data-[state=on]:hover:bg-sfds-action data-[state=on]:hover:text-white"
+					>
 						{f.label}
-						<span class="ml-1.5 text-sfds-slate-l3 tabular-nums">{countFor(f.value)}</span>
+						<span
+							class="ml-1.5 text-sfds-slate-l3 tabular-nums group-data-[state=on]/chip:text-white"
+						>
+							{countFor(f.value)}
+						</span>
 					</ToggleGroup.Item>
 				{/each}
 			</ToggleGroup.Root>
