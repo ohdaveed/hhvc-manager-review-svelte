@@ -3,7 +3,7 @@ export const article11Guide = {
 	type: 'Report',
 	title: 'Health Code Article 11 in plain language',
 	summary:
-		'Read the Healthy Housing and Vector Control rules most often cited for pests, mold, garbage, and other public health nuisances.',
+		'Read the Article 11 rules most often cited for pests, mold, garbage, and other public health nuisances.',
 	audience: ['This page is for anyone who wants a plain-language guide to Health Code Article 11.'],
 	reading: 'Grade 7',
 	reportDate: 'August 7, 2026',

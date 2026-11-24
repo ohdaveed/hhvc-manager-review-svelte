@@ -83,7 +83,7 @@ export const stepPrepUnit = {
 					],
 					bullets: [
 						'Arrange somewhere for pets, including fish tanks and birds, which need special handling.',
-						'Tell your operator about anyone in the home who is pregnant, elderly, or has a breathing condition.'
+						'Tell your operator about anyone in the home who is pregnant, older, or has a breathing condition.'
 					],
 					karl: 'Step 5. Deliberately does NOT state a re-entry time. Re-entry depends on the product applied and is set by the operator; naming a number here would be an invented safety instruction.'
 				},
