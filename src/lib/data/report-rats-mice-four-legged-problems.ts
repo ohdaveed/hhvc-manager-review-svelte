@@ -25,11 +25,11 @@ export const rodentsReport = {
 		thingsToKnow: [
 			{
 				label: 'Reporting anonymously',
-				text: 'You can report anonymously — 311 does not require your name, and HHVC does not share your identity with the property owner or manager.'
+				text: 'You can report anonymously. 311 does not require your name, and HHVC does not share your identity with the owner or manager.'
 			},
 			{
 				label: 'Notify your landlord first',
-				text: 'If you rent, tell your landlord first and give them 72 hours to start fixing the problem, unless it is an urgent health or safety risk.'
+				text: 'If you rent, tell your landlord first and give them 72 hours to start fixing the problem. Report right away if it is an urgent health or safety risk.'
 			}
 		]
 	},
@@ -70,7 +70,7 @@ export const rodentsReport = {
 						'**When it started:** How long this has been happening.',
 						'**Landlord notice:** If you rent, tell us if you already notified the property owner or manager.',
 						'**Other issues:** Any garbage, clutter, holes, or overgrown plants nearby.',
-						'**Your contact info:** Leave your name and phone number or email if you want an inspector to reach out to you.'
+						'**Your contact info:** Leave your name and phone number or email if you want an inspector to contact you.'
 					],
 					callout: {
 						karl: 'Callout block inside the "Tell us where the problem is" Section specifics: single rich text field, no separate title (this mockup callout already uses title: false, so no heading mismatch here). Text: photo guidance note.',
@@ -91,7 +91,7 @@ export const rodentsReport = {
 				'It may take us a few weekdays to get back to you. In the meantime, here are a few things you can do to help with the problem.'
 			],
 			bullets: [
-				'**Close off entry points:** Seal any gap bigger than a pencil with rodent-proof materials like hardware cloth, copper mesh, or sheet metal.',
+				'**Close off entry points:** Seal any gap bigger than a pencil. Use rodent-proof materials like hardware cloth, copper mesh, or sheet metal.',
 				'**Cut off food:** Store food and garbage in bins with tight-fitting lids. Do not leave pet food out overnight.',
 				'**Remove hiding places:** Clear clutter and trim overgrown plants where rats, mice, and raccoons hide or nest.',
 				'**Trap safely:** Use snap traps indoors. Do not use poisons — they can harm children, pets, and wildlife.',
@@ -149,12 +149,12 @@ export const rodentsReport = {
 			karl: 'custom_section -> title_and_text. Title = this heading, Text = the copy below. MOVED OUT OF things_to_know 2026-08-31, option (b): with this section the page claimed 4 things_to_know entries against the Help Center\'s two-item guidance, and the panel already holds the 2 What-to-know entries. custom_section is the same title_and_text block, repeatable with no recorded cap, so every word is kept and nothing is cut. PLACEMENT CONSEQUENCE, for the editor to judge: custom_section renders AFTER what_to_do and supporting_information, so this section now sits below them rather than above — things_to_know would have placed it above what_to_do. If that reading order matters more than the guidance, revert to option (a) and let the panel run to 4. PRIOR MAPPING, kept for the record: Best real-schema fit: a second things_to_know entry. Title: "How your report is processed". Text: the bulleted list below (after-report expectations, weekday processing note, enforcement statement, tenant rights note, and the Health Code Article 11 property-owner-obligation summary required by HHVC content standards Ch. 8.7.1). Same ordering caveat as the section above — things_to_know sits before what_to_do on the real form. Secondary Button link block ("View Article 11") citing the municipal code per Ch. 8.7.2.',
 			kind: 'body',
 			bullets: [
-				'**Review time:** It can take a few weekdays for 311 to send your report to Environmental Health and assign an inspector.',
+				'**Review time:** 311 sends your report to Environmental Health, which assigns an inspector. This can take a few weekdays.',
 				'**If you gave contact information:** An inspector may reach out to ask questions or schedule a visit.',
-				'**If you reported anonymously:** An inspector may still visit the property without notice—especially if there is an urgent safety or health risk.',
+				'**If you reported anonymously:** An inspector may still visit without notice. This is more likely with an urgent safety or health risk.',
 				'**If we find a problem:** The City can order the property owner or responsible party to fix the violation.',
 				'**Note:** Tenants have rights to safe and habitable housing. A property owner or manager cannot retaliate because a tenant reports housing conditions to the City.',
-				'Under San Francisco Health Code Article 11, property owners are legally required to keep their buildings clean, watertight, and completely free of rodent infestations.'
+				'San Francisco Health Code Article 11 requires property owners to keep buildings clean, watertight, and completely free of rodent infestations.'
 			],
 			button: 'View Article 11',
 			buttonUrl: 'https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890',

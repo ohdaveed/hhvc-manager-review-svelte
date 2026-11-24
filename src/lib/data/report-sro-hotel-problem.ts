@@ -18,7 +18,7 @@ export const sroHotelReport = {
 	whatToKnow: {
 		cost: 'Free',
 		thingsToKnow: [
-			'You can report anonymously — 311 does not require your name, and HHVC does not share your identity with the property owner or operator.',
+			'You can report anonymously. 311 does not require your name, and HHVC does not share your identity with the owner or operator.',
 			'This report covers pest, garbage, and housing health conditions. Records and inspection history for SROs, residential hotels, and shelters use a separate lookup tool.'
 		]
 	},
@@ -29,7 +29,7 @@ export const sroHotelReport = {
 			kind: 'body',
 			paragraphs: [
 				{
-					text: 'Environmental Health reviews pest, garbage, and housing health reports for residential hotels, SROs, and shelters, including shared kitchens, bathrooms, and garbage areas.',
+					text: 'Environmental Health reviews pest, garbage, and housing health reports for residential hotels, SROs, and shelters. This includes shared kitchens, bathrooms, and garbage areas.',
 					unverified: true,
 					unverifiedReason:
 						'Whether this report routes through the same 311 intake as rodentsReport/filthReport/insectsReport, or a separate SRO/hotel-specific intake, has no tier-1 source. Confirm with HHVC before publication.'
@@ -55,9 +55,9 @@ export const sroHotelReport = {
 					text: ['Only share the details that apply to your situation:'],
 					bullets: [
 						'**What you saw:** Pests, garbage, or a housing health condition, and which unit or shared area it affects.',
-						'**Where it is:** The building address, and whether the problem is in a unit, a shared kitchen or bathroom, or another common area.',
+						'**Where it is:** The building address. Say whether the problem is in a unit, a shared kitchen or bathroom, or another common area.',
 						'**When it started:** How long this has been happening.',
-						'**Your contact info:** Leave your name and phone number or email if you want an inspector to reach out to you.'
+						'**Your contact info:** Leave your name and phone number or email if you want an inspector to contact you.'
 					],
 					karl: 'what_to_do -> Section. Section title: "Tell us where the problem is". Section specifics: Text block (intro sentence) + bulleted checklist, mirroring insectsReport\'s equivalent step.'
 				}

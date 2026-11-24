@@ -69,7 +69,7 @@ export const ratFreeBlocks = {
 			kind: 'body',
 			component: 'spotlight',
 			paragraphs: [
-				'Rodent conditions on a property you own or manage are yours to correct under Article 11, whether or not anyone has reported them.'
+				'Under Article 11, rodent conditions on a property you own or manage are yours to correct. This applies whether or not anyone has reported them.'
 			],
 			button: 'See owner responsibilities',
 			buttonTarget: 'ownerHub'

@@ -134,21 +134,29 @@ names), `VI` x1 (`SS VI.6`, a section number), `PG` x1.
 lengths **and** `summary` lengths -- #194 only just brought every summary under 110,
 so an expansion landing in a summary can push it back over.
 
-## Phase C — sentences, 64 at >20w (one PR per 3-4 pages) -- NOT STARTED
+## Phase C — DONE (76 sentences rewritten, 3 exceptions documented)
 
-Scope set by A0. At >20w: 64 sentences across 23 pages; 17 of them reach 26w or more.
-Start with the worst:
+Scanned by walking the real page objects with metadata fields excluded, not from
+the CSV: **79 sentences over 20 words across 24 pages**, more than the CSV's 64
+because the scan reaches every rendered field and splits multi-sentence strings.
 
-| Page                                                                      | >20w |
-| ------------------------------------------------------------------------- | ---- |
-| `information-integrated-pest-management-for-property-owners-and-managers` | 10   |
-| `information-what-happens-after-you-report-housing-pest-problem`          | 7    |
-| `pay-your-annual-healthy-housing-fee-apartment-buildings`                 | 6    |
-| `report-garbage-filth-vegetation`                                         | 5    |
-| `information--article-11-compliance-for-property-owners`                  | 4    |
+Rewritten: 76, in four batches. Four sentences were shared verbatim across three
+pages each (the anonymous-reporting line, "Review time", "If you reported
+anonymously", "Your contact info"), so 4 rewrites closed 12 rows and kept the
+corpus consistent.
 
-Worst single sentence: 40w on `information-what-happens-after-you-report-housing-pest-problem`
-("If your complaint involves structural water-intrusion...").
+Three remain over 20 words and are **deliberate**:
+
+| Page                                                             | Text                                                                                    | Why it stays                                                                                                             |
+| ---------------------------------------------------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `information/what-happens-after-you-report-housing-pest-problem` | `Complaint → Inspection → Notice of Violation → …`                                      | a process chain, not prose; 6 of its 23 "words" are arrow glyphs, and rewriting it as a sentence destroys what it is for |
+| `pay-your-annual-healthy-housing-fee-apartment-buildings`        | `By mail: make a check … mail it to P.O. Box 7429 …`                                    | **false positive**: the sentence splitter breaks at `P.O.` before a capital. The two real sentences are 14w and 17w      |
+| `location/environmental-health-office`                           | `PLACEHOLDER — the street address, floor, and public counter hours are not confirmed …` | a Phase F blocked-fact marker, not copy to shorten                                                                       |
+
+Facts, figures and citations were preserved throughout — the fee rates
+($256/$234 per hour), the deadlines (72 hours, 30 days), `Director's Rules
+§VI.6`, `Article 2, Section 92`, and the DBI routing under the San Francisco
+Housing Code (2025).
 
 ## Phase D — tables, 10 rows, 2 pages (1 PR, code + copy)
 

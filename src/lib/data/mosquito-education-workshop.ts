@@ -19,7 +19,7 @@ export const mosquitoWorkshop = {
 			component: 'spotlight',
 			paragraphs: [
 				'Healthy Housing and Vector Control (HHVC) offers a free mosquito education workshop for youth audiences in San Francisco.',
-				'Our team sets up interactive science stations where students can explore mosquito biology, breeding habitats, and disease prevention through hands-on learning.'
+				'Our team sets up interactive science stations. Students explore mosquito biology, breeding habitats, and disease prevention through hands-on learning.'
 			],
 			callout: {
 				karl: 'Spotlight has no callout field — fold this "free program" note into the Spotlight description as a bolded lead-in, or flag for Digital Services if a distinct callout is needed.',
@@ -47,7 +47,7 @@ export const mosquitoWorkshop = {
 			kind: 'body',
 			component: 'supporting',
 			paragraphs: [
-				'Each workshop uses mobile science stations that let students observe mosquitoes up close and learn how small changes at home can prevent breeding.'
+				'Each workshop uses mobile science stations. Students observe mosquitoes up close and learn how small changes at home can prevent breeding.'
 			],
 			bullets: [
 				'Microscopes to view mosquito specimens and larvae',

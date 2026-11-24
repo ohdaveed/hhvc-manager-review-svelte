@@ -24,8 +24,8 @@ export const ipmEducation = {
 			kind: 'body',
 			component: 'spotlight',
 			paragraphs: [
-				'Healthy Housing and Vector Control offers free integrated pest management (IPM) education sessions for tenants, resident groups, and community organizations in San Francisco.',
-				'IPM is a prevention-first approach. Instead of relying on heavy pesticide use, it focuses on sealing entry points, removing food and water sources, and catching problems early.'
+				'Healthy Housing and Vector Control offers free integrated pest management (IPM) education sessions in San Francisco. They are for tenants, resident groups, and community organizations.',
+				'IPM is a prevention-first approach. Instead of relying on heavy pesticide use, it focuses on sealing entry points and removing food and water sources. It also catches problems early.'
 			],
 			callout: {
 				karl: 'Spotlight has no callout field — fold this "free program" note into the Spotlight description as a bolded lead-in, or flag for Digital Services if a distinct callout is needed.',
@@ -69,7 +69,7 @@ export const ipmEducation = {
 			kind: 'body',
 			component: 'supporting',
 			paragraphs: [
-				'Session content follows the same integrated pest management guidance HHVC recommends to property owners and managers under Article 11 of the San Francisco Health Code.'
+				'Session content follows the same integrated pest management guidance HHVC recommends to property owners and managers. That guidance sits under Article 11 of the San Francisco Health Code.'
 			],
 			bullets: [
 				'University of California Statewide IPM Program (UC IPM) prevention practices',

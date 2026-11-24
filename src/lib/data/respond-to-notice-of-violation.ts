@@ -65,7 +65,7 @@ export const noticeOfViolation = {
 				{
 					title: 'Contact the investigator if you need help',
 					text: [
-						'Contact the investigator named on the notice if you have questions about the cited conditions, the deadline, or what proof of correction is needed.',
+						'Contact the investigator named on the notice with questions. They can explain the cited conditions, the deadline, and what proof of correction is needed.',
 						'Ask before the deadline if you need clarification or more time. Do not assume that work by another person closes the violation.'
 					],
 					bullets: [

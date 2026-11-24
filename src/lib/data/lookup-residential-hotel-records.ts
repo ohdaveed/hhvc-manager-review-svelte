@@ -38,7 +38,7 @@ export const findHotelRecords = {
 			kind: 'body',
 			paragraphs: [
 				'Environmental Health inspects residential hotels, SROs, shelters, and related housing programs under separate datasets from the general residential complaint search.',
-				'Use this page when you need records for a residential hotel, SRO, or shelter rather than a standard apartment or mixed-use building.'
+				'Use this page for records about a residential hotel, SRO, or shelter. For a standard apartment or mixed-use building, use the general lookup.'
 			],
 			bullets: [
 				'**Note:** If you are staying at a regular tourist hotel, you may still use the general complaints and inspection lookup. Residential hotel and shelter records use a different program dataset.'

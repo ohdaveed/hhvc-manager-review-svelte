@@ -18,7 +18,7 @@ export const appealNotice = {
 		thingsToKnow: [
 			{
 				label: 'Who this information is for',
-				text: 'Anyone named on a Healthy Housing and Vector Control Notice of Violation who disagrees with it — an owner, a manager, or a tenant.'
+				text: 'An owner, manager, or tenant named on a Healthy Housing and Vector Control Notice of Violation who disagrees with it.'
 			},
 			{
 				label: 'Questions do not extend your deadline',

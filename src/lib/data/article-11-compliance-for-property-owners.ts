@@ -23,7 +23,7 @@ export const article11Compliance = {
 			karl: 'Maps to an "Information section" → Title and text block: Title = this heading, Text = the opening paragraph plus the six-item bulleted list below (bullets render inside the same rich text field). The list is the page\'s front-loaded "Quick compliance checklist," mirroring the wage-ordinance page\'s prominent dollar figure — it is rendered as a bulleted list rather than a separate Callout because Callout is a single rich-text field with no verified list support (see the page-level editorNote\'s open question #1). Flag for Digital Services if a distinct checklist block exists in the real schema.',
 			kind: 'body',
 			paragraphs: [
-				'Property owners and managers must keep buildings free of public health nuisances under San Francisco Health Code Article 11 — including pests, garbage, mold, and rodent problems.'
+				'San Francisco Health Code Article 11 requires property owners and managers to keep buildings free of public health nuisances. These include pests, garbage, mold, and rodent problems.'
 			],
 			bullets: [
 				'Pay your annual Healthy Housing fee if your building has 3 or more rental units',
@@ -40,7 +40,7 @@ export const article11Compliance = {
 			kind: 'body',
 			paragraphs: [
 				'When a tenant reports a pest or housing health problem, owners and managers must start investigating within 72 hours.',
-				'If Environmental Health finds a violation, they issue a notice of violation (NOV) listing the required corrections and a compliance deadline.'
+				'If Environmental Health finds a violation, they issue a notice of violation (NOV). It lists the required corrections and a compliance deadline.'
 			],
 			bullets: [
 				'[Fix your Healthy Housing and Vector Control violation](noticeOfViolation)',
@@ -57,8 +57,8 @@ export const article11Compliance = {
 			bullets: [
 				'Investigate tenant pest reports within 72 hours of receiving them.',
 				"Keep a written log of every report or sign of vermin: rodents, fleas, flies, bedbugs, spiders, cockroaches, wasps, and mosquitoes. Give the log to your pest control operator. You can use the City's [complaint forms and log template](https://www.sf.gov/resource/2024/healthy-housing-and-pest-information).",
-				'Keep records of complaints, inspections, and pest control services for at least 2 years, and make them available to the Department of Public Health on request.',
-				'Hire only licensed pest control operators (PCOs) to apply pesticides or trap rats — never unlicensed staff or over-the-counter treatments for significant infestations.',
+				'Keep records of complaints, inspections, and pest control services for at least 2 years. Make them available to the Department of Public Health on request.',
+				'Hire only licensed pest control operators (PCOs) to apply pesticides or trap rats. Never use unlicensed staff or over-the-counter treatments for significant infestations.',
 				'Give tenants written notice before pesticide application, including the product name, date, and safety information.',
 				'Complete pest-management training if the Director requires it after repeat violations.',
 				'[See the full owner-responsibility table](article11Guide)'

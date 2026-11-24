@@ -31,9 +31,9 @@ export const tenantRights = {
 			],
 			bullets: [
 				'**Keep your home clean:** Regular cleaning, taking out trash, and not letting food or garbage build up helps prevent pests.',
-				'**Report pest signs early:** Tell your landlord in writing as soon as you see droppings, gnaw marks, live pests, or damage.',
+				'**Report pest signs early:** Tell your landlord in writing when you see droppings, gnaw marks, live pests, or damage.',
 				'**Cooperate with inspections and treatments:** Allow reasonable access for pest control professionals, inspectors, and maintenance workers when scheduled.',
-				'**Prepare for treatment:** Follow preparation instructions from the pest control operator before treatment — move furniture, cover food, and clear access areas.',
+				"**Prepare for treatment:** Follow the pest control operator's instructions before treatment. Move furniture, cover food, and clear access areas.",
 				'**Reduce clutter:** Clutter gives pests places to hide and makes inspections and treatments less effective.'
 			],
 			callout: {

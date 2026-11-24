@@ -189,7 +189,7 @@ export const pestsTopic = {
 			kind: 'body',
 			bullets: ['[About Healthy Housing and Vector Control](aboutHhvcTeam)'],
 			paragraphs: [
-				'Healthy Housing and Vector Control is part of Environmental Health at the San Francisco Department of Public Health. We address pests, vectors, garbage, filth, animal waste, overgrown vegetation, and mold from humidity or condensation under Health Code Article 11.'
+				'Healthy Housing and Vector Control is part of Environmental Health at the San Francisco Department of Public Health. We address pests, vectors, garbage, filth, animal waste, overgrown vegetation, and mold from humidity or condensation. Health Code Article 11 covers this.'
 			]
 		}
 	]
