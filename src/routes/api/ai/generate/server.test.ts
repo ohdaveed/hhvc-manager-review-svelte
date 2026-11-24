@@ -126,7 +126,8 @@ describe('POST /api/ai/generate', () => {
 		expect(res.body.disclosure).toMatch(/AI-assisted draft/);
 		expect(res.body.groundedBy).toEqual([
 			'writing-and-style.md',
-			'content-types-and-components.md'
+			'content-types-and-components.md',
+			'hhvc-verified-facts'
 		]);
 
 		const [url, init] = fetchMock.mock.calls[0];
