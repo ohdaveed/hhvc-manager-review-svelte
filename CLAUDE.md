@@ -30,7 +30,7 @@ bun run check:ratchet    # asserts the svelte-check error count is exactly at ba
 
 bun run env:status       # which Supabase target local development points at
 bun run env:local        # point it at the local stack (values read from `supabase status`)
-bun run env:hosted       # point it at the hosted project (values from `.env.hosted`)
+bun run env:hosted       # point it at the hosted project (values from Doppler, else `.env.hosted`)
 ```
 
 ### Choosing a Supabase target
@@ -39,9 +39,10 @@ bun run env:hosted       # point it at the hosted project (values from `.env.hos
 
 Pointed at the hosted project, `ensureDevSession()` signs in with the local seed's password, the hosted project rejects it (`captcha protection: request disallowed`), and with no session every `TO authenticated` policy denies every read. `loadReview()` then finds nothing, so the queue, decisions, notes and checks are all inert **while the mockups still render from the static corpus** — the app looks like it is working. The only symptom is `No review found: null` in the console.
 
-Three properties worth keeping if this script is ever changed:
+Four properties worth keeping if this script is ever changed:
 
 - **Local values come from `supabase status` at switch time, never stored.** They change when the stack is recreated, and a stored copy goes stale silently.
+- **Hosted values come from Doppler (`hhvc-svelte/prd`), and `.env.hosted` is only the fallback.** `doppler secrets download` is tried first; the gitignored profile is read when Doppler cannot answer — not installed, not logged in, offline, project or config renamed — or when Doppler is missing any of the four keys, and the switch fails outright when neither source has them. The script prints which source supplied the values, because "it worked" and "it worked from the file you meant to retire" are different outcomes. `SUPABASE_DB_URL` is why Doppler owns these: the service-role key bypasses RLS through the API, but the connection string is DDL, so keeping it out of a plaintext file in the working tree is the point.
 - **Two script credentials switch with the two `SVELTE_PUBLIC_*` vars — four variables in all.** `SUPABASE_SERVICE_ROLE_KEY` is what `scripts/sync-checks.ts` authenticates with, and it bypasses RLS. `SUPABASE_DB_URL` is the direct Postgres connection `corpus:import` uses, since `import_corpus_version` moved to the `private` schema where PostgREST cannot reach it — that script no longer uses the service-role key at all. Moving only some of them leaves the app reading local while those scripts write to production — `env:status` reports that state as `SPLIT TARGET`, and it is the state this repo was in before the script existed. `credentialsAgree` reads the project ref out of the connection string's host (`db.<ref>.supabase.co`) or its username (`postgres.<ref>@…pooler…`), so a mismatched connection string is caught rather than merely carried along; the string itself is never printed, because unlike the API URL it carries the database password.
 - **No key is printed.** Targets are named by URL and project ref.
 
