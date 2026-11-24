@@ -34,5 +34,5 @@ Karl, read 2026-11-24:
       Blueprint header and the outline summary. Unit tests pin the page.
 - [x] **3. e2e.** The Topic page joins the outline and Blueprint specs, with axe at 1280px and 375px;
       screenshots looked at.
-- [ ] **4. Ship.** `verify` and the ratchets, PR, merge on green, and `verify:live` against the
+- [x] **4. Ship.** `verify` and the ratchets, PR, merge on green, and `verify:live` against the
       published commit.
