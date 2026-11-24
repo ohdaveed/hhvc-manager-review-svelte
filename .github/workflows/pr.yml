@@ -94,6 +94,17 @@ jobs:
       - name: svelte-check ratchet
         run: bun run check:ratchet
 
+      # The third baseline, and the one that had no gate at all: `bun run lint`
+      # is `prettier --check . && eslint .`, so the prettier half being red
+      # tree-wide meant a PR could add newly unformatted files and nothing
+      # reported it. This does not make formatting blocking -- the pre-existing
+      # drift stays -- it asserts the file count cannot rise. It enumerates
+      # `git ls-files` rather than `.`, because `.superpowers/` and
+      # `.impeccable/` are untracked but not gitignored, so a tree-wide count
+      # depends on which agent tooling has run locally.
+      - name: prettier ratchet
+        run: bun run format:ratchet
+
       - name: Check corpus lock
         run: bun run corpus:check
 
