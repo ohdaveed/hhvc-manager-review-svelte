@@ -76,6 +76,9 @@ export const ratFreeBlocks = {
 		},
 		{
 			heading: 'About this campaign',
+			// Campaign's single "About" rich-text panel (`about_campaign`). A tag, not
+			// prose, so the inventory can match it structurally (U27).
+			component: 'about',
 			karl: 'Maps to About the campaign. PLACEHOLDER — this campaign has no confirmed start date, area, or partner list. A Campaign page normally carries all three.',
 			kind: 'body',
 			paragraphs: [
@@ -84,7 +87,7 @@ export const ratFreeBlocks = {
 		},
 		{
 			heading: 'Related pages',
-			karl: 'Maps to Related links. Campaign is not linked automatically from anything, so every route into this page has to be placed by hand — on the Agency page, a Topic, or an Information page.',
+			karl: 'Maps to the Related field (`related_links`). Campaign is not linked automatically from anything, so every route into this page has to be placed by hand — on the Agency page, a Topic, or an Information page.',
 			kind: 'body',
 			cards: [
 				{

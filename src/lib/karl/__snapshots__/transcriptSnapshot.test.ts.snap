@@ -4545,6 +4545,31 @@ Entry
 
 Seal gaps around pipes, vents, and doors. A rat fits through a gap the size of a quarter.
 
+### About — \`about_campaign\` [TYPE] — page not approved
+
+**Title:**
+
+About this campaign
+
+**Text:**
+
+PLACEHOLDER: which neighborhoods, over what period, and with which partners. None is confirmed.
+
+### Partner agencies — \`partner_agencies\` [CHOOSE] — page not approved
+
+_A page chooser restricted to Agency pages. These entries name real sf.gov department pages outside this mockup, so search Karl for each by title._
+
+1. Choose page: "Environmental Health"
+2. Choose page: "311 Customer Service Center"
+
+### Related — \`related_links\` [CHOOSE] — page not approved
+
+_This block publishes the destination page’s title and a link, and NOTHING else. Choose the page and type no description._
+
+1. Choose page: "Integrated pest management for property owners and managers" (\`ownerGuidance\` → /sf.gov/information/integrated-pest-management-for-property-owners-and-managers)
+2. Choose page: "Free IPM education workshop" (\`ipmEducation\` → /sf.gov/integrated-pest-management-education)
+3. Choose page: "Healthy housing and pest resources" (\`verminResources\` → /sf.gov/resource--healthy-housing-and-vermin-information)
+
 ### Promote → For search engines — \`promote\` [TYPE] — page not approved
 
 _The slug is REQUIRED and lives on the Promote tab, so a page cannot be saved from the Content tab alone._
@@ -4567,11 +4592,8 @@ Nothing below has a field to be typed into. It is listed rather than dropped, be
 
 - \`summary\` — The page carries \`summary\`, and no Campaign panel documented in the field map accepts it.
 - \`audience\` — The page carries \`audience\`, and the panel SF.gov puts it in is not on this type. Campaign has no \`things_to_know\` panel — it is Transaction-only — and no free-text intro either, so the audience has to move into the body copy or be dropped deliberately. Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list.
-- \`partnerAgencies\` — The page carries \`partnerAgencies\`, and no Campaign panel documented in the field map accepts it.
 - \`sections.2.paragraphs\` — \`paragraphs\` on this section reached no panel in the Campaign inventory.
 - \`sections.2.bullets\` — \`bullets\` on this section reached no panel in the Campaign inventory.
-- \`sections.4.paragraphs\` — \`paragraphs\` on this section reached no panel in the Campaign inventory.
-- \`sections.5.cards\` — \`cards\` on this section reached no panel in the Campaign inventory.
 "
 `;
 

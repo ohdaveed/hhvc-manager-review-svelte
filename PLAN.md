@@ -38,7 +38,7 @@ Pages: `mosquitoWorkshop`, `ipmEducation`, `ratFreeBlocks`.
 
 ## Checklist
 
-- [ ] **1. Inventory and data.** Reword `ratFreeBlocks`' Related note so it names the Related field,
+- [x] **1. Inventory and data.** Reword `ratFreeBlocks`' Related note so it names the Related field,
       with a `classifySection` diff across the corpus before and after. Map Campaign
       `partner_agencies` to `partnerAgencies` and `about_campaign` to a `component: 'about'`
       section, tagging `ratFreeBlocks`' "About this campaign" (no render change), and update the

@@ -1128,9 +1128,10 @@ const KARL_PANELS = {
 			requiredDoc: 'not recorded',
 			repeatableDoc: 'single',
 			blockTypesDoc: 'single rich text field, "About campaign"',
-			sourceDoc: '— unused',
+			sourceDoc: "section with component: 'about' (1 page)",
 			source: {
-				kind: 'none'
+				kind: 'sections',
+				match: { component: 'about' }
 			},
 			docLine: 434
 		},
@@ -1143,9 +1144,10 @@ const KARL_PANELS = {
 			requiredDoc: 'not recorded',
 			repeatableDoc: 'repeatable',
 			blockTypesDoc: 'page chooser → Agency only',
-			sourceDoc: '— unused',
+			sourceDoc: 'partnerAgencies[] (1 page)',
 			source: {
-				kind: 'none'
+				kind: 'path',
+				path: 'partnerAgencies'
 			},
 			docLine: 435
 		},
