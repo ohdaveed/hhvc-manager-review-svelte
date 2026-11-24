@@ -1,36 +1,38 @@
-# PLAN — Karl outline rollout: Step by step
+# PLAN — Karl outline rollout: Topic
 
-Branch `feat/karl-step-by-step`, cut from `origin/main` at `bcbb06f` (the first slice, PR #197,
-verified live). The plan, decisions and vocabulary are in
-`docs/plans/2026-11-23-karl-field-mapping-layer.md` (§5, rollout step 1) and `CONTEXT.md`.
+Branch `feat/karl-topic`, cut from `origin/main` at `1c1c8d7` (Step by step, PR #198, verified
+live). The plan and vocabulary are in `docs/plans/2026-11-23-karl-field-mapping-layer.md` (§5,
+rollout step 2) and `CONTEXT.md`.
 
-Pages: `stepPestReport`, `stepCorrectViolation`, `stepPrepUnit` (6, 7 and 6 steps; every step titled).
+One page: `healthyHousingTopic` (`sf.gov/topics--healthy-housing-conditions`). Its sections are a
+Spotlight (with a button), two Services, a Resources block and a Related list.
 
-Measured before starting: Intro is Unconfirmed (inferred mapping), Steps are Placed, and all three
-"Related pages" sections are Unplaced (Step by step has no Related panel). **Defect:** the
-transcript labels every step in Transaction's vocabulary ("Section 1 — Section specifics → Text"),
-which the walkthrough and Blueprint show on a Step by step form that has no such field.
+Measured before starting: the four content sections are Placed, but every one is labelled "Child
+topics (outer StreamField; internally "Page content") 1–4", the field map's internal note. Related
+(U5) and the audience list are Unplaced. Primary agency is empty and required. The Spotlight's button
+reads as Placed although `componentSupport.ts` already marks a Topic spotlight button `unknown`.
 
 Karl, read 2026-11-24:
 
-- "You can add up to 15 steps, but should aim for no more than 5." (Steps)
-- "Each step has: Title\*" (Steps)
-- "Each step can link to one or no transaction on SF.gov." (How a Step by step page works). This
-  **confirms** the one-link rule the plan had marked unconfirmed.
-- Topic tagging contradicts itself. "How a Step by step page works" says "the step by step will not
-  automatically show on the topic page"; the Topic page and the Topics component say tagged Step
-  by step pages appear automatically. **Unconfirmed.**
-- URL: `sf.gov/step-by-step/title-of-step-by-step` (Step by step) vs `sf.gov/[slug]` (URLs).
-  **Unconfirmed.**
+- The form labels the outer stream "Child topics", and one block choice is also called "Child
+  topics" (field map, "Naming trap"), so labels name both: `Child topics · Spotlight block`.
+- Spotlight: "Report, Profile, and Topic only allow 1 spotlight." (Spotlight)
+- Spotlight button: the Button page leaves Topic out; the Spotlight page does not restrict it.
+  **Unconfirmed** (already `unknownTypes` in `COMPONENT_SUPPORT.spotlightButton`).
+- Auto-listed services: the Topic page says tagged Transaction and Step by step pages "will
+  automatically appear under the heading More services"; the Step by step page says the step by step
+  "will not automatically show on the topic page". **Unconfirmed.**
+- URL: `sf.gov/topic-[slug]` (URLs) vs `sf.gov/topics/name-of-topic` (Topic). **Unconfirmed.**
+- "Only DS can make new topics." (Topic). HHVC can draft this page, not create it. A page-level
+  caveat.
 
-- [x] **1. Step labels in the transcript.** On Step by step, steps read `Step N — Title` and
-      `Step N — Step description`. The snapshot diff is exactly the three Step by step pages.
-- [x] **2. Schema.** Step by step in `schema.ts`: Title, Description, steps ≤15 (confirmed), aim for
-      5 (advisory, no status change), step Title required, one Transaction link per step
-      (confirmed), and the Topics caveat and URL marked unconfirmed. Every rule is cited.
-- [x] **3. Placement.** Step-count and step-title checks; Step by step sub-labels (`Step 2 ·
-      Title`); the Topics caveat shown on the Blueprint slot. Unit tests pin the three pages.
-- [x] **4. e2e.** A Step by step page joins the outline and Blueprint specs, with axe at 1280px and
-      375px; screenshots looked at.
-- [x] **5. Ship.** `verify` and the ratchets, PR, merge on green, and `verify:live` against the
+- [ ] **1. Schema.** Topic in `schema.ts`: Title, Description, one Spotlight, the spotlight-button and
+      More-services caveats, the URL, and the page-level DS caveat, all cited. Caveats carry their
+      own one-line wording, replacing the `CAVEAT_TEXT` map.
+- [ ] **2. Placement.** Topic blocks labelled `Child topics · Spotlight block` (etc.); a spotlight
+      count over 1 needs a fix; the spotlight button Unconfirmed; the page caveat shown in the
+      Blueprint header and the outline summary. Unit tests pin the page.
+- [ ] **3. e2e.** The Topic page joins the outline and Blueprint specs, with axe at 1280px and 375px;
+      screenshots looked at.
+- [ ] **4. Ship.** `verify` and the ratchets, PR, merge on green, and `verify:live` against the
       published commit.
