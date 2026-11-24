@@ -124,6 +124,18 @@ _U6 — supply the parent Agency page by hand; the mockup has no field for it._
 
 ### Information section — \`information_section\` [TYPE] — page not approved
 
+_The Title "Who this information is for" is not in the mockup — this tool supplies it, matching sf.gov/manage-covid-19-schools-childcare-and-youth-programs, which renders the audience as an H3 with that title over a bulleted list. Add this block first, so every authored section below is one Information section block later than its place among the mockup sections._
+
+**Title:**
+
+Who this information is for
+
+**Text:**
+
+- Anyone who filed a 311 report or is waiting to hear back about a pest or housing problem.
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
 **Title:**
 
 How to follow up on your report
@@ -219,7 +231,6 @@ Learn what may happen after a 311 report about a housing or pest problem is sent
 
 Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
 
-- \`audience\` — The page carries \`audience\`, and the panel SF.gov puts it in is not on this type. Information has no \`things_to_know\` panel — it is Transaction-only — and no free-text intro either, so the audience has to move into the body copy or be dropped deliberately. Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list.
 - \`sections.0.steps\` — U3 — steps on an Information page. Information has no what_to_do-style container. Karl’s Step by step type fits the steps but has no cost and no things_to_know, so retyping the page would drop its whatToKnow entirely.
 "
 `;
@@ -392,6 +403,18 @@ _U6 — supply the parent Agency page by hand; the mockup has no field for it._
 
 ### Information section — \`information_section\` [TYPE] — page not approved
 
+_The Title "Who this information is for" is not in the mockup — this tool supplies it, matching sf.gov/manage-covid-19-schools-childcare-and-youth-programs, which renders the audience as an H3 with that title over a bulleted list. Add this block first, so every authored section below is one Information section block later than its place among the mockup sections._
+
+**Title:**
+
+Who this information is for
+
+**Text:**
+
+- This page is for property owners and managers responsible for Article 11 compliance.
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
 **Title:**
 
 What Article 11 requires
@@ -522,7 +545,6 @@ What property owners and managers must do to comply with Health Code Article 11 
 
 Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
 
-- \`audience\` — The page carries \`audience\`, and the panel SF.gov puts it in is not on this type. Information has no \`things_to_know\` panel — it is Transaction-only — and no free-text intro either, so the audience has to move into the body copy or be dropped deliberately. Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list.
 - \`contact\` — The page carries \`contact\`, and no Information panel documented in the field map accepts it.
 "
 `;
@@ -2867,6 +2889,18 @@ _U6 — supply the parent Agency page by hand; the mockup has no field for it._
 
 ### Information section — \`information_section\` [TYPE] — page not approved
 
+_The Title "Who this information is for" is not in the mockup — this tool supplies it, matching sf.gov/manage-covid-19-schools-childcare-and-youth-programs, which renders the audience as an H3 with that title over a bulleted list. Add this block first, so every authored section below is one Information section block later than its place among the mockup sections._
+
+**Title:**
+
+Who this information is for
+
+**Text:**
+
+- This page is for residents and property owners or managers dealing with standing water or mosquitoes.
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
 **Title:**
 
 What the program does
@@ -2952,12 +2986,6 @@ Mosquito Control Program | SF.gov
 **Meta description (\`search_description\`):**
 
 San Francisco mosquito control, catch-basin treatment, and how to report standing water or mosquito activity.
-
-## Unmapped — no documented Karl destination
-
-Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
-
-- \`audience\` — The page carries \`audience\`, and the panel SF.gov puts it in is not on this type. Information has no \`things_to_know\` panel — it is Transaction-only — and no free-text intro either, so the audience has to move into the body copy or be dropped deliberately. Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list.
 "
 `;
 
@@ -3378,6 +3406,18 @@ _U6 — supply the parent Agency page by hand; the mockup has no field for it._
 
 ### Information section — \`information_section\` [TYPE] — page not approved
 
+_The Title "Who this information is for" is not in the mockup — this tool supplies it, matching sf.gov/manage-covid-19-schools-childcare-and-youth-programs, which renders the audience as an H3 with that title over a bulleted list. Add this block first, so every authored section below is one Information section block later than its place among the mockup sections._
+
+**Title:**
+
+Who this information is for
+
+**Text:**
+
+- This page is for property owners, managers, and maintenance staff looking for pest prevention best practices.
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
 **Title:**
 
 Why it matters
@@ -3610,7 +3650,6 @@ IPM for SF property owners and managers. UC ANR templates for prevention, monito
 
 Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
 
-- \`audience\` — The page carries \`audience\`, and the panel SF.gov puts it in is not on this type. Information has no \`things_to_know\` panel — it is Transaction-only — and no free-text intro either, so the audience has to move into the body copy or be dropped deliberately. Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list.
 - \`contact\` — The page carries \`contact\`, and no Information panel documented in the field map accepts it.
 "
 `;
@@ -4951,6 +4990,18 @@ _U6 — supply the parent Agency page by hand; the mockup has no field for it._
 
 ### Information section — \`information_section\` [TYPE] — page not approved
 
+_The Title "Who this information is for" is not in the mockup — this tool supplies it, matching sf.gov/manage-covid-19-schools-childcare-and-youth-programs, which renders the audience as an H3 with that title over a bulleted list. Add this block first, so every authored section below is one Information section block later than its place among the mockup sections._
+
+**Title:**
+
+Who this information is for
+
+**Text:**
+
+- This page is for anyone deciding whether to report a pest or housing health problem to HHVC.
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
 **Title:**
 
 Use this page before you report
@@ -5071,12 +5122,6 @@ Learn what HHVC can inspect
 **Meta description (\`search_description\`):**
 
 Check whether HHVC may review a pest, vector, or housing health condition.
-
-## Unmapped — no documented Karl destination
-
-Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
-
-- \`audience\` — The page carries \`audience\`, and the panel SF.gov puts it in is not on this type. Information has no \`things_to_know\` panel — it is Transaction-only — and no free-text intro either, so the audience has to move into the body copy or be dropped deliberately. Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list.
 "
 `;
 
@@ -5945,6 +5990,18 @@ _U6 — supply the parent Agency page by hand; the mockup has no field for it._
 
 ### Information section — \`information_section\` [TYPE] — page not approved
 
+_The Title "Who this information is for" is not in the mockup — this tool supplies it, matching sf.gov/manage-covid-19-schools-childcare-and-youth-programs, which renders the audience as an H3 with that title over a bulleted list. Add this block first, so every authored section below is one Information section block later than its place among the mockup sections._
+
+**Title:**
+
+Who this information is for
+
+**Text:**
+
+- This page is for tenants, and anyone helping a tenant, worried about retaliation for reporting a housing problem.
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
 **Title:**
 
 You can ask the City for help
@@ -6060,12 +6117,6 @@ Tenant rights when reporting housing conditions | SF.gov
 **Meta description (\`search_description\`):**
 
 Tenant protections and help if you are worried about retaliation after reporting housing conditions.
-
-## Unmapped — no documented Karl destination
-
-Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
-
-- \`audience\` — The page carries \`audience\`, and the panel SF.gov puts it in is not on this type. Information has no \`things_to_know\` panel — it is Transaction-only — and no free-text intro either, so the audience has to move into the body copy or be dropped deliberately. Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list.
 "
 `;
 
@@ -6306,6 +6357,20 @@ _U6 — supply the parent Agency page by hand; the mockup has no field for it._
 
 ### Information section — \`information_section\` [TYPE] — page not approved
 
+_The Title "Who this information is for" is not in the mockup — this tool supplies it, matching sf.gov/manage-covid-19-schools-childcare-and-youth-programs, which renders the audience as an H3 with that title over a bulleted list. Add this block first, so every authored section below is one Information section block later than its place among the mockup sections._
+
+**Title:**
+
+Who this information is for
+
+**Text:**
+
+- A tenant with a problem who does not know which office handles it
+- Someone who has already been routed to the wrong department
+- An advocate or helper directing someone to the right place
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
 **Title:**
 
 Start with what you can see
@@ -6423,7 +6488,6 @@ Healthy Housing, Building Inspection, the Rent Board, or 311 — find the right 
 
 Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
 
-- \`audience\` — The page carries \`audience\`, and the panel SF.gov puts it in is not on this type. Information has no \`things_to_know\` panel — it is Transaction-only — and no free-text intro either, so the audience has to move into the body copy or be dropped deliberately. Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list.
 - \`sections.5.cards\` — \`cards\` on this section reached no panel in the Information inventory.
 "
 `;
