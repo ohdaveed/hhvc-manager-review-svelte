@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "corpusHash": "e76566e3589dac67a0df012a92b4c2d2feb433fd070c6eae10234638456e4779",
+  "corpusHash": "f2c8942f9f4625b3a36fcade52b591f91a45e4f8ea90e4f0020673b6f17e7219",
   "pages": {
     "appeal-a-notice-of-violation": {
       "contentHash": "d2de33a79622bc1e311e48547da7d93cb02d7bc16208d7363d30d24214abfbc0",
@@ -59,14 +59,13 @@
       }
     },
     "find-complaints-and-inspection-records": {
-      "contentHash": "75c6d5d60e11e14f344e762928c77e8723d9f0fbc77df2f613514278cbc17852",
+      "contentHash": "01b3d3e48bbb1475053eefbe643bd24fbfc22edf1e63a490e396dfaf21046342",
       "fieldHashes": {
         "audience.0": "8c45f400fec451a1bc9ce0a215542bf74947a9b23be9e651035f29a263c01863",
         "audience.1": "07ba42a6b34abe0fd539727850b606f53fd580304a22ebcaa7d3e9e49871fbee",
         "audience.2": "85df195c364dd281755e10200a1c372f4a37eba7f562879fd6355e4cc61506b9",
         "primaryAgency": "8a2847f0ee854052d30378a2ef091f979c9737bbd8219086a1e04dc0abd84f9f",
         "sections.if-you-need-to-report-a-new-problem.heading": "f9065f9dbbeae3b3d7371ca39e10032264f503f1cac2682e29c15211cbb2ef47",
-        "sections.open-the-lookup-tool.callout.text": "1491728521e0adcd5f4d85bb2804787607680a9dd470a471b3facdbf842461fe",
         "sections.open-the-lookup-tool.heading": "98ed0dd3f7c06c5d697eaa2b0d583af49c506f58fd9a42917081673df9520a6f",
         "sections.open-the-lookup-tool.paragraphs.0": "353527eef5682296e71d8256d96005e572bb6a4096b61509c172e3b6fe55b652",
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",
@@ -356,7 +355,7 @@
       }
     },
     "information-what-happens-after-you-report-housing-pest-problem": {
-      "contentHash": "2b314365530df1612ecd41a3aa2eef0f1ea382ef3e68f9f35199e12618e8a6be",
+      "contentHash": "8654455540f6e4d9c5b756ecb2e5d5a618b173079d2791ea336c93294450e3de",
       "fieldHashes": {
         "audience.0": "ab7c2ae91dde4a165cb5bfad6b59c9357c277cb3b90296ea67f37d60a88ffd9a",
         "sections.how-a-report-moves-through-the-city.heading": "3cc3a9df7c21b4e31184b297456da9056a3d154a27b16e6c582322658b55a28e",
@@ -379,7 +378,7 @@
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",
         "sections.tenant-rights-and-retaliation.bullets.0": "4a1ef6981ec415b767a364383541ba244a782736af5fa8f5d8ea1b5642c34364",
         "sections.tenant-rights-and-retaliation.heading": "cf8cd5d9cb1ea992c332b1f8c67589f274774f39b5df5ee06d1957248dae9d56",
-        "sections.tenant-rights-and-retaliation.paragraphs.0": "4253be545fc8721f2c139ccbb82db7e49c6d040a7fdc8ebf8114a79e2a16dba3",
+        "sections.tenant-rights-and-retaliation.paragraphs.0": "45ed689c04e0d22c6e65225aaadbf0e4dbcf0001a705f94a2e052dff71a356a9",
         "sections.tenant-rights-and-retaliation.paragraphs.1": "1e69e539f4c3920b793e257ba01345134d6c017ec7e0619eb963fc0560d8dd40",
         "sections.what-this-page-does-not-promise.bullets.0": "9f60ade73d09923ec6e42737be361fdd5e3a05655cfc65175225998ce679fe1e",
         "sections.what-this-page-does-not-promise.bullets.1": "b79b6d7d5509c5830c0257d64e56ce6b205a6324efda81ba71fa0214f34b308d",
@@ -667,7 +666,7 @@
       }
     },
     "report-cockroaches-mosquitoes-insects": {
-      "contentHash": "8ec3ba1fb2ad76eecef88dd616b682e602966a84f4211dc32d3d6cdd99790bc9",
+      "contentHash": "888d4e04288201d0c49a68246af936e7868deb3372a8bb53b651b3bea0246e5e",
       "fieldHashes": {
         "audience.0": "ccd19a6cb7d9ab3acebcabbd48b7a9834d7412a0195eba101a0370b74c1c4e3f",
         "audience.1": "7ea11dfb70cfa49f0c3effee3965434ea835da01b69ddfff911ff6b4b9851d7a",
@@ -675,19 +674,12 @@
         "audience.3": "e8fc989713acf23892e0915301cafdf4b633aeddfbdca7097e6fbcfb12e0e833",
         "primaryAgency": "8a2847f0ee854052d30378a2ef091f979c9737bbd8219086a1e04dc0abd84f9f",
         "sections.get-help-making-your-report.bullets.0": "c611ee16da4ff1079def378046b55e1a2e6ddc15845ebff14a8522c0e14ee08e",
-        "sections.get-help-making-your-report.bullets.1": "8a7b83ee654e759dd88a84f47ad696421d210b6d496822555087f450ce227266",
-        "sections.get-help-making-your-report.bullets.2": "9d2084957f02089f8fab30d80b7b49c9a26fe35d349a120ebec48fe5459922b3",
         "sections.get-help-making-your-report.bullets.3": "f9f1a4378700678c7934757e4650d3a6e57552028f0b4c1d779010f96ef203c4",
         "sections.get-help-making-your-report.heading": "71b77444f3056e1b4028ad90b88153575a4169e626a1e3daeabd5cf6e7adc24d",
         "sections.get-help-making-your-report.paragraphs.0": "4137ed4dbf3d9f85ba8f53c758fd02999b129b7498f14d15bb85cc4e0fac426c",
-        "sections.how-your-report-is-processed.bullets.0": "e9ebedeab0a6f73be8ce7a6d51b296bbf92f0c790512cef38d605bfbaa503ff7",
-        "sections.how-your-report-is-processed.bullets.1": "533b086413500f4d9bfa441196fc7f751518f772229aeb2f14f7be923b392932",
-        "sections.how-your-report-is-processed.bullets.2": "817ddbaa66f0fdaab5c4d95a29b60ec0f859772f2db78df5b11a203167759f62",
-        "sections.how-your-report-is-processed.bullets.3": "ba43d065652521a380ad4ce81f577fe4035552ec127ed1c29497411fcaa3f278",
-        "sections.how-your-report-is-processed.bullets.4": "673be6ebd2511fc57e2d04944e0b43c42d70e426dfdce86f2c1d5bb8fd2007e3",
-        "sections.how-your-report-is-processed.bullets.5": "d14e646eddeaf49c1c7dedfeac03e2e37a5f6bac32e75c8f4241560f0be64f5f",
-        "sections.how-your-report-is-processed.heading": "dce800402fde15f670bcd699e937468f1ae174712796e82c8e2ad4349bf58a9a",
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",
+        "sections.how-your-report-is-processed.bullets.5": "d14e646eddeaf49c1c7dedfeac03e2e37a5f6bac32e75c8f4241560f0be64f5f",
+        "sections.what-the-health-code-requires.heading": "13e7f9679361d6015ff823a78c3727f0056246ddc3619f6327039a4177b39212",
         "sections.what-to-do.heading": "f47f1edc44ed92664871471b0cf8f463813788468c23680c12f52a36c2827e26",
         "sections.while-you-wait-tips-to-help-with-the-problem.bullets.0": "3f2d0bbdad85f544925a9f26448aee3b4206e496c123d76b2d9ec955679a1c31",
         "sections.while-you-wait-tips-to-help-with-the-problem.bullets.1": "f0a0ec8e1695414ca9452a651cbdee0fcbbbf381ece106f5cd755edb9cb32a66",
@@ -701,7 +693,7 @@
       }
     },
     "report-garbage-filth-vegetation": {
-      "contentHash": "18933fec0fa32d01bd6313beac13b735b53a976e05ce7b0a040e9f40a8a9607d",
+      "contentHash": "ecb6da1a3803ff6e3a6beea5f0a73d776804f5bf4bdca3848d39b379691a4ba1",
       "fieldHashes": {
         "audience.0": "0141f1792023db799338c596092991d8c6b8fdd26cfad661752f4c75ecae3941",
         "audience.1": "7ea11dfb70cfa49f0c3effee3965434ea835da01b69ddfff911ff6b4b9851d7a",
@@ -709,20 +701,13 @@
         "audience.3": "2283621818532acfb4c9550b9595f0ca57a4c0e87d7fd2ab8742a7eafd1869c8",
         "primaryAgency": "8a2847f0ee854052d30378a2ef091f979c9737bbd8219086a1e04dc0abd84f9f",
         "sections.get-help-making-your-report.bullets.0": "c611ee16da4ff1079def378046b55e1a2e6ddc15845ebff14a8522c0e14ee08e",
-        "sections.get-help-making-your-report.bullets.1": "8a7b83ee654e759dd88a84f47ad696421d210b6d496822555087f450ce227266",
-        "sections.get-help-making-your-report.bullets.2": "9d2084957f02089f8fab30d80b7b49c9a26fe35d349a120ebec48fe5459922b3",
         "sections.get-help-making-your-report.bullets.3": "f9f1a4378700678c7934757e4650d3a6e57552028f0b4c1d779010f96ef203c4",
         "sections.get-help-making-your-report.callout.text": "dd79fe8dfb98d19b571977eed93fc7a4d93104e67a36f79d6e692e401e1fed9a",
         "sections.get-help-making-your-report.heading": "71b77444f3056e1b4028ad90b88153575a4169e626a1e3daeabd5cf6e7adc24d",
         "sections.get-help-making-your-report.paragraphs.0": "4137ed4dbf3d9f85ba8f53c758fd02999b129b7498f14d15bb85cc4e0fac426c",
-        "sections.how-your-report-is-processed.bullets.0": "e9ebedeab0a6f73be8ce7a6d51b296bbf92f0c790512cef38d605bfbaa503ff7",
-        "sections.how-your-report-is-processed.bullets.1": "533b086413500f4d9bfa441196fc7f751518f772229aeb2f14f7be923b392932",
-        "sections.how-your-report-is-processed.bullets.2": "817ddbaa66f0fdaab5c4d95a29b60ec0f859772f2db78df5b11a203167759f62",
-        "sections.how-your-report-is-processed.bullets.3": "ba43d065652521a380ad4ce81f577fe4035552ec127ed1c29497411fcaa3f278",
-        "sections.how-your-report-is-processed.bullets.4": "673be6ebd2511fc57e2d04944e0b43c42d70e426dfdce86f2c1d5bb8fd2007e3",
-        "sections.how-your-report-is-processed.bullets.5": "c55b9bf3686cfefc11fc47f810e22d7e7526e6cffae583825a6512c108da9e3f",
-        "sections.how-your-report-is-processed.heading": "dce800402fde15f670bcd699e937468f1ae174712796e82c8e2ad4349bf58a9a",
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",
+        "sections.how-your-report-is-processed.bullets.5": "c55b9bf3686cfefc11fc47f810e22d7e7526e6cffae583825a6512c108da9e3f",
+        "sections.what-the-health-code-requires.heading": "13e7f9679361d6015ff823a78c3727f0056246ddc3619f6327039a4177b39212",
         "sections.what-to-do.heading": "f47f1edc44ed92664871471b0cf8f463813788468c23680c12f52a36c2827e26",
         "sections.while-you-wait-tips-to-help-with-the-problem.bullets.0": "2aba7b76bf3b1577d3afb8057f8f10f7968f90630db765a81e7a036d4c7070f3",
         "sections.while-you-wait-tips-to-help-with-the-problem.bullets.1": "4de142243569df90b44de127ae468dea9fe242a635653294d5965dd0f78e7ec8",
@@ -787,7 +772,7 @@
       }
     },
     "report-problem-sro-hotel": {
-      "contentHash": "2f503d982d8737208ae25eeff7763d2efcbfc6df4b736045011c2be21a918368",
+      "contentHash": "b89776b66d1ccf1d4974835480db0c2a359ebe6854eddfc8dfebce0543ebb12a",
       "fieldHashes": {
         "audience.0": "be987c8fc9c24db154ad4666479a0684b915936d69c743e47f983827727ca69e",
         "audience.1": "ca102fe69416dfaa221c07d585c085d12eaba2b060cbc4b2fd69bc54a8bbb9f6",
@@ -803,7 +788,7 @@
       }
     },
     "report-rats-mice-four-legged-problems": {
-      "contentHash": "387870f347aa4180ad4a9753edfdbf044f4b75116764f022c18a4fef4408ed76",
+      "contentHash": "f64bb354ca03979e353b1edc889391ae254c3b962b75a842dcad85379a014d8d",
       "fieldHashes": {
         "audience.0": "46b8f713b30af842c8b3fbb13a3d880bd06d78b8c0e61ad9cecfc6f94c59ef8d",
         "audience.1": "7ea11dfb70cfa49f0c3effee3965434ea835da01b69ddfff911ff6b4b9851d7a",
@@ -811,19 +796,12 @@
         "audience.3": "db57b6e59cce99cacee1fdf0af09f65b72b2c243e40c3c6fcfdd308889f988aa",
         "primaryAgency": "8a2847f0ee854052d30378a2ef091f979c9737bbd8219086a1e04dc0abd84f9f",
         "sections.get-help-making-your-report.bullets.0": "c611ee16da4ff1079def378046b55e1a2e6ddc15845ebff14a8522c0e14ee08e",
-        "sections.get-help-making-your-report.bullets.1": "8a7b83ee654e759dd88a84f47ad696421d210b6d496822555087f450ce227266",
-        "sections.get-help-making-your-report.bullets.2": "9d2084957f02089f8fab30d80b7b49c9a26fe35d349a120ebec48fe5459922b3",
         "sections.get-help-making-your-report.bullets.3": "f9f1a4378700678c7934757e4650d3a6e57552028f0b4c1d779010f96ef203c4",
         "sections.get-help-making-your-report.heading": "71b77444f3056e1b4028ad90b88153575a4169e626a1e3daeabd5cf6e7adc24d",
         "sections.get-help-making-your-report.paragraphs.0": "4137ed4dbf3d9f85ba8f53c758fd02999b129b7498f14d15bb85cc4e0fac426c",
-        "sections.how-your-report-is-processed.bullets.0": "e9ebedeab0a6f73be8ce7a6d51b296bbf92f0c790512cef38d605bfbaa503ff7",
-        "sections.how-your-report-is-processed.bullets.1": "533b086413500f4d9bfa441196fc7f751518f772229aeb2f14f7be923b392932",
-        "sections.how-your-report-is-processed.bullets.2": "817ddbaa66f0fdaab5c4d95a29b60ec0f859772f2db78df5b11a203167759f62",
-        "sections.how-your-report-is-processed.bullets.3": "ba43d065652521a380ad4ce81f577fe4035552ec127ed1c29497411fcaa3f278",
-        "sections.how-your-report-is-processed.bullets.4": "673be6ebd2511fc57e2d04944e0b43c42d70e426dfdce86f2c1d5bb8fd2007e3",
-        "sections.how-your-report-is-processed.bullets.5": "fd8eb71a3bbbfc98b08345cc0170711d398c960867cf0d31314a5926d310ec44",
-        "sections.how-your-report-is-processed.heading": "dce800402fde15f670bcd699e937468f1ae174712796e82c8e2ad4349bf58a9a",
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",
+        "sections.how-your-report-is-processed.bullets.5": "fd8eb71a3bbbfc98b08345cc0170711d398c960867cf0d31314a5926d310ec44",
+        "sections.what-the-health-code-requires.heading": "13e7f9679361d6015ff823a78c3727f0056246ddc3619f6327039a4177b39212",
         "sections.what-to-do.heading": "f47f1edc44ed92664871471b0cf8f463813788468c23680c12f52a36c2827e26",
         "sections.while-you-wait-tips-to-help-with-the-problem.bullets.0": "0b33b59ae46f33cac32598df8a69a9a9d1334a166079afe937c79c1d18f28e3d",
         "sections.while-you-wait-tips-to-help-with-the-problem.bullets.1": "667dd35d2f3b8558849ea999a5fd2f4cbe8819e40bced4fec614837d405ec108",
