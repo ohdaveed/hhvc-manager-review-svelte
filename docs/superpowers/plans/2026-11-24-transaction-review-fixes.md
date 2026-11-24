@@ -18,7 +18,7 @@ Measured by running `analyzePage` over the 16 `type: 'Transaction'` modules, plu
 | ---------------------------------------------- | ------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 4 descriptions over 110 characters             | **Fixed by #194**                                      | Before #194: insects 123, fix violation 118, garbage 117, rats 112. Now all ≤ 110 (two are exactly 110)                                                                                            |
 | "What to do: Pass" on every page               | **Fixed by #208**                                      | `karl-transaction-what-to-do` now reports an issue on 8 pages: follow-up, housing inspection, inspector lookup, public records, hotel records, tenant steps, violations lookup, complaints records |
-| More than 2 Things to know                     | **Check exists** (`placement.ts:626`, `maxItems` rule) | Every Transaction page has exactly 2. The 4 audience lines the review counted come from the `audience` field, not from `thingsToKnow`                                                              |
+| More than 2 Things to know                     | **Check exists** (`placement.ts:626`, `maxItems` rule) | No Transaction page has more than 2 (the inspector lookup has 1). The 4 audience lines the review counted come from the `audience` field, not from `thingsToKnow`                                  |
 | Confidentiality wording conflicts (blocker 4)  | **Decided**                                            | Decisions tab: "We never share your name or contact information.", once per page → B1                                                                                                              |
 | `PLACEHOLDER` text                             | **Partly caught**                                      | `HAS_PLACEHOLDER = /PLACEHOLDER/` (`placement.ts:240`) is case-sensitive, so it catches the citation page but not the inspector lookup's "This button is a placeholder" → A2                       |
 | Related links to types Karl doesn't allow      | **Not caught**                                         | `karlComponentFindings` reads only sections tagged `component: 'related'`. No Transaction page tags its Related section, so the check runs on none of the 16 → A1                                  |
@@ -67,7 +67,7 @@ Measured by running `analyzePage` over the 16 `type: 'Transaction'` modules, plu
   - `flags the annual fee page's Related card to Property owner responsibilities`: the `pay-healthy-housing-fee` page yields a finding with `component: 'related'` and `status: 'issue'`, and the detail names `Resource Collection`.
   - `still flags a section tagged component: 'related'`: the existing coverage over `article-11-compliance-for-property-owners` stays green.
   - `skips a card whose target is not in the corpus` (Review Focus 2).
-  - Corpus sweep: the Transaction pages with an issue are exactly fee, public records, inspector lookup, complaints records, violations lookup and hotel records (the review's blocker 5 table).
+  - Corpus sweep: assert the set of Transaction pages with an issue as measured after the fix, and check it against the review's blocker 5 table (fee, public records, inspector lookup, complaints records, violations lookup, hotel records). Explain any difference in the PR; #195 changed copy after the review.
 - [ ] **Step 2: Run** `bun run test:unit -- --run src/lib/analysis/karlComponentChecks.test.ts`. Expected: the new tests FAIL with no finding.
 - [ ] **Step 3: Implement.** In `usesOn`, treat a section as Related when `section.component === 'related'` **or** its placement's `rawName` is in `{'related', 'related_links'}`. Judge the allowed types from the host page's `schemaFor(page.type).relatedTargets` when that is non-null. Otherwise use `RELATED_PERMITTED_TYPES`, which is today's behavior.
 - [ ] **Step 4: Run the file again, then the whole unit suite.** Expected: PASS.
@@ -105,7 +105,7 @@ Measured by running `analyzePage` over the 16 `type: 'Transaction'` modules, plu
   - Complaints records (the review's model page) passes.
   - Annual fee reports an issue. Assert the actual words the function finds on today's copy; the review counted 6.
 - [ ] **Step 2: Run them.** Expected: FAIL (not defined).
-- [ ] **Step 3: Implement.** Tokenize on non-letters. Drop a small stop list (`a an the to for of and or your you in on by with`). Compare word stems by exact lowercase match only; no stemming library. ponytail: exact match misses "report"/"reporting"; add suffix folding if reviewers ask.
+- [ ] **Step 3: Implement.** Tokenize on non-letters. Drop a small stop list (`a an the to for of and or your you in on by with`). Compare words by exact lowercase match only; no stemming library. ponytail: exact match misses "report"/"reporting"; add suffix folding if reviewers ask.
 - [ ] **Step 4: Run.** Expected: PASS.
 - [ ] **Step 5: Commit** `feat(analysis): flag title words repeated in the description`
 
@@ -169,11 +169,10 @@ The Decisions tab moves shared text (anonymity, the landlord notice, how reports
 
 - [ ] **Step 1:** List each shared passage and its destination page in the PR description before editing. Check that the destination doesn't already say it.
 - [ ] **Step 2:** Replace the "How your report is processed" section on each report page with a Related card to _What happens after you report_.
-- [ ] **Step 3:** Order the remaining steps landlord notice → what to include → 311 button last. The review's step-order finding survives the Decisions tab ("Replaced", line 136).
-- [ ] **Step 4:** Remove the `audience` lines from the three report pages' rendered What to know. Transactions have no audience field. Check first whether placement already sends `audience` to the unplaced tray on Transaction (`placement.ts:327–340`); if it does, the copy fix is still wanted, but no check needs changing.
-- [ ] **Step 5:** Run `bun run verify` and `classifySection` before and after on every touched section. Commit `refactor(content): move shared report text to its own pages, button last`.
+- [ ] **Step 3:** In What to do, put what to include in the report before the 311 button, and the button last. The landlord notice moves out with the shared text.
+- [ ] **Step 4:** Run `bun run verify` and `classifySection` before and after on every touched section. Commit `refactor(content): move shared report text to its own pages, button last`.
 
-The 9-page report regroup, the SRO page removal, the mosquito and pigeon pages and the mold leak referral are **last in the Decisions tab's build order** and depend on open questions. They get their own plan, not this one.
+The 9-page report regroup, the SRO page removal, the mosquito and pigeon pages and the mold leak referral are **last in the Decisions tab's build order** and depend on open questions. They get their own plan, not this one. The Decisions tab's "Replaced" section points the step-order and audience-line findings at those 9 new pages, so they belong to that plan too.
 
 ## Track C — Decisions for the manager or HHVC (questions, not tasks)
 

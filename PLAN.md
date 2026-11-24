@@ -19,7 +19,7 @@ Production has 0 edits and 0 comments on any page (measured 2026-11-24). Re-coun
 ## Track B — Decided copy changes
 
 - [ ] **B1.** Every page says "We never share your name or contact information." once, and the City Attorney line is gone.
-- [ ] **B2.** The garbage, rats and insects pages move their shared text to *What happens after you report* and *Tenant rights*, order the steps landlord → details → 311 button, and drop the audience lines.
+- [ ] **B2.** The garbage, rats and insects pages move their shared text to *What happens after you report* and *Tenant rights*, and put the 311 button last in What to do.
 
 ## Track C — Questions for manager review (not built here)
 
@@ -34,4 +34,6 @@ Production has 0 edits and 0 comments on any page (measured 2026-11-24). Re-coun
 
 ## Deliberately out of scope
 
-The 9-page report regroup, removing the SRO page, the mosquito and pigeon pages, the Topic fold and the sewage "Fix first" item. All are Decided but come later in the Decisions tab's build order, and several depend on open questions. Each gets its own plan.
+The 9-page report regroup, removing the SRO page, the mosquito and pigeon pages, and the Topic fold. All are Decided but come later in the Decisions tab's build order, and several depend on open questions. Each gets its own plan.
+
+The sewage routing fix is out of scope only because it sits on an Information page (*Learn what HHVC can inspect*). The Decisions tab marks it **Fix first**, and it is still pending.
