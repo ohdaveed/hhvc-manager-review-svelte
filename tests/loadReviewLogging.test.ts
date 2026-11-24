@@ -29,11 +29,20 @@ describe('loadReview logging', () => {
 		expect(error).not.toHaveBeenCalled();
 	});
 
-	it('logs an error when the reviews query fails', async () => {
+	it('logs an error and rejects when the reviews query fails', async () => {
 		result.data = null;
 		result.error = { code: '42501', message: 'permission denied' };
 		const error = vi.spyOn(console, 'error').mockImplementation(() => {});
-		await loadReview();
+		// Rejecting, not resolving, is what lets a caller tell a failed load from
+		// an empty one: the landing page shows "didn't load" only on a rejection.
+		await expect(loadReview()).rejects.toThrow('Could not load the review');
 		expect(error).toHaveBeenCalledWith('No review found:', result.error);
+	});
+
+	it('resolves when no review is visible', async () => {
+		result.data = [];
+		result.error = null;
+		vi.spyOn(console, 'info').mockImplementation(() => {});
+		await expect(loadReview()).resolves.toBeTypeOf('function');
 	});
 });

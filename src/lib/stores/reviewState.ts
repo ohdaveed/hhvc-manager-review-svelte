@@ -87,6 +87,13 @@ export const editsStore = writable<Edit[]>([]);
  * Loads all pages for the most recent review and initializes realtime.
  * Call this once from the review layout's onMount.
  * Returns the unsubscribe cleanup function.
+ *
+ * REJECTS when a query fails, and resolves with a no-op cleanup when no review
+ * is visible. The two used to look the same -- both resolved -- so a caller
+ * could not tell "the database errored" from "there is nothing to show", and
+ * the landing page sat on "Loading your progress…" forever after an error.
+ * The error is still logged first: `tests/fixtures.ts` ignores that message by
+ * text, and a rejection carries nothing the e2e gate would recognise.
  */
 export async function loadReview(): Promise<() => void> {
 	// Every policy is `FOR ALL TO authenticated`, so without a session each query
@@ -104,7 +111,7 @@ export async function loadReview(): Promise<() => void> {
 	// review), not a failure, so only a real error is logged as one.
 	if (reviewsError) {
 		console.error('No review found:', reviewsError);
-		return () => {};
+		throw new Error('Could not load the review', { cause: reviewsError });
 	}
 	if (!reviews || reviews.length === 0) {
 		console.info('No review visible (signed out, or none exists).');
@@ -128,7 +135,7 @@ export async function loadReview(): Promise<() => void> {
 	if (pagesError) {
 		console.error('Failed to load pages:', pagesError);
 		channel.unsubscribe();
-		return () => {};
+		throw new Error('Could not load the review pages', { cause: pagesError });
 	}
 
 	pagesStore.set((pages as ReviewPage[]) ?? []);

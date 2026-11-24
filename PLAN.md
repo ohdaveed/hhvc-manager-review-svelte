@@ -1,33 +1,36 @@
-# PLAN — Karl outline rollout: About us (the last type)
+# PLAN — Landing page fixes
 
-Branch `feat/karl-about`, cut from `origin/main` at `88ceac2` (Location, PR #204, verified live).
-The plan and vocabulary are in `docs/plans/2026-11-23-karl-field-mapping-layer.md` (§5, rollout
-step 6) and `CONTEXT.md`.
+Branch `feat/landing-fixes`, cut from `origin/main` at `0046900`, in worktree `../wt-landing-fixes`.
+The confirmed design is `docs/superpowers/specs/2026-11-24-landing-page-fixes-brief.md` (user
+confirmed "build as written", 2026-11-24). It came from the dashboard review of the same day.
 
-One page: `aboutHhvcTeam` (`sf.gov/departments--healthy-housing-and-vector-control--about`).
+## Tasks
 
-## Measured before starting
+- [x] **loadReview rejects on a query error.** A `/reviews` error rejects instead of resolving to
+      a no-op, so the landing page's `failed` branch is reachable; "no review visible" stays a
+      resolve. The review layout's handling of a rejection is checked and still works.
+- [x] **Status card.** One card in the header slot in every state: skeleton (loading), signed out
+      (Sign in), in progress / none decided / all decided, load failed (Try again re-runs the
+      load), and signed in with no review. A "Next up" row holds the title; the button reads
+      Continue/Start with the accessible name `Continue to <title>` / `Start with <title>`. No
+      horizontal overflow at 375px.
+- [x] **Status shortcuts.** Legend entries (plus "N undecided") are buttons that set the list's
+      status filter and move focus to the list heading.
+- [x] **Drafts.** `isDraftPath` pages are always under Proposed pages; a draft's meta line shows
+      Drafting… / Draft ready / Drafting stalled / Draft failed.
+- [x] **Empty search.** The message names the query and the active status, plus a "Clear search
+      and filter" button that resets both and focuses the search box.
+- [x] **Polish.** How it works opens when nothing is decided yet. The propose textarea really
+      renders 5 rows and gets an example line. Row meta is `text-slate-700`.
+- [x] **Gates.** New/updated unit and e2e specs; `bun run verify`, lint/check/format ratchets,
+      e2e green.
+- [x] **Rendered check.** 375/768/1440, signed in/out, loading/error, axe clean, console clean.
 
-"4 sections: 4 go into Karl. 2 things won't carry over to Karl." Three Information sections and a
-Resources section place; Summary is Unplaced (U21: About has no Description); the audience list
-is Unplaced; Primary agency is empty. No About rule is checked yet.
+## Decisions
 
-## Karl, read 2026-11-24
-
-- How an About page works: "Create an About page and tag an **existing Agency**. A **button**
-  linking to the About page will **automatically be added** from the About section of that Agency
-  page." **Confirmed**, a page note: this page is reached from its Agency page.
-- Information: mission statement, vision, goals, list of divisions; "About pages don't take
-  images." **Confirmed**, a Good-to-know note on the Information panel.
-- Resources: SF.gov pages, other websites, PDFs or other files.
-- URL: `sf.gov/about-[department name]` (URLs) vs
-  `sf.gov/departments/name-of-department/about` (About). **Unconfirmed.**
-
-## Checklist
-
-- [x] **1. Schema and placement.** About us in `schema.ts`: Title, the Agency-button page note,
-      the no-images note, an unconfirmed URL, no Related. Unit tests pin the page.
-- [x] **2. e2e.** The About us page joins both specs, with axe at 1280px and 375px; screenshots
-      looked at.
-- [x] **3. Ship.** `verify` and the ratchets, then a PR. Ask before merging. Then mark the rollout
-      complete in the plan doc.
+- PLAN.md is per-branch in this repo; this replaces the Karl Agency plan, which merged as #202.
+- Rendered check (2026-11-24, preview of this branch on :4198, signed-in stub fixture): no
+  horizontal overflow at 375px (`scrollWidth` 375), axe WCAG 2.1 AA 0 violations signed in, all
+  four drafts under Proposed pages with their state lines, error card and Try again verified.
+- `verify` timed out four unrelated unit tests once under a load average of ~10-16; each passed
+  in isolation and the retried commit's `verify` was green (1037 passed).

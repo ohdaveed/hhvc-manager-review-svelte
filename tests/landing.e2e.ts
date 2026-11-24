@@ -1,6 +1,6 @@
 import type { Page } from '@playwright/test';
 import { expect, test } from './fixtures';
-import { DRAFT_IDS, gotoSignedIn } from './signedIn';
+import { DRAFT_IDS, gotoSignedIn, signedIn } from './signedIn';
 
 /**
  * The landing page and the AI-drafted page route, in a real browser.
@@ -165,5 +165,39 @@ test.describe('signed out', () => {
 		await expect(page.getByText(/\d+ of \d+ decided/)).toHaveCount(0);
 		await expect(page.getByRole('link', { name: /^Continue to / })).toHaveCount(0);
 		await expect(page.getByText('Checking your session…')).toHaveCount(0);
+	});
+});
+
+test.describe('status card', () => {
+	test('fits a phone: the page does not scroll sideways at 375px', async ({ page }) => {
+		await page.setViewportSize({ width: 375, height: 812 });
+		await gotoSignedIn(page, '/', { drafts: true, decidedFirst: true });
+
+		await expect(page.getByRole('link', { name: /^Continue to / })).toBeVisible();
+		// The Continue button used to carry the page title and `nowrap`, measured
+		// at 437px inside a 343px card: the whole page scrolled 97px sideways.
+		const overflow = await page.evaluate(
+			() => document.documentElement.scrollWidth - document.documentElement.clientWidth
+		);
+		expect(overflow).toBe(0);
+	});
+
+	test('a failed load says so, and Try again recovers in place', async ({ page }) => {
+		await signedIn(page);
+		// The first `reviews` read fails; later ones fall through to the fixture.
+		let failures = 1;
+		await page.route('**/rest/v1/reviews*', (route) =>
+			failures-- > 0
+				? route.fulfill({ status: 500, contentType: 'application/json', body: '{}' })
+				: route.fallback()
+		);
+		await page.goto('/');
+
+		// Before `loadReview` rejected on error, this state was unreachable and the
+		// card said "Loading your progress…" forever.
+		await expect(page.getByText("Your progress didn't load")).toBeVisible();
+		await page.getByRole('button', { name: 'Try again' }).click();
+		await expect(page.getByText(/^\d+ of \d+ decided$/)).toBeVisible();
+		await expect(page.getByText("Your progress didn't load")).toHaveCount(0);
 	});
 });
