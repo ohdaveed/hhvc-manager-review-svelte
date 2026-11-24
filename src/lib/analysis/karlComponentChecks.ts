@@ -1,14 +1,16 @@
 /**
- * Components a page uses that Karl does not offer on its content type, and
- * component text over Karl's character limits.
+ * Related cards that point at a page type Karl's Related field cannot hold.
  *
- * The rules live in `$lib/karl/componentSupport`; this only walks a page and
- * states what they say about it. One finding per component the page actually
- * uses, so a page without callouts is not told its callouts pass.
+ * This is the one Karl check that is NOT judged by placements: a placement says
+ * which panel a card lands in, not what type of page the card links to. Every
+ * other component check this module used to run -- a callout, accordion,
+ * button, spotlight, resource tile, contact section, table or alert on a type
+ * that does not offer it, and their character limits -- is now part of the
+ * placement (`$lib/karl/placement`), which the Karl outline and
+ * `karlPlacementChecks` both read, so the two cannot disagree.
  *
- * These findings cite their component's help page directly rather than a
- * `KarlHelpKey`: the citation comes from the same row as the rule, so the two
- * cannot point at different pages.
+ * The finding cites the component's help page directly rather than a
+ * `KarlHelpKey`: the citation comes from the same row as the rule.
  */
 import { pagesByKey } from '$lib/data';
 import {
@@ -48,47 +50,22 @@ const snippet = (text: unknown): string => {
 };
 
 function usesOn(page: AnyPage): Use[] {
-	const type = String(page.type ?? '');
 	const uses: Use[] = [];
-	const add = (component: KarlComponent, text: unknown, where: string, judged = type) =>
-		uses.push({
-			component,
-			type: judged,
-			text: snippet(text),
-			length: String(text ?? '').trim().length,
-			where
-		});
-
-	if (page.contact) add('contact', 'Contact us', 'Contact section');
-
-	if (page.spotlight) {
-		add('spotlight', page.spotlight.title, 'Page spotlight');
-		if (page.spotlight.button) add('spotlightButton', page.spotlight.button, 'Page spotlight');
-	}
-
 	for (const section of page.sections ?? []) {
+		if (section.component !== 'related') continue;
 		const where = `Section “${section.heading ?? ''}”`;
-		const isSpotlight = section.component === 'spotlight';
-
-		if (isSpotlight) add('spotlight', section.heading, where);
-		if (section.component === 'supporting') add('accordion', section.heading, where);
-		if (section.component === 'resources') add('resources', section.heading, where);
-		if (section.component === 'related') {
-			for (const card of section.cards ?? []) {
-				// A target outside the corpus has no known type; the site map reports those.
-				const target = typeOf(card?.target);
-				if (target) add('related', card.title, `${where} → ${target} page`, target);
-			}
-		}
-		if (section.callout) add('callout', section.callout.title ?? section.callout.text, where);
-		if (section.button) add(isSpotlight ? 'spotlightButton' : 'button', section.button, where);
-		if (section.table) add('table', section.table.caption ?? section.heading, where);
-
-		// Steps are part of their page, so Karl judges them by the page's type.
-		for (const step of section.steps ?? []) {
-			const at = `Step “${step.title ?? ''}”`;
-			if (step.callout) add('callout', step.callout.title ?? step.callout.text, at);
-			if (step.button) add('button', step.button, at);
+		for (const card of section.cards ?? []) {
+			// A target outside the corpus has no known type; the site map reports those.
+			const target = typeOf(card?.target);
+			if (!target) continue;
+			const text = snippet(card.title);
+			uses.push({
+				component: 'related',
+				type: target,
+				text,
+				length: String(card.title ?? '').trim().length,
+				where: `${where} → ${target} page`
+			});
 		}
 	}
 	return uses;

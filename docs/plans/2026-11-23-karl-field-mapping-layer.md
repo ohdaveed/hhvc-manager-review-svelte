@@ -556,7 +556,12 @@ Steps, each test-first:
 | 5     | Agency (1)                  | spotlight ≤2, alert 30/120, Section title 1/2 required             | **Done.** Fixed the walkthrough: Subsection intro paragraphs were emitted as a "Text" field that does not exist (now reported as U20), and Section title 2 got four headings (now each heading is its Subsection's Title, decided 2026-11-24). Resource tiles Unconfirmed; URL Unconfirmed.                                       |
 | 6     | About us, Location (1 each) | Location's panels are "not captured", so most read gray            | **Both done.** Location from Karl's "How a Location page works" (groups as labels; five uncaptured sections shown, not invented, U26; Address-snippet note). About us: Agency-button page note and "About pages don't take images", both confirmed. **All ten content types the corpus uses now have a schema.**                  |
 
-**Analysis checks moving onto the schemas** (same finding ids, so the panel doesn't change shape):
+**Analysis checks moving onto the schemas** (same finding ids, so the panel doesn't change shape).
+**Done 2026-11-24** in `src/lib/analysis/karlPlacementChecks.ts`, as `karl-unplaced`,
+`karl-needs-fix`, `karl-unconfirmed`, `karl-empty-fields` and `karl-url-pattern` (in place of the
+names below). Before narrowing the component checks, the placements took over the two checks they
+lacked: a component tagged on a type without it, and the accordion title on every type. The
+original list:
 
 - `karl-transaction-what-to-do`: passes only if `claims` has a `what_to_do` entry **and** the
   section's heading is "What to do". The note-prose regex goes.
