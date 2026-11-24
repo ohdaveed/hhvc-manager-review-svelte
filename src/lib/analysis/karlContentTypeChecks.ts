@@ -20,6 +20,8 @@ import {
 	STEP_TARGET,
 	type ContentTypeRuleKey
 } from '$lib/karl/contentTypeRules';
+import { pagesByKey } from '$lib/data';
+import { placementsFor } from '$lib/karl/placement';
 import type { KarlHelpLink } from './karlHelp';
 import type { ComponentFinding } from './karlComponentChecks';
 import type { FindingItem } from './index';
@@ -40,9 +42,6 @@ const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
 const NUMBERED_HEADING = /^\s*\d+[.)]\s+\S/;
 
 /** A section the corpus maps onto Karl's What to do panel. */
-const isWhatToDo = (section: AnyPage): boolean =>
-	/^\s*what to do\s*$/i.test(String(section.heading ?? '')) ||
-	/what[_ ]to[_ ]do/i.test(String(section.karl ?? ''));
 
 function stepByStepFindings(page: AnyPage): ComponentFinding[] {
 	const steps: { title: string; where: string }[] = [];
@@ -131,26 +130,47 @@ function stepByStepFindings(page: AnyPage): ComponentFinding[] {
 	return [count, titles];
 }
 
+/**
+ * A Transaction's What to do section, read off its placement.
+ *
+ * It used to pass any section whose `karl` NOTE mentioned what_to_do, so a page
+ * whose prose said so but whose section went elsewhere passed -- the known gap.
+ * Now a section counts only when the transcript places it in `what_to_do`, and
+ * its heading must be the "What to do" Karl hard-codes there.
+ */
 function transactionFindings(page: AnyPage): ComponentFinding[] {
-	const has = (page.sections ?? []).some(isWhatToDo);
+	const placements = placementsFor(page as never, null, pagesByKey);
+	const whatToDo = [...placements.sections.values()].filter((s) => s.rawName === 'what_to_do');
+	const items: FindingItem[] = [];
+	if (whatToDo.length === 0) {
+		items.push({
+			text: 'No What to do section',
+			detail:
+				'Add the steps that move the reader forward, or, if the page only explains something, make it an Information page.'
+		});
+	}
+	for (const s of whatToDo) {
+		if (s.heading.trim().toLowerCase() !== 'what to do') {
+			items.push({
+				key: s.label,
+				text: s.heading,
+				detail: 'Karl always shows the heading “What to do” here, so this heading will not appear.'
+			});
+		}
+	}
 	return [
 		{
 			id: 'karl-transaction-what-to-do',
 			title: 'What to do section',
-			status: has ? 'pass' : 'issue',
-			summary: has
-				? 'This Transaction has a What to do section.'
-				: 'This Transaction has no section mapped to Karl’s What to do panel, so nothing on it tells the reader what to do.',
+			status: items.length ? 'issue' : 'pass',
+			summary:
+				whatToDo.length === 0
+					? 'This Transaction has no section in Karl’s What to do panel, so nothing on it tells the reader what to do.'
+					: items.length
+						? 'This Transaction’s What to do section has a heading Karl will not show.'
+						: 'This Transaction has a What to do section, headed “What to do”.',
 			help: help('transactionWhatToDo'),
-			items: has
-				? []
-				: [
-						{
-							text: 'No What to do section',
-							detail:
-								'Add the steps that move the reader forward, or, if the page only explains something, make it an Information page.'
-						}
-					]
+			items
 		}
 	];
 }

@@ -631,3 +631,57 @@ describe('About us', () => {
 		);
 	});
 });
+
+// The component checks the Analysis panel used to run itself, now owned by
+// placements (they moved out of karlComponentChecks). One case each.
+describe('component checks the placements took over', () => {
+	const at = (page: object) => placementsFor(page as never, null, pagesByKey);
+
+	it('a table on a type that has none does not carry over', () => {
+		const p = at({
+			type: 'Information',
+			title: 'T',
+			sections: [{ heading: 'Data', table: [['a', 'b']] }]
+		});
+		expect(p.fields.get('sections.data.table.0.0')?.status).toBe('unplaced');
+	});
+
+	it('steps, step callouts and step buttons on a Campaign do not carry over', () => {
+		const p = at({
+			type: 'Campaign',
+			title: 'T',
+			sections: [
+				{ heading: 'Do it', steps: [{ title: 'Go', callout: { text: 'Note' }, button: 'Go' }] }
+			]
+		});
+		expect(p.sections.get('do-it')?.status).toBe('unplaced');
+	});
+
+	it('an accordion title over 65 characters needs a fix, on Campaign as on Transaction', () => {
+		const heading = 'x'.repeat(66);
+		const p = at({
+			type: 'Campaign',
+			title: 'T',
+			sections: [{ heading, component: 'supporting', paragraphs: ['p'] }]
+		});
+		const key = [...p.sections.keys()][0];
+		expect(p.fields.get(`sections.${key}.heading`)?.reasons[0]).toMatch(
+			/66 characters; Karl wants 65 or fewer/
+		);
+	});
+
+	it('resource tiles on an Information page need a fix (ownerGuidance)', () => {
+		const p = of('ownerGuidance');
+		const s = p.sections.get('primary-source-uc-ipm-guide-for-property-managers');
+		expect(s?.status).toBe('needs-fix');
+		expect(s?.reasons).toContain(
+			'Karl has no resource tile on an Information page. List these links in the body copy instead.'
+		);
+	});
+
+	it('a second spotlight on a Topic needs a fix', () => {
+		const spot = { heading: 'S', component: 'spotlight', paragraphs: ['p'] };
+		const p = at({ type: 'Topic', title: 'T', sections: [spot, { ...spot, heading: 'S2' }] });
+		expect(p.sections.get('s')?.status).toBe('needs-fix');
+	});
+});
