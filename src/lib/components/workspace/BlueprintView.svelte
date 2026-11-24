@@ -73,6 +73,9 @@
 							<h3 class="bp-slot-title">{slot.label}</h3>
 							<KarlChip status={slot.status} />
 						</div>
+						{#each slot.reasons as reason, i (i)}
+							<p class="bp-reason">{reason}</p>
+						{/each}
 						<ul class="bp-values">
 							{#each slot.values.slice(0, MAX_VALUES) as v, i (i)}
 								<li><span class="bp-value-label">{v.label}:</span> {v.value}</li>
@@ -255,6 +258,12 @@
 	.bp-empty {
 		font-weight: 400;
 		color: #3d4551;
+	}
+
+	.bp-reason {
+		margin: 6px 0 0;
+		font-size: 13px;
+		color: #6f4a00;
 	}
 
 	.bp-required {

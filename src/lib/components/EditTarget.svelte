@@ -68,7 +68,15 @@
 	const chip = $derived(placement?.chip ? placement : undefined);
 	// Outlined on its own only when it says something its section does not:
 	// placed strings inside a placed section stay quiet (decision 9).
-	const karlFlag = $derived(chip || karlStatus === 'unplaced' ? '' : undefined);
+	// Inside an unplaced SECTION the section's own outline and chip already say
+	// it; outlining every string again only buries the page in red.
+	const sectionUnplaced = $derived(
+		outline?.placements?.sections.get(fieldId.match(/^sections\.([^.]+)\./)?.[1] ?? '')?.status ===
+			'unplaced'
+	);
+	const karlFlag = $derived(
+		chip || (karlStatus === 'unplaced' && !sectionUnplaced) ? '' : undefined
+	);
 	const chipId = $derived(`karl-chip-${fieldId.replace(/[^a-zA-Z0-9_-]/g, '-')}`);
 	// Text inside a heading becomes part of its name, so a chip there is never
 	// read inline -- signed in, the button's description carries it.

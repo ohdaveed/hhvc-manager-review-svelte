@@ -91,6 +91,8 @@ export type PanelFill = {
 	/** The rendered field ids it holds, for jumping to them. */
 	fieldIds: string[];
 	status: PlacementStatus;
+	/** Why a slot is not simply placed, prefixed with the section it comes from. */
+	reasons: string[];
 };
 
 export type PagePlacements = {
@@ -484,7 +486,17 @@ export function placementsFor(
 			filled: values.length > 0,
 			values,
 			fieldIds,
-			status: worstOf(fieldIds.map((id) => fields.get(id)!.status))
+			status: worstOf(fieldIds.map((id) => fields.get(id)!.status)),
+			// A repeatable panel holds several sections; the slot's status is the
+			// worst of them, so it has to say which one and why.
+			reasons: [
+				...new Set([
+					...[...sectionPlacements.values()]
+						.filter((s) => s.rawName === panel.rawName && s.status !== 'placed')
+						.flatMap((s) => s.reasons.map((r) => (s.heading ? `“${s.heading}”: ${r}` : r))),
+					...fieldIds.flatMap((id) => fields.get(id)!.reasons)
+				])
+			]
 		});
 	}
 

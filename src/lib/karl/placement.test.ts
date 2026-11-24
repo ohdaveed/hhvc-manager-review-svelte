@@ -250,3 +250,14 @@ describe('what a chip shows', () => {
 		expect(of('recordsHub').whatToKnow).toBeNull();
 	});
 });
+
+describe('Blueprint slot reasons', () => {
+	it('says which section makes a repeatable panel need a fix, and why', () => {
+		const body = of('recordsHub').panels.find((x) => x.rawName === 'body');
+		expect(body?.status).toBe('needs-fix');
+		expect(body?.reasons).toEqual([
+			'“Related pages”: This page type has no Related panel, so these links go into Body instead.'
+		]);
+		expect(of('recordsHub').panels.find((x) => x.rawName === 'title')?.reasons).toEqual([]);
+	});
+});
