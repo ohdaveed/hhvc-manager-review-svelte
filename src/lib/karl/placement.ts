@@ -143,7 +143,20 @@ const panelLabel = (type: string, rawName: string): string => {
 	const panel = (
 		panelByRawName as unknown as (t: string, r: string) => { uiLabel?: string } | null
 	)(type, rawName);
+	if (type === 'Location' && LOCATION_LABELS[rawName]) return LOCATION_LABELS[rawName];
 	return panel?.uiLabel ? formLabel(panel.uiLabel) : rawName;
+};
+
+/**
+ * Location's form was captured to field names only (U26), so its labels are
+ * the help center's -- grouped as "How a Location page works" groups them:
+ * Image and Body under "Essential information", Intro under "Getting here".
+ */
+const LOCATION_LABELS: Record<string, string> = {
+	image: 'Essential information · Image',
+	body: 'Essential information · Body',
+	intro: 'Getting here · Intro',
+	about_location: 'About'
 };
 
 /**
@@ -380,8 +393,13 @@ export function placementsFor(
 			}
 			if (RELATED_HEADING.test(heading) && !RELATED_PANELS.has(claimant)) {
 				status = worstOf([status, 'needs-fix']);
+				// Location does have a related field, but for Location pages only.
+				const onlyLocations =
+					schema?.relatedTargets?.length === 1 && schema.relatedTargets[0] === 'Location';
 				reasons.push(
-					`This page type has no Related panel, so these links go into ${panelLabel(type, claimant)} instead.`
+					onlyLocations
+						? `This page type’s only related field takes Location pages, so these links go into ${panelLabel(type, claimant)} instead.`
+						: `This page type has no Related panel, so these links go into ${panelLabel(type, claimant)} instead.`
 				);
 			}
 			// Step count and step titles: judged on the section, since a missing
@@ -412,6 +430,12 @@ export function placementsFor(
 				}
 				// Advisory: Karl's "aim for" is reported, but it is not a rule the
 				// copy breaks, so the status does not change.
+				// A caveat about the section's placement itself, e.g. Location's
+				// Getting here › Intro being for transport text.
+				if (rule.kind === 'caveat' && rule.sub === 'Section' && rule.status === 'unconfirmed') {
+					status = worstOf([status, 'unconfirmed']);
+					reasons.push(rule.plain);
+				}
 				// Karl's advice on a table's width: reported, never a fix.
 				if (rule.kind === 'targetColumns') {
 					const table = (section as { table?: unknown[][] }).table;
@@ -670,7 +694,10 @@ export function placementsFor(
 			.map((f) => f.fieldId);
 		panels.push({
 			rawName: panel.rawName,
-			label: (type === 'Agency' && AGENCY_SUBSECTIONS[panel.rawName]) || panel.label,
+			label:
+				(type === 'Agency' && AGENCY_SUBSECTIONS[panel.rawName]) ||
+				(type === 'Location' && LOCATION_LABELS[panel.rawName]) ||
+				panel.label,
 			required: panel.required,
 			inert: panel.inert,
 			filled: values.length > 0,
