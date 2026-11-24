@@ -16,7 +16,7 @@ Pilot pages: `report-rats-mice-four-legged-problems` (Transaction),
 - [x] **3. `src/lib/karl/schema.ts`** for Transaction, Information and Resource Collection, with
       cited rules. A test checks that every key exists in `KARL_PANELS`, that the order matches, and
       that every rule has a citation.
-- [ ] **4. `src/lib/karl/placement.ts`** `placementsFor(page, record)` returns a status and label per
+- [x] **4. `src/lib/karl/placement.ts`** `placementsFor(page, record)` returns a status and label per
       field id. Unit tests pin the pilot statuses, including a pinned `fieldKey` section.
 - [ ] **5. Karl outline UI.** Karl menu replacing the walkthrough button, `EditTarget` and `Section`
       chips, the persisted switch, and `aria-describedby`. Off on draft routes.

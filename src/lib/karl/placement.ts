@@ -1,0 +1,463 @@
+/**
+ * Placements: which Karl panel each rendered field lands in, and its status.
+ *
+ * Nothing here decides where copy goes. `buildTranscript` already walks a page
+ * against the live-form inventory; this module joins its answer to the field
+ * ids the mockup renders, and judges the copy against `schema.ts`'s rules. See
+ * `CONTEXT.md` for the vocabulary: placement, unplaced, and the four statuses.
+ *
+ * **The join.** The transcript keys sections by POSITION (`sections.0.steps`)
+ * and claims containers; the mockup keys them by SECTION KEY
+ * (`sections.what-to-do.steps.0.text.0`) and renders leaves. So an index is
+ * converted with `deriveFieldKey` -- the one definition of a section key -- and
+ * each field id takes its longest matching prefix.
+ *
+ * **The copy judged is the copy on screen**: the base corpus with the
+ * reviewer's accepted edits on top, read from the review record by field id.
+ *
+ * Nothing is stored. Placements are recomputed from the page and its record,
+ * so `edits.field_id`, the record fold and the export are untouched.
+ */
+import { buildTranscript } from '$lib/legacy-core/karl-transcript.js';
+import { PROMOTE_PANEL, panelByRawName } from '$lib/legacy-core/karl-blocks.js';
+import { deriveFieldKey } from '$lib/corpus/fieldKey';
+import { extractCopy, type CorpusPage } from '$lib/corpus/fields';
+import type { ReviewRecord } from './reviewRecord';
+import { schemaFor, type FieldRule } from './schema';
+
+export type PlacementStatus = 'placed' | 'needs-fix' | 'unconfirmed' | 'unplaced';
+
+/** Worst first: what a chip shows when several statuses apply. */
+const PRECEDENCE: readonly PlacementStatus[] = ['unplaced', 'needs-fix', 'unconfirmed', 'placed'];
+
+export const STATUS_TEXT: Record<PlacementStatus, string> = {
+	placed: 'Goes into Karl',
+	'needs-fix': 'Needs a fix',
+	unconfirmed: 'Karl’s rule unconfirmed',
+	unplaced: 'Won’t carry over to Karl'
+};
+
+export function worstOf(statuses: readonly PlacementStatus[]): PlacementStatus {
+	for (const status of PRECEDENCE) if (statuses.includes(status)) return status;
+	return 'placed';
+}
+
+export type Placement = {
+	fieldId: string;
+	/** The panel's raw Wagtail name, or `null` for unplaced copy. */
+	rawName: string | null;
+	/** e.g. `What to Do · Section 2 · Button link`. Empty for unplaced copy. */
+	label: string;
+	/** This field's status, including what it inherits from its section. */
+	status: PlacementStatus;
+	/** Reasons that are this field's own, not its section's. A chip is drawn only when there are some. */
+	reasons: string[];
+};
+
+export type SectionPlacement = {
+	sectionKey: string;
+	heading: string;
+	rawName: string | null;
+	label: string;
+	status: PlacementStatus;
+	reasons: string[];
+};
+
+/** One finding for the "Won't carry over to Karl" tray. */
+export type UnplacedItem = {
+	/** What the reviewer sees: the section heading, or the page field's name. */
+	subject: string;
+	/** The transcript's own reason, which says where the copy could go where it knows. */
+	reason: string;
+	/** The rendered field ids it covers, for jumping to it. Empty when nothing renders. */
+	fieldIds: string[];
+};
+
+/** One Karl panel, as the Blueprint draws it. */
+export type PanelFill = {
+	rawName: string;
+	label: string;
+	required: boolean;
+	inert: boolean;
+	filled: boolean;
+	/** The values the transcript resolved into this panel, in the form's terms. */
+	values: { label: string; value: string }[];
+	/** The rendered field ids it holds, for jumping to them. */
+	fieldIds: string[];
+	status: PlacementStatus;
+};
+
+export type PagePlacements = {
+	type: string;
+	fields: Map<string, Placement>;
+	sections: Map<string, SectionPlacement>;
+	unplaced: UnplacedItem[];
+	panels: PanelFill[];
+	url: { pattern: string; status: PlacementStatus; says: string } | null;
+};
+
+/* The legacy transcript is untyped; these narrow what this module reads from it. */
+type Entry = {
+	rawName: string;
+	uiLabel: string;
+	inferred?: boolean;
+	sectionIndex?: number;
+	fields: { label: string; value: string }[];
+	choices: { label: string }[];
+};
+type Transcript = {
+	type: string;
+	entries: Entry[];
+	claims: Record<string, string>;
+	unmapped: { path: string; shape: string; reason: string }[];
+};
+type Section = { heading?: unknown; fieldKey?: unknown };
+type Page = CorpusPage & { type?: unknown; sections?: Section[] };
+
+const transcriptOf = (page: Page, record: ReviewRecord | null, pages: object): Transcript =>
+	(buildTranscript as unknown as (p: unknown, r: unknown, ps: unknown) => Transcript)(
+		page,
+		record,
+		pages
+	);
+
+const panelLabel = (type: string, rawName: string): string => {
+	if (rawName === 'promote') return PROMOTE_PANEL.uiLabel;
+	const panel = (
+		panelByRawName as unknown as (t: string, r: string) => { uiLabel?: string } | null
+	)(type, rawName);
+	return panel?.uiLabel ?? rawName;
+};
+
+/** The part of a field id after its section key, as Karl's form names it. */
+function subLabel(rest: string): string {
+	const step = rest.match(/^steps\.(\d+)\.(.+)$/);
+	if (step) {
+		const n = Number(step[1]) + 1;
+		const field = step[2];
+		if (field === 'title') return `Section ${n} · Section title`;
+		if (/^(text|bullets)\.\d+$/.test(field)) return `Section ${n} · Text`;
+		if (field === 'button') return `Section ${n} · Button link`;
+		if (field === 'buttonUrl') return `Section ${n} · Button link (URL)`;
+		if (field.startsWith('callout.')) return `Section ${n} · Callout`;
+		return `Section ${n}`;
+	}
+	if (rest === 'heading') return 'Title';
+	if (/^(paragraphs|bullets)\.\d+$/.test(rest)) return 'Text';
+	const card = rest.match(/^cards\.(\d+)\./);
+	if (card) return `Item ${Number(card[1]) + 1}`;
+	if (rest.startsWith('callout.')) return 'Callout';
+	return '';
+}
+
+const HAS_PLACEHOLDER = /PLACEHOLDER/;
+const RELATED_HEADING = /^\s*related\b/i;
+const RELATED_PANELS = new Set(['related', 'related_links']);
+
+/**
+ * The placements for one page.
+ *
+ * @param pages the corpus KEYED BY PAGE KEY (`pagesByKey`), which the
+ *   transcript needs to resolve link targets -- not the `allPages` array.
+ */
+export function placementsFor(
+	page: Page,
+	record: ReviewRecord | null,
+	pages: object
+): PagePlacements {
+	const transcript = transcriptOf(page, record, pages);
+	const type = String(page.type ?? '');
+	const schema = schemaFor(type);
+	const sections: Section[] = Array.isArray(page.sections) ? page.sections : [];
+	const keyOf = (index: number) => deriveFieldKey(sections[index] ?? {}, index);
+	const idOf = (path: string) =>
+		path.replace(/^sections\.(\d+)/, (_, i: string) => `sections.${keyOf(Number(i))}`);
+
+	// Copy as rendered: base corpus plus accepted edits.
+	const copy: Record<string, string> = { ...extractCopy(page) };
+	for (const [id, value] of Object.entries(record?.section_edits ?? {})) copy[id] = value;
+	if (record?.edited_title) copy.title = record.edited_title;
+	if (record?.edited_summary) copy.summary = record.edited_summary;
+
+	const claims = Object.entries(transcript.claims ?? {}).map(([path, raw]) => [idOf(path), raw]);
+	const unmapped = (transcript.unmapped ?? []).map((u) => ({ ...u, id: idOf(u.path) }));
+	const longest = <T extends { id: string }>(id: string, list: T[]): T | undefined =>
+		list
+			.filter((item) => id === item.id || id.startsWith(`${item.id}.`))
+			.sort((a, b) => b.id.length - a.id.length)[0];
+
+	// Sections a panel took through an INFERRED mapping: the transcript tells the
+	// editor to verify those, so the outline cannot call them settled.
+	const inferredSections = new Set(
+		transcript.entries
+			.filter((e) => e.inferred && typeof e.sectionIndex === 'number')
+			.map((e) => keyOf(e.sectionIndex as number))
+	);
+
+	// Instance numbers: the second Custom Section on a page is "Custom Section 2".
+	const instances = new Map<string, string[]>();
+	for (const [id, raw] of claims) {
+		const key = id.match(/^sections\.([^.]+)\./)?.[1];
+		if (!key) continue;
+		const seen = instances.get(raw) ?? [];
+		if (!seen.includes(key)) seen.push(key);
+		instances.set(raw, seen);
+	}
+	const instanceLabel = (raw: string, key: string) => {
+		const seen = instances.get(raw) ?? [];
+		return raw !== 'what_to_do' && seen.length > 1
+			? `${panelLabel(type, raw)} ${seen.indexOf(key) + 1}`
+			: panelLabel(type, raw);
+	};
+
+	const rulesOf = (raw: string): readonly FieldRule[] =>
+		schema?.panels.find((p) => p.rawName === raw)?.rules ?? [];
+	const lengthReason = (rule: FieldRule & { kind: 'maxChars' }, text: string, what: string) => {
+		const over = rule.strict ? text.length >= rule.max : text.length > rule.max;
+		if (!over) return null;
+		const limit = rule.strict ? `under ${rule.max}` : `${rule.max} or fewer`;
+		return `${what} is ${text.length} characters; Karl wants ${limit}.`;
+	};
+
+	const thingsToKnow = (() => {
+		const list = page.whatToKnow?.thingsToKnow;
+		return Array.isArray(list) ? list.length : 0;
+	})();
+
+	// Section-level judgements, which every field in the section inherits.
+	const sectionPlacements = new Map<string, SectionPlacement>();
+	sections.forEach((section, index) => {
+		const key = keyOf(index);
+		const prefix = `sections.${key}`;
+		const heading = typeof section.heading === 'string' ? section.heading : '';
+		const ids = Object.keys(copy).filter((id) => id.startsWith(`${prefix}.`));
+		const claimant =
+			claims.find(([id]) => id === prefix || id.startsWith(`${prefix}.`))?.[1] ?? null;
+		const reasons: string[] = [];
+		let status: PlacementStatus = 'placed';
+
+		const sectionUnmapped = unmapped.filter(
+			(u) => u.id === prefix || u.id.startsWith(`${prefix}.`)
+		);
+		const unplacedIds = ids.filter((id) => longest(id, sectionUnmapped));
+		if (!claimant || (ids.length > 0 && unplacedIds.length === ids.length)) {
+			status = 'unplaced';
+			reasons.push(
+				sectionUnmapped[0]?.reason ?? 'No Karl panel on this page type takes this section.'
+			);
+		} else {
+			if (inferredSections.has(key)) {
+				status = worstOf([status, 'unconfirmed']);
+				reasons.push(
+					'Karl’s field map does not document this mapping; the editor should check it before saving.'
+				);
+			}
+			if (RELATED_HEADING.test(heading) && !RELATED_PANELS.has(claimant)) {
+				status = worstOf([status, 'needs-fix']);
+				reasons.push(
+					`This page type has no Related panel, so these links go into ${panelLabel(type, claimant)} instead.`
+				);
+			}
+			for (const rule of rulesOf(claimant)) {
+				if (
+					rule.kind === 'fixedHeading' &&
+					heading.trim().toLowerCase() !== rule.heading.toLowerCase()
+				) {
+					status = worstOf([status, 'needs-fix']);
+					reasons.push(
+						`Karl always shows the heading “${rule.heading}” here, so “${heading}” will not appear.`
+					);
+				}
+			}
+		}
+
+		sectionPlacements.set(key, {
+			sectionKey: key,
+			heading,
+			rawName: status === 'unplaced' ? null : claimant,
+			label: claimant && status !== 'unplaced' ? instanceLabel(claimant, key) : '',
+			status,
+			reasons
+		});
+	});
+
+	const fields = new Map<string, Placement>();
+	// One finding, one chip: four audience lines share a single `audience` gap,
+	// so only the first carries its reason (decision 8).
+	const reportedGaps = new Set<string>();
+	for (const id of Object.keys(copy)) {
+		const claim = longest(
+			id,
+			claims.map(([cid, raw]) => ({ id: cid, raw }))
+		);
+		const gap = longest(id, unmapped);
+		const sectionKey = id.match(/^sections\.([^.]+)\./)?.[1];
+		const section = sectionKey ? sectionPlacements.get(sectionKey) : undefined;
+		const text = copy[id] ?? '';
+		const reasons: string[] = [];
+
+		// A heading the sweep folded into its section's finding has no claim and
+		// no gap of its own; it shares the section's fate.
+		const unplaced =
+			(gap && (!claim || gap.id.length >= claim.id.length)) ||
+			(!claim && section?.status === 'unplaced');
+		if (unplaced) {
+			if (gap && section?.status !== 'unplaced' && !reportedGaps.has(gap.id)) {
+				reportedGaps.add(gap.id);
+				reasons.push(gap.reason);
+			}
+			fields.set(id, { fieldId: id, rawName: null, label: '', status: 'unplaced', reasons });
+			continue;
+		}
+		if (!claim) continue; // not migrated by design: nothing to say
+
+		const raw = claim.raw;
+		let label = panelLabel(type, raw);
+		if (sectionKey) {
+			const rest = id.slice(`sections.${sectionKey}.`.length);
+			const sub = raw === 'what_to_do' && rest === 'heading' ? 'Heading' : subLabel(rest);
+			label = [instanceLabel(raw, sectionKey), sub].filter(Boolean).join(' · ');
+		} else {
+			const ttk = id.match(/^whatToKnow\.thingsToKnow\.(\d+)\.(label|text)$/);
+			if (ttk)
+				label = `${label} · Block ${Number(ttk[1]) + 1} · ${ttk[2] === 'label' ? 'Title' : 'Text'}`;
+		}
+
+		let own: PlacementStatus = 'placed';
+		const fail = (reason: string | null) => {
+			if (!reason) return;
+			own = 'needs-fix';
+			reasons.push(reason);
+		};
+
+		if (HAS_PLACEHOLDER.test(text)) fail('Still holds PLACEHOLDER text.');
+		for (const rule of rulesOf(raw)) {
+			if (rule.kind !== 'maxChars' || rule.sub) continue;
+			if (id === 'title' || id === 'summary')
+				fail(lengthReason(rule, text, raw === 'title' ? 'Title' : 'Description'));
+		}
+		if (raw === 'cost' && id === 'whatToKnow.cost') {
+			for (const rule of rulesOf('cost'))
+				if (rule.kind === 'maxChars') fail(lengthReason(rule, text, rule.sub ?? 'Cost'));
+		}
+		if (raw === 'things_to_know' && id.startsWith('whatToKnow.thingsToKnow.')) {
+			for (const rule of rulesOf('things_to_know'))
+				if (rule.kind === 'maxItems' && thingsToKnow > rule.max)
+					fail(
+						`The page has ${thingsToKnow} Things to know; Karl recommends no more than ${rule.max}.`
+					);
+		}
+		if (raw === 'what_to_do' && /\.steps\.\d+\.button$/.test(id)) {
+			for (const rule of rulesOf('section_specifics'))
+				if (rule.kind === 'maxChars' && rule.sub === 'Button link')
+					fail(lengthReason(rule, text, 'Button text'));
+		}
+		if (raw === 'supporting_information' && id.endsWith('.heading')) {
+			for (const rule of rulesOf('supporting_information'))
+				if (rule.kind === 'maxChars' && rule.sub === 'Title')
+					fail(lengthReason(rule, text, 'Accordion title'));
+		}
+
+		fields.set(id, {
+			fieldId: id,
+			rawName: raw,
+			label,
+			status: worstOf([own, section?.status ?? 'placed']),
+			reasons
+		});
+	}
+
+	// The tray: one item per transcript finding, which already groups a whole
+	// unplaced section (or the whole audience list) into one.
+	const findings: UnplacedItem[] = unmapped.map((u) => {
+		const key = u.id.match(/^sections\.([^.]+)/)?.[1];
+		const heading = key ? sectionPlacements.get(key)?.heading : undefined;
+		const fieldIds = [...fields.keys()].filter(
+			(id) => (id === u.id || id.startsWith(`${u.id}.`)) && fields.get(id)?.status === 'unplaced'
+		);
+		const subject =
+			u.id === 'audience'
+				? 'The “Who this is for” list'
+				: u.id === 'primaryAgency'
+					? 'Primary agency'
+					: heading
+						? `“${heading}”${/\.button(Url)?$/.test(u.id) ? ' — its button' : ''}`
+						: u.id;
+		return { subject, reason: u.reason, fieldIds };
+	});
+	// A button and its URL are two transcript findings about one thing a reader
+	// sees; merge items naming the same subject.
+	const unplacedItems: UnplacedItem[] = [];
+	for (const item of findings) {
+		const same = unplacedItems.find((i) => i.subject === item.subject && i.reason === item.reason);
+		if (same) same.fieldIds.push(...item.fieldIds.filter((id) => !same.fieldIds.includes(id)));
+		else unplacedItems.push(item);
+	}
+	// A section's folded heading is covered by its section's finding; make sure
+	// jumping to it lands on the section, not on nothing.
+	for (const item of unplacedItems) {
+		const key = item.fieldIds[0]?.match(/^sections\.([^.]+)\./)?.[1];
+		const headingId = key ? `sections.${key}.heading` : '';
+		if (
+			headingId &&
+			fields.get(headingId)?.status === 'unplaced' &&
+			!item.fieldIds.includes(headingId)
+		)
+			item.fieldIds.unshift(headingId);
+	}
+
+	const inventory = schema
+		? schema.panels
+		: (transcript.entries.map((e) => ({
+				rawName: e.rawName,
+				label: e.uiLabel,
+				required: false,
+				inert: false,
+				subPanelOf: undefined
+			})) as {
+				rawName: string;
+				label: string;
+				required: boolean;
+				inert: boolean;
+				subPanelOf?: string;
+			}[]);
+	const seenPanels = new Set<string>();
+	const panels: PanelFill[] = [];
+	for (const panel of inventory) {
+		if (panel.subPanelOf || seenPanels.has(panel.rawName)) continue;
+		seenPanels.add(panel.rawName);
+		const entries = transcript.entries.filter((e) => e.rawName === panel.rawName);
+		const values = entries.flatMap((e) => [
+			...e.fields,
+			...e.choices.map((c) => ({ label: 'Choose page', value: c.label }))
+		]);
+		const fieldIds = [...fields.values()]
+			.filter((f) => f.rawName === panel.rawName)
+			.map((f) => f.fieldId);
+		panels.push({
+			rawName: panel.rawName,
+			label: panel.label,
+			required: panel.required,
+			inert: panel.inert,
+			filled: values.length > 0,
+			values,
+			fieldIds,
+			status: worstOf(fieldIds.map((id) => fields.get(id)!.status))
+		});
+	}
+
+	return {
+		type,
+		fields,
+		sections: sectionPlacements,
+		unplaced: unplacedItems,
+		panels,
+		url: schema
+			? {
+					pattern: schema.url.pattern,
+					status: schema.url.status === 'confirmed' ? 'placed' : 'unconfirmed',
+					says: schema.url.cite.says
+				}
+			: null
+	};
+}
