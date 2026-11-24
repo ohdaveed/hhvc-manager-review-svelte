@@ -10,6 +10,10 @@
 > verification logs, `docs/source/hhvc-policy/**`, and everything under `build_scripts/`.
 > They are cited as the record of where a finding came from, not as files to open here.
 > Do not "fix" them into paths under `src/` — there is nothing at the other end.
+> **Two exceptions, copied in 2026-11-23** so a fresh clone has them:
+> `docs/wagtail-content-mapping.md` and
+> `docs/source/hhvc-policy/karl-content-type-field-reference.md` now exist here, unchanged from
+> the tool package. The rest of the list above still does not.
 >
 > Keep the two copies in step. A correction applied to one belongs in the other.
 
