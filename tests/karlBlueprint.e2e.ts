@@ -60,10 +60,30 @@ const PILOTS = [
 		],
 		empty: ['Data dashboard (empty)', 'Custom section (empty)'],
 		tray: 1
+	},
+	{
+		slug: 'step-by-step-report-a-pest-problem',
+		first: ['title', 'primary_agency', 'description', 'intro', 'steps'],
+		empty: ['Primary agency (empty)', 'Topics (empty)'],
+		tray: 2
 	}
 ] as const;
 
 test.describe('Blueprint', () => {
+	test('Step by step: steps are Step blocks, with Karl’s advice and the Topics caveat', async ({
+		page
+	}) => {
+		await gotoSignedIn(page, '/review/step-by-step-report-a-pest-problem');
+		await openBlueprint(page);
+		const steps = page.locator('[data-karl-panel="steps"]');
+		await expect(steps).toContainText('Step 1 — Title');
+		await expect(steps).not.toContainText('Section specifics');
+		await expect(steps).toContainText('Karl suggests aiming for no more than 5');
+		await expect(page.locator('[data-karl-panel="topics"]')).toContainText(
+			'Karl’s rule unconfirmed'
+		);
+	});
+
 	for (const pilot of PILOTS) {
 		test(`${pilot.slug}: Karl order, empty panels, tray, AA at 1280 and 375`, async ({ page }) => {
 			await page.setViewportSize({ width: 1280, height: 900 });

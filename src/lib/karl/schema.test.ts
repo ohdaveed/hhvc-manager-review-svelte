@@ -65,3 +65,29 @@ describe('Karl schema', () => {
 		expect(schemaFor(undefined)).toBeNull();
 	});
 });
+
+describe('Step by step schema', () => {
+	const sbs = schemaFor('Step by step')!;
+	const rules = (raw: string) => sbs.panels.find((p) => p.rawName === raw)!.rules;
+
+	it('caps steps at 15, advises 5, requires a title, and allows one Transaction link each', () => {
+		expect(rules('steps')).toEqual([
+			expect.objectContaining({ kind: 'maxItems', max: 15, status: 'confirmed' }),
+			expect.objectContaining({ kind: 'targetItems', target: 5 }),
+			expect.objectContaining({ kind: 'required', sub: 'Title' }),
+			expect.objectContaining({ kind: 'maxItems', max: 1, per: 'step', status: 'confirmed' })
+		]);
+	});
+
+	it('marks the Topics behaviour and the URL unconfirmed: Karl contradicts itself on both', () => {
+		expect(rules('topics')).toEqual([
+			expect.objectContaining({ kind: 'caveat', status: 'unconfirmed' })
+		]);
+		expect(sbs.url.status).toBe('unconfirmed');
+	});
+
+	it('has no Related panel', () => {
+		expect(sbs.relatedTargets).toBeNull();
+		expect(sbs.panels.map((p) => p.rawName)).not.toContain('related');
+	});
+});

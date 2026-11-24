@@ -23,6 +23,7 @@
 import { KARL_FLAGS, panelsFor } from '$lib/legacy-core/karl-blocks.js';
 import { COMPONENT_SUPPORT } from './componentSupport';
 import { RELATED_PERMITTED_TYPES } from './sitemap';
+import { CONTENT_TYPE_RULES, STEP_LIMIT, STEP_TARGET } from './contentTypeRules';
 
 const HC = 'https://sfdigitalservices.gitbook.io/karl-sf.gov-editor-help-center/using-karl-the-cms';
 const TYPES = `${HC}/content-types/building-a-page-by-content-type`;
@@ -48,8 +49,25 @@ export type FieldRule =
 			status: RuleStatus;
 			cite: Cite;
 	  }
-	| { kind: 'maxItems'; max: number; status: RuleStatus; cite: Cite }
-	| { kind: 'fixedHeading'; heading: string; status: RuleStatus; cite: Cite };
+	| {
+			kind: 'maxItems';
+			max: number;
+			/** Counted per step rather than per page, e.g. one Transaction link per step. */
+			per?: 'step';
+			status: RuleStatus;
+			cite: Cite;
+	  }
+	/** Karl's own guidance below its hard limit: reported, but it does not make copy need a fix. */
+	| { kind: 'targetItems'; target: number; status: RuleStatus; cite: Cite }
+	/** A sub-field Karl marks required, e.g. each step's Title. */
+	| { kind: 'required'; sub: string; status: RuleStatus; cite: Cite }
+	| { kind: 'fixedHeading'; heading: string; status: RuleStatus; cite: Cite }
+	/**
+	 * Something Karl says about how the panel BEHAVES, rather than a limit on the
+	 * copy in it. Only ever `unconfirmed` so far: it exists for the claims Karl's
+	 * pages contradict each other on, which the Blueprint shows beside the slot.
+	 */
+	| { kind: 'caveat'; status: RuleStatus; cite: Cite };
 
 export type KarlPanelSchema = {
 	rawName: string;
@@ -77,7 +95,12 @@ export type ContentTypeSchema = {
 	panels: readonly KarlPanelSchema[];
 };
 
-export const SCHEMA_TYPES = ['Transaction', 'Information', 'Resource Collection'] as const;
+export const SCHEMA_TYPES = [
+	'Transaction',
+	'Information',
+	'Resource Collection',
+	'Step by step'
+] as const;
 export type SchemaType = (typeof SCHEMA_TYPES)[number];
 
 const TITLE: FieldRule = {
@@ -233,6 +256,67 @@ const RULES: Record<SchemaType, TypeRules> = {
 		// No `related` panel in the live form's inventory.
 		relatedTargets: null,
 		rules: { title: [TITLE], description: [DESCRIPTION] }
+	},
+	'Step by step': {
+		// The URLs page gives `sf.gov/[slug]`; the Step by step page gives
+		// `sf.gov/step-by-step/title-of-step-by-step`.
+		url: {
+			pattern: 'sf.gov/[slug] or sf.gov/step-by-step/[slug]',
+			status: 'unconfirmed',
+			cite: {
+				helpTitle: 'URLs; Step by step',
+				url: `${HC}/components/urls`,
+				says: 'URLs page: "Step by step - sf.gov/[slug]". Step by step page: "URL sf.gov/step-by-step/title-of-step-by-step".'
+			}
+		},
+		// No `related` panel in the live form's inventory.
+		relatedTargets: null,
+		rules: {
+			title: [TITLE],
+			description: [DESCRIPTION],
+			steps: [
+				{
+					kind: 'maxItems',
+					max: STEP_LIMIT,
+					status: 'confirmed',
+					cite: { ...CONTENT_TYPE_RULES.stepCount }
+				},
+				{
+					kind: 'targetItems',
+					target: STEP_TARGET,
+					status: 'confirmed',
+					cite: { ...CONTENT_TYPE_RULES.stepCount }
+				},
+				{
+					kind: 'required',
+					sub: 'Title',
+					status: 'confirmed',
+					cite: { ...CONTENT_TYPE_RULES.stepTitle }
+				},
+				{
+					kind: 'maxItems',
+					max: 1,
+					per: 'step',
+					status: 'confirmed',
+					cite: {
+						helpTitle: 'How a Step by step page works',
+						url: `${TYPES}/step-by-step/how-a-step-by-step-page-works`,
+						says: 'Each step can link to one or no transaction on SF.gov.'
+					}
+				}
+			],
+			topics: [
+				{
+					kind: 'caveat',
+					status: 'unconfirmed',
+					cite: {
+						helpTitle: 'How a Step by step page works; Topic; Topics',
+						url: `${TYPES}/step-by-step/how-a-step-by-step-page-works`,
+						says: 'Step by step page: "You can add a topic, but the step by step will not automatically show on the topic page." Topic page: "Transaction and step by step pages tagged to the topic will automatically appear under the heading More services."'
+					}
+				}
+			]
+		}
 	}
 };
 

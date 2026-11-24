@@ -261,3 +261,47 @@ describe('Blueprint slot reasons', () => {
 		expect(of('recordsHub').panels.find((x) => x.rawName === 'title')?.reasons).toEqual([]);
 	});
 });
+
+describe('Step by step', () => {
+	const p = of('stepPestReport');
+
+	it('labels steps in Step by step’s own fields', () => {
+		expect(p.fields.get('sections.what-to-do.steps.1.title')?.label).toBe('Steps · Step 2 · Title');
+		expect(p.fields.get('sections.what-to-do.steps.0.text.0')?.label).toBe(
+			'Steps · Step 1 · Step description'
+		);
+	});
+
+	it('notes six steps against Karl’s aim of five, without calling it a fix', () => {
+		const s = p.sections.get('what-to-do');
+		expect(s?.status).toBe('placed');
+		expect(s?.reasons).toEqual(['This page has 6 steps; Karl suggests aiming for no more than 5.']);
+	});
+
+	it('reports a step with no title as needing a fix', () => {
+		const id = 'sections.what-to-do.steps.2.title';
+		const q = of('stepPestReport', record({ section_edits: { [id]: '  ' } }));
+		expect(q.sections.get('what-to-do')?.status).toBe('needs-fix');
+		expect(q.sections.get('what-to-do')?.reasons).toContain(
+			'Step 3 has no title; Karl requires one on every step.'
+		);
+	});
+
+	it('reports Related pages as unplaced: Step by step has no Related panel', () => {
+		for (const key of ['stepPestReport', 'stepCorrectViolation', 'stepPrepUnit'])
+			expect(of(key).sections.get('related-pages')?.status, key).toBe('unplaced');
+	});
+
+	it('shows the Topics caveat on the Blueprint slot, and an unconfirmed URL', () => {
+		expect(p.panels.find((x) => x.rawName === 'topics')?.caveats).toEqual([
+			'Karl’s own pages disagree on whether this page then shows up on that Topic page automatically.'
+		]);
+		expect(p.url?.status).toBe('unconfirmed');
+	});
+
+	it('summarises the page', () => {
+		expect(outlineSummary(p)).toBe(
+			'2 sections: 1 goes into Karl, 1 unconfirmed. 2 things won’t carry over to Karl.'
+		);
+	});
+});
