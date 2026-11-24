@@ -25,7 +25,7 @@ Karl, read 2026-11-24:
 
 - [x] **1. Step labels in the transcript.** On Step by step, steps read `Step N — Title` and
       `Step N — Step description`. The snapshot diff is exactly the three Step by step pages.
-- [ ] **2. Schema.** Step by step in `schema.ts`: Title, Description, steps ≤15 (confirmed), aim for
+- [x] **2. Schema.** Step by step in `schema.ts`: Title, Description, steps ≤15 (confirmed), aim for
       5 (advisory, no status change), step Title required, one Transaction link per step
       (confirmed), and the Topics caveat and URL marked unconfirmed. Every rule is cited.
 - [ ] **3. Placement.** Step-count and step-title checks; Step by step sub-labels (`Step 2 ·
