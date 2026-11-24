@@ -8,7 +8,7 @@ Pilot pages: `report-rats-mice-four-legged-problems` (Transaction),
 `information-what-happens-after-you-report-housing-pest-problem` (Information) and
 `look-up-building-records` (Resource Collection).
 
-- [ ] **1. Claims in the transcript.** `buildTranscript` records which panel claimed each path
+- [x] **1. Claims in the transcript.** `buildTranscript` records which panel claimed each path
       (`transcript.claims`). `renderTranscriptMarkdown` output must be byte-identical for all 39
       pages, checked against a snapshot taken before the change.
 - [ ] **2. Primary agency source.** `primary_agency` reads `primaryAgency` as a CHOOSE on every type

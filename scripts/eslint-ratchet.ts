@@ -22,8 +22,9 @@
  */
 import { spawnSync } from 'node:child_process';
 
-/** Measured on 2026-08-28 at the commit that added this script. */
-const BASELINE = 4;
+/** Measured on 2026-08-28 at the commit that added this script; lowered to 3
+ *  on 2026-11-23 when `karl-transcript.js`'s `@ts-nocheck` was waived inline. */
+const BASELINE = 3;
 
 type EslintFileResult = { filePath: string; errorCount: number };
 

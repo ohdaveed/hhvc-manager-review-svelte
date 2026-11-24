@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- untyped legacy port; waived so the staged-file hook can commit edits here (ratchet 4 -> 3)
 // @ts-nocheck
 /* The Karl transcript builder: turning one reviewed mockup page into a
    field-by-field instruction an editor follows in Karl's own form order.
@@ -299,6 +300,29 @@ function unmappedShape(type, section, field) {
 }
 
 /**
+ * Mark a page path as consumed, and record which panel consumed it.
+ *
+ * `consumed` answers "did ANY panel take this?", which is all the unmapped
+ * sweep needs. `claims` answers "WHICH panel took it?", which is what the Karl
+ * outline needs to label a rendered element with its placement. Both are
+ * written here and only here, so the two cannot disagree about a path.
+ *
+ * The FIRST claimant wins. A path claimed by two panels is already a double
+ * emission and a defect of its own; recording the first keeps the claim stable
+ * rather than letting a later panel overwrite it.
+ *
+ * Note a claim is about the PATH, not its value: `emitPathPanel` claims every
+ * candidate path, including ones that resolve empty. Whether a panel is filled
+ * is a property of its transcript entry, not of its claims.
+ * @param {object} context
+ * @param {string} path
+ */
+function claim(context, path) {
+	context.consumed.add(path);
+	if (context.panel && !context.claims.has(path)) context.claims.set(path, context.panel);
+}
+
+/**
  * Build the transcript for one page.
  *
  * @param {object} page a page object from pages/*.js
@@ -329,6 +353,7 @@ function buildTranscript(page, reviewRecord, pages) {
 		approved: Boolean(reviewRecord && APPROVED_DECISIONS.has(reviewRecord.decision)),
 		entries: [],
 		consumed: [],
+		claims: {},
 		unmapped: [],
 		flags: []
 	};
@@ -355,7 +380,19 @@ function buildTranscript(page, reviewRecord, pages) {
 	// exists to prevent.
 	const classes = sections.map((section) => (section.cards ? classifySection(section) : null));
 	const consumed = new Set();
-	const context = { page, reviewRecord, pages, sections, classes, consumed, transcript, type };
+	const claims = new Map();
+	const context = {
+		page,
+		reviewRecord,
+		pages,
+		sections,
+		classes,
+		consumed,
+		claims,
+		panel: null,
+		transcript,
+		type
+	};
 
 	for (const panel of panels) {
 		// Sub-panels (Transaction's Section title and Section specifics) are fields
@@ -364,13 +401,21 @@ function buildTranscript(page, reviewRecord, pages) {
 		// only exists inside a block they have already filled.
 		if (panel.subPanelOf) continue;
 		const sources = Array.isArray(panel.source) ? panel.source : [panel.source];
+		context.panel = panel.rawName;
 		emitPanelSources(context, panel, sources);
 	}
 
+	context.panel = 'promote';
 	emitPromoteTab(context);
+	// The sweep reads `consumed`; it claims nothing, and must not inherit the
+	// last panel's name if it ever does.
+	context.panel = null;
 	sweepUnconsumed(context);
 
 	transcript.consumed = [...consumed].sort();
+	transcript.claims = Object.fromEntries(
+		[...claims].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
+	);
 	return transcript;
 }
 
@@ -473,7 +518,7 @@ function emitPathPanel(context, panel, source) {
 		}
 		if (!resolved) resolved = candidate;
 	}
-	paths.forEach((path) => context.consumed.add(path));
+	paths.forEach((path) => claim(context, path));
 
 	const value = resolved ? resolved.value : undefined;
 	if (value === undefined || value === null || value === '') return emitEmptyPanel(context, panel);
@@ -592,7 +637,7 @@ function emitSpotlightValue(context, entry, spotlight, basePath) {
 			`${context.type} shows up to ${cap} Spotlight${cap === 1 ? '' : 's'}. That is a rendering and editorial cap, not one the form enforces.`
 		);
 	}
-	context.consumed.add(basePath);
+	claim(context, basePath);
 	if (entry.fields.length) context.transcript.entries.push(entry);
 }
 
@@ -628,7 +673,7 @@ function noteButtonLength(entry, label) {
 function emitSectionField(context, panel, source, section, index) {
 	const path = `sections.${index}.${source.field}`;
 	const { value, overlaid } = resolveValue(context.page, context.reviewRecord, path);
-	context.consumed.add(path);
+	claim(context, path);
 	if (!value) return emitEmptyPanel(context, panel);
 	const entry = newEntry(panel, 'TYPE');
 	entry.overlaid = overlaid;
@@ -664,7 +709,7 @@ function emitSection(context, panel, source, section, index) {
 
 	const headingPath = `sections.${index}.heading`;
 	const heading = resolveValue(context.page, context.reviewRecord, headingPath);
-	context.consumed.add(headingPath);
+	claim(context, headingPath);
 
 	if (section.steps) {
 		// The section's own heading is NOT typed anywhere: Karl's What to Do panel
@@ -691,7 +736,7 @@ function emitSection(context, panel, source, section, index) {
 			entry.fields.push({ label: `Fact ${factIndex + 1} — title`, value: fact.label });
 			entry.fields.push({ label: `Fact ${factIndex + 1} — text`, value: fact.text });
 		});
-		context.consumed.add(`sections.${index}.facts`);
+		claim(context, `sections.${index}.facts`);
 		entry.notes.push(
 			'Fact items carry no reviewer overlay — this tool records no edit for them, so these are the authored values rather than reviewed ones.'
 		);
@@ -730,7 +775,7 @@ function emitSection(context, panel, source, section, index) {
 				representation: linkRepresentation(card.target || card.url || '#', context.pages)
 			});
 		}
-		context.consumed.add(`sections.${index}.cards`);
+		claim(context, `sections.${index}.cards`);
 		entry.notes.push(
 			'Report has no page-card block (U15) — each of these becomes a hyperlink inside the Body rich text, and the card’s own description is dropped.'
 		);
@@ -747,7 +792,7 @@ function emitSection(context, panel, source, section, index) {
 			path: `sections.${index}.cards`,
 			reason: `The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "${(section.karl || '').slice(0, 160)}". Resolve it before typing anything from them.`
 		});
-		context.consumed.add(`sections.${index}.cards`);
+		claim(context, `sections.${index}.cards`);
 	}
 
 	if (scope !== 'cards')
@@ -758,7 +803,7 @@ function emitSection(context, panel, source, section, index) {
 			if (card.text)
 				entry.fields.push({ label: `Entry ${cardIndex + 1} — Text`, value: card.text });
 		});
-		context.consumed.add(`sections.${index}.cards`);
+		claim(context, `sections.${index}.cards`);
 	}
 	if (entry.fields.length || entry.links.length) context.transcript.entries.push(entry);
 }
@@ -779,7 +824,7 @@ function emitSectionSpotlight(context, entry, section, index, heading) {
 		`sections.${index}`
 	);
 	for (const field of ['paragraphs', 'image', 'button', 'buttonUrl']) {
-		if (section[field]) context.consumed.add(`sections.${index}.${field}`);
+		if (section[field]) claim(context, `sections.${index}.${field}`);
 	}
 	if (section.callout) emitCallout(context, entry, section.callout, `sections.${index}.callout`);
 }
@@ -810,8 +855,8 @@ function emitSectionProse(context, entry, section, index, options) {
 		entry.fields.push({ label: 'Text', value: text });
 		entry.overlaid = entry.overlaid || paragraphs.overlaid || bullets.overlaid;
 		collectLinks(context, entry, text);
-		context.consumed.add(paragraphsPath);
-		context.consumed.add(bulletsPath);
+		claim(context, paragraphsPath);
+		claim(context, bulletsPath);
 	}
 
 	if (section.table) {
@@ -822,7 +867,7 @@ function emitSectionProse(context, entry, section, index, options) {
 			entry.notes.push(
 				'Table block: choose the header option first, then add a column per heading. Use 2 or 3 columns — more forces horizontal scrolling on a phone — and note that text inside a table is NOT machine translated while the rest of sf.gov is.'
 			);
-			context.consumed.add(tablePath);
+			claim(context, tablePath);
 		}
 		// On any other type the table is left unconsumed and reported by the sweep:
 		// Report is the only Karl content type with a Table block, so there is
@@ -857,7 +902,7 @@ function emitCallout(context, entry, callout, basePath) {
 			});
 		}
 		collectLinks(context, entry, String(text.value));
-		context.consumed.add(textPath);
+		claim(context, textPath);
 	}
 	const titlePath = `${basePath}.title`;
 	const title = resolveValue(context.page, context.reviewRecord, titlePath);
@@ -869,7 +914,7 @@ function emitCallout(context, entry, callout, basePath) {
 			path: titlePath,
 			reason: `Callout title "${title.value}" has no Karl field — every Karl Callout is a single rich text field with no title (U2). Fold it into the rich text as a bolded lead-in, or get a field added.`
 		});
-		context.consumed.add(titlePath);
+		claim(context, titlePath);
 	}
 }
 
@@ -910,7 +955,7 @@ function emitCardChoices(context, entry, section, index, cardClass) {
 			});
 		}
 	});
-	context.consumed.add(`sections.${index}.cards`);
+	claim(context, `sections.${index}.cards`);
 }
 
 /** A section's steps, as Karl what_to_do Section blocks. */
@@ -922,7 +967,7 @@ function emitSteps(context, entry, section, index) {
 			label: `Section ${stepIndex + 1} — Section title`,
 			value: String(title.value || '')
 		});
-		context.consumed.add(`${base}.title`);
+		claim(context, `${base}.title`);
 
 		const text = resolveValue(context.page, context.reviewRecord, `${base}.text`);
 		const bullets = resolveValue(context.page, context.reviewRecord, `${base}.bullets`);
@@ -935,8 +980,8 @@ function emitSteps(context, entry, section, index) {
 			collectLinks(context, entry, folded);
 			entry.overlaid = entry.overlaid || text.overlaid || bullets.overlaid;
 		}
-		context.consumed.add(`${base}.text`);
-		context.consumed.add(`${base}.bullets`);
+		claim(context, `${base}.text`);
+		claim(context, `${base}.bullets`);
 
 		if (step.button) {
 			entry.fields.push({
@@ -948,13 +993,13 @@ function emitSteps(context, entry, section, index) {
 				value: buttonDestination(context, step)
 			});
 			noteButtonLength(entry, step.button);
-			context.consumed.add(`${base}.button`);
-			context.consumed.add(`${base}.buttonUrl`);
+			claim(context, `${base}.button`);
+			claim(context, `${base}.buttonUrl`);
 		}
 
 		if (step.callout) emitCallout(context, entry, step.callout, `${base}.callout`);
 	});
-	context.consumed.add(`sections.${index}.steps`);
+	claim(context, `sections.${index}.steps`);
 	entry.notes.push(
 		'A step with text, a button and a callout becomes ONE Section block whose Section specifics holds a Text, a Button link and a Callout as siblings — not fields on the step.'
 	);
@@ -973,7 +1018,7 @@ function emitPromoteTab(context) {
 	);
 	for (const field of PROMOTE_PANEL.fields) {
 		const { value } = resolveValue(context.page, context.reviewRecord, field.path);
-		context.consumed.add(field.path);
+		claim(context, field.path);
 		if (value)
 			entry.fields.push({ label: `${field.label} (\`${field.rawName}\`)`, value: String(value) });
 	}
