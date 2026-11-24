@@ -229,3 +229,68 @@ stub would weaken that signal.
 - **Task 8** — axe reports obscured or unresolvable contrast as `incomplete` rather
 - **Task 8** — the stub treats a MISSING `review_id` param as "return all rows",
 - **Task 8** — no mutation was run for dropping `updated_at` from the store's select,
+
+## Post-merge follow-ups (2026-11-24)
+
+Added the day after the merge, from a session that verified the live deploy and cleaned
+up the branches and worktrees this feature left behind. The list above is unchanged:
+nothing in it has been done, and the **Do first** item was re-measured as still open —
+`routePathFor` appears in three source files and in no test, and `currentPath` has no
+coverage under `tests/` at all.
+
+### Three gates this feature's review leaned on were themselves broken
+
+Worth recording here because the Process and verification section above treats these as
+the things that decide whether work is done.
+
+- **`verify:live`'s two proxy gates passed vacuously** (#181). They asserted only a 401
+  status, so anything fronting the site with a blanket 401 satisfied both without the
+  route's auth check running at all. Measured 2026-11-23 while Netlify team SSO visitor
+  access was on: every hostname answered 401, the three other live gates FAILed, and
+  these two printed PASS beside them — green next to red, where a reader is least likely
+  to doubt it. They now compare the body, because the route answers
+  `{"message":"Unauthorized"}` and the SSO gate answered a `text/html` login stub.
+- **The prettier count had no ratchet at all** (#183). `bun run lint` is
+  `prettier --check . && eslint .`; its prettier half is red tree-wide and the `&&`
+  short-circuits eslint away, so a PR could add newly unformatted files and nothing
+  reported it. Now asserted at 50 of 449 **tracked** files, counted over `git ls-files`
+  rather than `.` — `.superpowers/` and `.impeccable/` are untracked but not gitignored,
+  so a tree-wide count read 78 locally and moved with whichever skills had been run.
+- **The corpus render test's timeout was tighter than its own work** (#184).
+  `karlOrphanNotice.test.ts > the corpus > flags exactly the expected pages` mounts
+  `Page.svelte` once per corpus page — 39 now, 29 when it was written — against vitest's
+  default 5000ms. Six measured failures between 5.6s and 7.1s, every one passing on
+  retry, two of them on commits from this feature's own follow-up work.
+
+### New findings, most important first
+
+1. **Nobody has verified that a reviewer can sign in.** Structurally uncovered rather
+   than neglected: the only test touching invites is `tests/inviteForm.test.ts`, a unit
+   test of the form; e2e runs signed out against a production build by design; and CI has
+   no Supabase project, so no automated test can traverse a real magic link. On
+   2026-11-23 production sat behind a Netlify SSO wall returning 401 on every URL — no
+   reviewer could have reached the tool, magic links would have landed on a dead page,
+   and two `verify:live` gates still reported green. The path also has more moving parts
+   than it looks: invites moved from emailed `inviteUserByEmail` to hand-delivered
+   `generateLink`, the site rename invalidated the auth allow-lists once already, and a
+   production invite does not work on a preview. A person trying it is currently the only
+   check that exists.
+2. **A public deploy preview spends the production Gemini key.** `GEMINI_API_KEY` is
+   shared across every Netlify context, and visitor access is now off for all of them, so
+   preview URLs are reachable by anyone who has the link. The exposure is bounded — the
+   route 401s without a bearer token and the review tables are all `TO authenticated`, so
+   an anonymous visitor sees only the static corpus — but the bound is the route's auth
+   check, not the absence of a public surface.
+3. **A whole-page draft sits close to a hard cliff.** Drafting is this feature's marquee
+   capability and the slowest call in the app: ~46s measured on `gemini-3.8-flash`
+   against a 55s `GEMINI_DEADLINE_MS` budget and Netlify's non-configurable 60s function
+   kill. The validation retry only starts with ≥15s left, so a page draft rarely gets
+   one. Re-measure against the current model before anyone demos this.
+4. **Staging drifts from production on every merge.** The Supabase GitHub App applies
+   migrations to the production ref only, so `aplbsgacqnxhzjuquvft` stays wherever the
+   last manual `supabase db push` left it — while deploy previews read staging. This
+   feature's `draft_pages` was pushed to both and verified, but `public.documents` exists
+   on production, is absent from staging, and appears in no migration on either.
+   `verify:live` cannot see any of this: its gates pass identically whether a view the
+   frontend queries exists or not, because a failed hydration logs to the console and
+   leaves the app rendering.
