@@ -19,7 +19,7 @@ Production has 0 edits and 0 comments on any page (measured 2026-11-24). Re-coun
 ## Track B — Decided copy changes
 
 - [x] **B1.** Every page says "We never share your name or contact information." once, and the City Attorney line is gone.
-- [ ] **B2.** The garbage, rats and insects pages move their shared text to *What happens after you report* and *Tenant rights*, and put the 311 button last in What to do.
+- [x] **B2.** The garbage, rats and insects pages drop the review-time, contact, anonymous-visit, outcome and retaliation text (on *What happens after you report*, which each links) and the repeated "give your name" line. **Deferred:** moving the landlord notice and putting the 311 button last — the 72-hour wait is still open in the Decisions tab, and the 9-page regroup rewrites these steps anyway.
 
 ## Track C — Questions for manager review (not built here)
 

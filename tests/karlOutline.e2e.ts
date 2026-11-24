@@ -160,7 +160,7 @@ test.describe('Karl outline', () => {
 		await switchOnByKeyboard(page);
 		// The "View Article 11" button has no Karl home (U1).
 		const target = page.locator(
-			'button[data-rewrite-field="sections.how-your-report-is-processed.button"]'
+			'button[data-rewrite-field="sections.what-the-health-code-requires.button"]'
 		);
 		await expect(target).toHaveAccessibleDescription(/Won’t carry over to Karl/);
 		// The audience list is one finding, so one chip, not four.

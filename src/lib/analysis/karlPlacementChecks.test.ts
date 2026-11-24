@@ -27,7 +27,7 @@ describe('the Analysis panel reads the same placements as the Karl outline', () 
 		expect(f.status).toBe('issue');
 		expect(f.items.map((i) => i.text)).toEqual([
 			'The “Who this is for” list',
-			'“How your report is processed” — its button'
+			'“What the Health Code requires” — its button'
 		]);
 	});
 
@@ -48,7 +48,7 @@ describe('the Analysis panel reads the same placements as the Karl outline', () 
 		expect(f.status).toBe('unavailable');
 		expect(f.items.map((i) => i.text)).toEqual([
 			'Get help making your report',
-			'How your report is processed'
+			'What the Health Code requires'
 		]);
 		const location = byId('ehOffice', 'karl-unconfirmed');
 		expect(location.items[0]).toMatchObject({ text: 'This page' });

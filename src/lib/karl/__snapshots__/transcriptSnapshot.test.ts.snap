@@ -1141,7 +1141,6 @@ Get help making your report
 You can make a report even if you are not the tenant. A friend, family member, advocate, or helper can report for someone else.
 
 - You can ask 311 for help in your language.
-- You do not have to give your name to make a report.
 - You can ask 311 for a service request number so you can follow up later.
 
 **Callout (rich text, no title field):**
@@ -1156,15 +1155,10 @@ _Inferred mapping — the field map documents this panel only for supporting/fla
 
 **Title:**
 
-How your report is processed
+What the Health Code requires
 
 **Text:**
 
-- **Review time:** 311 sends your report to Environmental Health, which assigns an inspector. This can take a few weekdays.
-- **If you gave contact information:** An inspector may reach out to ask questions or schedule a visit.
-- **If you reported anonymously:** An inspector may still visit without notice. This is more likely with an urgent safety or health risk.
-- **If we find a problem:** The City can order the property owner or responsible party to fix the violation.
-- **Note:** Tenants have rights to safe and habitable housing. A property owner or manager cannot retaliate because a tenant reports housing conditions to the City.
 - San Francisco Health Code Article 11 covers this. Property owners must not let trash, filth, animal waste, or overgrown plants build up. Build-up that shelters pests or creates a health hazard is a violation.
 
 ### Related — \`related\` [CHOOSE] — page not approved
@@ -1890,7 +1884,6 @@ Get help making your report
 You can make a report even if you are not the tenant. A friend, family member, advocate, or helper can report for someone else.
 
 - You can ask 311 for help in your language.
-- You do not have to give your name to make a report.
 - You can ask 311 for a service request number so you can follow up later.
 
 ### Custom Section — \`custom_section\` [TYPE] — page not approved
@@ -1901,15 +1894,10 @@ _Inferred mapping — the field map documents this panel only for supporting/fla
 
 **Title:**
 
-How your report is processed
+What the Health Code requires
 
 **Text:**
 
-- **Review time:** 311 sends your report to Environmental Health, which assigns an inspector. This can take a few weekdays.
-- **If you gave contact information:** An inspector may reach out to ask questions or schedule a visit.
-- **If you reported anonymously:** An inspector may still visit without notice. This is more likely with an urgent safety or health risk.
-- **If we find a problem:** The City can order the property owner or responsible party to fix the violation.
-- **Note:** Tenants have rights to safe and habitable housing. A property owner or manager cannot retaliate because a tenant reports housing conditions to the City.
 - San Francisco Health Code Article 11 requires property owners to keep buildings clean, watertight, and completely free of insect infestations. They must also remove places where flies and mosquitoes breed.
 
 ### Related — \`related\` [CHOOSE] — page not approved
@@ -4849,7 +4837,6 @@ Get help making your report
 You can make a report even if you are not the tenant. A friend, family member, advocate, or helper can report for someone else.
 
 - You can ask 311 for help in your language.
-- You do not have to give your name to make a report.
 - You can ask 311 for a service request number so you can follow up later.
 
 ### Custom Section — \`custom_section\` [TYPE] — page not approved
@@ -4860,15 +4847,10 @@ _Inferred mapping — the field map documents this panel only for supporting/fla
 
 **Title:**
 
-How your report is processed
+What the Health Code requires
 
 **Text:**
 
-- **Review time:** 311 sends your report to Environmental Health, which assigns an inspector. This can take a few weekdays.
-- **If you gave contact information:** An inspector may reach out to ask questions or schedule a visit.
-- **If you reported anonymously:** An inspector may still visit without notice. This is more likely with an urgent safety or health risk.
-- **If we find a problem:** The City can order the property owner or responsible party to fix the violation.
-- **Note:** Tenants have rights to safe and habitable housing. A property owner or manager cannot retaliate because a tenant reports housing conditions to the City.
 - San Francisco Health Code Article 11 requires property owners to keep buildings clean, watertight, and completely free of rodent infestations.
 
 ### Related — \`related\` [CHOOSE] — page not approved
