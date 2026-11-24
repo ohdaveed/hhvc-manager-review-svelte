@@ -34,4 +34,4 @@ wider than 3 columns today.
       in the Blueprint, apart from the unconfirmed ones. Unit tests pin both pages.
 - [x] **2. e2e.** `inspectionsAnnual` joins the outline spec and `article11Guide` the Blueprint
       spec, with axe at 1280px and 375px; screenshots looked at.
-- [ ] **3. Ship.** `verify` and the ratchets, PR, merge on green, and `verify:live`.
+- [x] **3. Ship.** `verify` and the ratchets, PR, merge on green, and `verify:live`.
