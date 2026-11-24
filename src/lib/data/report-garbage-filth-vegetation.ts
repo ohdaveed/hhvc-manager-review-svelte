@@ -22,7 +22,7 @@ export const filthReport = {
 		thingsToKnow: [
 			{
 				label: 'Reporting anonymously',
-				text: 'You can report anonymously. 311 does not require your name, and HHVC does not share your identity with the owner or manager.'
+				text: 'You can report anonymously. 311 does not require your name. We never share your name or contact information.'
 			},
 			{
 				label: 'Mold review threshold',
@@ -43,11 +43,7 @@ export const filthReport = {
 						'If the problem is urgent, report now.'
 					],
 					button: 'Report through 311',
-					karl: 'what_to_do -> Section. Section title: "Start your report". Section specifics: Text block (these 2 sentences) + Button link block ("Report through 311") + Callout block below. Keep the 311 action first.',
-					callout: {
-						text: '**Your report is confidential.** The City will never share your name or contact information with your landlord or property manager.',
-						karl: 'Callout block inside the "Start your report" Section specifics: single rich text field only, no separate title field like this mockup callout has. The confidentiality line is the bolded lead-in of that one field, not a heading -- retype it exactly, bold included.'
-					}
+					karl: 'what_to_do -> Section. Section title: "Start your report". Section specifics: Text block (these 2 sentences) + Button link block ("Report through 311"). Keep the 311 action first.'
 				},
 				{
 					title: 'If you rent, give 72 hours when possible',
@@ -89,7 +85,7 @@ export const filthReport = {
 					],
 					callout: {
 						karl: 'Callout block inside the "Describe the condition" Section specifics: single rich text field, no separate title field. Text: the documented mold-review threshold, photo guidance, and the reporter-identity disclosure note.',
-						text: "For mold on walls or ceilings, HHVC can act when the affected area totals at least 10 square feet. Photos are not required. Describe the location and condition clearly. Reporter identities are only shared with the City Attorney's Office and are not shared in response to public records requests."
+						text: 'For mold on walls or ceilings, HHVC can act when the affected area totals at least 10 square feet. Photos are not required. Describe the location and condition clearly.'
 					},
 					karl: 'what_to_do -> Section. Section title: "Describe the condition". Section specifics: Text block (intro sentence + bulleted checklist) + Callout block below. Checklist names the garbage, filth, pigeon, vegetation, and mold scope this consolidated page covers.'
 				}
@@ -149,7 +145,6 @@ export const filthReport = {
 			bullets: [
 				'You can ask 311 for help in your language.',
 				'You do not have to give your name to make a report.',
-				'HHVC does not share the reporter’s identity with the property owner or manager.',
 				'You can ask 311 for a service request number so you can follow up later.'
 			],
 			callout: {

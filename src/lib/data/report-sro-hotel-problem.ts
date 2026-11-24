@@ -18,7 +18,7 @@ export const sroHotelReport = {
 	whatToKnow: {
 		cost: 'Free',
 		thingsToKnow: [
-			'You can report anonymously. 311 does not require your name, and HHVC does not share your identity with the owner or operator.',
+			'You can report anonymously. 311 does not require your name. We never share your name or contact information.',
 			'This report covers pest, garbage, and housing health conditions. Records and inspection history for SROs, residential hotels, and shelters use a separate lookup tool.'
 		]
 	},

@@ -388,7 +388,7 @@ describe('Campaign', () => {
 	});
 
 	it('keeps callouts placed where Karl offers them', () => {
-		expect(of('rodentsReport').fields.get('sections.what-to-do.steps.0.callout.text')?.status).toBe(
+		expect(of('rodentsReport').fields.get('sections.what-to-do.steps.2.callout.text')?.status).toBe(
 			'placed'
 		);
 	});

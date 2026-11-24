@@ -25,7 +25,7 @@ export const rodentsReport = {
 		thingsToKnow: [
 			{
 				label: 'Reporting anonymously',
-				text: 'You can report anonymously. 311 does not require your name, and HHVC does not share your identity with the owner or manager.'
+				text: 'You can report anonymously. 311 does not require your name. We never share your name or contact information.'
 			},
 			{
 				label: 'Notify your landlord first',
@@ -46,11 +46,7 @@ export const rodentsReport = {
 						'If the problem is urgent, report now.'
 					],
 					button: 'Report through 311',
-					karl: 'what_to_do -> Section. Section title: "Start your report". Section specifics: Text block (these 2 sentences) + Button link block ("Report through 311") + Callout block below. Keep the 311 action first.',
-					callout: {
-						text: '**Your report is confidential.** The City will never share your name or contact information with your landlord or property manager.',
-						karl: 'Callout block inside the "Start your report" Section specifics: single rich text field only, no separate title field like this mockup callout has. The confidentiality line is the bolded lead-in of that one field, not a heading -- retype it exactly, bold included.'
-					}
+					karl: 'what_to_do -> Section. Section title: "Start your report". Section specifics: Text block (these 2 sentences) + Button link block ("Report through 311"). Keep the 311 action first.'
 				},
 				{
 					title: 'Notify your landlord before reporting',
@@ -140,7 +136,6 @@ export const rodentsReport = {
 			bullets: [
 				'You can ask 311 for help in your language.',
 				'You do not have to give your name to make a report.',
-				'HHVC does not share the reporter’s identity with the property owner or manager.',
 				'You can ask 311 for a service request number so you can follow up later.'
 			]
 		},
