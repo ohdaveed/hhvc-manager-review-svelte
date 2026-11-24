@@ -149,8 +149,11 @@ describe('ReviewQueue', () => {
 		pagesStore.set([row('topic-x--about', 'approved'), row('topic-x--report', 'needs-review')]);
 		render(ReviewQueue);
 
-		// A bar split by colour alone says nothing to a screen reader.
-		expect(screen.getByRole('img', { name: '1 of 2 pages decided, 50 percent' })).toBeTruthy();
+		// A bar split by colour alone says nothing to a screen reader, and the sum
+		// alone does not say what the colours mean -- the label names the parts.
+		expect(
+			screen.getByRole('img', { name: '1 of 2 pages decided, 50 percent: 1 approved' })
+		).toBeTruthy();
 	});
 
 	it('renders a row per page, with the corpus title and page type', () => {

@@ -51,13 +51,21 @@ test.describe('signed in', () => {
 		const list = page.getByRole('region', { name: 'All pages' });
 		// All four states, named by `draft_pages.title` for the ones with no
 		// corpus entry and by the page's own title for the ready one.
+		//
+		// NOT `exact`. A row is one anchor wrapping the title, the status badge
+		// and the page type, so its accessible name is all three joined -- the
+		// ready draft matches a corpus page and so carries a type line, while the
+		// three unbuilt ones have neither type nor badge and are bare titles.
+		// Anchoring on the title is what both shapes have in common.
 		for (const title of [
 			'Report a noisy construction site',
 			'Report a leaking roof',
 			'Report a broken heater',
 			'Report a pest problem'
 		]) {
-			await expect(list.getByRole('link', { name: title, exact: true })).toBeVisible();
+			await expect(
+				list.getByRole('link', { name: new RegExp(`^${title}\\b`) }).first()
+			).toBeVisible();
 		}
 
 		await expect(list.getByRole('link', { name: 'A draft from another review' })).toHaveCount(0);

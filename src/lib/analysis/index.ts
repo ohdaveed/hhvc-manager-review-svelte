@@ -29,6 +29,7 @@ import {
 import { labelCount, longParagraphs, rawUrlsInProse, vagueLabels } from './textChecks';
 import { runDomChecks } from './domChecks';
 import { karlComponentFindings, type ComponentFinding } from './karlComponentChecks';
+import { karlContentTypeFindings } from './karlContentTypeChecks';
 
 export type FindingStatus = 'pass' | 'issue' | 'unavailable';
 
@@ -65,6 +66,12 @@ export type Analysis = {
 	 * component's help page directly (a `KarlHelpLink`, not a `KarlHelpKey`).
 	 */
 	componentFindings: ComponentFinding[];
+	/**
+	 * Whether the page's shape fits Karl's rules for its content type (step
+	 * limits, a Transaction's What to do, Information staying non-actionable).
+	 * Same shape as `componentFindings`, for the same reason.
+	 */
+	contentTypeFindings: ComponentFinding[];
 	/** How many corpus strings were measured — the honest denominator for the score. */
 	measuredFields: number;
 };
@@ -234,6 +241,7 @@ export function analyzePage({ page, edits = [], root = null }: AnalyzeInput): An
 		readabilityHelp: 'readability',
 		findings,
 		componentFindings: karlComponentFindings(page),
+		contentTypeFindings: karlContentTypeFindings(page),
 		measuredFields: entries.filter((e) => e.kind === 'heading' || e.kind === 'prose').length
 	};
 }
