@@ -49,4 +49,4 @@ one field. The field map rows change with it.
       `Resources · Subsection N`. Unit tests pin the page.
 - [x] **3. e2e.** The Agency page joins both specs, with axe at 1280px and 375px; screenshots
       looked at.
-- [ ] **4. Ship.** `verify` and the ratchets, then a PR. Ask before merging.
+- [x] **4. Ship.** `verify` and the ratchets, then a PR. Ask before merging.
