@@ -45,5 +45,5 @@ source), judged on the copy on screen (base plus saved edits):
       include a page whose note mentions `what_to_do` but has no such section.
 - [x] **3. Component checks narrowed.** `karlComponentFindings` keeps the Related target check;
       its tests are rewritten to that scope.
-- [ ] **4. Verify.** Unit tests, the ratchets, the Analysis panel's e2e and axe, a screenshot of
+- [x] **4. Verify.** Unit tests, the ratchets, the Analysis panel's e2e and axe, a screenshot of
       the panel looked at, then a PR. Ask before merging.
