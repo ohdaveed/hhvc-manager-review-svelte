@@ -68,6 +68,8 @@ export type FieldRule =
 			status: RuleStatus;
 			cite: Cite;
 	  }
+	/** Karl's advice on a table's width: reported, never a fix. */
+	| { kind: 'targetColumns'; target: number; status: RuleStatus; cite: Cite }
 	/** A sub-field Karl marks required, e.g. each step's Title. */
 	| { kind: 'required'; sub: string; status: RuleStatus; cite: Cite }
 	| { kind: 'fixedHeading'; heading: string; status: RuleStatus; cite: Cite }
@@ -122,7 +124,8 @@ export const SCHEMA_TYPES = [
 	'Resource Collection',
 	'Step by step',
 	'Topic',
-	'Campaign'
+	'Campaign',
+	'Report'
 ] as const;
 
 /** A panel's label as Karl's form shows it: the inventory's label without its trailing note. */
@@ -356,6 +359,50 @@ const RULES: Record<SchemaType, TypeRules> = {
 						helpTitle: 'How a Step by step page works; Topic; Topics',
 						url: `${TYPES}/step-by-step/how-a-step-by-step-page-works`,
 						says: 'Step by step page: "You can add a topic, but the step by step will not automatically show on the topic page." Topic page: "Transaction and step by step pages tagged to the topic will automatically appear under the heading More services."'
+					}
+				}
+			]
+		}
+	},
+	Report: {
+		// The URLs page gives `sf.gov/[slug]`; the Report page gives
+		// `sf.gov/reports/month-year/title-of-report`.
+		url: {
+			pattern: 'sf.gov/[slug] or sf.gov/reports/[month-year]/[slug]',
+			status: 'unconfirmed',
+			cite: {
+				helpTitle: 'URLs; Report',
+				url: `${HC}/components/urls`,
+				says: 'URLs page: "Report - sf.gov/[slug]". Report page: "URL sf.gov/reports/month-year/title-of-report".'
+			}
+		},
+		// No Related panel: "Reports are not automatically connected to or linked
+		// from other page types", and the live form has none.
+		relatedTargets: null,
+		rules: {
+			title: [TITLE],
+			spotlight: [SPOTLIGHT_BUTTON],
+			content: [
+				{
+					kind: 'targetColumns',
+					target: 3,
+					status: 'confirmed',
+					cite: {
+						helpTitle: 'How a Report page works',
+						url: `${TYPES}/report/how-a-report-page-works`,
+						says: 'Tables work best with 3 or fewer columns.'
+					}
+				},
+				// Confirmed, unlike the other caveats: Karl says it plainly. A
+				// manager should know it before choosing a table over body text.
+				{
+					kind: 'caveat',
+					plain: 'Text in tables is not machine translated into SF.gov’s other languages.',
+					status: 'confirmed',
+					cite: {
+						helpTitle: COMPONENT_SUPPORT.table.helpTitle,
+						url: COMPONENT_SUPPORT.table.url,
+						says: 'Text in tables is not machine translated.'
 					}
 				}
 			]

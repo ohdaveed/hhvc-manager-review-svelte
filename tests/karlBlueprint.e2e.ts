@@ -78,10 +78,28 @@ const PILOTS = [
 		first: ['title', 'primary_agency', 'logo', 'background_header_image', 'theme', 'spotlight_1'],
 		empty: ['Logo (empty)', 'Color theme (empty)'],
 		tray: 3
+	},
+	{
+		slug: 'report-health-code-article-11-plain-language',
+		first: ['title', 'date', 'primary_agency', 'spotlight', 'content'],
+		empty: ['Primary agency (empty)', 'Print version (empty)'],
+		tray: 2
 	}
 ] as const;
 
 test.describe('Blueprint', () => {
+	test('Report: tables are named, and table text not being translated is Good to know', async ({
+		page
+	}) => {
+		await gotoSignedIn(page, '/review/report-health-code-article-11-plain-language');
+		await openBlueprint(page);
+		const content = page.locator('[data-karl-panel="content"]');
+		await expect(content.locator('.bp-note')).toHaveText(
+			'Good to know: Text in tables is not machine translated into SF.gov’s other languages.'
+		);
+		await expect(content.locator('.bp-caveat')).toHaveCount(0);
+	});
+
 	test('Topic: who can create it, the stream named as the form names it, and its caveats', async ({
 		page
 	}) => {

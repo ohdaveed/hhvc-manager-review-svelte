@@ -62,6 +62,14 @@ const PILOTS = [
 		summary:
 			'7 sections: 7 go into Karl. 2 details need a fix, 1 detail is unconfirmed. 2 things won’t carry over to Karl.',
 		sections: { placed: 7 }
+	},
+	{
+		// Rollout step 4: Report. The Related list lands in Content (no Related
+		// panel); 18 PLACEHOLDER table cells.
+		slug: 'report-healthy-housing-inspections-annual-summary',
+		summary:
+			'6 sections: 5 go into Karl, 1 needs a fix. 18 details need a fix. 2 things won’t carry over to Karl.',
+		sections: { placed: 5, 'needs-fix': 1 }
 	}
 ] as const;
 
