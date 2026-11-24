@@ -1,7 +1,7 @@
 <script lang="ts">
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import { ChevronsRight } from 'lucide-svelte';
+	import { ChevronsRight } from '@lucide/svelte';
 	import ReviewPanel from './ReviewPanel.svelte';
 	import FieldsPanel from './FieldsPanel.svelte';
 	import RethinkPanel from './RethinkPanel.svelte';

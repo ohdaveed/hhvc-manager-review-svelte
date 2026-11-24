@@ -16,7 +16,7 @@
 	 * `decorative` for one that repeats adjacent text. `<Icon name="rat" />` with
 	 * neither is a type error.
 	 *
-	 * Do not mix this with `lucide-svelte`. Lucide is the review tool's icon set;
+	 * Do not mix this with `@lucide/svelte`. Lucide is the review tool's icon set;
 	 * these are the public site's, and the stroke weights differ visibly.
 	 */
 	interface Base {

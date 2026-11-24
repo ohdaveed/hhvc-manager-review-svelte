@@ -21,7 +21,7 @@
 		Monitor,
 		Smartphone,
 		Tablet
-	} from 'lucide-svelte';
+	} from '@lucide/svelte';
 	import * as ToggleGroup from '$lib/components/ui/toggle-group/index.js';
 	import {
 		PREVIEW_WIDTHS,
