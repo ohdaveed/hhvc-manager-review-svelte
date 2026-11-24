@@ -38,7 +38,7 @@ location, People, Related locations, Contact us.
 
 ## Checklist
 
-- [ ] **1. Schema and placement.** Location in `schema.ts`: Title, Description, alert limits, the
+- [x] **1. Schema and placement.** Location in `schema.ts`: Title, Description, alert limits, the
       Address-snippet note, the uncaptured-sections caveat (U26), Related locations (Location pages
       only), and an unconfirmed URL. Labels carry the help center's groups (`Essential information ·
       Body`, `Getting here · Intro`). The intro gets a reason: Karl describes Getting here as

@@ -533,3 +533,50 @@ describe('Agency', () => {
 		expect(p.url?.status).toBe('unconfirmed');
 	});
 });
+
+describe('Location', () => {
+	const p = of('ehOffice');
+
+	it('labels fields with the groups Karl’s guide puts them in', () => {
+		expect(p.sections.get('who-this-information-is-for')?.label).toBe('Getting here · Intro');
+		expect(p.sections.get('before-you-come-in')?.label).toBe('Essential information · Body 1');
+		expect(p.panels.map((x) => x.label)).toContain('Essential information · Image');
+	});
+
+	it('questions an audience section in Getting here, which Karl describes as transport text', () => {
+		const s = p.sections.get('who-this-information-is-for');
+		expect(s?.status).toBe('unconfirmed');
+		expect(s?.reasons).toContain(
+			'Karl puts Intro under “Getting here”, which is for transportation and getting to the location; check this text belongs there.'
+		);
+	});
+
+	it('says why the Related list lands in Body: Related locations takes Location pages only', () => {
+		const s = p.sections.get('related-pages');
+		expect(s?.status).toBe('needs-fix');
+		expect(s?.reasons.join(' ')).toMatch(/only related field takes Location pages/);
+	});
+
+	it('flags the placeholder address and hours', () => {
+		expect(p.fields.get('sections.address-and-hours.bullets.0')?.reasons).toEqual([
+			'Still holds PLACEHOLDER text.'
+		]);
+	});
+
+	it('says, before anything else, where address and hours really come from, and what was never captured', () => {
+		expect(p.pageCaveats).toHaveLength(2);
+		expect(p.pageCaveats[0]).toMatch(
+			/^A Location’s address and opening hours come from its Address snippet/
+		);
+		expect(p.pageCaveats[1]).toMatch(
+			/Parking, Accessibility, Public transportation, Accordions and Additional location info/
+		);
+	});
+
+	it('keeps Contact us placed (Karl lists it for Location) and the URL unconfirmed', () => {
+		const contact = [...p.fields.values()].filter((f) => f.fieldId.startsWith('contact.'));
+		expect(contact.length).toBeGreaterThan(0);
+		expect(contact.every((f) => f.status === 'placed')).toBe(true);
+		expect(p.url?.status).toBe('unconfirmed');
+	});
+});
