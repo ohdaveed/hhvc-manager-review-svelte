@@ -123,8 +123,13 @@
 			<FactsBlock facts={section.facts} sectionKey={key} {label} />
 		{/if}
 
+		<!-- `caption` is the section heading, not a new corpus field. The heading
+		     already names the table for a sighted reader as the <h2> above it, so
+		     reusing it gives the <table> a real <caption> and the scroll region a
+		     meaningful accessible name without inventing a second string a
+		     reviewer would have to keep in sync with the first. -->
 		{#if section.table}
-			<TableBlock table={section.table} sectionKey={key} {label} />
+			<TableBlock table={section.table} caption={section.heading} sectionKey={key} {label} />
 		{/if}
 
 		{#if section.button}

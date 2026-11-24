@@ -158,25 +158,43 @@ Facts, figures and citations were preserved throughout — the fee rates
 §VI.6`, `Article 2, Section 92`, and the DBI routing under the San Francisco
 Housing Code (2025).
 
-## Phase D — tables, 10 rows, 2 pages (1 PR, code + copy)
+## Phase D — DONE (10 tables, no new corpus field)
 
-`table no caption` on `report-health-code-article-11-plain-language` and
-`report-healthy-housing-inspections-annual-summary`.
+`table no caption` on `report-health-code-article-11-plain-language` (7 tables)
+and `report-healthy-housing-inspections-annual-summary` (3).
 
-This is a schema change, not a copy edit, and the repo already documents why:
+**The fix reuses the section heading instead of adding a `caption` field.** All
+ten table sections already carry a heading, and every one already reads as a
+table name -- "Article 11 sections at a glance", "Inspections by outcome",
+"Violations by condition". `Section.svelte` prints it as the `<h2>` directly
+above the table, so passing it down gives the `<table>` a real `<caption>` and
+the scroll region a meaningful accessible name with:
 
-- `src/lib/components/blocks/TableBlock.svelte` — "the corpus has no per-table
-  description field"; `section.table` is a bare `string[][]`.
-- `src/lib/components/sfgov/ds/DataTable.svelte:33` — `caption` is a **required**
-  prop, for WCAG 1.4.10 Reflow.
-- `src/lib/analysis/karlHelp.ts:119` — Karl's table editor does have a caption
-  setting, so a caption is publishable in the real CMS.
+- no new corpus field, so no `fields.ts`, `fieldResolver.ts` or `corpus.lock` churn
+- no second string for a reviewer to keep in sync with the heading
+- no visual change at all
+- the caption text still reviewable, because the heading is already an edit target
 
-Work: add an optional `caption` to the table section type, thread it through
-`TableBlock`, write captions for the 10 tables. Follow `DataTable`'s
-`captionHidden` pattern and default to screen-reader-only -- Figma is the design
-source of truth here and the Table design carries no visible caption, so a visible
-one would be drift.
+The planned schema field would have duplicated copy that already existed.
+
+It also fixed a defect nobody had filed: the scroll region's accessible name was
+`aria-label={`${label} table`}` -- "Section [2] table", a positional string a
+screen reader user cannot act on. It is now the heading.
+
+Rendered `sr-only`, following `DataTable`'s `captionHidden` pattern, because the
+heading above already prints the same text; a visible caption would print it
+twice and drift from the Figma Table design, which carries no visible caption.
+
+`tests/tableBlock.test.ts` asserted the OLD positional name (`/table/i`) and was
+updated -- its intent ("the scroll container has an accessible name") is
+unchanged and better served. `tests/tableCaption.test.ts` is new: caption text
+per section, region name, and that the caption is `sr-only` rather than
+`display: none`, since a caption removed from the box tree leaves the
+accessibility tree with it.
+
+Verified in the real browser, not only in jsdom: 7 tables / 7 captions on the
+article-11 page, text matching each heading, bounding box 0.53x0.53px -- hidden
+but present. All 21 axe e2e tests pass, including that page.
 
 ## Phase E — CLOSE: metaDescription, no work
 

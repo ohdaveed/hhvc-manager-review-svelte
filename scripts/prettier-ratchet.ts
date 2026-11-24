@@ -37,8 +37,14 @@
  */
 import { spawnSync } from 'node:child_process';
 
-/** Measured on 2026-11-24 over `git ls-files`, at the commit that added this. */
-const BASELINE = 50;
+/**
+ * Measured on 2026-11-24 over `git ls-files`, at the commit that added this.
+ *
+ * Lowered 50 -> 47 in the findings-audit branch: the per-file format hook
+ * reformatted three already-unformatted data modules as a side effect of
+ * editing their copy. Banked rather than left as slack, per the rule below.
+ */
+const BASELINE = 47;
 
 const tracked = spawnSync('git', ['ls-files'], {
 	encoding: 'utf-8',

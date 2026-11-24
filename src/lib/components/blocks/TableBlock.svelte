@@ -25,8 +25,26 @@
 	 * specimen, `Section.svelte` already renders `section.heading` as the
 	 * `<h2>` one level up, and the corpus has no per-table description field.
 	 */
-	let { table, sectionKey, label }: { table?: string[][]; sectionKey: string; label: string } =
-		$props();
+	let {
+		table,
+		caption,
+		sectionKey,
+		label
+	}: { table?: string[][]; caption?: string; sectionKey: string; label: string } = $props();
+
+	/**
+	 * The table's accessible name. `caption` is the section heading, passed down
+	 * by `Section.svelte`; the positional `label` ("Section [2]") is the fallback
+	 * for a section constructed without one, e.g. in a test fixture.
+	 *
+	 * Karl's table editor carries a caption setting of its own
+	 * (`$lib/analysis/karlHelp.ts` -> `tables`: "Where the caption and
+	 * header-row settings live in the table editor"), so a caption is
+	 * publishable in the real CMS rather than a mockup-only affordance.
+	 */
+	const captionText = $derived(
+		typeof caption === 'string' && caption.trim() ? caption.trim() : `${label} table`
+	);
 
 	const rows = $derived(Array.isArray(table) ? table : []);
 	const header = $derived(rows[0] ?? []);
@@ -44,8 +62,15 @@
 	     is how it is satisfied. Suppressing the framework warning is what keeps
 	     the e2e axe pass green, so the two are not in tension. -->
 	<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
-	<div class="table-scroll" tabindex="0" role="region" aria-label={`${label} table`}>
+	<div class="table-scroll" tabindex="0" role="region" aria-label={captionText}>
 		<table class="sfgov-table">
+			<!-- Visually hidden, because `Section.svelte` already prints this exact
+			     text as the <h2> directly above the table -- a visible <caption>
+			     would print the heading twice. `sr-only` rather than
+			     `display: none`: a caption removed from the box tree is removed
+			     from the accessibility tree with it, which is the thing being
+			     fixed here. Mirrors `DataTable`'s `captionHidden` pattern. -->
+			<caption class="sr-only">{captionText}</caption>
 			<thead>
 				<tr>
 					{#each header as cell, c (c)}
@@ -97,6 +122,20 @@
 	   observer. `Rectangle 155` in the design is a right-edge gradient to
 	   `rgba(0,0,0,0.40)` at 40px; the left edge is the same mechanism and is
 	   kept, since the design simply had nothing to draw it against. */
+	/* Visually hidden but still in the accessibility tree. Svelte scopes styles
+	   per component, so this cannot be borrowed from DataTable. */
+	.sr-only {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		white-space: nowrap;
+		border: 0;
+	}
+
 	.table-scroll {
 		overflow-x: auto;
 		margin: 20px 0;
