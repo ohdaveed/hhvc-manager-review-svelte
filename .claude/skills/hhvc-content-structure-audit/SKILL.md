@@ -39,12 +39,25 @@ Use this skill when:
 
 Build an inventory of what currently exists across all pages.
 
+There is no `tsx` in this repo; `bun` runs TypeScript directly. Write the
+measurement as a script in the session scratchpad (not `/tmp`) and import the
+corpus by absolute path. Below, `$SCRATCH` stands for the scratchpad directory
+the harness names in its system prompt:
+
 ```bash
-echo "const allPages = " > /tmp/check.ts
-cat src/lib/data/index.ts | grep export | wc -l
-bun run tsx -e "import {allPages} from 'src/lib/data';
-  allPages.forEach(p => console.log(p.slug, p.type, p.sections.length))"
+cat > "$SCRATCH/census.ts" <<'EOF'
+import { allPages } from '/home/ohdaveed/hhvc-manager-review-svelte/src/lib/data/index.ts';
+for (const p of allPages) console.log(p.slug, p.type, p.sections.length);
+console.log(allPages.length, 'pages');
+EOF
+bun "$SCRATCH/census.ts"
 ```
+
+For Karl coverage, measure with the transcript rather than re-deriving it:
+`buildTranscript(page, null, pagesByKey)` from `$lib/legacy-core/karl-transcript.js`
+returns each page's `entries` (panels filled) and `unmapped` (copy no panel
+accepts). Pass `pagesByKey`, not `allPages`: handed the array, no link target
+resolves.
 
 Record findings in structured format (CSV, YAML, or markdown table). Include: page identifier, type, section/field counts, coverage of optional fields, constraint violations.
 
@@ -56,13 +69,20 @@ Verify the target schema can hold the content currently on the page. Trace each 
 
 For each piece of content at risk, decide: **migrate, fold, or drop**.
 
+Review decisions live on `pages` (keyed by `path`, the page id), not on
+`reviews`, which holds only the review itself. Query the **local** stack first;
+it is seeded with all 39 pages:
+
 ```bash
 git log --oneline src/lib/data/ | head -5
-doppler run --project hhvc-svelte --config prd -- \
-  psql "$SUPABASE_DB_URL" \
-  -c "SELECT slug, status, manager_notes FROM reviews \
-       WHERE slug IN ('...');"
+docker exec supabase_db_hhvc-manager-review-svelte psql -U postgres -d postgres \
+  -c "SELECT path, status, manager_notes FROM pages WHERE path IN ('...');"
 ```
+
+Reading **production** decisions is a separate, deliberate step: it needs
+`SUPABASE_DB_URL` from Doppler (`hhvc-svelte/prd`), and that value may be
+restricted so the CLI cannot read it. If so, record it as an open gate rather
+than routing around it.
 
 ### 4. Identify human-facing content decisions
 
@@ -86,7 +106,21 @@ test('corpus audits match expectations', () => {
 
 ### 6. Check authoritative sources, not documentation
 
-When schema or naming is in question, check the source of truth. Precedence: CMS form (live, authoritative) > field map (in-repo) > Help Center (reference only).
+When schema or naming is in question, check the source of truth. Two questions,
+two authorities, and they must not be swapped:
+
+- **How a page should be built** (limits, which components a type offers,
+  editorial rules): the **Karl Editor Help Center** is authoritative. This was
+  reversed on 2026-08-23 (field map `O14`), so a rule the live form fails to
+  enforce is still a rule. Button labels are 25 characters even though the
+  field accepts 255.
+- **What the form actually contains** (field names, their order, required
+  flags): the **live CMS form**, transcribed in `docs/karl-export-field-map.md`
+  and `KARL_PANELS` in `src/lib/legacy-core/karl-blocks.js`.
+
+Where the Help Center contradicts itself (URL patterns: the URLs page and each
+type's own page disagree for Information, Step by step, Topic and Agency), mark
+the rule **unconfirmed** rather than picking one.
 
 ## Documenting and Coordinating Audit Findings
 
@@ -142,9 +176,7 @@ Record decisions and reasoning so concurrent work doesn't re-open settled questi
 When feedback surfaces errors, re-measure from the source:
 
 ```bash
-bun run tsx -e "import {allPages} from 'src/lib/data';
-  // Re-run your measurement logic
-  console.log(results)"
+bun "$SCRATCH/census.ts"   # the step 1 script, re-run unchanged
 ```
 
 Compare against prior document. Two-way verification (your measurement + peer review) catches more than one-way.
