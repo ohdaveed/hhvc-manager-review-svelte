@@ -24,6 +24,7 @@ import { deriveFieldKey } from '$lib/corpus/fieldKey';
 import { extractCopy, type CorpusPage } from '$lib/corpus/fields';
 import type { ReviewRecord } from './reviewRecord';
 import { formLabel, schemaFor, type FieldRule } from './schema';
+import { COMPONENT_SUPPORT, isSupported } from './componentSupport';
 
 export type PlacementStatus = 'placed' | 'needs-fix' | 'unconfirmed' | 'unplaced';
 
@@ -149,6 +150,18 @@ const panelLabel = (type: string, rawName: string): string => {
  * map's "Naming trap"). So a Topic section is labelled by stream AND block:
  * `Child topics · Spotlight block`, never the stream alone.
  */
+/** Page-level fields, named as a reader sees them rather than by field id. */
+const PAGE_FIELD_NAMES: Record<string, string> = {
+	audience: 'The “Who this is for” list',
+	primaryAgency: 'Primary agency',
+	summary: 'The summary under the title',
+	partnerAgencies: 'Partner agencies',
+	contact: 'Contact us'
+};
+
+/** What a block kind is called when it is counted. */
+const BLOCK_NOUNS: Record<string, string> = { supporting: 'accordion', spotlight: 'spotlight' };
+
 const TOPIC_BLOCKS: Record<string, string> = {
 	spotlight: 'Spotlight block',
 	services: 'Services block',
@@ -369,7 +382,18 @@ export function placementsFor(
 				}
 				// Advisory: Karl's "aim for" is reported, but it is not a rule the
 				// copy breaks, so the status does not change.
-				if (stepCount && rule.kind === 'targetItems' && stepCount > rule.target) {
+				// Karl's advice on a block count, e.g. at most 5 accordions on a
+				// Campaign page: reported, never a fix.
+				if (rule.kind === 'targetItems' && rule.block && componentOf.get(key) === rule.block) {
+					const count = [...componentOf.values()].filter((c) => c === rule.block).length;
+					if (count > rule.target) {
+						const noun = BLOCK_NOUNS[rule.block] ?? `${rule.block} block`;
+						reasons.push(
+							`This page has ${count} ${noun}s; Karl suggests no more than ${rule.target}.`
+						);
+					}
+				}
+				if (stepCount && rule.kind === 'targetItems' && !rule.block && stepCount > rule.target) {
 					reasons.push(
 						`This page has ${stepCount} steps; Karl suggests aiming for no more than ${rule.target}.`
 					);
@@ -413,6 +437,7 @@ export function placementsFor(
 	// One finding, one chip: four audience lines share a single `audience` gap,
 	// so only the first carries its reason (decision 8).
 	const reportedGaps = new Set<string>();
+	const reportedCaveats = new Set<string>();
 	for (const id of Object.keys(copy)) {
 		const claim = longest(
 			id,
@@ -478,6 +503,29 @@ export function placementsFor(
 		}
 
 		if (HAS_PLACEHOLDER.test(text)) fail('Still holds PLACEHOLDER text.');
+		// A callout on a type Karl offers none on: the transcript folds its text
+		// into the block, so the words survive but not as a callout -- the same
+		// shape as a Related list landing as Resource tiles. The in-mockup
+		// KarlOrphanNotice has said so all along; the outline now agrees.
+		if (/(^|\.)callout\.(text|title)$/.test(id) && isSupported('callout', type) === 'no') {
+			fail(`Karl has no callout on a ${type} page. ${COMPONENT_SUPPORT.callout.instead}`);
+		}
+		// A button inside a panel with a Button limit, e.g. a Campaign spotlight's.
+		if (/\.button$/.test(id)) {
+			for (const rule of rulesOf(raw))
+				if (rule.kind === 'maxChars' && rule.sub === 'Button')
+					fail(lengthReason(rule, text, 'Button text'));
+		}
+		// A whole panel Karl's own pages disagree on (Campaign's Contact us): one
+		// chip, on the first of its fields, as with the audience list.
+		for (const rule of rulesOf(raw)) {
+			if (rule.kind !== 'caveat' || rule.sub || sectionKey) continue;
+			if (reportedCaveats.has(raw)) own = worstOf([own, 'unconfirmed']);
+			else {
+				reportedCaveats.add(raw);
+				doubt(rule.plain);
+			}
+		}
 		for (const rule of rulesOf(raw)) {
 			if (rule.kind !== 'maxChars' || rule.sub) continue;
 			if (id === 'title' || id === 'summary')
@@ -524,20 +572,17 @@ export function placementsFor(
 			(id) => (id === u.id || id.startsWith(`${u.id}.`)) && fields.get(id)?.status === 'unplaced'
 		);
 		const subject =
-			u.id === 'audience'
-				? 'The “Who this is for” list'
-				: u.id === 'primaryAgency'
-					? 'Primary agency'
-					: heading
-						? `“${heading}”${/\.button(Url)?$/.test(u.id) ? ' — its button' : ''}`
-						: u.id;
+			PAGE_FIELD_NAMES[u.id] ??
+			(heading ? `“${heading}”${/\.button(Url)?$/.test(u.id) ? ' — its button' : ''}` : u.id);
 		return { subject, reason: u.reason.replace(/\*\*|`|__/g, ''), fieldIds };
 	});
 	// A button and its URL are two transcript findings about one thing a reader
 	// sees; merge items naming the same subject.
 	const unplacedItems: UnplacedItem[] = [];
 	for (const item of findings) {
-		const same = unplacedItems.find((i) => i.subject === item.subject && i.reason === item.reason);
+		// By subject alone: a section's paragraphs and bullets are two findings
+		// with two reasons, but one thing a reader sees.
+		const same = unplacedItems.find((i) => i.subject === item.subject);
 		if (same) same.fieldIds.push(...item.fieldIds.filter((id) => !same.fieldIds.includes(id)));
 		else unplacedItems.push(item);
 	}
@@ -657,8 +702,23 @@ export function outlineSummary(placements: PagePlacements): string {
 		.filter(([n]) => n > 0)
 		.map(([n, one, many]) => `${n} ${n === 1 ? one : many}`);
 	const lead = `${sections.length} ${sections.length === 1 ? 'section' : 'sections'}${parts.length ? `: ${parts.join(', ')}` : ''}.`;
+	// Findings on single strings inside placed sections -- a callout on a type
+	// with none, a button over 25 characters, PLACEHOLDER text. Counting
+	// sections alone reported "7 go into Karl" over a page with two of these.
+	const details = [...placements.fields.values()].filter(
+		(f) => f.reasons.length > 0 && f.status !== 'unplaced'
+	);
+	const fixes = details.filter((f) => f.status === 'needs-fix').length;
+	const doubts = details.filter((f) => f.status === 'unconfirmed').length;
+	const detailParts = [
+		fixes ? `${fixes} ${fixes === 1 ? 'detail needs' : 'details need'} a fix` : '',
+		doubts ? `${doubts} ${doubts === 1 ? 'detail is' : 'details are'} unconfirmed` : ''
+	].filter(Boolean);
+	const detail = detailParts.length
+		? ` ${detailParts.join(', ').replace(/^./, (c) => c.toUpperCase())}.`
+		: '';
 	const gaps = placements.unplaced.length;
 	return gaps
-		? `${lead} ${gaps} ${gaps === 1 ? 'thing won’t' : 'things won’t'} carry over to Karl.`
-		: lead;
+		? `${lead}${detail} ${gaps} ${gaps === 1 ? 'thing won’t' : 'things won’t'} carry over to Karl.`
+		: `${lead}${detail}`;
 }

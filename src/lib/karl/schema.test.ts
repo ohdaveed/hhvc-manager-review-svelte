@@ -61,7 +61,7 @@ describe('Karl schema', () => {
 	});
 
 	it('returns null for a type this slice does not cover', () => {
-		expect(schemaFor('Campaign')).toBeNull();
+		expect(schemaFor('Agency')).toBeNull();
 		expect(schemaFor(undefined)).toBeNull();
 	});
 });
@@ -127,5 +127,35 @@ describe('Topic schema', () => {
 	it('has no Related panel and an unconfirmed URL', () => {
 		expect(topic.relatedTargets).toBeNull();
 		expect(topic.url.status).toBe('unconfirmed');
+	});
+});
+
+describe('Campaign schema', () => {
+	const campaign = schemaFor('Campaign')!;
+	const rules = (raw: string) => campaign.panels.find((p) => p.rawName === raw)!.rules;
+
+	it('caps a spotlight button at 25 characters on both spotlights', () => {
+		for (const raw of ['spotlight_1', 'spotlight_2'])
+			expect(rules(raw)).toEqual([
+				expect.objectContaining({ kind: 'maxChars', sub: 'Button', max: 25 })
+			]);
+	});
+
+	it('advises no more than 5 accordions, and has no Description panel', () => {
+		expect(rules('additional_content')).toEqual([
+			expect.objectContaining({ kind: 'targetItems', target: 5, block: 'supporting' })
+		]);
+		expect(campaign.panels.map((p) => p.rawName)).not.toContain('description');
+	});
+
+	it('marks Contact us unconfirmed: the form has it, Karl’s Campaign guide does not', () => {
+		expect(rules('contact')).toEqual([
+			expect.objectContaining({ kind: 'caveat', status: 'unconfirmed' })
+		]);
+	});
+
+	it('has a confirmed URL and a Related panel', () => {
+		expect(campaign.url.status).toBe('confirmed');
+		expect(campaign.relatedTargets).toContain('Transaction');
 	});
 });

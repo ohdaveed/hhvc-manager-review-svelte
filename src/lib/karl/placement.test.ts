@@ -359,3 +359,75 @@ describe('Topic', () => {
 		expect(p.panels.find((x) => x.rawName === 'content_fields')?.caveats).toHaveLength(2);
 	});
 });
+
+describe('Campaign', () => {
+	it('says a callout needs a fix: Karl has no callout on a Campaign page', () => {
+		const f = of('mosquitoWorkshop').fields.get(
+			'sections.bring-mosquito-science-to-your-students.callout.text'
+		);
+		expect(f?.status).toBe('needs-fix');
+		expect(f?.reasons).toEqual([
+			'Karl has no callout on a Campaign page. Put this text in the section’s body copy instead.'
+		]);
+	});
+
+	it('keeps callouts placed where Karl offers them', () => {
+		expect(of('rodentsReport').fields.get('sections.what-to-do.steps.0.callout.text')?.status).toBe(
+			'placed'
+		);
+	});
+
+	it('fails a spotlight button over 25 characters', () => {
+		const p = of('ratFreeBlocks');
+		expect(p.fields.get('sections.for-owners-and-managers.button')?.reasons).toEqual([
+			'Button text is 26 characters; Karl wants 25 or fewer.'
+		]);
+		expect(p.fields.get('sections.take-away-what-rats-live-on.button')?.status).toBe('placed');
+	});
+
+	it('places the About section and partner agencies, and flags the About placeholder', () => {
+		const p = of('ratFreeBlocks');
+		expect(p.sections.get('about-this-campaign')).toMatchObject({
+			rawName: 'about_campaign',
+			status: 'placed'
+		});
+		expect(p.sections.get('related-pages')).toMatchObject({
+			rawName: 'related_links',
+			status: 'placed'
+		});
+		expect(p.fields.get('partnerAgencies.0.title')?.rawName).toBe('partner_agencies');
+		expect(p.fields.get('sections.about-this-campaign.paragraphs.0')?.reasons).toEqual([
+			'Still holds PLACEHOLDER text.'
+		]);
+	});
+
+	it('keeps “Start with your own block” unplaced, listed once', () => {
+		const p = of('ratFreeBlocks');
+		expect(p.sections.get('start-with-your-own-block')?.status).toBe('unplaced');
+		expect(p.unplaced.map((u) => u.subject)).toEqual([
+			'The summary under the title',
+			'The “Who this is for” list',
+			'“Start with your own block”'
+		]);
+	});
+
+	it('marks Contact us unconfirmed with one chip', () => {
+		const p = of('ipmEducation');
+		const contact = [...p.fields.values()].filter((f) => f.fieldId.startsWith('contact.'));
+		expect(contact.length).toBeGreaterThan(0);
+		expect(contact.every((f) => f.status === 'unconfirmed')).toBe(true);
+		expect(contact.filter((f) => f.chip)).toHaveLength(1);
+	});
+
+	it('counts findings inside placed sections in the summary', () => {
+		expect(outlineSummary(of('mosquitoWorkshop'))).toBe(
+			'7 sections: 7 go into Karl. 2 details need a fix. 2 things won’t carry over to Karl.'
+		);
+		expect(outlineSummary(of('ipmEducation'))).toBe(
+			'7 sections: 7 go into Karl. 2 details need a fix, 1 detail is unconfirmed. 2 things won’t carry over to Karl.'
+		);
+		expect(outlineSummary(of('ratFreeBlocks'))).toBe(
+			'5 sections: 5 go into Karl. 2 details need a fix. 3 things won’t carry over to Karl.'
+		);
+	});
+});

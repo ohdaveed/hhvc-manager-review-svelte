@@ -72,6 +72,12 @@ const PILOTS = [
 		first: ['title', 'primary_agency', 'description', 'top_level_topic', 'content_fields'],
 		empty: ['Primary agency (empty)', 'Set top-level? (empty)'],
 		tray: 2
+	},
+	{
+		slug: 'rat-free-blocks',
+		first: ['title', 'primary_agency', 'logo', 'background_header_image', 'theme', 'spotlight_1'],
+		empty: ['Logo (empty)', 'Color theme (empty)'],
+		tray: 3
 	}
 ] as const;
 

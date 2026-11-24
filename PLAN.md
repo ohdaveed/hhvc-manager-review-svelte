@@ -1,38 +1,53 @@
-# PLAN — Karl outline rollout: Topic
+# PLAN — Karl outline rollout: Campaign
 
-Branch `feat/karl-topic`, cut from `origin/main` at `1c1c8d7` (Step by step, PR #198, verified
-live). The plan and vocabulary are in `docs/plans/2026-11-23-karl-field-mapping-layer.md` (§5,
-rollout step 2) and `CONTEXT.md`.
+Branch `feat/karl-campaign`, cut from `origin/main` at `5609592` (Topic, PR #199, verified live).
+The plan and vocabulary are in `docs/plans/2026-11-23-karl-field-mapping-layer.md` (§5, rollout
+step 3) and `CONTEXT.md`.
 
-One page: `healthyHousingTopic` (`sf.gov/topics--healthy-housing-conditions`). Its sections are a
-Spotlight (with a button), two Services, a Resources block and a Related list.
+Pages: `mosquitoWorkshop`, `ipmEducation`, `ratFreeBlocks`.
 
-Measured before starting: the four content sections are Placed, but every one is labelled "Child
-topics (outer StreamField; internally "Page content") 1–4", the field map's internal note. Related
-(U5) and the audience list are Unplaced. Primary agency is empty and required. The Spotlight's button
-reads as Placed although `componentSupport.ts` already marks a Topic spotlight button `unknown`.
+## Measured before starting
 
-Karl, read 2026-11-24:
+- Summary is Unplaced on all three: Campaign has no Description (U21). Correct.
+- **Callouts show as Placed** (four, inside Spotlight 1 and Additional content 3), but Karl offers
+  callouts only on Transaction, Information and Data story, and the existing in-mockup notice
+  already says so. The outline contradicts it.
+- **"See owner responsibilities" is 26 characters**, over the 25-character button limit; nothing
+  checks spotlight buttons.
+- `ratFreeBlocks` "Related pages" is Unplaced although its note says "Maps to Related links".
+  Cause: the prose classifier's `TITLE_ONLY` matches "related field/panel" and `related_links`, not
+  "Related links" (the U27 class).
+- `ratFreeBlocks` "About this campaign" and its `partnerAgencies` reach no panel: the Campaign
+  inventory reads "— unused" for `about_campaign` and `partner_agencies`, transcribed when no
+  Campaign page used them.
+- `ratFreeBlocks` "Start with your own block": its note claims "Additional content → Title and text
+  block", but Campaign's Additional content offers Image with text, Video, Accordion section, Embed
+  and Resources. **Stays Unplaced**; the note is wrong, not the outline.
 
-- The form labels the outer stream "Child topics", and one block choice is also called "Child
-  topics" (field map, "Naming trap"), so labels name both: `Child topics · Spotlight block`.
-- Spotlight: "Report, Profile, and Topic only allow 1 spotlight." (Spotlight)
-- Spotlight button: the Button page leaves Topic out; the Spotlight page does not restrict it.
-  **Unconfirmed** (already `unknownTypes` in `COMPONENT_SUPPORT.spotlightButton`).
-- Auto-listed services: the Topic page says tagged Transaction and Step by step pages "will
-  automatically appear under the heading More services"; the Step by step page says the step by step
-  "will not automatically show on the topic page". **Unconfirmed.**
-- URL: `sf.gov/topic-[slug]` (URLs) vs `sf.gov/topics/name-of-topic` (Topic). **Unconfirmed.**
-- "Only DS can make new topics." (Topic). HHVC can draft this page, not create it. A page-level
-  caveat.
+## Karl, read 2026-11-24
 
-- [x] **1. Schema.** Topic in `schema.ts`: Title, Description, one Spotlight, the spotlight-button and
-      More-services caveats, the URL, and the page-level DS caveat, all cited. Caveats carry their
-      own one-line wording, replacing the `CAVEAT_TEXT` map.
-- [x] **2. Placement.** Topic blocks labelled `Child topics · Spotlight block` (etc.); a spotlight
-      count over 1 needs a fix; the spotlight button Unconfirmed; the page caveat shown in the
-      Blueprint header and the outline summary. Unit tests pin the page.
-- [x] **3. e2e.** The Topic page joins the outline and Blueprint specs, with axe at 1280px and 375px;
-      screenshots looked at.
-- [x] **4. Ship.** `verify` and the ratchets, PR, merge on green, and `verify:live` against the
-      published commit.
+- "How a Campaign page works" lists Title, Primary agency, Logo, Background header image, Color
+  theme, Spotlight 1, Top facts, Additional content, Spotlight 2, About, Partner agencies and
+  Related. **No Contact us**, though the live-form capture has a `contact` panel. Under the field
+  map's precedence (O14, help center first), Campaign's Contact us is **Unconfirmed**. This
+  settles the audit's "Contact us on Campaign" question as a real disagreement, not a repo error.
+- Spotlight: "Agency and Campaign allow up to 2 spotlights." Button: a button is allowed "as part
+  of a Spotlight on: Agency, Campaign, Report"; "Buttons can only be 25 characters long."
+- Accordions on a Campaign page: "Ideally, you should have a maximum of 5 accordions." (advisory)
+- URL: `sf.gov/[slug]` (URLs) and `sf.gov/title-of-campaign` (Campaign) agree. **Confirmed.**
+
+## Checklist
+
+- [x] **1. Inventory and data.** Reword `ratFreeBlocks`' Related note so it names the Related field,
+      with a `classifySection` diff across the corpus before and after. Map Campaign
+      `partner_agencies` to `partnerAgencies` and `about_campaign` to a `component: 'about'`
+      section, tagging `ratFreeBlocks`' "About this campaign" (no render change), and update the
+      field map rows. The snapshot diff is limited to `ratFreeBlocks`.
+- [x] **2. Schema.** Campaign in `schema.ts`: Title, spotlight button ≤25, accordions aim ≤5
+      (advisory), Contact us caveat, confirmed URL, Related targets. All cited.
+- [x] **3. Placement.** A callout on a type Karl offers none on needs a fix (any type, as the
+      in-mockup notice already says); spotlight button length; accordion advice; Contact us
+      Unconfirmed. Unit tests pin all three pages.
+- [x] **4. e2e.** `ratFreeBlocks` and `ipmEducation` join the outline spec, and `ratFreeBlocks`
+      the Blueprint spec, with axe at 1280px and 375px; screenshots looked at.
+- [x] **5. Ship.** `verify` and the ratchets, PR, merge on green, and `verify:live`.
