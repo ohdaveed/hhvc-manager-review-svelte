@@ -48,6 +48,6 @@ Pages: `mosquitoWorkshop`, `ipmEducation`, `ratFreeBlocks`.
 - [x] **3. Placement.** A callout on a type Karl offers none on needs a fix (any type, as the
       in-mockup notice already says); spotlight button length; accordion advice; Contact us
       Unconfirmed. Unit tests pin all three pages.
-- [ ] **4. e2e.** `ratFreeBlocks` and `ipmEducation` join the outline spec, and `ratFreeBlocks`
+- [x] **4. e2e.** `ratFreeBlocks` and `ipmEducation` join the outline spec, and `ratFreeBlocks`
       the Blueprint spec, with axe at 1280px and 375px; screenshots looked at.
 - [ ] **5. Ship.** `verify` and the ratchets, PR, merge on green, and `verify:live`.

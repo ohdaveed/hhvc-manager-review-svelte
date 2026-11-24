@@ -44,9 +44,24 @@ const PILOTS = [
 		// Rollout step 2: Topic. Related (U5) has no panel; only Digital
 		// Services can create a Topic page, which the summary says first.
 		slug: 'topics--healthy-housing-conditions',
-		summary: '4 sections: 4 go into Karl. 2 things won’t carry over to Karl.',
+		summary:
+			'4 sections: 4 go into Karl. 1 detail is unconfirmed. 2 things won’t carry over to Karl.',
 		caveat: 'Only SF.gov Digital Services can create a new Topic page.',
 		sections: { placed: 4, unplaced: 1 }
+	},
+	{
+		// Rollout step 3: Campaign. A 26-character spotlight button and About
+		// PLACEHOLDER text need a fix; "Start with your own block" has no panel.
+		slug: 'rat-free-blocks',
+		summary: '5 sections: 5 go into Karl. 2 details need a fix. 3 things won’t carry over to Karl.',
+		sections: { placed: 5, unplaced: 1 }
+	},
+	{
+		// Two callouts Karl has no Campaign component for; Contact us unconfirmed.
+		slug: 'integrated-pest-management-education',
+		summary:
+			'7 sections: 7 go into Karl. 2 details need a fix, 1 detail is unconfirmed. 2 things won’t carry over to Karl.',
+		sections: { placed: 7 }
 	}
 ] as const;
 
