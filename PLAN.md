@@ -26,7 +26,7 @@ Karl, read 2026-11-24:
 - "Only DS can make new topics." (Topic). HHVC can draft this page, not create it. A page-level
   caveat.
 
-- [ ] **1. Schema.** Topic in `schema.ts`: Title, Description, one Spotlight, the spotlight-button and
+- [x] **1. Schema.** Topic in `schema.ts`: Title, Description, one Spotlight, the spotlight-button and
       More-services caveats, the URL, and the page-level DS caveat, all cited. Caveats carry their
       own one-line wording, replacing the `CAVEAT_TEXT` map.
 - [ ] **2. Placement.** Topic blocks labelled `Child topics · Spotlight block` (etc.); a spotlight

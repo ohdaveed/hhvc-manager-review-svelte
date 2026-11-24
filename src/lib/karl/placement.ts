@@ -180,15 +180,6 @@ const HAS_PLACEHOLDER = /PLACEHOLDER/;
 const RELATED_HEADING = /^\s*related\b/i;
 const RELATED_PANELS = new Set(['related', 'related_links']);
 
-/**
- * A caveat in words a manager can read. The schema keeps Karl's verbatim
- * quotes as the citation; this is the one-line version the Blueprint shows.
- */
-const CAVEAT_TEXT: Record<string, string> = {
-	'Step by step.topics':
-		'Karl’s own pages disagree on whether this page then shows up on that Topic page automatically.'
-};
-
 /** Page-level fields that are a block of their own on the rendered page. */
 const PAGE_BLOCKS = new Set(['title', 'summary', 'primaryAgency']);
 
@@ -555,7 +546,7 @@ export function placementsFor(
 			],
 			caveats: rulesOf(panel.rawName)
 				.filter((rule) => rule.kind === 'caveat')
-				.map((rule) => CAVEAT_TEXT[`${type}.${panel.rawName}`] ?? rule.cite.says)
+				.map((rule) => (rule.kind === 'caveat' ? rule.plain : ''))
 		});
 	}
 

@@ -61,7 +61,7 @@ describe('Karl schema', () => {
 	});
 
 	it('returns null for a type this slice does not cover', () => {
-		expect(schemaFor('Topic')).toBeNull();
+		expect(schemaFor('Campaign')).toBeNull();
 		expect(schemaFor(undefined)).toBeNull();
 	});
 });
@@ -89,5 +89,43 @@ describe('Step by step schema', () => {
 	it('has no Related panel', () => {
 		expect(sbs.relatedTargets).toBeNull();
 		expect(sbs.panels.map((p) => p.rawName)).not.toContain('related');
+	});
+});
+
+describe('Topic schema', () => {
+	const topic = schemaFor('Topic')!;
+	const rules = (raw: string) => topic.panels.find((p) => p.rawName === raw)!.rules;
+
+	it('labels the content stream as the form does, and says which "Child topics" it is', () => {
+		const panel = topic.panels.find((p) => p.rawName === 'content_fields')!;
+		expect(panel.label).toBe('Child topics');
+		expect(panel.helpLabel).toBe('Page content');
+	});
+
+	it('allows one spotlight, and marks the button and More services unconfirmed', () => {
+		expect(rules('content_fields')).toEqual([
+			expect.objectContaining({
+				kind: 'maxItems',
+				max: 1,
+				block: 'spotlight',
+				status: 'confirmed'
+			}),
+			expect.objectContaining({ kind: 'caveat', sub: 'Spotlight button', status: 'unconfirmed' }),
+			expect.objectContaining({ kind: 'caveat', sub: 'Services', status: 'unconfirmed' })
+		]);
+	});
+
+	it('says only Digital Services can create a Topic page', () => {
+		expect(topic.pageCaveats).toEqual([
+			expect.objectContaining({
+				status: 'confirmed',
+				cite: expect.objectContaining({ says: 'Only DS can make new topics.' })
+			})
+		]);
+	});
+
+	it('has no Related panel and an unconfirmed URL', () => {
+		expect(topic.relatedTargets).toBeNull();
+		expect(topic.url.status).toBe('unconfirmed');
 	});
 });
