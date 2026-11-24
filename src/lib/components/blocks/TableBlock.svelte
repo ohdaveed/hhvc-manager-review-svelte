@@ -122,20 +122,6 @@
 	   observer. `Rectangle 155` in the design is a right-edge gradient to
 	   `rgba(0,0,0,0.40)` at 40px; the left edge is the same mechanism and is
 	   kept, since the design simply had nothing to draw it against. */
-	/* Visually hidden but still in the accessibility tree. Svelte scopes styles
-	   per component, so this cannot be borrowed from DataTable. */
-	.sr-only {
-		position: absolute;
-		width: 1px;
-		height: 1px;
-		padding: 0;
-		margin: -1px;
-		overflow: hidden;
-		clip: rect(0, 0, 0, 0);
-		white-space: nowrap;
-		border: 0;
-	}
-
 	.table-scroll {
 		overflow-x: auto;
 		margin: 20px 0;
@@ -220,5 +206,19 @@
 	.sfgov-table :global(.edit-target) {
 		margin: 0;
 		padding: 0;
+	}
+
+	/* Visually hidden but still in the accessibility tree. Svelte scopes styles
+	   per component, so this cannot be borrowed from DataTable. */
+	.sr-only {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		white-space: nowrap;
+		border: 0;
 	}
 </style>

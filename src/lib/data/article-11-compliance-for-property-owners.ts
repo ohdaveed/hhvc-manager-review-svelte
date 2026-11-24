@@ -49,6 +49,11 @@ export const article11Compliance = {
 		},
 		{
 			heading: 'What you must do',
+			// Pinned: this heading was reworded by the plain-language audit, and the
+			// derived key is a slug of the heading -- so leaving it derived would have
+			// re-keyed every `sections.<key>.*` id below and orphaned any edit or
+			// comment saved against them. The key is the ORIGINAL slug on purpose.
+			fieldKey: 'what-you-re-required-to-do',
 			karl: "Maps to a third Title and text block: Title = this heading, Text = the intro paragraph plus the bulleted list below. Condensed from the owner-responsibility and PCO-requirement content in `article11Guide` (Director's Rules §V.2 and related citations) — not a full restatement; links out to the complete table. The vermin-log bullet and the 72-hour bullet above it are the two halves of ONE Director's Rules sentence (Residential Building Owner/Operator Guidelines for Vector Control, item 2) — the pest list is quoted from it verbatim, so do not trim it to a shorter set. It is deliberately separate from the 2-year records bullet that follows: that one is retention of complaints/inspections/treatments for DPH, this one is a running log handed to the PCO. Flag for Digital Services: the log-template link points at the live SF.gov resource page rather than a mockup page key, because no equivalent page exists in this set.",
 			kind: 'body',
 			paragraphs: [

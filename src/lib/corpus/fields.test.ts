@@ -380,7 +380,20 @@ describe('extractFields/extractCopy coverage of the real corpus', () => {
 	// comment for `karl`, `editorNote`, `editorStatus`) or carry no
 	// reader-visible copy at all (discriminators, style/target ids, booleans).
 	const NON_COPY_TOP = ['editorNote', 'editorStatus', 'reading', 'slug', 'type'];
-	const NON_COPY_SECTION = ['buttonStyle', 'buttonTarget', 'component', 'karl', 'kind', 'open'];
+	// `fieldKey` is IDENTITY, not copy: it pins the `sections.<key>.*` ids so an
+	// editorial rewrite of the heading cannot re-key the section and orphan the
+	// edits stored against it. `deriveFieldKey` reads it; neither extractor
+	// treats it as text, and it must never reach `content_hash` -- pinning a key
+	// changes no reader-visible copy.
+	const NON_COPY_SECTION = [
+		'buttonStyle',
+		'buttonTarget',
+		'component',
+		'fieldKey',
+		'karl',
+		'kind',
+		'open'
+	];
 	const NON_COPY_CALLOUT = ['karl', 'variant'];
 
 	// Deeper levels `extractCopy` walks into that `extractFields` never

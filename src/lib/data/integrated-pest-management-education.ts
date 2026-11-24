@@ -49,6 +49,11 @@ export const ipmEducation = {
 		},
 		{
 			heading: 'What the session covers',
+			// Pinned: this heading was reworded by the plain-language audit, and the
+			// derived key is a slug of the heading -- so leaving it derived would have
+			// re-keyed every `sections.<key>.*` id below and orphaned any edit or
+			// comment saved against them. The key is the ORIGINAL slug on purpose.
+			fieldKey: 'what-you-ll-learn',
 			karl: 'Maps to a second Additional content → Accordion section block: Title = this heading, Accordion sidebar = the paragraph below, each bullet below becomes one Accordion item (topic name as Title, elaboration as Body). Renders as a collapsible accordion.',
 			kind: 'body',
 			component: 'supporting',

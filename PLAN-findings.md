@@ -234,6 +234,56 @@ Each needs a specific fact from HHVC:
 
 Do not fix by expanding an acronym. Route to HHVC as a content request.
 
+## Review fixes (2026-11-23)
+
+Self-review of the PR found two issues, both introduced by this branch.
+
+**1. Three heading rewrites re-keyed 27 field ids.** `deriveFieldKey` slugifies
+the section heading, so the Phase A heading fixes moved every
+`sections.<key>.*` id in those sections:
+
+| Page                                                     | key before                          | key after                     |
+| -------------------------------------------------------- | ----------------------------------- | ----------------------------- |
+| `departments--healthy-housing-and-vector-control`        | `need-another-city-housing-service` | `other-city-housing-services` |
+| `information--article-11-compliance-for-property-owners` | `what-you-re-required-to-do`        | `what-you-must-do`            |
+| `integrated-pest-management-education`                   | `what-you-ll-learn`                 | `what-the-session-covers`     |
+
+`edits.field_id` and `comments.field_id` store those ids and `latest_edits` is
+keyed on `(page_id, field_id)`, so rows saved under an old id are orphaned --
+present in the database, resolving to nothing on the page. `edits` has no UPDATE
+or DELETE policy, so they cannot be repaired through the app.
+
+Production holds **0 edits and 0 comments** (checked), so nothing was actually
+orphaned. It was a latent trap, not damage.
+
+Fixed by making `deriveFieldKey` honour an explicit `fieldKey` and pinning those
+three sections to their ORIGINAL slugs, which decouples identity from copy --
+the same split `Section.svelte` already makes between `fieldId` and `label`.
+Honoured inside `deriveFieldKey` rather than at its two call sites so the
+renderer and the hasher cannot disagree. Verified: field ids added=0, removed=0
+against `origin/main`.
+
+`tests/fieldKeyStability.spec.ts` guards it -- precedence, the three pinned keys,
+and that no two sections on a page share a key, since a pin could otherwise
+collide with another section's derived slug and silently fold two sections'
+fields together.
+
+`src/lib/corpus/fields.test.ts`'s exhaustive key-coverage guard caught `fieldKey`
+as an unclassified section key and it is now listed NON_COPY: it is identity, and
+pinning a key changes no reader-visible copy.
+
+**2. A load-bearing CSS comment was orphaned from its rule.** The `.sr-only`
+block had been inserted between `TableBlock`'s 17-line `.table-scroll` comment
+(the design's shadow note, the four-layer gradient mechanism, `Rectangle 155`)
+and `.table-scroll` itself, so that explanation appeared to document `.sr-only`.
+Moved to the end of the style block. Later in the cascade only strengthens it,
+and nothing else targets the caption.
+
+Four copy nits were recorded and left for a content owner: the DBI jurisdiction
+clause was disambiguated by interpretation; the appeal-eligibility sentence turned
+an example list into an exhaustive one; the mold bullet dropped "growing or"; and
+the at-risk callout dropped the hedge "often".
+
 ## Mechanics for every phase
 
 - Any `src/lib/data/` edit needs `bun run corpus:lock` regenerated; #194 is the
