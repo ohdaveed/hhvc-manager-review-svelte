@@ -37,3 +37,28 @@ test('a Transaction with no What to do section is flagged in the panel', async (
 	await page.getByRole('tab', { name: 'Analysis' }).click();
 	await expect(page.getByRole('tabpanel')).toContainText('No What to do section');
 });
+
+test('the Transaction review findings show in the panel', async ({ page }) => {
+	await page.setViewportSize({ width: 1280, height: 900 });
+	await gotoSignedIn(page, '/review/pay-your-annual-healthy-housing-fee-apartment-buildings');
+	await page.getByRole('tab', { name: 'Analysis' }).click();
+	const panel = page.getByRole('tabpanel');
+	await expect(panel).toContainText('Title words in the description');
+	await expect(panel).toContainText('not Resource Collection pages');
+
+	const dir = process.env.KARL_SHOTS;
+	if (dir) {
+		const card = panel.getByText('Title words in the description').locator('xpath=../..');
+		await card.scrollIntoViewIfNeeded();
+		await page.screenshot({ path: `${dir}/analysis-karl-fee-1280.png` });
+	}
+
+	await gotoSignedIn(page, '/review/pay-a-healthy-housing-citation');
+	await page.getByRole('tab', { name: 'Analysis' }).click();
+	await expect(panel).toContainText('A Transaction should let people act');
+	await expect(panel).toContainText('remove “a”');
+	if (dir) {
+		await panel.getByText('A Transaction should let people act').scrollIntoViewIfNeeded();
+		await page.screenshot({ path: `${dir}/analysis-karl-citation-1280.png` });
+	}
+});
