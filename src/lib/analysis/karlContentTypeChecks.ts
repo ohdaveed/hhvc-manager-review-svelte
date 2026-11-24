@@ -171,8 +171,31 @@ function transactionFindings(page: AnyPage): ComponentFinding[] {
 						: 'This Transaction has a What to do section, headed “What to do”.',
 			help: help('transactionWhatToDo'),
 			items
-		}
+		},
+		actionFinding(page)
 	];
+}
+
+const hasText = (v: unknown) => typeof v === 'string' && v.trim() !== '';
+
+/** A button in any section or step, or a page-level Contact us block. */
+function actionFinding(page: AnyPage): ComponentFinding {
+	const sections: AnyPage[] = Array.isArray(page.sections) ? page.sections : [];
+	const button = sections.some(
+		(s) => hasText(s?.button) || (s?.steps ?? []).some((st: AnyPage) => hasText(st?.button))
+	);
+	const contact = Boolean(page.contact);
+	const ok = button || contact;
+	return {
+		id: 'karl-transaction-action',
+		title: 'A way to act',
+		status: ok ? 'pass' : 'issue',
+		summary: ok
+			? `This Transaction lets people act: ${button ? 'it has a button' : 'it has a Contact us block'}.`
+			: 'A Transaction should let people act: add a button in What to do, or a Contact us block.',
+		help: help('transactionWhatToDo'),
+		items: []
+	};
 }
 
 function informationFindings(page: AnyPage): ComponentFinding[] {

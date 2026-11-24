@@ -13,7 +13,7 @@ Production has 0 edits and 0 comments on any page (measured 2026-11-24). Re-coun
 - [x] **A2.** A placed button whose URL is `#` needs a fix. PLACEHOLDER stays uppercase-only (decision 14 of the field-mapping plan); the inspector lookup's unplaced `#` button was already reported under `karl-unplaced`.
 - [x] **A3.** A `karl-description-reuse` finding lists the title words repeated in the description (issue at 2 or more).
 - [x] **A4.** `karl-url-pattern` flags `a`/`an`/`the` in a slug.
-- [ ] **A5.** A `karl-transaction-action` finding flags a Transaction with no button and no Contact us.
+- [x] **A5.** A `karl-transaction-action` finding flags a Transaction with no button and no Contact us.
 - [ ] **A-ship.** Gates and ratchets green, signed-in axe e2e green, screenshot of the panel looked at, PR open. Ask before merging.
 
 ## Track B — Decided copy changes

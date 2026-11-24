@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { allPages } from '$lib/data/index';
+import { allPages, pagesByKey } from '$lib/data/index';
 import { CONTENT_TYPE_RULES, STEP_LIMIT } from '$lib/karl/contentTypeRules';
 import { karlContentTypeFindings } from './karlContentTypeChecks';
 import { analyzePage } from './index';
@@ -168,4 +168,51 @@ it('reaches the analysis panel through analyzePage', () => {
 		'karl-step-count',
 		'karl-step-titles'
 	]);
+});
+
+describe('a Transaction gives the reader a way to act', () => {
+	const actionOf = (p: object) =>
+		karlContentTypeFindings(p as never).find((f) => f.id === 'karl-transaction-action');
+	const tx = (extra: object) => ({
+		type: 'Transaction',
+		sections: [{ heading: 'What to do', steps: [{ title: 'Do it', text: ['Do the thing.'] }] }],
+		...extra
+	});
+
+	it('flags a Transaction with no button and no Contact us', () => {
+		const f = actionOf((pagesByKey as Record<string, object>).noticeOfViolation);
+		expect(f?.status).toBe('issue');
+		expect(f?.summary).toBe(
+			'A Transaction should let people act: add a button in What to do, or a Contact us block.'
+		);
+	});
+
+	it('passes a Transaction with a button', () => {
+		expect(actionOf((pagesByKey as Record<string, object>).filthReport)?.status).toBe('pass');
+	});
+
+	it('passes a Transaction whose only action is Contact us', () => {
+		expect(actionOf(tx({ contact: { phone: ['311'] } }))?.status).toBe('pass');
+	});
+
+	it('gives a non-Transaction page no such finding', () => {
+		expect(actionOf({ ...tx({}), type: 'Information' })).toBeUndefined();
+	});
+
+	it('flags exactly these Transaction pages on the current corpus', () => {
+		const flagged = Object.entries(pagesByKey as Record<string, { type: string }>)
+			.filter(([, p]) => p.type === 'Transaction' && actionOf(p)?.status === 'issue')
+			.map(([k]) => k)
+			.sort();
+		expect(flagged).toEqual(
+			[
+				'appealNotice',
+				'inspectionPrepFollowup',
+				'inspectionPrepInitial',
+				'noticeOfViolation',
+				'payCitation',
+				'tenantNoticeSteps'
+			].sort()
+		);
+	});
 });
