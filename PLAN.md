@@ -2,7 +2,7 @@
 
 Branch `docs/plan-transaction-review-fixes`, cut from `origin/main` at `4f4d0ea`.
 Detail, evidence and the status of each finding: `docs/superpowers/plans/2026-11-24-transaction-review-fixes.md`.
-Spec: `Transaction pages.md` and `hhvc-karl-review-all-tabs.md`. That file's **Decisions** tab overrides the other tabs: build only what it lists under Decided.
+Spec: `docs/reviews/2026-11-23-transaction-pages-karl-review.md` and `docs/reviews/2026-11-24-karl-review-all-tabs.md`. That file's **Decisions** tab overrides the other tabs: build only what it lists under Decided.
 
 Already fixed before this plan: descriptions over 110 characters (#194) and "What to do: Pass on every page" (#208).
 Production has 0 edits and 0 comments on any page (measured 2026-11-24). Re-count before any task that moves copy.
@@ -27,7 +27,7 @@ Production has 0 edits and 0 comments on any page (measured 2026-11-24). Re-coun
 
 ## Track D — Docs
 
-- [ ] **D1.** The two review files are in `docs/reviews/`, each with a dated status note.
+- [x] **D1.** The two review files are in `docs/reviews/`, each with a dated status note.
 - [ ] **D2.** The review's stale Analysis-gap line is annotated with what #208 and A1–A5 fixed.
 - [ ] **D3.** `docs/karl-transaction-compliance.csv` is updated alongside B1–B2.
 - [ ] **D4.** CLAUDE.md is confirmed to need no change (grep re-run after A).

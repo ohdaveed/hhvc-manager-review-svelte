@@ -8,7 +8,7 @@
 
 **Tech Stack:** SvelteKit 2 / Svelte 5, TypeScript, Vitest (`bun run test:unit -- --run`), Playwright e2e.
 
-**Spec:** `Transaction pages.md` (the Transaction tab, Nov 23) and `hhvc-karl-review-all-tabs.md` (all tabs, exported Nov 24). **The Decisions tab at the top of the second file overrides every other tab**: "Build only what's under **Decided**." Its build order is field mapping and display modes (done, #197–#208), then fixes within existing pages, then page-type changes and merges, then the report reorganization.
+**Spec:** `docs/reviews/2026-11-23-transaction-pages-karl-review.md` (the Transaction tab, Nov 23) and `docs/reviews/2026-11-24-karl-review-all-tabs.md` (all tabs, exported Nov 24). **The Decisions tab at the top of the second file overrides every other tab**: "Build only what's under **Decided**." Its build order is field mapping and display modes (done, #197–#208), then fixes within existing pages, then page-type changes and merges, then the report reorganization.
 
 ## Status of the review's findings, measured 2026-11-24 on `4f4d0ea`
 
@@ -195,7 +195,7 @@ Raise these as one list for manager review. Nothing here gets built until it mov
 
 Follow `candera-docs-audit`: verify each claim, find every copy, and keep the original claims with a dated note rather than rewriting them.
 
-- [ ] **D1: Bring the two review files into the repo.** Move `Transaction pages.md` and `hhvc-karl-review-all-tabs.md` from the repo root to `docs/reviews/` (confirm the move first). Each gets a dated **Status, 2026-11-24** note under its title that points at this plan's status table. Leave the original findings unedited.
+- [x] **D1: Bring the two review files into the repo.** Move `docs/reviews/2026-11-23-transaction-pages-karl-review.md` and `docs/reviews/2026-11-24-karl-review-all-tabs.md` from the repo root to `docs/reviews/` (confirm the move first). Each gets a dated **Status, 2026-11-24** note under its title that points at this plan's status table. Leave the original findings unedited.
 - [ ] **D2: Fix the review's own stale line.** Its "Gaps in the Analysis panel" says "What to do section: Pass shows on every page". Add a note under it: fixed by #208; the Related, placeholder, reuse, slug and action gaps are closed by A1–A5 (update as each one merges).
 - [ ] **D3: `docs/karl-transaction-compliance.csv`.** Update the rows for every section B1–B2 change, in the same PR as the change. The CSV records section shapes, so it goes stale with any copy move.
 - [ ] **D4: No CLAUDE.md change is warranted.** It documents none of the checks A1–A5 touch. Checked with `grep -rlE "karlComponentFindings|karl-transaction-what-to-do|HAS_PLACEHOLDER|Analysis panel"`, which matches only the review files, `PLAN.md` and `docs/plans/2026-11-23-karl-field-mapping-layer.md`. Re-run that grep at the end of track A. Update the field-mapping plan's §5 if A1 changes what it says `karlComponentFindings` keeps.
