@@ -11,7 +11,7 @@
  * edits, folded the same way `reviewRecordFor` folds them.
  */
 import { pagesByKey } from '$lib/data';
-import { placementsFor, type PagePlacements } from '$lib/karl/placement';
+import { placementsFor, plainReason, type PagePlacements } from '$lib/karl/placement';
 import type { ReviewRecord } from '$lib/karl/reviewRecord';
 import { schemaFor } from '$lib/karl/schema';
 import type { CorpusPage } from '$lib/corpus/fields';
@@ -63,7 +63,12 @@ export function recordFromEdits(edits: EditRow[]): ReviewRecord {
 const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
 
 function unplacedFinding(p: PagePlacements, help: KarlHelpLink): ComponentFinding {
-	const items: FindingItem[] = p.unplaced.map((u) => ({ text: u.subject, detail: u.reason }));
+	// The plain first sentence, as the outline's chips show it; the Blueprint's
+	// tray keeps the transcript's full reason for whoever rebuilds the page.
+	const items: FindingItem[] = p.unplaced.map((u) => ({
+		text: u.subject,
+		detail: plainReason(u.reason)
+	}));
 	return {
 		id: 'karl-unplaced',
 		title: 'Copy that won’t carry over',
