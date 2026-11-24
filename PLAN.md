@@ -50,4 +50,4 @@ Pages: `mosquitoWorkshop`, `ipmEducation`, `ratFreeBlocks`.
       Unconfirmed. Unit tests pin all three pages.
 - [x] **4. e2e.** `ratFreeBlocks` and `ipmEducation` join the outline spec, and `ratFreeBlocks`
       the Blueprint spec, with axe at 1280px and 375px; screenshots looked at.
-- [ ] **5. Ship.** `verify` and the ratchets, PR, merge on green, and `verify:live`.
+- [x] **5. Ship.** `verify` and the ratchets, PR, merge on green, and `verify:live`.
