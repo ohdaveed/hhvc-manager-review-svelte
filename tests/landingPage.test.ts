@@ -133,9 +133,11 @@ describe('landing page', () => {
 		pagesStore.set([row('draft:abc', 'needs-review')]);
 		render(Page);
 		// Not in pageStore, not in draftsStore: the path is the last-resort name.
-		expect((await screen.findByRole('link', { name: /continue/i })).getAttribute('href')).toBe(
-			'/review/draft/abc'
-		);
+		// The verb depends on whether anything is decided -- nothing is here, so
+		// the button reads "Start with". This test is about the href either way.
+		expect(
+			(await screen.findByRole('link', { name: /start with|continue to/i })).getAttribute('href')
+		).toBe('/review/draft/abc');
 	});
 
 	it('counts drafts in the total', async () => {
@@ -172,8 +174,33 @@ describe('landing page', () => {
 	it('lists every corpus page in All pages', () => {
 		session.signedIn = false;
 		render(Page);
-		expect(screen.getByRole('link', { name: 'About vector control' }).getAttribute('href')).toBe(
-			'/review/topic-x--about'
+		// A row is ONE anchor covering the whole row, so its accessible name is
+		// every line inside it -- the title and the muted type line -- not the
+		// title alone. That is deliberate: a screen reader then hears what a
+		// sighted reader scans. `topic-x--about` is in no theme group, so this
+		// also covers the "Other pages" fallback.
+		expect(
+			screen.getByRole('link', { name: 'About vector control About us' }).getAttribute('href')
+		).toBe('/review/topic-x--about');
+	});
+
+	it('badges a page with its recorded status, inside the row name', async () => {
+		session.signedIn = true;
+		pagesStore.set([row('topic-x--about', 'approved')]);
+		render(Page);
+
+		// The badge is a span inside the link, so it joins the row's name. Pinned
+		// deliberately: this is the composed order a screen reader announces.
+		const link = await screen.findByRole('link', { name: /About vector control/ });
+		expect(link.textContent?.replace(/\s+/g, ' ').trim()).toBe(
+			'About vector control Approved About us'
 		);
+	});
+
+	it('shows no status badge when signed out, there being no review to read', () => {
+		session.signedIn = false;
+		render(Page);
+		expect(screen.queryByText('Undecided')).toBeNull();
+		expect(screen.queryByText('Approved')).toBeNull();
 	});
 });
