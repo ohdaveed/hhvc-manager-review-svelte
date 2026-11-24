@@ -305,3 +305,57 @@ describe('Step by step', () => {
 		);
 	});
 });
+
+describe('Topic', () => {
+	const p = of('healthyHousingTopic');
+
+	it('names the stream and the block, never the stream alone', () => {
+		expect([...p.sections.values()].map((s) => s.label)).toEqual([
+			'Child topics · Spotlight block',
+			'Child topics · Services block 1',
+			'Child topics · Services block 2',
+			'Child topics · Resources block',
+			''
+		]);
+	});
+
+	it('doubts the spotlight button: Karl’s pages disagree on it', () => {
+		const button = p.fields.get('sections.report-a-housing-health-issue.button');
+		expect(button?.status).toBe('unconfirmed');
+		expect(button?.reasons).toEqual([
+			'Karl’s own pages disagree on whether a Topic page’s spotlight can have a button.'
+		]);
+		expect(p.sections.get('report-a-housing-health-issue')?.status).toBe('placed');
+	});
+
+	it('needs a fix when a second spotlight appears', () => {
+		const page = pagesByKey.healthyHousingTopic as unknown as {
+			sections: { component?: string }[];
+		};
+		const twice = {
+			...page,
+			sections: page.sections.map((s, i) => (i === 1 ? { ...s, component: 'spotlight' } : s))
+		};
+		const q = placementsFor(twice as never, null, pagesByKey);
+		expect(q.sections.get('report-a-housing-health-issue')?.status).toBe('needs-fix');
+		expect(q.sections.get('report-a-housing-health-issue')?.reasons).toContain(
+			'This page has 2 spotlight blocks; Karl allows 1 on a Topic page.'
+		);
+	});
+
+	it('keeps Related unplaced (U5) and the URL unconfirmed', () => {
+		expect(p.sections.get('related')?.status).toBe('unplaced');
+		expect(p.url?.status).toBe('unconfirmed');
+	});
+
+	it('says, before anything else, that only Digital Services can create it', () => {
+		expect(p.pageCaveats).toEqual([
+			'Only SF.gov Digital Services can create a new Topic page. HHVC can draft this one, but not publish it.'
+		]);
+		expect(of('rodentsReport').pageCaveats).toEqual([]);
+	});
+
+	it('shows both stream caveats on the Blueprint slot', () => {
+		expect(p.panels.find((x) => x.rawName === 'content_fields')?.caveats).toHaveLength(2);
+	});
+});

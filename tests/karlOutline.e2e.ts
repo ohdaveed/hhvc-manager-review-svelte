@@ -39,6 +39,14 @@ const PILOTS = [
 		slug: 'step-by-step-report-a-pest-problem',
 		summary: '2 sections: 1 goes into Karl, 1 unconfirmed. 2 things won’t carry over to Karl.',
 		sections: { placed: 1, unconfirmed: 1, unplaced: 1 }
+	},
+	{
+		// Rollout step 2: Topic. Related (U5) has no panel; only Digital
+		// Services can create a Topic page, which the summary says first.
+		slug: 'topics--healthy-housing-conditions',
+		summary: '4 sections: 4 go into Karl. 2 things won’t carry over to Karl.',
+		caveat: 'Only SF.gov Digital Services can create a new Topic page.',
+		sections: { placed: 4, unplaced: 1 }
 	}
 ] as const;
 
@@ -79,9 +87,13 @@ test.describe('Karl outline', () => {
 
 			await switchOnByKeyboard(page);
 
-			await expect(page.locator('.karl-outline-summary')).toHaveText(
-				`Karl outline: ${pilot.summary}`
-			);
+			const summary = page.locator('.karl-outline-summary');
+			if ('caveat' in pilot) {
+				await expect(summary).toContainText(`Karl outline: ${pilot.summary}`);
+				await expect(summary).toContainText(`Before you start: ${pilot.caveat}`);
+			} else {
+				await expect(summary).toHaveText(`Karl outline: ${pilot.summary}`);
+			}
 			for (const [status, n] of Object.entries(pilot.sections)) {
 				await expect(
 					page.locator(`#mockPage [data-karl-section][data-karl-status="${status}"]`)

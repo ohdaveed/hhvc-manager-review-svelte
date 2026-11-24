@@ -54,6 +54,8 @@ export type FieldRule =
 			max: number;
 			/** Counted per step rather than per page, e.g. one Transaction link per step. */
 			per?: 'step';
+			/** Counted over the panel's blocks of one kind, e.g. Topic's one `spotlight`. */
+			block?: string;
 			status: RuleStatus;
 			cite: Cite;
 	  }
@@ -67,7 +69,18 @@ export type FieldRule =
 	 * copy in it. Only ever `unconfirmed` so far: it exists for the claims Karl's
 	 * pages contradict each other on, which the Blueprint shows beside the slot.
 	 */
-	| { kind: 'caveat'; status: RuleStatus; cite: Cite };
+	| {
+			kind: 'caveat';
+			/** The one sub-field it is about, where it is narrower than the panel. */
+			sub?: string;
+			/** The caveat in one plain line for a manager; `cite.says` keeps Karl's words. */
+			plain: string;
+			status: RuleStatus;
+			cite: Cite;
+	  };
+
+/** Something Karl says about the content type as a whole, shown above the Blueprint. */
+export type PageCaveat = { plain: string; status: RuleStatus; cite: Cite };
 
 export type KarlPanelSchema = {
 	rawName: string;
@@ -92,6 +105,7 @@ export type ContentTypeSchema = {
 	url: { pattern: string; status: RuleStatus; cite: Cite };
 	/** Types a Related card may link to, or `null` when this type has no Related panel. */
 	relatedTargets: readonly string[] | null;
+	pageCaveats: readonly PageCaveat[];
 	panels: readonly KarlPanelSchema[];
 };
 
@@ -99,8 +113,12 @@ export const SCHEMA_TYPES = [
 	'Transaction',
 	'Information',
 	'Resource Collection',
-	'Step by step'
+	'Step by step',
+	'Topic'
 ] as const;
+
+/** A panel's label as Karl's form shows it: the inventory's label without its trailing note. */
+export const formLabel = (uiLabel: string): string => uiLabel.replace(/\s*\(.*\)\s*$/, '');
 export type SchemaType = (typeof SCHEMA_TYPES)[number];
 
 const TITLE: FieldRule = {
@@ -139,6 +157,7 @@ const INERT = new Set(['redirect_url', 'agency_redirect']);
 type TypeRules = {
 	url: ContentTypeSchema['url'];
 	relatedTargets: readonly string[] | null;
+	pageCaveats?: readonly PageCaveat[];
 	helpLabels?: Record<string, string>;
 	rules: Record<string, readonly FieldRule[]>;
 };
@@ -308,11 +327,84 @@ const RULES: Record<SchemaType, TypeRules> = {
 			topics: [
 				{
 					kind: 'caveat',
+					plain:
+						'Karl’s own pages disagree on whether this page then shows up on that Topic page automatically.',
 					status: 'unconfirmed',
 					cite: {
 						helpTitle: 'How a Step by step page works; Topic; Topics',
 						url: `${TYPES}/step-by-step/how-a-step-by-step-page-works`,
 						says: 'Step by step page: "You can add a topic, but the step by step will not automatically show on the topic page." Topic page: "Transaction and step by step pages tagged to the topic will automatically appear under the heading More services."'
+					}
+				}
+			]
+		}
+	},
+	Topic: {
+		// The URLs page gives `sf.gov/topic-[slug]`; the Topic page gives
+		// `sf.gov/topics/name-of-topic`.
+		url: {
+			pattern: 'sf.gov/topic-[slug] or sf.gov/topics/[slug]',
+			status: 'unconfirmed',
+			cite: {
+				helpTitle: 'URLs; Topic',
+				url: `${HC}/components/urls`,
+				says: 'URLs page: "Topic - sf.gov/topic-[slug]". Topic page: "URL sf.gov/topics/name-of-topic".'
+			}
+		},
+		// No `related` panel: confirmed at E1, and the reason for U5.
+		relatedTargets: null,
+		pageCaveats: [
+			{
+				plain:
+					'Only SF.gov Digital Services can create a new Topic page. HHVC can draft this one, but not publish it.',
+				status: 'confirmed',
+				cite: {
+					helpTitle: 'Topic',
+					url: `${TYPES}/topic`,
+					says: 'Only DS can make new topics.'
+				}
+			}
+		],
+		// The form labels this stream "Child topics", and one of its block
+		// choices is ALSO "Child topics" (field map, "Naming trap"); internally it
+		// is "Page content". The help label says which one is meant.
+		helpLabels: { content_fields: 'Page content' },
+		rules: {
+			title: [TITLE],
+			description: [DESCRIPTION],
+			content_fields: [
+				{
+					kind: 'maxItems',
+					max: KARL_FLAGS.spotlightsAllowed.Topic,
+					block: 'spotlight',
+					status: 'confirmed',
+					cite: {
+						helpTitle: COMPONENT_SUPPORT.spotlight.helpTitle,
+						url: COMPONENT_SUPPORT.spotlight.url,
+						says: 'Report, Profile, and Topic only allow 1 spotlight.'
+					}
+				},
+				{
+					kind: 'caveat',
+					sub: 'Spotlight button',
+					plain: 'Karl’s own pages disagree on whether a Topic page’s spotlight can have a button.',
+					status: 'unconfirmed',
+					cite: {
+						helpTitle: 'Button; Spotlight',
+						url: COMPONENT_SUPPORT.spotlightButton.url,
+						says: 'Button page: "You can add a button as part of a Spotlight on: Agency, Campaign, Report" (Topic not listed). Spotlight page: "You have the option to add a button in the spotlight" (no restriction).'
+					}
+				},
+				{
+					kind: 'caveat',
+					sub: 'Services',
+					plain:
+						'Karl’s own pages disagree on whether tagged service pages are listed here automatically, under “More services”.',
+					status: 'unconfirmed',
+					cite: {
+						helpTitle: 'Topic; How a Step by step page works',
+						url: `${TYPES}/topic`,
+						says: 'Topic page: "Transaction and step by step pages tagged to the topic will automatically appear under the heading More services." Step by step page: "You can add a topic, but the step by step will not automatically show on the topic page."'
 					}
 				}
 			]
@@ -349,9 +441,13 @@ export function schemaFor(type: unknown): ContentTypeSchema | null {
 		type,
 		url: spec.url,
 		relatedTargets: spec.relatedTargets,
+		pageCaveats: spec.pageCaveats ?? [],
 		panels: inventory(type).map((panel) => ({
 			rawName: panel.rawName,
-			label: panel.uiLabel,
+			// The inventory keeps the field map's disambiguating parenthetical
+			// ("Child topics (outer StreamField; ...)"); the form shows the part
+			// before it. Same rule as karl-blocks' `crumbLabel`.
+			label: formLabel(panel.uiLabel),
 			...(spec.helpLabels?.[panel.rawName] ? { helpLabel: spec.helpLabels[panel.rawName] } : {}),
 			order: panel.order,
 			required: Boolean(panel.required),

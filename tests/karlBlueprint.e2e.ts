@@ -66,10 +66,30 @@ const PILOTS = [
 		first: ['title', 'primary_agency', 'description', 'intro', 'steps'],
 		empty: ['Primary agency (empty)', 'Topics (empty)'],
 		tray: 2
+	},
+	{
+		slug: 'topics--healthy-housing-conditions',
+		first: ['title', 'primary_agency', 'description', 'top_level_topic', 'content_fields'],
+		empty: ['Primary agency (empty)', 'Set top-level? (empty)'],
+		tray: 2
 	}
 ] as const;
 
 test.describe('Blueprint', () => {
+	test('Topic: who can create it, the stream named as the form names it, and its caveats', async ({
+		page
+	}) => {
+		await gotoSignedIn(page, '/review/topics--healthy-housing-conditions');
+		await openBlueprint(page);
+		await expect(page.locator('.bp-page-caveat')).toContainText(
+			'Only SF.gov Digital Services can create a new Topic page.'
+		);
+		const stream = page.locator('[data-karl-panel="content_fields"]');
+		await expect(stream.getByRole('heading', { level: 3 })).toHaveText('Child topics');
+		await expect(stream).not.toContainText('outer StreamField');
+		await expect(stream.locator('.bp-caveat')).toHaveCount(2);
+	});
+
 	test('Step by step: steps are Step blocks, with Karl’s advice and the Topics caveat', async ({
 		page
 	}) => {

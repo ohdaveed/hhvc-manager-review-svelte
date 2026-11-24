@@ -23,7 +23,7 @@ import { PROMOTE_PANEL, panelByRawName } from '$lib/legacy-core/karl-blocks.js';
 import { deriveFieldKey } from '$lib/corpus/fieldKey';
 import { extractCopy, type CorpusPage } from '$lib/corpus/fields';
 import type { ReviewRecord } from './reviewRecord';
-import { schemaFor, type FieldRule } from './schema';
+import { formLabel, schemaFor, type FieldRule } from './schema';
 
 export type PlacementStatus = 'placed' | 'needs-fix' | 'unconfirmed' | 'unplaced';
 
@@ -106,6 +106,8 @@ export type PagePlacements = {
 	unplaced: UnplacedItem[];
 	panels: PanelFill[];
 	url: { pattern: string; status: PlacementStatus; says: string } | null;
+	/** What Karl says about the content type as a whole, in one plain line each. */
+	pageCaveats: string[];
 };
 
 /* The legacy transcript is untyped; these narrow what this module reads from it. */
@@ -138,7 +140,20 @@ const panelLabel = (type: string, rawName: string): string => {
 	const panel = (
 		panelByRawName as unknown as (t: string, r: string) => { uiLabel?: string } | null
 	)(type, rawName);
-	return panel?.uiLabel ?? rawName;
+	return panel?.uiLabel ? formLabel(panel.uiLabel) : rawName;
+};
+
+/**
+ * Topic's content stream holds several kinds of block, and the stream and one
+ * of its block choices are both called "Child topics" on Karl's form (the field
+ * map's "Naming trap"). So a Topic section is labelled by stream AND block:
+ * `Child topics · Spotlight block`, never the stream alone.
+ */
+const TOPIC_BLOCKS: Record<string, string> = {
+	spotlight: 'Spotlight block',
+	services: 'Services block',
+	resources: 'Resources block',
+	content: 'Content block'
 };
 
 /**
@@ -179,15 +194,6 @@ function subLabel(rest: string, stepByStep = false): string {
 const HAS_PLACEHOLDER = /PLACEHOLDER/;
 const RELATED_HEADING = /^\s*related\b/i;
 const RELATED_PANELS = new Set(['related', 'related_links']);
-
-/**
- * A caveat in words a manager can read. The schema keeps Karl's verbatim
- * quotes as the citation; this is the one-line version the Blueprint shows.
- */
-const CAVEAT_TEXT: Record<string, string> = {
-	'Step by step.topics':
-		'Karl’s own pages disagree on whether this page then shows up on that Topic page automatically.'
-};
 
 /** Page-level fields that are a block of their own on the rendered page. */
 const PAGE_BLOCKS = new Set(['title', 'summary', 'primaryAgency']);
@@ -262,7 +268,23 @@ export function placementsFor(
 		if (!seen.includes(key)) seen.push(key);
 		instances.set(raw, seen);
 	}
+	const componentOf = new Map(
+		sections.map((section, index) => [
+			keyOf(index),
+			String((section as { component?: unknown }).component ?? '')
+		])
+	);
 	const instanceLabel = (raw: string, key: string) => {
+		const block =
+			type === 'Topic' && raw === 'content_fields'
+				? TOPIC_BLOCKS[componentOf.get(key) ?? '']
+				: undefined;
+		if (block) {
+			const same = (instances.get(raw) ?? []).filter(
+				(k) => componentOf.get(k) === componentOf.get(key)
+			);
+			return `${panelLabel(type, raw)} · ${block}${same.length > 1 ? ` ${same.indexOf(key) + 1}` : ''}`;
+		}
 		const seen = instances.get(raw) ?? [];
 		return raw !== 'what_to_do' && seen.length > 1
 			? `${panelLabel(type, raw)} ${seen.indexOf(key) + 1}`
@@ -324,7 +346,24 @@ export function placementsFor(
 			const steps = (section as { steps?: unknown[] }).steps;
 			const stepCount = Array.isArray(steps) ? steps.length : 0;
 			for (const rule of rulesOf(claimant)) {
-				if (stepCount && rule.kind === 'maxItems' && !rule.per && stepCount > rule.max) {
+				// A block-count limit, e.g. Topic's one spotlight: count this page's
+				// sections of that kind, and mark each of them.
+				if (rule.kind === 'maxItems' && rule.block && componentOf.get(key) === rule.block) {
+					const count = [...componentOf.values()].filter((c) => c === rule.block).length;
+					if (count > rule.max) {
+						status = worstOf([status, 'needs-fix']);
+						reasons.push(
+							`This page has ${count} ${rule.block} blocks; Karl allows ${rule.max} on a ${type} page.`
+						);
+					}
+				}
+				if (
+					stepCount &&
+					rule.kind === 'maxItems' &&
+					!rule.per &&
+					!rule.block &&
+					stepCount > rule.max
+				) {
 					status = worstOf([status, 'needs-fix']);
 					reasons.push(`This page has ${stepCount} steps; Karl allows up to ${rule.max}.`);
 				}
@@ -425,9 +464,18 @@ export function placementsFor(
 		let own: PlacementStatus = 'placed';
 		const fail = (reason: string | null) => {
 			if (!reason) return;
-			own = 'needs-fix';
+			own = worstOf([own, 'needs-fix']);
 			reasons.push(reason);
 		};
+		// A field resting on a rule Karl's own pages contradict.
+		const doubt = (reason: string) => {
+			own = worstOf([own, 'unconfirmed']);
+			reasons.push(reason);
+		};
+		if (sectionKey && componentOf.get(sectionKey) === 'spotlight' && /\.button(Url)?$/.test(id)) {
+			for (const rule of rulesOf(raw))
+				if (rule.kind === 'caveat' && rule.sub === 'Spotlight button') doubt(rule.plain);
+		}
 
 		if (HAS_PLACEHOLDER.test(text)) fail('Still holds PLACEHOLDER text.');
 		for (const rule of rulesOf(raw)) {
@@ -555,7 +603,7 @@ export function placementsFor(
 			],
 			caveats: rulesOf(panel.rawName)
 				.filter((rule) => rule.kind === 'caveat')
-				.map((rule) => CAVEAT_TEXT[`${type}.${panel.rawName}`] ?? rule.cite.says)
+				.map((rule) => (rule.kind === 'caveat' ? rule.plain : ''))
 		});
 	}
 
@@ -579,6 +627,7 @@ export function placementsFor(
 		whatToKnow,
 		unplaced: unplacedItems,
 		panels,
+		pageCaveats: (schema?.pageCaveats ?? []).map((caveat) => caveat.plain),
 		url: schema
 			? {
 					pattern: schema.url.pattern,
