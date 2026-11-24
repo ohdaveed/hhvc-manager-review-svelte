@@ -29,5 +29,5 @@ is Unplaced; Primary agency is empty. No About rule is checked yet.
       the no-images note, an unconfirmed URL, no Related. Unit tests pin the page.
 - [x] **2. e2e.** The About us page joins both specs, with axe at 1280px and 375px; screenshots
       looked at.
-- [ ] **3. Ship.** `verify` and the ratchets, then a PR. Ask before merging. Then mark the rollout
+- [x] **3. Ship.** `verify` and the ratchets, then a PR. Ask before merging. Then mark the rollout
       complete in the plan doc.
