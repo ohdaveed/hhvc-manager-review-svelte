@@ -75,7 +75,12 @@
 	// three groups. They carry their help link inline rather than as a key.
 	const allFindings = $derived<(Finding | ComponentFinding)[]>(
 		analysis
-			? [...analysis.findings, ...analysis.componentFindings, ...analysis.contentTypeFindings]
+			? [
+					...analysis.findings,
+					...analysis.placementFindings,
+					...analysis.componentFindings,
+					...analysis.contentTypeFindings
+				]
 			: []
 	);
 	const issues = $derived(allFindings.filter((f) => f.status === 'issue'));

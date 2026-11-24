@@ -24,7 +24,7 @@ import { deriveFieldKey } from '$lib/corpus/fieldKey';
 import { extractCopy, type CorpusPage } from '$lib/corpus/fields';
 import type { ReviewRecord } from './reviewRecord';
 import { formLabel, schemaFor, type FieldRule } from './schema';
-import { COMPONENT_SUPPORT, isSupported } from './componentSupport';
+import { COMPONENT_SUPPORT, isSupported, type KarlComponent } from './componentSupport';
 
 export type PlacementStatus = 'placed' | 'needs-fix' | 'unconfirmed' | 'unplaced';
 
@@ -241,6 +241,16 @@ const HAS_PLACEHOLDER = /PLACEHOLDER/;
 const RELATED_HEADING = /^\s*related\b/i;
 const RELATED_PANELS = new Set(['related', 'related_links']);
 
+/** "a Campaign page", "an Information page". */
+const aPage = (type: string) => `${/^[aeiou]/i.test(type) ? 'an' : 'a'} ${type} page`;
+
+/** Section tags that name a Karl component, judged against the page's type. */
+const SECTION_COMPONENTS: Record<string, KarlComponent> = {
+	supporting: 'accordion',
+	resources: 'resources',
+	spotlight: 'spotlight'
+};
+
 /** Page-level fields that are a block of their own on the rendered page. */
 const PAGE_BLOCKS = new Set(['title', 'summary', 'primaryAgency']);
 
@@ -390,6 +400,17 @@ export function placementsFor(
 				reasons.push(
 					'Karl’s field map does not document this mapping; the editor should check it before saving.'
 				);
+			}
+			// A section tagged as a component Karl does not offer on this type --
+			// resource tiles on an Information page, say. The transcript folds it
+			// into some other field, so the words survive but not as that
+			// component: the same shape as a callout on a type without callouts.
+			const component =
+				SECTION_COMPONENTS[String((section as { component?: unknown }).component ?? '')];
+			if (component && isSupported(component, type) === 'no') {
+				const rule = COMPONENT_SUPPORT[component];
+				status = worstOf([status, 'needs-fix']);
+				reasons.push(`Karl has no ${rule.label.toLowerCase()} on ${aPage(type)}. ${rule.instead}`);
 			}
 			if (RELATED_HEADING.test(heading) && !RELATED_PANELS.has(claimant)) {
 				status = worstOf([status, 'needs-fix']);
@@ -572,7 +593,7 @@ export function placementsFor(
 		// shape as a Related list landing as Resource tiles. The in-mockup
 		// KarlOrphanNotice has said so all along; the outline now agrees.
 		if (/(^|\.)callout\.(text|title)$/.test(id) && isSupported('callout', type) === 'no') {
-			fail(`Karl has no callout on a ${type} page. ${COMPONENT_SUPPORT.callout.instead}`);
+			fail(`Karl has no callout on ${aPage(type)}. ${COMPONENT_SUPPORT.callout.instead}`);
 		}
 		// A button inside a panel with a Button limit, e.g. a Campaign spotlight's.
 		if (/\.button$/.test(id)) {
@@ -612,10 +633,23 @@ export function placementsFor(
 				if (rule.kind === 'maxChars' && rule.sub === 'Button link')
 					fail(lengthReason(rule, text, 'Button text'));
 		}
-		if (raw === 'supporting_information' && id.endsWith('.heading')) {
-			for (const rule of rulesOf('supporting_information'))
-				if (rule.kind === 'maxChars' && rule.sub === 'Title')
-					fail(lengthReason(rule, text, 'Accordion title'));
+		// An accordion's title, on any type that has accordions (Transaction's
+		// supporting information, Campaign's additional content): Karl's
+		// Accordions page caps it at 65 for all of them.
+		if (sectionKey && componentOf.get(sectionKey) === 'supporting' && id.endsWith('.heading')) {
+			fail(
+				lengthReason(
+					{
+						kind: 'maxChars',
+						max: COMPONENT_SUPPORT.accordion.maxChars?.title ?? 65,
+						strict: false,
+						status: 'confirmed',
+						cite: { helpTitle: '', url: '', says: '' }
+					},
+					text,
+					'Accordion title'
+				)
+			);
 		}
 
 		fields.set(id, {

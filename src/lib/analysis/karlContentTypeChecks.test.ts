@@ -41,17 +41,27 @@ describe('Karl content-type checks on the current corpus', () => {
 				// Steps on an Information page.
 				'sf.gov/information/what-happens-after-you-report-housing-pest-problem / karl-information-actionable / How a report moves through the City',
 				// Five "1." … "5." headings on an Information page.
-				'sf.gov/information/integrated-pest-management-for-property-owners-and-managers / karl-information-actionable / 5 numbered section headings'
+				'sf.gov/information/integrated-pest-management-for-property-owners-and-managers / karl-information-actionable / 5 numbered section headings',
+				// No section placed in What to do. These passed while the check read
+				// note prose that merely mentioned what_to_do.
+				'sf.gov/find-complaints-and-inspection-records / karl-transaction-what-to-do / No What to do section',
+				'sf.gov/find-healthy-housing-inspector-by-neighborhood / karl-transaction-what-to-do / No What to do section',
+				'sf.gov/find-residential-hotel-and-shelter-records / karl-transaction-what-to-do / No What to do section',
+				'sf.gov/lookup-residential-health-code-violations / karl-transaction-what-to-do / No What to do section',
+				'sf.gov/make-a-public-records-request-environmental-health / karl-transaction-what-to-do / No What to do section',
+				// A custom heading where Karl hard-codes "What to do".
+				'sf.gov/get-ready-for-a-follow-up-inspection / karl-transaction-what-to-do / Document your work',
+				'sf.gov/get-ready-for-a-follow-up-inspection / karl-transaction-what-to-do / What to expect at the follow-up visit',
+				'sf.gov/get-ready-for-a-housing-inspection / karl-transaction-what-to-do / Before the inspector arrives',
+				'sf.gov/get-ready-for-a-housing-inspection / karl-transaction-what-to-do / What to expect during the visit',
+				'sf.gov/tenant-steps-after-notice-of-violation / karl-transaction-what-to-do / Prepare your unit'
 			].sort()
 		);
 	});
 
-	it('every Transaction in the corpus has a What to do section', () => {
-		const transactions = pages.filter((p) => p.type === 'Transaction');
-		expect(transactions.length).toBeGreaterThan(0);
-		for (const p of transactions) {
-			expect(byId(p, 'karl-transaction-what-to-do')?.status, String(p.slug)).toBe('pass');
-		}
+	it('passes a Transaction whose steps are placed in What to do under that heading', () => {
+		const rats = pages.find((p) => p.slug === 'sf.gov/report-rats-mice-four-legged-problems')!;
+		expect(byId(rats, 'karl-transaction-what-to-do')?.status).toBe('pass');
 	});
 });
 
@@ -96,12 +106,24 @@ describe('Step by step', () => {
 });
 
 describe('Transaction', () => {
-	it('accepts a section mapped to what_to_do under another heading', () => {
+	it('does not accept a note that only mentions what_to_do: the section must be placed there', () => {
 		const page = {
 			type: 'Transaction',
 			sections: [{ heading: 'Document your work', karl: 'what_to_do. Each step is one Section.' }]
 		};
-		expect(byId(page, 'karl-transaction-what-to-do')?.status).toBe('pass');
+		const finding = byId(page, 'karl-transaction-what-to-do');
+		expect(finding?.status).toBe('issue');
+		expect(finding?.items[0].text).toBe('No What to do section');
+	});
+
+	it('flags steps placed in What to do under a heading Karl will not show', () => {
+		const page = {
+			type: 'Transaction',
+			sections: [{ heading: 'Document your work', steps: [{ title: 'Take photos' }] }]
+		};
+		const finding = byId(page, 'karl-transaction-what-to-do');
+		expect(finding?.status).toBe('issue');
+		expect(finding?.items[0]).toMatchObject({ text: 'Document your work' });
 	});
 
 	it('flags a Transaction with no What to do', () => {

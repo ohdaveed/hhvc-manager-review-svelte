@@ -30,6 +30,7 @@ import { labelCount, longParagraphs, rawUrlsInProse, vagueLabels } from './textC
 import { runDomChecks } from './domChecks';
 import { karlComponentFindings, type ComponentFinding } from './karlComponentChecks';
 import { karlContentTypeFindings } from './karlContentTypeChecks';
+import { karlPlacementFindings } from './karlPlacementChecks';
 
 export type FindingStatus = 'pass' | 'issue' | 'unavailable';
 
@@ -72,6 +73,8 @@ export type Analysis = {
 	 * Same shape as `componentFindings`, for the same reason.
 	 */
 	contentTypeFindings: ComponentFinding[];
+	/** Where the page lands in Karl: the same placements the Karl outline draws. */
+	placementFindings: ComponentFinding[];
 	/** How many corpus strings were measured — the honest denominator for the score. */
 	measuredFields: number;
 };
@@ -242,6 +245,7 @@ export function analyzePage({ page, edits = [], root = null }: AnalyzeInput): An
 		findings,
 		componentFindings: karlComponentFindings(page),
 		contentTypeFindings: karlContentTypeFindings(page),
+		placementFindings: karlPlacementFindings(page, edits),
 		measuredFields: entries.filter((e) => e.kind === 'heading' || e.kind === 'prose').length
 	};
 }

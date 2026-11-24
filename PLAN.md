@@ -39,11 +39,11 @@ source), judged on the copy on screen (base plus saved edits):
 
 ## Checklist
 
-- [ ] **1. Placement findings.** `karlPlacementChecks.ts` and tests over the whole corpus, wired into
+- [x] **1. Placement findings.** `karlPlacementChecks.ts` and tests over the whole corpus, wired into
       `analyzePage` (a `placementFindings` list) and the panel's flattened list.
-- [ ] **2. What to do from the placement.** `karl-transaction-what-to-do` reads placements; tests
+- [x] **2. What to do from the placement.** `karl-transaction-what-to-do` reads placements; tests
       include a page whose note mentions `what_to_do` but has no such section.
-- [ ] **3. Component checks narrowed.** `karlComponentFindings` keeps the Related target check;
+- [x] **3. Component checks narrowed.** `karlComponentFindings` keeps the Related target check;
       its tests are rewritten to that scope.
 - [ ] **4. Verify.** Unit tests, the ratchets, the Analysis panel's e2e and axe, a screenshot of
       the panel looked at, then a PR. Ask before merging.
