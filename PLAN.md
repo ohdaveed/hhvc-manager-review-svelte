@@ -29,7 +29,7 @@ Karl, read 2026-11-24:
 - [x] **1. Schema.** Topic in `schema.ts`: Title, Description, one Spotlight, the spotlight-button and
       More-services caveats, the URL, and the page-level DS caveat, all cited. Caveats carry their
       own one-line wording, replacing the `CAVEAT_TEXT` map.
-- [ ] **2. Placement.** Topic blocks labelled `Child topics · Spotlight block` (etc.); a spotlight
+- [x] **2. Placement.** Topic blocks labelled `Child topics · Spotlight block` (etc.); a spotlight
       count over 1 needs a fix; the spotlight button Unconfirmed; the page caveat shown in the
       Blueprint header and the outline summary. Unit tests pin the page.
 - [ ] **3. e2e.** The Topic page joins the outline and Blueprint specs, with axe at 1280px and 375px;

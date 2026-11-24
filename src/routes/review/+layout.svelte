@@ -755,6 +755,9 @@
 								<p class="karl-outline-summary" role="status">
 									<strong>Karl outline:</strong>
 									{outlineSummary(outlinePlacements)}
+									{#each outlinePlacements.pageCaveats as caveat, i (i)}
+										<br /><strong>Before you start:</strong> {caveat}
+									{/each}
 								</p>
 							{/if}
 							<div class="mx-auto max-w-[1076px]">

@@ -65,6 +65,10 @@
 			</p>
 		{/if}
 
+		{#each placements.pageCaveats as caveat, i (i)}
+			<p class="bp-page-caveat"><strong>Before you start:</strong> {caveat}</p>
+		{/each}
+
 		<ol class="bp-slots" aria-label="Karl form panels, in order">
 			{#each slots as slot (slot.rawName)}
 				<li class="bp-slot" data-filled={slot.filled} data-karl-panel={slot.rawName}>
@@ -211,6 +215,16 @@
 	.bp-url {
 		max-width: 760px;
 		margin: 0 auto 12px;
+		font-size: 14px;
+		color: #1c2b39;
+	}
+
+	.bp-page-caveat {
+		max-width: 760px;
+		margin: 0 auto 12px;
+		padding: 8px 12px;
+		border-left: 3px solid #545b64;
+		background: #eef0f3;
 		font-size: 14px;
 		color: #1c2b39;
 	}
