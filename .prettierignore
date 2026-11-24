@@ -33,3 +33,12 @@ supabase/.temp/
 # further. `907b24e` is the instance that made it visible: a 3-line edit
 # carrying 186 lines of churn under a `ci:` subject.
 PLAN.md
+
+# Agent tooling scratch, matching `.gitignore`. Prettier does not read
+# `.gitignore`, so it needs stating twice: without this, `prettier --check .`
+# reports 78 files where `git ls-files` reports 50, and the difference is
+# whichever skill happened to run on this machine. `format:ratchet` counts
+# tracked files and is unaffected either way; this is what makes the figure in
+# `bun run lint` mean the same thing.
+.superpowers/
+.impeccable/
