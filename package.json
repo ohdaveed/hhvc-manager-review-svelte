@@ -14,6 +14,7 @@
 		"lint": "prettier --check . && eslint .",
 		"lint:ratchet": "bun run scripts/eslint-ratchet.ts",
 		"check:ratchet": "bun run scripts/check-ratchet.ts",
+		"format:ratchet": "bun run scripts/prettier-ratchet.ts",
 		"test": "npm run test:unit -- --run && npm run test:e2e",
 		"test:unit": "vitest",
 		"test:e2e": "playwright install chromium && playwright test",
