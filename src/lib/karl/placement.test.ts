@@ -484,3 +484,52 @@ describe('Report', () => {
 		expect(guide.panels.map((x) => x.rawName)).not.toContain('related');
 	});
 });
+
+describe('Agency', () => {
+	const p = of('pestsTopic');
+
+	it('tells the two Subsection panels apart by the section they sit under', () => {
+		expect(p.sections.get('get-help-with-pests-mold-or-trash')?.label).toBe(
+			'Services · Subsection'
+		);
+		expect(p.sections.get('if-you-rent')?.label).toBe('Resources · Subsection 1');
+		expect(p.fields.get('sections.look-up-records-and-rules.heading')?.label).toBe(
+			'Resources · Subsection 3 · Title'
+		);
+		expect(p.panels.filter((x) => x.label.endsWith('Subsection')).map((x) => x.label)).toEqual([
+			'Services · Subsection',
+			'Resources · Subsection'
+		]);
+	});
+
+	it('reports the Subsection intro paragraphs as unplaced (U20), not placed', () => {
+		const f = p.fields.get('sections.if-you-rent.paragraphs.0');
+		expect(f?.status).toBe('unplaced');
+		expect(f?.reasons[0]).toMatch(/Title and a links list/);
+		expect(p.sections.get('if-you-rent')?.status).toBe('placed');
+		expect(p.unplaced.map((u) => u.subject)).toEqual([
+			'The “Who this is for” list',
+			'“Get help with pests, mold, or trash”',
+			'“If you rent”',
+			'“If you own or manage a building”',
+			'“Other City housing services”'
+		]);
+	});
+
+	it('keeps Section title 1 and 2 at their pre-filled values', () => {
+		const titles = p.panels.filter((x) => /^Section title [12]$/.test(x.label));
+		expect(titles.map((x) => x.values.map((v) => v.value))).toEqual([['Services'], ['Resources']]);
+	});
+
+	it('flags the required, empty Public records panel', () => {
+		expect(p.panels.find((x) => x.rawName === 'public_records')).toMatchObject({
+			required: true,
+			filled: false
+		});
+	});
+
+	it('doubts resource tiles on Agency, and the URL', () => {
+		expect(p.panels.find((x) => x.rawName === 'resources')?.caveats).toHaveLength(1);
+		expect(p.url?.status).toBe('unconfirmed');
+	});
+});

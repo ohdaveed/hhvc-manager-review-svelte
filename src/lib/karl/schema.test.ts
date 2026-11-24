@@ -57,11 +57,11 @@ describe('Karl schema', () => {
 				.panels.filter((p) => p.inert)
 				.map((p) => `${t}.${p.rawName}`)
 		);
-		expect(inert).toEqual(['Transaction.redirect_url']);
+		expect(inert).toEqual(['Transaction.redirect_url', 'Agency.agency_redirect']);
 	});
 
 	it('returns null for a type this slice does not cover', () => {
-		expect(schemaFor('Agency')).toBeNull();
+		expect(schemaFor('About us')).toBeNull();
 		expect(schemaFor(undefined)).toBeNull();
 	});
 });
