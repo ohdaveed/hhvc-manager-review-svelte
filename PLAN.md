@@ -1,50 +1,38 @@
-# PLAN — Karl outline rollout: Location
+# PLAN — Review workspace header band and side panels
 
-Branch `feat/karl-location`, cut from `origin/main` at `0046900` (Agency, PR #202, verified live).
-The plan and vocabulary are in `docs/plans/2026-11-23-karl-field-mapping-layer.md` (§5, rollout
-step 6) and `CONTEXT.md`.
+Branch `feat/workspace-header`, cut from `origin/main` at `88ceac2`, in worktree
+`../wt-workspace-header`. Approved by the user ("Build it", 2026-11-24) after a dashboard-layout
+review of `/review/[slug]` rendered at 1440/1280/768/375. Independent of PR #205 (landing page).
 
-One page: `ehOffice` (`sf.gov/location/environmental-health-office`), a proposed page with
-placeholder address and hours.
+## Findings this answers
 
-## Measured before starting
+1. Nothing in the workspace links back to `/`.
+2. The queue header (83px), canvas toolbar (48px) and panel tab strip (48px, grey tint) are three
+   unaligned tops.
+3. Account (email, Sign out) and an "SFDS REBUILD" eyebrow sit above the queue.
+4. The toolbar shows the slug, not the page; its only navigation is "First page".
+5. Decision is the panel's default and main job but its tab is third; "Manager Review" repeats it.
+6. The decision is invisible with the panel collapsed and on phones.
 
-"5 sections: 1 needs a fix, 4 unconfirmed." Every mapping is inferred, because the live form was
-captured only to panel names (field map E2, register **U26**): `title`, `primary_agency`,
-`description`, `alert`, `image`, `body`, `intro`, `services`, `about_location`, `partner_agencies`,
-`at_this_location`, `people`, `related_locations`, `contact`. Labels read "Body 1–3" and "Intro" with
-no hint of where they sit on the page.
+## Tasks
 
-## Karl, read 2026-11-24
+- [ ] **Header band.** Queue rail header is one 48px row: "All pages" link to `/` + collapse.
+      Toolbar: previous/next page in queue order, the page title (slug in its tooltip), a status
+      badge, then unsaved count, preview width ("Desktop · 54%", px in tooltip) and Karl. Panel tab
+      strip on white. All three share one bottom border line.
+- [ ] **Queue order helper.** `queueOrder(pages)` in `reviewState` (groups in
+      `QUEUE_STATUS_ORDER`, store order within), corpus order when no review is loaded; unit-tested.
+- [ ] **Account to footer.** Email + Sign out move to the queue footer beside Site map / Export;
+      the eyebrow goes.
+- [ ] **Panel.** Tabs ordered Decision, Fields, Rethink, Analysis; "Manager Review" heading removed.
+- [ ] **Decision when hidden.** Collapsed panel strip shows a status dot with an accessible label;
+      the phone Review button carries the status.
+- [ ] **Tests and gates.** Replace `toolbarQueueStart.e2e.ts` with prev/next coverage; update
+      specs that pin the old header; `verify`, ratchets, affected e2e green.
+- [ ] **Rendered check.** 1440/1280/768/375, collapsed, signed out; keyboard order; axe.
 
-"How a Location page works" lists 21 sections: Title, Description, Primary Agency, Alert, **Essential
-information** (Image, Body), **Getting here** (Intro, Parking, Accessibility, Public
-transportation, Accordions), Services, About, Partner agencies, **Additional location info**, At this
-location, People, Related locations, Contact us.
+## Decisions
 
-- These are not 21 fields. "Essential information" ("includes an Image and a Body section for
-  text") and "Getting here" ("Basic information about transportation … The 'Getting here'
-  subheading cannot be changed") are **groups** over the captured `image`/`body` and `intro`.
-- **Parking, Accessibility, Public transportation, Accordions and Additional location info have no
-  field in the capture.** They probably sit inside fields nobody expanded (U26). They are not
-  invented here; they are shown as one Unconfirmed note.
-- A Location "is based on an Address", and the Address snippet carries Line 1, City, State and Zip
-  (all required) plus **Hours and days open**. The page's own note already says its address and hours
-  "belong with the page's address fields". This is a **confirmed** Good-to-know note.
-- Related locations takes other **Location** pages only; At this location takes Agency or Location
-  pages; Contact us is listed, so it is **confirmed** (unlike Campaign).
-- Alert: title ≤30 and description ≤120 characters (Alert component).
-- URL: `sf.gov/[slug]` (URLs) vs `sf.gov/location/name-of-location` (Location). **Unconfirmed.**
-
-## Checklist
-
-- [x] **1. Schema and placement.** Location in `schema.ts`: Title, Description, alert limits, the
-      Address-snippet note, the uncaptured-sections caveat (U26), Related locations (Location pages
-      only), and an unconfirmed URL. Labels carry the help center's groups (`Essential information ·
-      Body`, `Getting here · Intro`). The intro gets a reason: Karl describes Getting here as
-      transport information, which an audience line may not be. The absorbed Related list's reason
-      names Related locations. Unit tests pin the page.
-- [x] **2. Field map.** U26 gains the help-center reading. The inventory keeps its 14 captured fields.
-- [x] **3. e2e.** The Location page joins both specs, with axe at 1280px and 375px; screenshots
-      looked at.
-- [x] **4. Ship.** `verify` and the ratchets, then a PR. Ask before merging.
+- Toolbar badge uses the workspace vocabulary (`queueHeading`: "Needs review"), matching the
+  queue groups beside it. Unifying with the landing page's "Undecided" is follow-up F1 in
+  `src/lib/review/statusLabels.ts`, deliberately not done here.
