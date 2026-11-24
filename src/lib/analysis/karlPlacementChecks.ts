@@ -163,6 +163,8 @@ function emptyFieldsFinding(p: PagePlacements, help: KarlHelpLink): ComponentFin
 /** A confirmed `sf.gov/[slug]` pattern: one path segment after the host. */
 const FLAT_SLUG = /^sf\.gov\/[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
+const ARTICLES = new Set(['a', 'an', 'the']);
+
 function urlFinding(
 	page: CorpusPage,
 	p: PagePlacements,
@@ -187,23 +189,30 @@ function urlFinding(
 		};
 	}
 	// The only confirmed pattern is `sf.gov/[slug]`.
-	const ok = FLAT_SLUG.test(slug);
+	const flat = FLAT_SLUG.test(slug);
+	const items: FindingItem[] = [];
+	if (!flat)
+		items.push({
+			text: slug,
+			detail: `Expected ${schema.url.pattern}: lowercase words joined by dashes, with no further path.`
+		});
+	// Karl's URLs page drops articles: `apply-for-cannabis-equity-permit`.
+	const articles = [...new Set(slug.replace(/^sf\.gov\//, '').split('-'))].filter((w) =>
+		ARTICLES.has(w)
+	);
+	for (const a of articles)
+		items.push({ text: slug, detail: `Karl drops articles from URLs: remove “${a}”.` });
 	return {
 		id: 'karl-url-pattern',
 		title: 'URL pattern',
-		status: ok ? 'pass' : 'issue',
-		summary: ok
-			? `The URL follows Karl’s ${schema.url.pattern} pattern for a ${p.type} page.`
-			: `Karl gives ${schema.url.pattern} for a ${p.type} page; this URL does not follow it.`,
+		status: items.length ? 'issue' : 'pass',
+		summary: !flat
+			? `Karl gives ${schema.url.pattern} for a ${p.type} page; this URL does not follow it.`
+			: items.length
+				? `The URL follows Karl’s ${schema.url.pattern} pattern but keeps an article Karl drops.`
+				: `The URL follows Karl’s ${schema.url.pattern} pattern for a ${p.type} page.`,
 		help,
-		items: ok
-			? []
-			: [
-					{
-						text: slug,
-						detail: `Expected ${schema.url.pattern}: lowercase words joined by dashes, with no further path.`
-					}
-				]
+		items
 	};
 }
 

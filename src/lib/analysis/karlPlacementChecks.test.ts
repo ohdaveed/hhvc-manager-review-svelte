@@ -151,3 +151,40 @@ describe('title words reused in the description', () => {
 		expect(byId('payFee', 'karl-description-reuse', edits as never).status).toBe('pass');
 	});
 });
+
+describe('articles in the slug', () => {
+	const urlOf = (slug: string) =>
+		karlPlacementFindings(
+			{ slug, type: 'Transaction', title: 'T', summary: 'S', sections: [] } as never,
+			[]
+		).find((f) => f.id === 'karl-url-pattern')!;
+
+	it('flags an article as a whole word in the slug', () => {
+		const f = urlOf('sf.gov/report-a-pest-problem');
+		expect(f.status).toBe('issue');
+		expect(f.items.map((i) => i.detail)).toContain('Karl drops articles from URLs: remove “a”.');
+	});
+
+	it('does not flag letters inside a word', () => {
+		expect(urlOf('sf.gov/data-analytics').status).toBe('pass');
+	});
+
+	it('flags exactly the Transaction slugs the review names', () => {
+		const flagged = Object.values(pagesByKey as Record<string, { slug: string; type: string }>)
+			.filter((p) => p.type === 'Transaction')
+			.filter((p) =>
+				karlPlacementFindings(p as never)
+					.find((f) => f.id === 'karl-url-pattern')!
+					.items.some((i) => /articles/.test(i.detail ?? ''))
+			)
+			.map((p) => p.slug)
+			.sort();
+		expect(flagged).toEqual([
+			'sf.gov/appeal-a-notice-of-violation',
+			'sf.gov/get-ready-for-a-follow-up-inspection',
+			'sf.gov/get-ready-for-a-housing-inspection',
+			'sf.gov/make-a-public-records-request-environmental-health',
+			'sf.gov/pay-a-healthy-housing-citation'
+		]);
+	});
+});
