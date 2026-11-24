@@ -43,7 +43,7 @@ test('no WCAG 2.1 AA violations in the signed-in queue and decision panel', asyn
 
 	// The queue's four status groups and the decision controls, which only
 	// exist for a signed-in reviewer.
-	await expect(page.getByRole('heading', { name: 'Manager Review' })).toBeVisible();
+	await expect(page.getByRole('heading', { name: 'Decision' })).toBeAttached();
 	// Radios, not buttons: the decision is a single choice, and `ReviewPanel`
 	// models it as a radiogroup. Asserting the wrong role here failed loudly,
 	// which is the point of asserting the surface rendered at all.

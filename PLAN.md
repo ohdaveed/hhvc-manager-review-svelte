@@ -1,36 +1,42 @@
-# PLAN — Landing page fixes
+# PLAN — Review workspace header band and side panels
 
-Branch `feat/landing-fixes`, cut from `origin/main` at `0046900`, in worktree `../wt-landing-fixes`.
-The confirmed design is `docs/superpowers/specs/2026-11-24-landing-page-fixes-brief.md` (user
-confirmed "build as written", 2026-11-24). It came from the dashboard review of the same day.
+Branch `feat/workspace-header`, cut from `origin/main` at `88ceac2`, in worktree
+`../wt-workspace-header`. Approved by the user ("Build it", 2026-11-24) after a dashboard-layout
+review of `/review/[slug]` rendered at 1440/1280/768/375. Independent of PR #205 (landing page).
+
+## Findings this answers
+
+1. Nothing in the workspace links back to `/`.
+2. The queue header (83px), canvas toolbar (48px) and panel tab strip (48px, grey tint) are three
+   unaligned tops.
+3. Account (email, Sign out) and an "SFDS REBUILD" eyebrow sit above the queue.
+4. The toolbar shows the slug, not the page; its only navigation is "First page".
+5. Decision is the panel's default and main job but its tab is third; "Manager Review" repeats it.
+6. The decision is invisible with the panel collapsed and on phones.
 
 ## Tasks
 
-- [x] **loadReview rejects on a query error.** A `/reviews` error rejects instead of resolving to
-      a no-op, so the landing page's `failed` branch is reachable; "no review visible" stays a
-      resolve. The review layout's handling of a rejection is checked and still works.
-- [x] **Status card.** One card in the header slot in every state: skeleton (loading), signed out
-      (Sign in), in progress / none decided / all decided, load failed (Try again re-runs the
-      load), and signed in with no review. A "Next up" row holds the title; the button reads
-      Continue/Start with the accessible name `Continue to <title>` / `Start with <title>`. No
-      horizontal overflow at 375px.
-- [x] **Status shortcuts.** Legend entries (plus "N undecided") are buttons that set the list's
-      status filter and move focus to the list heading.
-- [x] **Drafts.** `isDraftPath` pages are always under Proposed pages; a draft's meta line shows
-      Drafting… / Draft ready / Drafting stalled / Draft failed.
-- [x] **Empty search.** The message names the query and the active status, plus a "Clear search
-      and filter" button that resets both and focuses the search box.
-- [x] **Polish.** How it works opens when nothing is decided yet. The propose textarea really
-      renders 5 rows and gets an example line. Row meta is `text-slate-700`.
-- [x] **Gates.** New/updated unit and e2e specs; `bun run verify`, lint/check/format ratchets,
-      e2e green.
-- [x] **Rendered check.** 375/768/1440, signed in/out, loading/error, axe clean, console clean.
+- [x] **Header band.** Queue rail header is one 48px row: "All pages" link to `/` + collapse.
+      Toolbar: previous/next page in queue order, the page title (slug in its tooltip), a status
+      badge, then unsaved count, preview width ("Desktop · 54%", px in tooltip) and Karl. Panel tab
+      strip on white. All three share one bottom border line.
+- [x] **Queue order helper.** `queueOrder(pages)` in `reviewState` (groups in
+      `QUEUE_STATUS_ORDER`, store order within), corpus order when no review is loaded; unit-tested.
+- [x] **Account to footer.** Email + Sign out move to the queue footer beside Site map / Export;
+      the eyebrow goes.
+- [x] **Panel.** Tabs ordered Decision, Fields, Rethink, Analysis; "Manager Review" heading removed.
+- [x] **Decision when hidden.** Collapsed panel strip shows a status dot with an accessible label;
+      the phone Review button carries the status.
+- [x] **Tests and gates.** Replace `toolbarQueueStart.e2e.ts` with prev/next coverage; update
+      specs that pin the old header; `verify`, ratchets, affected e2e green.
+- [x] **Rendered check.** 1440/1280/768/375, collapsed, signed out; keyboard order; axe.
 
 ## Decisions
 
-- PLAN.md is per-branch in this repo; this replaces the Karl Agency plan, which merged as #202.
-- Rendered check (2026-11-24, preview of this branch on :4198, signed-in stub fixture): no
-  horizontal overflow at 375px (`scrollWidth` 375), axe WCAG 2.1 AA 0 violations signed in, all
-  four drafts under Proposed pages with their state lines, error card and Try again verified.
-- `verify` timed out four unrelated unit tests once under a load average of ~10-16; each passed
-  in isolation and the retried commit's `verify` was green (1037 passed).
+- Toolbar badge uses the workspace vocabulary (`queueHeading`: "Needs review"), matching the
+  queue groups beside it. Unifying with the landing page's "Undecided" is follow-up F1 in
+  `src/lib/review/statusLabels.ts`, deliberately not done here.
+- Rendered check (2026-11-24, preview of this branch on :4197, signed-in stub): the queue header,
+  canvas toolbar and panel tab strip all end at y=48 at 1440 and 1280; no overflow at 375; the
+  collapsed panel shows the decision ring; the phone Review button reads "Review (Needs review)".
+  Full e2e 92/93 then the one failure (that accessible name) fixed and re-run green.
