@@ -7,6 +7,7 @@
 		path,
 		title,
 		meta = '',
+		metaTone = 'default',
 		current = false,
 		density = 'compact',
 		badge
@@ -20,6 +21,12 @@
 		title: string;
 		/** The muted second line. Empty or missing renders no line at all. */
 		meta?: string;
+		/**
+		 * How the meta line reads. `progress` leads with a pulsing dot (static
+		 * under reduced motion) for work in flight; `danger` is for a line that
+		 * reports a failure. The words carry the meaning either way (WCAG 1.4.1).
+		 */
+		metaTone?: 'default' | 'progress' | 'danger';
 		/** This row is the page on screen: sets `aria-current="page"`. */
 		current?: boolean;
 		/** `compact` is the queue sidebar; `comfortable` is a full-width list. */
@@ -45,10 +52,23 @@
 	{#if meta}
 		<span
 			data-slot="page-row-meta"
-			class="mt-0.5 block text-sfds-slate-l3 {comfortable
+			class="mt-0.5 block {comfortable
 				? 'text-[13px] leading-[18px]'
-				: 'text-[11px] leading-[14px]'}"
+				: 'text-[11px] leading-[14px]'} {metaTone === 'danger'
+				? 'text-sfds-red'
+				: comfortable
+					? 'text-slate-700'
+					: 'text-sfds-slate-l3'}"
 		>
+			<!-- Comfortable rows (the landing list) use neutral slate-700: the
+			     queue's slate blue under a link title read as a second link. The
+			     queue keeps its colour, measured against its selected-row tint. -->
+			{#if metaTone === 'progress'}
+				<span
+					class="mr-1.5 inline-block size-2 rounded-full bg-sfds-action align-[1px] motion-safe:animate-pulse"
+					aria-hidden="true"
+				></span>
+			{/if}
 			{meta}
 		</span>
 	{/if}

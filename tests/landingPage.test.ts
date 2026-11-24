@@ -6,7 +6,7 @@
  * it shows progress and a Continue link a person clicks.
  */
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { render, screen } from '@testing-library/svelte';
+import { fireEvent, render, screen } from '@testing-library/svelte';
 
 const goto = vi.fn();
 vi.mock('$app/navigation', () => ({ goto: (...args: unknown[]) => goto(...args) }));
@@ -101,12 +101,34 @@ describe('landing page', () => {
 		loadReview.mockRejectedValueOnce(new Error('network down'));
 		render(Page);
 
-		expect(await screen.findByText(/progress could not be loaded/i)).toBeTruthy();
+		expect(await screen.findByText(/your progress didn't load/i)).toBeTruthy();
 		expect(screen.queryByText(/loading your progress/i)).toBeNull();
 		expect(warnSpy).toHaveBeenCalledOnce();
 		expect(errorSpy).not.toHaveBeenCalled();
 		// Everything else on the page is unaffected.
 		expect(screen.getByRole('heading', { name: /how it works/i })).toBeTruthy();
+	});
+
+	it('recovers in place when Try again succeeds', async () => {
+		session.signedIn = true;
+		vi.spyOn(console, 'warn').mockImplementation(() => {});
+		loadReview.mockRejectedValueOnce(new Error('network down'));
+		render(Page);
+
+		const retry = await screen.findByRole('button', { name: 'Try again' });
+		pagesStore.set([row('topic-x--about', 'approved'), row('topic-x--report', 'needs-review')]);
+		await fireEvent.click(retry);
+
+		expect(await screen.findByText(/1 of 2 decided/i)).toBeTruthy();
+		expect(screen.queryByText(/didn't load/i)).toBeNull();
+		expect(loadReview).toHaveBeenCalledTimes(2);
+	});
+
+	it('tells "no review yet" apart from loading when the load finds nothing', async () => {
+		session.signedIn = true;
+		render(Page);
+		expect(await screen.findByText(/no review to work through yet/i)).toBeTruthy();
+		expect(screen.queryByText(/loading your progress/i)).toBeNull();
 	});
 
 	it('does not redirect', async () => {
@@ -125,7 +147,40 @@ describe('landing page', () => {
 		expect(await screen.findByText(/1 of 2 decided/i)).toBeTruthy();
 		const cont = screen.getByRole('link', { name: 'Continue to Report a problem' });
 		expect(cont.getAttribute('href')).toBe('/review/topic-x--report');
+		// The title sits beside the button, not inside it, so a long one cannot
+		// push the button past a phone's edge. The visible label starts the name.
+		expect(cont.textContent?.trim()).toBe('Continue');
+		expect(screen.getByText('Next up')).toBeTruthy();
 		expect(loadReview).toHaveBeenCalledOnce();
+	});
+
+	it('filters All pages to a status from the status card, and focuses the list', async () => {
+		session.signedIn = true;
+		pagesStore.set([row('topic-x--about', 'approved'), row('topic-x--report', 'needs-review')]);
+		render(Page);
+
+		await fireEvent.click(await screen.findByRole('button', { name: /^1 approved/ }));
+
+		expect(screen.getByRole('link', { name: /About vector control/ })).toBeTruthy();
+		expect(screen.queryByRole('link', { name: /^Report a problem/ })).toBeNull();
+		expect(screen.getByRole('radio', { name: /Approved/ }).getAttribute('aria-checked')).toBe(
+			'true'
+		);
+		expect(document.activeElement?.id).toBe('all-pages');
+	});
+
+	it('names the active filter when nothing matches, and clears both', async () => {
+		session.signedIn = true;
+		pagesStore.set([row('topic-x--about', 'approved'), row('topic-x--report', 'needs-review')]);
+		render(Page);
+
+		await fireEvent.click(await screen.findByRole('button', { name: /^1 approved/ }));
+		await fireEvent.input(screen.getByLabelText('Search pages'), { target: { value: 'zzzz' } });
+		expect(screen.getByText('No pages marked “Approved” match “zzzz”.')).toBeTruthy();
+
+		await fireEvent.click(screen.getByRole('button', { name: 'Clear search and filter' }));
+		expect(screen.getByRole('link', { name: /^Report a problem/ })).toBeTruthy();
+		expect(document.activeElement?.id).toBe('page-search');
 	});
 
 	it('links a draft that is first in the queue to its draft route, not a 404', async () => {
@@ -166,8 +221,23 @@ describe('landing page', () => {
 			}
 		]);
 		render(Page);
-		expect(screen.getByRole('link', { name: 'Proposed rodent page' }).getAttribute('href')).toBe(
-			'/review/draft/abc'
+		// The meta line is the draft's state, so a reviewer who left while it
+		// drafted can see from here whether it finished.
+		expect(
+			screen.getByRole('link', { name: 'Proposed rodent page Drafting…' }).getAttribute('href')
+		).toBe('/review/draft/abc');
+	});
+
+	it('keeps a READY draft under Proposed pages, not Other pages', () => {
+		session.signedIn = false;
+		pageStore.pages = [
+			...pageStore.pages,
+			{ id: 'draft:abc', title: 'Report a noisy site', type: 'Transaction', sections: [] }
+		];
+		render(Page);
+		const link = screen.getByRole('link', { name: /^Report a noisy site/ });
+		expect(link.closest('details')?.querySelector('summary')?.textContent).toMatch(
+			/Proposed pages/
 		);
 	});
 

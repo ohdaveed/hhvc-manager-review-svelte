@@ -1,6 +1,16 @@
 <script lang="ts">
 	import ChevronDown from '@lucide/svelte/icons/chevron-down';
-	import { sessionStore } from '$lib/stores/session.svelte';
+
+	let {
+		startOpen
+	}: {
+		/**
+		 * Whether the explainer should start open, or `undefined` while that is not
+		 * known yet. The page decides: open for a signed-out visitor, and for a
+		 * reviewer who has decided nothing yet -- they are new to the tool too.
+		 */
+		startOpen: boolean | undefined;
+	} = $props();
 
 	const steps = [
 		'Open a page from the queue. Each mockup renders the way it would appear on SF.gov.',
@@ -10,18 +20,14 @@
 	];
 
 	/**
-	 * Open for a visitor finding out what the tool is; closed for a reviewer who
-	 * came back to carry on.
+	 * Open for someone finding out what the tool is; closed for a reviewer who
+	 * came back to carry on. Four paragraphs of onboarding above the page list
+	 * work against the status card's "pick up where you left off" job on every
+	 * visit after the first.
 	 *
-	 * Signed in is the returning case by definition, and four paragraphs of
-	 * onboarding above the page list works against the hero card's "pick up where
-	 * you left off" job on every visit after the first.
-	 *
-	 * Starts CLOSED rather than open, and opens only once the session resolves to
-	 * signed out. `sessionStore.knownSignedOut` is false during the initial check
-	 * as well as when signed in -- it exists for exactly this flash, and the
-	 * signed-in reviewer is who must not see one. A signed-out visitor gets the
-	 * explainer a beat late instead, which is the cheaper of the two.
+	 * Starts CLOSED, and settles once `startOpen` is known. A returning reviewer
+	 * is who must not see a flash of it; a newcomer gets it a beat late instead,
+	 * which is the cheaper of the two.
 	 *
 	 * `latched` and `touched` are plain `let`, not `$state`, so reading them here
 	 * creates no dependency and the effect settles the initial state ONCE. Without
@@ -34,9 +40,9 @@
 	let touched = false;
 
 	$effect(() => {
-		if (latched || touched || sessionStore.signedIn === undefined) return;
+		if (latched || touched || startOpen === undefined) return;
 		latched = true;
-		open = sessionStore.knownSignedOut;
+		open = startOpen;
 	});
 </script>
 

@@ -2,16 +2,28 @@
 	import ChevronDown from '@lucide/svelte/icons/chevron-down';
 	import PageRow from '$lib/components/review/PageRow.svelte';
 	import * as ToggleGroup from '$lib/components/ui/toggle-group/index.js';
+	import { tick } from 'svelte';
+	import { Button } from '$lib/components/ui/button/index.js';
+	import { isDraftPath } from '$lib/corpus/draftPath';
 	import { pageTitleFor } from '$lib/corpus/pageTitle';
 	import { filterPages, type StatusFilter } from '$lib/landing/filter';
 	import { PAGE_GROUPS } from '$lib/landing/groups';
 	import { STATUS_LABELS } from '$lib/review/statusLabels';
-	import { draftsStore } from '$lib/stores/draftPages';
+	import { draftsStore, isStaleDraft } from '$lib/stores/draftPages';
 	import { pageStore } from '$lib/stores/pageData.svelte';
 	import { pagesStore, QUEUE_STATUS_ORDER } from '$lib/stores/reviewState';
 
+	let {
+		query = $bindable(''),
+		status = $bindable<StatusFilter>('all')
+	}: {
+		/** The search box. Bindable so the page can clear it. */
+		query?: string;
+		/** The status filter. Bindable so the status card's shortcuts can set it. */
+		status?: StatusFilter;
+	} = $props();
+
 	const titleFor = (path: string) => pageTitleFor(path, pageStore.pages, $draftsStore);
-	const inCorpus = (path: string) => pageStore.pages.some((p) => p.id === path);
 
 	/**
 	 * A path's recorded status, or `undefined` when the review has no row for it.
@@ -27,10 +39,21 @@
 	/**
 	 * Drafts are listed under their own heading, not sorted into a theme: a
 	 * drafted page is described in free text at request time and has none.
-	 * Only those outside `pageStore` — a ready draft is already in the corpus
-	 * store and so already in a themed group.
+	 *
+	 * EVERY draft, whatever its state, by its `draft:` path. A ready draft is
+	 * merged into `pageStore` under that same path, and this used to exclude
+	 * drafts found there -- on the assumption a ready draft was "already in a
+	 * themed group". It was not: `PAGE_GROUPS` can never name a `draft:<uuid>`,
+	 * so a finished draft drifted into "Other pages" the moment it was ready.
+	 * Both sources are read, deduplicated, so a ready draft whose row has not
+	 * reached `draftsStore` is still listed here.
 	 */
-	const draftPaths = $derived($draftsStore.map((d) => d.path).filter((p) => !inCorpus(p)));
+	const draftPaths = $derived([
+		...new Set([
+			...$draftsStore.map((d) => d.path),
+			...pageStore.pages.map((p) => p.id).filter(isDraftPath)
+		])
+	]);
 
 	/**
 	 * Corpus pages no group claims.
@@ -44,7 +67,9 @@
 	 * says it should have had a home.
 	 */
 	const grouped = new Set(PAGE_GROUPS.flatMap((g) => g.pages as readonly string[]));
-	const ungrouped = $derived(pageStore.pages.map((p) => p.id).filter((id) => !grouped.has(id)));
+	const ungrouped = $derived(
+		pageStore.pages.map((p) => p.id).filter((id) => !grouped.has(id) && !isDraftPath(id))
+	);
 
 	const sections = $derived([
 		...PAGE_GROUPS.map((g) => ({ id: g.id, heading: g.heading, paths: [...g.pages] })),
@@ -67,9 +92,6 @@
 	// still nothing to show. So the controls appear when they can work, which
 	// also means they appear once rather than flashing in and out.
 	const hasReview = $derived($pagesStore.length > 0);
-
-	let query = $state('');
-	let status = $state<StatusFilter>('all');
 
 	const shownIn = (paths: string[]) =>
 		filterPages({ paths, query, status, statusOf, titleOf: titleFor });
@@ -108,12 +130,52 @@
 	// `metaFor` deliberately omits the status: the badge already states it, and
 	// repeating it in the muted line is the kind of duplication that makes a row
 	// slower to scan rather than faster.
-	const metaFor = (path: string) => pageStore.pages.find((p) => p.id === path)?.type ?? '';
+	const typeOf = (path: string) => pageStore.pages.find((p) => p.id === path)?.type ?? '';
+
+	/**
+	 * A draft's meta line is its drafting state, not its type: a reviewer who
+	 * left while it drafted comes back here to see whether it finished. That
+	 * state is a different fact from the review decision, which stays the badge.
+	 */
+	const metaFor = (path: string): { meta: string; tone: 'default' | 'progress' | 'danger' } => {
+		const draft = $draftsStore.find((d) => d.path === path);
+		if (!draft) return { meta: typeOf(path), tone: 'default' };
+		if (draft.state === 'failed') return { meta: 'Draft failed — open to retry', tone: 'danger' };
+		if (isStaleDraft(draft)) return { meta: 'Drafting stalled — open to retry', tone: 'danger' };
+		if (draft.state === 'drafting') return { meta: 'Drafting…', tone: 'progress' };
+		return { meta: 'Draft ready', tone: 'default' };
+	};
+
+	/** The empty message names everything applied, so it can be undone. */
+	const statusName = $derived(status === 'all' ? '' : STATUS_LABELS[status].label);
+	const emptyMessage = $derived.by(() => {
+		const q = query.trim();
+		if (q && statusName) return `No pages marked “${statusName}” match “${q}”.`;
+		if (q) return `No pages match “${q}”.`;
+		return `No pages are marked “${statusName}”.`;
+	});
+
+	let searchInput: HTMLInputElement | undefined = $state();
+
+	async function clearAll() {
+		query = '';
+		status = 'all';
+		await tick();
+		searchInput?.focus();
+	}
 </script>
 
 <section aria-labelledby="all-pages" class="space-y-4">
 	<div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2">
-		<h2 id="all-pages" class="text-lg font-semibold text-slate-900">All pages</h2>
+		<!-- `tabindex="-1"`: the status card's shortcuts move focus here, so a
+		     keyboard or screen-reader user lands where the filtered rows begin. -->
+		<h2
+			id="all-pages"
+			tabindex="-1"
+			class="scroll-mt-4 text-lg font-semibold text-slate-900 focus:outline-none"
+		>
+			All pages
+		</h2>
 		<!-- A filter changes what is on screen without moving focus, so a sighted
 		     user sees it and a screen-reader user is told. Only while filtering:
 		     an unconditional live region would announce on first paint. -->
@@ -132,6 +194,7 @@
 			<input
 				id="page-search"
 				type="search"
+				bind:this={searchInput}
 				bind:value={query}
 				placeholder="Title or path"
 				autocomplete="off"
@@ -174,9 +237,10 @@
 	</div>
 
 	{#if totalShown === 0}
-		<p role="status" class="py-4 text-slate-700">
-			No pages match {query.trim() ? `“${query.trim()}”` : 'this filter'}.
-		</p>
+		<div class="flex flex-wrap items-center gap-x-4 gap-y-2 py-4">
+			<p role="status" class="text-slate-800">{emptyMessage}</p>
+			<Button variant="outline" onclick={clearAll}>Clear search and filter</Button>
+		</div>
 	{/if}
 
 	<!-- Native `<details>`, the same mechanism as How it works, so the page has
@@ -209,8 +273,15 @@
 				<ul class="pb-2">
 					{#each section.shown as path (path)}
 						{@const s = statusOf(path)}
+						{@const m = metaFor(path)}
 						<li>
-							<PageRow {path} title={titleFor(path)} meta={metaFor(path)} density="comfortable">
+							<PageRow
+								{path}
+								title={titleFor(path)}
+								meta={m.meta}
+								metaTone={m.tone}
+								density="comfortable"
+							>
 								{#snippet badge()}
 									{#if s}
 										<span
