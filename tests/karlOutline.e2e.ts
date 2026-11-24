@@ -25,7 +25,7 @@ const PILOTS = [
 	},
 	{
 		slug: 'information-what-happens-after-you-report-housing-pest-problem',
-		summary: '5 sections: 5 go into Karl. 2 things won’t carry over to Karl.',
+		summary: '5 sections: 5 go into Karl. 1 thing won’t carry over to Karl.',
 		sections: { placed: 5, unplaced: 1 }
 	},
 	{

@@ -104,6 +104,22 @@ describe('what happens after you report (Information pilot)', () => {
 		expect(tray?.fieldIds[0]).toBe('sections.how-a-report-moves-through-the-city.heading');
 	});
 
+	// The transcript makes the audience list the FIRST Information section
+	// block, so every authored section sits one slot lower in Karl than its
+	// position among the mockup's sections. The outline has to count the same way.
+	it('places the audience list as Information section 1 and numbers the rest after it', () => {
+		expect(p.fields.get('audience.0')).toMatchObject({
+			rawName: 'information_section',
+			label: 'Information section 1 · Text',
+			status: 'placed'
+		});
+		expect(p.fields.get('sections.how-to-follow-up-on-your-report.heading')?.label).toBe(
+			'Information section 2 · Title'
+		);
+		expect(p.sections.get('what-this-page-does-not-promise')?.label).toBe('Information section 5');
+		expect(p.unplaced.map((u) => u.subject)).not.toContain('The “Who this is for” list');
+	});
+
 	it('places Related, which Information has', () => {
 		expect(p.sections.get('related-pages')).toMatchObject({ rawName: 'related', status: 'placed' });
 	});
@@ -214,7 +230,7 @@ describe('outline summary', () => {
 			'5 sections: 3 go into Karl, 2 unconfirmed. 2 things won’t carry over to Karl.'
 		);
 		expect(outlineSummary(of('afterReport'))).toBe(
-			'5 sections: 5 go into Karl. 2 things won’t carry over to Karl.'
+			'5 sections: 5 go into Karl. 1 thing won’t carry over to Karl.'
 		);
 		expect(outlineSummary(of('recordsHub'))).toBe(
 			'4 sections: 3 go into Karl, 1 needs a fix. 1 thing won’t carry over to Karl.'
