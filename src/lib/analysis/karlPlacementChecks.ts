@@ -18,6 +18,7 @@ import type { CorpusPage } from '$lib/corpus/fields';
 import type { ComponentFinding } from './karlComponentChecks';
 import type { KarlHelpLink } from './karlHelp';
 import type { EditRow } from './pageCopy';
+import { titleWordsInDescription } from './textChecks';
 import type { FindingItem } from './index';
 
 const TYPES =
@@ -206,6 +207,32 @@ function urlFinding(
 	};
 }
 
+const DESCRIPTION_HELP: KarlHelpLink = {
+	title: 'Description',
+	url: 'https://sfdigitalservices.gitbook.io/karl-sf.gov-editor-help-center/using-karl-the-cms/components/description',
+	why: 'Karl asks a Description not to reuse words from the title.'
+};
+
+/** Pass at 0 or 1 reused words: one shared key word is often unavoidable. */
+function descriptionReuseFinding(page: CorpusPage, record: ReviewRecord): ComponentFinding {
+	const p = page as { title?: unknown; summary?: unknown };
+	const reused = titleWordsInDescription(
+		String(record.edited_title || p.title || ''),
+		String(record.edited_summary || p.summary || '')
+	);
+	const ok = reused.length < 2;
+	return {
+		id: 'karl-description-reuse',
+		title: 'Title words in the description',
+		status: ok ? 'pass' : 'issue',
+		summary: ok
+			? 'The description says something the title does not.'
+			: `The description repeats ${reused.length} words from the title. Use the space for what the title leaves out.`,
+		help: DESCRIPTION_HELP,
+		items: ok ? [] : [{ text: reused.join(', '), detail: 'Words the title already says.' }]
+	};
+}
+
 export function karlPlacementFindings(page: CorpusPage, edits: EditRow[] = []): ComponentFinding[] {
 	const type = String((page as { type?: unknown }).type ?? '');
 	if (!type) return [];
@@ -221,6 +248,7 @@ export function karlPlacementFindings(page: CorpusPage, edits: EditRow[] = []): 
 		needsFixFinding(placements, help),
 		unconfirmedFinding(placements, unconfirmedPageNotes, help),
 		emptyFieldsFinding(placements, help),
-		...(url ? [url] : [])
+		...(url ? [url] : []),
+		descriptionReuseFinding(page, record)
 	];
 }

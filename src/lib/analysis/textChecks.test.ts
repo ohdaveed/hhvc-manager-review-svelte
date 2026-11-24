@@ -1,5 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { labelCount, longParagraphs, rawUrlsInProse, vagueLabels } from './textChecks';
+import {
+	labelCount,
+	longParagraphs,
+	rawUrlsInProse,
+	titleWordsInDescription,
+	vagueLabels
+} from './textChecks';
 import type { CopyEntry } from './pageCopy';
 
 const label = (key: string, text: string): CopyEntry => ({ key, text, kind: 'label' });
@@ -125,5 +131,36 @@ describe('multiple pasted URLs in one field', () => {
 
 	it('still reports a single URL once', () => {
 		expect(rawUrlsInProse([prose('p', 'Go to https://sf.gov/a now.')])).toHaveLength(1);
+	});
+});
+
+describe('titleWordsInDescription', () => {
+	it('ignores stop words', () => {
+		expect(titleWordsInDescription('Pay your annual fee', 'Pay the fee by the due date')).toEqual([
+			'pay',
+			'fee'
+		]);
+	});
+
+	it('keeps a hyphenated word whole', () => {
+		expect(
+			titleWordsInDescription(
+				'Report rats, mice, and other four-legged problems',
+				'Report rats, mice, raccoons, bats, or other four-legged pests in a home.'
+			)
+		).toEqual(['report', 'rats', 'mice', 'other', 'four-legged']);
+	});
+
+	it('lists each reused word once, in title order', () => {
+		expect(
+			titleWordsInDescription(
+				'Pay your annual Healthy Housing fee for apartment buildings',
+				'Pay your annual Healthy Housing fee if you own an apartment building with 3 or more rental units.'
+			)
+		).toEqual(['pay', 'annual', 'healthy', 'housing', 'fee', 'apartment']);
+	});
+
+	it('returns nothing for an empty description', () => {
+		expect(titleWordsInDescription('Pay a fee', '')).toEqual([]);
 	});
 });

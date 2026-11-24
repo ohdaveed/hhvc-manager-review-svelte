@@ -201,3 +201,24 @@ export function longParagraphs(entries: CopyEntry[], maxSentences = 3): TextIssu
 	}
 	return issues;
 }
+
+/** Words too common to count as reuse. */
+const STOP_WORDS = new Set(
+	'a an the to for of and or your you in on by with if is are it its at as from'.split(' ')
+);
+
+const words = (text: string) => text.toLowerCase().match(/[a-z]+(?:[-'][a-z]+)*/g) ?? [];
+
+/**
+ * Title words a Description repeats. Karl: don't reuse words from the title.
+ * Exact lowercase matches only, so "report" and "reporting" do not count.
+ * ponytail: no stemming; add suffix folding if reviewers ask for it.
+ */
+export function titleWordsInDescription(title: string, description: string): string[] {
+	const inDescription = new Set(words(description));
+	const reused: string[] = [];
+	for (const word of words(title))
+		if (!STOP_WORDS.has(word) && inDescription.has(word) && !reused.includes(word))
+			reused.push(word);
+	return reused;
+}

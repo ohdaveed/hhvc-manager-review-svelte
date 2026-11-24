@@ -75,7 +75,7 @@ describe('the Analysis panel reads the same placements as the Karl outline', () 
 		expect(nested.status).toBe('issue');
 	});
 
-	it('gives every corpus page five findings, each citing a Karl help page', () => {
+	it('gives every corpus page six findings, each citing a Karl help page', () => {
 		for (const [key, p] of Object.entries(pagesByKey)) {
 			const findings = karlPlacementFindings(p as never);
 			expect(
@@ -86,7 +86,8 @@ describe('the Analysis panel reads the same placements as the Karl outline', () 
 				'karl-needs-fix',
 				'karl-unconfirmed',
 				'karl-empty-fields',
-				'karl-url-pattern'
+				'karl-url-pattern',
+				'karl-description-reuse'
 			]);
 			for (const f of findings)
 				expect(f.help.url, `${key} ${f.id}`).toMatch(/^https:\/\/sfdigitalservices/);
@@ -125,5 +126,28 @@ describe('dead button links', () => {
 		const unplaced = byId('inspectorLookup', 'karl-unplaced');
 		expect(unplaced.status).toBe('issue');
 		expect(unplaced.items.map((i) => i.text)).toContain('“Open the lookup tool” — its button');
+	});
+});
+
+describe('title words reused in the description', () => {
+	it('flags the annual fee page, which repeats 6 title words', () => {
+		const f = byId('payFee', 'karl-description-reuse');
+		expect(f.status).toBe('issue');
+		expect(f.items[0].text).toBe('pay, annual, healthy, housing, fee, apartment');
+	});
+
+	it('passes the complaints records page, which repeats 1', () => {
+		expect(byId('findRecords', 'karl-description-reuse').status).toBe('pass');
+	});
+
+	it('judges an edited description', () => {
+		const edits = [
+			{
+				field_id: 'summary',
+				new_content: 'Owners of buildings with 3 or more units owe it each year.',
+				created_at: 'z'
+			}
+		];
+		expect(byId('payFee', 'karl-description-reuse', edits as never).status).toBe('pass');
 	});
 });
