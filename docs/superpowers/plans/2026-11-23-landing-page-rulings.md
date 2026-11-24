@@ -264,17 +264,38 @@ the things that decide whether work is done.
 
 ### New findings, most important first
 
-1. **Nobody has verified that a reviewer can sign in.** Structurally uncovered rather
-   than neglected: the only test touching invites is `tests/inviteForm.test.ts`, a unit
-   test of the form; e2e runs signed out against a production build by design; and CI has
-   no Supabase project, so no automated test can traverse a real magic link. On
-   2026-11-23 production sat behind a Netlify SSO wall returning 401 on every URL — no
-   reviewer could have reached the tool, magic links would have landed on a dead page,
-   and two `verify:live` gates still reported green. The path also has more moving parts
-   than it looks: invites moved from emailed `inviteUserByEmail` to hand-delivered
-   `generateLink`, the site rename invalidated the auth allow-lists once already, and a
-   production invite does not work on a preview. A person trying it is currently the only
-   check that exists.
+1. **Sign-in works, but nobody has ever used the tool.** The path is structurally
+   uncovered by tests — the only test touching invites is `tests/inviteForm.test.ts`, a
+   unit test of the form; e2e runs signed out against a production build by design; and
+   CI has no Supabase project, so nothing automated can traverse a real magic link. So it
+   was run by hand on **2026-11-24, and it passed end to end**: a link issued to the one
+   production account, delivered, redeemed exactly once
+   (`recovery_token` cleared, `last_sign_in_at` → `02:07:30`) and a session created
+   against the production project. `/login` serves 200, `POST /api/invite` refuses an
+   unauthenticated caller with 401, and `disable_signup: true` means an unknown address
+   gets a clean 422 rather than appearing to work.
+
+   **What that run actually exposed is worse than a broken login.** Production holds
+   **one** account, 39 pages, **0 decisions and 0 edits** — and staging the same. The
+   mechanism works; no reviewer has ever been onboarded, so nothing downstream of
+   sign-in has been exercised by a real user: no decision, no saved edit, no AI rewrite,
+   no realtime. That is the actual risk this entry was reaching for, and verifying the
+   login did not reduce it.
+
+   Three things the run turned up, all measured:
+
+   - **The redirect allow-list is still unverified**, and it is what the site rename
+     broke once already. `POST /auth/v1/otp` with a deliberately non-allow-listed
+     `redirect_to` answered **200**, which Supabase documents as consistent with either a
+     permissive list or a correct fallback to Site URL — the API cannot tell them apart.
+     Settling it means reading the link in the delivered mail, or the service-role
+     `admin/generate_link` response.
+   - **The mailer enforces a 33s per-address cooldown** (`over_email_send_rate_limit`,
+     429), which `/api/invite` passes through verbatim. Onboarding several reviewers at
+     once has to be paced.
+   - **Sessions accumulate**: that single account had 5 live rows in `auth.sessions`, so
+     signing out does not clear other devices.
+
 2. **A public deploy preview spends the production Gemini key.** `GEMINI_API_KEY` is
    shared across every Netlify context, and visitor access is now off for all of them, so
    preview URLs are reachable by anyone who has the link. The exposure is bounded — the
