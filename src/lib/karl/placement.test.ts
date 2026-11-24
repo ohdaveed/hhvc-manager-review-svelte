@@ -431,3 +431,56 @@ describe('Campaign', () => {
 		);
 	});
 });
+
+describe('Report', () => {
+	const guide = of('article11Guide');
+	const annual = of('inspectionsAnnual');
+
+	it('names Report’s Content blocks: Body and Table', () => {
+		expect(guide.fields.get('sections.article-11-sections-at-a-glance.table.1.0')?.label).toBe(
+			'Content 2 · Table'
+		);
+		expect(annual.fields.get('sections.about-these-figures.heading')?.label).toBe(
+			'Content 1 · Body · Heading'
+		);
+	});
+
+	it('tells a manager that table text is not machine translated, as a confirmed note', () => {
+		const content = guide.panels.find((x) => x.rawName === 'content');
+		expect(content?.notes).toEqual([
+			'Text in tables is not machine translated into SF.gov’s other languages.'
+		]);
+		expect(content?.caveats).toEqual([]);
+	});
+
+	it('advises when a table is wider than 3 columns, without calling it a fix', () => {
+		const page = pagesByKey.inspectionsAnnual as unknown as { sections: { table?: string[][] }[] };
+		const wide = {
+			...page,
+			sections: page.sections.map((s) =>
+				s.table ? { ...s, table: s.table.map((row) => [...row, 'x']) } : s
+			)
+		};
+		const q = placementsFor(wide as never, null, pagesByKey);
+		const s = q.sections.get('inspections-by-outcome');
+		expect(s?.status).toBe('placed');
+		expect(s?.reasons).toEqual([
+			'This table has 4 columns; Karl says tables work best with 3 or fewer.'
+		]);
+	});
+
+	it('keeps the callout, the absorbed Related list and the PLACEHOLDER cells as fixes', () => {
+		expect(guide.fields.get('sections.how-to-use-this-guide.callout.text')?.reasons[0]).toMatch(
+			/^Karl has no callout on a Report page/
+		);
+		expect(annual.sections.get('related-pages')?.status).toBe('needs-fix');
+		expect(outlineSummary(annual)).toBe(
+			'6 sections: 5 go into Karl, 1 needs a fix. 18 details need a fix. 2 things won’t carry over to Karl.'
+		);
+	});
+
+	it('has no Related panel and an unconfirmed URL', () => {
+		expect(guide.url?.status).toBe('unconfirmed');
+		expect(guide.panels.map((x) => x.rawName)).not.toContain('related');
+	});
+});

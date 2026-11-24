@@ -28,7 +28,7 @@ wider than 3 columns today.
 
 ## Checklist
 
-- [ ] **1. Schema and placement.** Report in `schema.ts` (Title, spotlight button ≤25, tables aim
+- [x] **1. Schema and placement.** Report in `schema.ts` (Title, spotlight button ≤25, tables aim
       for ≤3 columns, the translation note, unconfirmed URL, no Related). Sub-labels name Report's
       Content blocks (`Content 2 · Table`, `· Body`). Confirmed caveats become "Good to know" notes
       in the Blueprint, apart from the unconfirmed ones. Unit tests pin both pages.

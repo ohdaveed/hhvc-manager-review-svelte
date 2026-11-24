@@ -96,6 +96,8 @@ export type PanelFill = {
 	reasons: string[];
 	/** What Karl's own pages disagree on about how this panel behaves. */
 	caveats: string[];
+	/** What Karl says plainly about how this panel behaves, worth knowing first. */
+	notes: string[];
 };
 
 export type PagePlacements = {
@@ -176,7 +178,15 @@ const TOPIC_BLOCKS: Record<string, string> = {
  * description, Transaction link); everywhere else they are Transaction's
  * what_to_do Sections. Same split as the transcript's `emitSteps`.
  */
-function subLabel(rest: string, stepByStep = false): string {
+function subLabel(rest: string, type = ''): string {
+	const stepByStep = type === 'Step by step';
+	// Report's Content stream offers two blocks: Body (rich text, whose H2s
+	// make the table of contents) and Table.
+	if (type === 'Report') {
+		if (rest === 'heading') return 'Body · Heading';
+		if (/^(paragraphs|bullets)\.\d+$/.test(rest)) return 'Body';
+		if (/^table\./.test(rest)) return 'Table';
+	}
 	const step = rest.match(/^steps\.(\d+)\.(.+)$/);
 	if (step && stepByStep) {
 		const n = Number(step[1]) + 1;
@@ -382,6 +392,17 @@ export function placementsFor(
 				}
 				// Advisory: Karl's "aim for" is reported, but it is not a rule the
 				// copy breaks, so the status does not change.
+				// Karl's advice on a table's width: reported, never a fix.
+				if (rule.kind === 'targetColumns') {
+					const table = (section as { table?: unknown[][] }).table;
+					const columns = Array.isArray(table)
+						? Math.max(0, ...table.map((row) => (Array.isArray(row) ? row.length : 0)))
+						: 0;
+					if (columns > rule.target)
+						reasons.push(
+							`This table has ${columns} columns; Karl says tables work best with ${rule.target} or fewer.`
+						);
+				}
 				// Karl's advice on a block count, e.g. at most 5 accordions on a
 				// Campaign page: reported, never a fix.
 				if (rule.kind === 'targetItems' && rule.block && componentOf.get(key) === rule.block) {
@@ -475,10 +496,7 @@ export function placementsFor(
 		let label = panelLabel(type, raw);
 		if (sectionKey) {
 			const rest = id.slice(`sections.${sectionKey}.`.length);
-			const sub =
-				raw === 'what_to_do' && rest === 'heading'
-					? 'Heading'
-					: subLabel(rest, type === 'Step by step');
+			const sub = raw === 'what_to_do' && rest === 'heading' ? 'Heading' : subLabel(rest, type);
 			label = [instanceLabel(raw, sectionKey), sub].filter(Boolean).join(' · ');
 		} else {
 			const ttk = id.match(/^whatToKnow\.thingsToKnow\.(\d+)\.(label|text)$/);
@@ -519,7 +537,8 @@ export function placementsFor(
 		// A whole panel Karl's own pages disagree on (Campaign's Contact us): one
 		// chip, on the first of its fields, as with the audience list.
 		for (const rule of rulesOf(raw)) {
-			if (rule.kind !== 'caveat' || rule.sub || sectionKey) continue;
+			if (rule.kind !== 'caveat' || rule.status !== 'unconfirmed' || rule.sub || sectionKey)
+				continue;
 			if (reportedCaveats.has(raw)) own = worstOf([own, 'unconfirmed']);
 			else {
 				reportedCaveats.add(raw);
@@ -646,9 +665,12 @@ export function placementsFor(
 					...fieldIds.flatMap((id) => fields.get(id)!.reasons)
 				])
 			],
-			caveats: rulesOf(panel.rawName)
-				.filter((rule) => rule.kind === 'caveat')
-				.map((rule) => (rule.kind === 'caveat' ? rule.plain : ''))
+			caveats: rulesOf(panel.rawName).flatMap((rule) =>
+				rule.kind === 'caveat' && rule.status === 'unconfirmed' ? [rule.plain] : []
+			),
+			notes: rulesOf(panel.rawName).flatMap((rule) =>
+				rule.kind === 'caveat' && rule.status === 'confirmed' ? [rule.plain] : []
+			)
 		});
 	}
 
