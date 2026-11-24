@@ -61,7 +61,7 @@ describe('Karl schema', () => {
 	});
 
 	it('returns null for a type this slice does not cover', () => {
-		expect(schemaFor('About us')).toBeNull();
+		expect(schemaFor('Data story')).toBeNull();
 		expect(schemaFor(undefined)).toBeNull();
 	});
 });

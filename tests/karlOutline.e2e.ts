@@ -86,6 +86,13 @@ const PILOTS = [
 			'5 sections: 1 needs a fix, 4 unconfirmed. 5 details need a fix. 1 thing won’t carry over to Karl.',
 		caveat: 'A Location’s address and opening hours come from its Address snippet',
 		sections: { 'needs-fix': 1, unconfirmed: 4 }
+	},
+	{
+		// Rollout step 7: About us, the last type the corpus uses.
+		slug: 'departments--healthy-housing-and-vector-control--about',
+		summary: '4 sections: 4 go into Karl. 2 things won’t carry over to Karl.',
+		caveat: 'Karl adds a button to this department’s Agency page that links here automatically',
+		sections: { placed: 4 }
 	}
 ] as const;
 
