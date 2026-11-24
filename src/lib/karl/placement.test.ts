@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { pagesByKey } from '$lib/data/index';
 import { placementsFor, worstOf } from './placement';
 import type { ReviewRecord } from './reviewRecord';
+import { toStorePage } from '$lib/stores/pageData.svelte';
 
 const page = (key: string) =>
 	(pagesByKey as Record<string, Parameters<typeof placementsFor>[0]>)[key];
@@ -189,4 +190,20 @@ describe('section keys', () => {
 			}
 		}
 	});
+});
+
+describe('the page object the app renders', () => {
+	// The layout hands over `pageStore.pages[n]`, built by `toStorePage`, which
+	// adds `id` and stamps `fieldKey` on every section. Neither is copy, so
+	// neither may surface as unplaced.
+	it.each(['rodentsReport', 'afterReport', 'recordsHub'])(
+		'%s: same placements as the corpus module',
+		(key) => {
+			const fromCorpus = of(key);
+			const fromStore = placementsFor(toStorePage(page(key)) as never, null, pagesByKey);
+			expect(fromStore.unplaced).toEqual(fromCorpus.unplaced);
+			expect([...fromStore.fields.entries()]).toEqual([...fromCorpus.fields.entries()]);
+			expect([...fromStore.sections.keys()]).toEqual([...fromCorpus.sections.keys()]);
+		}
+	);
 });

@@ -165,7 +165,13 @@ export function placementsFor(
 	record: ReviewRecord | null,
 	pages: object
 ): PagePlacements {
-	const transcript = transcriptOf(page, record, pages);
+	// The app renders `pageStore` pages, which `toStorePage` gives a routable
+	// `id`. It is not copy, but the transcript's sweep reports any page key it
+	// does not know, so it would surface as unplaced. Dropped here, at the one
+	// boundary this module owns, rather than taught to the transcript.
+	const { id: _routableId, ...corpusPage } = page as Page & { id?: unknown };
+	void _routableId;
+	const transcript = transcriptOf(corpusPage, record, pages);
 	const type = String(page.type ?? '');
 	const schema = schemaFor(type);
 	const sections: Section[] = Array.isArray(page.sections) ? page.sections : [];
