@@ -3,7 +3,7 @@ export const article11Compliance = {
 	type: 'Information',
 	title: 'Article 11 compliance for property owners',
 	summary:
-		'A compliance-first front door for Health Code Article 11: what owners and managers must do, the fee, and who to call — modeled on the SF.gov minimum wage ordinance page.',
+		'What property owners and managers must do under Health Code Article 11, the annual fee, and who to call.',
 	audience: [
 		'This page is for property owners and managers responsible for Article 11 compliance.'
 	],

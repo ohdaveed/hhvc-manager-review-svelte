@@ -3,7 +3,7 @@ export const insectsReport = {
 	type: 'Transaction',
 	title: 'Report cockroaches, mosquitoes, and other insects',
 	summary:
-		'Report cockroaches, bed bugs, mosquitoes, flies, wasps, or other insect problems in a home, building, yard, or shared area.',
+		'Report cockroaches, bed bugs, mosquitoes, or other insects in a home, building, yard, or shared area.',
 	primaryAgency: 'Healthy Housing and Vector Control',
 	audience: [
 		'A tenant affected by cockroaches, bed bugs, mosquitoes, or other insects',

@@ -3,7 +3,7 @@ export const rodentsReport = {
 	type: 'Transaction',
 	title: 'Report rats, mice, and other four-legged problems',
 	summary:
-		'Report rats, mice, raccoons, bats, or other four-legged pest problems in a home, building, yard, or shared area.',
+		'Report rats, mice, raccoons, bats, or other four-legged pests in a home, building, yard, or shared area.',
 	primaryAgency: 'Healthy Housing and Vector Control',
 	audience: [
 		'A tenant affected by rats, mice, bats, or other four-legged pests',
