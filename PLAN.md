@@ -13,7 +13,7 @@ Pilot pages: `report-rats-mice-four-legged-problems` (Transaction),
       pages, checked against a snapshot taken before the change.
 - [x] **2. Primary agency source.** `primary_agency` reads `primaryAgency` as a CHOOSE on Transaction,
       the only type that carries it (U6, narrowed). The snapshot diff shows only those 16 steps changing.
-- [ ] **3. `src/lib/karl/schema.ts`** for Transaction, Information and Resource Collection, with
+- [x] **3. `src/lib/karl/schema.ts`** for Transaction, Information and Resource Collection, with
       cited rules. A test checks that every key exists in `KARL_PANELS`, that the order matches, and
       that every rule has a citation.
 - [ ] **4. `src/lib/karl/placement.ts`** `placementsFor(page, record)` returns a status and label per
