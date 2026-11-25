@@ -1,6 +1,6 @@
 # tests/ — e2e conventions
 
-Moved from the root `CLAUDE.md` so it loads only when working under `tests/`. The Vitest project split (which directory gets which environment) stays in the root file.
+The Vitest project split (which directory gets which environment) is in the root `CLAUDE.md`.
 
 ## Every e2e spec imports `test` from `tests/fixtures`
 
