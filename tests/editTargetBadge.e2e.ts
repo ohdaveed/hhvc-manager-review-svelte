@@ -13,7 +13,7 @@ import { gotoSignedIn } from './signedIn';
  *
  * Signed in, because signed out there are no edit targets and no badges.
  */
-const PAGE = '/review/report-garbage-filth-vegetation';
+const PAGE = '/review/report-garbage-clutter-or-overgrown-plants';
 
 async function badgeProblem(page: Page): Promise<string | null> {
 	return page.evaluate(() => {

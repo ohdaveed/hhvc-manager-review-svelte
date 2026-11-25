@@ -80,7 +80,7 @@ export const article11Guide = {
 			karl: 'Report Content -> Table block. Covers the most common sanitation citations: Sec. 581(b)(1), (3), and (5). Pair each translation with an inline link to the consolidated garbage, filth, and mold reporting Transaction rather than adding a new reporting page.',
 			kind: 'body',
 			paragraphs: [
-				'Report conditions like trash, mold, or unsanitary waste using [Report garbage, mold, or trash](filthReport).'
+				'Report trash or animal waste using [Report garbage, clutter, or overgrown plants](garbageReport) or [Report animal waste on a property](animalWasteReport).'
 			],
 			table: [
 				['Health code', 'In plain language'],
@@ -103,7 +103,7 @@ export const article11Guide = {
 			karl: 'Report Content -> Table block. Covers Sec. 581(b)(2), (11), and 605. Keep vegetation and poison-plant duties distinct: overgrowth is a nuisance condition; Sec. 605 concerns an order to remove poison oak or ivy.',
 			kind: 'body',
 			paragraphs: [
-				'Report overgrown vegetation or sanitation issues using [Report vegetation or a sanitation problem](filthReport).'
+				'Report overgrown vegetation using [Report garbage, clutter, or overgrown plants](garbageReport).'
 			],
 			table: [
 				['Health code', 'In plain language'],
@@ -182,7 +182,7 @@ export const article11Guide = {
 					karl: 'Report Content -> inline page link.'
 				},
 				{
-					title: 'Report cockroaches, mosquitoes, and other insects',
+					title: 'Report cockroaches or other insects',
 					text: 'Report insect infestations and standing-water concerns.',
 					target: 'insectsReport',
 					karl: 'Report Content -> inline page link.'

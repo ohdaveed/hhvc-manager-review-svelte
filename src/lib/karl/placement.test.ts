@@ -64,11 +64,9 @@ describe('rats report (Transaction pilot)', () => {
 	});
 
 	it('calls the inferred Custom Section mapping unconfirmed, not settled', () => {
-		// The rats page no longer has this section (shared report text moved to
-		// What happens after you report); the old combined garbage page still does.
-		const old = of('filthReport');
-		expect(old.sections.get('get-help-making-your-report')?.status).toBe('unconfirmed');
-		expect(statusOf(old, 'sections.get-help-making-your-report.paragraphs.0')).toBe('unconfirmed');
+		// "What the Health Code requires" is mapped to custom_section by inference.
+		expect(p.sections.get('what-the-health-code-requires')?.status).toBe('unconfirmed');
+		expect(statusOf(p, 'sections.what-the-health-code-requires.bullets.0')).toBe('unconfirmed');
 	});
 
 	it('places the rest', () => {

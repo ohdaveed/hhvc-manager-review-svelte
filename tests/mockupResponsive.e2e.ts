@@ -27,7 +27,7 @@ import { expect, test } from './fixtures';
  * layout instead, and a pane narrower than a real phone lays out at 390px and
  * zooms down (`fitFrame`) rather than reflowing at a width no phone has.
  */
-const PAGE = '/review/report-garbage-filth-vegetation';
+const PAGE = '/review/report-garbage-clutter-or-overgrown-plants';
 
 const frameWidth = (page: Page) =>
 	page.locator('.mockup-frame').evaluate((el) => Math.round(el.getBoundingClientRect().width));

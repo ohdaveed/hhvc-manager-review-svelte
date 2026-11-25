@@ -6,7 +6,7 @@ import { signedIn } from './signedIn';
  * the page; the banner and read-only mode follow `onAuthStateChange`. The
  * address is the stub's fake one from `tests/signedIn.ts`.
  */
-const PAGE = '/review/report-garbage-filth-vegetation';
+const PAGE = '/review/report-garbage-clutter-or-overgrown-plants';
 
 test('shows the signed-in address and signs out in place', async ({ page }) => {
 	await page.setViewportSize({ width: 1440, height: 900 });

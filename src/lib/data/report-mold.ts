@@ -12,7 +12,7 @@ export const moldReport = {
 	],
 	reading: 'Grade 6',
 	editorNote:
-		'Report regroup (Decided, Nov 24, 2026), built 2026-11-25. New page, one of the 9 condition pages. Scope is the Decided one: visible mold, the 10 sq ft threshold, the moisture source, and a referral to DBI for leaks. C8 (decided Nov 24, 2026): the Department of Building Inspection handles mold caused by a leak, so the leak referral names DBI. Text is carried from the mold half of "Report garbage, mold, and overgrown vegetation", which keeps its mold content until it is rebuilt. That page stated the 10 sq ft rule three times; here it is stated once, in Things to know. The third-party test-kit line stays flagged unverified, as it was there.',
+		'Report regroup (Decided, Nov 24, 2026), built 2026-11-25. New page, one of the 9 condition pages. Scope is the Decided one: visible mold, the 10 sq ft threshold, the moisture source, and a referral to DBI for leaks. C8 (decided Nov 24, 2026): the Department of Building Inspection handles mold caused by a leak, so the leak referral names DBI. Text is carried from the mold half of "Report garbage, mold, and overgrown vegetation", which was retired once all 9 condition pages existed (2026-11-25). That page stated the 10 sq ft rule three times; here it is stated once, in Things to know. The third-party test-kit line stays flagged unverified, as it was there.',
 	whatToKnow: {
 		cost: 'Free',
 		thingsToKnow: [

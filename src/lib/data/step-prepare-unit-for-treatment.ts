@@ -95,7 +95,7 @@ export const stepPrepUnit = {
 					bullets: [
 						'Keep washed items sealed until you are told otherwise.',
 						'Report what you still see. A second visit is normal for some pests.',
-						'[Report cockroaches, mosquitoes, and other insects](insectsReport)'
+						'[Report cockroaches or other insects](insectsReport)'
 					],
 					karl: 'Step 6. Transaction link: insectsReport. "A second visit is normal for some pests" is stated without a count, since the number varies by pest and product.'
 				}

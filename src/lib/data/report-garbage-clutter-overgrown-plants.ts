@@ -12,7 +12,7 @@ export const garbageReport = {
 	],
 	reading: 'Grade 6',
 	editorNote:
-		'Report regroup (Decided, Nov 24, 2026), built 2026-11-25. New page, one of the 9 condition pages. Scope is the Decided one: garbage, excessive materials and overgrown vegetation, with links to Adult Protective Services and the Fire Marshal, phrased as offers of help rather than threats of enforcement. Both link targets were checked live on 2026-11-25: the APS page answers 200, and the fire safety page redirects to the Fire Department\'s own report form. Text is carried from "Report garbage, mold, and overgrown vegetation", which keeps its pigeon and animal waste content until those conditions get their own pages. Shared report text lives on What happens after you report and Tenant rights.',
+		'Report regroup (Decided, Nov 24, 2026), built 2026-11-25. New page, one of the 9 condition pages. Scope is the Decided one: garbage, excessive materials and overgrown vegetation, with links to Adult Protective Services and the Fire Marshal, phrased as offers of help rather than threats of enforcement. Both link targets were checked live on 2026-11-25: the APS page answers 200, and the fire safety page redirects to the Fire Department\'s own report form. Text is carried from "Report garbage, mold, and overgrown vegetation", which was retired once pigeons and animal waste got their own pages (2026-11-25). Shared report text lives on What happens after you report and Tenant rights.',
 	whatToKnow: {
 		cost: 'Free',
 		thingsToKnow: [

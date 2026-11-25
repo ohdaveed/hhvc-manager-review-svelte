@@ -39,15 +39,17 @@ export const stepPestReport = {
 					],
 					bullets: [
 						'[Report rats or mice](rodentsReport)',
+						'[Report animal waste on a property](animalWasteReport)',
+						'[Report bed bugs](bedBugReport)',
+						'[Report cockroaches or other insects](insectsReport)',
 						'[Report mosquitoes or standing water](mosquitoReport)',
-						'[Report cockroaches, mosquitoes, and other insects](insectsReport)',
+						'[Report pigeon droppings, nesting, or feeding](pigeonReport)',
+						'[Report a sewage leak or backup](sewageReport)',
 						'[Report mold](moldReport)',
 						'[Report garbage, clutter, or overgrown plants](garbageReport)',
-						'[Report garbage, mold, and overgrown vegetation](filthReport)',
-						'[Report a problem in an SRO or hotel](sroHotelReport)',
 						'You can report a building you do not live in, and you can report on behalf of someone else.'
 					],
-					karl: 'Step 1. Step description: one Text block holding the paragraph and the bullets, whose rich-text Link tool carries the four reporting pages as Internal links. Transaction link: the reporting page closest to the reader — set per case, or left blank because four apply here.'
+					karl: 'Step 1. Step description: one Text block holding the paragraph and the bullets, whose rich-text Link tool carries the nine condition report pages as Internal links (report regroup, 2026-11-25). Transaction link: the reporting page closest to the reader — set per case, or left blank because nine apply here.'
 				},
 				{
 					title: 'Check what Healthy Housing can inspect',

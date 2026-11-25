@@ -12,7 +12,7 @@ export const mosquitoReport = {
 	],
 	reading: 'Grade 6',
 	editorNote:
-		'Report regroup (Decided, Nov 24, 2026), built 2026-11-25. New page, one of the 9 condition pages: HHVC finds water sources and treats them, so mosquitoes get their own Transaction. The dead-bird West Nile referral moves here from the insects page, and Mosquito Control Program now links here instead of holding its own report section. Things to know follows the Decided order: item 1 is what HHVC checks, item 2 is access. The old insects page still carries its mosquito content until it is rebuilt as "Report cockroaches or other insects". Decided: move this page up in the Topic and Agency lists during mosquito season. Shared report text lives on What happens after you report and Tenant rights.',
+		'Report regroup (Decided, Nov 24, 2026), built 2026-11-25. New page, one of the 9 condition pages: HHVC finds water sources and treats them, so mosquitoes get their own Transaction. The dead-bird West Nile referral moves here from the insects page, and Mosquito Control Program now links here instead of holding its own report section. Things to know follows the Decided order: item 1 is what HHVC checks, item 2 is access. The old insects page was rebuilt as "Report cockroaches or other insects" without its mosquito content (2026-11-25). Decided: move this page up in the Topic and Agency lists during mosquito season. Shared report text lives on What happens after you report and Tenant rights.',
 	whatToKnow: {
 		cost: 'Free',
 		thingsToKnow: [
@@ -87,7 +87,7 @@ export const mosquitoReport = {
 				{
 					title: 'UC IPM Pest Notes: Mosquitoes',
 					text: 'University of California guidance on reducing mosquitoes around the home.',
-					url: 'https://ipm.ucanr.edu/home-and-landscape/mosquitoes/pest-notes/',
+					url: 'https://ipm.ucanr.edu/home-and-landscape/mosquitoes/',
 					karl: 'External link inside the supporting_information accordion. Third-party UC IPM reference.'
 				},
 				{

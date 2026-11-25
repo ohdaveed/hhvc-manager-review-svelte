@@ -70,7 +70,7 @@ const REVIEW_ID = '00000000-0000-4000-8000-000000000001';
  * row is the surface the contrast defect was hiding on.
  */
 const PAGE_ROWS = [
-	{ path: 'report-garbage-filth-vegetation', status: 'needs-review' },
+	{ path: 'report-garbage-clutter-or-overgrown-plants', status: 'needs-review' },
 	{ path: 'step-by-step-correct-a-violation-and-close-your-case', status: 'approved' },
 	{ path: 'property-owner-responsibilities-hhvc', status: 'revise' },
 	{ path: 'find-complaints-and-inspection-records', status: 'blocked' },
@@ -99,7 +99,7 @@ const EDIT_ROWS = [
 		id: '00000000-0000-4000-8000-000000000201',
 		page_id: PAGE_ROWS[0].id,
 		field_id: 'title',
-		new_content: 'Report garbage, mold, and overgrown vegetation',
+		new_content: 'Report garbage, clutter, or overgrown plants',
 		created_at: '2026-01-01T00:00:00Z'
 	}
 ];

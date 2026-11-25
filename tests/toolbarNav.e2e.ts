@@ -11,7 +11,7 @@ import { gotoSignedIn } from './signedIn';
  * specs independent of Supabase. The decision specs need a review row, so they
  * run signed in through the stub.
  */
-const FIRST = '/review/report-garbage-filth-vegetation';
+const FIRST = '/review/report-garbage-clutter-or-overgrown-plants';
 
 test('links back to the landing page from the queue', async ({ page }) => {
 	await page.goto(FIRST);
@@ -42,8 +42,8 @@ test('names the page in the toolbar, with the slug as its tooltip', async ({ pag
 	await page.setViewportSize({ width: 1440, height: 900 });
 	await page.goto(FIRST);
 	const title = page.getByTestId('toolbar-title');
-	await expect(title).toHaveText('Report garbage, mold, and overgrown vegetation');
-	await expect(title).toHaveAttribute('title', /report-garbage-filth-vegetation/);
+	await expect(title).toHaveText('Report garbage, clutter, or overgrown plants');
+	await expect(title).toHaveAttribute('title', /report-garbage-clutter-or-overgrown-plants/);
 });
 
 test('keeps the decision on screen when the panel is collapsed', async ({ page }) => {

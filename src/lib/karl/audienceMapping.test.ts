@@ -60,7 +60,7 @@ describe('audience is reported, not suppressed', () => {
 	});
 
 	it('names the Things to know destination rather than claiming none exists', () => {
-		const [gap] = audienceGap(pagesByKey.filthReport);
+		const [gap] = audienceGap(pagesByKey.garbageReport);
 
 		// The specific wording is free to change; what must not come back is the
 		// generic sweep reason, which asserts the opposite of what is true.
@@ -70,12 +70,12 @@ describe('audience is reported, not suppressed', () => {
 	});
 
 	it('cites the published page the destination was read off', () => {
-		const [gap] = audienceGap(pagesByKey.filthReport);
+		const [gap] = audienceGap(pagesByKey.garbageReport);
 		expect(gap.reason).toContain('sf.gov/manage-covid-19-schools-childcare-and-youth-programs');
 	});
 
 	it('explains that the blocker is the 2-entry budget, not a missing field', () => {
-		const [gap] = audienceGap(pagesByKey.filthReport);
+		const [gap] = audienceGap(pagesByKey.garbageReport);
 		expect(gap.reason).toMatch(/caps Things to know at 2/);
 	});
 
@@ -123,7 +123,7 @@ describe('audience is reported, not suppressed', () => {
 	});
 
 	it('still cites the live pattern on both branches', () => {
-		const transaction = audienceGap(pagesByKey.filthReport)[0];
+		const transaction = audienceGap(pagesByKey.garbageReport)[0];
 		const otherType = (Object.values(pagesByKey) as { type?: string; audience?: unknown[] }[]).find(
 			(p) =>
 				p.type !== 'Transaction' &&

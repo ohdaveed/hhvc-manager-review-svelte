@@ -97,16 +97,23 @@ export const OPEN_QUESTIONS: OpenQuestion[] = [
 		id: 'mold-test-kits',
 		question:
 			'Should residents be told not to rely on third-party mold test kits when they report?',
-		fields: [
-			{ slug: 'sf.gov/report-garbage-filth-vegetation', path: 'sections.0.steps.2.bullets.1' },
-			{ slug: 'sf.gov/report-mold', path: 'sections.0.steps.3.bullets.6' }
-		]
+		fields: [{ slug: 'sf.gov/report-mold', path: 'sections.0.steps.3.bullets.6' }]
+	},
+	// The SRO intake question was answered (Decided, Nov 24, 2026: one clerk
+	// takes every report), and the SRO report page it was flagged on is removed.
+	{
+		id: 'bed-bug-treatment-deadline',
+		question:
+			'Must an owner or manager start professional bed bug treatment within a set time after bed bugs are confirmed, and if so, how long?',
+		note: 'The drafts say 2 working days (writing audit row 132); the Nov 24 decisions record lists it under To confirm.',
+		fields: [{ slug: 'sf.gov/report-bed-bugs', path: 'sections.0.steps.0.bullets.0' }]
 	},
 	{
-		id: 'sro-intake',
+		id: 'public-dog-waste-311',
 		question:
-			'Do SRO, residential hotel and shelter reports go through the same 311 intake as other housing reports, or a separate one?',
-		fields: [{ slug: 'sf.gov/report-problem-sro-hotel', path: 'sections.0.paragraphs.0' }]
+			'Which 311 service takes reports of dog waste on public sidewalks and streets, which HHVC does not handle?',
+		note: 'Decided Nov 24, 2026: likely Public Works street cleaning; the agency is still to confirm.',
+		fields: [{ slug: 'sf.gov/report-animal-waste-on-property', path: 'sections.0.steps.0.text.1' }]
 	},
 	{
 		id: 'dbi-routing-citation',

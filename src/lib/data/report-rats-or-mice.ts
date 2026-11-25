@@ -63,7 +63,7 @@ export const rodentsReport = {
 		},
 		{
 			heading: 'While you wait: tips to help with the problem',
-			karl: 'Maps to supporting_information (Accordions). This accordion uses the mockup-only open flag so the tips are visible without a click — flag for Digital Services that the real accordion renders collapsed. Contents: one Text block (lead paragraph + IPM bullets) + a Resources-style external links list (UC IPM, CDC, NEHA). The pet waste tip is the Decided cross-link line ("Pick up pet waste daily. It feeds rats."); it gets a link when the animal waste page is built.',
+			karl: 'Maps to supporting_information (Accordions). This accordion uses the mockup-only open flag so the tips are visible without a click — flag for Digital Services that the real accordion renders collapsed. Contents: one Text block (lead paragraph + IPM bullets) + a Resources-style external links list (UC IPM, CDC, NEHA). The pet waste tip is the Decided cross-link line ("Pick up pet waste daily. It feeds rats."), linked to the animal waste page.',
 			kind: 'body',
 			component: 'supporting',
 			open: true,
@@ -73,7 +73,7 @@ export const rodentsReport = {
 			bullets: [
 				'**Close off entry points:** Seal any gap bigger than a pencil. Use rodent-proof materials like hardware cloth, copper mesh, or sheet metal.',
 				'**Cut off food:** Store food and garbage in bins with tight-fitting lids. Do not leave pet food out overnight.',
-				'**Pick up pet waste daily:** It feeds rats.',
+				'**Pick up pet waste daily:** It feeds rats. [Report animal waste on a property](animalWasteReport)',
 				'**Remove hiding places:** Clear clutter and trim overgrown plants where rats and mice hide or nest.',
 				'**Trap safely:** Use snap traps indoors. Do not use poisons — they can harm children, pets, and wildlife.',
 				'**Clean up safely:** Wet down droppings with a disinfectant and wear gloves. Never dry-sweep or vacuum droppings.'
@@ -88,7 +88,7 @@ export const rodentsReport = {
 				{
 					title: 'UC IPM Pest Notes: House mouse',
 					text: 'University of California guidance on managing house mice.',
-					url: 'https://ipm.ucanr.edu/home-and-landscape/house-mouse/pest-notes/',
+					url: 'https://ipm.ucanr.edu/home-and-landscape/house-mouse/',
 					karl: 'External link inside the supporting_information accordion. Third-party UC IPM reference.'
 				},
 				{
