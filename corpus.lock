@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "corpusHash": "30eccdf290ca05efd870f69396cd37521f2b7295bf04db48bd15f03fa298df3a",
+  "corpusHash": "a91786fcd1b437836912c992043fc648af1460fba49f752b38a5551883abb307",
   "pages": {
     "departments--healthy-housing-and-vector-control": {
       "contentHash": "a33ecebd9a26b51fbb63bd23f9d3c3c447f9a26e419d1e80f0e173127c983b54",
@@ -326,7 +326,7 @@
       }
     },
     "information-what-happens-after-you-report-housing-pest-problem": {
-      "contentHash": "acd7d79bf09e3e918d63a01576ecc1b1ce721b5cb4f605b97aa9b2a8ed13b483",
+      "contentHash": "36e4a7a4083882b8f4ba5025e93b7d5c1ba07c7c435c1bc225d2e4690db4e933",
       "fieldHashes": {
         "audience.0": "ab7c2ae91dde4a165cb5bfad6b59c9357c277cb3b90296ea67f37d60a88ffd9a",
         "sections.how-a-report-moves-through-the-city.heading": "3cc3a9df7c21b4e31184b297456da9056a3d154a27b16e6c582322658b55a28e",
@@ -342,7 +342,7 @@
         "sections.if-a-problem-is-found.bullets.3": "85cade130e6596cf22449f646b7372db25d03e73418616181d908e8e59b9d2c3",
         "sections.if-a-problem-is-found.bullets.4": "5604203b3ea0e180d4824f68444e035f1aadd1f33a975de16cd4184a47808e12",
         "sections.if-a-problem-is-found.bullets.5": "952f8d527b75920b133232d244c6db1fea6ba996bd94989c179c84234ca3454c",
-        "sections.if-a-problem-is-found.bullets.6": "9fe867b62663d55440ade2437cecc6cabe4e43fa29db7945dcdb97b2d7f7cfaf",
+        "sections.if-a-problem-is-found.bullets.6": "e78fcbb69da3aa350853a8701129182fc99e223a52f029ab752cc2db40b9d393",
         "sections.if-a-problem-is-found.bullets.7": "fd3a91d5216533a5df28ab9fcbb3a917699051ad1ba45809dc4270c6bd28967b",
         "sections.if-a-problem-is-found.heading": "9895baa9750e1a0711e781788a6520e394a8f5917dc1a115b19ccd31b08866f4",
         "sections.if-a-problem-is-found.paragraphs.0": "25101a12f7029aea87dcb0b3f469406695f743c9a3c31e06e02829e18d3c9179",
@@ -814,7 +814,7 @@
       }
     },
     "report-rats-or-mice": {
-      "contentHash": "f36b787eeb5d828774762cc479d10f13b24b1fe82f458ae1d344b2c37c4a8d3e",
+      "contentHash": "8d702579e62f6ebf79890b3cc7f4825dbf49d1d816eee7c35d2dc2599a7cd110",
       "fieldHashes": {
         "audience.0": "a9ca519e04d66d8198f130da425c754891deb725a1f7b20119bfd88e8aecb388",
         "audience.1": "7ea11dfb70cfa49f0c3effee3965434ea835da01b69ddfff911ff6b4b9851d7a",
@@ -825,7 +825,7 @@
         "sections.what-the-health-code-requires.bullets.0": "fd8eb71a3bbbfc98b08345cc0170711d398c960867cf0d31314a5926d310ec44",
         "sections.what-the-health-code-requires.heading": "13e7f9679361d6015ff823a78c3727f0056246ddc3619f6327039a4177b39212",
         "sections.what-to-do.heading": "f47f1edc44ed92664871471b0cf8f463813788468c23680c12f52a36c2827e26",
-        "sections.while-you-wait-tips-to-help-with-the-problem.bullets.0": "0b33b59ae46f33cac32598df8a69a9a9d1334a166079afe937c79c1d18f28e3d",
+        "sections.while-you-wait-tips-to-help-with-the-problem.bullets.0": "0c23cf615a2ebfb3eb8e27541e2d41d03141c6c8d9a660fde398329b8a935e12",
         "sections.while-you-wait-tips-to-help-with-the-problem.bullets.1": "667dd35d2f3b8558849ea999a5fd2f4cbe8819e40bced4fec614837d405ec108",
         "sections.while-you-wait-tips-to-help-with-the-problem.bullets.2": "dffe04fd69fa97a4e4b28e2b9611bd663e971215b0bc4141679d1150381aac31",
         "sections.while-you-wait-tips-to-help-with-the-problem.bullets.3": "3e9daf3550a30a0e0642569250d225a756a2578ba0e90a453753e4d8561fb36f",
@@ -913,7 +913,7 @@
       }
     },
     "step-by-step-report-a-pest-problem": {
-      "contentHash": "c0beaeaf745c354708d433448f4db9bbf052e1222d15ff32d4fec2a0d2c16ccb",
+      "contentHash": "178f2edd1b270be4b64f1d07a848d6e062229b650b9b103251325d55b759d88a",
       "fieldHashes": {
         "audience.0": "f5c7e2f49afb9c254d917c8465f34cbfdbd8438ff2d88b948166d70a6714537d",
         "audience.1": "6f4181c37a361dc43a4300abc1b15e41ce65710e30337be619ffaf9a71382556",

@@ -117,13 +117,13 @@ export const afterReport = {
 				},
 				'These timelines represent general enforcement standards. Actual correction deadlines are established on the official Notice of Violation based on the severity of the health hazard.',
 				'Extensions: HHVC may offer an extension to the compliance deadline if the property owner contacts the inspector before the deadline.',
-				'Bed Bug Treatment: A property owner or manager must initiate professional treatment within 2 working days of confirmation.',
 				{
-					text: 'If a property owner misses the deadline, HHVC may charge reinspection fees. These are $256/hour for inspectors and $234/hour for technicians. Invoices must be paid within 30 days. Unpaid bills will incur $10 or $30 late penalties and 1.5% compounded monthly interest.',
+					text: 'Bed Bug Treatment: A property owner or manager must initiate professional treatment within 2 working days of confirmation.',
 					unverified: true,
 					unverifiedReason:
-						'The fee rates themselves are verified against the FY26-27 EHB fee schedule, but "1.5% compounded monthly interest" is not: tier-1 says interest "accrues at 1.5% per month," not compounded, and the parallel sentence on the notice-of-violation page says "1.5% interest" with no compounding (source-of-truth audit 2026-07-06 — Medium). Align the interest wording with the source before publication.'
+						'Quoted from the draft pages (writing audit row 132) and listed under To confirm in the Nov 24 decisions record, as on Report bed bugs. Confirm the rule and its source with HHVC before publication.'
 				},
+				'If a property owner misses the deadline, HHVC may charge reinspection fees. These are $256/hour for inspectors and $234/hour for technicians. Invoices must be paid within 30 days. Unpaid bills get a $10 or $30 late penalty, and interest accrues at 1.5% per month.',
 				{
 					text: "Persistent violations can result in citations, civil liabilities, or a Director's Hearing to recover attorneys' fees and administrative abatement costs.",
 					unverified: true,
