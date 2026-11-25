@@ -106,7 +106,10 @@ export const OPEN_QUESTIONS: OpenQuestion[] = [
 		question:
 			'Must an owner or manager start professional bed bug treatment within a set time after bed bugs are confirmed, and if so, how long?',
 		note: 'The drafts say 2 working days (writing audit row 132); the Nov 24 decisions record lists it under To confirm.',
-		fields: [{ slug: 'sf.gov/report-bed-bugs', path: 'sections.0.steps.0.bullets.0' }]
+		fields: [
+			{ slug: 'sf.gov/report-bed-bugs', path: 'sections.0.steps.0.bullets.0' },
+			{ slug: HAPPENS, path: 'sections.4.bullets.5' }
+		]
 	},
 	{
 		id: 'public-dog-waste-311',
@@ -172,13 +175,6 @@ export const OPEN_QUESTIONS: OpenQuestion[] = [
 		question: 'Is there a shorter correction window for sewage backups, and how long is it?',
 		note: 'Mockup says 48 to 72 hours; no tier-1 source mentions sewage backups.',
 		fields: [{ slug: HAPPENS, path: 'sections.4.bullets.1' }]
-	},
-	{
-		id: 'interest-wording',
-		question:
-			'The interest wording on the after-you-report page does not match the source and needs correcting.',
-		note: 'Copy says "1.5% compounded monthly interest"; the source says it "accrues at 1.5% per month" (fact unpaid-invoice-interest). A copy fix, not a research question.',
-		fields: [{ slug: HAPPENS, path: 'sections.4.bullets.6' }]
 	},
 	{
 		id: 'enforcement-chain',

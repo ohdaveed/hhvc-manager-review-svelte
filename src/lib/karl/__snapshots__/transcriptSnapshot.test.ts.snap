@@ -202,7 +202,7 @@ If an inspection identifies a violation, Environmental Health will issue a Notic
 - These timelines represent general enforcement standards. Actual correction deadlines are established on the official Notice of Violation based on the severity of the health hazard.
 - Extensions: HHVC may offer an extension to the compliance deadline if the property owner contacts the inspector before the deadline.
 - Bed Bug Treatment: A property owner or manager must initiate professional treatment within 2 working days of confirmation.
-- If a property owner misses the deadline, HHVC may charge reinspection fees. These are $256/hour for inspectors and $234/hour for technicians. Invoices must be paid within 30 days. Unpaid bills will incur $10 or $30 late penalties and 1.5% compounded monthly interest.
+- If a property owner misses the deadline, HHVC may charge reinspection fees. These are $256/hour for inspectors and $234/hour for technicians. Invoices must be paid within 30 days. Unpaid bills get a $10 or $30 late penalty, and interest accrues at 1.5% per month.
 - Persistent violations can result in citations, civil liabilities, or a Director's Hearing to recover attorneys' fees and administrative abatement costs.
 
 ### Information section — \`information_section\` [TYPE] — page not approved
@@ -5083,7 +5083,7 @@ While you wait: tips to help with the problem
 
 It may take us a few weekdays to get back to you. In the meantime, here are a few things you can do to help with the problem.
 
-- **Close off entry points:** Seal any gap bigger than a pencil. Use rodent-proof materials like hardware cloth, copper mesh, or sheet metal.
+- **Close off entry points:** Seal any gap bigger than 1/4 inch. Use rodent-proof materials like hardware cloth, copper mesh, or sheet metal.
 - **Cut off food:** Store food and garbage in bins with tight-fitting lids. Do not leave pet food out overnight.
 - **Pick up pet waste daily:** It feeds rats. [Report animal waste on a property](animalWasteReport)
 - **Remove hiding places:** Clear clutter and trim overgrown plants where rats and mice hide or nest.
@@ -5765,6 +5765,7 @@ Start with 311. Pick the report that matches what you have seen — the conditio
 - [Report mold](moldReport)
 - [Report garbage, clutter, or overgrown plants](garbageReport)
 - You can report a building you do not live in, and you can report on behalf of someone else.
+- If you rent, tell your landlord first, unless the problem is urgent. [Tenant rights when reporting housing conditions](tenantRights) explains how long to wait.
 
 **Step 2 — Title:**
 
@@ -5784,8 +5785,6 @@ Get ready for the inspection
 **Step 3 — Step description:**
 
 An inspector will look at the conditions you reported. Being ready shortens the visit and avoids a second one.
-
-If you rent, give 72 hours notice when you can before anyone enters a unit.
 
 - Clear a path to the area you reported so an inspector can see the condition.
 - If you gave contact information, an inspector may contact you to ask questions or schedule a visit.
@@ -5837,6 +5836,7 @@ A case closes when the cited conditions are corrected and that has been confirme
 - "Report a sewage leak or backup" → shape 5 — rich text Link tool → Internal link → "Report a sewage leak or backup"
 - "Report mold" → shape 5 — rich text Link tool → Internal link → "Report mold"
 - "Report garbage, clutter, or overgrown plants" → shape 5 — rich text Link tool → Internal link → "Report garbage, clutter, or overgrown plants"
+- "Tenant rights when reporting housing conditions" → shape 5 — rich text Link tool → Internal link → "Tenant rights when reporting housing conditions"
 - "Learn what Healthy Housing and Vector Control can inspect" → shape 5 — rich text Link tool → Internal link → "Learn what Healthy Housing and Vector Control can inspect"
 - "What happens after you report a housing or pest problem" → shape 5 — rich text Link tool → Internal link → "What happens after you report a housing or pest problem"
 - "Correct a violation and close your case" → shape 5 — rich text Link tool → Internal link → "Correct a violation and close your case"

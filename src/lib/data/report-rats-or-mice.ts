@@ -71,7 +71,7 @@ export const rodentsReport = {
 				'It may take us a few weekdays to get back to you. In the meantime, here are a few things you can do to help with the problem.'
 			],
 			bullets: [
-				'**Close off entry points:** Seal any gap bigger than a pencil. Use rodent-proof materials like hardware cloth, copper mesh, or sheet metal.',
+				'**Close off entry points:** Seal any gap bigger than 1/4 inch. Use rodent-proof materials like hardware cloth, copper mesh, or sheet metal.',
 				'**Cut off food:** Store food and garbage in bins with tight-fitting lids. Do not leave pet food out overnight.',
 				'**Pick up pet waste daily:** It feeds rats. [Report animal waste on a property](animalWasteReport)',
 				'**Remove hiding places:** Clear clutter and trim overgrown plants where rats and mice hide or nest.',
