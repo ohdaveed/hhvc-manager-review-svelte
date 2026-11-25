@@ -92,6 +92,10 @@ All 6 change type or merge. Each one changes the page's URL and its `pages.path`
 - **What tenants need to do after a Notice of Violation:** Information page.
 - **Find complaints and inspection records** and **Look up residential health code violations:** combine into one Transaction.
 
+### Custom headings become "What to do" (C2, decided Nov 24, 2026)
+
+Rename the custom heading to "What to do" on the Transaction pages that keep their type: public records, inspector lookup, complaints records (the combined lookup from C1) and hotel records. The other 3 of the 7 leave the Transaction type under C1: the 2 "get ready" pages become steps and tenant steps becomes an Information page, so their headings don't need renaming.
+
 ### Sewage page
 
 "Report a sewage leak or backup" covers sewage from a drain, toilet, cleanout or pipe, inside or outside a building, including yards and shared areas. HHVC responds within 48 hours of the complaint. The owner hires a plumber, and HHVC confirms the sewage is removed and the area sanitized. A leaking pipe with no sewage goes to another agency.
