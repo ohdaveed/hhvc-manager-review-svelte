@@ -3,7 +3,7 @@ export const filthReport = {
 	type: 'Transaction',
 	title: 'Report garbage, mold, and overgrown vegetation',
 	summary:
-		'Report garbage, clutter, mold, animal waste, or overgrown plants that may attract pests.',
+		'Tell 311 about clutter, animal waste, or plant growth that may draw pests to a home or building.',
 	primaryAgency: 'Healthy Housing and Vector Control',
 	audience: [
 		'A tenant or resident affected by garbage, clutter, mold, filth, or overgrown plants',

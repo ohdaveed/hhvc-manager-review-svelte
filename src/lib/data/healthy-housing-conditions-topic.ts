@@ -3,7 +3,7 @@ export const healthyHousingTopic = {
 	type: 'Topic',
 	title: 'Healthy housing conditions',
 	summary:
-		'We help keep San Francisco housing healthy by protecting residents from vermin and other hazards.',
+		'Report pests, mold, or garbage, look up building records, and find help keeping your home safe.',
 	audience: [
 		'This page is for tenants, property owners and managers, and anyone researching healthy-housing services in San Francisco.'
 	],

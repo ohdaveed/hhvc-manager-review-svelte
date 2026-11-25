@@ -2,7 +2,7 @@ export const languageGuides = {
 	slug: 'sf.gov/resource/guides-in-other-languages',
 	type: 'Resource Collection',
 	title: 'Guides in other languages',
-	summary: 'Pest, mold, and tenant rights guides in languages other than English.',
+	summary: 'Pest, mold, and tenant rights help for people who read a language besides English.',
 	audience: [
 		'A resident who reads a language other than English',
 		'A community organization handing out material',
@@ -14,7 +14,8 @@ export const languageGuides = {
 	editorStatus: 'needs-review',
 	sections: [
 		{
-			heading: 'About these guides',
+			heading: 'Find a guide in your language',
+			fieldKey: 'about-these-guides',
 			karl: 'Maps to Introductory text. Kept short — Resource Collection puts its weight in the Body, and a long preamble pushes the documents below the fold.',
 			kind: 'body',
 			paragraphs: [
@@ -75,5 +76,6 @@ export const languageGuides = {
 		}
 	],
 	seoTitle: 'Guides in other languages | SF.gov',
-	metaDescription: 'Pest, mold, and tenant rights guides in languages other than English.'
+	metaDescription:
+		'Pest, mold, and tenant rights help for people who read a language besides English.'
 };

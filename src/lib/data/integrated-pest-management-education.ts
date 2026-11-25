@@ -3,7 +3,7 @@ export const ipmEducation = {
 	type: 'Campaign',
 	title: 'Free IPM education workshop',
 	summary:
-		'Request a free integrated pest management (IPM) session for tenant groups and community organizations.',
+		'Request a no-cost integrated pest management session for tenant groups and community organizations.',
 	audience: [
 		'This page is for tenants, resident groups, and community organizations that want to host a free pest-prevention workshop.'
 	],

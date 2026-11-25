@@ -2,8 +2,7 @@ export const payFee = {
 	slug: 'sf.gov/pay-your-annual-healthy-housing-fee-apartment-buildings',
 	type: 'Transaction',
 	title: 'Pay your annual Healthy Housing fee for apartment buildings',
-	summary:
-		'Pay your annual Healthy Housing fee if you own an apartment building with 3 or more rental units.',
+	summary: 'Required each year if you own a building with 3 or more rental units.',
 	primaryAgency: 'Healthy Housing and Vector Control',
 	audience: [
 		'A property owner responsible for an apartment building',

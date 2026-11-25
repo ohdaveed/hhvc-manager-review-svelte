@@ -3,7 +3,7 @@ export const article11Compliance = {
 	type: 'Information',
 	title: 'Article 11 compliance for property owners',
 	summary:
-		'What property owners and managers must do under Health Code Article 11, the annual fee, and who to call.',
+		'What landlords and managers must do under the Health Code, the yearly fee, and who to call.',
 	audience: [
 		'This page is for property owners and managers responsible for Article 11 compliance.'
 	],

@@ -190,7 +190,7 @@ If an inspection identifies a violation, Environmental Health will issue a Notic
 
 **Title:**
 
-What this page does not promise
+What to expect on timing and results
 
 **Text:**
 
@@ -395,7 +395,7 @@ Article 11 compliance for property owners
 
 **Description:**
 
-What property owners and managers must do under Health Code Article 11, the annual fee, and who to call.
+What landlords and managers must do under the Health Code, the yearly fee, and who to call.
 
 ### Primary agency — \`primary_agency\` [FLAG] — page not approved
 
@@ -604,7 +604,7 @@ _Every Body block on this page can live in ONE Body field: Heading 2 auto-genera
 
 **Body — Heading 2:**
 
-How to use this guide
+See which Article 11 rules apply to housing
 
 **Text:**
 
@@ -1007,7 +1007,7 @@ Report garbage, mold, and overgrown vegetation
 
 **Description:**
 
-Report garbage, clutter, mold, animal waste, or overgrown plants that may attract pests.
+Tell 311 about clutter, animal waste, or plant growth that may draw pests to a home or building.
 
 ### Primary agency — \`primary_agency\` [CHOOSE] — page not approved
 
@@ -1236,7 +1236,7 @@ Find residential hotel and shelter records
 
 **Description:**
 
-Look up inspection and program records for SROs, residential hotels, and emergency shelters.
+Look up inspection and program history for SROs and emergency shelters.
 
 ### Primary agency — \`primary_agency\` [CHOOSE] — page not approved
 
@@ -1518,7 +1518,7 @@ Look up residential health code violations
 
 **Description:**
 
-Search violation and inspection history for residential buildings under the SF Health Code.
+Search inspection and enforcement history for any residential address in San Francisco.
 
 ### Primary agency — \`primary_agency\` [CHOOSE] — page not approved
 
@@ -1655,7 +1655,7 @@ _U6 — supply the parent Agency page by hand; the mockup has no field for it._
 
 **Description:**
 
-We help keep San Francisco housing healthy by protecting residents from vermin and other hazards.
+Report pests, mold, or garbage, look up building records, and find help keeping your home safe.
 
 ### Child topics (outer StreamField; internally "Page content") — \`content_fields\` [TYPE] — page not approved
 
@@ -1758,7 +1758,7 @@ Report cockroaches, mosquitoes, and other insects
 
 **Description:**
 
-Report cockroaches, bed bugs, mosquitoes, or other insects in a home, building, yard, or shared area.
+Tell 311 about bed bugs, roaches, or other pests in a home, building, yard, or shared area.
 
 ### Primary agency — \`primary_agency\` [CHOOSE] — page not approved
 
@@ -1975,7 +1975,7 @@ Get ready for a follow-up inspection
 
 **Description:**
 
-Prepare for a Healthy Housing and Vector Control follow-up inspection after a Notice of Violation.
+Show the inspector the repairs your Notice of Violation asked for, with records of the work.
 
 ### Primary agency — \`primary_agency\` [CHOOSE] — page not approved
 
@@ -2089,7 +2089,7 @@ Get ready for a follow-up inspection | SF.gov
 
 **Meta description (\`search_description\`):**
 
-Prepare for a Healthy Housing and Vector Control follow-up inspection after a Notice of Violation.
+Show the inspector the repairs your Notice of Violation asked for, with records of the work.
 
 ## Unmapped — no documented Karl destination
 
@@ -2120,7 +2120,7 @@ Get ready for a housing inspection after you report
 
 **Description:**
 
-Prepare for a Healthy Housing and Vector Control inspection after you file a 311 report.
+Prepare for the Environmental Health visit that follows a 311 complaint.
 
 ### Primary agency — \`primary_agency\` [CHOOSE] — page not approved
 
@@ -2239,7 +2239,7 @@ Get ready for a housing inspection after you report | SF.gov
 
 **Meta description (\`search_description\`):**
 
-Prepare for a Healthy Housing and Vector Control inspection after you file a 311 report.
+Prepare for the Environmental Health visit that follows a 311 complaint.
 
 ## Unmapped — no documented Karl destination
 
@@ -2276,7 +2276,7 @@ _Every Body block on this page can live in ONE Body field: Heading 2 auto-genera
 
 **Body — Heading 2:**
 
-About these figures
+What this summary counts
 
 **Text:**
 
@@ -2423,7 +2423,7 @@ Find your Healthy Housing inspector by neighborhood
 
 **Description:**
 
-Look up which Healthy Housing and Vector Control inspector covers your neighborhood.
+See which Environmental Health staff member is assigned to your part of San Francisco.
 
 ### Primary agency — \`primary_agency\` [CHOOSE] — page not approved
 
@@ -2759,7 +2759,7 @@ Guides in other languages
 
 **Description:**
 
-Pest, mold, and tenant rights guides in languages other than English.
+Pest, mold, and tenant rights help for people who read a language besides English.
 
 ### Primary agency — \`primary_agency\` [FLAG] — page not approved
 
@@ -2769,7 +2769,7 @@ _U6 — supply the parent Agency page by hand; the mockup has no field for it._
 
 **Title:**
 
-About these guides
+Find a guide in your language
 
 **Text:**
 
@@ -2818,7 +2818,7 @@ Guides in other languages | SF.gov
 
 **Meta description (\`search_description\`):**
 
-Pest, mold, and tenant rights guides in languages other than English.
+Pest, mold, and tenant rights help for people who read a language besides English.
 
 ## Flags — resolve before saving — page not approved
 
@@ -3195,7 +3195,7 @@ Fix your Healthy Housing and Vector Control violation
 
 **Description:**
 
-Follow your Notice of Violation and work with our inspectors to correct a housing or pest problem.
+Follow your notice and work with our inspectors to correct a pest or building problem.
 
 ### Primary agency — \`primary_agency\` [CHOOSE] — page not approved
 
@@ -3394,7 +3394,7 @@ Who this information is for
 
 **Title:**
 
-Why it matters
+Protect residents’ health
 
 **Text:**
 
@@ -3427,7 +3427,7 @@ Integrated Pest Management (IPM) is a prevention-first approach. It uses inspect
 
 **Title:**
 
-Primary source: UC IPM guide for property managers
+Use the UC IPM guide for property managers
 
 **Text:**
 
@@ -3659,7 +3659,7 @@ _U6 — supply the parent Agency page by hand; the mockup has no field for it._
 
 **Title:**
 
-About this collection
+Keep your building free of health nuisances
 
 **Text:**
 
@@ -3897,7 +3897,7 @@ Pay your annual Healthy Housing fee for apartment buildings
 
 **Description:**
 
-Pay your annual Healthy Housing fee if you own an apartment building with 3 or more rental units.
+Required each year if you own a building with 3 or more rental units.
 
 ### Primary agency — \`primary_agency\` [CHOOSE] — page not approved
 
@@ -4318,7 +4318,7 @@ Make a public records request
 
 **Description:**
 
-Request Environmental Health inspection, complaint, or enforcement records that are not in the online lookups.
+Ask for Environmental Health inspection, complaint, or enforcement files not in the online lookups.
 
 ### Primary agency — \`primary_agency\` [CHOOSE] — page not approved
 
@@ -4615,7 +4615,7 @@ Look up building records
 
 **Description:**
 
-Find inspection reports and violations for a building, or request public records.
+Find inspection reports and violations for an address, or ask for documents that are not online.
 
 ### Primary agency — \`primary_agency\` [FLAG] — page not approved
 
@@ -4625,7 +4625,7 @@ _U6 — supply the parent Agency page by hand; the mockup has no field for it._
 
 **Title:**
 
-About this collection
+Find records for an address
 
 **Text:**
 
@@ -4719,7 +4719,7 @@ Report rats, mice, and other four-legged problems
 
 **Description:**
 
-Report rats, mice, raccoons, bats, or other four-legged pests in a home, building, yard, or shared area.
+Tell 311 about raccoons, bats, or rodents in a home, building, yard, or shared area.
 
 ### Primary agency — \`primary_agency\` [CHOOSE] — page not approved
 
@@ -4929,7 +4929,7 @@ Learn what Healthy Housing and Vector Control can inspect
 
 **Description:**
 
-See what Environmental Health may inspect in apartments, residential hotels, and emergency shelters.
+See which conditions Environmental Health checks in apartments, residential hotels, and emergency shelters.
 
 ### Primary agency — \`primary_agency\` [FLAG] — page not approved
 
@@ -4951,7 +4951,7 @@ Who this information is for
 
 **Title:**
 
-Use this page before you report
+Check if HHVC can help before you report
 
 **Text:**
 
@@ -5004,7 +5004,7 @@ Problems HHVC may inspect
 
 **Title:**
 
-How to choose the right page
+Choose where to report your problem
 
 **Text:**
 
@@ -5093,7 +5093,7 @@ Report a problem in an SRO or hotel
 
 **Description:**
 
-Report a pest, garbage, or housing health problem in a single room occupancy (SRO) hotel or residential hotel.
+Tell us about pests, garbage, or health hazards in a single room occupancy or residential hotel.
 
 ### Primary agency — \`primary_agency\` [CHOOSE] — page not approved
 
@@ -5761,7 +5761,7 @@ What tenants need to do after a Notice of Violation
 
 **Description:**
 
-Learn what to do if a Notice of Violation lists corrective actions for your unit or building.
+Learn your part when corrective actions are listed for your unit or building.
 
 ### Primary agency — \`primary_agency\` [CHOOSE] — page not approved
 

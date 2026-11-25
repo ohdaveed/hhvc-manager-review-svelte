@@ -3,7 +3,7 @@ export const inspectionPrepFollowup = {
 	type: 'Transaction',
 	title: 'Get ready for a follow-up inspection',
 	summary:
-		'Prepare for a Healthy Housing and Vector Control follow-up inspection after a Notice of Violation.',
+		'Show the inspector the repairs your Notice of Violation asked for, with records of the work.',
 	primaryAgency: 'Healthy Housing and Vector Control',
 	audience: [
 		'A property owner or manager who received a Notice of Violation',
@@ -96,5 +96,5 @@ export const inspectionPrepFollowup = {
 	],
 	seoTitle: 'Get ready for a follow-up inspection | SF.gov',
 	metaDescription:
-		'Prepare for a Healthy Housing and Vector Control follow-up inspection after a Notice of Violation.'
+		'Show the inspector the repairs your Notice of Violation asked for, with records of the work.'
 };

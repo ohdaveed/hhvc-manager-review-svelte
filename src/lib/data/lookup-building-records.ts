@@ -2,7 +2,8 @@ export const recordsHub = {
 	slug: 'sf.gov/look-up-building-records',
 	type: 'Resource Collection',
 	title: 'Look up building records',
-	summary: 'Find inspection reports and violations for a building, or request public records.',
+	summary:
+		'Find inspection reports and violations for an address, or ask for documents that are not online.',
 	audience: [
 		"This page is for tenants, property owners and managers, and anyone looking up a building's inspection or violation history."
 	],
@@ -11,7 +12,8 @@ export const recordsHub = {
 		'Resource collection hub. Groups building lookup tools and formal requests. Three child pages link to external tools on xnet.sfdph.org or citywide services.',
 	sections: [
 		{
-			heading: 'About this collection',
+			heading: 'Find records for an address',
+			fieldKey: 'about-this-collection',
 			karl: 'Maps to the top-level "Introductory text" field (Title + rich-text Text) — a repeatable field separate from the Body stream. Heading → Title, paragraphs → Text.',
 			kind: 'body',
 			paragraphs: [
