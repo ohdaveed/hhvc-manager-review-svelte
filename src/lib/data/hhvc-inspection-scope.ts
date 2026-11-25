@@ -3,7 +3,7 @@ export const scopeInfo = {
 	type: 'Information',
 	title: 'Learn what Healthy Housing and Vector Control can inspect',
 	summary:
-		'See which conditions Environmental Health checks in apartments, residential hotels, and emergency shelters.',
+		'See which conditions Environmental Health checks in apartments, residential hotels, and shelters.',
 	audience: [
 		'This page is for anyone deciding whether to report a pest or housing health problem to HHVC.'
 	],

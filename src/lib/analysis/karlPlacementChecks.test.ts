@@ -130,18 +130,8 @@ describe('dead button links', () => {
 });
 
 describe('title words reused in the description', () => {
-	// The annual fee page's description used to repeat 6 title words; it was
-	// rewritten, so the issue case now comes in through an edit.
-	it('flags an edited description that repeats 6 title words', () => {
-		const edits = [
-			{
-				field_id: 'summary',
-				new_content:
-					'Pay your annual Healthy Housing fee if you own an apartment building with 3 or more rental units.',
-				created_at: 'z'
-			}
-		];
-		const f = byId('payFee', 'karl-description-reuse', edits as never);
+	it('flags the annual fee page, which repeats 6 title words', () => {
+		const f = byId('payFee', 'karl-description-reuse');
 		expect(f.status).toBe('issue');
 		expect(f.items[0].text).toBe('pay, annual, healthy, housing, fee, apartment');
 	});
@@ -150,8 +140,15 @@ describe('title words reused in the description', () => {
 		expect(byId('findRecords', 'karl-description-reuse').status).toBe('pass');
 	});
 
-	it('passes the annual fee page as written', () => {
-		expect(byId('payFee', 'karl-description-reuse').status).toBe('pass');
+	it('judges an edited description', () => {
+		const edits = [
+			{
+				field_id: 'summary',
+				new_content: 'Owners of buildings with 3 or more units owe it each year.',
+				created_at: 'z'
+			}
+		];
+		expect(byId('payFee', 'karl-description-reuse', edits as never).status).toBe('pass');
 	});
 });
 

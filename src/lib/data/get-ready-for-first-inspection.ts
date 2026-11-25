@@ -2,7 +2,8 @@ export const inspectionPrepInitial = {
 	slug: 'sf.gov/get-ready-for-a-housing-inspection',
 	type: 'Transaction',
 	title: 'Get ready for a housing inspection after you report',
-	summary: 'Prepare for the Environmental Health visit that follows a 311 complaint.',
+	summary:
+		'Prepare for a Healthy Housing and Vector Control inspection after you file a 311 report.',
 	primaryAgency: 'Healthy Housing and Vector Control',
 	audience: [
 		'A person who filed a 311 report',
@@ -114,5 +115,6 @@ export const inspectionPrepInitial = {
 		}
 	],
 	seoTitle: 'Get ready for a housing inspection after you report | SF.gov',
-	metaDescription: 'Prepare for the Environmental Health visit that follows a 311 complaint.'
+	metaDescription:
+		'Prepare for a Healthy Housing and Vector Control inspection after you file a 311 report.'
 };

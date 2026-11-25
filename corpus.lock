@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "corpusHash": "1f5e035a313dbac4b0b113b999c5caf149ac7a25005637b8524f8ac21cf7844c",
+  "corpusHash": "bd2951c766c7b8b05a6a448f5355015d95d1ac8307741ef4442c15068136e08f",
   "pages": {
     "appeal-a-notice-of-violation": {
       "contentHash": "d2de33a79622bc1e311e48547da7d93cb02d7bc16208d7363d30d24214abfbc0",
@@ -81,7 +81,7 @@
       }
     },
     "find-healthy-housing-inspector-by-neighborhood": {
-      "contentHash": "b5323971a214d2a216971f7ea688605ea2ad1612c56b62013c54805191ffdc2e",
+      "contentHash": "d84cf50b30de61326427a2e3f37f7a7e2bb2b33753edaa4731aa164179526940",
       "fieldHashes": {
         "audience.0": "ee7046d054b604ab75e1a35f8a7bd272abf99c5a0329763a505884c19c1b92b6",
         "audience.1": "ca0260de12cc094fc5a5ea58688f66afb546343ec84ec50175c9b64f76868362",
@@ -94,7 +94,7 @@
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",
         "sections.what-this-tool-covers.heading": "c5ade2db4f81ddf0778c5ca244939adee0139501ddea961bfd8f8b9d6b3729bb",
         "sections.what-this-tool-covers.paragraphs.0": "e8e492ae40ca2cb919f9c222401cff38494d48f65e1953ff573c658597f0274b",
-        "summary": "3f0e0073bebf9f1f645aa0a47bcc15c3dbf7a02f920af99b04130365ac26aaa8",
+        "summary": "94a7fc956285c4816b0248163c63ff326aa3cf16d10522857f0a594705864c9c",
         "title": "6fd1e61883a2d6f634dc0f057c270cffb883f9a1a6d56d8e46ad8a8fed34fca5"
       }
     },
@@ -118,7 +118,7 @@
       }
     },
     "fix-healthy-housing-and-vector-control-violation": {
-      "contentHash": "9f68695064d49e0ee5d441e841d4d6ee5ab26f814c428879319eeaa0d7456e36",
+      "contentHash": "9ca0ea451fa7f6f0eda0b5d09440814dab2f7089be2b2cf1b59267da7426c23e",
       "fieldHashes": {
         "audience.0": "d9b855b5d44c9c8bfe79e4d4202ac84ded93178af5b43fa69066d4c16c19687f",
         "audience.1": "b0ed964a408f3306f5c3a69c42d64aa3cf0f8c21f9024a107d01b0a730484d87",
@@ -126,12 +126,12 @@
         "audience.3": "662cf13bca3db9797fa563150e6a55e0a131b9b67354639955373d994b731172",
         "primaryAgency": "8a2847f0ee854052d30378a2ef091f979c9737bbd8219086a1e04dc0abd84f9f",
         "sections.what-to-do.heading": "f47f1edc44ed92664871471b0cf8f463813788468c23680c12f52a36c2827e26",
-        "summary": "1d30803cb5536e1944ab5177074916087a95accc2796ac53a1bbc7d58024b21a",
+        "summary": "d88ae12c0fce65c3ef7a6eab26867c61a737d8b53306d6d7902eb0f76a44dd70",
         "title": "2f2e6edd0d3a34311808fc171347c9d72941f16bc485d04658de852a80c669ab"
       }
     },
     "get-ready-for-a-follow-up-inspection": {
-      "contentHash": "77294f77b5b967c8e09379fcd8111082efe4610b79f81f7f84f82a6ed8ad8ac1",
+      "contentHash": "f92f61d1601d3467f4cf6a76ba364fc99b384f36672519095edc60665d00245e",
       "fieldHashes": {
         "audience.0": "d9b855b5d44c9c8bfe79e4d4202ac84ded93178af5b43fa69066d4c16c19687f",
         "audience.1": "b0ed964a408f3306f5c3a69c42d64aa3cf0f8c21f9024a107d01b0a730484d87",
@@ -141,12 +141,12 @@
         "sections.document-your-work.heading": "304c4a74da01f197a282d4be11040ec6816c28fae8397b54a20090c893b62fd1",
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",
         "sections.what-to-expect-at-the-follow-up-visit.heading": "65223502f845c39f7b88f54d9fbae1c61e22a0de171172ef540531c8993bba53",
-        "summary": "ec9341151808e715fd56f24081f27e2122254916d6e02eec8464622456ec6e5d",
+        "summary": "63a9d390e1bc0009d0947e0a68d17e04dfbd5b6384c05e1090a356cca88a3166",
         "title": "3f6270be138230e5646f4c38f6cf4f898f3ed82c40f6ba016ba34173f0f11ec9"
       }
     },
     "get-ready-for-a-housing-inspection": {
-      "contentHash": "c9e2c4d3cc22ee068ad9d26c3fae6335d881520d04325bc489bae7bae0951c02",
+      "contentHash": "538816f1bdc610c13479ac0b5fc67bd2fd6885642435ccf00b38ee70e7763042",
       "fieldHashes": {
         "audience.0": "8833e75a61873a1a1741939f7d56ab39fd4b492b1528bede9e4a699bd3e9ae48",
         "audience.1": "56846a949e799eef0c313788379b2f7025fc31ba7cf13fdbc616971d4fe4737b",
@@ -156,12 +156,12 @@
         "sections.before-the-inspector-arrives.heading": "25ecee0435a662840ba67086172bc64dea3f2151a66b466d0095c928dadb001b",
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",
         "sections.what-to-expect-during-the-visit.heading": "e79bfb3d6cd2696f43f54749bceaae6ae145c62fffc1ce195b899dad98b9694d",
-        "summary": "c1f634f10e5bb1611c27795ab47586d38977a4d1cb55b978d0896b24c1b9ebbd",
+        "summary": "7a0c706792f37c041a6eb79a1ce2c0b3ce1846177fcd294f7e26ad098a18b84c",
         "title": "884f26793ca60c13bcd2e1f3a195d21e976d2ea2d1cde228c1cd1a43661a5bce"
       }
     },
     "information--article-11-compliance-for-property-owners": {
-      "contentHash": "99158be61df1d8b5fea279f7fee108145ab7adbee7e7757c1458666f7897c48c",
+      "contentHash": "5c7c0a90159d35867272bed203e79503c5b7f27a40872548d4db8af983eec5ae",
       "fieldHashes": {
         "audience.0": "62e56b32840a5718e35e8663134f9f0b53b9b8fbc05f65c186bc3a3edaf2704e",
         "sections.fees-and-full-requirements.bullets.0": "131b77dea77b7171d760885b243930b75031a004dbd06d33f602ca4ac62091b0",
@@ -198,7 +198,7 @@
         "sections.what-you-re-required-to-do.bullets.6": "17533238601dcb466d5a57cda2a9e3112f33665ea4d7ee9bd5c9181d8ea40e52",
         "sections.what-you-must-do.heading": "f21b3e8082933dc114ab3c540623db91ced1f2c3a2b9e5dbbfe176c834b246e8",
         "sections.what-you-must-do.paragraphs.0": "dc2586386ef9301c865b4005ea269358906b6a6755f45a5fc8dbadf14ecbd9d2",
-        "summary": "5c9503e9e53ed03c25bdaf4b0d4ad304612f44623374349e61a210a2ff4a8269",
+        "summary": "ec9ac1a9f1c7beed4085d4e8e39769d2a7a4d95c82d740bab74cb718434dc310",
         "title": "9abf510ce30dd0b6fb199bcabe575d7588d9a1a2bc5110e1bd87b4fe301d4202"
       }
     },
@@ -272,7 +272,7 @@
       }
     },
     "information-learn-what-hhvc-can-inspect": {
-      "contentHash": "18faf2beb9d5b4465b03fa1a19aef94d20d6914b57e0a64b6c2d0aa32c02d67f",
+      "contentHash": "7800cafbc976e06e72b8c188361ad88e537d4cbe42f3cba5d47a2d36ce1ab5d8",
       "fieldHashes": {
         "audience.0": "1ef84115f8e2b0d700a51ccd2042154c64a2df7737f7d3d2fc132d0a1efd7cdb",
         "sections.have-this-ready-when-you-report.bullets.0": "0ada99febc0d66588ce80c35d0e44a6adc092048167eaf3c935b2eed2ad6ba76",
@@ -314,7 +314,7 @@
         "sections.use-this-page-before-you-report.heading": "2b21a2cbeb42785620389638504474584e4fa580e7a32d4e47091650de6b1995",
         "sections.use-this-page-before-you-report.paragraphs.0": "5dc12aa7ffdf16f451e7c371f183f4ae5f169999335caf47ee1334094dd15939",
         "sections.use-this-page-before-you-report.paragraphs.1": "938c20a79b37bd12c9f983b2c39d43ee4d2faffc96af6ada5c5e6d4213261ecd",
-        "summary": "1358584e97a5d551127a88939d62f0c66dc4340dd98308e076942e8d84997b3a",
+        "summary": "68891b8cb21cf9419e434af81349a98c5659f1c3e4cf0ef329bc8a955d18f968",
         "title": "ce3e45b1c4923e43f5e0e09e3eb9a10f08b6a00ae07569c610adc2172de7a800"
       }
     },
@@ -525,7 +525,7 @@
       }
     },
     "make-a-public-records-request-environmental-health": {
-      "contentHash": "2e02ca0a718cabd30053a6450d69f3f87bc38cb44a369bc491fa6989c23c0587",
+      "contentHash": "385f3b1b373662546896dfb55943076551cf69f181628aedc1f0038be972ba82",
       "fieldHashes": {
         "audience.0": "c6d195a594aac25a783e75cc7acd9cefe47547fa5732a423f1b583bb11989895",
         "audience.1": "a3c6e3a9ab0cf23f84aeb13420043c85824610a5dee332aca9a6f502af521080",
@@ -540,7 +540,7 @@
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",
         "sections.submit-your-request.heading": "8d1c8f7f76d3ec5e5f407a2bd8abeaafe2da4025c2ca4d7799bd4061382923cc",
         "sections.submit-your-request.paragraphs.0": "7fc26c4e572c2de6c74edc72f789934a1cc9b142afcd60e30fc2e1007802ca2c",
-        "summary": "caeb55956e9778870a2064a842dbc8a28851bfc0c24f7890e97ac4e5be60d418",
+        "summary": "b29a1edb2e264897f575ca3c9977b69fedeb5d174dc2687d3d5463e5dbcf650c",
         "title": "4207f067e1f0fd9226567e22785e2d905d6ebdf1a991d7431b2f9649e366173a"
       }
     },
@@ -615,14 +615,14 @@
       }
     },
     "pay-your-annual-healthy-housing-fee-apartment-buildings": {
-      "contentHash": "6aa7910418798bd9df5f4924ed8dcd2822f9994794d9e3c4cda54db81c19015c",
+      "contentHash": "adc063da08de1a18622a018f647b1927271d958016513b58979b432f65d41992",
       "fieldHashes": {
         "audience.0": "ce954ee632623499a80aa7e89585abd482eac785efdba7bbb521095bdffd6776",
         "audience.1": "03e8b05d2a9089953d76ab77c1851840c9296a818085a09ee8058e2c6c9eb2a5",
         "primaryAgency": "8a2847f0ee854052d30378a2ef091f979c9737bbd8219086a1e04dc0abd84f9f",
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",
         "sections.what-to-do.heading": "f47f1edc44ed92664871471b0cf8f463813788468c23680c12f52a36c2827e26",
-        "summary": "43bbf37b46c9c546972f8151763b06c8d8f400d191eb8eacaeaa5f2b6f7428eb",
+        "summary": "377eeee8d1f74b5594533654d4716d414b84d85a06673e511bf6ef6a96707aaa",
         "title": "53ddde206faf3313aa27a7d4b01e96f8846795d75233c4108ffbb36571c78c55"
       }
     },
@@ -693,7 +693,7 @@
       }
     },
     "report-garbage-filth-vegetation": {
-      "contentHash": "b431b19a76b7216effbf09c9173a672bb95215ef24758d89f5e321d065e2ccf8",
+      "contentHash": "3c67380ff7c580267dadc60826c57d52cebc180e45fa4e50f6b9aace81033dac",
       "fieldHashes": {
         "audience.0": "0141f1792023db799338c596092991d8c6b8fdd26cfad661752f4c75ecae3941",
         "audience.1": "7ea11dfb70cfa49f0c3effee3965434ea835da01b69ddfff911ff6b4b9851d7a",
@@ -717,7 +717,7 @@
         "sections.while-you-wait-tips-to-help-with-the-problem.bullets.5": "1fedaced99120f3846827664185f848bbc91edbeb8a209dc7280ca35974b6cd3",
         "sections.while-you-wait-tips-to-help-with-the-problem.heading": "2a48c1f432e88393905002da6aa167655da242c845c0b5d3b6a2c5ac736416c1",
         "sections.while-you-wait-tips-to-help-with-the-problem.paragraphs.0": "a83aaa4be38220b027448141140b29300f531ed7b868b5f748ad42e685cc3a83",
-        "summary": "92f87c5d640993c8d3e94bceec341404d5d03328ebfdcd30655c1ecd837c9d13",
+        "summary": "5b4764302c77b1cb83a95b0ae398a9de192f0693073f9176fcac725d12836a94",
         "title": "18671c98f659bc53fc88f6f749a1a5b98d2e7755414c382652a04f2fcf6b5123"
       }
     },
@@ -788,7 +788,7 @@
       }
     },
     "report-rats-mice-four-legged-problems": {
-      "contentHash": "b840114003a4bedfe0d522bb375850af13e20a52f7eea6327c9cbc4ebfdf9fa6",
+      "contentHash": "d0eb7cc830ef7d657bcd8bef00578b257ed85258c45289c490b23dd63c9a96d8",
       "fieldHashes": {
         "audience.0": "46b8f713b30af842c8b3fbb13a3d880bd06d78b8c0e61ad9cecfc6f94c59ef8d",
         "audience.1": "7ea11dfb70cfa49f0c3effee3965434ea835da01b69ddfff911ff6b4b9851d7a",
@@ -810,7 +810,7 @@
         "sections.while-you-wait-tips-to-help-with-the-problem.bullets.4": "84dd61f7aeea411c4aee0dbb03cf776c58d697412821a85296ad46fcc0b7698d",
         "sections.while-you-wait-tips-to-help-with-the-problem.heading": "2a48c1f432e88393905002da6aa167655da242c845c0b5d3b6a2c5ac736416c1",
         "sections.while-you-wait-tips-to-help-with-the-problem.paragraphs.0": "a83aaa4be38220b027448141140b29300f531ed7b868b5f748ad42e685cc3a83",
-        "summary": "883bf4cd9dcc658f7fa66fe29f6ce962a4a95af497fc36a677a2ca9d93a00d48",
+        "summary": "afbf8dfe03adfd99b4792eca520086c417e878acf9d7bbc3f610d9eb0680ce55",
         "title": "13423054053b09ca0c3246dc139367162b803fcc36cf48aef70539ec106def8a"
       }
     },
@@ -832,7 +832,7 @@
       }
     },
     "resource-guides-in-other-languages": {
-      "contentHash": "3c6e15f4949514dd098802b1baa96165add790d28a8b9d2ea91b2d3ae2625b8c",
+      "contentHash": "e1235527faa4ca75256c523e0af8c40e074d967a2ad3a48e313d7ba77ebe4cce",
       "fieldHashes": {
         "audience.0": "d192f15de710dc5ae179904bda93fd5e2e94d45032edcd39dc1833182c62e04c",
         "audience.1": "5d72f1bb23a9204f78d4a1e448475fbbcb7371140f649ed1d4fe482843253861",
@@ -852,7 +852,7 @@
         "sections.tenant-rights-guides.bullets.0": "2697578e3dcef69ecb444dea39f94912bd2c51c8e9682a7360572b53adb29df6",
         "sections.tenant-rights-guides.bullets.1": "9175894c4d216e3743dc77015c36993ea48ff295440aff69cc29df99df2a7b99",
         "sections.tenant-rights-guides.heading": "e2161c0186fa3cebef44fb12eeac2a81ae56d128a890d5bfacc73d835751c9d2",
-        "summary": "0e770f5dbe148047b5440760a0a26e7c3bcaf7437b0b18bd4275ff7ae6a5048b",
+        "summary": "a5d384d36a8b1b05a24e49b8e2c85d37e34f949852e95ee024f527ab823e359b",
         "title": "852809ab671ac844466a4b790e062944209a6c47979fa56d2153d1bec53cfabb"
       }
     },

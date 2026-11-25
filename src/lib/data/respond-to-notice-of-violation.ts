@@ -2,7 +2,8 @@ export const noticeOfViolation = {
 	slug: 'sf.gov/fix-healthy-housing-and-vector-control-violation',
 	type: 'Transaction',
 	title: 'Fix your Healthy Housing and Vector Control violation',
-	summary: 'Follow your notice and work with our inspectors to correct a pest or building problem.',
+	summary:
+		'Follow your Notice of Violation and work with our inspectors to correct a housing or pest problem.',
 	primaryAgency: 'Healthy Housing and Vector Control',
 	audience: [
 		'A property owner or manager who received a Notice of Violation',

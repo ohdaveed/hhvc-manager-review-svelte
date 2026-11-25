@@ -2,7 +2,7 @@ export const languageGuides = {
 	slug: 'sf.gov/resource/guides-in-other-languages',
 	type: 'Resource Collection',
 	title: 'Guides in other languages',
-	summary: 'Pest, mold, and tenant rights help for people who read a language besides English.',
+	summary: 'Get pest, mold, and tenant rights guides in a language besides English.',
 	audience: [
 		'A resident who reads a language other than English',
 		'A community organization handing out material',
@@ -76,6 +76,5 @@ export const languageGuides = {
 		}
 	],
 	seoTitle: 'Guides in other languages | SF.gov',
-	metaDescription:
-		'Pest, mold, and tenant rights help for people who read a language besides English.'
+	metaDescription: 'Get pest, mold, and tenant rights guides in a language besides English.'
 };

@@ -3,7 +3,7 @@ export const publicRecords = {
 	type: 'Transaction',
 	title: 'Make a public records request',
 	summary:
-		'Ask for Environmental Health inspection, complaint, or enforcement files not in the online lookups.',
+		'Ask Environmental Health for inspection, complaint, or enforcement records not in the online lookups.',
 	primaryAgency: 'Healthy Housing and Vector Control',
 	audience: [
 		'A tenant or advocate requesting formal copies of inspection records',
