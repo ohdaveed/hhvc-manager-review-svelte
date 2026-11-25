@@ -221,7 +221,7 @@ describe('the real corpus', () => {
 			'information-tenant-steps-after-notice-of-violation',
 			'step-by-step-prepare-your-unit-for-pest-treatment',
 			'location-environmental-health-office',
-			'appeal-notice-of-violation',
+			'question-notice-of-violation',
 			'pay-healthy-housing-citation'
 		]);
 	});

@@ -117,6 +117,8 @@ The 3 Transaction URLs that keep their page lose the "a". The 2 "get ready" page
 - **The appeal page's title changes to match its URL:** "Question a Notice of Violation" becomes "Appeal a Notice of Violation". The URL keeps "appeal" rather than changing to "question".
 - Each rename changes the page's `pages.path` row too.
 
+> **Amended Nov 25, 2026:** the owner confirmed a Notice of Violation cannot be appealed, so "appeal" comes out of both the title and the URL. The title goes back to "Question a Notice of Violation" and the URL becomes `question-notice-of-violation`, still without the article. `20261125120000_question_nov_path.sql` moves the page's `pages.path` row. The C10 ruling below names this page by its old title; it is the same page.
+
 ### Descriptions don't repeat the title (C6, decided Nov 24, 2026)
 
 Rewrite each description that reuses title words, using the Analysis panel's list for that page. Less is more: cut the repeated words rather than replace them with new ones, and keep the description short.
