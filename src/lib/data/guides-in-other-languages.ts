@@ -59,7 +59,7 @@ export const languageGuides = {
 			karl: 'Maps to the Custom section or to Related, depending on how Digital Services renders a card group here. Cards publish the destination page’s own title.',
 			kind: 'body',
 			cards: [
-				{ title: 'Healthy housing and pest resources', target: 'verminResources' },
+				{ title: 'Healthy housing conditions', target: 'healthyHousingTopic' },
 				{ title: 'Who to call about a housing problem', target: 'whoToCall' },
 				{ title: 'Report a pest problem, start to finish', target: 'stepPestReport' }
 			]

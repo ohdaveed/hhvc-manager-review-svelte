@@ -42,9 +42,9 @@ export const ownerHub = {
 					karl: "SF.gov page link block, links to an existing Information page. This block is just an unrestricted page reference — it has no custom title/text field, so this card's `text` description has no home in Karl; flag for Digital Services if the description must survive."
 				},
 				{
-					title: 'Look up building records',
-					target: 'recordsHub',
-					karl: "SF.gov page link block, links to another Resource Collection page (recordsHub). This block is just an unrestricted page reference — it has no custom title/text field, so this card's `text` description has no home in Karl; flag for Digital Services if the description must survive."
+					title: 'Find complaints and inspection records',
+					target: 'findRecords',
+					karl: 'SF.gov page link block, links to the records lookup Transaction. Replaces the Look up building records collection, which folded into the Topic (2026-11-25). This block has no custom title/text field.'
 				}
 			]
 		},

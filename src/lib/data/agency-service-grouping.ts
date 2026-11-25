@@ -50,9 +50,9 @@ export const pestsTopic = {
 					karl: "Services subsection entry -> SF.gov page link to the SRO/hotel-report Transaction, added 2026-08-11 to fill the gap findHotelRecords' lookup-only scope left. The description is a copy of the destination page Description, which is what Karl renders here; see the page-level note."
 				},
 				{
-					title: 'Healthy housing and pest resources',
-					target: 'verminResources',
-					karl: 'Services subsection entry -> SF.gov page link to the healthy-housing resources Resource Collection. Mirrors the live "Get help with vermin in your building" service, which sf.gov files under Services (General housing issues) rather than Resources — this card was previously the last entry under "Look up records and rules", where a tenant looking for self-help would not think to look. It briefly carried the task-shaped title "Get help with pests in your building"; that was reverted because a Karl subsection entry is only a page or external-link picker with NO label or description field, so the card renders the DESTINATION page\'s title and Description. Title and text here are therefore copied from `verminResources` verbatim and must be kept in sync with it — changing them here changes nothing in Karl. Getting a task-shaped label means retitling the destination page.'
+					title: 'Healthy housing conditions',
+					target: 'healthyHousingTopic',
+					karl: 'Services subsection entry -> SF.gov page link to the Healthy housing conditions Topic, which the Healthy housing and pest resources collection folded into (Topic merge, 2026-11-25).'
 				},
 				{
 					title: 'Learn what Healthy Housing and Vector Control can inspect',
@@ -125,9 +125,9 @@ export const pestsTopic = {
 			kind: 'body',
 			cards: [
 				{
-					title: 'Look up building records',
-					target: 'recordsHub',
-					karl: 'Resources subsection entry -> SF.gov page link to the records Resource Collection.'
+					title: 'Find complaints and inspection records',
+					target: 'findRecords',
+					karl: 'Resources subsection entry -> SF.gov page link to the records lookup Transaction. The Look up building records collection it replaced folded into the Topic (2026-11-25).'
 				},
 				{
 					title: 'Health Code Article 11 in plain language',

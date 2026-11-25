@@ -133,13 +133,8 @@ export const payFee = {
 				},
 
 				{
-					title: 'Look up building records',
-					target: 'recordsHub',
-					karl: 'Related panel page chooser entry.'
-				},
-				{
-					title: 'Healthy housing and pest resources',
-					target: 'verminResources',
+					title: 'Healthy housing conditions',
+					target: 'healthyHousingTopic',
 					karl: 'Related panel page chooser entry.'
 				}
 			]

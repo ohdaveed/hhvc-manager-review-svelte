@@ -53,7 +53,6 @@ export const PAGE_GROUPS = [
 		pages: [
 			'find-complaints-and-inspection-records',
 			'find-residential-hotel-and-shelter-records',
-			'look-up-building-records',
 			'make-public-records-request-environmental-health',
 			'pay-healthy-housing-citation',
 			'pay-your-annual-healthy-housing-fee-apartment-buildings',
@@ -68,8 +67,7 @@ export const PAGE_GROUPS = [
 			'integrated-pest-management-education',
 			'mosquito-control-program',
 			'mosquito-education-workshop',
-			'step-by-step-prepare-your-unit-for-pest-treatment',
-			'resource--healthy-housing-and-vermin-information'
+			'step-by-step-prepare-your-unit-for-pest-treatment'
 		]
 	},
 	{

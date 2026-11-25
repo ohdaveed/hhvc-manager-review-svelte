@@ -92,8 +92,8 @@ export const findRecords = {
 			kind: 'placement',
 			cards: [
 				{
-					title: 'Look up building records',
-					target: 'recordsHub',
+					title: 'Healthy housing conditions',
+					target: 'healthyHousingTopic',
 					karl: 'related panel entry — page chooser only; this description text is not supported in the real schema (see section-level karl note above).'
 				},
 				{

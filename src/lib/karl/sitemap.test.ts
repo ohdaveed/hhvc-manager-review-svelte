@@ -82,7 +82,7 @@ describe('buildSitemap', () => {
 describe('typeBreakdown', () => {
 	it('reads back the corpus composition, commonest type first', () => {
 		expect(typeBreakdown(hydrate())).toBe(
-			'11 Transaction · 8 Information · 4 Resource Collection · 3 Campaign · 3 Step by step · 2 Report · 1 About us · 1 Agency · 1 Location · 1 Topic'
+			'11 Transaction · 8 Information · 3 Campaign · 3 Step by step · 2 Report · 2 Resource Collection · 1 About us · 1 Agency · 1 Location · 1 Topic'
 		);
 	});
 });
@@ -212,23 +212,19 @@ describe('the real corpus', () => {
 	// Five of these carry inbound links and are still unreachable from a hub.
 	// The weaker `incoming === 0` test reports five pages and misses those
 	// five, which is why this is a reachability pass rather than a count.
-	// Ten before Track C (2026-11-25). C1 removed both get-ready pages, and the
-	// Agency page's "If you rent" card now reaches the Correct a violation Step
-	// by step, which in turn reaches Article 11 compliance through its Related.
-	it('has six pages unreachable from the Agency and Topic hubs', () => {
+	// Ten before Track C (2026-11-25), six after it, three after the Topic merge,
+	// which put tenant steps, the citation page and Question a NOV on the Topic.
+	it('has three pages unreachable from the Agency and Topic hubs', () => {
 		expect(findOrphans(entries).map((e) => e.id)).toEqual([
 			'departments--healthy-housing-and-vector-control--about',
-			'information-tenant-steps-after-notice-of-violation',
 			'step-by-step-prepare-your-unit-for-pest-treatment',
-			'location-environmental-health-office',
-			'question-notice-of-violation',
-			'pay-healthy-housing-citation'
+			'location-environmental-health-office'
 		]);
 	});
 
-	it('finds three orphans that inbound-link counting would miss', () => {
+	it('finds one orphan that inbound-link counting would miss', () => {
 		const missed = findOrphans(entries).filter((e) => e.incoming > 0);
 
-		expect(missed).toHaveLength(3);
+		expect(missed).toHaveLength(1);
 	});
 });

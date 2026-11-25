@@ -1,5 +1,4 @@
 import { filthReport } from './report-garbage-filth-vegetation';
-import { recordsHub } from './lookup-building-records';
 import { inspectorLookup } from './find-inspector-by-neighborhood';
 import { article11Guide } from './health-code-article-11';
 import { sroHotelReport } from './report-sro-hotel-problem';
@@ -8,7 +7,6 @@ import { afterReport } from './what-happens-after-report';
 import { ownerHub } from './property-owner-responsibilities';
 import { publicRecords } from './public-records-request';
 import { findHotelRecords } from './lookup-residential-hotel-records';
-import { verminResources } from './healthy-housing-vermin-resources';
 import { pestsTopic } from './agency-service-grouping';
 import { rodentsReport } from './report-rats-mice-four-legged-problems';
 import { tenantNoticeSteps } from './tenant-steps-after-notice-of-violation';
@@ -52,7 +50,6 @@ import { inspectionsAnnual } from './report-inspections-annual-summary';
  */
 export const pagesByKey = {
 	filthReport,
-	recordsHub,
 	inspectorLookup,
 	article11Guide,
 	sroHotelReport,
@@ -61,7 +58,6 @@ export const pagesByKey = {
 	ownerHub,
 	publicRecords,
 	findHotelRecords,
-	verminResources,
 	pestsTopic,
 	rodentsReport,
 	tenantNoticeSteps,

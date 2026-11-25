@@ -9,7 +9,7 @@ export const healthyHousingTopic = {
 	],
 	reading: 'Grade 6',
 	editorNote:
-		"New Topic-type page mock, verified against the real, currently-live sf.gov/topics--healthy-housing-conditions — a Topic page that sits exactly where HHVC's own program belongs in SF.gov's real information architecture, one level above where this mockup's Agency page (pestsTopic) sits. Field mapping confirmed against docs/wagtail-content-mapping.md's \"Verified against the real Karl 'Topic' add-page form\" section (2026-07-05) plus this live re-check (2026-08-12). Every card below targets a page this mockup already has — no invented pages. The live page's own 'Lead poisoning issues'/asbestos content has no equivalent anywhere in this mockup and sits outside HHVC's established Article 11 scope (CLAUDE.md's banned-terms list), so it is not reproduced; the second Services sub-group below (\"Look up records\") substitutes this mockup's own records Resource Collection in its place. Mockup fields with no equivalent here, matching every other page type's own documented gaps: Primary agency, Set top-level?, Child topics, Timeline (no other Topic pages exist in this mockup to nest under or list as children).",
+		"New Topic-type page mock, verified against the real, currently-live sf.gov/topics--healthy-housing-conditions — a Topic page that sits exactly where HHVC's own program belongs in SF.gov's real information architecture, one level above where this mockup's Agency page (pestsTopic) sits. Field mapping confirmed against docs/wagtail-content-mapping.md's \"Verified against the real Karl 'Topic' add-page form\" section (2026-07-05) plus this live re-check (2026-08-12). Every card below targets a page this mockup already has — no invented pages. The live page's own 'Lead poisoning issues'/asbestos content has no equivalent anywhere in this mockup and sits outside HHVC's established Article 11 scope (CLAUDE.md's banned-terms list), so it is not reproduced; the second Services sub-group below (\"Look up records\") substitutes this mockup's own records Resource Collection in its place. Mockup fields with no equivalent here, matching every other page type's own documented gaps: Primary agency, Set top-level?, Child topics, Timeline (no other Topic pages exist in this mockup to nest under or list as children). MERGED 2026-11-25 (Topic merge, Decided Nov 24, 2026): the Healthy housing and pest resources and Look up building records Resource Collections fold into this page and are retired. Every page and outside document they linked is listed here, under the Topic tab's suggested structure with the reports grouped as Pests and Sanitation; their intro paragraphs have no Topic field to go into. The Agency page card is dropped: the Topic tab notes an Agency page isn't a service. Live on sf.gov this page is titled 'Healthy housing and vector control'; the mockup title is unchanged.",
 	sections: [
 		{
 			heading: 'Report a housing health issue',
@@ -22,9 +22,16 @@ export const healthyHousingTopic = {
 			button: 'Start a report',
 			buttonTarget: 'rodentsReport'
 		},
+		// Topic merge (Decided, Nov 24, 2026): the Healthy housing and pest
+		// resources and Look up building records Resource Collections fold into
+		// this page and are retired. Sections follow the Topic tab's suggested
+		// structure, with the report pages grouped as Pests and Sanitation. Each
+		// block is a Services or Resources block: Title + a Links list of SF.gov
+		// pages or external links (docs/karl-export-field-map.md, Topic).
 		{
-			heading: 'General housing issues',
-			karl: "Maps to one repeatable Services block (Title = this heading, Links = each card below). Confirmed live as the first of the real page's two Services sub-groups. Card titles/descriptions are inherited from each destination page (same rule as every other Services/Resources subsection in this mockup) — no text field is set here. Holds only the three resident-facing reports plus the Agency page: the owner and enforcement tasks (annual fee, fixing a violation) were removed in the hub-roles pass because the Agency page already lists them by audience. A Topic is citywide, so it routes into the program rather than repeating its task list.",
+			heading: 'Report pests',
+			fieldKey: 'general-housing-issues',
+			karl: 'Maps to a Services block (Title = this heading, Links = the cards). The Pests half of the report group (Decided). The 9 condition pages replace the two report Transactions when the report regroup lands; the Step by step follows them as the overview.',
 			kind: 'body',
 			component: 'services',
 			cards: [
@@ -33,36 +40,116 @@ export const healthyHousingTopic = {
 					title: 'Report cockroaches, mosquitoes, and other insects',
 					target: 'insectsReport'
 				},
+				{ title: 'Report a pest problem, start to finish', target: 'stepPestReport' }
+			]
+		},
+		{
+			heading: 'Report sanitation problems',
+			karl: 'Maps to a Services block. The Sanitation half of the report group (Decided). Garbage, mold and vegetation share one Transaction until the report regroup splits them into the sewage, animal waste, mold and garbage pages.',
+			kind: 'body',
+			component: 'services',
+			cards: [{ title: 'Report garbage, mold, and overgrown vegetation', target: 'filthReport' }]
+		},
+		{
+			heading: 'If you got a notice',
+			karl: 'Maps to a Services block. Topic tab, suggested structure item 2, with the tenant Information page added beside the owner steps.',
+			kind: 'body',
+			component: 'services',
+			cards: [
+				{ title: 'Correct a violation and close your case', target: 'stepCorrectViolation' },
 				{
-					title: 'Report garbage, mold, and overgrown vegetation',
-					target: 'filthReport'
+					title: 'What tenants need to do after a Notice of Violation',
+					target: 'tenantNoticeSteps'
 				},
-				{ title: 'Healthy Housing and Vector Control', target: 'pestsTopic' }
+				{ title: 'Question a Notice of Violation', target: 'appealNotice' },
+				{ title: 'Pay a Healthy Housing citation', target: 'payCitation' }
+			]
+		},
+		{
+			heading: 'For property owners',
+			karl: 'Maps to a Services block. Topic tab, suggested structure item 3. The owner-duty pages are listed separately until their merge is decided.',
+			kind: 'body',
+			component: 'services',
+			cards: [
+				{
+					title: 'Pay your annual Healthy Housing fee for apartment buildings',
+					target: 'payFee'
+				},
+				{ title: 'Property owner responsibilities', target: 'ownerHub' },
+				{ title: 'Article 11 compliance for property owners', target: 'article11Compliance' },
+				{
+					title: 'Integrated pest management for property owners and managers',
+					target: 'ownerGuidance'
+				}
 			]
 		},
 		{
 			heading: 'Look up records',
-			karl: 'Maps to a second repeatable Services block. Substitutes for the real page\'s "Lead poisoning issues" sub-group, which has no equivalent content in this mockup (see page editorNote) — this mockup\'s own real lookup Transaction pages fill the second sub-group instead, keeping the same two-group Services shape confirmed live. Holds one entry, the records Resource Collection, rather than the four lookup Transactions it used to list: that collection already routes a visitor to the right lookup, so listing all four here duplicated it.',
+			karl: 'Maps to a Services block. Holds what the retired Look up building records Resource Collection listed: the three lookup Transactions and the public records request. Its annual fee link is under For property owners.',
 			kind: 'body',
 			component: 'services',
-			cards: [{ title: 'Look up building records', target: 'recordsHub' }]
+			cards: [
+				{ title: 'Find complaints and inspection records', target: 'findRecords' },
+				{ title: 'Find residential hotel and shelter records', target: 'findHotelRecords' },
+				{
+					title: 'Find your Healthy Housing inspector by neighborhood',
+					target: 'inspectorLookup'
+				},
+				{ title: 'Make a public records request', target: 'publicRecords' }
+			]
 		},
 		{
-			heading: 'Guidance and resources',
-			karl: "Maps to Topic's repeatable Resources block (identical Title + Links shape to Services, per the Karl docs). The real page splits this into 3 sub-groups (general information, lead resources, health codes); this mockup collapses to one sub-group since it has no lead-specific content.",
+			heading: 'Learn more',
+			fieldKey: 'guidance-and-resources',
+			karl: 'Maps to a Resources block. Topic tab, suggested structure item 5, plus the pages the retired Healthy housing and pest resources collection linked that the list above lacks (who to call, guides in other languages, Rat-free blocks, the annual summary).',
 			kind: 'body',
 			component: 'resources',
 			cards: [
 				{ title: 'Learn what Healthy Housing and Vector Control can inspect', target: 'scopeInfo' },
-				{
-					title: 'Integrated pest management for property owners and managers',
-					target: 'ownerGuidance'
-				},
-				{ title: 'Healthy housing and pest resources', target: 'verminResources' },
+				{ title: 'Who to call about a housing problem', target: 'whoToCall' },
 				{ title: 'What happens after you report a housing or pest problem', target: 'afterReport' },
 				{ title: 'Tenant rights when reporting housing conditions', target: 'tenantRights' },
 				{ title: 'Health Code Article 11 in plain language', target: 'article11Guide' },
-				{ title: 'Mosquito Control Program', target: 'mosquitoControl' }
+				{ title: 'Mosquito Control Program', target: 'mosquitoControl' },
+				{ title: 'Rat-free blocks', target: 'ratFreeBlocks' },
+				{ title: 'Guides in other languages', target: 'languageGuides' },
+				{ title: 'Healthy Housing inspections: annual summary', target: 'inspectionsAnnual' }
+			]
+		},
+		{
+			heading: 'Guides and forms',
+			karl: 'Maps to a Resources block of External links. Carries every outside document and site the retired Healthy housing and pest resources collection linked, so the fold loses none of them. The api.sf.gov documents are Document Picker uploads in Karl; confirm the current file before publishing.',
+			kind: 'body',
+			component: 'resources',
+			cards: [
+				{
+					title: 'Prepare your unit for bed bug treatment',
+					url: 'https://api.sf.gov/documents/23140/GuidelinesforUnitPreparation_dP56n7G.pdf'
+				},
+				{
+					title: 'Residential building owner-operator guidelines for vector control',
+					url: 'https://api.sf.gov/documents/52936/R_Residential_Bldg_Owner-Operator_Guidelines_for_Vector_Control_2026_0SYmmSc.html'
+				},
+				{
+					title: 'Pest control reporting form',
+					url: 'https://api.sf.gov/documents/23712/PCOReportingForm_2.xls'
+				},
+				{
+					title: '16 Steps to a Healthy Home',
+					url: 'https://api.sf.gov/documents/52246/16_Steps_to_a_Healthy_Home.html'
+				},
+				{
+					title: 'Watch a roach-prevention video',
+					url: 'https://www.youtube.com/watch?v=S-aJzCk-rNQ'
+				},
+				{
+					title: 'UC IPM resources for homes and buildings',
+					url: 'https://ipm.ucanr.edu/home-and-landscape/'
+				},
+				{
+					title: 'Environmental health branch fee schedule',
+					url: 'https://api.sf.gov/documents/17453/Website_Fees_FY25-26_fgM2WjX.pdf'
+				}
 			]
 		},
 		{
