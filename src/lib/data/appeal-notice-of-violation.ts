@@ -68,10 +68,7 @@ export const appealNotice = {
 					text: [
 						'A notice can cite several conditions. Questioning one does not put the others on hold.'
 					],
-					bullets: [
-						'[Correct a violation and close your case](stepCorrectViolation)',
-						'[Fix your Healthy Housing and Vector Control violation](noticeOfViolation)'
-					],
+					bullets: ['[Correct a violation and close your case](stepCorrectViolation)'],
 					karl: 'Section 3. This is the step that prevents the most common expensive mistake — treating a disagreement as a pause on the whole notice.'
 				}
 			]

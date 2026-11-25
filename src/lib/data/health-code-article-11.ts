@@ -228,9 +228,9 @@ export const article11Guide = {
 			],
 			cards: [
 				{
-					title: 'Fix your Healthy Housing and Vector Control violation',
+					title: 'Correct a violation and close your case',
 					text: 'Understand the next steps after you receive a Notice of Violation.',
-					target: 'noticeOfViolation',
+					target: 'stepCorrectViolation',
 					karl: 'Report Content -> inline page link.'
 				},
 				{

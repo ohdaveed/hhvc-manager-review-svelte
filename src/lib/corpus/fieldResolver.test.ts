@@ -190,7 +190,7 @@ describe('resolveField — extractCopy parity (Group D)', () => {
 	});
 
 	it('whatToKnow.cost', () => {
-		const page = findPage('sf.gov/get-ready-for-a-housing-inspection');
+		const page = findPage('sf.gov/find-complaints-and-inspection-records');
 		const f = resolveField(page, 'whatToKnow.cost')!;
 		expect(f.value).toBe('Free');
 		f.set('Free with a valid 311 report');
@@ -198,19 +198,19 @@ describe('resolveField — extractCopy parity (Group D)', () => {
 	});
 
 	it('whatToKnow.thingsToKnow.N (plain-string form)', () => {
-		const page = findPage('sf.gov/get-ready-for-a-housing-inspection');
+		const page = findPage('sf.gov/find-healthy-housing-inspector-by-neighborhood');
 		const id = 'whatToKnow.thingsToKnow.0';
-		expect(resolveField(page, id)!.value).toMatch(/may contact you/);
+		expect(resolveField(page, id)!.value).toMatch(/have not been confirmed/);
 		resolveField(page, id)!.set('Rewritten thing to know.');
 		expect(resolveField(page, id)!.value).toBe('Rewritten thing to know.');
 	});
 
 	it('whatToKnow.thingsToKnow.N.{label,text} (labelled form)', () => {
-		const page = findPage('sf.gov/lookup-residential-health-code-violations');
+		const page = findPage('sf.gov/find-complaints-and-inspection-records');
 		const labelId = 'whatToKnow.thingsToKnow.0.label';
 		const textId = 'whatToKnow.thingsToKnow.0.text';
-		expect(resolveField(page, labelId)!.value).toBe('What this tool covers');
-		expect(resolveField(page, textId)!.value).toMatch(/same Environmental Health lookup tool/);
+		expect(resolveField(page, labelId)!.value).toBe('Complaint privacy');
+		expect(resolveField(page, textId)!.value).toMatch(/Complaint records are public/);
 		resolveField(page, labelId)!.set('New label');
 		resolveField(page, textId)!.set('New text');
 		expect(resolveField(page, labelId)!.value).toBe('New label');
@@ -262,47 +262,39 @@ describe('resolveField — extractCopy parity (Group D)', () => {
 	});
 
 	it('sections.<key>.steps.N.{title,button,buttonUrl}', () => {
-		const page = findPage('sf.gov/get-ready-for-a-housing-inspection');
-		const id = 'sections.before-the-inspector-arrives.steps.0.title';
-		expect(resolveField(page, id)!.value).toBe('Clear access to the reported area');
-		resolveField(page, id)!.set('Clear a path first.');
-		expect(resolveField(page, id)!.value).toBe('Clear a path first.');
+		const page = findPage('sf.gov/find-complaints-and-inspection-records');
+		const base = 'sections.open-the-lookup-tool.steps.0';
+		expect(resolveField(page, `${base}.title`)!.value).toBe('Open the lookup tool');
+		resolveField(page, `${base}.title`)!.set('Search the records.');
+		expect(resolveField(page, `${base}.title`)!.value).toBe('Search the records.');
 
-		// No corpus step carries button/buttonUrl yet, so this half exercises a
-		// minimal fixture rather than real data.
-		const fixture = withKeys({
-			slug: 'fixture',
-			sections: [
-				{ heading: 'S', steps: [{ title: 'T', button: 'Go', buttonUrl: 'https://example.com' }] }
-			]
-		});
-		expect(resolveField(fixture, 'sections.s.steps.0.button')!.value).toBe('Go');
-		expect(resolveField(fixture, 'sections.s.steps.0.buttonUrl')!.value).toBe(
-			'https://example.com'
-		);
+		// C2 put this page's button inside a What to do step, so real data now
+		// covers the button half too.
+		expect(resolveField(page, `${base}.button`)!.value).toBe('Open lookup tool');
+		expect(resolveField(page, `${base}.buttonUrl`)!.value).toMatch(/^https:\/\/xnet\.sfdph\.org/);
 	});
 
 	it('sections.<key>.steps.N.text.J keeps the unverified flag through a write', () => {
-		const page = findPage('sf.gov/get-ready-for-a-housing-inspection');
-		const id = 'sections.before-the-inspector-arrives.steps.0.text.0';
+		const page = findPage('sf.gov/information/what-happens-after-you-report-housing-pest-problem');
+		const id = 'sections.how-a-report-moves-through-the-city.steps.2.text.0';
 
 		const before = resolveField(page, id)!;
-		expect(before.value).toMatch(/Clear a path/);
+		expect(before.value).toMatch(/structural water intrusion/);
 		expect(before.unverified).toBe(true);
-		expect(before.unverifiedReason).toMatch(/Confirm with HHVC/);
+		expect(before.unverifiedReason).toMatch(/San Francisco Housing Code/);
 
 		before.set('Rewritten step text.');
 
 		const after = resolveField(page, id)!;
 		expect(after.value).toBe('Rewritten step text.');
 		expect(after.unverified).toBe(true);
-		expect(after.unverifiedReason).toMatch(/Confirm with HHVC/);
+		expect(after.unverifiedReason).toMatch(/San Francisco Housing Code/);
 	});
 
 	it('sections.<key>.steps.N.bullets.J', () => {
-		const page = findPage('sf.gov/get-ready-for-a-housing-inspection');
-		const id = 'sections.before-the-inspector-arrives.steps.2.bullets.0';
-		expect(resolveField(page, id)!.value).toMatch(/Photos of the condition/);
+		const page = findPage('sf.gov/step-by-step/report-a-pest-problem');
+		const id = 'sections.what-to-do.steps.2.bullets.2';
+		expect(resolveField(page, id)!.value).toMatch(/photos of the condition/);
 		resolveField(page, id)!.set('Rewritten bullet.');
 		expect(resolveField(page, id)!.value).toBe('Rewritten bullet.');
 	});

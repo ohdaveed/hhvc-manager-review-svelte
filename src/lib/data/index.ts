@@ -1,9 +1,6 @@
 import { filthReport } from './report-garbage-filth-vegetation';
-import { inspectionPrepFollowup } from './get-ready-for-followup-inspection';
 import { recordsHub } from './lookup-building-records';
-import { noticeOfViolation } from './respond-to-notice-of-violation';
 import { inspectorLookup } from './find-inspector-by-neighborhood';
-import { inspectionPrepInitial } from './get-ready-for-first-inspection';
 import { article11Guide } from './health-code-article-11';
 import { sroHotelReport } from './report-sro-hotel-problem';
 import { aboutHhvcTeam } from './about-hhvc-team';
@@ -17,7 +14,6 @@ import { rodentsReport } from './report-rats-mice-four-legged-problems';
 import { tenantNoticeSteps } from './tenant-steps-after-notice-of-violation';
 import { insectsReport } from './report-cockroaches-mosquitoes-insects';
 import { tenantRights } from './tenant-rights-reporting';
-import { findViolations } from './lookup-residential-violations';
 import { findRecords } from './lookup-complaints-inspections';
 import { mosquitoWorkshop } from './mosquito-education-workshop';
 import { healthyHousingTopic } from './healthy-housing-conditions-topic';
@@ -56,11 +52,8 @@ import { inspectionsAnnual } from './report-inspections-annual-summary';
  */
 export const pagesByKey = {
 	filthReport,
-	inspectionPrepFollowup,
 	recordsHub,
-	noticeOfViolation,
 	inspectorLookup,
-	inspectionPrepInitial,
 	article11Guide,
 	sroHotelReport,
 	aboutHhvcTeam,
@@ -74,7 +67,6 @@ export const pagesByKey = {
 	tenantNoticeSteps,
 	insectsReport,
 	tenantRights,
-	findViolations,
 	findRecords,
 	mosquitoWorkshop,
 	healthyHousingTopic,

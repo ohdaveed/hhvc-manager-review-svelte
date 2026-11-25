@@ -61,7 +61,7 @@ export const payCitation = {
 					],
 					bullets: [
 						'[Correct a violation and close your case](stepCorrectViolation)',
-						'[Get ready for a follow-up inspection](inspectionPrepFollowup)'
+						'[Correct a violation and close your case](stepCorrectViolation)'
 					],
 					karl: 'Section 3. The point the whole page exists to make, so it is a step rather than a footnote.'
 				},

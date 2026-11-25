@@ -32,8 +32,8 @@ export const ownerHub = {
 					karl: "SF.gov page link block, links to an existing Transaction page. This block is just an unrestricted page reference — it has no custom title/text field, so this card's `text` description has no home in Karl; flag for Digital Services if the description must survive."
 				},
 				{
-					title: 'Fix your Healthy Housing and Vector Control violation',
-					target: 'noticeOfViolation',
+					title: 'Correct a violation and close your case',
+					target: 'stepCorrectViolation',
 					karl: "SF.gov page link block, links to an existing Information page. This block is just an unrestricted page reference — it has no custom title/text field, so this card's `text` description has no home in Karl; flag for Digital Services if the description must survive."
 				},
 				{
@@ -72,8 +72,8 @@ export const ownerHub = {
 					karl: 'SF.gov page link block within the "Related pages" Resource section (Body → Resources). No custom title/text field, so this card\'s `text` description has no home in Karl.'
 				},
 				{
-					title: 'Look up residential health code violations',
-					target: 'findViolations',
+					title: 'Find complaints and inspection records',
+					target: 'findRecords',
 					karl: 'SF.gov page link block within the "Related pages" Resource section (Body → Resources). No custom title/text field, so this card\'s `text` description has no home in Karl.'
 				},
 				{

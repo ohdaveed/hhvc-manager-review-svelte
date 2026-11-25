@@ -64,10 +64,7 @@ export const inspectorLookup = {
 					title: 'Find complaints and inspection records',
 					target: 'findRecords'
 				},
-				{
-					title: 'Look up residential health code violations',
-					target: 'findViolations'
-				},
+
 				{
 					title: 'Healthy Housing and Vector Control',
 					target: 'pestsTopic'

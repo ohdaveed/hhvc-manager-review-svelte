@@ -182,8 +182,6 @@ describe('articles in the slug', () => {
 			.sort();
 		expect(flagged).toEqual([
 			'sf.gov/appeal-a-notice-of-violation',
-			'sf.gov/get-ready-for-a-follow-up-inspection',
-			'sf.gov/get-ready-for-a-housing-inspection',
 			'sf.gov/make-a-public-records-request-environmental-health',
 			'sf.gov/pay-a-healthy-housing-citation'
 		]);

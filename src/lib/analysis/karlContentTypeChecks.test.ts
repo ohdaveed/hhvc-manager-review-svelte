@@ -41,17 +41,10 @@ describe('Karl content-type checks on the current corpus', () => {
 				// Steps on an Information page.
 				'sf.gov/information/what-happens-after-you-report-housing-pest-problem / karl-information-actionable / How a report moves through the City',
 				// Five "1." … "5." headings on an Information page.
-				'sf.gov/information/integrated-pest-management-for-property-owners-and-managers / karl-information-actionable / 5 numbered section headings',
-				// No section placed in What to do. These passed while the check read
-				// note prose that merely mentioned what_to_do. C2 moved the other four
-				// lookup and records pages into What to do; this one merges under C1.
-				'sf.gov/lookup-residential-health-code-violations / karl-transaction-what-to-do / No What to do section',
-				// A custom heading where Karl hard-codes "What to do".
-				'sf.gov/get-ready-for-a-follow-up-inspection / karl-transaction-what-to-do / Document your work',
-				'sf.gov/get-ready-for-a-follow-up-inspection / karl-transaction-what-to-do / What to expect at the follow-up visit',
-				'sf.gov/get-ready-for-a-housing-inspection / karl-transaction-what-to-do / Before the inspector arrives',
-				'sf.gov/get-ready-for-a-housing-inspection / karl-transaction-what-to-do / What to expect during the visit',
-				'sf.gov/tenant-steps-after-notice-of-violation / karl-transaction-what-to-do / Prepare your unit'
+				'sf.gov/information/integrated-pest-management-for-property-owners-and-managers / karl-information-actionable / 5 numbered section headings'
+				// No What to do findings remain: C2 moved the lookup and records pages
+				// into What to do, and C1 removed or retyped the pages with custom
+				// headings there.
 			].sort()
 		);
 	});
@@ -177,7 +170,7 @@ describe('a Transaction gives the reader a way to act', () => {
 	});
 
 	it('flags a Transaction with no button and no Contact us', () => {
-		const f = actionOf((pagesByKey as Record<string, object>).noticeOfViolation);
+		const f = actionOf((pagesByKey as Record<string, object>).payCitation);
 		expect(f?.status).toBe('issue');
 		expect(f?.summary).toBe(
 			'A Transaction should let people act: add a button in What to do, or a Contact us block.'
@@ -203,12 +196,9 @@ describe('a Transaction gives the reader a way to act', () => {
 			.sort();
 		expect(flagged).toEqual(
 			[
-				// appealNotice passes since C10 gave it a Contact us block.
-				'inspectionPrepFollowup',
-				'inspectionPrepInitial',
-				'noticeOfViolation',
-				'payCitation',
-				'tenantNoticeSteps'
+				// appealNotice passes since C10 gave it a Contact us block; C1 removed
+				// or retyped the other four. The citation page waits on its payment link (C3).
+				'payCitation'
 			].sort()
 		);
 	});

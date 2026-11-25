@@ -15,7 +15,7 @@ const keys = Object.keys(pagesByKey).sort();
 
 describe('transcript Markdown, every corpus page', () => {
 	it('covers the whole corpus', () => {
-		expect(keys).toHaveLength(39);
+		expect(keys).toHaveLength(35);
 	});
 
 	it.each(keys)('%s', (key) => {

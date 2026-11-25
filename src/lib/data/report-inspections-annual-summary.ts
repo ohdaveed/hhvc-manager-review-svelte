@@ -81,7 +81,7 @@ export const inspectionsAnnual = {
 			kind: 'body',
 			cards: [
 				{ title: 'Health Code Article 11 in plain language', target: 'article11Guide' },
-				{ title: 'Look up residential health code violations', target: 'findViolations' },
+				{ title: 'Find complaints and inspection records', target: 'findRecords' },
 				{ title: 'Learn what Healthy Housing and Vector Control can inspect', target: 'scopeInfo' }
 			]
 		}

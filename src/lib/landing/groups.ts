@@ -41,12 +41,9 @@ export const PAGE_GROUPS = [
 		pages: [
 			'information-learn-what-hhvc-can-inspect',
 			'find-healthy-housing-inspector-by-neighborhood',
-			'get-ready-for-a-housing-inspection',
-			'get-ready-for-a-follow-up-inspection',
-			'fix-healthy-housing-and-vector-control-violation',
 			'step-by-step-correct-a-violation-and-close-your-case',
 			'appeal-a-notice-of-violation',
-			'tenant-steps-after-notice-of-violation',
+			'information-tenant-steps-after-notice-of-violation',
 			'report-health-code-article-11-plain-language'
 		]
 	},
@@ -55,7 +52,6 @@ export const PAGE_GROUPS = [
 		heading: 'Records, fees and payments',
 		pages: [
 			'find-complaints-and-inspection-records',
-			'lookup-residential-health-code-violations',
 			'find-residential-hotel-and-shelter-records',
 			'look-up-building-records',
 			'make-a-public-records-request-environmental-health',

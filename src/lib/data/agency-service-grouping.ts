@@ -86,9 +86,9 @@ export const pestsTopic = {
 					karl: 'Resources subsection entry -> SF.gov page link to the after-report Information page.'
 				},
 				{
-					title: 'Fix your Healthy Housing and Vector Control violation',
-					target: 'noticeOfViolation',
-					karl: 'Resources subsection entry -> SF.gov page link to the notice-of-violation Transaction.'
+					title: 'Correct a violation and close your case',
+					target: 'stepCorrectViolation',
+					karl: 'Resources subsection entry -> SF.gov page link to the Correct a violation Step by step, which Fix your violation merged into (C1, decided Nov 24, 2026).'
 				}
 			]
 		},

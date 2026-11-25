@@ -53,7 +53,7 @@ export const afterReport = {
 					text: [
 						'If you did not give contact information, an inspection may still happen without notice when areas can be accessed. This is more likely if the report describes an urgent health or safety risk.'
 					],
-					bullets: ['[Get ready for a housing inspection after you report](inspectionPrepInitial)'],
+					bullets: ['[Report a pest problem, start to finish](stepPestReport)'],
 					karl: 'Maps to a fourth Title and text block: Title = this step title, Text = the paragraph below, plus a rich-text link (added 2026-08-11) to the new inspection-prep checklist this step previously had nowhere to point to.'
 				}
 			]
@@ -137,10 +137,6 @@ export const afterReport = {
 			karl: 'Maps to the Related field: a generic unrestricted "Page" chooser, repeatable.',
 			kind: 'placement',
 			cards: [
-				{
-					title: 'Fix your Healthy Housing and Vector Control violation',
-					target: 'noticeOfViolation'
-				},
 				{
 					title: 'Learn what Healthy Housing and Vector Control can inspect',
 					target: 'scopeInfo'

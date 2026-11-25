@@ -17,7 +17,9 @@ import { expect, test } from './fixtures';
  * controls range from 16px to 44px tall under `items-center`, so their tops
  * differ even when they share a row.
  */
-const PAGE = '/review/lookup-residential-health-code-violations';
+// A Transaction with a slug as long as the one this was written against
+// (lookup-residential-health-code-violations, merged away under C1).
+const PAGE = '/review/find-residential-hotel-and-shelter-records';
 
 const toolbarControls = (page: Page) =>
 	page.locator('nav.review-toolbar').evaluate((nav) =>

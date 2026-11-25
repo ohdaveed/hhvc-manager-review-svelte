@@ -71,11 +71,11 @@ const REVIEW_ID = '00000000-0000-4000-8000-000000000001';
  */
 const PAGE_ROWS = [
 	{ path: 'report-garbage-filth-vegetation', status: 'needs-review' },
-	{ path: 'get-ready-for-a-follow-up-inspection', status: 'approved' },
+	{ path: 'step-by-step-correct-a-violation-and-close-your-case', status: 'approved' },
 	{ path: 'look-up-building-records', status: 'revise' },
-	{ path: 'fix-healthy-housing-and-vector-control-violation', status: 'blocked' },
+	{ path: 'find-complaints-and-inspection-records', status: 'blocked' },
 	{ path: 'find-healthy-housing-inspector-by-neighborhood', status: 'needs-review' },
-	{ path: 'get-ready-for-a-housing-inspection', status: 'approved' }
+	{ path: 'step-by-step-report-a-pest-problem', status: 'approved' }
 ].map((row, i) => ({
 	id: `00000000-0000-4000-8000-00000000010${i}`,
 	review_id: REVIEW_ID,

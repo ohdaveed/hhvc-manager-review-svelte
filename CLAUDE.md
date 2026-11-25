@@ -131,7 +131,7 @@ A drafted page is not in the static corpus, so its content lives in `draft_pages
 
 That `path` is the reserved form `draft:<uuid>`, not a derived slug, so a draft cannot collide with a corpus slug or with another draft. **`reviewHrefFor` in `$lib/corpus/draftPath` is the single place a `pages.path` becomes a link** — it sends `draft:<uuid>` to `/review/draft/<uuid>` and everything else to `/review/<slug>`. Build review links through it rather than interpolating a path, or a draft will 404 under `/review/[slug]`.
 
-`/review/draft/[id]` is the **one route with `ssr = false`**, and it is only that one on purpose. A draft is `TO authenticated` and sessions live in the browser, so a server render has no session and would report a good draft as missing. Opting this single route out is what leaves `/review/[slug]`'s pure, static 404 guard — and `tests/reviewSlug404.spec.ts` — untouched for the thirty-nine corpus pages; making `[slug]` fall back to a database read would have turned that guard into a network call. A draft renders under a provenance banner that says whether it is drafting, ready, stale or failed.
+`/review/draft/[id]` is the **one route with `ssr = false`**, and it is only that one on purpose. A draft is `TO authenticated` and sessions live in the browser, so a server render has no session and would report a good draft as missing. Opting this single route out is what leaves `/review/[slug]`'s pure, static 404 guard — and `tests/reviewSlug404.spec.ts` — untouched for the thirty-five corpus pages; making `[slug]` fall back to a database read would have turned that guard into a network call. A draft renders under a provenance banner that says whether it is drafting, ready, stale or failed.
 
 ## Architecture
 

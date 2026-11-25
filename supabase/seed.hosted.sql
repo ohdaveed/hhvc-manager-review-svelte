@@ -26,11 +26,8 @@ SELECT '22222222-2222-2222-2222-222222222222', path
 FROM (
     VALUES
       ('report-garbage-filth-vegetation'),
-      ('get-ready-for-a-follow-up-inspection'),
       ('look-up-building-records'),
-      ('fix-healthy-housing-and-vector-control-violation'),
       ('find-healthy-housing-inspector-by-neighborhood'),
-      ('get-ready-for-a-housing-inspection'),
       ('report-health-code-article-11-plain-language'),
       ('report-problem-sro-hotel'),
       ('departments--healthy-housing-and-vector-control--about'),
@@ -41,10 +38,9 @@ FROM (
       ('resource--healthy-housing-and-vermin-information'),
       ('departments--healthy-housing-and-vector-control'),
       ('report-rats-mice-four-legged-problems'),
-      ('tenant-steps-after-notice-of-violation'),
+      ('information-tenant-steps-after-notice-of-violation'),
       ('report-cockroaches-mosquitoes-insects'),
       ('information-tenant-rights-and-reporting-housing-conditions'),
-      ('lookup-residential-health-code-violations'),
       ('find-complaints-and-inspection-records'),
       ('mosquito-education-workshop'),
       ('topics--healthy-housing-conditions'),

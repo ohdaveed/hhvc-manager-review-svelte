@@ -11,7 +11,7 @@ export const stepCorrectViolation = {
 	],
 	reading: 'Grade 7',
 	editorNote:
-		'PROPOSED PAGE — not in the current 29. This is the sequence `design/HHVC Page Ideas.dc.html` says is "scattered across four Transaction pages" today, with the reader left to assemble it. It is the page the four proposed post-inspection Transactions attach to: "Ask for more time" and "Tell us your violation is fixed" are steps here rather than sibling pages, which is how Karl documents Step by step working — an overview whose Step blocks carry a Transaction link to the detail. NO DEADLINE OR INTERVAL IS STATED. Every correction period comes from the individual notice, and the corpus has no confirmed default; steps say what governs the date instead of naming one. Party responsibility is split per step rather than pooled into one list, because this is the page an owner reads under deadline pressure and a mixed list is where someone reads past the line that was theirs.',
+		'PROPOSED PAGE — not in the current 29. This is the sequence `design/HHVC Page Ideas.dc.html` says is "scattered across four Transaction pages" today, with the reader left to assemble it. It is the page the four proposed post-inspection Transactions attach to: "Ask for more time" and "Tell us your violation is fixed" are steps here rather than sibling pages, which is how Karl documents Step by step working — an overview whose Step blocks carry a Transaction link to the detail. NO DEADLINE OR INTERVAL IS STATED. Every correction period comes from the individual notice, and the corpus has no confirmed default; steps say what governs the date instead of naming one. Party responsibility is split per step rather than pooled into one list, because this is the page an owner reads under deadline pressure and a mixed list is where someone reads past the line that was theirs. MERGED 2026-11-25 (C1, decided Nov 24, 2026): Fix your Healthy Housing and Vector Control violation merged into this page, and Get ready for a follow-up inspection folded into Steps 5 and 6. Both pages are removed. Their facts this page lacked are carried with their unverified flags; the rest it already said.',
 	editorStatus: 'needs-review',
 	sections: [
 		{
@@ -40,9 +40,9 @@ export const stepCorrectViolation = {
 					],
 					bullets: [
 						'Check which actions are assigned to the owner, to the manager, and to a tenant.',
-						'[Fix your Healthy Housing and Vector Control violation](noticeOfViolation)'
+						'A notice can list actions for the building, shared areas, or a specific unit.'
 					],
-					karl: 'Step 1. Transaction link: noticeOfViolation. Deliberately states that the deadline comes from the notice, so the page cannot go stale against a policy change.'
+					karl: 'Step 1. Transaction link: none. noticeOfViolation merged into this page (C1, decided Nov 24, 2026); its "check which actions apply to the building, shared areas, or a specific unit" line is the second bullet. Deliberately states that the deadline comes from the notice, so the page cannot go stale against a policy change.'
 				},
 				{
 					title: 'Owners and managers: arrange the work',
@@ -65,6 +65,7 @@ export const stepCorrectViolation = {
 					bullets: [
 						'Follow the preparation instructions you were given before a treatment visit.',
 						'Allow properly noticed access for inspection or work.',
+						'A Notice of Violation does not change a tenant’s right to safe and habitable housing.',
 						'[Prepare your unit for pest treatment](stepPrepUnit)',
 						'[What tenants need to do after a Notice of Violation](tenantNoticeSteps)'
 					],
@@ -73,7 +74,8 @@ export const stepCorrectViolation = {
 				{
 					title: 'Ask for more time before the deadline, not after',
 					text: [
-						'If the work cannot be finished in time, contact the investigator named on the notice before the date passes.'
+						'If the work cannot be finished in time, contact the investigator named on the notice before the date passes.',
+						'They can explain the cited conditions, the deadline, and what proof of correction is needed.'
 					],
 					bullets: [
 						'Ask early. A request made after the deadline is a different conversation.',
@@ -86,8 +88,16 @@ export const stepCorrectViolation = {
 					text: [
 						'Photos, receipts, and pest treatment reports are what show the conditions were corrected.'
 					],
-					bullets: ['Keep records for every cited condition, not just the largest one.'],
-					karl: 'Step 5. No retention period is stated: the corpus records a two-year figure elsewhere for a different obligation, and reusing it here would be an invention.'
+					bullets: [
+						'Keep records for every cited condition, not just the largest one.',
+						{
+							text: 'Confirm every condition listed on the notice has been addressed, not only the ones that were easiest to fix.',
+							unverified: true,
+							unverifiedReason:
+								'No tier-1 source confirms whether a partial correction can close part of a multi-condition notice. Confirm with HHVC before publication.'
+						}
+					],
+					karl: 'Step 5. Holds the follow-up page’s "Document your work" (C1): its records sentence was already this step’s text, and its "fully corrected" line is the second bullet, still flagged unverified. No retention period is stated: the corpus records a two-year figure elsewhere for a different obligation, and reusing it here would be an invention.'
 				},
 				{
 					title: 'Pass the re-inspection',
@@ -95,10 +105,15 @@ export const stepCorrectViolation = {
 						'A follow-up inspection checks whether the cited conditions were corrected. The case closes when they have been.'
 					],
 					bullets: [
-						'[Get ready for a follow-up inspection](inspectionPrepFollowup)',
+						{
+							text: 'An inspector reviews the specific conditions listed on your Notice of Violation to confirm whether they were corrected.',
+							unverified: true,
+							unverifiedReason:
+								"What exactly a follow-up inspection checks beyond the notice's cited conditions has no tier-1 source. Confirm with HHVC before publication."
+						},
 						'One party finishing does not close the case while other cited conditions remain.'
 					],
-					karl: 'Step 6. Transaction link: inspectionPrepFollowup. This is where the proposed "Tell us your violation is fixed" Transaction attaches.'
+					karl: 'Step 6. Holds the follow-up page’s "What to expect at the follow-up visit" (C1). That page is removed, so there is no Transaction link; its "if something is still not fixed" line is Step 7. This is where the proposed "Tell us your violation is fixed" Transaction attaches.'
 				},
 				{
 					title: 'If it is not corrected',
@@ -108,7 +123,8 @@ export const stepCorrectViolation = {
 					],
 					bullets: [
 						'[Question a Notice of Violation](appealNotice)',
-						'[Pay a Healthy Housing citation](payCitation)'
+						'[Pay a Healthy Housing citation](payCitation)',
+						'[What happens after you report a housing or pest problem](afterReport)'
 					],
 					karl: 'Step 7. Carried from noticeOfViolation’s own closing step, which took its wording from the Article 11 Interpretation Guide’s high-level workflow and intentionally omits unverified fee timing, hearing and abatement detail. The two links are proposed pages.'
 				}
