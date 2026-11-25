@@ -57,6 +57,7 @@ export const scopeInfo = {
 				'Shared SRO kitchens, bathrooms, garbage areas, or other shared spaces',
 				'Pest harborage or infestation conditions including burrows, nesting materials, and wildlife activity that may create a public health nuisance',
 				'Rodent-borne disease prevention under Article 2, Section 92: rodent access, droppings, gnaw marks, or failure to keep conditions rodent-free',
+				'Active sewage leaks or backups from a drain, toilet, cleanout, or pipe, inside or outside a building',
 				'Other conditions the Director determines to be a threat to public health or safety'
 			]
 		},
@@ -86,7 +87,7 @@ export const scopeInfo = {
 						'The "San Francisco Housing Code (2025)" citation has zero tier-1 support (source-of-truth audit 2026-07-06, cross-cutting finding #1) — the DBI routing split looks intentional, but the statutory citation and "(2025)" edition tag trace only to tier-3 NotebookLM material. Source a real Housing Code citation or soften to "may be routed to DBI" before publication.'
 				},
 				'If your problem is not on this list, start with 311. They can send your report to the right place.',
-				'For lead, pesticides, water quality, sewage, food sanitation, or business hygiene, use the [Citywide health nuisance and hazards reporting service](https://www.sf.gov/report-health-nuisance-or-hazards).',
+				'For lead, pesticides, water quality, food sanitation, or business hygiene, use the [Citywide health nuisance and hazards reporting service](https://www.sf.gov/report-health-nuisance-or-hazards).',
 				'If you are not sure whether HHVC can review your problem, it is still okay to report it. HHVC will review whether it may involve a housing or pest-related public health concern.'
 			]
 		},

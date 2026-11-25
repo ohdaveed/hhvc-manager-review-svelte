@@ -1,7 +1,7 @@
 export const appealNotice = {
-	slug: 'sf.gov/appeal-a-notice-of-violation',
+	slug: 'sf.gov/appeal-notice-of-violation',
 	type: 'Transaction',
-	title: 'Question a Notice of Violation',
+	title: 'Appeal a Notice of Violation',
 	summary: 'Talk to the investigator named on your notice if you disagree with what it says.',
 	audience: [
 		'A property owner or manager who disagrees with a notice',
@@ -9,9 +9,17 @@ export const appealNotice = {
 		'Someone who believes a notice names the wrong party'
 	],
 	primaryAgency: 'Healthy Housing and Vector Control',
+	// C10 (decided Nov 24, 2026): contacting the investigator is this page's main
+	// action, so it carries Karl's Contact us block. The investigator's own
+	// details are on the notice; these are HHVC's published lines.
+	contact: {
+		phone: ['311 (call or text)', '415-252-3800'],
+		email: ['healthyhousing@sf.gov'],
+		other: ['Environmental Health — Healthy Housing and Vector Control']
+	},
 	reading: 'Grade 7',
 	editorNote:
-		'PROPOSED PAGE — not in the current 29. REWRITTEN 2026-08-31 AFTER A CORRECTION FROM HHVC: there is no appeal process for a Notice of Violation. Questions and disagreements go to the investigator named on the notice. The earlier draft had readers requesting a Director’s Hearing and described an appeal window and a hearing cost; none of that exists. It was invented, and writing each unknown as "the notice tells you" disguised the invention rather than containing it — deferring the details of a right does not establish the right. Everything downstream of that premise is gone: the hearing step, the "appealing does not pause the deadline" entry, and the Karl structural flag about modelling a hearing as a Meeting. WHETHER THIS PAGE SHOULD EXIST AT ALL IS STILL OPEN — what remains is a short page telling a reader to call the person named on their notice, which `noticeOfViolation` already says in its own contact step, so this may be a duplicate rather than a gap. The slug still reads `appeal-a-notice-of-violation` and should change if the page survives; that means updating both seed files, `corpus.lock`, the sitemap test, and the production `pages` row added by `20260830210000`. The phrase "the investigator named on your notice" is carried verbatim from `noticeOfViolation` so the two cannot drift — note HHVC said "inspector" when correcting this and the corpus uses both words, so the term is worth settling.',
+		'PROPOSED PAGE — not in the current 29. REWRITTEN 2026-08-31 AFTER A CORRECTION FROM HHVC: there is no appeal process for a Notice of Violation. Questions and disagreements go to the investigator named on the notice. The earlier draft had readers requesting a Director’s Hearing and described an appeal window and a hearing cost; none of that exists. It was invented, and writing each unknown as "the notice tells you" disguised the invention rather than containing it — deferring the details of a right does not establish the right. Everything downstream of that premise is gone: the hearing step, the "appealing does not pause the deadline" entry, and the Karl structural flag about modelling a hearing as a Meeting. WHETHER THIS PAGE SHOULD EXIST AT ALL IS STILL OPEN — what remains is a short page telling a reader to call the person named on their notice, which `noticeOfViolation` already says in its own contact step, so this may be a duplicate rather than a gap. The slug still reads `appeal-a-notice-of-violation` and should change if the page survives; that means updating both seed files, `corpus.lock`, the sitemap test, and the production `pages` row added by `20260830210000`. The phrase "the investigator named on your notice" is carried verbatim from `noticeOfViolation` so the two cannot drift — note HHVC said "inspector" when correcting this and the corpus uses both words, so the term is worth settling. RETITLED 2026-11-25 (C5, decided Nov 24, 2026): the title is "Appeal a Notice of Violation" again, to match the URL, which keeps "appeal". That sits against the 2026-08-31 correction above, that there is no appeal process. The body still sends disagreements to the investigator and promises no appeal or hearing route. Confirm the title with HHVC before publication.',
 	editorStatus: 'needs-review',
 	whatToKnow: {
 		cost: 'No fee is charged for asking about a notice.',
@@ -60,10 +68,7 @@ export const appealNotice = {
 					text: [
 						'A notice can cite several conditions. Questioning one does not put the others on hold.'
 					],
-					bullets: [
-						'[Correct a violation and close your case](stepCorrectViolation)',
-						'[Fix your Healthy Housing and Vector Control violation](noticeOfViolation)'
-					],
+					bullets: ['[Correct a violation and close your case](stepCorrectViolation)'],
 					karl: 'Section 3. This is the step that prevents the most common expensive mistake — treating a disagreement as a pause on the whole notice.'
 				}
 			]
@@ -85,7 +90,7 @@ export const appealNotice = {
 			url: 'https://www.sf.gov/departments--department-public-health--environmental-health'
 		}
 	],
-	seoTitle: 'Question a Notice of Violation | SF.gov',
+	seoTitle: 'Appeal a Notice of Violation | SF.gov',
 	metaDescription:
 		'Talk to the investigator named on your notice if you disagree with a Healthy Housing and Vector Control violation.'
 };

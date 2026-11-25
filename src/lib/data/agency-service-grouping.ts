@@ -86,9 +86,9 @@ export const pestsTopic = {
 					karl: 'Resources subsection entry -> SF.gov page link to the after-report Information page.'
 				},
 				{
-					title: 'Fix your Healthy Housing and Vector Control violation',
-					target: 'noticeOfViolation',
-					karl: 'Resources subsection entry -> SF.gov page link to the notice-of-violation Transaction.'
+					title: 'Correct a violation and close your case',
+					target: 'stepCorrectViolation',
+					karl: 'Resources subsection entry -> SF.gov page link to the Correct a violation Step by step, which Fix your violation merged into (C1, decided Nov 24, 2026).'
 				}
 			]
 		},
@@ -175,7 +175,7 @@ export const pestsTopic = {
 				},
 				{
 					title: 'Report a health nuisance or hazard',
-					text: 'Use the Citywide 311 service for lead, water, sewage, food, pesticide, or business hygiene concerns.',
+					text: 'Use the Citywide 311 service for lead, water, food, pesticide, or business hygiene concerns.',
 					url: 'https://www.sf.gov/report-health-nuisance-or-hazards',
 					karl: 'Resources subsection entry -> External link to the Citywide Environmental Health reporting service. This integrates the broad 311 intake without duplicating its non-HHVC services in the Article 11 page model.'
 				},

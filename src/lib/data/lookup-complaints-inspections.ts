@@ -3,7 +3,7 @@ export const findRecords = {
 	type: 'Transaction',
 	title: 'Find complaints and inspection records',
 	summary:
-		'Search Environmental Health complaint and inspection history for a San Francisco address or location.',
+		'Search investigated complaints, inspections, and health code violations for a San Francisco address.',
 	primaryAgency: 'Healthy Housing and Vector Control',
 	audience: [
 		'A tenant checking whether a building has prior complaints or inspections',
@@ -12,7 +12,7 @@ export const findRecords = {
 	],
 	reading: 'Grade 7',
 	editorNote:
-		'SF.gov landing page for an external lookup tool. Primary CTA opens xnet.sfdph.org (Residential Health Code Violations). Verify the external URL before publication.',
+		'SF.gov landing page for an external lookup tool. Primary CTA opens xnet.sfdph.org (Residential Health Code Violations). Verify the external URL before publication. MERGED 2026-11-25 (C1, decided Nov 24, 2026): Look up residential health code violations was a second landing page for the same xnet tool, and is removed. Its audience (tenants, owners and advocates checking violation history) is already covered here, and the description now names violations so those searches still land on this page.',
 	whatToKnow: {
 		cost: 'Free',
 		// Reorganized into ~2 named subsections (Karl's own "no more than 2, if
@@ -49,14 +49,20 @@ export const findRecords = {
 			]
 		},
 		{
-			heading: 'Open the lookup tool',
-			karl: 'what_to_do -> Section. Section title: "Open the lookup tool". Section specifics: Text block (this paragraph) + Button link block (External URL radio, target = the xnet URL).',
+			heading: 'What to do',
+			fieldKey: 'open-the-lookup-tool',
+			karl: 'what_to_do, headed "What to do" as Karl shows it (C2, decided Nov 24, 2026). One Section: Section title "Open the lookup tool"; Section specifics: Text block (the paragraph) + Button link block (External URL radio, target = the xnet URL).',
 			kind: 'body',
-			paragraphs: [
-				'The search tool opens on the Department of Public Health external records site. You will leave SF.gov.'
-			],
-			button: 'Open lookup tool',
-			buttonUrl: 'https://xnet.sfdph.org:8443/ords/eeop/f?p=119:1'
+			steps: [
+				{
+					title: 'Open the lookup tool',
+					text: [
+						'The search tool opens on the Department of Public Health external records site. You will leave SF.gov.'
+					],
+					button: 'Open lookup tool',
+					buttonUrl: 'https://xnet.sfdph.org:8443/ords/eeop/f?p=119:1'
+				}
+			]
 		},
 		{
 			heading: 'If you need to report a new problem',
@@ -109,5 +115,5 @@ export const findRecords = {
 	],
 	seoTitle: 'Find complaints and inspection records | SF.gov',
 	metaDescription:
-		'Search Environmental Health complaint and inspection records for a San Francisco building address.'
+		'Search investigated complaints, inspections, and health code violations for a San Francisco address.'
 };

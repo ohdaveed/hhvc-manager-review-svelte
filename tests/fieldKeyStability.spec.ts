@@ -69,7 +69,12 @@ describe('corpus field keys', () => {
 		['sf.gov/information/learn-what-hhvc-can-inspect', 'use-this-page-before-you-report'],
 		['sf.gov/information/learn-what-hhvc-can-inspect', 'how-to-choose-the-right-page'],
 		['sf.gov/resource/guides-in-other-languages', 'about-these-guides'],
-		['sf.gov/report/healthy-housing-inspections-annual-summary', 'about-these-figures']
+		['sf.gov/report/healthy-housing-inspections-annual-summary', 'about-these-figures'],
+		// C2: the What to do sections keep the key of the heading they replaced.
+		['sf.gov/find-healthy-housing-inspector-by-neighborhood', 'open-the-lookup-tool'],
+		['sf.gov/find-residential-hotel-and-shelter-records', 'open-the-lookup-tool'],
+		['sf.gov/find-complaints-and-inspection-records', 'open-the-lookup-tool'],
+		['sf.gov/make-public-records-request-environmental-health', 'submit-your-request']
 	])('%s still carries the pinned key %s', (slug, key) => {
 		const page = (allPages as unknown[]).find((p) => (p as { slug?: unknown }).slug === slug);
 		expect(page, `no page with slug ${slug}`).toBeDefined();

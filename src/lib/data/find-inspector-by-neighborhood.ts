@@ -33,18 +33,23 @@ export const inspectorLookup = {
 			]
 		},
 		{
-			heading: 'Open the lookup tool',
-			karl: 'what_to_do -> Section. Section title: "Open the lookup tool". Section specifics: Text block (this paragraph) + Button link block. Target is the inert "#" placeholder — see editorNote — rather than an invented URL.',
+			heading: 'What to do',
+			fieldKey: 'open-the-lookup-tool',
+			karl: 'what_to_do, headed "What to do" as Karl shows it (C2, decided Nov 24, 2026). One Section: Section title "Open the lookup tool"; Section specifics: Text block (the paragraph) + Button link block + Callout. Target is the inert "#" placeholder — see editorNote — rather than an invented URL; C3 keeps it that way until the editor builds the live page.',
 			kind: 'body',
-			paragraphs: [
-				'Select your neighborhood to see the assigned inspector and their contact information.'
-			],
-			button: 'Find your inspector',
-			buttonUrl: '#',
-			callout: {
-				text: 'This button is a placeholder until HHVC confirms the real lookup tool and entry point.',
-				variant: 'note'
-			}
+			steps: [
+				{
+					title: 'Open the lookup tool',
+					text: [
+						'Select your neighborhood to see the assigned inspector and their contact information.'
+					],
+					button: 'Find your inspector',
+					buttonUrl: '#',
+					callout: {
+						text: 'This button is a placeholder until HHVC confirms the real lookup tool and entry point.'
+					}
+				}
+			]
 		},
 		{
 			heading: 'Related pages',
@@ -59,10 +64,7 @@ export const inspectorLookup = {
 					title: 'Find complaints and inspection records',
 					target: 'findRecords'
 				},
-				{
-					title: 'Look up residential health code violations',
-					target: 'findViolations'
-				},
+
 				{
 					title: 'Healthy Housing and Vector Control',
 					target: 'pestsTopic'

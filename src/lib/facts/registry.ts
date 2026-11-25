@@ -82,9 +82,12 @@ export const VERIFIED_FACTS: VerifiedFact[] = [
 ];
 
 const HAPPENS = 'sf.gov/information/what-happens-after-you-report-housing-pest-problem';
-const FIRST = 'sf.gov/get-ready-for-a-housing-inspection';
-const FOLLOWUP = 'sf.gov/get-ready-for-a-follow-up-inspection';
-const TENANT = 'sf.gov/tenant-steps-after-notice-of-violation';
+// C1 (decided Nov 24, 2026): the two get-ready pages folded into step-by-step
+// steps and tenant steps became an Information page, so their unverified lines
+// are tracked where they now live.
+const FIRST = 'sf.gov/step-by-step/report-a-pest-problem';
+const FOLLOWUP = 'sf.gov/step-by-step/correct-a-violation-and-close-your-case';
+const TENANT = 'sf.gov/information/tenant-steps-after-notice-of-violation';
 const MOSQUITO_WS = 'sf.gov/mosquito-education-workshop';
 const IPM_ED = 'sf.gov/integrated-pest-management-education';
 
@@ -129,24 +132,24 @@ export const OPEN_QUESTIONS: OpenQuestion[] = [
 	{
 		id: 'inspection-access',
 		question: 'What does an inspector need access to at a first inspection?',
-		fields: [{ slug: FIRST, path: 'sections.0.steps.0.text.0' }]
+		fields: [{ slug: FIRST, path: 'sections.1.steps.2.bullets.0' }]
 	},
 	{
 		id: 'inspection-photos',
 		question: 'Do photos help an inspection, and does HHVC prefer any format?',
-		fields: [{ slug: FIRST, path: 'sections.0.steps.2.bullets.0' }]
+		fields: [{ slug: FIRST, path: 'sections.1.steps.2.bullets.2' }]
 	},
 	{
 		id: 'prior-communication',
 		question:
 			'Does HHVC use earlier tenant-to-owner communication about the problem during an inspection?',
-		fields: [{ slug: FIRST, path: 'sections.0.steps.2.bullets.1' }]
+		fields: [{ slug: FIRST, path: 'sections.1.steps.2.bullets.3' }]
 	},
 	{
 		id: 'inspection-scope',
 		question:
 			'Does an inspector look at areas near the reported condition, or only the condition reported?',
-		fields: [{ slug: FIRST, path: 'sections.1.steps.0.text.0' }]
+		fields: [{ slug: FIRST, path: 'sections.1.steps.2.bullets.4' }]
 	},
 
 	// --- After a Notice of Violation
@@ -179,30 +182,30 @@ export const OPEN_QUESTIONS: OpenQuestion[] = [
 		id: 'partial-correction',
 		question:
 			'Can a partial correction close part of a multi-condition notice, or must every listed condition be corrected?',
-		fields: [{ slug: FOLLOWUP, path: 'sections.0.steps.1.text.0' }]
+		fields: [{ slug: FOLLOWUP, path: 'sections.1.steps.4.bullets.1' }]
 	},
 	{
 		id: 'follow-up-scope',
 		question:
 			'Does a follow-up inspection check anything beyond the conditions cited on the notice?',
-		fields: [{ slug: FOLLOWUP, path: 'sections.1.steps.0.text.0' }]
+		fields: [{ slug: FOLLOWUP, path: 'sections.1.steps.5.bullets.0' }]
 	},
 	{
 		id: 'unit-prep-requirements',
 		question:
 			'What must a tenant do to have a unit ready for treatment or repair (move furniture, bag belongings)?',
-		fields: [{ slug: TENANT, path: 'sections.0.steps.1.bullets.0' }]
+		fields: [{ slug: TENANT, path: 'sections.0.bullets.1' }]
 	},
 	{
 		id: 'unit-prep-instructions',
 		question: 'Who issues unit-preparation instructions: the owner or manager, HHVC, or either?',
-		fields: [{ slug: TENANT, path: 'sections.0.steps.1.bullets.1' }]
+		fields: [{ slug: TENANT, path: 'sections.0.bullets.2' }]
 	},
 	{
 		id: 'entry-notice-period',
 		question:
 			'How much notice must an owner give a tenant before entering for treatment, repair or a follow-up inspection?',
-		fields: [{ slug: TENANT, path: 'sections.0.steps.2.text.0' }]
+		fields: [{ slug: TENANT, path: 'sections.0.bullets.3' }]
 	},
 
 	// --- Fees

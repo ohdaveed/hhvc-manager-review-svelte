@@ -99,10 +99,7 @@ export const tenantRights = {
 					title: 'What happens after you report a housing or pest problem',
 					target: 'afterReport'
 				},
-				{
-					title: 'Fix your Healthy Housing and Vector Control violation',
-					target: 'noticeOfViolation'
-				},
+
 				{
 					title: 'Learn what Healthy Housing and Vector Control can inspect',
 					target: 'scopeInfo'

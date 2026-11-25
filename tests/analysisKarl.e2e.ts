@@ -32,10 +32,16 @@ test('the Analysis panel shows where the page lands in Karl', async ({ page }) =
 	if (dir) await panel.screenshot({ path: `${dir}/analysis-karl-rats-1280.png` });
 });
 
-test('a Transaction with no What to do section is flagged in the panel', async ({ page }) => {
+// This page used to be the corpus's "no What to do section" example. C2
+// (decided Nov 24, 2026) gave it one, and no corpus Transaction lacks one now,
+// so the panel is checked for the pass; karlContentTypeChecks.test.ts covers
+// the issue path with fixtures.
+test('a Transaction’s What to do section is reported in the panel', async ({ page }) => {
 	await gotoSignedIn(page, '/review/find-complaints-and-inspection-records');
 	await page.getByRole('tab', { name: 'Analysis' }).click();
-	await expect(page.getByRole('tabpanel')).toContainText('No What to do section');
+	await expect(page.getByRole('tabpanel')).toContainText(
+		'This Transaction has a What to do section, headed “What to do”.'
+	);
 });
 
 test('the Transaction review findings show in the panel', async ({ page }) => {
@@ -53,10 +59,12 @@ test('the Transaction review findings show in the panel', async ({ page }) => {
 		await page.screenshot({ path: `${dir}/analysis-karl-fee-1280.png` });
 	}
 
-	await gotoSignedIn(page, '/review/pay-a-healthy-housing-citation');
+	await gotoSignedIn(page, '/review/pay-healthy-housing-citation');
 	await page.getByRole('tab', { name: 'Analysis' }).click();
 	await expect(panel).toContainText('A Transaction should let people act');
-	await expect(panel).toContainText('remove “a”');
+	// C5 dropped the article from this URL, so its old "remove “a”" finding is
+	// gone; the placeholder finding is the other one this page still carries.
+	await expect(panel).toContainText('Still holds PLACEHOLDER text');
 	if (dir) {
 		await panel.getByText('A Transaction should let people act').scrollIntoViewIfNeeded();
 		await page.screenshot({ path: `${dir}/analysis-karl-citation-1280.png` });

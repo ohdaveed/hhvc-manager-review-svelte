@@ -43,7 +43,7 @@ export const article11Compliance = {
 				'If Environmental Health finds a violation, they issue a notice of violation (NOV). It lists the required corrections and a compliance deadline.'
 			],
 			bullets: [
-				'[Fix your Healthy Housing and Vector Control violation](noticeOfViolation)',
+				'[Correct a violation and close your case](stepCorrectViolation)',
 				'[What happens after you report](afterReport)'
 			]
 		},

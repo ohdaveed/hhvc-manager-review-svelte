@@ -192,10 +192,7 @@ export const ownerGuidance = {
 					title: 'Property owner responsibilities',
 					target: 'ownerHub'
 				},
-				{
-					title: 'Fix your Healthy Housing and Vector Control violation',
-					target: 'noticeOfViolation'
-				},
+
 				{
 					title: 'Report rats, mice, and other four-legged problems',
 					target: 'rodentsReport'

@@ -207,9 +207,8 @@ _topicTag is unmapped metadata — the stored values are Agency labels, not Topi
 
 _This block publishes the destination page’s title and a link, and NOTHING else. Choose the page and type no description._
 
-1. Choose page: "Fix your Healthy Housing and Vector Control violation" (\`noticeOfViolation\` → /sf.gov/fix-healthy-housing-and-vector-control-violation)
-2. Choose page: "Learn what Healthy Housing and Vector Control can inspect" (\`scopeInfo\` → /sf.gov/information/learn-what-hhvc-can-inspect)
-3. Choose page: "Tenant rights when reporting housing conditions" (\`tenantRights\` → /sf.gov/information/tenant-rights-and-reporting-housing-conditions)
+1. Choose page: "Learn what Healthy Housing and Vector Control can inspect" (\`scopeInfo\` → /sf.gov/information/learn-what-hhvc-can-inspect)
+2. Choose page: "Tenant rights when reporting housing conditions" (\`tenantRights\` → /sf.gov/information/tenant-rights-and-reporting-housing-conditions)
 
 ### Promote → For search engines — \`promote\` [TYPE] — page not approved
 
@@ -236,11 +235,11 @@ Nothing below has a field to be typed into. It is listed rather than dropped, be
 `;
 
 exports[`transcript Markdown, every corpus page > appealNotice 1`] = `
-"# Question a Notice of Violation — Karl transcript
+"# Appeal a Notice of Violation — Karl transcript
 
 **Karl path:** New: Transaction → Content
 **Decision:** no review recorded
-**Page key:** \`appealNotice\` · **Slug:** \`sf.gov/appeal-a-notice-of-violation\` · **Type:** Transaction
+**Page key:** \`appealNotice\` · **Slug:** \`sf.gov/appeal-notice-of-violation\` · **Type:** Transaction
 
 **NOT APPROVED — do not publish from this transcript.** Approval in this tool is per page, not per field, so nothing below is signed off.
 
@@ -250,7 +249,7 @@ exports[`transcript Markdown, every corpus page > appealNotice 1`] = `
 
 **Page title:**
 
-Question a Notice of Violation
+Appeal a Notice of Violation
 
 ### Description — \`description\` [TYPE] — page not approved
 
@@ -328,12 +327,30 @@ Keep correcting what you do not dispute
 A notice can cite several conditions. Questioning one does not put the others on hold.
 
 - [Correct a violation and close your case](stepCorrectViolation)
-- [Fix your Healthy Housing and Vector Control violation](noticeOfViolation)
 
 **Links in this text — recreate each with the Link tool, do not paste them:**
 
 - "Correct a violation and close your case" → shape 5 — rich text Link tool → Internal link → "Correct a violation and close your case"
-- "Fix your Healthy Housing and Vector Control violation" → shape 5 — rich text Link tool → Internal link → "Fix your Healthy Housing and Vector Control violation"
+
+### Contact us — \`get_help\` [TYPE] — page not approved
+
+_Address is a snippet chooser referencing a stored Address record, not inline fields, and Phone number’s first field is labelled "Owner" rather than "Name"._
+
+**Phone number:**
+
+311 (call or text)
+
+**Phone number:**
+
+415-252-3800
+
+**Email:**
+
+healthyhousing@sf.gov
+
+**Additional info:**
+
+Environmental Health — Healthy Housing and Vector Control
 
 ### Partner agencies — \`partner_agencies\` [CHOOSE] — page not approved
 
@@ -355,11 +372,11 @@ _The slug is REQUIRED and lives on the Promote tab, so a page cannot be saved fr
 
 **Slug (\`slug\`):**
 
-sf.gov/appeal-a-notice-of-violation
+sf.gov/appeal-notice-of-violation
 
 **Title tag (\`seo_title\`):**
 
-Question a Notice of Violation | SF.gov
+Appeal a Notice of Violation | SF.gov
 
 **Meta description (\`search_description\`):**
 
@@ -442,12 +459,12 @@ When a tenant reports a pest or housing health problem, owners and managers must
 
 If Environmental Health finds a violation, they issue a notice of violation (NOV). It lists the required corrections and a compliance deadline.
 
-- [Fix your Healthy Housing and Vector Control violation](noticeOfViolation)
+- [Correct a violation and close your case](stepCorrectViolation)
 - [What happens after you report](afterReport)
 
 **Links in this text — recreate each with the Link tool, do not paste them:**
 
-- "Fix your Healthy Housing and Vector Control violation" → shape 5 — rich text Link tool → Internal link → "Fix your Healthy Housing and Vector Control violation"
+- "Correct a violation and close your case" → shape 5 — rich text Link tool → Internal link → "Correct a violation and close your case"
 - "What happens after you report" → shape 5 — rich text Link tool → Internal link → "What happens after you report a housing or pest problem"
 
 ### Information section — \`information_section\` [TYPE] — page not approved
@@ -769,7 +786,7 @@ If HHVC confirms a public health nuisance, the City may use the Article 11 enfor
 
 **Links in this text — recreate each with the Link tool, do not paste them:**
 
-- "Fix your Healthy Housing and Vector Control violation" → shape 5 — rich text Link tool → Internal link → "Fix your Healthy Housing and Vector Control violation"
+- "Correct a violation and close your case" → shape 5 — rich text Link tool → Internal link → "Correct a violation and close your case"
 - "What happens after you report" → shape 5 — rich text Link tool → Internal link → "What happens after you report a housing or pest problem"
 
 ### Content — \`content\` [TYPE] — page not approved
@@ -1270,6 +1287,28 @@ Leaving SF.gov
 
 The link opens on the Department of Public Health website. You will leave SF.gov.
 
+### What to Do — \`what_to_do\` [TYPE] — page not approved
+
+_The mockup heading "What to do" is not typed anywhere — Karl's What to Do panel carries its own label. Each step below becomes one Section block._
+
+_A step with text, a button and a callout becomes ONE Section block whose Section specifics holds a Text, a Button link and a Callout as siblings — not fields on the step._
+
+**Section 1 — Section title:**
+
+Open the lookup tool
+
+**Section 1 — Section specifics → Text:**
+
+The lookup opens on the Department of Public Health external site. You will leave SF.gov.
+
+**Section 1 — Section specifics → Button link → Link text:**
+
+Open hotel lookup
+
+**Section 1 — Button link → destination:**
+
+External URL → https://sfdph.org/dph/EH/ResidentialHotels/default.asp
+
 ### Custom Section — \`custom_section\` [TYPE] — page not approved
 
 ⚠ Inferred mapping — verify the destination before saving.
@@ -1287,20 +1326,6 @@ Environmental Health inspects residential hotels, SROs, shelters, and related ho
 Use this page for records about a residential hotel, SRO, or shelter. For a standard apartment or mixed-use building, use the general lookup.
 
 - **Note:** If you are staying at a regular tourist hotel, you may still use the general complaints and inspection lookup. Residential hotel and shelter records use a different program dataset.
-
-### Custom Section — \`custom_section\` [TYPE] — page not approved
-
-⚠ Inferred mapping — verify the destination before saving.
-
-_Inferred mapping — the field map documents this panel only for supporting/flat sections. Transaction has no generic body stream and this is its only repeatable Title-and-text panel, so verify the destination before saving._
-
-**Title:**
-
-Open the lookup tool
-
-**Text:**
-
-The lookup opens on the Department of Public Health external site. You will leave SF.gov.
 
 ### Related — \`related\` [CHOOSE] — page not approved
 
@@ -1347,8 +1372,6 @@ Look up Environmental Health records for San Francisco residential hotels, SROs,
 Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
 
 - \`audience\` — The page carries \`audience\`, and Karl does have a home for it: a **Things to know** entry titled "Who this information is for". Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list. What blocks it is the budget, not the field: the Help Center caps Things to know at 2 entries, and most Transaction pages here already spend both, so placing the audience means deciding which existing entry it replaces. That is a content call, not a missing panel.
-- \`sections.1.button\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
-- \`sections.1.buttonUrl\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
 "
 `;
 
@@ -1373,7 +1396,7 @@ Find complaints and inspection records
 
 **Description:**
 
-Search Environmental Health complaint and inspection history for a San Francisco address or location.
+Search investigated complaints, inspections, and health code violations for a San Francisco address.
 
 ### Primary agency — \`primary_agency\` [CHOOSE] — page not approved
 
@@ -1407,6 +1430,28 @@ Leaving SF.gov
 
 The link opens on the Department of Public Health website. You will leave SF.gov.
 
+### What to Do — \`what_to_do\` [TYPE] — page not approved
+
+_The mockup heading "What to do" is not typed anywhere — Karl's What to Do panel carries its own label. Each step below becomes one Section block._
+
+_A step with text, a button and a callout becomes ONE Section block whose Section specifics holds a Text, a Button link and a Callout as siblings — not fields on the step._
+
+**Section 1 — Section title:**
+
+Open the lookup tool
+
+**Section 1 — Section specifics → Text:**
+
+The search tool opens on the Department of Public Health external records site. You will leave SF.gov.
+
+**Section 1 — Section specifics → Button link → Link text:**
+
+Open lookup tool
+
+**Section 1 — Button link → destination:**
+
+External URL → https://xnet.sfdph.org:8443/ords/eeop/f?p=119:1
+
 ### Custom Section — \`custom_section\` [TYPE] — page not approved
 
 ⚠ Inferred mapping — verify the destination before saving.
@@ -1427,20 +1472,6 @@ The tool shows about five years of investigated complaint and inspection activit
 - Complaint ID or location ID searches
 - Past inspections and violation history
 - Complaint status for investigated cases
-
-### Custom Section — \`custom_section\` [TYPE] — page not approved
-
-⚠ Inferred mapping — verify the destination before saving.
-
-_Inferred mapping — the field map documents this panel only for supporting/flat sections. Transaction has no generic body stream and this is its only repeatable Title-and-text panel, so verify the destination before saving._
-
-**Title:**
-
-Open the lookup tool
-
-**Text:**
-
-The search tool opens on the Department of Public Health external records site. You will leave SF.gov.
 
 ### Related — \`related\` [CHOOSE] — page not approved
 
@@ -1485,148 +1516,13 @@ Find complaints and inspection records | SF.gov
 
 **Meta description (\`search_description\`):**
 
-Search Environmental Health complaint and inspection records for a San Francisco building address.
+Search investigated complaints, inspections, and health code violations for a San Francisco address.
 
 ## Unmapped — no documented Karl destination
 
 Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
 
 - \`audience\` — The page carries \`audience\`, and Karl does have a home for it: a **Things to know** entry titled "Who this information is for". Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list. What blocks it is the budget, not the field: the Help Center caps Things to know at 2 entries, and most Transaction pages here already spend both, so placing the audience means deciding which existing entry it replaces. That is a content call, not a missing panel.
-- \`sections.1.button\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
-- \`sections.1.buttonUrl\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
-"
-`;
-
-exports[`transcript Markdown, every corpus page > findViolations 1`] = `
-"# Look up residential health code violations — Karl transcript
-
-**Karl path:** New: Transaction → Content
-**Decision:** no review recorded
-**Page key:** \`findViolations\` · **Slug:** \`sf.gov/lookup-residential-health-code-violations\` · **Type:** Transaction
-
-**NOT APPROVED — do not publish from this transcript.** Approval in this tool is per page, not per field, so nothing below is signed off.
-
-> Every keystroke below is yours to make. This file is an export, not an approval, and nothing here has been written to Karl.
-
-### Page title — \`title\` [TYPE] — page not approved
-
-**Page title:**
-
-Look up residential health code violations
-
-### Description — \`description\` [TYPE] — page not approved
-
-**Description:**
-
-Search inspection and enforcement history for any residential address in San Francisco.
-
-### Primary agency — \`primary_agency\` [CHOOSE] — page not approved
-
-_U6, narrowed — the mockup names the agency as text, not as a page reference, and Karl requires a page. Choose the parent Agency page: HHVC was approved for its own Agency page (sf.gov/departments--healthy-housing-and-vector-control), so that is the value for HHVC pages rather than Environmental Health or DPH. Those two remain Partner agencies._
-
-1. Choose page: "Healthy Housing and Vector Control"
-
-### Cost — \`cost\` [TYPE] — page not approved
-
-_Choose the Cost radio first (Free, Flat fee, Range, Minimum and up, None) — all five variants end at this same description field._
-
-**Cost description:**
-
-Free
-
-### Things to Know — \`things_to_know\` [TYPE] — page not approved
-
-**Block 1 — Title:**
-
-What this tool covers
-
-**Block 1 — Text:**
-
-This is the same Environmental Health lookup tool used for complaint and inspection history.
-
-**Block 2 — Title:**
-
-Leaving SF.gov
-
-**Block 2 — Text:**
-
-The link opens on the Department of Public Health website. You will leave SF.gov.
-
-### Custom Section — \`custom_section\` [TYPE] — page not approved
-
-⚠ Inferred mapping — verify the destination before saving.
-
-_Inferred mapping — the field map documents this panel only for supporting/flat sections. Transaction has no generic body stream and this is its only repeatable Title-and-text panel, so verify the destination before saving._
-
-**Title:**
-
-What you can search
-
-**Text:**
-
-Search by address or record ID to see investigated complaints, inspections, and health code violations tied to a residential property.
-
-This is the same Environmental Health lookup tool used for complaint and inspection history.
-
-### Custom Section — \`custom_section\` [TYPE] — page not approved
-
-⚠ Inferred mapping — verify the destination before saving.
-
-_Inferred mapping — the field map documents this panel only for supporting/flat sections. Transaction has no generic body stream and this is its only repeatable Title-and-text panel, so verify the destination before saving._
-
-**Title:**
-
-Open the violation lookup
-
-**Text:**
-
-You will leave SF.gov to use the Department of Public Health records site.
-
-### Related — \`related\` [CHOOSE] — page not approved
-
-_This block publishes the destination page’s title and a link, and NOTHING else. Choose the page and type no description._
-
-1. Choose page: "Find complaints and inspection records" (\`findRecords\` → /sf.gov/find-complaints-and-inspection-records)
-2. Choose page: "Fix your Healthy Housing and Vector Control violation" (\`noticeOfViolation\` → /sf.gov/fix-healthy-housing-and-vector-control-violation)
-3. Choose page: "Look up building records" (\`recordsHub\` → /sf.gov/look-up-building-records)
-
-### Partner agencies — \`partner_agencies\` [CHOOSE] — page not approved
-
-_A page chooser restricted to Agency pages. These entries name real sf.gov department pages outside this mockup, so search Karl for each by title._
-
-1. Choose page: "Department of Public Health"
-
-### Topics — \`topics\` [TYPE] — page not approved
-
-_topicTag is unmapped metadata — the stored values are Agency labels, not Topic chooser references._
-
-### Redirect this page to — \`redirect_url\` [TYPE] — page not approved
-
-_Disabled by design — a ConditionalReadOnlyFieldPanel. Never type into it._
-
-### Promote → For search engines — \`promote\` [TYPE] — page not approved
-
-_The slug is REQUIRED and lives on the Promote tab, so a page cannot be saved from the Content tab alone._
-
-**Slug (\`slug\`):**
-
-sf.gov/lookup-residential-health-code-violations
-
-**Title tag (\`seo_title\`):**
-
-Look up residential health code violations | SF.gov
-
-**Meta description (\`search_description\`):**
-
-Search residential health code violations and inspection history for San Francisco buildings.
-
-## Unmapped — no documented Karl destination
-
-Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
-
-- \`audience\` — The page carries \`audience\`, and Karl does have a home for it: a **Things to know** entry titled "Who this information is for". Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list. What blocks it is the budget, not the field: the Help Center caps Things to know at 2 entries, and most Transaction pages here already spend both, so placing the audience means deciding which existing entry it replaces. That is a content call, not a missing panel.
-- \`sections.1.button\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
-- \`sections.1.buttonUrl\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
 "
 `;
 
@@ -1954,301 +1850,6 @@ Nothing below has a field to be typed into. It is listed rather than dropped, be
 "
 `;
 
-exports[`transcript Markdown, every corpus page > inspectionPrepFollowup 1`] = `
-"# Get ready for a follow-up inspection — Karl transcript
-
-**Karl path:** New: Transaction → Content
-**Decision:** no review recorded
-**Page key:** \`inspectionPrepFollowup\` · **Slug:** \`sf.gov/get-ready-for-a-follow-up-inspection\` · **Type:** Transaction
-
-**NOT APPROVED — do not publish from this transcript.** Approval in this tool is per page, not per field, so nothing below is signed off.
-
-> Every keystroke below is yours to make. This file is an export, not an approval, and nothing here has been written to Karl.
-
-### Page title — \`title\` [TYPE] — page not approved
-
-**Page title:**
-
-Get ready for a follow-up inspection
-
-### Description — \`description\` [TYPE] — page not approved
-
-**Description:**
-
-Prepare for a Healthy Housing and Vector Control follow-up inspection after a Notice of Violation.
-
-### Primary agency — \`primary_agency\` [CHOOSE] — page not approved
-
-_U6, narrowed — the mockup names the agency as text, not as a page reference, and Karl requires a page. Choose the parent Agency page: HHVC was approved for its own Agency page (sf.gov/departments--healthy-housing-and-vector-control), so that is the value for HHVC pages rather than Environmental Health or DPH. Those two remain Partner agencies._
-
-1. Choose page: "Healthy Housing and Vector Control"
-
-### Cost — \`cost\` [TYPE] — page not approved
-
-_Choose the Cost radio first (Free, Flat fee, Range, Minimum and up, None) — all five variants end at this same description field._
-
-**Cost description:**
-
-Free
-
-### Things to Know — \`things_to_know\` [TYPE] — page not approved
-
-**Block 1 — Title:**
-
-_(empty)_
-
-**Block 1 — Text:**
-
-A follow-up inspection checks whether the conditions on your Notice of Violation were corrected.
-
-**Block 2 — Title:**
-
-_(empty)_
-
-**Block 2 — Text:**
-
-If the reinspection finds the conditions were not corrected, HHVC may take further enforcement action.
-
-### What to Do — \`what_to_do\` [TYPE] — page not approved
-
-_The mockup heading "Document your work" is not typed anywhere — Karl's What to Do panel carries its own label. Each step below becomes one Section block._
-
-_A step with text, a button and a callout becomes ONE Section block whose Section specifics holds a Text, a Button link and a Callout as siblings — not fields on the step._
-
-**Section 1 — Section title:**
-
-Keep records of what you completed
-
-**Section 1 — Section specifics → Text:**
-
-Keep records of the work you complete, such as photos, receipts, or pest treatment reports.
-
-**Section 2 — Section title:**
-
-Make sure the cited conditions are fully corrected
-
-**Section 2 — Section specifics → Text:**
-
-Confirm every condition listed on the notice has been addressed, not only the ones that were easiest to fix.
-
-### What to Do — \`what_to_do\` [TYPE] — page not approved
-
-_The mockup heading "What to expect at the follow-up visit" is not typed anywhere — Karl's What to Do panel carries its own label. Each step below becomes one Section block._
-
-_A step with text, a button and a callout becomes ONE Section block whose Section specifics holds a Text, a Button link and a Callout as siblings — not fields on the step._
-
-**Section 1 — Section title:**
-
-An inspector checks the cited conditions
-
-**Section 1 — Section specifics → Text:**
-
-An inspector reviews the specific conditions listed on your Notice of Violation to confirm whether they were corrected.
-
-**Section 2 — Section title:**
-
-If something is still not fixed
-
-**Section 2 — Section specifics → Text:**
-
-HHVC may take further enforcement action, which can include a reinspection fee.
-
-- [What happens after you report a housing or pest problem](afterReport)
-
-**Links in this text — recreate each with the Link tool, do not paste them:**
-
-- "What happens after you report a housing or pest problem" → shape 5 — rich text Link tool → Internal link → "What happens after you report a housing or pest problem"
-
-### Related — \`related\` [CHOOSE] — page not approved
-
-_This block publishes the destination page’s title and a link, and NOTHING else. Choose the page and type no description._
-
-1. Choose page: "Fix your Healthy Housing and Vector Control violation" (\`noticeOfViolation\` → /sf.gov/fix-healthy-housing-and-vector-control-violation)
-2. Choose page: "What happens after you report a housing or pest problem" (\`afterReport\` → /sf.gov/information/what-happens-after-you-report-housing-pest-problem)
-3. Choose page: "Tenant rights when reporting housing conditions" (\`tenantRights\` → /sf.gov/information/tenant-rights-and-reporting-housing-conditions)
-
-### Topics — \`topics\` [TYPE] — page not approved
-
-_topicTag is unmapped metadata — the stored values are Agency labels, not Topic chooser references._
-
-### Redirect this page to — \`redirect_url\` [TYPE] — page not approved
-
-_Disabled by design — a ConditionalReadOnlyFieldPanel. Never type into it._
-
-### Promote → For search engines — \`promote\` [TYPE] — page not approved
-
-_The slug is REQUIRED and lives on the Promote tab, so a page cannot be saved from the Content tab alone._
-
-**Slug (\`slug\`):**
-
-sf.gov/get-ready-for-a-follow-up-inspection
-
-**Title tag (\`seo_title\`):**
-
-Get ready for a follow-up inspection | SF.gov
-
-**Meta description (\`search_description\`):**
-
-Prepare for a Healthy Housing and Vector Control follow-up inspection after a Notice of Violation.
-
-## Unmapped — no documented Karl destination
-
-Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
-
-- \`audience\` — The page carries \`audience\`, and Karl does have a home for it: a **Things to know** entry titled "Who this information is for". Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list. What blocks it is the budget, not the field: the Help Center caps Things to know at 2 entries, and most Transaction pages here already spend both, so placing the audience means deciding which existing entry it replaces. That is a content call, not a missing panel.
-"
-`;
-
-exports[`transcript Markdown, every corpus page > inspectionPrepInitial 1`] = `
-"# Get ready for a housing inspection after you report — Karl transcript
-
-**Karl path:** New: Transaction → Content
-**Decision:** no review recorded
-**Page key:** \`inspectionPrepInitial\` · **Slug:** \`sf.gov/get-ready-for-a-housing-inspection\` · **Type:** Transaction
-
-**NOT APPROVED — do not publish from this transcript.** Approval in this tool is per page, not per field, so nothing below is signed off.
-
-> Every keystroke below is yours to make. This file is an export, not an approval, and nothing here has been written to Karl.
-
-### Page title — \`title\` [TYPE] — page not approved
-
-**Page title:**
-
-Get ready for a housing inspection after you report
-
-### Description — \`description\` [TYPE] — page not approved
-
-**Description:**
-
-Prepare for a Healthy Housing and Vector Control inspection after you file a 311 report.
-
-### Primary agency — \`primary_agency\` [CHOOSE] — page not approved
-
-_U6, narrowed — the mockup names the agency as text, not as a page reference, and Karl requires a page. Choose the parent Agency page: HHVC was approved for its own Agency page (sf.gov/departments--healthy-housing-and-vector-control), so that is the value for HHVC pages rather than Environmental Health or DPH. Those two remain Partner agencies._
-
-1. Choose page: "Healthy Housing and Vector Control"
-
-### Cost — \`cost\` [TYPE] — page not approved
-
-_Choose the Cost radio first (Free, Flat fee, Range, Minimum and up, None) — all five variants end at this same description field._
-
-**Cost description:**
-
-Free
-
-### Things to Know — \`things_to_know\` [TYPE] — page not approved
-
-**Block 1 — Title:**
-
-_(empty)_
-
-**Block 1 — Text:**
-
-If you gave contact information, an inspector may contact you to ask questions or schedule a visit.
-
-**Block 2 — Title:**
-
-_(empty)_
-
-**Block 2 — Text:**
-
-An inspection may happen without advance notice when areas can be accessed.
-
-### What to Do — \`what_to_do\` [TYPE] — page not approved
-
-_The mockup heading "Before the inspector arrives" is not typed anywhere — Karl's What to Do panel carries its own label. Each step below becomes one Section block._
-
-_A step with text, a button and a callout becomes ONE Section block whose Section specifics holds a Text, a Button link and a Callout as siblings — not fields on the step._
-
-**Section 1 — Section title:**
-
-Clear access to the reported area
-
-**Section 1 — Section specifics → Text:**
-
-Clear a path to the area you reported so an inspector can see the condition.
-
-**Section 2 — Section title:**
-
-Be ready to answer questions or provide access
-
-**Section 2 — Section specifics → Text:**
-
-If you gave contact information, an inspector may contact you to ask questions or schedule a visit.
-
-**Section 3 — Section title:**
-
-Gather anything relevant
-
-**Section 3 — Section specifics → Text:**
-
-- Photos of the condition, dated if possible.
-- Any prior communication with a property owner or manager about the problem.
-
-### What to Do — \`what_to_do\` [TYPE] — page not approved
-
-_The mockup heading "What to expect during the visit" is not typed anywhere — Karl's What to Do panel carries its own label. Each step below becomes one Section block._
-
-_A step with text, a button and a callout becomes ONE Section block whose Section specifics holds a Text, a Button link and a Callout as siblings — not fields on the step._
-
-**Section 1 — Section title:**
-
-An inspector may check the reported area and nearby spaces
-
-**Section 1 — Section specifics → Text:**
-
-An inspector may look at the specific condition you reported as well as nearby areas that could be related.
-
-**Section 2 — Section title:**
-
-You may not get advance notice for every visit
-
-**Section 2 — Section specifics → Text:**
-
-If you did not give contact information, an inspection may still happen without notice.
-
-This can happen when areas can be accessed, for example if the report describes an urgent health or safety risk.
-
-### Related — \`related\` [CHOOSE] — page not approved
-
-_This block publishes the destination page’s title and a link, and NOTHING else. Choose the page and type no description._
-
-1. Choose page: "What happens after you report a housing or pest problem" (\`afterReport\` → /sf.gov/information/what-happens-after-you-report-housing-pest-problem)
-2. Choose page: "Learn what Healthy Housing and Vector Control can inspect" (\`scopeInfo\` → /sf.gov/information/learn-what-hhvc-can-inspect)
-3. Choose page: "Tenant rights when reporting housing conditions" (\`tenantRights\` → /sf.gov/information/tenant-rights-and-reporting-housing-conditions)
-
-### Topics — \`topics\` [TYPE] — page not approved
-
-_topicTag is unmapped metadata — the stored values are Agency labels, not Topic chooser references._
-
-### Redirect this page to — \`redirect_url\` [TYPE] — page not approved
-
-_Disabled by design — a ConditionalReadOnlyFieldPanel. Never type into it._
-
-### Promote → For search engines — \`promote\` [TYPE] — page not approved
-
-_The slug is REQUIRED and lives on the Promote tab, so a page cannot be saved from the Content tab alone._
-
-**Slug (\`slug\`):**
-
-sf.gov/get-ready-for-a-housing-inspection
-
-**Title tag (\`seo_title\`):**
-
-Get ready for a housing inspection after you report | SF.gov
-
-**Meta description (\`search_description\`):**
-
-Prepare for a Healthy Housing and Vector Control inspection after you file a 311 report.
-
-## Unmapped — no documented Karl destination
-
-Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
-
-- \`audience\` — The page carries \`audience\`, and Karl does have a home for it: a **Things to know** entry titled "Who this information is for". Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list. What blocks it is the budget, not the field: the Help Center caps Things to know at 2 entries, and most Transaction pages here already spend both, so placing the audience means deciding which existing entry it replaces. That is a content call, not a missing panel.
-"
-`;
-
 exports[`transcript Markdown, every corpus page > inspectionsAnnual 1`] = `
 "# Healthy Housing inspections: annual summary — Karl transcript
 
@@ -2368,7 +1969,7 @@ Related pages
 **Links in this text — recreate each with the Link tool, do not paste them:**
 
 - "Health Code Article 11 in plain language" → shape 5 — rich text Link tool → Internal link → "Health Code Article 11 in plain language"
-- "Look up residential health code violations" → shape 5 — rich text Link tool → Internal link → "Look up residential health code violations"
+- "Find complaints and inspection records" → shape 5 — rich text Link tool → Internal link → "Find complaints and inspection records"
 - "Learn what Healthy Housing and Vector Control can inspect" → shape 5 — rich text Link tool → Internal link → "Learn what Healthy Housing and Vector Control can inspect"
 
 ### Partner agencies — \`partner_agencies\` [CHOOSE] — page not approved
@@ -2449,6 +2050,32 @@ _(empty)_
 
 The exact lookup tool and destination have not been confirmed yet.
 
+### What to Do — \`what_to_do\` [TYPE] — page not approved
+
+_The mockup heading "What to do" is not typed anywhere — Karl's What to Do panel carries its own label. Each step below becomes one Section block._
+
+_A step with text, a button and a callout becomes ONE Section block whose Section specifics holds a Text, a Button link and a Callout as siblings — not fields on the step._
+
+**Section 1 — Section title:**
+
+Open the lookup tool
+
+**Section 1 — Section specifics → Text:**
+
+Select your neighborhood to see the assigned inspector and their contact information.
+
+**Section 1 — Section specifics → Button link → Link text:**
+
+Find your inspector
+
+**Section 1 — Button link → destination:**
+
+External URL → #
+
+**Callout (rich text, no title field):**
+
+This button is a placeholder until HHVC confirms the real lookup tool and entry point.
+
 ### Custom Section — \`custom_section\` [TYPE] — page not approved
 
 ⚠ Inferred mapping — verify the destination before saving.
@@ -2463,32 +2090,13 @@ What this tool covers
 
 Healthy Housing and Vector Control assigns inspectors by neighborhood. Use this page to find contact information for the inspector who covers your area.
 
-### Custom Section — \`custom_section\` [TYPE] — page not approved
-
-⚠ Inferred mapping — verify the destination before saving.
-
-_Inferred mapping — the field map documents this panel only for supporting/flat sections. Transaction has no generic body stream and this is its only repeatable Title-and-text panel, so verify the destination before saving._
-
-**Title:**
-
-Open the lookup tool
-
-**Text:**
-
-Select your neighborhood to see the assigned inspector and their contact information.
-
-**Callout (rich text, no title field):**
-
-This button is a placeholder until HHVC confirms the real lookup tool and entry point.
-
 ### Related — \`related\` [CHOOSE] — page not approved
 
 _This block publishes the destination page’s title and a link, and NOTHING else. Choose the page and type no description._
 
 1. Choose page: "Look up building records" (\`recordsHub\` → /sf.gov/look-up-building-records)
 2. Choose page: "Find complaints and inspection records" (\`findRecords\` → /sf.gov/find-complaints-and-inspection-records)
-3. Choose page: "Look up residential health code violations" (\`findViolations\` → /sf.gov/lookup-residential-health-code-violations)
-4. Choose page: "Healthy Housing and Vector Control" (\`pestsTopic\` → /sf.gov/departments--healthy-housing-and-vector-control)
+3. Choose page: "Healthy Housing and Vector Control" (\`pestsTopic\` → /sf.gov/departments--healthy-housing-and-vector-control)
 
 ### Topics — \`topics\` [TYPE] — page not approved
 
@@ -2519,8 +2127,6 @@ Look up which Healthy Housing and Vector Control inspector covers your San Franc
 Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
 
 - \`audience\` — The page carries \`audience\`, and Karl does have a home for it: a **Things to know** entry titled "Who this information is for". Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list. What blocks it is the budget, not the field: the Help Center caps Things to know at 2 entries, and most Transaction pages here already spend both, so placing the audience means deciding which existing entry it replaces. That is a content call, not a missing panel.
-- \`sections.1.button\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
-- \`sections.1.buttonUrl\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
 "
 `;
 
@@ -3174,183 +2780,6 @@ Nothing below has a field to be typed into. It is listed rather than dropped, be
 "
 `;
 
-exports[`transcript Markdown, every corpus page > noticeOfViolation 1`] = `
-"# Fix your Healthy Housing and Vector Control violation — Karl transcript
-
-**Karl path:** New: Transaction → Content
-**Decision:** no review recorded
-**Page key:** \`noticeOfViolation\` · **Slug:** \`sf.gov/fix-healthy-housing-and-vector-control-violation\` · **Type:** Transaction
-
-**NOT APPROVED — do not publish from this transcript.** Approval in this tool is per page, not per field, so nothing below is signed off.
-
-> Every keystroke below is yours to make. This file is an export, not an approval, and nothing here has been written to Karl.
-
-### Page title — \`title\` [TYPE] — page not approved
-
-**Page title:**
-
-Fix your Healthy Housing and Vector Control violation
-
-### Description — \`description\` [TYPE] — page not approved
-
-**Description:**
-
-Follow your Notice of Violation and work with our inspectors to correct a housing or pest problem.
-
-### Primary agency — \`primary_agency\` [CHOOSE] — page not approved
-
-_U6, narrowed — the mockup names the agency as text, not as a page reference, and Karl requires a page. Choose the parent Agency page: HHVC was approved for its own Agency page (sf.gov/departments--healthy-housing-and-vector-control), so that is the value for HHVC pages rather than Environmental Health or DPH. Those two remain Partner agencies._
-
-1. Choose page: "Healthy Housing and Vector Control"
-
-### Cost — \`cost\` [TYPE] — page not approved
-
-_Choose the Cost radio first (Free, Flat fee, Range, Minimum and up, None) — all five variants end at this same description field._
-
-**Cost description:**
-
-Free
-
-### Things to Know — \`things_to_know\` [TYPE] — page not approved
-
-**Block 1 — Title:**
-
-What your notice covers
-
-**Block 1 — Text:**
-
-Your Notice of Violation lists the specific conditions to correct and the deadline for completing the work.
-
-**Block 2 — Title:**
-
-If you need help or more time
-
-**Block 2 — Text:**
-
-Contact the investigator named on your notice before the deadline if you have questions or need more time.
-
-### What to Do — \`what_to_do\` [TYPE] — page not approved
-
-_The mockup heading "What to do" is not typed anywhere — Karl's What to Do panel carries its own label. Each step below becomes one Section block._
-
-_A step with text, a button and a callout becomes ONE Section block whose Section specifics holds a Text, a Button link and a Callout as siblings — not fields on the step._
-
-**Section 1 — Section title:**
-
-Read your Notice of Violation
-
-**Section 1 — Section specifics → Text:**
-
-Read the full notice as soon as you receive it. It identifies the conditions that must be corrected and gives a deadline for completing the work.
-
-Check which actions apply to the building, shared areas, or a specific unit. A notice may list actions for an owner, manager, tenant, or more than one responsible party.
-
-**Section 2 — Section title:**
-
-Make a plan to correct the conditions
-
-**Section 2 — Section specifics → Text:**
-
-Complete the actions assigned to you before the deadline on the notice.
-
-- Owners and managers may need to arrange repairs, pest treatment, garbage removal, or corrections in shared areas.
-- Tenants may need to clean or prepare a unit for treatment and allow access for scheduled inspections or work.
-- If professional pest treatment is required, use a licensed pest control operator.
-- One person finishing their work does not close the violation if other cited conditions remain.
-- Owners and managers should not wait for tenant actions before starting work they control.
-- Tenants should follow unit-preparation instructions and allow properly noticed access for treatment or inspection.
-- [Correct a violation and close your case](stepCorrectViolation)
-
-**Section 3 — Section title:**
-
-Contact the investigator if you need help
-
-**Section 3 — Section specifics → Text:**
-
-Contact the investigator named on the notice with questions. They can explain the cited conditions, the deadline, and what proof of correction is needed.
-
-Ask before the deadline if you need clarification or more time. Do not assume that work by another person closes the violation.
-
-- A Notice of Violation does not change a tenant’s right to safe and habitable housing.
-- [What tenants need to do after a Notice of Violation](tenantNoticeSteps)
-- [Tenant rights and reporting](tenantRights)
-- [Property owner responsibilities](ownerHub)
-- [Integrated pest management for property owners and managers](ownerGuidance)
-
-**Section 4 — Section title:**
-
-Prepare for follow-up inspection
-
-**Section 4 — Section specifics → Text:**
-
-Keep records of the work you complete, such as photos, receipts, or pest treatment reports.
-
-Be ready for HHVC to check whether the cited conditions were corrected. Follow-up inspection may be needed before the case can close.
-
-- [Get ready for a follow-up inspection](inspectionPrepFollowup)
-
-**Section 5 — Section title:**
-
-Finish the work or respond to further enforcement
-
-**Section 5 — Section specifics → Text:**
-
-If the violation is not corrected, HHVC may take additional enforcement action. This can include a reinspection fee when applicable, a citation, or a Director’s Hearing.
-
-Follow the instructions and deadlines in any later notice you receive.
-
-- [Question a Notice of Violation](appealNotice)
-- [Pay a Healthy Housing citation](payCitation)
-
-**Links in this text — recreate each with the Link tool, do not paste them:**
-
-- "Correct a violation and close your case" → shape 5 — rich text Link tool → Internal link → "Correct a violation and close your case"
-- "What tenants need to do after a Notice of Violation" → shape 5 — rich text Link tool → Internal link → "What tenants need to do after a Notice of Violation"
-- "Tenant rights and reporting" → shape 5 — rich text Link tool → Internal link → "Tenant rights when reporting housing conditions"
-- "Property owner responsibilities" → shape 5 — rich text Link tool → Internal link → "Property owner responsibilities"
-- "Integrated pest management for property owners and managers" → shape 5 — rich text Link tool → Internal link → "Integrated pest management for property owners and managers"
-- "Get ready for a follow-up inspection" → shape 5 — rich text Link tool → Internal link → "Get ready for a follow-up inspection"
-- "Question a Notice of Violation" → shape 5 — rich text Link tool → Internal link → "Question a Notice of Violation"
-- "Pay a Healthy Housing citation" → shape 5 — rich text Link tool → Internal link → "Pay a Healthy Housing citation"
-
-### Partner agencies — \`partner_agencies\` [CHOOSE] — page not approved
-
-_A page chooser restricted to Agency pages. These entries name real sf.gov department pages outside this mockup, so search Karl for each by title._
-
-1. Choose page: "Environmental Health"
-
-### Topics — \`topics\` [TYPE] — page not approved
-
-_topicTag is unmapped metadata — the stored values are Agency labels, not Topic chooser references._
-
-### Redirect this page to — \`redirect_url\` [TYPE] — page not approved
-
-_Disabled by design — a ConditionalReadOnlyFieldPanel. Never type into it._
-
-### Promote → For search engines — \`promote\` [TYPE] — page not approved
-
-_The slug is REQUIRED and lives on the Promote tab, so a page cannot be saved from the Content tab alone._
-
-**Slug (\`slug\`):**
-
-sf.gov/fix-healthy-housing-and-vector-control-violation
-
-**Title tag (\`seo_title\`):**
-
-Fix your Healthy Housing and Vector Control violation | SF.gov
-
-**Meta description (\`search_description\`):**
-
-Follow a Healthy Housing and Vector Control Notice of Violation to correct housing or pest conditions.
-
-## Unmapped — no documented Karl destination
-
-Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
-
-- \`audience\` — The page carries \`audience\`, and Karl does have a home for it: a **Things to know** entry titled "Who this information is for". Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list. What blocks it is the budget, not the field: the Help Center caps Things to know at 2 entries, and most Transaction pages here already spend both, so placing the audience means deciding which existing entry it replaces. That is a content call, not a missing panel.
-"
-`;
-
 exports[`transcript Markdown, every corpus page > ownerGuidance 1`] = `
 "# Integrated pest management for property owners and managers — Karl transcript
 
@@ -3600,9 +3029,8 @@ _topicTag is unmapped metadata — the stored values are Agency labels, not Topi
 _This block publishes the destination page’s title and a link, and NOTHING else. Choose the page and type no description._
 
 1. Choose page: "Property owner responsibilities" (\`ownerHub\` → /sf.gov/property-owner-responsibilities-hhvc)
-2. Choose page: "Fix your Healthy Housing and Vector Control violation" (\`noticeOfViolation\` → /sf.gov/fix-healthy-housing-and-vector-control-violation)
-3. Choose page: "Report rats, mice, and other four-legged problems" (\`rodentsReport\` → /sf.gov/report-rats-mice-four-legged-problems)
-4. Choose page: "Learn what Healthy Housing and Vector Control can inspect" (\`scopeInfo\` → /sf.gov/information/learn-what-hhvc-can-inspect)
+2. Choose page: "Report rats, mice, and other four-legged problems" (\`rodentsReport\` → /sf.gov/report-rats-mice-four-legged-problems)
+3. Choose page: "Learn what Healthy Housing and Vector Control can inspect" (\`scopeInfo\` → /sf.gov/information/learn-what-hhvc-can-inspect)
 
 ### Promote → For search engines — \`promote\` [TYPE] — page not approved
 
@@ -3676,7 +3104,7 @@ _This block publishes the destination page’s title and a link, and NOTHING els
 Owner obligations
 
 1. Choose page: "Pay your annual Healthy Housing fee for apartment buildings" (\`payFee\` → /sf.gov/pay-your-annual-healthy-housing-fee-apartment-buildings)
-2. Choose page: "Fix your Healthy Housing and Vector Control violation" (\`noticeOfViolation\` → /sf.gov/fix-healthy-housing-and-vector-control-violation)
+2. Choose page: "Correct a violation and close your case" (\`stepCorrectViolation\` → /sf.gov/step-by-step/correct-a-violation-and-close-your-case)
 3. Choose page: "Integrated pest management for property owners and managers" (\`ownerGuidance\` → /sf.gov/information/integrated-pest-management-for-property-owners-and-managers)
 4. Choose page: "Look up building records" (\`recordsHub\` → /sf.gov/look-up-building-records)
 
@@ -3689,7 +3117,7 @@ _This block publishes the destination page’s title and a link, and NOTHING els
 Related pages
 
 1. Choose page: "Healthy Housing and Vector Control" (\`pestsTopic\` → /sf.gov/departments--healthy-housing-and-vector-control)
-2. Choose page: "Look up residential health code violations" (\`findViolations\` → /sf.gov/lookup-residential-health-code-violations)
+2. Choose page: "Find complaints and inspection records" (\`findRecords\` → /sf.gov/find-complaints-and-inspection-records)
 3. Choose page: "What happens after you report a housing or pest problem" (\`afterReport\` → /sf.gov/information/what-happens-after-you-report-housing-pest-problem)
 
 ### Topics — \`topics\` [TYPE] — page not approved
@@ -3729,7 +3157,7 @@ exports[`transcript Markdown, every corpus page > payCitation 1`] = `
 
 **Karl path:** New: Transaction → Content
 **Decision:** no review recorded
-**Page key:** \`payCitation\` · **Slug:** \`sf.gov/pay-a-healthy-housing-citation\` · **Type:** Transaction
+**Page key:** \`payCitation\` · **Slug:** \`sf.gov/pay-healthy-housing-citation\` · **Type:** Transaction
 
 **NOT APPROVED — do not publish from this transcript.** Approval in this tool is per page, not per field, so nothing below is signed off.
 
@@ -3817,7 +3245,7 @@ Correct the condition as well
 The violation stays open until the cited conditions are corrected and confirmed, whether or not the citation is paid.
 
 - [Correct a violation and close your case](stepCorrectViolation)
-- [Get ready for a follow-up inspection](inspectionPrepFollowup)
+- [Correct a violation and close your case](stepCorrectViolation)
 
 **Section 4 — Section title:**
 
@@ -3827,15 +3255,15 @@ If you think the citation is wrong
 
 Contact the investigator named on your notice if you disagree. Do not simply withhold payment.
 
-- [Question a Notice of Violation](appealNotice)
+- [Appeal a Notice of Violation](appealNotice)
 - Contact the investigator named on your notice before the due date.
 
 **Links in this text — recreate each with the Link tool, do not paste them:**
 
 - "Environmental Health office" → shape 5 — rich text Link tool → Internal link → "Environmental Health office"
 - "Correct a violation and close your case" → shape 5 — rich text Link tool → Internal link → "Correct a violation and close your case"
-- "Get ready for a follow-up inspection" → shape 5 — rich text Link tool → Internal link → "Get ready for a follow-up inspection"
-- "Question a Notice of Violation" → shape 5 — rich text Link tool → Internal link → "Question a Notice of Violation"
+- "Correct a violation and close your case" → shape 5 — rich text Link tool → Internal link → "Correct a violation and close your case"
+- "Appeal a Notice of Violation" → shape 5 — rich text Link tool → Internal link → "Appeal a Notice of Violation"
 
 ### Partner agencies — \`partner_agencies\` [CHOOSE] — page not approved
 
@@ -3857,7 +3285,7 @@ _The slug is REQUIRED and lives on the Promote tab, so a page cannot be saved fr
 
 **Slug (\`slug\`):**
 
-sf.gov/pay-a-healthy-housing-citation
+sf.gov/pay-healthy-housing-citation
 
 **Title tag (\`seo_title\`):**
 
@@ -4028,9 +3456,8 @@ Pay within 30 days of the invoice due date. Keep your invoice number or property
 _This block publishes the destination page’s title and a link, and NOTHING else. Choose the page and type no description._
 
 1. Choose page: "Property owner responsibilities" (\`ownerHub\` → /sf.gov/property-owner-responsibilities-hhvc)
-2. Choose page: "Fix your Healthy Housing and Vector Control violation" (\`noticeOfViolation\` → /sf.gov/fix-healthy-housing-and-vector-control-violation)
-3. Choose page: "Look up building records" (\`recordsHub\` → /sf.gov/look-up-building-records)
-4. Choose page: "Healthy housing and pest resources" (\`verminResources\` → /sf.gov/resource--healthy-housing-and-vermin-information)
+2. Choose page: "Look up building records" (\`recordsHub\` → /sf.gov/look-up-building-records)
+3. Choose page: "Healthy housing and pest resources" (\`verminResources\` → /sf.gov/resource--healthy-housing-and-vermin-information)
 
 ### Partner agencies — \`partner_agencies\` [CHOOSE] — page not approved
 
@@ -4147,7 +3574,7 @@ If you rent
 
 1. Choose page: "Tenant rights when reporting housing conditions" (\`tenantRights\` → /sf.gov/information/tenant-rights-and-reporting-housing-conditions)
 2. Choose page: "What happens after you report a housing or pest problem" (\`afterReport\` → /sf.gov/information/what-happens-after-you-report-housing-pest-problem)
-3. Choose page: "Fix your Healthy Housing and Vector Control violation" (\`noticeOfViolation\` → /sf.gov/fix-healthy-housing-and-vector-control-violation)
+3. Choose page: "Correct a violation and close your case" (\`stepCorrectViolation\` → /sf.gov/step-by-step/correct-a-violation-and-close-your-case)
 
 ### Subsection — \`resources\` [CHOOSE] — page not approved
 
@@ -4195,7 +3622,7 @@ Read the City rules on communicable-disease prevention and rodent control.
 
 1. Choose page: "Look up building records" (\`recordsHub\` → /sf.gov/look-up-building-records)
 2. Choose page: "Health Code Article 11 in plain language" (\`article11Guide\` → /sf.gov/report/health-code-article-11-plain-language)
-3. Choose page: "Make a public records request" (\`publicRecords\` → /sf.gov/make-a-public-records-request-environmental-health)
+3. Choose page: "Make a public records request" (\`publicRecords\` → /sf.gov/make-public-records-request-environmental-health)
 
 ### Subsection — \`resources\` [TYPE] — page not approved
 
@@ -4227,7 +3654,7 @@ https://www.sf.gov/report-health-nuisance-or-hazards
 
 **External link 2 — Description:**
 
-Use the Citywide 311 service for lead, water, sewage, food, pesticide, or business hygiene concerns.
+Use the Citywide 311 service for lead, water, food, pesticide, or business hygiene concerns.
 
 **External link 3 — Title:**
 
@@ -4302,7 +3729,7 @@ exports[`transcript Markdown, every corpus page > publicRecords 1`] = `
 
 **Karl path:** New: Transaction → Content
 **Decision:** no review recorded
-**Page key:** \`publicRecords\` · **Slug:** \`sf.gov/make-a-public-records-request-environmental-health\` · **Type:** Transaction
+**Page key:** \`publicRecords\` · **Slug:** \`sf.gov/make-public-records-request-environmental-health\` · **Type:** Transaction
 
 **NOT APPROVED — do not publish from this transcript.** Approval in this tool is per page, not per field, so nothing below is signed off.
 
@@ -4352,6 +3779,28 @@ Leaving SF.gov
 
 Requests are handled through the citywide San Francisco NextRequest portal. You will leave SF.gov.
 
+### What to Do — \`what_to_do\` [TYPE] — page not approved
+
+_The mockup heading "What to do" is not typed anywhere — Karl's What to Do panel carries its own label. Each step below becomes one Section block._
+
+_A step with text, a button and a callout becomes ONE Section block whose Section specifics holds a Text, a Button link and a Callout as siblings — not fields on the step._
+
+**Section 1 — Section title:**
+
+Submit your request
+
+**Section 1 — Section specifics → Text:**
+
+Public records requests are handled through the citywide San Francisco NextRequest portal. You will leave SF.gov.
+
+**Section 1 — Section specifics → Button link → Link text:**
+
+Request records
+
+**Section 1 — Button link → destination:**
+
+External URL → https://sanfrancisco.nextrequest.com/requests/new
+
 ### Custom Section — \`custom_section\` [TYPE] — page not approved
 
 ⚠ Inferred mapping — verify the destination before saving.
@@ -4371,20 +3820,6 @@ Use a formal public records request for certified copies or a broader record set
 - Property address or complaint number
 - Date range for the records you need
 - A clear description of the records you are requesting
-
-### Custom Section — \`custom_section\` [TYPE] — page not approved
-
-⚠ Inferred mapping — verify the destination before saving.
-
-_Inferred mapping — the field map documents this panel only for supporting/flat sections. Transaction has no generic body stream and this is its only repeatable Title-and-text panel, so verify the destination before saving._
-
-**Title:**
-
-Submit your request
-
-**Text:**
-
-Public records requests are handled through the citywide San Francisco NextRequest portal. You will leave SF.gov.
 
 ### Related — \`related\` [CHOOSE] — page not approved
 
@@ -4413,7 +3848,7 @@ _The slug is REQUIRED and lives on the Promote tab, so a page cannot be saved fr
 
 **Slug (\`slug\`):**
 
-sf.gov/make-a-public-records-request-environmental-health
+sf.gov/make-public-records-request-environmental-health
 
 **Title tag (\`seo_title\`):**
 
@@ -4428,8 +3863,6 @@ Request Environmental Health public records through the citywide San Francisco p
 Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
 
 - \`audience\` — The page carries \`audience\`, and Karl does have a home for it: a **Things to know** entry titled "Who this information is for". Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list. What blocks it is the budget, not the field: the Help Center caps Things to know at 2 entries, and most Transaction pages here already spend both, so placing the audience means deciding which existing entry it replaces. That is a content call, not a missing panel.
-- \`sections.1.button\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
-- \`sections.1.buttonUrl\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
 "
 `;
 
@@ -4642,9 +4075,8 @@ _This block publishes the destination page’s title and a link, and NOTHING els
 Building lookups
 
 1. Choose page: "Find complaints and inspection records" (\`findRecords\` → /sf.gov/find-complaints-and-inspection-records)
-2. Choose page: "Look up residential health code violations" (\`findViolations\` → /sf.gov/lookup-residential-health-code-violations)
-3. Choose page: "Find residential hotel and shelter records" (\`findHotelRecords\` → /sf.gov/find-residential-hotel-and-shelter-records)
-4. Choose page: "Find your Healthy Housing inspector by neighborhood" (\`inspectorLookup\` → /sf.gov/find-healthy-housing-inspector-by-neighborhood)
+2. Choose page: "Find residential hotel and shelter records" (\`findHotelRecords\` → /sf.gov/find-residential-hotel-and-shelter-records)
+3. Choose page: "Find your Healthy Housing inspector by neighborhood" (\`inspectorLookup\` → /sf.gov/find-healthy-housing-inspector-by-neighborhood)
 
 ### Body — \`body\` [CHOOSE] — page not approved
 
@@ -4654,7 +4086,7 @@ _This block publishes the destination page’s title and a link, and NOTHING els
 
 Formal requests and payments
 
-1. Choose page: "Make a public records request" (\`publicRecords\` → /sf.gov/make-a-public-records-request-environmental-health)
+1. Choose page: "Make a public records request" (\`publicRecords\` → /sf.gov/make-public-records-request-environmental-health)
 2. Choose page: "Pay your annual Healthy Housing fee for apartment buildings" (\`payFee\` → /sf.gov/pay-your-annual-healthy-housing-fee-apartment-buildings)
 
 ### Body — \`body\` [CHOOSE] — page not approved
@@ -4998,6 +4430,7 @@ Problems HHVC may inspect
 - Shared SRO kitchens, bathrooms, garbage areas, or other shared spaces
 - Pest harborage or infestation conditions including burrows, nesting materials, and wildlife activity that may create a public health nuisance
 - Rodent-borne disease prevention under Article 2, Section 92: rodent access, droppings, gnaw marks, or failure to keep conditions rodent-free
+- Active sewage leaks or backups from a drain, toilet, cleanout, or pipe, inside or outside a building
 - Other conditions the Director determines to be a threat to public health or safety
 
 ### Information section — \`information_section\` [TYPE] — page not approved
@@ -5034,7 +4467,7 @@ If your problem is not listed
 
 - Some housing problems are handled by other City programs. For example, structural water intrusion, leaks, and major heating or utility failures go to the [Department of Building Inspection (DBI)](#). DBI handles these under the San Francisco Housing Code (2025).
 - If your problem is not on this list, start with 311. They can send your report to the right place.
-- For lead, pesticides, water quality, sewage, food sanitation, or business hygiene, use the [Citywide health nuisance and hazards reporting service](https://www.sf.gov/report-health-nuisance-or-hazards).
+- For lead, pesticides, water quality, food sanitation, or business hygiene, use the [Citywide health nuisance and hazards reporting service](https://www.sf.gov/report-health-nuisance-or-hazards).
 - If you are not sure whether HHVC can review your problem, it is still okay to report it. HHVC will review whether it may involve a housing or pest-related public health concern.
 
 **Links in this text — recreate each with the Link tool, do not paste them:**
@@ -5283,7 +4716,7 @@ Read the notice and find your deadline
 The notice lists the conditions to correct and the date they are due. That date governs everything below — this page does not set one.
 
 - Check which actions are assigned to the owner, to the manager, and to a tenant.
-- [Fix your Healthy Housing and Vector Control violation](noticeOfViolation)
+- A notice can list actions for the building, shared areas, or a specific unit.
 
 **Step 2 — Title:**
 
@@ -5308,6 +4741,7 @@ Unit preparation and access are the tenant’s part. Treatment that cannot reach
 
 - Follow the preparation instructions you were given before a treatment visit.
 - Allow properly noticed access for inspection or work.
+- A Notice of Violation does not change a tenant’s right to safe and habitable housing.
 - [Prepare your unit for pest treatment](stepPrepUnit)
 - [What tenants need to do after a Notice of Violation](tenantNoticeSteps)
 
@@ -5318,6 +4752,8 @@ Ask for more time before the deadline, not after
 **Step 4 — Step description:**
 
 If the work cannot be finished in time, contact the investigator named on the notice before the date passes.
+
+They can explain the cited conditions, the deadline, and what proof of correction is needed.
 
 - Ask early. A request made after the deadline is a different conversation.
 - This page does not promise an extension — whether one is granted is the investigator’s call.
@@ -5331,6 +4767,7 @@ Keep proof of the work
 Photos, receipts, and pest treatment reports are what show the conditions were corrected.
 
 - Keep records for every cited condition, not just the largest one.
+- Confirm every condition listed on the notice has been addressed, not only the ones that were easiest to fix.
 
 **Step 6 — Title:**
 
@@ -5340,7 +4777,7 @@ Pass the re-inspection
 
 A follow-up inspection checks whether the cited conditions were corrected. The case closes when they have been.
 
-- [Get ready for a follow-up inspection](inspectionPrepFollowup)
+- An inspector reviews the specific conditions listed on your Notice of Violation to confirm whether they were corrected.
 - One party finishing does not close the case while other cited conditions remain.
 
 **Step 7 — Title:**
@@ -5353,19 +4790,19 @@ Further enforcement can follow an uncorrected notice. This can include a reinspe
 
 Follow the instructions and deadlines in any later notice you receive.
 
-- [Question a Notice of Violation](appealNotice)
+- [Appeal a Notice of Violation](appealNotice)
 - [Pay a Healthy Housing citation](payCitation)
+- [What happens after you report a housing or pest problem](afterReport)
 
 **Links in this text — recreate each with the Link tool, do not paste them:**
 
-- "Fix your Healthy Housing and Vector Control violation" → shape 5 — rich text Link tool → Internal link → "Fix your Healthy Housing and Vector Control violation"
 - "Property owner responsibilities" → shape 5 — rich text Link tool → Internal link → "Property owner responsibilities"
 - "Integrated pest management for property owners and managers" → shape 5 — rich text Link tool → Internal link → "Integrated pest management for property owners and managers"
 - "Prepare your unit for pest treatment" → shape 5 — rich text Link tool → Internal link → "Prepare your unit for pest treatment"
 - "What tenants need to do after a Notice of Violation" → shape 5 — rich text Link tool → Internal link → "What tenants need to do after a Notice of Violation"
-- "Get ready for a follow-up inspection" → shape 5 — rich text Link tool → Internal link → "Get ready for a follow-up inspection"
-- "Question a Notice of Violation" → shape 5 — rich text Link tool → Internal link → "Question a Notice of Violation"
+- "Appeal a Notice of Violation" → shape 5 — rich text Link tool → Internal link → "Appeal a Notice of Violation"
 - "Pay a Healthy Housing citation" → shape 5 — rich text Link tool → Internal link → "Pay a Healthy Housing citation"
+- "What happens after you report a housing or pest problem" → shape 5 — rich text Link tool → Internal link → "What happens after you report a housing or pest problem"
 
 ### Topics — \`topics\` [TYPE] — page not approved
 
@@ -5492,7 +4929,12 @@ An inspector will look at the conditions you reported. Being ready shortens the 
 
 If you rent, give 72 hours notice when you can before anyone enters a unit.
 
-- [Get ready for a housing inspection after you report](inspectionPrepInitial)
+- Clear a path to the area you reported so an inspector can see the condition.
+- If you gave contact information, an inspector may contact you to ask questions or schedule a visit.
+- Have photos of the condition ready, dated if possible.
+- Keep any messages with a property owner or manager about the problem.
+- An inspector may look at the condition you reported and nearby areas that could be related.
+- If you did not give contact information, an inspection may still happen without notice.
 
 **Step 4 — Title:**
 
@@ -5513,7 +4955,7 @@ Follow the correction work
 
 The notice sets what has to be corrected and by when. That deadline comes from the notice, not from this page.
 
-- [Fix your Healthy Housing and Vector Control violation](noticeOfViolation)
+- [Correct a violation and close your case](stepCorrectViolation)
 - [What tenants need to do after a Notice of Violation](tenantNoticeSteps)
 
 **Step 6 — Title:**
@@ -5524,7 +4966,7 @@ Confirm the work is done
 
 A case closes when the cited conditions are corrected and that has been confirmed. A follow-up inspection may be needed first.
 
-- [Get ready for a follow-up inspection](inspectionPrepFollowup)
+- Steps 5 and 6 of [Correct a violation and close your case](stepCorrectViolation) cover proof of the work and the re-inspection.
 
 **Links in this text — recreate each with the Link tool, do not paste them:**
 
@@ -5533,11 +4975,10 @@ A case closes when the cited conditions are corrected and that has been confirme
 - "Report garbage, mold, and overgrown vegetation" → shape 5 — rich text Link tool → Internal link → "Report garbage, mold, and overgrown vegetation"
 - "Report a problem in an SRO or hotel" → shape 5 — rich text Link tool → Internal link → "Report a problem in an SRO or hotel"
 - "Learn what Healthy Housing and Vector Control can inspect" → shape 5 — rich text Link tool → Internal link → "Learn what Healthy Housing and Vector Control can inspect"
-- "Get ready for a housing inspection after you report" → shape 5 — rich text Link tool → Internal link → "Get ready for a housing inspection after you report"
 - "What happens after you report a housing or pest problem" → shape 5 — rich text Link tool → Internal link → "What happens after you report a housing or pest problem"
-- "Fix your Healthy Housing and Vector Control violation" → shape 5 — rich text Link tool → Internal link → "Fix your Healthy Housing and Vector Control violation"
+- "Correct a violation and close your case" → shape 5 — rich text Link tool → Internal link → "Correct a violation and close your case"
 - "What tenants need to do after a Notice of Violation" → shape 5 — rich text Link tool → Internal link → "What tenants need to do after a Notice of Violation"
-- "Get ready for a follow-up inspection" → shape 5 — rich text Link tool → Internal link → "Get ready for a follow-up inspection"
+- "Correct a violation and close your case" → shape 5 — rich text Link tool → Internal link → "Correct a violation and close your case"
 
 ### Topics — \`topics\` [TYPE] — page not approved
 
@@ -5743,9 +5184,9 @@ Nothing below has a field to be typed into. It is listed rather than dropped, be
 exports[`transcript Markdown, every corpus page > tenantNoticeSteps 1`] = `
 "# What tenants need to do after a Notice of Violation — Karl transcript
 
-**Karl path:** New: Transaction → Content
+**Karl path:** New: Information → Content
 **Decision:** no review recorded
-**Page key:** \`tenantNoticeSteps\` · **Slug:** \`sf.gov/tenant-steps-after-notice-of-violation\` · **Type:** Transaction
+**Page key:** \`tenantNoticeSteps\` · **Slug:** \`sf.gov/information/tenant-steps-after-notice-of-violation\` · **Type:** Information
 
 **NOT APPROVED — do not publish from this transcript.** Approval in this tool is per page, not per field, so nothing below is signed off.
 
@@ -5763,74 +5204,37 @@ What tenants need to do after a Notice of Violation
 
 Learn your part when corrective actions are listed for your unit or building.
 
-### Primary agency — \`primary_agency\` [CHOOSE] — page not approved
+### Primary agency — \`primary_agency\` [FLAG] — page not approved
 
-_U6, narrowed — the mockup names the agency as text, not as a page reference, and Karl requires a page. Choose the parent Agency page: HHVC was approved for its own Agency page (sf.gov/departments--healthy-housing-and-vector-control), so that is the value for HHVC pages rather than Environmental Health or DPH. Those two remain Partner agencies._
+_U6 — supply the parent Agency page by hand; the mockup has no field for it._
 
-1. Choose page: "Healthy Housing and Vector Control"
+### Information section — \`information_section\` [TYPE] — page not approved
 
-### Cost — \`cost\` [TYPE] — page not approved
+_The Title "Who this information is for" is not in the mockup — this tool supplies it, matching sf.gov/manage-covid-19-schools-childcare-and-youth-programs, which renders the audience as an H3 with that title over a bulleted list. Add this block first, so every authored section below is one Information section block later than its place among the mockup sections._
 
-_Choose the Cost radio first (Free, Flat fee, Range, Minimum and up, None) — all five variants end at this same description field._
+**Title:**
 
-**Cost description:**
+Who this information is for
 
-Free
+**Text:**
 
-### Things to Know — \`things_to_know\` [TYPE] — page not approved
+- A tenant with corrective actions listed on a Notice of Violation
+- A tenant representative helping someone understand their next steps
 
-**Block 1 — Title:**
+### Information section — \`information_section\` [TYPE] — page not approved
 
-_(empty)_
+**Title:**
 
-**Block 1 — Text:**
+Prepare your unit
 
-Your Notice of Violation lists which actions apply to your unit.
+**Text:**
 
-**Block 2 — Title:**
-
-_(empty)_
-
-**Block 2 — Text:**
-
-A property owner or manager cannot retaliate against you for reporting a condition.
-
-### What to Do — \`what_to_do\` [TYPE] — page not approved
-
-_The mockup heading "Prepare your unit" is not typed anywhere — Karl's What to Do panel carries its own label. Each step below becomes one Section block._
-
-_A step with text, a button and a callout becomes ONE Section block whose Section specifics holds a Text, a Button link and a Callout as siblings — not fields on the step._
-
-**Section 1 — Section title:**
-
-Check what applies to you
-
-**Section 1 — Section specifics → Text:**
-
-Read your Notice of Violation to see which corrective actions are listed for your unit or a shared area.
-
-**Section 2 — Section title:**
-
-Get your unit ready
-
-**Section 2 — Section specifics → Text:**
-
+- Read your Notice of Violation to see which corrective actions are listed for your unit or a shared area.
 - Clear the area that needs treatment or repair so the work can be completed.
 - Follow any preparation instructions from your property owner, manager, or HHVC.
+- Allow properly noticed access to your unit for scheduled treatment, repair work, or a follow-up inspection.
 
-**Section 3 — Section title:**
-
-Allow access for treatment or inspection
-
-**Section 3 — Section specifics → Text:**
-
-Allow properly noticed access to your unit for scheduled treatment, repair work, or a follow-up inspection.
-
-### Custom Section — \`custom_section\` [TYPE] — page not approved
-
-⚠ Inferred mapping — verify the destination before saving.
-
-_Inferred mapping — the field map documents this panel only for supporting/flat sections. Transaction has no generic body stream and this is its only repeatable Title-and-text panel, so verify the destination before saving._
+### Information section — \`information_section\` [TYPE] — page not approved
 
 **Title:**
 
@@ -5840,17 +5244,15 @@ Know your rights during this process
 
 A Notice of Violation does not change your right to safe and habitable housing.
 
+A property owner or manager cannot retaliate against you for reporting a condition.
+
 - [Tenant rights when reporting housing conditions](tenantRights)
 
 **Links in this text — recreate each with the Link tool, do not paste them:**
 
 - "Tenant rights when reporting housing conditions" → shape 5 — rich text Link tool → Internal link → "Tenant rights when reporting housing conditions"
 
-### Custom Section — \`custom_section\` [TYPE] — page not approved
-
-⚠ Inferred mapping — verify the destination before saving.
-
-_Inferred mapping — the field map documents this panel only for supporting/flat sections. Transaction has no generic body stream and this is its only repeatable Title-and-text panel, so verify the destination before saving._
+### Information section — \`information_section\` [TYPE] — page not approved
 
 **Title:**
 
@@ -5861,28 +5263,23 @@ If nothing happens by the deadline
 Contact the investigator named on your notice if the property owner or manager has not started the corrective work.
 
 - [What happens after you report a housing or pest problem](afterReport)
-- [Fix your Healthy Housing and Vector Control violation](noticeOfViolation)
+- [Correct a violation and close your case](stepCorrectViolation)
 
 **Links in this text — recreate each with the Link tool, do not paste them:**
 
 - "What happens after you report a housing or pest problem" → shape 5 — rich text Link tool → Internal link → "What happens after you report a housing or pest problem"
-- "Fix your Healthy Housing and Vector Control violation" → shape 5 — rich text Link tool → Internal link → "Fix your Healthy Housing and Vector Control violation"
+- "Correct a violation and close your case" → shape 5 — rich text Link tool → Internal link → "Correct a violation and close your case"
+
+### Topics — \`topics\` [TYPE] — page not approved
+
+_topicTag is unmapped metadata — the stored values are Agency labels, not Topic chooser references. Do not paste one into this chooser._
 
 ### Related — \`related\` [CHOOSE] — page not approved
 
 _This block publishes the destination page’s title and a link, and NOTHING else. Choose the page and type no description._
 
-1. Choose page: "Fix your Healthy Housing and Vector Control violation" (\`noticeOfViolation\` → /sf.gov/fix-healthy-housing-and-vector-control-violation)
-2. Choose page: "Tenant rights when reporting housing conditions" (\`tenantRights\` → /sf.gov/information/tenant-rights-and-reporting-housing-conditions)
-3. Choose page: "What happens after you report a housing or pest problem" (\`afterReport\` → /sf.gov/information/what-happens-after-you-report-housing-pest-problem)
-
-### Topics — \`topics\` [TYPE] — page not approved
-
-_topicTag is unmapped metadata — the stored values are Agency labels, not Topic chooser references._
-
-### Redirect this page to — \`redirect_url\` [TYPE] — page not approved
-
-_Disabled by design — a ConditionalReadOnlyFieldPanel. Never type into it._
+1. Choose page: "Tenant rights when reporting housing conditions" (\`tenantRights\` → /sf.gov/information/tenant-rights-and-reporting-housing-conditions)
+2. Choose page: "What happens after you report a housing or pest problem" (\`afterReport\` → /sf.gov/information/what-happens-after-you-report-housing-pest-problem)
 
 ### Promote → For search engines — \`promote\` [TYPE] — page not approved
 
@@ -5890,7 +5287,7 @@ _The slug is REQUIRED and lives on the Promote tab, so a page cannot be saved fr
 
 **Slug (\`slug\`):**
 
-sf.gov/tenant-steps-after-notice-of-violation
+sf.gov/information/tenant-steps-after-notice-of-violation
 
 **Title tag (\`seo_title\`):**
 
@@ -5904,7 +5301,7 @@ Learn what to do as a tenant after a Healthy Housing and Vector Control Notice o
 
 Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
 
-- \`audience\` — The page carries \`audience\`, and Karl does have a home for it: a **Things to know** entry titled "Who this information is for". Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list. What blocks it is the budget, not the field: the Help Center caps Things to know at 2 entries, and most Transaction pages here already spend both, so placing the audience means deciding which existing entry it replaces. That is a content call, not a missing panel.
+- \`primaryAgency\` — The page carries \`primaryAgency\`, and no Information panel documented in the field map accepts it.
 "
 `;
 
@@ -6046,8 +5443,7 @@ _topicTag is unmapped metadata — the stored values are Agency labels, not Topi
 _This block publishes the destination page’s title and a link, and NOTHING else. Choose the page and type no description._
 
 1. Choose page: "What happens after you report a housing or pest problem" (\`afterReport\` → /sf.gov/information/what-happens-after-you-report-housing-pest-problem)
-2. Choose page: "Fix your Healthy Housing and Vector Control violation" (\`noticeOfViolation\` → /sf.gov/fix-healthy-housing-and-vector-control-violation)
-3. Choose page: "Learn what Healthy Housing and Vector Control can inspect" (\`scopeInfo\` → /sf.gov/information/learn-what-hhvc-can-inspect)
+2. Choose page: "Learn what Healthy Housing and Vector Control can inspect" (\`scopeInfo\` → /sf.gov/information/learn-what-hhvc-can-inspect)
 
 ### Promote → For search engines — \`promote\` [TYPE] — page not approved
 

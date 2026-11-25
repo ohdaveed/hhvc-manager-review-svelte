@@ -42,7 +42,7 @@ This tab overrides the other tabs. Build only what's under **Decided**. Everythi
 | Pests      | Report pigeon droppings, nesting, or feeding | Roosting, nesting, droppings, feathers, and people who feed pigeons                                                                       |
 | Sanitation | Report a sewage leak or backup               | Active sewage from a drain, toilet, cleanout or pipe, inside or outside a building                                                        |
 | Sanitation | Report animal waste on a property            | Dog and cat waste and raccoon droppings, on private property only                                                                         |
-| Sanitation | Report mold                                  | Visible mold, the 10 sq ft threshold, the moisture source, and a referral for leaks                                                       |
+| Sanitation | Report mold                                  | Visible mold, the 10 sq ft threshold, the moisture source, and a referral to DBI for leaks                                                |
 | Sanitation | Report garbage, clutter, or overgrown plants | Garbage, excessive materials, overgrown vegetation, with links to Adult Protective Services and the Fire Marshal                          |
 
 - **SRO:** remove the separate SRO report page. Add a 1-line "Live in an SRO or residential hotel?" note to each report page instead. Confirmed: all complaints go to one clerk, who assigns SRO cases to senior inspectors, so there's no separate intake.
@@ -81,6 +81,63 @@ This tab overrides the other tabs. Build only what's under **Decided**. Everythi
   - **Adult Protective Services:** when an older or dependent adult living with excessive materials may need help
   - **The Fire Marshal:** when stored materials block exits or create a fire risk
   - Link the SF.gov pages for both. Phrase them as offers of help, not threats of enforcement.
+
+### Pages that aren't transactions (C1, decided Nov 24, 2026)
+
+All 6 change type or merge. Each one changes the page's URL and its `pages.path` row.
+
+- **Fix your HHVC violation:** merge into the step-by-step _Correct a violation and close your case_.
+- **Get ready for a follow-up inspection:** folds into _Correct a violation and close your case_, not an Information page. "Document your work" goes into step 5 (_Keep proof of the work_) and "What to expect at the follow-up visit" into step 6 (_Pass the re-inspection_). The page is removed.
+- **Get ready for a housing inspection after you report:** folds into step 3 (_Get ready for the inspection_) of _Report a pest problem, start to finish_. That inspection comes before any violation, so it doesn't belong in the violation step-by-step. The page is removed.
+- **What tenants need to do after a Notice of Violation:** Information page.
+- **Find complaints and inspection records** and **Look up residential health code violations:** combine into one Transaction.
+
+### Custom headings become "What to do" (C2, decided Nov 24, 2026)
+
+Rename the custom heading to "What to do" on the Transaction pages that keep their type: public records, inspector lookup, complaints records (the combined lookup from C1) and hotel records. The other 3 of the 7 leave the Transaction type under C1: the 2 "get ready" pages become steps and tenant steps becomes an Information page, so their headings don't need renaming.
+
+### Placeholder pages are not Blocked (C3, decided Nov 24, 2026)
+
+The citation and inspector lookup pages stay as they are. This is a mockup: the payment link and the lookup tool get filled in when the editor builds the live Karl page, so the mockup doesn't wait on them.
+
+### Disallowed Related links wait for the Topic merge (C4, decided Nov 24, 2026)
+
+Leave the Related links to _Look up building records_ in place for now. The Topic page merge retires that Resource Collection, and its links go with it. Not covered by the merge: the inspector lookup page's link to the HHVC Agency page.
+
+### Drop articles from URLs (C5, decided Nov 24, 2026)
+
+The 3 Transaction URLs that keep their page lose the "a". The 2 "get ready" pages are removed under C1, so they aren't renamed.
+
+| Now                                                  | New                                                |
+| ---------------------------------------------------- | -------------------------------------------------- |
+| `pay-a-healthy-housing-citation`                     | `pay-healthy-housing-citation`                     |
+| `appeal-a-notice-of-violation`                       | `appeal-notice-of-violation`                       |
+| `make-a-public-records-request-environmental-health` | `make-public-records-request-environmental-health` |
+
+- **The appeal page's title changes to match its URL:** "Question a Notice of Violation" becomes "Appeal a Notice of Violation". The URL keeps "appeal" rather than changing to "question".
+- Each rename changes the page's `pages.path` row too.
+
+### Descriptions don't repeat the title (C6, decided Nov 24, 2026)
+
+Rewrite each description that reuses title words, using the Analysis panel's list for that page. Less is more: cut the repeated words rather than replace them with new ones, and keep the description short.
+
+> **Amended Nov 25, 2026:** the owner replaced "cut rather than replace" with this standard: start with a verb, add 1–2 terms the title doesn't have, repeat at most one title word, and stay around 70–100 characters (never over Karl's 110). Reasons: Karl's Description guidance (explain the action, use keywords not in the title) and Google's meta-description guidance (too-short descriptions are an anti-pattern). Implemented in #211 on 18 pages. The annual fee page stays unchanged (C7). Both "get ready" pages and _Fix your HHVC violation_ also stay unchanged, because C1 removes or merges them.
+
+### Annual fee page: no changes in the mockup (C7, decided Nov 24, 2026)
+
+Leave the page as it is: the due-date wording, the $115 vs. $117 half-hour reinspection fee and the "What the annual fee supports" callout. They get fixed when the page moves to Karl.
+
+### Mold from a leak goes to DBI (C8, decided Nov 24, 2026)
+
+The Department of Building Inspection handles mold caused by a leak. The mold page's leak referral names DBI.
+
+### Reading level stays at grade 6–7 (C9, decided Nov 24, 2026)
+
+Keep the app's per-page targets of grade 6–7. Don't score against Karl's grade 5 guideline.
+
+### Contact us on the appeal page (C10, decided Nov 24, 2026)
+
+_Appeal a Notice of Violation_ gets a Contact us block, since contacting the investigator is its main action. The other 2 pages raised don't: _Fix your HHVC violation_ merges into the step-by-step (C1), and the annual fee page waits for the Karl transfer (C7).
 
 ### Sewage page
 

@@ -63,8 +63,35 @@ export const stepPestReport = {
 						'An inspector will look at the conditions you reported. Being ready shortens the visit and avoids a second one.',
 						'If you rent, give 72 hours notice when you can before anyone enters a unit.'
 					],
-					bullets: ['[Get ready for a housing inspection after you report](inspectionPrepInitial)'],
-					karl: 'Step 3. Transaction link: inspectionPrepInitial. The 72-hour line is carried verbatim from filthReport rather than restated, so the two pages cannot drift.'
+					bullets: [
+						{
+							text: 'Clear a path to the area you reported so an inspector can see the condition.',
+							unverified: true,
+							unverifiedReason:
+								'What specifically an inspector needs access to has no tier-1 source. Confirm with HHVC before publication.'
+						},
+						'If you gave contact information, an inspector may contact you to ask questions or schedule a visit.',
+						{
+							text: 'Have photos of the condition ready, dated if possible.',
+							unverified: true,
+							unverifiedReason:
+								'Whether photos help an inspection, and any specific format HHVC prefers, has no tier-1 source. Confirm with HHVC before publication.'
+						},
+						{
+							text: 'Keep any messages with a property owner or manager about the problem.',
+							unverified: true,
+							unverifiedReason:
+								'Whether HHVC uses prior tenant-to-owner communication during an inspection has no tier-1 source. Confirm with HHVC before publication.'
+						},
+						{
+							text: 'An inspector may look at the condition you reported and nearby areas that could be related.',
+							unverified: true,
+							unverifiedReason:
+								'The scope of what an inspector checks beyond the reported condition has no tier-1 source. Confirm with HHVC before publication.'
+						},
+						'If you did not give contact information, an inspection may still happen without notice.'
+					],
+					karl: 'Step 3. Transaction link: none. Get ready for a housing inspection after you report folded into this step (C1, decided Nov 24, 2026) and is removed; its checklist is the bullets, each unverified line still flagged. The 72-hour line is carried verbatim from filthReport rather than restated, so the two pages cannot drift.'
 				},
 				{
 					title: 'Read what the inspection found',
@@ -83,18 +110,20 @@ export const stepPestReport = {
 						'The notice sets what has to be corrected and by when. That deadline comes from the notice, not from this page.'
 					],
 					bullets: [
-						'[Fix your Healthy Housing and Vector Control violation](noticeOfViolation)',
+						'[Correct a violation and close your case](stepCorrectViolation)',
 						'[What tenants need to do after a Notice of Violation](tenantNoticeSteps)'
 					],
-					karl: 'Step 5. Transaction link: noticeOfViolation. No interval is stated here on purpose — the correction period is set per notice and the corpus has no confirmed default.'
+					karl: 'Step 5. Transaction link: none. noticeOfViolation merged into the Correct a violation Step by step (C1), which the first bullet links; the Transaction link chooser takes Transaction pages only. No interval is stated here on purpose — the correction period is set per notice and the corpus has no confirmed default.'
 				},
 				{
 					title: 'Confirm the work is done',
 					text: [
 						'A case closes when the cited conditions are corrected and that has been confirmed. A follow-up inspection may be needed first.'
 					],
-					bullets: ['[Get ready for a follow-up inspection](inspectionPrepFollowup)'],
-					karl: 'Step 6. Transaction link: inspectionPrepFollowup. This step is where the proposed "Tell us your violation is fixed" Transaction would attach if it is built — the plan lists it separately and it belongs here as detail, not as a sibling page.'
+					bullets: [
+						'Steps 5 and 6 of [Correct a violation and close your case](stepCorrectViolation) cover proof of the work and the re-inspection.'
+					],
+					karl: 'Step 6. Transaction link: none. Get ready for a follow-up inspection folded into Steps 5 and 6 of the Correct a violation Step by step (C1) and is removed. This step is where the proposed "Tell us your violation is fixed" Transaction would attach if it is built — the plan lists it separately and it belongs here as detail, not as a sibling page.'
 				}
 			]
 		},

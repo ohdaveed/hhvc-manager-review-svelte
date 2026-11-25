@@ -131,11 +131,7 @@ export const payFee = {
 					target: 'ownerHub',
 					karl: 'Related panel page chooser entry.'
 				},
-				{
-					title: 'Fix your Healthy Housing and Vector Control violation',
-					target: 'noticeOfViolation',
-					karl: 'Related panel page chooser entry. This is the appropriate route for a Notice of Violation, not the annual-fee payment path.'
-				},
+
 				{
 					title: 'Look up building records',
 					target: 'recordsHub',
