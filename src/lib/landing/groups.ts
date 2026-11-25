@@ -42,7 +42,7 @@ export const PAGE_GROUPS = [
 			'information-learn-what-hhvc-can-inspect',
 			'find-healthy-housing-inspector-by-neighborhood',
 			'step-by-step-correct-a-violation-and-close-your-case',
-			'appeal-notice-of-violation',
+			'question-notice-of-violation',
 			'information-tenant-steps-after-notice-of-violation',
 			'report-health-code-article-11-plain-language'
 		]

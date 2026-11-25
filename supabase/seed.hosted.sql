@@ -55,7 +55,7 @@ FROM (
       ('step-by-step-prepare-your-unit-for-pest-treatment'),
       ('location-environmental-health-office'),
       ('information-who-to-call-about-a-housing-problem'),
-      ('appeal-notice-of-violation'),
+      ('question-notice-of-violation'),
       ('pay-healthy-housing-citation'),
       ('resource-guides-in-other-languages'),
       ('rat-free-blocks'),
