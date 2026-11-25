@@ -2,8 +2,7 @@ export const tenantNoticeSteps = {
 	slug: 'sf.gov/tenant-steps-after-notice-of-violation',
 	type: 'Transaction',
 	title: 'What tenants need to do after a Notice of Violation',
-	summary:
-		'Learn what to do if a Notice of Violation lists corrective actions for your unit or building.',
+	summary: 'Learn your part when corrective actions are listed for your unit or building.',
 	primaryAgency: 'Healthy Housing and Vector Control',
 	audience: [
 		'A tenant with corrective actions listed on a Notice of Violation',

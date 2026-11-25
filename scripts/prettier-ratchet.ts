@@ -43,8 +43,11 @@ import { spawnSync } from 'node:child_process';
  * Lowered 50 -> 46 in the findings-audit branch: the per-file format hook
  * reformatted four already-unformatted data modules as a side effect of
  * editing their copy. Banked rather than left as slack, per the rule below.
+ *
+ * Lowered 46 -> 43 when completed plans and specs under `docs/` were deleted;
+ * three of them were unformatted.
  */
-const BASELINE = 46;
+const BASELINE = 43;
 
 const tracked = spawnSync('git', ['ls-files'], {
 	encoding: 'utf-8',

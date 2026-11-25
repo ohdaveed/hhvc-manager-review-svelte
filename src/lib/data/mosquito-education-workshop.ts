@@ -2,8 +2,7 @@ export const mosquitoWorkshop = {
 	slug: 'sf.gov/mosquito-education-workshop',
 	type: 'Campaign',
 	title: 'Free mosquito education workshop',
-	summary:
-		'Request a free mosquito science workshop for schools, camps, museums, and science fairs.',
+	summary: 'Request a no-cost science session for schools, camps, museums, and science fairs.',
 	audience: [
 		'This page is for teachers, youth program leaders, and families who want to host a free mosquito science workshop.'
 	],

@@ -2,8 +2,7 @@ export const findHotelRecords = {
 	slug: 'sf.gov/find-residential-hotel-and-shelter-records',
 	type: 'Transaction',
 	title: 'Find residential hotel and shelter records',
-	summary:
-		'Look up inspection and program records for SROs, residential hotels, and emergency shelters.',
+	summary: 'Look up inspection and program history for SROs and emergency shelters.',
 	primaryAgency: 'Healthy Housing and Vector Control',
 	audience: [
 		'A resident of a single room occupancy (SRO) hotel or residential hotel',

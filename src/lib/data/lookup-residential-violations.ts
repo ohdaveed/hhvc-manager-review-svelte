@@ -3,7 +3,7 @@ export const findViolations = {
 	type: 'Transaction',
 	title: 'Look up residential health code violations',
 	summary:
-		'Search violation and inspection history for residential buildings under the SF Health Code.',
+		'Search inspection and enforcement history for any residential address in San Francisco.',
 	primaryAgency: 'Healthy Housing and Vector Control',
 	audience: [
 		'A tenant researching prior violations at a building',

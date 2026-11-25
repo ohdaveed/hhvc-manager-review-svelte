@@ -2,7 +2,7 @@ export const inspectorLookup = {
 	slug: 'sf.gov/find-healthy-housing-inspector-by-neighborhood',
 	type: 'Transaction',
 	title: 'Find your Healthy Housing inspector by neighborhood',
-	summary: 'Look up which Healthy Housing and Vector Control inspector covers your neighborhood.',
+	summary: 'Look up the Environmental Health inspector assigned to your part of San Francisco.',
 	primaryAgency: 'Healthy Housing and Vector Control',
 	audience: [
 		'A tenant checking who their assigned inspector is',

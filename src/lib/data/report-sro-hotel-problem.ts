@@ -3,7 +3,7 @@ export const sroHotelReport = {
 	type: 'Transaction',
 	title: 'Report a problem in an SRO or hotel',
 	summary:
-		'Report a pest, garbage, or housing health problem in a single room occupancy (SRO) hotel or residential hotel.',
+		'Tell us about pests, garbage, or health hazards in a single room occupancy or residential hotel.',
 	primaryAgency: 'Healthy Housing and Vector Control',
 	audience: [
 		'A resident of an SRO or residential hotel',

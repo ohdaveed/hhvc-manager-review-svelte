@@ -2,8 +2,7 @@ export const aboutHhvcTeam = {
 	slug: 'sf.gov/departments--healthy-housing-and-vector-control--about',
 	type: 'About us',
 	title: 'About Healthy Housing and Vector Control',
-	summary:
-		'Who we are, what we do, and how the Healthy Housing and Vector Control team is organized.',
+	summary: 'Meet the Environmental Health team that inspects homes and responds to pest reports.',
 	audience: [
 		'Anyone who wants to know more about the Healthy Housing and Vector Control program and the people who run it.'
 	],

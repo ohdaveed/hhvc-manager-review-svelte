@@ -14,7 +14,8 @@ export const inspectionsAnnual = {
 	editorStatus: 'needs-review',
 	sections: [
 		{
-			heading: 'About these figures',
+			heading: 'What this summary counts',
+			fieldKey: 'about-these-figures',
 			karl: 'Report Content → Title and text block. Placed before the tables so a reader knows what is counted before they read a count — the same ordering article11Guide uses for its disclaimer.',
 			kind: 'body',
 			paragraphs: [

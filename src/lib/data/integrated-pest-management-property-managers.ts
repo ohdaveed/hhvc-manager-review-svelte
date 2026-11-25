@@ -17,7 +17,8 @@ export const ownerGuidance = {
 	},
 	sections: [
 		{
-			heading: 'Why it matters',
+			heading: 'Protect residents’ health',
+			fieldKey: 'why-it-matters',
 			karl: 'Maps to an "Information section" → Title and text block: Title = this heading, Text = the two paragraphs below (cross-vector health-harm framing for owners/managers, placed first to motivate prevention). Verify disease-risk specifics with SFDPH vector program before publication.',
 			kind: 'body',
 			paragraphs: [
@@ -46,7 +47,8 @@ export const ownerGuidance = {
 			]
 		},
 		{
-			heading: 'Primary source: UC IPM guide for property managers',
+			heading: 'Use the UC IPM guide for property managers',
+			fieldKey: 'primary-source-uc-ipm-guide-for-property-managers',
 			component: 'resources',
 			karl: 'Maps to a third Title and text block: Title = this heading, Text = the two paragraphs below.',
 			kind: 'placement',
