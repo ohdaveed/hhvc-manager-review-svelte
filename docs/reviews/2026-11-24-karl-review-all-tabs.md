@@ -104,6 +104,19 @@ The citation and inspector lookup pages stay as they are. This is a mockup: the 
 
 Leave the Related links to _Look up building records_ in place for now. The Topic page merge retires that Resource Collection, and its links go with it. Not covered by the merge: the inspector lookup page's link to the HHVC Agency page.
 
+### Drop articles from URLs (C5, decided Nov 24, 2026)
+
+The 3 Transaction URLs that keep their page lose the "a". The 2 "get ready" pages are removed under C1, so they aren't renamed.
+
+| Now                                                  | New                                                |
+| ---------------------------------------------------- | -------------------------------------------------- |
+| `pay-a-healthy-housing-citation`                     | `pay-healthy-housing-citation`                     |
+| `appeal-a-notice-of-violation`                       | `appeal-notice-of-violation`                       |
+| `make-a-public-records-request-environmental-health` | `make-public-records-request-environmental-health` |
+
+- **The appeal page's title changes to match its URL:** "Question a Notice of Violation" becomes "Appeal a Notice of Violation". The URL keeps "appeal" rather than changing to "question".
+- Each rename changes the page's `pages.path` row too.
+
 ### Sewage page
 
 "Report a sewage leak or backup" covers sewage from a drain, toilet, cleanout or pipe, inside or outside a building, including yards and shared areas. HHVC responds within 48 hours of the complaint. The owner hires a plumber, and HHVC confirms the sewage is removed and the area sanitized. A leaking pipe with no sewage goes to another agency.
