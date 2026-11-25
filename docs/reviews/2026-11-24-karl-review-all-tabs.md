@@ -133,6 +133,10 @@ The Department of Building Inspection handles mold caused by a leak. The mold pa
 
 Keep the app's per-page targets of grade 6–7. Don't score against Karl's grade 5 guideline.
 
+### Contact us on the appeal page (C10, decided Nov 24, 2026)
+
+_Appeal a Notice of Violation_ gets a Contact us block, since contacting the investigator is its main action. The other 2 pages raised don't: _Fix your HHVC violation_ merges into the step-by-step (C1), and the annual fee page waits for the Karl transfer (C7).
+
 ### Sewage page
 
 "Report a sewage leak or backup" covers sewage from a drain, toilet, cleanout or pipe, inside or outside a building, including yards and shared areas. HHVC responds within 48 hours of the complaint. The owner hires a plumber, and HHVC confirms the sewage is removed and the area sanitized. A leaking pipe with no sewage goes to another agency.
