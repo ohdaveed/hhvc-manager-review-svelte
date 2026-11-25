@@ -3,13 +3,13 @@ export const mosquitoControl = {
 	type: 'Information',
 	title: 'Mosquito Control Program',
 	summary:
-		'Learn about mosquito surveillance, catch-basin treatment, and how to report standing water.',
+		'Learn about mosquito surveillance, catch-basin treatment, and where to report standing water.',
 	audience: [
 		'This page is for residents and property owners or managers dealing with standing water or mosquitoes.'
 	],
 	reading: 'Grade 7',
 	editorNote:
-		'SF.gov landing page for Vector Control / Mosquito Control Program resources. Primary CTA opens SFMosquito.org. Verify phone numbers and external URLs before publication.',
+		'SF.gov landing page for Vector Control / Mosquito Control Program resources. Primary CTA opens SFMosquito.org. Verify phone numbers and external URLs before publication. 2026-11-25 (report regroup, Decided Nov 24, 2026): the "Report mosquitoes or standing water" task section is removed, and the page links to the new Report mosquitoes or standing water Transaction instead. That section carried the unverified 415-252-3806 program number, which goes with it; confirm the program line with HHVC if the number is wanted back.',
 	sections: [
 		{
 			heading: 'What the program does',
@@ -18,24 +18,6 @@ export const mosquitoControl = {
 			paragraphs: [
 				'The San Francisco Mosquito Control Program is part of Healthy Housing and Vector Control. The program monitors mosquito activity and treats catch basins and standing water when appropriate. It also responds to reports that may affect public health.',
 				'Mosquitoes can spread diseases such as West Nile virus. Reducing standing water around homes and buildings is the most effective way to prevent breeding.'
-			]
-		},
-		{
-			heading: 'Report mosquitoes or standing water',
-			karl: 'Paragraphs and bullets map to a second Title and text block (Title = this heading, Text = the paragraph plus the bulleted list). Resolved schema gap: the verified Information form has no confirmed button/CTA block type (button converted to inline link) — folded into this block’s rich text as a Link-tool link (Internal link → the insectsReport Transaction page), or via the "Part of" repeatable field (a page chooser restricted to Transaction pages) if this Information page is marked as supporting that Transaction — flag both options for Digital Services rather than assuming either.',
-			kind: 'body',
-			paragraphs: [
-				'You can report standing water or mosquito concerns through 311 or by contacting the Mosquito Control Program directly.',
-				'[Report cockroaches, mosquitoes, and other insects through 311](insectsReport)'
-			],
-			bullets: [
-				'Call 311 within San Francisco or (415) 701-2311 from outside the city',
-				{
-					text: 'Contact the Mosquito Control Program at 415-252-3806 for unusual mosquito activity',
-					unverified: true,
-					unverifiedReason:
-						'Phone number 415-252-3806 appears in no tier-1/2/3 source doc (source-of-truth audit 2026-07-06, cross-cutting finding #2). The tier-1-confirmed DPH number is 415-252-3800 — this reads as a digit swap. Confirm the real program line with HHVC before publication.'
-				}
 			]
 		},
 		{
@@ -73,8 +55,8 @@ export const mosquitoControl = {
 					target: 'mosquitoWorkshop'
 				},
 				{
-					title: 'Report cockroaches, mosquitoes, and other insects',
-					target: 'insectsReport'
+					title: 'Report mosquitoes or standing water',
+					target: 'mosquitoReport'
 				}
 			]
 		}

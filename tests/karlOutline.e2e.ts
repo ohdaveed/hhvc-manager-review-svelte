@@ -19,14 +19,16 @@ const RULES = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];
 
 const PILOTS = [
 	{
-		slug: 'report-rats-mice-four-legged-problems',
-		summary: '5 sections: 3 go into Karl, 2 unconfirmed. 2 things won’t carry over to Karl.',
-		sections: { placed: 4, unconfirmed: 2 }
+		slug: 'report-rats-or-mice',
+		// 4 sections since the report regroup moved the shared report text out (2026-11-25).
+		summary: '4 sections: 3 go into Karl, 1 unconfirmed. 2 things won’t carry over to Karl.',
+		sections: { placed: 4, unconfirmed: 1 }
 	},
 	{
 		slug: 'information-what-happens-after-you-report-housing-pest-problem',
-		summary: '5 sections: 5 go into Karl. 1 thing won’t carry over to Karl.',
-		sections: { placed: 5, unplaced: 1 }
+		// 6 sections since "Who can report" took the shared report text (2026-11-25).
+		summary: '6 sections: 6 go into Karl. 1 thing won’t carry over to Karl.',
+		sections: { placed: 6, unplaced: 1 }
 	},
 	{
 		slug: 'property-owner-responsibilities-hhvc',
@@ -157,7 +159,7 @@ test.describe('Karl outline', () => {
 	}
 
 	test('a field with a reason of its own describes it to a screen reader', async ({ page }) => {
-		await gotoSignedIn(page, '/review/report-rats-mice-four-legged-problems');
+		await gotoSignedIn(page, '/review/report-rats-or-mice');
 		await switchOnByKeyboard(page);
 		// The "View Article 11" button has no Karl home (U1).
 		const target = page.locator(
@@ -169,7 +171,7 @@ test.describe('Karl outline', () => {
 	});
 
 	test('stays on across pages and a reload', async ({ page }) => {
-		await gotoSignedIn(page, '/review/report-rats-mice-four-legged-problems');
+		await gotoSignedIn(page, '/review/report-rats-or-mice');
 		await switchOnByKeyboard(page);
 		await page.reload();
 		await page.waitForLoadState('networkidle');

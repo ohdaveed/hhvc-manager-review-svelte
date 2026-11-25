@@ -98,7 +98,8 @@ export const OPEN_QUESTIONS: OpenQuestion[] = [
 		question:
 			'Should residents be told not to rely on third-party mold test kits when they report?',
 		fields: [
-			{ slug: 'sf.gov/report-garbage-filth-vegetation', path: 'sections.0.steps.2.bullets.1' }
+			{ slug: 'sf.gov/report-garbage-filth-vegetation', path: 'sections.0.steps.2.bullets.1' },
+			{ slug: 'sf.gov/report-mold', path: 'sections.0.steps.3.bullets.6' }
 		]
 	},
 	{
@@ -113,7 +114,7 @@ export const OPEN_QUESTIONS: OpenQuestion[] = [
 			'What is the correct legal citation, if any, for routing structural water intrusion to DBI?',
 		note: '"San Francisco Housing Code (2025)" has no tier-1 source. If there is no citation, the copy should say it "may be routed to DBI".',
 		fields: [
-			{ slug: HAPPENS, path: 'sections.0.steps.2.text.0' },
+			{ slug: HAPPENS, path: 'sections.1.steps.2.text.0' },
 			{ slug: 'sf.gov/information/learn-what-hhvc-can-inspect', path: 'sections.4.bullets.0' }
 		]
 	},
@@ -157,26 +158,26 @@ export const OPEN_QUESTIONS: OpenQuestion[] = [
 		id: 'standard-correction-window',
 		question: 'Is there a standard correction window for violations, and how long is it?',
 		note: 'Mockup says 30 days. The only tier-1 "30 days" is the fee late-payment period.',
-		fields: [{ slug: HAPPENS, path: 'sections.3.bullets.2' }]
+		fields: [{ slug: HAPPENS, path: 'sections.4.bullets.2' }]
 	},
 	{
 		id: 'sewage-correction-window',
 		question: 'Is there a shorter correction window for sewage backups, and how long is it?',
 		note: 'Mockup says 48 to 72 hours; no tier-1 source mentions sewage backups.',
-		fields: [{ slug: HAPPENS, path: 'sections.3.bullets.1' }]
+		fields: [{ slug: HAPPENS, path: 'sections.4.bullets.1' }]
 	},
 	{
 		id: 'interest-wording',
 		question:
 			'The interest wording on the after-you-report page does not match the source and needs correcting.',
 		note: 'Copy says "1.5% compounded monthly interest"; the source says it "accrues at 1.5% per month" (fact unpaid-invoice-interest). A copy fix, not a research question.',
-		fields: [{ slug: HAPPENS, path: 'sections.3.bullets.6' }]
+		fields: [{ slug: HAPPENS, path: 'sections.4.bullets.6' }]
 	},
 	{
 		id: 'enforcement-chain',
 		question:
 			"Can persistent violations lead to citations, civil liability, or a Director's Hearing that recovers attorneys' fees and abatement costs?",
-		fields: [{ slug: HAPPENS, path: 'sections.3.bullets.7' }]
+		fields: [{ slug: HAPPENS, path: 'sections.4.bullets.7' }]
 	},
 	{
 		id: 'partial-correction',
@@ -226,10 +227,7 @@ export const OPEN_QUESTIONS: OpenQuestion[] = [
 		id: 'mosquito-program-phone',
 		question: 'What is the Mosquito Control Program phone number?',
 		note: 'Mockup uses 415-252-3806, which appears in no source; the audit found 415-252-3800 as a tier-1 SFDPH number and suspects a digit swap.',
-		fields: [
-			{ slug: MOSQUITO_WS, path: 'sections.5.facts.0' },
-			{ slug: 'sf.gov/mosquito-control-program', path: 'sections.1.bullets.1' }
-		]
+		fields: [{ slug: MOSQUITO_WS, path: 'sections.5.facts.0' }]
 	},
 	{
 		id: 'mosquito-workshop-request',

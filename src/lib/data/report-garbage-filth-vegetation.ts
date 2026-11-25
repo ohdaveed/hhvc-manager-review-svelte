@@ -12,7 +12,7 @@ export const filthReport = {
 	],
 	reading: 'Grade 6',
 	editorNote:
-		'Consolidated Transaction page. Replaces the separate "Report garbage or clutter", "Report overgrown vegetation", "Report pigeons", and "Report mold in my home" pages. The mold integration keeps one primary 311 CTA, adds leak-versus-condensation guidance and the SFDPH 10-square-foot walls/ceiling review threshold, and does not restate the source page’s unsupported assignment of all condensation-caused mold to a tenant. The "While you wait" section is the Supporting information block requested by the manager.',
+		'Consolidated Transaction page. Replaces the separate "Report garbage or clutter", "Report overgrown vegetation", "Report pigeons", and "Report mold in my home" pages. The mold integration keeps one primary 311 CTA, adds leak-versus-condensation guidance and the SFDPH 10-square-foot walls/ceiling review threshold, and does not restate the source page’s unsupported assignment of all condensation-caused mold to a tenant. The "While you wait" section is the Supporting information block requested by the manager. 2026-11-25 (report regroup, Decided Nov 24, 2026): Report mold and Report garbage, clutter, or overgrown plants now cover those conditions. This page stays until animal waste and pigeons get their own pages, then it is retired; until then its mold, garbage and vegetation content overlaps the new pages.',
 	whatToKnow: {
 		cost: 'Free',
 		// Reorganized into ~2 named subsections (Karl's own "no more than 2, if
@@ -175,7 +175,7 @@ export const filthReport = {
 					target: 'afterReport'
 				},
 				{
-					title: 'Report rats, mice, and other four-legged problems',
+					title: 'Report rats or mice',
 					target: 'rodentsReport'
 				},
 				{

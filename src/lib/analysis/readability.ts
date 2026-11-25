@@ -78,7 +78,7 @@ export type Readability = {
  *
  * Three of these materially move the score and are easy to drop by accident:
  * URLs, email addresses and bare integers are all REMOVED. An ARI that counts
- * `https://sf.gov/report-rats-mice-four-legged-problems` as one 52-letter word
+ * `https://sf.gov/report-rats-or-mice` as one 52-letter word
  * reports college level for a page written at 6th grade, and "72" as a word
  * shortens the mean word length in the other direction. Smart quotes and en/em
  * dashes are folded to ASCII so the letter count does not depend on which

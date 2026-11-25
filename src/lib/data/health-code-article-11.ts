@@ -138,9 +138,9 @@ export const article11Guide = {
 			],
 			cards: [
 				{
-					title: 'Report mold from humidity or condensation',
+					title: 'Report mold',
 					text: 'Use 311 to report mold and describe the moisture source and affected area.',
-					target: 'filthReport',
+					target: 'moldReport',
 					karl: 'Report Content -> inline page link. The Card is mockup presentation; use a text link in Karl if Report has no page-card block.'
 				},
 				{
@@ -176,7 +176,7 @@ export const article11Guide = {
 			],
 			cards: [
 				{
-					title: 'Report rats, mice, and other four-legged problems',
+					title: 'Report rats or mice',
 					text: 'Report rodents, burrows, droppings, and related pest concerns.',
 					target: 'rodentsReport',
 					karl: 'Report Content -> inline page link.'

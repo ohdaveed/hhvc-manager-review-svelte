@@ -38,8 +38,11 @@ export const stepPestReport = {
 						'Start with 311. Pick the report that matches what you have seen — the condition decides which team responds, not the building.'
 					],
 					bullets: [
-						'[Report rats, mice, and other four-legged problems](rodentsReport)',
+						'[Report rats or mice](rodentsReport)',
+						'[Report mosquitoes or standing water](mosquitoReport)',
 						'[Report cockroaches, mosquitoes, and other insects](insectsReport)',
+						'[Report mold](moldReport)',
+						'[Report garbage, clutter, or overgrown plants](garbageReport)',
 						'[Report garbage, mold, and overgrown vegetation](filthReport)',
 						'[Report a problem in an SRO or hotel](sroHotelReport)',
 						'You can report a building you do not live in, and you can report on behalf of someone else.'

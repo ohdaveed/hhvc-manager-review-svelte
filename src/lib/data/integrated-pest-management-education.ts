@@ -153,7 +153,7 @@ export const ipmEducation = {
 					karl: 'Maps to a related_links entry (Link to = SF.gov page, Page = this target, Link text = this title).'
 				},
 				{
-					title: 'Report rats, mice, and other four-legged problems',
+					title: 'Report rats or mice',
 					target: 'rodentsReport',
 					karl: 'Maps to a related_links entry (Link to = SF.gov page, Page = this target, Link text = this title).'
 				},

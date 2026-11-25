@@ -13,7 +13,7 @@ export const insectsReport = {
 	],
 	reading: 'Grade 6',
 	editorNote:
-		'Consolidated Transaction page. Replaces the separate "Report cockroaches", "Report bed bugs", and "Report mosquitoes" pages, absorbs the fly, wasp, and mite reporting paths from the deleted species Information pages, and routes dead-bird reports to the State West Nile virus program (manager decision at plan review). One primary 311 CTA. The "While you wait" section is the Supporting information block requested by the manager.',
+		'Consolidated Transaction page. Replaces the separate "Report cockroaches", "Report bed bugs", and "Report mosquitoes" pages, absorbs the fly, wasp, and mite reporting paths from the deleted species Information pages, and routes dead-bird reports to the State West Nile virus program (manager decision at plan review). One primary 311 CTA. The "While you wait" section is the Supporting information block requested by the manager. 2026-11-25 (report regroup, Decided Nov 24, 2026): Report mosquitoes or standing water now covers mosquitoes and the dead-bird referral. This page stays until the bed bug page is built and it is rebuilt as "Report cockroaches or other insects"; until then its mosquito content overlaps the new page.',
 	whatToKnow: {
 		cost: 'Free',
 		// Reorganized into ~2 named subsections (Karl's own "no more than 2, if

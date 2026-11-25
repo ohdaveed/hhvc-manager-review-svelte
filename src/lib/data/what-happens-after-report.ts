@@ -9,6 +9,18 @@ export const afterReport = {
 	reading: 'Grade 7',
 	sections: [
 		{
+			heading: 'Who can report',
+			karl: 'Maps to an "Information section" → Title and text block: Title = this heading, Text = the paragraph plus the bulleted list. Added 2026-11-25 under the Decided shared-content rule: text every report page used to repeat (reporting anonymously, reporting for someone else, language help, the landlord notice) lives here and on Tenant rights, and the report pages keep only what is specific to their condition.',
+			kind: 'body',
+			paragraphs: ['Anyone can report a housing or pest problem to 311.'],
+			bullets: [
+				'You can report anonymously. 311 does not require your name.',
+				'You can report even if you are not the tenant. A friend, family member, advocate, or helper can report for someone else.',
+				'You can ask 311 for help in your language.',
+				'If you rent, tell your landlord first, unless the problem is urgent. [Tenant rights when reporting housing conditions](tenantRights) explains how long to wait.'
+			]
+		},
+		{
 			heading: 'How a report moves through the City',
 			karl: 'This section\'s steps[] don\'t match a single "Title and text/Image/Callout" block directly — but since the "Information section" stream field is repeatable, each step below maps to its own separate Title and text block (Title = step title, Text = step paragraph(s)), not one combined block. Note: the mockup\'s numbered "you report / HHVC reviews / inspector contacts / inspection happens" sequence and step-by-step visual styling has no confirmed equivalent in the Information page template — Karl\'s Title and text blocks are plain sequential stream items with no built-in step-numbering, so if that visual sequencing matters, flag it as a separate presentation gap for Digital Services.',
 			kind: 'body',

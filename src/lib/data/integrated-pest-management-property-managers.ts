@@ -194,7 +194,7 @@ export const ownerGuidance = {
 				},
 
 				{
-					title: 'Report rats, mice, and other four-legged problems',
+					title: 'Report rats or mice',
 					target: 'rodentsReport'
 				},
 				{

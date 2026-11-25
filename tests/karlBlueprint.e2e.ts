@@ -37,7 +37,7 @@ const panelOrder = (page: Page) =>
 
 const PILOTS = [
 	{
-		slug: 'report-rats-mice-four-legged-problems',
+		slug: 'report-rats-or-mice',
 		first: ['title', 'description', 'primary_agency', 'cost', 'things_to_know', 'what_to_do'],
 		empty: ['Contact us (empty)', 'Topics (empty)'],
 		tray: 2
@@ -207,7 +207,7 @@ test.describe('Blueprint', () => {
 	});
 
 	test('"Show on page" lands on the field, focused, with the outline on', async ({ page }) => {
-		await gotoSignedIn(page, '/review/report-rats-mice-four-legged-problems');
+		await gotoSignedIn(page, '/review/report-rats-or-mice');
 		await openBlueprint(page);
 		await page
 			.getByRole('button', { name: 'Show on page: “What the Health Code requires” — its button' })

@@ -13,7 +13,7 @@ const RULES = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];
 
 test('the Analysis panel shows where the page lands in Karl', async ({ page }) => {
 	await page.setViewportSize({ width: 1280, height: 900 });
-	await gotoSignedIn(page, '/review/report-rats-mice-four-legged-problems');
+	await gotoSignedIn(page, '/review/report-rats-or-mice');
 	await page.getByRole('tab', { name: 'Analysis' }).click();
 
 	const panel = page.getByRole('tabpanel');
