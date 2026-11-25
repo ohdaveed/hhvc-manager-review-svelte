@@ -8,7 +8,10 @@ import { ownerHub } from './property-owner-responsibilities';
 import { publicRecords } from './public-records-request';
 import { findHotelRecords } from './lookup-residential-hotel-records';
 import { pestsTopic } from './agency-service-grouping';
-import { rodentsReport } from './report-rats-mice-four-legged-problems';
+import { rodentsReport } from './report-rats-or-mice';
+import { mosquitoReport } from './report-mosquitoes-standing-water';
+import { moldReport } from './report-mold';
+import { garbageReport } from './report-garbage-clutter-overgrown-plants';
 import { tenantNoticeSteps } from './tenant-steps-after-notice-of-violation';
 import { insectsReport } from './report-cockroaches-mosquitoes-insects';
 import { tenantRights } from './tenant-rights-reporting';
@@ -60,6 +63,9 @@ export const pagesByKey = {
 	findHotelRecords,
 	pestsTopic,
 	rodentsReport,
+	mosquitoReport,
+	moldReport,
+	garbageReport,
 	tenantNoticeSteps,
 	insectsReport,
 	tenantRights,

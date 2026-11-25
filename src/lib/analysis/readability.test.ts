@@ -4,7 +4,7 @@ import { normalizeForReadability, parseReadingTarget, scoreReadability } from '.
 describe('normalizeForReadability', () => {
 	it('strips URLs, so a long link does not read as one long word', () => {
 		const withUrl = normalizeForReadability(
-			'Report it at https://sf.gov/report-rats-mice-four-legged-problems today.'
+			'Report it at https://sf.gov/report-rats-or-mice today.'
 		);
 		expect(withUrl).not.toContain('https');
 		expect(withUrl).toContain('Report it at');

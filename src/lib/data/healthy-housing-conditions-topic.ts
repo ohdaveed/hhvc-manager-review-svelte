@@ -31,11 +31,12 @@ export const healthyHousingTopic = {
 		{
 			heading: 'Report pests',
 			fieldKey: 'general-housing-issues',
-			karl: 'Maps to a Services block (Title = this heading, Links = the cards). The Pests half of the report group (Decided). The 9 condition pages replace the two report Transactions when the report regroup lands; the Step by step follows them as the overview.',
+			karl: 'Maps to a Services block (Title = this heading, Links = the cards). The Pests half of the report group (Decided). Report rats or mice and Report mosquitoes or standing water are 2 of the 9 condition pages (built 2026-11-25). The cockroaches page stays until the bed bug and cockroach pages replace it; the Step by step follows them as the overview.',
 			kind: 'body',
 			component: 'services',
 			cards: [
-				{ title: 'Report rats, mice, and other four-legged problems', target: 'rodentsReport' },
+				{ title: 'Report rats or mice', target: 'rodentsReport' },
+				{ title: 'Report mosquitoes or standing water', target: 'mosquitoReport' },
 				{
 					title: 'Report cockroaches, mosquitoes, and other insects',
 					target: 'insectsReport'
@@ -45,10 +46,14 @@ export const healthyHousingTopic = {
 		},
 		{
 			heading: 'Report sanitation problems',
-			karl: 'Maps to a Services block. The Sanitation half of the report group (Decided). Garbage, mold and vegetation share one Transaction until the report regroup splits them into the sewage, animal waste, mold and garbage pages.',
+			karl: 'Maps to a Services block. The Sanitation half of the report group (Decided). Report mold and Report garbage, clutter, or overgrown plants are 2 of the 9 condition pages (built 2026-11-25). The old combined page stays for animal waste and pigeons until those pages are built.',
 			kind: 'body',
 			component: 'services',
-			cards: [{ title: 'Report garbage, mold, and overgrown vegetation', target: 'filthReport' }]
+			cards: [
+				{ title: 'Report mold', target: 'moldReport' },
+				{ title: 'Report garbage, clutter, or overgrown plants', target: 'garbageReport' },
+				{ title: 'Report garbage, mold, and overgrown vegetation', target: 'filthReport' }
+			]
 		},
 		{
 			heading: 'If you got a notice',

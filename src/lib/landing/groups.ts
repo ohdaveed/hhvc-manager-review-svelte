@@ -25,8 +25,11 @@ export const PAGE_GROUPS = [
 		id: 'report',
 		heading: 'Report a problem',
 		pages: [
-			'report-rats-mice-four-legged-problems',
+			'report-rats-or-mice',
+			'report-mosquitoes-or-standing-water',
 			'report-cockroaches-mosquitoes-insects',
+			'report-mold',
+			'report-garbage-clutter-or-overgrown-plants',
 			'report-garbage-filth-vegetation',
 			'report-problem-sro-hotel',
 			'step-by-step-report-a-pest-problem',

@@ -4,7 +4,7 @@
  * Karl Jr. scrapes the rendered page, because on a live SF.gov page the DOM is
  * the whole of the content. Here it is not. `Section.svelte` renders `heading`,
  * `paragraphs`, `bullets` and `callout` — and nothing else. A Transaction page's
- * `steps` array, which on `report-rats-mice-four-legged-problems` carries the
+ * `steps` array, which on `report-rats-or-mice` carries the
  * entire "What to do" body, never reaches the DOM at all; `RethinkPanel` says as
  * much to the reviewer ("Steps and cards not shown").
  *

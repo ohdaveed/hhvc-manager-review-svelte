@@ -36,8 +36,11 @@ export const whoToCall = {
 				'This team inspects conditions that affect health in and around housing, under Health Code Article 11.'
 			],
 			bullets: [
-				'[Report rats, mice, and other four-legged problems](rodentsReport)',
+				'[Report rats or mice](rodentsReport)',
+				'[Report mosquitoes or standing water](mosquitoReport)',
 				'[Report cockroaches, mosquitoes, and other insects](insectsReport)',
+				'[Report mold](moldReport)',
+				'[Report garbage, clutter, or overgrown plants](garbageReport)',
 				'[Report garbage, mold, and overgrown vegetation](filthReport)',
 				'[Report a problem in an SRO or hotel](sroHotelReport)',
 				'[Learn what Healthy Housing and Vector Control can inspect](scopeInfo)'

@@ -58,7 +58,7 @@ describe('a check with an empty denominator', () => {
 	it('states the denominator it scanned when it does pass', () => {
 		// A pass a reviewer cannot check is not much better than an unearned one.
 		const page = (allPages as Record<string, unknown>[]).find((p) =>
-			String(p.slug).includes('report-rats-mice-four-legged-problems')
+			String(p.slug).includes('report-rats-or-mice')
 		)!;
 		const analysis = analyzePage({ page: page as never });
 		for (const finding of analysis.findings.filter((f) => f.status === 'pass')) {

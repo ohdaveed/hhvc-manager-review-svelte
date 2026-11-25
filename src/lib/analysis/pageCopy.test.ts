@@ -96,7 +96,7 @@ describe('over the real corpus', () => {
 	// measuring a fraction of the page again.
 	it('measures step copy, which the renderer never emits', () => {
 		const rodents = (allPages as Record<string, unknown>[]).find((p) =>
-			String(p.slug).includes('report-rats-mice-four-legged-problems')
+			String(p.slug).includes('report-rats-or-mice')
 		);
 		expect(rodents, 'the rodents page must be in allPages').toBeTruthy();
 		const entries = analyzableCopy(rodents as never);

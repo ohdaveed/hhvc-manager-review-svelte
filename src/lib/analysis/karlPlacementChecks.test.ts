@@ -46,10 +46,7 @@ describe('the Analysis panel reads the same placements as the Karl outline', () 
 	it('lists what Karl’s own pages leave unsettled, as unavailable rather than an issue', () => {
 		const f = byId('rodentsReport', 'karl-unconfirmed');
 		expect(f.status).toBe('unavailable');
-		expect(f.items.map((i) => i.text)).toEqual([
-			'Get help making your report',
-			'What the Health Code requires'
-		]);
+		expect(f.items.map((i) => i.text)).toEqual(['What the Health Code requires']);
 		const location = byId('ehOffice', 'karl-unconfirmed');
 		expect(location.items[0]).toMatchObject({ text: 'This page' });
 		expect(location.items[0].detail).toMatch(/Parking, Accessibility/);

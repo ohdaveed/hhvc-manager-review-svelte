@@ -30,9 +30,14 @@ export const pestsTopic = {
 					karl: 'Services subsection entry -> external link to the live topic preview’s "contact 311" destination. This is the general entry point for the "Get help with pests, mold, or trash" topic; the three focused report pages below remain available for people who know the condition.'
 				},
 				{
-					title: 'Report rats, mice, and other four-legged problems',
+					title: 'Report rats or mice',
 					target: 'rodentsReport',
 					karl: 'Services subsection entry -> SF.gov page link to the rodents-report Transaction. The description is a copy of the destination page Description, which is what Karl renders here; see the page-level note.'
+				},
+				{
+					title: 'Report mosquitoes or standing water',
+					target: 'mosquitoReport',
+					karl: 'Services subsection entry -> SF.gov page link to the mosquito-report Transaction (report regroup, built 2026-11-25). Decided: move it up this list during mosquito season. The description is a copy of the destination page Description, which is what Karl renders here; see the page-level note.'
 				},
 				{
 					title: 'Report cockroaches, mosquitoes, and other insects',
@@ -43,6 +48,16 @@ export const pestsTopic = {
 					title: 'Report garbage, mold, and overgrown vegetation',
 					target: 'filthReport',
 					karl: 'Services subsection entry -> SF.gov page link to the consolidated filth-report Transaction. This is the focused report route for the current live topic’s mold and trash scope; the description is a copy of the destination page Description, which is what Karl renders here.'
+				},
+				{
+					title: 'Report mold',
+					target: 'moldReport',
+					karl: 'Services subsection entry -> SF.gov page link to the mold-report Transaction (report regroup, built 2026-11-25). The description is a copy of the destination page Description, which is what Karl renders here; see the page-level note.'
+				},
+				{
+					title: 'Report garbage, clutter, or overgrown plants',
+					target: 'garbageReport',
+					karl: 'Services subsection entry -> SF.gov page link to the garbage-and-clutter report Transaction (report regroup, built 2026-11-25). The description is a copy of the destination page Description, which is what Karl renders here; see the page-level note.'
 				},
 				{
 					title: 'Report a problem in an SRO or hotel',
