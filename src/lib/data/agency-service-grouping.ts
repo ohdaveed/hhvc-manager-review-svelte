@@ -27,42 +27,52 @@ export const pestsTopic = {
 					title: 'Get help with pests, mold, or trash through 311',
 					text: 'Start a City service request when you are not sure which Healthy Housing and Vector Control report fits.',
 					url: 'https://www.sf.gov/topics--311-online-services',
-					karl: 'Services subsection entry -> external link to the live topic preview’s "contact 311" destination. This is the general entry point for the "Get help with pests, mold, or trash" topic; the three focused report pages below remain available for people who know the condition.'
+					karl: 'Services subsection entry -> external link to the live topic preview’s "contact 311" destination. This is the general entry point for the "Get help with pests, mold, or trash" topic; the nine condition report pages below remain available for people who know the condition.'
 				},
 				{
 					title: 'Report rats or mice',
 					target: 'rodentsReport',
-					karl: 'Services subsection entry -> SF.gov page link to the rodents-report Transaction. The description is a copy of the destination page Description, which is what Karl renders here; see the page-level note.'
+					karl: 'Services subsection entry -> SF.gov page link to the rats-or-mice report Transaction (report regroup, 2026-11-25). The description is a copy of the destination page Description, which is what Karl renders here; see the page-level note.'
+				},
+				{
+					title: 'Report animal waste on a property',
+					target: 'animalWasteReport',
+					karl: "Services subsection entry -> SF.gov page link to the animal waste report Transaction (report regroup, 2026-11-25). Listed high because animal waste is one of HHVC's largest complaint areas (Decided). The description is a copy of the destination page Description, which is what Karl renders here; see the page-level note."
+				},
+				{
+					title: 'Report bed bugs',
+					target: 'bedBugReport',
+					karl: 'Services subsection entry -> SF.gov page link to the bed bug report Transaction (report regroup, 2026-11-25). The description is a copy of the destination page Description, which is what Karl renders here; see the page-level note.'
+				},
+				{
+					title: 'Report cockroaches or other insects',
+					target: 'insectsReport',
+					karl: 'Services subsection entry -> SF.gov page link to the insects report Transaction (report regroup, 2026-11-25). The description is a copy of the destination page Description, which is what Karl renders here; see the page-level note.'
 				},
 				{
 					title: 'Report mosquitoes or standing water',
 					target: 'mosquitoReport',
-					karl: 'Services subsection entry -> SF.gov page link to the mosquito-report Transaction (report regroup, built 2026-11-25). Decided: move it up this list during mosquito season. The description is a copy of the destination page Description, which is what Karl renders here; see the page-level note.'
+					karl: 'Services subsection entry -> SF.gov page link to the mosquito report Transaction (report regroup, 2026-11-25). Decided: move it up this list during mosquito season. The description is a copy of the destination page Description, which is what Karl renders here; see the page-level note.'
 				},
 				{
-					title: 'Report cockroaches, mosquitoes, and other insects',
-					target: 'insectsReport',
-					karl: 'Services subsection entry -> SF.gov page link to the insects-report Transaction. The description is a copy of the destination page Description, which is what Karl renders here; see the page-level note.'
+					title: 'Report pigeon droppings, nesting, or feeding',
+					target: 'pigeonReport',
+					karl: 'Services subsection entry -> SF.gov page link to the pigeon report Transaction (report regroup, 2026-11-25). The description is a copy of the destination page Description, which is what Karl renders here; see the page-level note.'
 				},
 				{
-					title: 'Report garbage, mold, and overgrown vegetation',
-					target: 'filthReport',
-					karl: 'Services subsection entry -> SF.gov page link to the consolidated filth-report Transaction. This is the focused report route for the current live topic’s mold and trash scope; the description is a copy of the destination page Description, which is what Karl renders here.'
+					title: 'Report a sewage leak or backup',
+					target: 'sewageReport',
+					karl: 'Services subsection entry -> SF.gov page link to the sewage report Transaction (report regroup, 2026-11-25). The description is a copy of the destination page Description, which is what Karl renders here; see the page-level note.'
 				},
 				{
 					title: 'Report mold',
 					target: 'moldReport',
-					karl: 'Services subsection entry -> SF.gov page link to the mold-report Transaction (report regroup, built 2026-11-25). The description is a copy of the destination page Description, which is what Karl renders here; see the page-level note.'
+					karl: 'Services subsection entry -> SF.gov page link to the mold report Transaction (report regroup, 2026-11-25). The description is a copy of the destination page Description, which is what Karl renders here; see the page-level note.'
 				},
 				{
 					title: 'Report garbage, clutter, or overgrown plants',
 					target: 'garbageReport',
-					karl: 'Services subsection entry -> SF.gov page link to the garbage-and-clutter report Transaction (report regroup, built 2026-11-25). The description is a copy of the destination page Description, which is what Karl renders here; see the page-level note.'
-				},
-				{
-					title: 'Report a problem in an SRO or hotel',
-					target: 'sroHotelReport',
-					karl: "Services subsection entry -> SF.gov page link to the SRO/hotel-report Transaction, added 2026-08-11 to fill the gap findHotelRecords' lookup-only scope left. The description is a copy of the destination page Description, which is what Karl renders here; see the page-level note."
+					karl: 'Services subsection entry -> SF.gov page link to the garbage-and-clutter report Transaction (report regroup, 2026-11-25). The description is a copy of the destination page Description, which is what Karl renders here; see the page-level note.'
 				},
 				{
 					title: 'Healthy housing conditions',

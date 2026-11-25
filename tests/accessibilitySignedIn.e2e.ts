@@ -28,7 +28,7 @@ import { DRAFT_IDS, gotoSignedIn } from './signedIn';
 const RULES = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];
 
 /** The row `signedIn.ts` gives `page_checks` and an edit. */
-const PAGE = '/review/report-garbage-filth-vegetation';
+const PAGE = '/review/report-garbage-clutter-or-overgrown-plants';
 
 const noViolations = async (page: Page) => {
 	const { violations } = await new AxeBuilder({ page }).withTags(RULES).analyze();

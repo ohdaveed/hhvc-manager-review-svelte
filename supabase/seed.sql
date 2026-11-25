@@ -102,10 +102,8 @@ INSERT INTO pages (review_id, path)
 SELECT '22222222-2222-2222-2222-222222222222', path
 FROM (
     VALUES
-      ('report-garbage-filth-vegetation'),
       ('find-healthy-housing-inspector-by-neighborhood'),
       ('report-health-code-article-11-plain-language'),
-      ('report-problem-sro-hotel'),
       ('departments--healthy-housing-and-vector-control--about'),
       ('information-what-happens-after-you-report-housing-pest-problem'),
       ('property-owner-responsibilities-hhvc'),
@@ -116,8 +114,12 @@ FROM (
       ('report-mosquitoes-or-standing-water'),
       ('report-mold'),
       ('report-garbage-clutter-or-overgrown-plants'),
+      ('report-bed-bugs'),
+      ('report-pigeon-droppings-nesting-or-feeding'),
+      ('report-sewage-leak-or-backup'),
+      ('report-animal-waste-on-property'),
       ('information-tenant-steps-after-notice-of-violation'),
-      ('report-cockroaches-mosquitoes-insects'),
+      ('report-cockroaches-or-other-insects'),
       ('information-tenant-rights-and-reporting-housing-conditions'),
       ('find-complaints-and-inspection-records'),
       ('mosquito-education-workshop'),

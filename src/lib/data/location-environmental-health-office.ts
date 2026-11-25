@@ -40,7 +40,7 @@ export const ehOffice = {
 				'Reporting a problem, checking a record, and paying a fee are all quicker without a visit.'
 			],
 			bullets: [
-				'[Report garbage, mold, and overgrown vegetation](filthReport)',
+				'[Report garbage, clutter, or overgrown plants](garbageReport)',
 				'[Find complaints and inspection records](findRecords)',
 				'[Pay your annual Healthy Housing fee for apartment buildings](payFee)',
 				'Call 311 if you are not sure whether your problem needs a visit at all.'

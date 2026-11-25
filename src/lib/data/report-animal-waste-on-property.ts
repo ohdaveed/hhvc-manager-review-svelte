@@ -1,0 +1,139 @@
+export const animalWasteReport = {
+	slug: 'sf.gov/report-animal-waste-on-property',
+	type: 'Transaction',
+	title: 'Report animal waste on a property',
+	summary: 'Dog poop, cat waste, or raccoon droppings in a yard, building, or shared area.',
+	primaryAgency: 'Healthy Housing and Vector Control',
+	audience: [
+		'A tenant or resident affected by animal waste where they live',
+		'A neighbor reporting animal waste on a nearby property',
+		'A friend, family member, advocate, or helper reporting for someone else'
+	],
+	reading: 'Grade 6',
+	editorNote:
+		"Report regroup (Decided, Nov 24, 2026), built 2026-11-25. New page, one of the 9 condition pages, and one of HHVC's largest complaint areas, so it is listed high in the Topic and Agency report groups (Decided). The description is the Decided search-words example. Private property only, said at the top (Decided): HHVC does not respond to dog waste on sidewalks or streets. Raccoon droppings are cited here because of the roundworm egg risk (Decided): the page says to report them rather than clean them, links the CDC raccoon roundworm guidance, and gives no cleanup steps. Pigeon droppings moved to their own page, which this one links. TO CONFIRM: which 311 service takes dog waste on public property (likely Public Works street cleaning), so that line is flagged unverified; and whether HHVC cites the owner in every raccoon latrine case (§596 also allows a manager or whoever created the condition), so the page does not say who is cited.",
+	whatToKnow: {
+		cost: 'Free',
+		thingsToKnow: [
+			{
+				label: 'Private property only',
+				text: 'We respond to animal waste on private property, such as yards, buildings, and shared areas. We do not respond to dog waste on sidewalks or streets.'
+			},
+			{
+				label: 'Raccoon droppings',
+				text: 'Do not clean up raccoon droppings yourself. They can carry roundworm eggs that make people very sick. Report them instead.'
+			}
+		]
+	},
+	sections: [
+		{
+			heading: 'What to do',
+			karl: 'Karl: what_to_do StreamField. Each step below = one Section block (section_title + section_specifics). The 311 action comes first.',
+			kind: 'body',
+			steps: [
+				{
+					title: 'Start your report',
+					text: [
+						'Use 311 to report animal waste on private property.',
+						{
+							text: 'For dog waste on a sidewalk or street, ask 311 for street cleaning instead.',
+							unverified: true,
+							unverifiedReason:
+								'Decided: send public-property reports to the right 311 service, and confirm the agency, likely Public Works street cleaning. Confirm the 311 service name before publication.'
+						},
+						'Pigeon droppings have their own page: [Report pigeon droppings, nesting, or feeding](pigeonReport).',
+						'Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.'
+					],
+					button: 'Report through 311',
+					karl: 'what_to_do -> Section. Section title: "Start your report". Section specifics: Text block (these 4 paragraphs: the action, the public-property routing, the pigeon page, and the one-line SRO note every report page carries, Decided) + Button link block ("Report through 311").'
+				},
+				{
+					title: 'Tell us what you saw',
+					text: ['Only share the details that apply to your situation:'],
+					bullets: [
+						'**What you saw:** Dog or cat waste, or raccoon droppings.',
+						'**Where it is:** The address, and where on the property, such as a yard, stairwell, roof, or shared area.',
+						'**When it started:** How long it has been building up.',
+						'**Other issues:** Whether it smells or draws flies, rats, or mice.',
+						'**Your contact info:** Leave a phone number or email if you want an inspector to contact you.'
+					],
+					callout: {
+						karl: 'Callout block inside the "Tell us what you saw" Section specifics: single rich text field, no separate title. Text: the one confidentiality sentence (Decided: the same on every page, once per page) plus the photo note.',
+						text: 'We never share your name or contact information. You do not need to send photos.',
+						title: false
+					},
+					karl: 'what_to_do -> Section. Section title: "Tell us what you saw". Section specifics: Text block (intro sentence + bulleted checklist) + Callout block below.'
+				}
+			]
+		},
+		{
+			heading: 'While you wait: tips to help with the problem',
+			karl: 'Maps to supporting_information (Accordions). This accordion uses the mockup-only open flag so the tips are visible without a click — flag for Digital Services that the real accordion renders collapsed. Contents: one Text block (lead paragraph + tips) + a Resources-style external link (CDC). The pet waste tip is the Decided cross-link line. No raccoon cleanup steps (Decided).',
+			kind: 'body',
+			component: 'supporting',
+			open: true,
+			paragraphs: [
+				'It may take us a few weekdays to get back to you. In the meantime, here are a few things you can do to help with the problem.'
+			],
+			bullets: [
+				'**Pick up pet waste daily:** It feeds rats.',
+				'**Bag it:** Put pet waste in a bag, then in a bin with a tight lid.'
+			],
+			cards: [
+				{
+					title: 'CDC: Preventing raccoon roundworm',
+					text: 'Federal guidance on raccoon roundworm and how to avoid it.',
+					url: 'https://www.cdc.gov/baylisascaris/prevention/index.html',
+					karl: 'External link inside the supporting_information accordion. Third-party CDC reference for the raccoon roundworm risk (Decided).'
+				}
+			]
+		},
+		{
+			heading: 'What the Health Code requires',
+			karl: 'custom_section -> title_and_text. Title = this heading, Text = the Article 11 line, carried from the old combined garbage page (HHVC content standards Ch. 8.7.1). Secondary Button link block ("View Article 11") citing the municipal code per Ch. 8.7.2.',
+			kind: 'body',
+			bullets: [
+				'San Francisco Health Code Article 11 covers this. Property owners must not let animal waste build up. Build-up that shelters pests or creates a health hazard is a violation.'
+			],
+			button: 'View Article 11',
+			buttonUrl: 'https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890',
+			buttonStyle: 'secondary'
+		},
+		{
+			heading: 'Related pages',
+			karl: 'Maps to the related panel: repeatable field "Page *" with a "Choose a page" button. 4 cards below = 4 related "Page" entries. All internal SF.gov pages — Karl Related is a page chooser and cannot hold external links.',
+			kind: 'placement',
+			cards: [
+				{
+					title: 'What happens after you report a housing or pest problem',
+					target: 'afterReport'
+				},
+				{
+					title: 'Report pigeon droppings, nesting, or feeding',
+					target: 'pigeonReport'
+				},
+				{
+					title: 'Report rats or mice',
+					target: 'rodentsReport'
+				},
+				{
+					title: 'Tenant rights when reporting housing conditions',
+					target: 'tenantRights'
+				}
+			]
+		}
+	],
+	partnerAgencies: [
+		{
+			title: '311 Customer Service Center',
+			url: 'https://www.sf.gov/departments--311-customer-service-center'
+		},
+		{
+			title: 'Environmental Health',
+			url: 'https://www.sf.gov/departments--department-public-health--environmental-health'
+		}
+	],
+	seoTitle: 'Report animal waste on a property | SF.gov',
+	metaDescription:
+		'Report dog poop, cat waste, or raccoon droppings in a San Francisco yard, building, or shared area.'
+};

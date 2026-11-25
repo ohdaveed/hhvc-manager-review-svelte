@@ -63,6 +63,7 @@ export const ipmEducation = {
 			bullets: [
 				'How to seal small gaps and cracks that let pests inside',
 				'Safe food and garbage storage that does not attract rodents or insects',
+				'Pick up pet waste daily. It feeds rats.',
 				'Early signs of rats, mice, cockroaches, and bed bugs',
 				'When to notify your landlord and when to report a problem to the City',
 				'Least-toxic tools you can use yourself, and which pesticides to avoid indoors'

@@ -253,6 +253,192 @@ Nothing below has a field to be typed into. It is listed rather than dropped, be
 "
 `;
 
+exports[`transcript Markdown, every corpus page > animalWasteReport 1`] = `
+"# Report animal waste on a property — Karl transcript
+
+**Karl path:** New: Transaction → Content
+**Decision:** no review recorded
+**Page key:** \`animalWasteReport\` · **Slug:** \`sf.gov/report-animal-waste-on-property\` · **Type:** Transaction
+
+**NOT APPROVED — do not publish from this transcript.** Approval in this tool is per page, not per field, so nothing below is signed off.
+
+> Every keystroke below is yours to make. This file is an export, not an approval, and nothing here has been written to Karl.
+
+### Page title — \`title\` [TYPE] — page not approved
+
+**Page title:**
+
+Report animal waste on a property
+
+### Description — \`description\` [TYPE] — page not approved
+
+**Description:**
+
+Dog poop, cat waste, or raccoon droppings in a yard, building, or shared area.
+
+### Primary agency — \`primary_agency\` [CHOOSE] — page not approved
+
+_U6, narrowed — the mockup names the agency as text, not as a page reference, and Karl requires a page. Choose the parent Agency page: HHVC was approved for its own Agency page (sf.gov/departments--healthy-housing-and-vector-control), so that is the value for HHVC pages rather than Environmental Health or DPH. Those two remain Partner agencies._
+
+1. Choose page: "Healthy Housing and Vector Control"
+
+### Cost — \`cost\` [TYPE] — page not approved
+
+_Choose the Cost radio first (Free, Flat fee, Range, Minimum and up, None) — all five variants end at this same description field._
+
+**Cost description:**
+
+Free
+
+### Things to Know — \`things_to_know\` [TYPE] — page not approved
+
+**Block 1 — Title:**
+
+Private property only
+
+**Block 1 — Text:**
+
+We respond to animal waste on private property, such as yards, buildings, and shared areas. We do not respond to dog waste on sidewalks or streets.
+
+**Block 2 — Title:**
+
+Raccoon droppings
+
+**Block 2 — Text:**
+
+Do not clean up raccoon droppings yourself. They can carry roundworm eggs that make people very sick. Report them instead.
+
+### What to Do — \`what_to_do\` [TYPE] — page not approved
+
+_The mockup heading "What to do" is not typed anywhere — Karl's What to Do panel carries its own label. Each step below becomes one Section block._
+
+_A step with text, a button and a callout becomes ONE Section block whose Section specifics holds a Text, a Button link and a Callout as siblings — not fields on the step._
+
+**Section 1 — Section title:**
+
+Start your report
+
+**Section 1 — Section specifics → Text:**
+
+Use 311 to report animal waste on private property.
+
+For dog waste on a sidewalk or street, ask 311 for street cleaning instead.
+
+Pigeon droppings have their own page: [Report pigeon droppings, nesting, or feeding](pigeonReport).
+
+Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.
+
+**Section 1 — Section specifics → Button link → Link text:**
+
+Report through 311
+
+**Section 1 — Button link → destination:**
+
+None
+
+**Section 2 — Section title:**
+
+Tell us what you saw
+
+**Section 2 — Section specifics → Text:**
+
+Only share the details that apply to your situation:
+
+- **What you saw:** Dog or cat waste, or raccoon droppings.
+- **Where it is:** The address, and where on the property, such as a yard, stairwell, roof, or shared area.
+- **When it started:** How long it has been building up.
+- **Other issues:** Whether it smells or draws flies, rats, or mice.
+- **Your contact info:** Leave a phone number or email if you want an inspector to contact you.
+
+**Callout (rich text, no title field):**
+
+We never share your name or contact information. You do not need to send photos.
+
+**Links in this text — recreate each with the Link tool, do not paste them:**
+
+- "Report pigeon droppings, nesting, or feeding" → shape 5 — rich text Link tool → Internal link → "Report pigeon droppings, nesting, or feeding"
+
+### Accordion title and text — \`supporting_information\` [TYPE] — page not approved
+
+**Title:**
+
+While you wait: tips to help with the problem
+
+**Text:**
+
+It may take us a few weekdays to get back to you. In the meantime, here are a few things you can do to help with the problem.
+
+- **Pick up pet waste daily:** It feeds rats.
+- **Bag it:** Put pet waste in a bag, then in a bin with a tight lid.
+
+### Custom Section — \`custom_section\` [TYPE] — page not approved
+
+⚠ Inferred mapping — verify the destination before saving.
+
+_Inferred mapping — the field map documents this panel only for supporting/flat sections. Transaction has no generic body stream and this is its only repeatable Title-and-text panel, so verify the destination before saving._
+
+**Title:**
+
+What the Health Code requires
+
+**Text:**
+
+- San Francisco Health Code Article 11 covers this. Property owners must not let animal waste build up. Build-up that shelters pests or creates a health hazard is a violation.
+
+### Related — \`related\` [CHOOSE] — page not approved
+
+_This block publishes the destination page’s title and a link, and NOTHING else. Choose the page and type no description._
+
+1. Choose page: "What happens after you report a housing or pest problem" (\`afterReport\` → /sf.gov/information/what-happens-after-you-report-housing-pest-problem)
+2. Choose page: "Report pigeon droppings, nesting, or feeding" (\`pigeonReport\` → /sf.gov/report-pigeon-droppings-nesting-or-feeding)
+3. Choose page: "Report rats or mice" (\`rodentsReport\` → /sf.gov/report-rats-or-mice)
+4. Choose page: "Tenant rights when reporting housing conditions" (\`tenantRights\` → /sf.gov/information/tenant-rights-and-reporting-housing-conditions)
+
+### Partner agencies — \`partner_agencies\` [CHOOSE] — page not approved
+
+_A page chooser restricted to Agency pages. These entries name real sf.gov department pages outside this mockup, so search Karl for each by title._
+
+1. Choose page: "311 Customer Service Center"
+2. Choose page: "Environmental Health"
+
+### Topics — \`topics\` [TYPE] — page not approved
+
+_topicTag is unmapped metadata — the stored values are Agency labels, not Topic chooser references._
+
+### Redirect this page to — \`redirect_url\` [TYPE] — page not approved
+
+_Disabled by design — a ConditionalReadOnlyFieldPanel. Never type into it._
+
+### Promote → For search engines — \`promote\` [TYPE] — page not approved
+
+_The slug is REQUIRED and lives on the Promote tab, so a page cannot be saved from the Content tab alone._
+
+**Slug (\`slug\`):**
+
+sf.gov/report-animal-waste-on-property
+
+**Title tag (\`seo_title\`):**
+
+Report animal waste on a property | SF.gov
+
+**Meta description (\`search_description\`):**
+
+Report dog poop, cat waste, or raccoon droppings in a San Francisco yard, building, or shared area.
+
+## Flags — resolve before saving — page not approved
+
+- \`sections.1.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to supporting_information (Accordions). This accordion uses the mockup-only open flag so the tips are visible without a click — flag for Digital Services t". Resolve it before typing anything from them.
+
+## Unmapped — no documented Karl destination
+
+Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
+
+- \`audience\` — The page carries \`audience\`, and Karl does have a home for it: a **Things to know** entry titled "Who this information is for". Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list. What blocks it is the budget, not the field: the Help Center caps Things to know at 2 entries, and most Transaction pages here already spend both, so placing the audience means deciding which existing entry it replaces. That is a content call, not a missing panel.
+- \`sections.2.button\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
+- \`sections.2.buttonUrl\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
+"
+`;
+
 exports[`transcript Markdown, every corpus page > appealNotice 1`] = `
 "# Question a Notice of Violation — Karl transcript
 
@@ -683,7 +869,7 @@ Garbage, filth, and waste
 
 **Text:**
 
-Report conditions like trash, mold, or unsanitary waste using [Report garbage, mold, or trash](filthReport).
+Report trash or animal waste using [Report garbage, clutter, or overgrown plants](garbageReport) or [Report animal waste on a property](animalWasteReport).
 
 | Health code | In plain language |
 | --- | --- |
@@ -693,7 +879,8 @@ Report conditions like trash, mold, or unsanitary waste using [Report garbage, m
 
 **Links in this text — recreate each with the Link tool, do not paste them:**
 
-- "Report garbage, mold, or trash" → shape 5 — rich text Link tool → Internal link → "Report garbage, mold, and overgrown vegetation"
+- "Report garbage, clutter, or overgrown plants" → shape 5 — rich text Link tool → Internal link → "Report garbage, clutter, or overgrown plants"
+- "Report animal waste on a property" → shape 5 — rich text Link tool → Internal link → "Report animal waste on a property"
 
 ### Content — \`content\` [TYPE] — page not approved
 
@@ -707,7 +894,7 @@ Overgrown vegetation and poisonous plants
 
 **Text:**
 
-Report overgrown vegetation or sanitation issues using [Report vegetation or a sanitation problem](filthReport).
+Report overgrown vegetation using [Report garbage, clutter, or overgrown plants](garbageReport).
 
 | Health code | In plain language |
 | --- | --- |
@@ -717,7 +904,7 @@ Report overgrown vegetation or sanitation issues using [Report vegetation or a s
 
 **Links in this text — recreate each with the Link tool, do not paste them:**
 
-- "Report vegetation or a sanitation problem" → shape 5 — rich text Link tool → Internal link → "Report garbage, mold, and overgrown vegetation"
+- "Report garbage, clutter, or overgrown plants" → shape 5 — rich text Link tool → Internal link → "Report garbage, clutter, or overgrown plants"
 
 ### Content — \`content\` [TYPE] — page not approved
 
@@ -759,7 +946,7 @@ Pests, rodents, and noxious insects
 **Links in this text — recreate each with the Link tool, do not paste them:**
 
 - "Report rats or mice" → shape 5 — rich text Link tool → Internal link → "Report rats or mice"
-- "Report cockroaches, mosquitoes, and other insects" → shape 5 — rich text Link tool → Internal link → "Report cockroaches, mosquitoes, and other insects"
+- "Report cockroaches or other insects" → shape 5 — rich text Link tool → Internal link → "Report cockroaches or other insects"
 
 ### Content — \`content\` [TYPE] — page not approved
 
@@ -853,6 +1040,198 @@ Nothing below has a field to be typed into. It is listed rather than dropped, be
 "
 `;
 
+exports[`transcript Markdown, every corpus page > bedBugReport 1`] = `
+"# Report bed bugs — Karl transcript
+
+**Karl path:** New: Transaction → Content
+**Decision:** no review recorded
+**Page key:** \`bedBugReport\` · **Slug:** \`sf.gov/report-bed-bugs\` · **Type:** Transaction
+
+**NOT APPROVED — do not publish from this transcript.** Approval in this tool is per page, not per field, so nothing below is signed off.
+
+> Every keystroke below is yours to make. This file is an export, not an approval, and nothing here has been written to Karl.
+
+### Page title — \`title\` [TYPE] — page not approved
+
+**Page title:**
+
+Report bed bugs
+
+### Description — \`description\` [TYPE] — page not approved
+
+**Description:**
+
+Bites, small brown insects, or dark spots on bedding in a unit or building, and what the owner must do.
+
+### Primary agency — \`primary_agency\` [CHOOSE] — page not approved
+
+_U6, narrowed — the mockup names the agency as text, not as a page reference, and Karl requires a page. Choose the parent Agency page: HHVC was approved for its own Agency page (sf.gov/departments--healthy-housing-and-vector-control), so that is the value for HHVC pages rather than Environmental Health or DPH. Those two remain Partner agencies._
+
+1. Choose page: "Healthy Housing and Vector Control"
+
+### Cost — \`cost\` [TYPE] — page not approved
+
+_Choose the Cost radio first (Free, Flat fee, Range, Minimum and up, None) — all five variants end at this same description field._
+
+**Cost description:**
+
+Free
+
+### Things to Know — \`things_to_know\` [TYPE] — page not approved
+
+**Block 1 — Title:**
+
+Nearby units
+
+**Block 1 — Text:**
+
+Bed bugs spread between units. The owner may need to inspect or treat the units next to yours too.
+
+**Block 2 — Title:**
+
+Get your unit ready
+
+**Block 2 — Text:**
+
+Treatment works only if the unit is ready. [Prepare your unit for pest treatment](stepPrepUnit) explains what to move, wash, and bag.
+
+**Links in this text — recreate each with the Link tool, do not paste them:**
+
+- "Prepare your unit for pest treatment" → shape 5 — rich text Link tool → Internal link → "Prepare your unit for pest treatment"
+
+### What to Do — \`what_to_do\` [TYPE] — page not approved
+
+_The mockup heading "What to do" is not typed anywhere — Karl's What to Do panel carries its own label. Each step below becomes one Section block._
+
+_A step with text, a button and a callout becomes ONE Section block whose Section specifics holds a Text, a Button link and a Callout as siblings — not fields on the step._
+
+**Section 1 — Section title:**
+
+Tell the owner
+
+**Section 1 — Section specifics → Text:**
+
+If you rent, tell the property owner or manager about the bed bugs right away. Owners must look into pest reports from tenants.
+
+- The owner or manager must start professional treatment within 2 working days of confirming bed bugs.
+
+**Section 2 — Section title:**
+
+Start your report
+
+**Section 2 — Section specifics → Text:**
+
+Use 311 to report bed bugs to the City, especially if the owner does not respond or start treatment.
+
+Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.
+
+**Section 2 — Section specifics → Button link → Link text:**
+
+Report through 311
+
+**Section 2 — Button link → destination:**
+
+None
+
+**Section 3 — Section title:**
+
+Tell us what you saw
+
+**Section 3 — Section specifics → Text:**
+
+Only share the details that apply to your situation:
+
+- **What you saw:** Bites, live bugs, shed skins, or small dark spots on bedding or furniture.
+- **Where it is:** The address and unit number, and whether neighbors have bed bugs too.
+- **When it started:** How long this has been happening.
+- **The owner:** Whether you told the owner or manager, and whether treatment has started.
+- **Your contact info:** Leave a phone number or email if you want an inspector to contact you.
+
+**Callout (rich text, no title field):**
+
+We never share your name or contact information. You do not need to send photos.
+
+### Accordion title and text — \`supporting_information\` [TYPE] — page not approved
+
+**Title:**
+
+While you wait: tips to help with the problem
+
+**Text:**
+
+It may take us a few weekdays to get back to you. In the meantime, here are a few things you can do to help with the problem.
+
+- **Keep your furniture:** Do not throw out furniture before treatment. Moving it can spread the bugs.
+- **Wash on high heat:** Wash and dry bedding and clothes on the hottest setting they can take.
+
+### Custom Section — \`custom_section\` [TYPE] — page not approved
+
+⚠ Inferred mapping — verify the destination before saving.
+
+_Inferred mapping — the field map documents this panel only for supporting/flat sections. Transaction has no generic body stream and this is its only repeatable Title-and-text panel, so verify the destination before saving._
+
+**Title:**
+
+What the Health Code requires
+
+**Text:**
+
+- San Francisco Health Code Article 11 requires property owners to keep buildings free of insect infestations, including bed bugs.
+
+### Related — \`related\` [CHOOSE] — page not approved
+
+_This block publishes the destination page’s title and a link, and NOTHING else. Choose the page and type no description._
+
+1. Choose page: "What happens after you report a housing or pest problem" (\`afterReport\` → /sf.gov/information/what-happens-after-you-report-housing-pest-problem)
+2. Choose page: "Tenant rights when reporting housing conditions" (\`tenantRights\` → /sf.gov/information/tenant-rights-and-reporting-housing-conditions)
+3. Choose page: "Report cockroaches or other insects" (\`insectsReport\` → /sf.gov/report-cockroaches-or-other-insects)
+4. Choose page: "Learn what Healthy Housing and Vector Control can inspect" (\`scopeInfo\` → /sf.gov/information/learn-what-hhvc-can-inspect)
+
+### Partner agencies — \`partner_agencies\` [CHOOSE] — page not approved
+
+_A page chooser restricted to Agency pages. These entries name real sf.gov department pages outside this mockup, so search Karl for each by title._
+
+1. Choose page: "311 Customer Service Center"
+2. Choose page: "Environmental Health"
+
+### Topics — \`topics\` [TYPE] — page not approved
+
+_topicTag is unmapped metadata — the stored values are Agency labels, not Topic chooser references._
+
+### Redirect this page to — \`redirect_url\` [TYPE] — page not approved
+
+_Disabled by design — a ConditionalReadOnlyFieldPanel. Never type into it._
+
+### Promote → For search engines — \`promote\` [TYPE] — page not approved
+
+_The slug is REQUIRED and lives on the Promote tab, so a page cannot be saved from the Content tab alone._
+
+**Slug (\`slug\`):**
+
+sf.gov/report-bed-bugs
+
+**Title tag (\`seo_title\`):**
+
+Report bed bugs | SF.gov
+
+**Meta description (\`search_description\`):**
+
+Report bed bugs in a San Francisco apartment or building, and learn what the property owner must do.
+
+## Flags — resolve before saving — page not approved
+
+- \`sections.1.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to supporting_information (Accordions). This accordion uses the mockup-only open flag so the tips are visible without a click — flag for Digital Services t". Resolve it before typing anything from them.
+
+## Unmapped — no documented Karl destination
+
+Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
+
+- \`audience\` — The page carries \`audience\`, and Karl does have a home for it: a **Things to know** entry titled "Who this information is for". Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list. What blocks it is the budget, not the field: the Help Center caps Things to know at 2 entries, and most Transaction pages here already spend both, so placing the audience means deciding which existing entry it replaces. That is a content call, not a missing panel.
+- \`sections.2.button\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
+- \`sections.2.buttonUrl\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
+"
+`;
+
 exports[`transcript Markdown, every corpus page > ehOffice 1`] = `
 "# Environmental Health office — Karl transcript
 
@@ -896,14 +1275,14 @@ Before you come in
 
 Reporting a problem, checking a record, and paying a fee are all quicker without a visit.
 
-- [Report garbage, mold, and overgrown vegetation](filthReport)
+- [Report garbage, clutter, or overgrown plants](garbageReport)
 - [Find complaints and inspection records](findRecords)
 - [Pay your annual Healthy Housing fee for apartment buildings](payFee)
 - Call 311 if you are not sure whether your problem needs a visit at all.
 
 **Links in this text — recreate each with the Link tool, do not paste them:**
 
-- "Report garbage, mold, and overgrown vegetation" → shape 5 — rich text Link tool → Internal link → "Report garbage, mold, and overgrown vegetation"
+- "Report garbage, clutter, or overgrown plants" → shape 5 — rich text Link tool → Internal link → "Report garbage, clutter, or overgrown plants"
 - "Find complaints and inspection records" → shape 5 — rich text Link tool → Internal link → "Find complaints and inspection records"
 - "Pay your annual Healthy Housing fee for apartment buildings" → shape 5 — rich text Link tool → Internal link → "Pay your annual Healthy Housing fee for apartment buildings"
 
@@ -1022,235 +1401,6 @@ Nothing below has a field to be typed into. It is listed rather than dropped, be
 "
 `;
 
-exports[`transcript Markdown, every corpus page > filthReport 1`] = `
-"# Report garbage, mold, and overgrown vegetation — Karl transcript
-
-**Karl path:** New: Transaction → Content
-**Decision:** no review recorded
-**Page key:** \`filthReport\` · **Slug:** \`sf.gov/report-garbage-filth-vegetation\` · **Type:** Transaction
-
-**NOT APPROVED — do not publish from this transcript.** Approval in this tool is per page, not per field, so nothing below is signed off.
-
-> Every keystroke below is yours to make. This file is an export, not an approval, and nothing here has been written to Karl.
-
-### Page title — \`title\` [TYPE] — page not approved
-
-**Page title:**
-
-Report garbage, mold, and overgrown vegetation
-
-### Description — \`description\` [TYPE] — page not approved
-
-**Description:**
-
-Tell 311 about clutter, animal waste, or plants that may draw pests to a home.
-
-### Primary agency — \`primary_agency\` [CHOOSE] — page not approved
-
-_U6, narrowed — the mockup names the agency as text, not as a page reference, and Karl requires a page. Choose the parent Agency page: HHVC was approved for its own Agency page (sf.gov/departments--healthy-housing-and-vector-control), so that is the value for HHVC pages rather than Environmental Health or DPH. Those two remain Partner agencies._
-
-1. Choose page: "Healthy Housing and Vector Control"
-
-### Cost — \`cost\` [TYPE] — page not approved
-
-_Choose the Cost radio first (Free, Flat fee, Range, Minimum and up, None) — all five variants end at this same description field._
-
-**Cost description:**
-
-Free
-
-### Things to Know — \`things_to_know\` [TYPE] — page not approved
-
-**Block 1 — Title:**
-
-Reporting anonymously
-
-**Block 1 — Text:**
-
-You can report anonymously. 311 does not require your name. We never share your name or contact information.
-
-**Block 2 — Title:**
-
-Mold review threshold
-
-**Block 2 — Text:**
-
-For mold on a wall or ceiling, HHVC can act when the affected area totals at least 10 square feet.
-
-### What to Do — \`what_to_do\` [TYPE] — page not approved
-
-_The mockup heading "What to do" is not typed anywhere — Karl's What to Do panel carries its own label. Each step below becomes one Section block._
-
-_A step with text, a button and a callout becomes ONE Section block whose Section specifics holds a Text, a Button link and a Callout as siblings — not fields on the step._
-
-**Section 1 — Section title:**
-
-Start your report
-
-**Section 1 — Section specifics → Text:**
-
-Use 311 to report an active problem to the City.
-
-If the problem is urgent, report now.
-
-**Section 1 — Section specifics → Button link → Link text:**
-
-Report through 311
-
-**Section 1 — Button link → destination:**
-
-None
-
-**Section 2 — Section title:**
-
-If you rent, give 72 hours when possible
-
-**Section 2 — Section specifics → Text:**
-
-Tell the property owner or manager about the condition.
-
-- If they do not respond or start fixing it within 72 hours, submit your report. It can then be assigned for review.
-- Do not wait 72 hours if there is an urgent health or safety concern.
-
-**Section 3 — Section title:**
-
-For mold, identify the moisture source
-
-**Section 3 — Section specifics → Text:**
-
-Mold needs excess moisture to grow. Look for leaks from plumbing, roofs, windows, or wet spots, and for condensation from humid indoor air.
-
-Tell the property owner or manager in writing as soon as you find a leak. Include the date, where the mold is, and where you think the moisture is coming from. Keep a copy of your message.
-
-- For mold on a wall or ceiling, describe the size of the area and whether it is spreading.
-- Do not rely on a third-party mold test kit when you report. Describe the visible condition and moisture source instead.
-
-**Section 4 — Section title:**
-
-Describe the condition
-
-**Section 4 — Section specifics → Text:**
-
-Include only the details that apply:
-
-- The address or location
-- The condition: garbage, debris, clutter, stored items, animal waste, pigeon droppings or roosting, overgrown plants and brush, or mold
-- Whether it is inside, outside, or in a shared area
-- How long it has been happening
-- Whether you told the property owner or manager, if you rent
-- Whether you saw rats, mice, mosquitoes, or other pests nearby
-- Your contact information, if you want an inspector to contact you
-
-**Callout (rich text, no title field):**
-
-For mold on walls or ceilings, HHVC can act when the affected area totals at least 10 square feet. Photos are not required. Describe the location and condition clearly.
-
-### Accordion title and text — \`supporting_information\` [TYPE] — page not approved
-
-**Title:**
-
-While you wait: tips to help with the problem
-
-**Text:**
-
-It may take us a few weekdays to get back to you. In the meantime, here are a few things you can do to help with the problem.
-
-- **Contain garbage:** Bag garbage before you toss it, and keep bin lids fully closed.
-- **Do not feed pigeons:** Feeding attracts droppings, roosting, and other pests.
-- **Clean up droppings safely:** Wet down droppings with a disinfectant and wear gloves. Never dry-sweep them.
-- **Trim plants:** Cut back overgrown plants and brush, especially where they touch buildings or fences.
-- **Store items off the ground:** Keep stored items on shelves or pallets so pests cannot hide under them.
-- **Reduce indoor moisture:** Open windows or run fans in kitchens and bathrooms to slow mold growth.
-
-### Custom Section — \`custom_section\` [TYPE] — page not approved
-
-⚠ Inferred mapping — verify the destination before saving.
-
-_Inferred mapping — the field map documents this panel only for supporting/flat sections. Transaction has no generic body stream and this is its only repeatable Title-and-text panel, so verify the destination before saving._
-
-**Title:**
-
-Get help making your report
-
-**Text:**
-
-You can make a report even if you are not the tenant. A friend, family member, advocate, or helper can report for someone else.
-
-- You can ask 311 for help in your language.
-- You can ask 311 for a service request number so you can follow up later.
-
-**Callout (rich text, no title field):**
-
-You can use 311 to report mold caused by humidity or condensation inside a building. Describe where the mold is, how large the affected wall or ceiling area is, and what is causing moisture.
-
-### Custom Section — \`custom_section\` [TYPE] — page not approved
-
-⚠ Inferred mapping — verify the destination before saving.
-
-_Inferred mapping — the field map documents this panel only for supporting/flat sections. Transaction has no generic body stream and this is its only repeatable Title-and-text panel, so verify the destination before saving._
-
-**Title:**
-
-What the Health Code requires
-
-**Text:**
-
-- San Francisco Health Code Article 11 covers this. Property owners must not let trash, filth, animal waste, or overgrown plants build up. Build-up that shelters pests or creates a health hazard is a violation.
-
-### Related — \`related\` [CHOOSE] — page not approved
-
-_This block publishes the destination page’s title and a link, and NOTHING else. Choose the page and type no description._
-
-1. Choose page: "Learn what Healthy Housing and Vector Control can inspect" (\`scopeInfo\` → /sf.gov/information/learn-what-hhvc-can-inspect)
-2. Choose page: "What happens after you report a housing or pest problem" (\`afterReport\` → /sf.gov/information/what-happens-after-you-report-housing-pest-problem)
-3. Choose page: "Report rats or mice" (\`rodentsReport\` → /sf.gov/report-rats-or-mice)
-4. Choose page: "Tenant rights when reporting housing conditions" (\`tenantRights\` → /sf.gov/information/tenant-rights-and-reporting-housing-conditions)
-
-### Partner agencies — \`partner_agencies\` [CHOOSE] — page not approved
-
-_A page chooser restricted to Agency pages. These entries name real sf.gov department pages outside this mockup, so search Karl for each by title._
-
-1. Choose page: "311 Customer Service Center"
-2. Choose page: "Environmental Health"
-
-### Topics — \`topics\` [TYPE] — page not approved
-
-_topicTag is unmapped metadata — the stored values are Agency labels, not Topic chooser references._
-
-### Redirect this page to — \`redirect_url\` [TYPE] — page not approved
-
-_Disabled by design — a ConditionalReadOnlyFieldPanel. Never type into it._
-
-### Promote → For search engines — \`promote\` [TYPE] — page not approved
-
-_The slug is REQUIRED and lives on the Promote tab, so a page cannot be saved from the Content tab alone._
-
-**Slug (\`slug\`):**
-
-sf.gov/report-garbage-filth-vegetation
-
-**Title tag (\`seo_title\`):**
-
-Report garbage, mold, and overgrown vegetation | SF.gov
-
-**Meta description (\`search_description\`):**
-
-Report garbage, clutter, mold, animal waste, pigeon problems, or overgrown vegetation in San Francisco.
-
-## Flags — resolve before saving — page not approved
-
-- \`sections.1.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to supporting_information (Accordions). This accordion uses the mockup-only open flag so the tips are visible without a click — flag for Digital Services t". Resolve it before typing anything from them.
-
-## Unmapped — no documented Karl destination
-
-Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
-
-- \`audience\` — The page carries \`audience\`, and Karl does have a home for it: a **Things to know** entry titled "Who this information is for". Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list. What blocks it is the budget, not the field: the Help Center caps Things to know at 2 entries, and most Transaction pages here already spend both, so placing the audience means deciding which existing entry it replaces. That is a content call, not a missing panel.
-- \`sections.3.button\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
-- \`sections.3.buttonUrl\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
-"
-`;
-
 exports[`transcript Markdown, every corpus page > findHotelRecords 1`] = `
 "# Find residential hotel and shelter records — Karl transcript
 
@@ -1350,11 +1500,10 @@ Use this page for records about a residential hotel, SRO, or shelter. For a stan
 
 _This block publishes the destination page’s title and a link, and NOTHING else. Choose the page and type no description._
 
-1. Choose page: "Report a problem in an SRO or hotel" (\`sroHotelReport\` → /sf.gov/report-problem-sro-hotel)
-2. Choose page: "Find complaints and inspection records" (\`findRecords\` → /sf.gov/find-complaints-and-inspection-records)
-3. Choose page: "Healthy housing conditions" (\`healthyHousingTopic\` → /sf.gov/topics--healthy-housing-conditions)
-4. Choose page: "Tenant rights when reporting housing conditions" (\`tenantRights\` → /sf.gov/information/tenant-rights-and-reporting-housing-conditions)
-5. Choose page: "Report cockroaches, mosquitoes, and other insects" (\`insectsReport\` → /sf.gov/report-cockroaches-mosquitoes-insects)
+1. Choose page: "Find complaints and inspection records" (\`findRecords\` → /sf.gov/find-complaints-and-inspection-records)
+2. Choose page: "Healthy housing conditions" (\`healthyHousingTopic\` → /sf.gov/topics--healthy-housing-conditions)
+3. Choose page: "Tenant rights when reporting housing conditions" (\`tenantRights\` → /sf.gov/information/tenant-rights-and-reporting-housing-conditions)
+4. Choose page: "Report cockroaches or other insects" (\`insectsReport\` → /sf.gov/report-cockroaches-or-other-insects)
 
 ### Partner agencies — \`partner_agencies\` [CHOOSE] — page not approved
 
@@ -1846,8 +1995,8 @@ Report housing health issues, find services and resources, and learn how San Fra
 
 ## Flags — resolve before saving — page not approved
 
-- \`sections.1.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to a Services block (Title = this heading, Links = the cards). The Pests half of the report group (Decided). Report rats or mice and Report mosquitoes or s". Resolve it before typing anything from them.
-- \`sections.2.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to a Services block. The Sanitation half of the report group (Decided). Report mold and Report garbage, clutter, or overgrown plants are 2 of the 9 conditi". Resolve it before typing anything from them.
+- \`sections.1.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to a Services block (Title = this heading, Links = the cards). The Pests half of the report group (Decided): the 5 pest condition pages (report regroup, co". Resolve it before typing anything from them.
+- \`sections.2.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to a Services block. The Sanitation half of the report group (Decided): the 4 sanitation condition pages (report regroup, completed 2026-11-25). Animal was". Resolve it before typing anything from them.
 - \`sections.3.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to a Services block. Topic tab, suggested structure item 2, with the tenant Information page added beside the owner steps.". Resolve it before typing anything from them.
 - \`sections.4.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to a Services block. Topic tab, suggested structure item 3. The owner-duty pages are listed separately until their merge is decided.". Resolve it before typing anything from them.
 - \`sections.5.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to a Services block. Holds what the retired Look up building records Resource Collection listed: the three lookup Transactions and the public records reque". Resolve it before typing anything from them.
@@ -1864,11 +2013,11 @@ Nothing below has a field to be typed into. It is listed rather than dropped, be
 `;
 
 exports[`transcript Markdown, every corpus page > insectsReport 1`] = `
-"# Report cockroaches, mosquitoes, and other insects — Karl transcript
+"# Report cockroaches or other insects — Karl transcript
 
 **Karl path:** New: Transaction → Content
 **Decision:** no review recorded
-**Page key:** \`insectsReport\` · **Slug:** \`sf.gov/report-cockroaches-mosquitoes-insects\` · **Type:** Transaction
+**Page key:** \`insectsReport\` · **Slug:** \`sf.gov/report-cockroaches-or-other-insects\` · **Type:** Transaction
 
 **NOT APPROVED — do not publish from this transcript.** Approval in this tool is per page, not per field, so nothing below is signed off.
 
@@ -1878,13 +2027,13 @@ exports[`transcript Markdown, every corpus page > insectsReport 1`] = `
 
 **Page title:**
 
-Report cockroaches, mosquitoes, and other insects
+Report cockroaches or other insects
 
 ### Description — \`description\` [TYPE] — page not approved
 
 **Description:**
 
-Tell 311 about bed bugs, roaches, or other pests in a home, building, yard, or shared area.
+Roaches, fleas, flies, wasps, or mites in a home, building, yard, or shared area.
 
 ### Primary agency — \`primary_agency\` [CHOOSE] — page not approved
 
@@ -1904,19 +2053,26 @@ Free
 
 **Block 1 — Title:**
 
-Reporting anonymously
+Flies often point to another problem
 
 **Block 1 — Text:**
 
-You can report anonymously. 311 does not require your name. We never share your name or contact information.
+Flies usually breed in garbage or animal waste. If you see that too, use [Report garbage, clutter, or overgrown plants](garbageReport) or [Report animal waste on a property](animalWasteReport).
 
 **Block 2 — Title:**
 
-Seeing a dead bird
+Mites
 
 **Block 2 — Text:**
 
-Report it to the State West Nile virus program instead of 311 — dead birds help track West Nile virus.
+Mites often come with rats, mice, or pigeons. If you see those too, use [Report rats or mice](rodentsReport) or [Report pigeon droppings, nesting, or feeding](pigeonReport).
+
+**Links in this text — recreate each with the Link tool, do not paste them:**
+
+- "Report garbage, clutter, or overgrown plants" → shape 5 — rich text Link tool → Internal link → "Report garbage, clutter, or overgrown plants"
+- "Report animal waste on a property" → shape 5 — rich text Link tool → Internal link → "Report animal waste on a property"
+- "Report rats or mice" → shape 5 — rich text Link tool → Internal link → "Report rats or mice"
+- "Report pigeon droppings, nesting, or feeding" → shape 5 — rich text Link tool → Internal link → "Report pigeon droppings, nesting, or feeding"
 
 ### What to Do — \`what_to_do\` [TYPE] — page not approved
 
@@ -1930,9 +2086,11 @@ Start your report
 
 **Section 1 — Section specifics → Text:**
 
-Use 311 to report an active problem to the City.
+Use 311 to report cockroaches, fleas, flies, wasps, or mites to the City. If the problem is urgent, report now.
 
-If the problem is urgent, report now.
+Bed bugs and mosquitoes have their own pages: [Report bed bugs](bedBugReport) and [Report mosquitoes or standing water](mosquitoReport).
+
+Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.
 
 **Section 1 — Section specifics → Button link → Link text:**
 
@@ -1944,40 +2102,38 @@ None
 
 **Section 2 — Section title:**
 
-Notify your landlord before reporting
+Tell us what you saw
 
 **Section 2 — Section specifics → Text:**
 
-- **Notify your landlord:** Tell the property owner or manager about the insects. For bed bugs, owners must investigate complaints promptly and coordinate treatment.
-- **Give them 72 hours:** If they do not start fixing the problem within 3 days, report it to the City.
-- **Urgent problems:** If there is a serious danger to health or safety, report it right away without waiting.
-
-**Section 3 — Section title:**
-
-Tell us where the problem is
-
-**Section 3 — Section specifics → Text:**
-
 Only share the details that apply to your situation:
 
-- **What you saw:** Cockroaches, bed bugs, mosquitoes, flies, wasps, mites, or another insect problem.
-- **Where it is:** The address or location, and where you saw the insects (inside, outside, or in a shared area).
-- **Standing water:** For mosquitoes, tell us about any standing water — buckets, planters, clogged gutters, or fountains.
+- **What you saw:** Cockroaches, fleas, flies, wasps, or mites.
+- **Where it is:** The address, and whether you saw them inside, outside, or in a shared area.
 - **When it started:** How long this has been happening.
-- **Landlord notice:** If you rent, tell us if you already notified the property owner or manager.
-- **Your contact info:** Leave your name and phone number or email if you want an inspector to contact you.
-
-**Section 3 — Section specifics → Button link → Link text:**
-
-Report a dead bird
-
-**Section 3 — Button link → destination:**
-
-External URL → https://westnile.ca.gov/report
+- **Other issues:** Any garbage, animal waste, rats, mice, or pigeons nearby.
+- **Your contact info:** Leave a phone number or email if you want an inspector to contact you.
 
 **Callout (rich text, no title field):**
 
-See a dead bird? Report it to the State West Nile virus program instead — dead birds help track West Nile virus.
+We never share your name or contact information. You do not need to send photos.
+
+**Section 3 — Section title:**
+
+If you see a wasp nest
+
+**Section 3 — Section specifics → Text:**
+
+Do not disturb the nest. Mark the spot and keep people and pets away.
+
+We confirm the nest. If it is on public property, we refer it to Public Works.
+
+PLACEHOLDER: what happens when the nest is on private property.
+
+**Links in this text — recreate each with the Link tool, do not paste them:**
+
+- "Report bed bugs" → shape 5 — rich text Link tool → Internal link → "Report bed bugs"
+- "Report mosquitoes or standing water" → shape 5 — rich text Link tool → Internal link → "Report mosquitoes or standing water"
 
 ### Accordion title and text — \`supporting_information\` [TYPE] — page not approved
 
@@ -1990,27 +2146,9 @@ While you wait: tips to help with the problem
 It may take us a few weekdays to get back to you. In the meantime, here are a few things you can do to help with the problem.
 
 - **Cockroaches:** Clean up crumbs and grease, fix dripping faucets and leaks, and seal cracks near pipes. Use bait stations instead of sprays.
-- **Bed bugs:** Do not throw out furniture before treatment — it can spread the bugs. Wash and dry bedding on high heat, and tell your landlord right away.
-- **Mosquitoes:** Dump standing water at least once a week — buckets, planters, saucers, and clogged gutters. Fix holes in window screens.
 - **Flies:** Bag garbage tightly and keep bin lids closed so flies cannot breed in it.
-- **Wasps:** Do not disturb a ground nest. Mark the spot and keep people and pets away until it is treated.
-
-### Custom Section — \`custom_section\` [TYPE] — page not approved
-
-⚠ Inferred mapping — verify the destination before saving.
-
-_Inferred mapping — the field map documents this panel only for supporting/flat sections. Transaction has no generic body stream and this is its only repeatable Title-and-text panel, so verify the destination before saving._
-
-**Title:**
-
-Get help making your report
-
-**Text:**
-
-You can make a report even if you are not the tenant. A friend, family member, advocate, or helper can report for someone else.
-
-- You can ask 311 for help in your language.
-- You can ask 311 for a service request number so you can follow up later.
+- **Drain flies:** Scrub slow or unused drains with a brush and flush them with hot water.
+- **Fruit flies:** Throw out overripe fruit and rinse cans and bottles before you recycle them.
 
 ### Custom Section — \`custom_section\` [TYPE] — page not approved
 
@@ -2024,16 +2162,16 @@ What the Health Code requires
 
 **Text:**
 
-- San Francisco Health Code Article 11 requires property owners to keep buildings clean, watertight, and completely free of insect infestations. They must also remove places where flies and mosquitoes breed.
+- San Francisco Health Code Article 11 requires property owners to keep buildings free of insect infestations, including cockroaches, fleas, flies, and wasps.
 
 ### Related — \`related\` [CHOOSE] — page not approved
 
 _This block publishes the destination page’s title and a link, and NOTHING else. Choose the page and type no description._
 
-1. Choose page: "Learn what Healthy Housing and Vector Control can inspect" (\`scopeInfo\` → /sf.gov/information/learn-what-hhvc-can-inspect)
-2. Choose page: "What happens after you report a housing or pest problem" (\`afterReport\` → /sf.gov/information/what-happens-after-you-report-housing-pest-problem)
-3. Choose page: "Mosquito Control Program" (\`mosquitoControl\` → /sf.gov/mosquito-control-program)
-4. Choose page: "Tenant rights when reporting housing conditions" (\`tenantRights\` → /sf.gov/information/tenant-rights-and-reporting-housing-conditions)
+1. Choose page: "What happens after you report a housing or pest problem" (\`afterReport\` → /sf.gov/information/what-happens-after-you-report-housing-pest-problem)
+2. Choose page: "Tenant rights when reporting housing conditions" (\`tenantRights\` → /sf.gov/information/tenant-rights-and-reporting-housing-conditions)
+3. Choose page: "Report bed bugs" (\`bedBugReport\` → /sf.gov/report-bed-bugs)
+4. Choose page: "Learn what Healthy Housing and Vector Control can inspect" (\`scopeInfo\` → /sf.gov/information/learn-what-hhvc-can-inspect)
 
 ### Partner agencies — \`partner_agencies\` [CHOOSE] — page not approved
 
@@ -2056,15 +2194,15 @@ _The slug is REQUIRED and lives on the Promote tab, so a page cannot be saved fr
 
 **Slug (\`slug\`):**
 
-sf.gov/report-cockroaches-mosquitoes-insects
+sf.gov/report-cockroaches-or-other-insects
 
 **Title tag (\`seo_title\`):**
 
-Report cockroaches, mosquitoes, and other insects | SF.gov
+Report cockroaches or other insects | SF.gov
 
 **Meta description (\`search_description\`):**
 
-Report cockroaches, bed bugs, mosquitoes, flies, wasps, or other insect problems in San Francisco.
+Report cockroaches, fleas, flies, wasps, or mites in a San Francisco home, building, or yard.
 
 ## Flags — resolve before saving — page not approved
 
@@ -2075,8 +2213,8 @@ Report cockroaches, bed bugs, mosquitoes, flies, wasps, or other insect problems
 Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
 
 - \`audience\` — The page carries \`audience\`, and Karl does have a home for it: a **Things to know** entry titled "Who this information is for". Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list. What blocks it is the budget, not the field: the Help Center caps Things to know at 2 entries, and most Transaction pages here already spend both, so placing the audience means deciding which existing entry it replaces. That is a content call, not a missing panel.
-- \`sections.3.button\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
-- \`sections.3.buttonUrl\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
+- \`sections.2.button\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
+- \`sections.2.buttonUrl\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
 "
 `;
 
@@ -2498,6 +2636,7 @@ Sessions cover practical, low-cost steps residents can take themselves, and when
 
 - How to seal small gaps and cracks that let pests inside
 - Safe food and garbage storage that does not attract rodents or insects
+- Pick up pet waste daily. It feeds rats.
 - Early signs of rats, mice, cockroaches, and bed bugs
 - When to notify your landlord and when to report a problem to the City
 - Least-toxic tools you can use yourself, and which pesticides to avoid indoors
@@ -3520,6 +3659,11 @@ Most pest problems in buildings start with a few common conditions. Fixing them 
 - Standing water, leaks, and damp spaces
 - Clutter, cardboard storage, and unused materials that offer shelter
 - Overgrown landscaping and debris close to walls and foundations
+- Pet waste in yards and shared areas. Pick up pet waste daily. It feeds rats. [Report animal waste on a property](animalWasteReport)
+
+**Links in this text — recreate each with the Link tool, do not paste them:**
+
+- "Report animal waste on a property" → shape 5 — rich text Link tool → Internal link → "Report animal waste on a property"
 
 ### Information section — \`information_section\` [TYPE] — page not approved
 
@@ -4161,15 +4305,17 @@ https://www.sf.gov/topics--311-online-services
 Start a City service request when you are not sure which Healthy Housing and Vector Control report fits.
 
 1. Choose page: "Report rats or mice" (\`rodentsReport\` → /sf.gov/report-rats-or-mice)
-2. Choose page: "Report mosquitoes or standing water" (\`mosquitoReport\` → /sf.gov/report-mosquitoes-or-standing-water)
-3. Choose page: "Report cockroaches, mosquitoes, and other insects" (\`insectsReport\` → /sf.gov/report-cockroaches-mosquitoes-insects)
-4. Choose page: "Report garbage, mold, and overgrown vegetation" (\`filthReport\` → /sf.gov/report-garbage-filth-vegetation)
-5. Choose page: "Report mold" (\`moldReport\` → /sf.gov/report-mold)
-6. Choose page: "Report garbage, clutter, or overgrown plants" (\`garbageReport\` → /sf.gov/report-garbage-clutter-or-overgrown-plants)
-7. Choose page: "Report a problem in an SRO or hotel" (\`sroHotelReport\` → /sf.gov/report-problem-sro-hotel)
-8. Choose page: "Healthy housing conditions" (\`healthyHousingTopic\` → /sf.gov/topics--healthy-housing-conditions)
-9. Choose page: "Learn what Healthy Housing and Vector Control can inspect" (\`scopeInfo\` → /sf.gov/information/learn-what-hhvc-can-inspect)
-10. Choose page: "Guides in other languages" (\`languageGuides\` → /sf.gov/resource/guides-in-other-languages)
+2. Choose page: "Report animal waste on a property" (\`animalWasteReport\` → /sf.gov/report-animal-waste-on-property)
+3. Choose page: "Report bed bugs" (\`bedBugReport\` → /sf.gov/report-bed-bugs)
+4. Choose page: "Report cockroaches or other insects" (\`insectsReport\` → /sf.gov/report-cockroaches-or-other-insects)
+5. Choose page: "Report mosquitoes or standing water" (\`mosquitoReport\` → /sf.gov/report-mosquitoes-or-standing-water)
+6. Choose page: "Report pigeon droppings, nesting, or feeding" (\`pigeonReport\` → /sf.gov/report-pigeon-droppings-nesting-or-feeding)
+7. Choose page: "Report a sewage leak or backup" (\`sewageReport\` → /sf.gov/report-sewage-leak-or-backup)
+8. Choose page: "Report mold" (\`moldReport\` → /sf.gov/report-mold)
+9. Choose page: "Report garbage, clutter, or overgrown plants" (\`garbageReport\` → /sf.gov/report-garbage-clutter-or-overgrown-plants)
+10. Choose page: "Healthy housing conditions" (\`healthyHousingTopic\` → /sf.gov/topics--healthy-housing-conditions)
+11. Choose page: "Learn what Healthy Housing and Vector Control can inspect" (\`scopeInfo\` → /sf.gov/information/learn-what-hhvc-can-inspect)
+12. Choose page: "Guides in other languages" (\`languageGuides\` → /sf.gov/resource/guides-in-other-languages)
 
 ### Section title 2 — \`resources_title\` [TYPE] — page not approved
 
@@ -4336,6 +4482,190 @@ Nothing below has a field to be typed into. It is listed rather than dropped, be
 - \`sections.1.paragraphs\` — U20 — an Agency Services/Resources Subsection carries a single optional Title and a links list. There is no description field, so this prose has nowhere to go.
 - \`sections.2.paragraphs\` — U20 — an Agency Services/Resources Subsection carries a single optional Title and a links list. There is no description field, so this prose has nowhere to go.
 - \`sections.4.paragraphs\` — U20 — an Agency Services/Resources Subsection carries a single optional Title and a links list. There is no description field, so this prose has nowhere to go.
+"
+`;
+
+exports[`transcript Markdown, every corpus page > pigeonReport 1`] = `
+"# Report pigeon droppings, nesting, or feeding — Karl transcript
+
+**Karl path:** New: Transaction → Content
+**Decision:** no review recorded
+**Page key:** \`pigeonReport\` · **Slug:** \`sf.gov/report-pigeon-droppings-nesting-or-feeding\` · **Type:** Transaction
+
+**NOT APPROVED — do not publish from this transcript.** Approval in this tool is per page, not per field, so nothing below is signed off.
+
+> Every keystroke below is yours to make. This file is an export, not an approval, and nothing here has been written to Karl.
+
+### Page title — \`title\` [TYPE] — page not approved
+
+**Page title:**
+
+Report pigeon droppings, nesting, or feeding
+
+### Description — \`description\` [TYPE] — page not approved
+
+**Description:**
+
+Roosting birds, feathers, or bird waste on a building, and people who feed them.
+
+### Primary agency — \`primary_agency\` [CHOOSE] — page not approved
+
+_U6, narrowed — the mockup names the agency as text, not as a page reference, and Karl requires a page. Choose the parent Agency page: HHVC was approved for its own Agency page (sf.gov/departments--healthy-housing-and-vector-control), so that is the value for HHVC pages rather than Environmental Health or DPH. Those two remain Partner agencies._
+
+1. Choose page: "Healthy Housing and Vector Control"
+
+### Cost — \`cost\` [TYPE] — page not approved
+
+_Choose the Cost radio first (Free, Flat fee, Range, Minimum and up, None) — all five variants end at this same description field._
+
+**Cost description:**
+
+Free
+
+### Things to Know — \`things_to_know\` [TYPE] — page not approved
+
+**Block 1 — Title:**
+
+Who we contact
+
+**Block 1 — Text:**
+
+We contact the property owner. Health Code Article 11 also lets us act against a manager, or whoever created the problem.
+
+**Block 2 — Title:**
+
+Bird mites
+
+**Block 2 — Text:**
+
+Tiny biting mites often come with nesting pigeons. Report them here too.
+
+### What to Do — \`what_to_do\` [TYPE] — page not approved
+
+_The mockup heading "What to do" is not typed anywhere — Karl's What to Do panel carries its own label. Each step below becomes one Section block._
+
+_A step with text, a button and a callout becomes ONE Section block whose Section specifics holds a Text, a Button link and a Callout as siblings — not fields on the step._
+
+**Section 1 — Section title:**
+
+Start your report
+
+**Section 1 — Section specifics → Text:**
+
+Use 311 to report pigeon droppings, nesting, roosting, or feeding to the City.
+
+Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.
+
+**Section 1 — Section specifics → Button link → Link text:**
+
+Report through 311
+
+**Section 1 — Button link → destination:**
+
+None
+
+**Section 2 — Section title:**
+
+Tell us what you see
+
+**Section 2 — Section specifics → Text:**
+
+Only share the details that apply to your situation:
+
+- **What you see:** Pigeons roosting or nesting on ledges, roofs, or signs, or a build-up of droppings or feathers.
+- **Where it is:** The address, and where on the building or property.
+- **When it started:** How long this has been happening.
+- **Mites:** Whether you see tiny biting mites indoors.
+- **Your contact info:** Leave a phone number or email if you want an inspector to contact you.
+
+**Callout (rich text, no title field):**
+
+We never share your name or contact information. You do not need to send photos.
+
+**Section 3 — Section title:**
+
+If someone is feeding pigeons
+
+**Section 3 — Section specifics → Text:**
+
+Tell us where and when the feeding happens. The person feeding them may be a neighbor, not the property owner.
+
+PLACEHOLDER: what HHVC does when the person feeding pigeons is not the property owner.
+
+### Accordion title and text — \`supporting_information\` [TYPE] — page not approved
+
+**Title:**
+
+While you wait: tips to help with the problem
+
+**Text:**
+
+It may take us a few weekdays to get back to you. In the meantime, here are a few things you can do to help with the problem.
+
+- **Do not feed pigeons:** Feeding attracts droppings, roosting, and other pests.
+- **Clean up droppings safely:** Wet down droppings with a disinfectant and wear gloves. Never dry-sweep them.
+
+### Custom Section — \`custom_section\` [TYPE] — page not approved
+
+⚠ Inferred mapping — verify the destination before saving.
+
+_Inferred mapping — the field map documents this panel only for supporting/flat sections. Transaction has no generic body stream and this is its only repeatable Title-and-text panel, so verify the destination before saving._
+
+**Title:**
+
+What the Health Code requires
+
+**Text:**
+
+- San Francisco Health Code Article 11 does not allow animals, including pigeons, to nest, roost, or live on a property in ways that create a health hazard.
+
+### Related — \`related\` [CHOOSE] — page not approved
+
+_This block publishes the destination page’s title and a link, and NOTHING else. Choose the page and type no description._
+
+1. Choose page: "What happens after you report a housing or pest problem" (\`afterReport\` → /sf.gov/information/what-happens-after-you-report-housing-pest-problem)
+2. Choose page: "Report animal waste on a property" (\`animalWasteReport\` → /sf.gov/report-animal-waste-on-property)
+3. Choose page: "Tenant rights when reporting housing conditions" (\`tenantRights\` → /sf.gov/information/tenant-rights-and-reporting-housing-conditions)
+4. Choose page: "Learn what Healthy Housing and Vector Control can inspect" (\`scopeInfo\` → /sf.gov/information/learn-what-hhvc-can-inspect)
+
+### Partner agencies — \`partner_agencies\` [CHOOSE] — page not approved
+
+_A page chooser restricted to Agency pages. These entries name real sf.gov department pages outside this mockup, so search Karl for each by title._
+
+1. Choose page: "311 Customer Service Center"
+2. Choose page: "Environmental Health"
+
+### Topics — \`topics\` [TYPE] — page not approved
+
+_topicTag is unmapped metadata — the stored values are Agency labels, not Topic chooser references._
+
+### Redirect this page to — \`redirect_url\` [TYPE] — page not approved
+
+_Disabled by design — a ConditionalReadOnlyFieldPanel. Never type into it._
+
+### Promote → For search engines — \`promote\` [TYPE] — page not approved
+
+_The slug is REQUIRED and lives on the Promote tab, so a page cannot be saved from the Content tab alone._
+
+**Slug (\`slug\`):**
+
+sf.gov/report-pigeon-droppings-nesting-or-feeding
+
+**Title tag (\`seo_title\`):**
+
+Report pigeon droppings, nesting, or feeding | SF.gov
+
+**Meta description (\`search_description\`):**
+
+Report pigeons roosting or nesting, droppings or feathers, or people feeding pigeons at a San Francisco property.
+
+## Unmapped — no documented Karl destination
+
+Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
+
+- \`audience\` — The page carries \`audience\`, and Karl does have a home for it: a **Things to know** entry titled "Who this information is for". Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list. What blocks it is the budget, not the field: the Help Center caps Things to know at 2 entries, and most Transaction pages here already spend both, so placing the audience means deciding which existing entry it replaces. That is a content call, not a missing panel.
+- \`sections.2.button\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
+- \`sections.2.buttonUrl\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
 "
 `;
 
@@ -4755,10 +5085,14 @@ It may take us a few weekdays to get back to you. In the meantime, here are a fe
 
 - **Close off entry points:** Seal any gap bigger than a pencil. Use rodent-proof materials like hardware cloth, copper mesh, or sheet metal.
 - **Cut off food:** Store food and garbage in bins with tight-fitting lids. Do not leave pet food out overnight.
-- **Pick up pet waste daily:** It feeds rats.
+- **Pick up pet waste daily:** It feeds rats. [Report animal waste on a property](animalWasteReport)
 - **Remove hiding places:** Clear clutter and trim overgrown plants where rats and mice hide or nest.
 - **Trap safely:** Use snap traps indoors. Do not use poisons — they can harm children, pets, and wildlife.
 - **Clean up safely:** Wet down droppings with a disinfectant and wear gloves. Never dry-sweep or vacuum droppings.
+
+**Links in this text — recreate each with the Link tool, do not paste them:**
+
+- "Report animal waste on a property" → shape 5 — rich text Link tool → Internal link → "Report animal waste on a property"
 
 ### Custom Section — \`custom_section\` [TYPE] — page not approved
 
@@ -4931,24 +5265,28 @@ Choose where to report your problem
 **Text:**
 
 - **Rats or mice:** [Report rats or mice](rodentsReport)
+- **Dog or cat waste, or raccoon droppings, on private property:** [Report animal waste on a property](animalWasteReport)
+- **Bed bugs:** [Report bed bugs](bedBugReport)
+- **Cockroaches, fleas, flies, wasps, or mites:** [Report cockroaches or other insects](insectsReport)
 - **Mosquitoes or standing water:** [Report mosquitoes or standing water](mosquitoReport)
-- **Cockroaches, bed bugs, flies, wasps, or mites:** [Report cockroaches, mosquitoes, and other insects](insectsReport)
+- **Pigeon droppings, nesting, roosting, or feeding:** [Report pigeon droppings, nesting, or feeding](pigeonReport)
+- **Sewage from a drain, toilet, cleanout, or pipe:** [Report a sewage leak or backup](sewageReport)
 - **Mold from humidity or condensation:** [Report mold](moldReport)
 - **Garbage, clutter, or overgrown plants:** [Report garbage, clutter, or overgrown plants](garbageReport)
-- **Animal waste, raccoon droppings, or pigeon droppings or roosting:** [Report garbage, mold, and overgrown vegetation](filthReport)
-- **A problem in an SRO or residential hotel:** [Report a problem in an SRO or hotel](sroHotelReport)
 - **Dead birds:** [Report a dead bird to the State West Nile virus program](https://westnile.ca.gov/report)
 - **Health Code Article 11:** [Read Article 11 in plain language](article11Guide)
 
 **Links in this text — recreate each with the Link tool, do not paste them:**
 
 - "Report rats or mice" → shape 5 — rich text Link tool → Internal link → "Report rats or mice"
+- "Report animal waste on a property" → shape 5 — rich text Link tool → Internal link → "Report animal waste on a property"
+- "Report bed bugs" → shape 5 — rich text Link tool → Internal link → "Report bed bugs"
+- "Report cockroaches or other insects" → shape 5 — rich text Link tool → Internal link → "Report cockroaches or other insects"
 - "Report mosquitoes or standing water" → shape 5 — rich text Link tool → Internal link → "Report mosquitoes or standing water"
-- "Report cockroaches, mosquitoes, and other insects" → shape 5 — rich text Link tool → Internal link → "Report cockroaches, mosquitoes, and other insects"
+- "Report pigeon droppings, nesting, or feeding" → shape 5 — rich text Link tool → Internal link → "Report pigeon droppings, nesting, or feeding"
+- "Report a sewage leak or backup" → shape 5 — rich text Link tool → Internal link → "Report a sewage leak or backup"
 - "Report mold" → shape 5 — rich text Link tool → Internal link → "Report mold"
 - "Report garbage, clutter, or overgrown plants" → shape 5 — rich text Link tool → Internal link → "Report garbage, clutter, or overgrown plants"
-- "Report garbage, mold, and overgrown vegetation" → shape 5 — rich text Link tool → Internal link → "Report garbage, mold, and overgrown vegetation"
-- "Report a problem in an SRO or hotel" → shape 5 — rich text Link tool → Internal link → "Report a problem in an SRO or hotel"
 - "Report a dead bird to the State West Nile virus program" → shape 5 — rich text Link tool → External link
 - "Read Article 11 in plain language" → shape 5 — rich text Link tool → Internal link → "Health Code Article 11 in plain language"
 
@@ -5000,12 +5338,12 @@ Check whether HHVC may review a pest, vector, or housing health condition.
 "
 `;
 
-exports[`transcript Markdown, every corpus page > sroHotelReport 1`] = `
-"# Report a problem in an SRO or hotel — Karl transcript
+exports[`transcript Markdown, every corpus page > sewageReport 1`] = `
+"# Report a sewage leak or backup — Karl transcript
 
 **Karl path:** New: Transaction → Content
 **Decision:** no review recorded
-**Page key:** \`sroHotelReport\` · **Slug:** \`sf.gov/report-problem-sro-hotel\` · **Type:** Transaction
+**Page key:** \`sewageReport\` · **Slug:** \`sf.gov/report-sewage-leak-or-backup\` · **Type:** Transaction
 
 **NOT APPROVED — do not publish from this transcript.** Approval in this tool is per page, not per field, so nothing below is signed off.
 
@@ -5015,13 +5353,13 @@ exports[`transcript Markdown, every corpus page > sroHotelReport 1`] = `
 
 **Page title:**
 
-Report a problem in an SRO or hotel
+Report a sewage leak or backup
 
 ### Description — \`description\` [TYPE] — page not approved
 
 **Description:**
 
-Tell us about pests, garbage, or health hazards in a single room occupancy or residential hotel.
+Raw waste from a drain, toilet, cleanout, or pipe, inside a building or in a yard or shared area.
 
 ### Primary agency — \`primary_agency\` [CHOOSE] — page not approved
 
@@ -5041,19 +5379,23 @@ Free
 
 **Block 1 — Title:**
 
-_(empty)_
+How fast we respond
 
 **Block 1 — Text:**
 
-You can report anonymously. 311 does not require your name. We never share your name or contact information.
+We respond within 48 hours of getting your report. Report sewage right away; you do not need to wait for your landlord.
 
 **Block 2 — Title:**
 
-_(empty)_
+A leak with no sewage
 
 **Block 2 — Text:**
 
-This report covers pest, garbage, and housing health conditions. Records and inspection history for SROs, residential hotels, and shelters use a separate lookup tool.
+A leaking pipe with no sewage goes to the Department of Building Inspection. [Report a building concern to DBI](https://www.sf.gov/report-residential-building-concern)
+
+**Links in this text — recreate each with the Link tool, do not paste them:**
+
+- "Report a building concern to DBI" → shape 5 — rich text Link tool → External link
 
 ### What to Do — \`what_to_do\` [TYPE] — page not approved
 
@@ -5063,13 +5405,13 @@ _A step with text, a button and a callout becomes ONE Section block whose Sectio
 
 **Section 1 — Section title:**
 
-Start your report
+Report it right away
 
 **Section 1 — Section specifics → Text:**
 
-Use 311 to report an active problem to the City.
+Use 311 to report sewage as soon as you see it. Stay away from it, and keep children and pets away.
 
-If the problem is urgent, report now.
+Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.
 
 **Section 1 — Section specifics → Button link → Link text:**
 
@@ -5081,39 +5423,55 @@ None
 
 **Section 2 — Section title:**
 
-Tell us where the problem is
+Tell us where it is
 
 **Section 2 — Section specifics → Text:**
 
 Only share the details that apply to your situation:
 
-- **What you saw:** Pests, garbage, or a housing health condition, and which unit or shared area it affects.
-- **Where it is:** The building address. Say whether the problem is in a unit, a shared kitchen or bathroom, or another common area.
-- **When it started:** How long this has been happening.
-- **Your contact info:** Leave your name and phone number or email if you want an inspector to contact you.
+- **Where it comes from:** A drain, toilet, cleanout, or pipe.
+- **Where it is:** The address, and whether it is inside, in a yard, or in a shared area.
+- **When it started:** How long it has been happening, and whether it is still flowing.
+- **Your contact info:** Leave a phone number or email if you want an inspector to contact you.
 
-### Custom Section — \`custom_section\` [TYPE] — page not approved
+**Callout (rich text, no title field):**
 
-⚠ Inferred mapping — verify the destination before saving.
+We never share your name or contact information. You do not need to send photos.
 
-_Inferred mapping — the field map documents this panel only for supporting/flat sections. Transaction has no generic body stream and this is its only repeatable Title-and-text panel, so verify the destination before saving._
+**Section 3 — Section title:**
+
+What happens next
+
+**Section 3 — Section specifics → Text:**
+
+The property owner must hire a plumber to fix the problem. We check that the sewage is removed and the area is cleaned and sanitized.
+
+### Accordion title and text — \`supporting_information\` [TYPE] — page not approved
 
 **Title:**
 
-What this covers
+While you wait: tips to stay safe
 
 **Text:**
 
-Environmental Health reviews pest, garbage, and housing health reports for residential hotels, SROs, and shelters. This includes shared kitchens, bathrooms, and garbage areas.
+- **Stop using it:** Do not use the sink, toilet, or drain that is backing up.
+- **Wash up:** Wash your hands well if you touch anything the sewage reached.
 
 ### Related — \`related\` [CHOOSE] — page not approved
 
 _This block publishes the destination page’s title and a link, and NOTHING else. Choose the page and type no description._
 
-1. Choose page: "Find residential hotel and shelter records" (\`findHotelRecords\` → /sf.gov/find-residential-hotel-and-shelter-records)
-2. Choose page: "Learn what Healthy Housing and Vector Control can inspect" (\`scopeInfo\` → /sf.gov/information/learn-what-hhvc-can-inspect)
-3. Choose page: "What happens after you report a housing or pest problem" (\`afterReport\` → /sf.gov/information/what-happens-after-you-report-housing-pest-problem)
-4. Choose page: "Tenant rights when reporting housing conditions" (\`tenantRights\` → /sf.gov/information/tenant-rights-and-reporting-housing-conditions)
+1. Choose page: "What happens after you report a housing or pest problem" (\`afterReport\` → /sf.gov/information/what-happens-after-you-report-housing-pest-problem)
+2. Choose page: "Tenant rights when reporting housing conditions" (\`tenantRights\` → /sf.gov/information/tenant-rights-and-reporting-housing-conditions)
+3. Choose page: "Who to call about a housing problem" (\`whoToCall\` → /sf.gov/information/who-to-call-about-a-housing-problem)
+4. Choose page: "Learn what Healthy Housing and Vector Control can inspect" (\`scopeInfo\` → /sf.gov/information/learn-what-hhvc-can-inspect)
+
+### Partner agencies — \`partner_agencies\` [CHOOSE] — page not approved
+
+_A page chooser restricted to Agency pages. These entries name real sf.gov department pages outside this mockup, so search Karl for each by title._
+
+1. Choose page: "311 Customer Service Center"
+2. Choose page: "Environmental Health"
 
 ### Topics — \`topics\` [TYPE] — page not approved
 
@@ -5129,15 +5487,15 @@ _The slug is REQUIRED and lives on the Promote tab, so a page cannot be saved fr
 
 **Slug (\`slug\`):**
 
-sf.gov/report-problem-sro-hotel
+sf.gov/report-sewage-leak-or-backup
 
 **Title tag (\`seo_title\`):**
 
-Report a problem in an SRO or hotel | SF.gov
+Report a sewage leak or backup | SF.gov
 
 **Meta description (\`search_description\`):**
 
-Report a pest, garbage, or housing health problem in a San Francisco SRO, residential hotel, or shelter.
+Report sewage from a drain, toilet, cleanout, or pipe at a San Francisco home or building. We respond within 48 hours.
 
 ## Unmapped — no documented Karl destination
 
@@ -5398,12 +5756,14 @@ Report the problem to 311
 Start with 311. Pick the report that matches what you have seen — the condition decides which team responds, not the building.
 
 - [Report rats or mice](rodentsReport)
+- [Report animal waste on a property](animalWasteReport)
+- [Report bed bugs](bedBugReport)
+- [Report cockroaches or other insects](insectsReport)
 - [Report mosquitoes or standing water](mosquitoReport)
-- [Report cockroaches, mosquitoes, and other insects](insectsReport)
+- [Report pigeon droppings, nesting, or feeding](pigeonReport)
+- [Report a sewage leak or backup](sewageReport)
 - [Report mold](moldReport)
 - [Report garbage, clutter, or overgrown plants](garbageReport)
-- [Report garbage, mold, and overgrown vegetation](filthReport)
-- [Report a problem in an SRO or hotel](sroHotelReport)
 - You can report a building you do not live in, and you can report on behalf of someone else.
 
 **Step 2 — Title:**
@@ -5469,12 +5829,14 @@ A case closes when the cited conditions are corrected and that has been confirme
 **Links in this text — recreate each with the Link tool, do not paste them:**
 
 - "Report rats or mice" → shape 5 — rich text Link tool → Internal link → "Report rats or mice"
+- "Report animal waste on a property" → shape 5 — rich text Link tool → Internal link → "Report animal waste on a property"
+- "Report bed bugs" → shape 5 — rich text Link tool → Internal link → "Report bed bugs"
+- "Report cockroaches or other insects" → shape 5 — rich text Link tool → Internal link → "Report cockroaches or other insects"
 - "Report mosquitoes or standing water" → shape 5 — rich text Link tool → Internal link → "Report mosquitoes or standing water"
-- "Report cockroaches, mosquitoes, and other insects" → shape 5 — rich text Link tool → Internal link → "Report cockroaches, mosquitoes, and other insects"
+- "Report pigeon droppings, nesting, or feeding" → shape 5 — rich text Link tool → Internal link → "Report pigeon droppings, nesting, or feeding"
+- "Report a sewage leak or backup" → shape 5 — rich text Link tool → Internal link → "Report a sewage leak or backup"
 - "Report mold" → shape 5 — rich text Link tool → Internal link → "Report mold"
 - "Report garbage, clutter, or overgrown plants" → shape 5 — rich text Link tool → Internal link → "Report garbage, clutter, or overgrown plants"
-- "Report garbage, mold, and overgrown vegetation" → shape 5 — rich text Link tool → Internal link → "Report garbage, mold, and overgrown vegetation"
-- "Report a problem in an SRO or hotel" → shape 5 — rich text Link tool → Internal link → "Report a problem in an SRO or hotel"
 - "Learn what Healthy Housing and Vector Control can inspect" → shape 5 — rich text Link tool → Internal link → "Learn what Healthy Housing and Vector Control can inspect"
 - "What happens after you report a housing or pest problem" → shape 5 — rich text Link tool → Internal link → "What happens after you report a housing or pest problem"
 - "Correct a violation and close your case" → shape 5 — rich text Link tool → Internal link → "Correct a violation and close your case"
@@ -5641,11 +6003,11 @@ Do not clean the treated surfaces until your operator says it is safe — cleani
 
 - Keep washed items sealed until you are told otherwise.
 - Report what you still see. A second visit is normal for some pests.
-- [Report cockroaches, mosquitoes, and other insects](insectsReport)
+- [Report cockroaches or other insects](insectsReport)
 
 **Links in this text — recreate each with the Link tool, do not paste them:**
 
-- "Report cockroaches, mosquitoes, and other insects" → shape 5 — rich text Link tool → Internal link → "Report cockroaches, mosquitoes, and other insects"
+- "Report cockroaches or other insects" → shape 5 — rich text Link tool → Internal link → "Report cockroaches or other insects"
 
 ### Topics — \`topics\` [TYPE] — page not approved
 
@@ -6031,23 +6393,27 @@ What Healthy Housing handles
 This team inspects conditions that affect health in and around housing, under Health Code Article 11.
 
 - [Report rats or mice](rodentsReport)
+- [Report animal waste on a property](animalWasteReport)
+- [Report bed bugs](bedBugReport)
+- [Report cockroaches or other insects](insectsReport)
 - [Report mosquitoes or standing water](mosquitoReport)
-- [Report cockroaches, mosquitoes, and other insects](insectsReport)
+- [Report pigeon droppings, nesting, or feeding](pigeonReport)
+- [Report a sewage leak or backup](sewageReport)
 - [Report mold](moldReport)
 - [Report garbage, clutter, or overgrown plants](garbageReport)
-- [Report garbage, mold, and overgrown vegetation](filthReport)
-- [Report a problem in an SRO or hotel](sroHotelReport)
 - [Learn what Healthy Housing and Vector Control can inspect](scopeInfo)
 
 **Links in this text — recreate each with the Link tool, do not paste them:**
 
 - "Report rats or mice" → shape 5 — rich text Link tool → Internal link → "Report rats or mice"
+- "Report animal waste on a property" → shape 5 — rich text Link tool → Internal link → "Report animal waste on a property"
+- "Report bed bugs" → shape 5 — rich text Link tool → Internal link → "Report bed bugs"
+- "Report cockroaches or other insects" → shape 5 — rich text Link tool → Internal link → "Report cockroaches or other insects"
 - "Report mosquitoes or standing water" → shape 5 — rich text Link tool → Internal link → "Report mosquitoes or standing water"
-- "Report cockroaches, mosquitoes, and other insects" → shape 5 — rich text Link tool → Internal link → "Report cockroaches, mosquitoes, and other insects"
+- "Report pigeon droppings, nesting, or feeding" → shape 5 — rich text Link tool → Internal link → "Report pigeon droppings, nesting, or feeding"
+- "Report a sewage leak or backup" → shape 5 — rich text Link tool → Internal link → "Report a sewage leak or backup"
 - "Report mold" → shape 5 — rich text Link tool → Internal link → "Report mold"
 - "Report garbage, clutter, or overgrown plants" → shape 5 — rich text Link tool → Internal link → "Report garbage, clutter, or overgrown plants"
-- "Report garbage, mold, and overgrown vegetation" → shape 5 — rich text Link tool → Internal link → "Report garbage, mold, and overgrown vegetation"
-- "Report a problem in an SRO or hotel" → shape 5 — rich text Link tool → Internal link → "Report a problem in an SRO or hotel"
 - "Learn what Healthy Housing and Vector Control can inspect" → shape 5 — rich text Link tool → Internal link → "Learn what Healthy Housing and Vector Control can inspect"
 
 ### Information section — \`information_section\` [TYPE] — page not approved

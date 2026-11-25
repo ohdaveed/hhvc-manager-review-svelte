@@ -59,7 +59,9 @@ export const ratFreeBlocks = {
 				'Agree a week when everyone clears clutter and checks their bins.',
 				'Walk the block together afterwards and look for the gaps that remain.',
 				'Report what is left — especially anything on a property no one is maintaining.',
+				'Pick up pet waste daily. It feeds rats.',
 				'[Report rats or mice](rodentsReport)',
+				'[Report animal waste on a property](animalWasteReport)',
 				'[Report garbage, clutter, or overgrown plants](garbageReport)'
 			]
 		},

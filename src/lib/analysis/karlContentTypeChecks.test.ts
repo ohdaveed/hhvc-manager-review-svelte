@@ -178,7 +178,7 @@ describe('a Transaction gives the reader a way to act', () => {
 	});
 
 	it('passes a Transaction with a button', () => {
-		expect(actionOf((pagesByKey as Record<string, object>).filthReport)?.status).toBe('pass');
+		expect(actionOf((pagesByKey as Record<string, object>).garbageReport)?.status).toBe('pass');
 	});
 
 	it('passes a Transaction whose only action is Contact us', () => {
