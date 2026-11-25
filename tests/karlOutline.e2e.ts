@@ -29,7 +29,7 @@ const PILOTS = [
 		sections: { placed: 5, unplaced: 1 }
 	},
 	{
-		slug: 'look-up-building-records',
+		slug: 'property-owner-responsibilities-hhvc',
 		summary: '4 sections: 3 go into Karl, 1 needs a fix. 1 thing won’t carry over to Karl.',
 		sections: { placed: 3, 'needs-fix': 1 }
 	},
@@ -44,10 +44,11 @@ const PILOTS = [
 		// Rollout step 2: Topic. Related (U5) has no panel; only Digital
 		// Services can create a Topic page, which the summary says first.
 		slug: 'topics--healthy-housing-conditions',
+		// 8 sections since the Topic merge folded both hubs in (2026-11-25).
 		summary:
-			'4 sections: 4 go into Karl. 1 detail is unconfirmed. 2 things won’t carry over to Karl.',
+			'8 sections: 8 go into Karl. 1 detail is unconfirmed. 2 things won’t carry over to Karl.',
 		caveat: 'Only SF.gov Digital Services can create a new Topic page.',
-		sections: { placed: 4, unplaced: 1 }
+		sections: { placed: 8, unplaced: 1 }
 	},
 	{
 		// Rollout step 3: Campaign. A 26-character spotlight button and About
@@ -176,7 +177,7 @@ test.describe('Karl outline', () => {
 	});
 
 	test('works signed out, from the base copy', async ({ page }) => {
-		await page.goto('/review/look-up-building-records');
+		await page.goto('/review/property-owner-responsibilities-hhvc');
 		await page.waitForLoadState('networkidle');
 		await switchOnByKeyboard(page);
 		await expect(page.locator('.karl-outline-summary')).toContainText('1 needs a fix');

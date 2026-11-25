@@ -49,7 +49,7 @@ const PILOTS = [
 		tray: 1
 	},
 	{
-		slug: 'look-up-building-records',
+		slug: 'property-owner-responsibilities-hhvc',
 		first: [
 			'title',
 			'description',
@@ -223,7 +223,7 @@ test.describe('Blueprint', () => {
 	});
 
 	test('Back to review returns to the mockup', async ({ page }) => {
-		await gotoSignedIn(page, '/review/look-up-building-records');
+		await gotoSignedIn(page, '/review/property-owner-responsibilities-hhvc');
 		await openBlueprint(page);
 		await page.getByRole('button', { name: 'Back to review' }).click();
 		await expect(page.getByRole('region', { name: 'Mockup preview' })).toBeVisible();

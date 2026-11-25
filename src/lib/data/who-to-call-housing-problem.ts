@@ -86,7 +86,7 @@ export const whoToCall = {
 			cards: [
 				{ title: 'Report a pest problem, start to finish', target: 'stepPestReport' },
 				{ title: 'Health Code Article 11 in plain language', target: 'article11Guide' },
-				{ title: 'Healthy housing and pest resources', target: 'verminResources' }
+				{ title: 'Healthy housing conditions', target: 'healthyHousingTopic' }
 			]
 		}
 	],

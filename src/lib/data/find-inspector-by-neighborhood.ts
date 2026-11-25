@@ -57,8 +57,8 @@ export const inspectorLookup = {
 			kind: 'placement',
 			cards: [
 				{
-					title: 'Look up building records',
-					target: 'recordsHub'
+					title: 'Healthy housing conditions',
+					target: 'healthyHousingTopic'
 				},
 				{
 					title: 'Find complaints and inspection records',

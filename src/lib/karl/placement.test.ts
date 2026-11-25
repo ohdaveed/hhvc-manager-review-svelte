@@ -136,8 +136,11 @@ describe('what happens after you report (Information pilot)', () => {
 	});
 });
 
-describe('look up building records (Resource Collection pilot)', () => {
-	const p = of('recordsHub');
+// Look up building records was the Resource Collection pilot until it folded
+// into the Topic (2026-11-25). Property owner responsibilities places the same
+// way: four sections, one of them a Related list that lands in Body.
+describe('property owner responsibilities (Resource Collection pilot)', () => {
+	const p = of('ownerHub');
 
 	it('says a Related list here needs a fix: it lands as Resource tiles (decision 5)', () => {
 		const s = p.sections.get('related-pages');
@@ -147,7 +150,7 @@ describe('look up building records (Resource Collection pilot)', () => {
 	});
 
 	it('places the other sections', () => {
-		expect(p.sections.get('building-lookups')?.status).toBe('placed');
+		expect(p.sections.get('owner-obligations')?.status).toBe('placed');
 		expect(p.sections.get('about-this-collection')?.status).toBe('placed');
 	});
 });
@@ -212,7 +215,7 @@ describe('the page object the app renders', () => {
 	// The layout hands over `pageStore.pages[n]`, built by `toStorePage`, which
 	// adds `id` and stamps `fieldKey` on every section. Neither is copy, so
 	// neither may surface as unplaced.
-	it.each(['rodentsReport', 'afterReport', 'recordsHub'])(
+	it.each(['rodentsReport', 'afterReport', 'ownerHub'])(
 		'%s: same placements as the corpus module',
 		(key) => {
 			const fromCorpus = of(key);
@@ -232,7 +235,7 @@ describe('outline summary', () => {
 		expect(outlineSummary(of('afterReport'))).toBe(
 			'5 sections: 5 go into Karl. 1 thing won’t carry over to Karl.'
 		);
-		expect(outlineSummary(of('recordsHub'))).toBe(
+		expect(outlineSummary(of('ownerHub'))).toBe(
 			'4 sections: 3 go into Karl, 1 needs a fix. 1 thing won’t carry over to Karl.'
 		);
 	});
@@ -263,18 +266,18 @@ describe('what a chip shows', () => {
 			label: 'Cost · Things to Know',
 			status: 'placed'
 		});
-		expect(of('recordsHub').whatToKnow).toBeNull();
+		expect(of('ownerHub').whatToKnow).toBeNull();
 	});
 });
 
 describe('Blueprint slot reasons', () => {
 	it('says which section makes a repeatable panel need a fix, and why', () => {
-		const body = of('recordsHub').panels.find((x) => x.rawName === 'body');
+		const body = of('ownerHub').panels.find((x) => x.rawName === 'body');
 		expect(body?.status).toBe('needs-fix');
 		expect(body?.reasons).toEqual([
 			'“Related pages”: This page type has no Related panel, so these links go into Body instead.'
 		]);
-		expect(of('recordsHub').panels.find((x) => x.rawName === 'title')?.reasons).toEqual([]);
+		expect(of('ownerHub').panels.find((x) => x.rawName === 'title')?.reasons).toEqual([]);
 	});
 });
 
@@ -327,10 +330,15 @@ describe('Topic', () => {
 
 	it('names the stream and the block, never the stream alone', () => {
 		expect([...p.sections.values()].map((s) => s.label)).toEqual([
+			// Five Services and two Resources blocks since the Topic merge (2026-11-25).
 			'Child topics · Spotlight block',
 			'Child topics · Services block 1',
 			'Child topics · Services block 2',
-			'Child topics · Resources block',
+			'Child topics · Services block 3',
+			'Child topics · Services block 4',
+			'Child topics · Services block 5',
+			'Child topics · Resources block 1',
+			'Child topics · Resources block 2',
 			''
 		]);
 	});

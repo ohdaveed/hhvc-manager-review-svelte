@@ -95,7 +95,7 @@ export const ratFreeBlocks = {
 					target: 'ownerGuidance'
 				},
 				{ title: 'Free IPM education workshop', target: 'ipmEducation' },
-				{ title: 'Healthy housing and pest resources', target: 'verminResources' }
+				{ title: 'Healthy housing conditions', target: 'healthyHousingTopic' }
 			]
 		}
 	],

@@ -1333,7 +1333,7 @@ _This block publishes the destination page’s title and a link, and NOTHING els
 
 1. Choose page: "Report a problem in an SRO or hotel" (\`sroHotelReport\` → /sf.gov/report-problem-sro-hotel)
 2. Choose page: "Find complaints and inspection records" (\`findRecords\` → /sf.gov/find-complaints-and-inspection-records)
-3. Choose page: "Look up building records" (\`recordsHub\` → /sf.gov/look-up-building-records)
+3. Choose page: "Healthy housing conditions" (\`healthyHousingTopic\` → /sf.gov/topics--healthy-housing-conditions)
 4. Choose page: "Tenant rights when reporting housing conditions" (\`tenantRights\` → /sf.gov/information/tenant-rights-and-reporting-housing-conditions)
 5. Choose page: "Report cockroaches, mosquitoes, and other insects" (\`insectsReport\` → /sf.gov/report-cockroaches-mosquitoes-insects)
 
@@ -1485,7 +1485,7 @@ _This block publishes the destination page’s title and a link, and NOTHING els
 
 _This block publishes the destination page’s title and a link, and NOTHING else. Choose the page and type no description._
 
-1. Choose page: "Look up building records" (\`recordsHub\` → /sf.gov/look-up-building-records)
+1. Choose page: "Healthy housing conditions" (\`healthyHousingTopic\` → /sf.gov/topics--healthy-housing-conditions)
 2. Choose page: "Find residential hotel and shelter records" (\`findHotelRecords\` → /sf.gov/find-residential-hotel-and-shelter-records)
 
 ### Partner agencies — \`partner_agencies\` [CHOOSE] — page not approved
@@ -1575,14 +1575,29 @@ Start a report
 
 SF.gov page → "Report rats, mice, and other four-legged problems"
 
-### Child topics (outer StreamField; internally "Page content") — \`content_fields\` [CHOOSE] — page not approved
+### Child topics (outer StreamField; internally "Page content") — \`content_fields\` [TYPE] — page not approved
 
-_This block publishes the destination page’s title AND its summary. Choose the page and type no description — anything typed here cannot appear._
+**Title:**
 
-1. Choose page: "Report rats, mice, and other four-legged problems" (\`rodentsReport\` → /sf.gov/report-rats-mice-four-legged-problems)
-2. Choose page: "Report cockroaches, mosquitoes, and other insects" (\`insectsReport\` → /sf.gov/report-cockroaches-mosquitoes-insects)
-3. Choose page: "Report garbage, mold, and overgrown vegetation" (\`filthReport\` → /sf.gov/report-garbage-filth-vegetation)
-4. Choose page: "Healthy Housing and Vector Control" (\`pestsTopic\` → /sf.gov/departments--healthy-housing-and-vector-control)
+Report pests
+
+### Child topics (outer StreamField; internally "Page content") — \`content_fields\` [TYPE] — page not approved
+
+**Title:**
+
+Report sanitation problems
+
+### Child topics (outer StreamField; internally "Page content") — \`content_fields\` [TYPE] — page not approved
+
+**Title:**
+
+If you got a notice
+
+### Child topics (outer StreamField; internally "Page content") — \`content_fields\` [TYPE] — page not approved
+
+**Title:**
+
+For property owners
 
 ### Child topics (outer StreamField; internally "Page content") — \`content_fields\` [TYPE] — page not approved
 
@@ -1594,7 +1609,13 @@ Look up records
 
 **Title:**
 
-Guidance and resources
+Learn more
+
+### Child topics (outer StreamField; internally "Page content") — \`content_fields\` [TYPE] — page not approved
+
+**Title:**
+
+Guides and forms
 
 ### Partner agencies — \`partner_agencies\` [CHOOSE] — page not approved
 
@@ -1621,15 +1642,20 @@ Report housing health issues, find services and resources, and learn how San Fra
 
 ## Flags — resolve before saving — page not approved
 
-- \`sections.2.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to a second repeatable Services block. Substitutes for the real page's "Lead poisoning issues" sub-group, which has no equivalent content in this mockup (s". Resolve it before typing anything from them.
-- \`sections.3.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to Topic's repeatable Resources block (identical Title + Links shape to Services, per the Karl docs). The real page splits this into 3 sub-groups (general ". Resolve it before typing anything from them.
+- \`sections.1.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to a Services block (Title = this heading, Links = the cards). The Pests half of the report group (Decided). The 9 condition pages replace the two report T". Resolve it before typing anything from them.
+- \`sections.2.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to a Services block. The Sanitation half of the report group (Decided). Garbage, mold and vegetation share one Transaction until the report regroup splits ". Resolve it before typing anything from them.
+- \`sections.3.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to a Services block. Topic tab, suggested structure item 2, with the tenant Information page added beside the owner steps.". Resolve it before typing anything from them.
+- \`sections.4.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to a Services block. Topic tab, suggested structure item 3. The owner-duty pages are listed separately until their merge is decided.". Resolve it before typing anything from them.
+- \`sections.5.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to a Services block. Holds what the retired Look up building records Resource Collection listed: the three lookup Transactions and the public records reque". Resolve it before typing anything from them.
+- \`sections.6.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to a Resources block. Topic tab, suggested structure item 5, plus the pages the retired Healthy housing and pest resources collection linked that the list ". Resolve it before typing anything from them.
+- \`sections.7.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to a Resources block of External links. Carries every outside document and site the retired Healthy housing and pest resources collection linked, so the fo". Resolve it before typing anything from them.
 
 ## Unmapped — no documented Karl destination
 
 Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
 
 - \`audience\` — The page carries \`audience\`, and the panel SF.gov puts it in is not on this type. Topic has no \`things_to_know\` panel — it is Transaction-only — and no free-text intro either, so the audience has to move into the body copy or be dropped deliberately. Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list.
-- \`sections.4.cards\` — U5 — Topic has no \`related\` field, confirmed at E1. Either this panel moves into content_fields as a Resources block, or the page drops it.
+- \`sections.8.cards\` — U5 — Topic has no \`related\` field, confirmed at E1. Either this panel moves into content_fields as a Resources block, or the page drops it.
 "
 `;
 
@@ -2094,7 +2120,7 @@ Healthy Housing and Vector Control assigns inspectors by neighborhood. Use this 
 
 _This block publishes the destination page’s title and a link, and NOTHING else. Choose the page and type no description._
 
-1. Choose page: "Look up building records" (\`recordsHub\` → /sf.gov/look-up-building-records)
+1. Choose page: "Healthy housing conditions" (\`healthyHousingTopic\` → /sf.gov/topics--healthy-housing-conditions)
 2. Choose page: "Find complaints and inspection records" (\`findRecords\` → /sf.gov/find-complaints-and-inspection-records)
 3. Choose page: "Healthy Housing and Vector Control" (\`pestsTopic\` → /sf.gov/departments--healthy-housing-and-vector-control)
 
@@ -3106,7 +3132,7 @@ Owner obligations
 1. Choose page: "Pay your annual Healthy Housing fee for apartment buildings" (\`payFee\` → /sf.gov/pay-your-annual-healthy-housing-fee-apartment-buildings)
 2. Choose page: "Correct a violation and close your case" (\`stepCorrectViolation\` → /sf.gov/step-by-step/correct-a-violation-and-close-your-case)
 3. Choose page: "Integrated pest management for property owners and managers" (\`ownerGuidance\` → /sf.gov/information/integrated-pest-management-for-property-owners-and-managers)
-4. Choose page: "Look up building records" (\`recordsHub\` → /sf.gov/look-up-building-records)
+4. Choose page: "Find complaints and inspection records" (\`findRecords\` → /sf.gov/find-complaints-and-inspection-records)
 
 ### Body — \`body\` [CHOOSE] — page not approved
 
@@ -3456,8 +3482,7 @@ Pay within 30 days of the invoice due date. Keep your invoice number or property
 _This block publishes the destination page’s title and a link, and NOTHING else. Choose the page and type no description._
 
 1. Choose page: "Property owner responsibilities" (\`ownerHub\` → /sf.gov/property-owner-responsibilities-hhvc)
-2. Choose page: "Look up building records" (\`recordsHub\` → /sf.gov/look-up-building-records)
-3. Choose page: "Healthy housing and pest resources" (\`verminResources\` → /sf.gov/resource--healthy-housing-and-vermin-information)
+2. Choose page: "Healthy housing conditions" (\`healthyHousingTopic\` → /sf.gov/topics--healthy-housing-conditions)
 
 ### Partner agencies — \`partner_agencies\` [CHOOSE] — page not approved
 
@@ -3552,7 +3577,7 @@ Start a City service request when you are not sure which Healthy Housing and Vec
 2. Choose page: "Report cockroaches, mosquitoes, and other insects" (\`insectsReport\` → /sf.gov/report-cockroaches-mosquitoes-insects)
 3. Choose page: "Report garbage, mold, and overgrown vegetation" (\`filthReport\` → /sf.gov/report-garbage-filth-vegetation)
 4. Choose page: "Report a problem in an SRO or hotel" (\`sroHotelReport\` → /sf.gov/report-problem-sro-hotel)
-5. Choose page: "Healthy housing and pest resources" (\`verminResources\` → /sf.gov/resource--healthy-housing-and-vermin-information)
+5. Choose page: "Healthy housing conditions" (\`healthyHousingTopic\` → /sf.gov/topics--healthy-housing-conditions)
 6. Choose page: "Learn what Healthy Housing and Vector Control can inspect" (\`scopeInfo\` → /sf.gov/information/learn-what-hhvc-can-inspect)
 7. Choose page: "Guides in other languages" (\`languageGuides\` → /sf.gov/resource/guides-in-other-languages)
 
@@ -3620,7 +3645,7 @@ https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-59718
 
 Read the City rules on communicable-disease prevention and rodent control.
 
-1. Choose page: "Look up building records" (\`recordsHub\` → /sf.gov/look-up-building-records)
+1. Choose page: "Find complaints and inspection records" (\`findRecords\` → /sf.gov/find-complaints-and-inspection-records)
 2. Choose page: "Health Code Article 11 in plain language" (\`article11Guide\` → /sf.gov/report/health-code-article-11-plain-language)
 3. Choose page: "Make a public records request" (\`publicRecords\` → /sf.gov/make-public-records-request-environmental-health)
 
@@ -3826,7 +3851,7 @@ Use a formal public records request for certified copies or a broader record set
 _This block publishes the destination page’s title and a link, and NOTHING else. Choose the page and type no description._
 
 1. Choose page: "Find complaints and inspection records" (\`findRecords\` → /sf.gov/find-complaints-and-inspection-records)
-2. Choose page: "Look up building records" (\`recordsHub\` → /sf.gov/look-up-building-records)
+2. Choose page: "Healthy housing conditions" (\`healthyHousingTopic\` → /sf.gov/topics--healthy-housing-conditions)
 
 ### Partner agencies — \`partner_agencies\` [CHOOSE] — page not approved
 
@@ -3998,7 +4023,7 @@ _This block publishes the destination page’s title and a link, and NOTHING els
 
 1. Choose page: "Integrated pest management for property owners and managers" (\`ownerGuidance\` → /sf.gov/information/integrated-pest-management-for-property-owners-and-managers)
 2. Choose page: "Free IPM education workshop" (\`ipmEducation\` → /sf.gov/integrated-pest-management-education)
-3. Choose page: "Healthy housing and pest resources" (\`verminResources\` → /sf.gov/resource--healthy-housing-and-vermin-information)
+3. Choose page: "Healthy housing conditions" (\`healthyHousingTopic\` → /sf.gov/topics--healthy-housing-conditions)
 
 ### Promote → For search engines — \`promote\` [TYPE] — page not approved
 
@@ -4024,109 +4049,6 @@ Nothing below has a field to be typed into. It is listed rather than dropped, be
 - \`audience\` — The page carries \`audience\`, and the panel SF.gov puts it in is not on this type. Campaign has no \`things_to_know\` panel — it is Transaction-only — and no free-text intro either, so the audience has to move into the body copy or be dropped deliberately. Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list.
 - \`sections.2.paragraphs\` — \`paragraphs\` on this section reached no panel in the Campaign inventory.
 - \`sections.2.bullets\` — \`bullets\` on this section reached no panel in the Campaign inventory.
-"
-`;
-
-exports[`transcript Markdown, every corpus page > recordsHub 1`] = `
-"# Look up building records — Karl transcript
-
-**Karl path:** New: Resource Collection → Content
-**Decision:** no review recorded
-**Page key:** \`recordsHub\` · **Slug:** \`sf.gov/look-up-building-records\` · **Type:** Resource Collection
-
-**NOT APPROVED — do not publish from this transcript.** Approval in this tool is per page, not per field, so nothing below is signed off.
-
-> Every keystroke below is yours to make. This file is an export, not an approval, and nothing here has been written to Karl.
-
-### Page title — \`title\` [TYPE] — page not approved
-
-**Page title:**
-
-Look up building records
-
-### Description — \`description\` [TYPE] — page not approved
-
-**Description:**
-
-Find inspection reports and violations for an address, or ask for documents that are not online.
-
-### Primary agency — \`primary_agency\` [FLAG] — page not approved
-
-_U6 — supply the parent Agency page by hand; the mockup has no field for it._
-
-### Introductory text — \`introductory_text\` [TYPE] — page not approved
-
-**Title:**
-
-Find records for an address
-
-**Text:**
-
-Use these resources to look up Environmental Health records for a building or address.
-
-Some tools live on SF.gov. Others open on external City systems that HHVC already uses for public record searches.
-
-### Body — \`body\` [CHOOSE] — page not approved
-
-_This block publishes the destination page’s title and a link, and NOTHING else. Choose the page and type no description._
-
-**Resource section — Title:**
-
-Building lookups
-
-1. Choose page: "Find complaints and inspection records" (\`findRecords\` → /sf.gov/find-complaints-and-inspection-records)
-2. Choose page: "Find residential hotel and shelter records" (\`findHotelRecords\` → /sf.gov/find-residential-hotel-and-shelter-records)
-3. Choose page: "Find your Healthy Housing inspector by neighborhood" (\`inspectorLookup\` → /sf.gov/find-healthy-housing-inspector-by-neighborhood)
-
-### Body — \`body\` [CHOOSE] — page not approved
-
-_This block publishes the destination page’s title and a link, and NOTHING else. Choose the page and type no description._
-
-**Resource section — Title:**
-
-Formal requests and payments
-
-1. Choose page: "Make a public records request" (\`publicRecords\` → /sf.gov/make-public-records-request-environmental-health)
-2. Choose page: "Pay your annual Healthy Housing fee for apartment buildings" (\`payFee\` → /sf.gov/pay-your-annual-healthy-housing-fee-apartment-buildings)
-
-### Body — \`body\` [CHOOSE] — page not approved
-
-_This block publishes the destination page’s title and a link, and NOTHING else. Choose the page and type no description._
-
-**Resource section — Title:**
-
-Related pages
-
-1. Choose page: "Healthy Housing and Vector Control" (\`pestsTopic\` → /sf.gov/departments--healthy-housing-and-vector-control)
-2. Choose page: "What happens after you report a housing or pest problem" (\`afterReport\` → /sf.gov/information/what-happens-after-you-report-housing-pest-problem)
-3. Choose page: "Property owner responsibilities" (\`ownerHub\` → /sf.gov/property-owner-responsibilities-hhvc)
-4. Choose page: "Healthy Housing inspections: annual summary" (\`inspectionsAnnual\` → /sf.gov/report/healthy-housing-inspections-annual-summary)
-
-### Topics — \`topics\` [TYPE] — page not approved
-
-_topicTag is unmapped metadata — the stored values are Agency labels, not Topic chooser references._
-
-### Promote → For search engines — \`promote\` [TYPE] — page not approved
-
-_The slug is REQUIRED and lives on the Promote tab, so a page cannot be saved from the Content tab alone._
-
-**Slug (\`slug\`):**
-
-sf.gov/look-up-building-records
-
-**Title tag (\`seo_title\`):**
-
-Look up building records | SF.gov
-
-**Meta description (\`search_description\`):**
-
-Find HHVC inspection records, violations, and public records for San Francisco buildings.
-
-## Unmapped — no documented Karl destination
-
-Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
-
-- \`audience\` — The page carries \`audience\`, and the panel SF.gov puts it in is not on this type. Resource Collection has no \`things_to_know\` panel — it is Transaction-only — and no free-text intro either, so the audience has to move into the body copy or be dropped deliberately. Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list.
 "
 `;
 
@@ -5460,214 +5382,6 @@ Tenant rights when reporting housing conditions | SF.gov
 **Meta description (\`search_description\`):**
 
 Tenant protections and help if you are worried about retaliation after reporting housing conditions.
-"
-`;
-
-exports[`transcript Markdown, every corpus page > verminResources 1`] = `
-"# Healthy housing and pest resources — Karl transcript
-
-**Karl path:** New: Resource Collection → Content
-**Decision:** no review recorded
-**Page key:** \`verminResources\` · **Slug:** \`sf.gov/resource--healthy-housing-and-vermin-information\` · **Type:** Resource Collection
-
-**NOT APPROVED — do not publish from this transcript.** Approval in this tool is per page, not per field, so nothing below is signed off.
-
-> Every keystroke below is yours to make. This file is an export, not an approval, and nothing here has been written to Karl.
-
-### Page title — \`title\` [TYPE] — page not approved
-
-**Page title:**
-
-Healthy housing and pest resources
-
-### Description — \`description\` [TYPE] — page not approved
-
-**Description:**
-
-Find guides, forms, and videos for reporting, preventing, and managing pests in a home or building.
-
-### Primary agency — \`primary_agency\` [FLAG] — page not approved
-
-_U6 — supply the parent Agency page by hand; the mockup has no field for it._
-
-### Introductory text — \`introductory_text\` [TYPE] — page not approved
-
-**Title:**
-
-Start with the problem
-
-**Text:**
-
-Report an active problem first. Use the guides below when you need more detail or are preparing for treatment.
-
-### Introductory text — \`introductory_text\` [TYPE] — page not approved
-
-**Title:**
-
-If you rent
-
-**Text:**
-
-Use these resources to understand your rights, prepare for pest treatment, and keep a record of the problem.
-
-### Introductory text — \`introductory_text\` [TYPE] — page not approved
-
-**Title:**
-
-If you own or manage a building
-
-**Text:**
-
-Use these resources to prevent pests, document your work, and meet Article 11 responsibilities.
-
-### Body — \`body\` [CHOOSE] — page not approved
-
-_This block publishes the destination page’s title and a link, and NOTHING else. Choose the page and type no description._
-
-**Resource section — Title:**
-
-Start with the problem
-
-1. Choose page: "Report rats, mice, and other four-legged problems" (\`rodentsReport\` → /sf.gov/report-rats-mice-four-legged-problems)
-2. Choose page: "Report cockroaches, mosquitoes, and other insects" (\`insectsReport\` → /sf.gov/report-cockroaches-mosquitoes-insects)
-3. Choose page: "Report garbage, mold, and overgrown vegetation" (\`filthReport\` → /sf.gov/report-garbage-filth-vegetation)
-
-### Body — \`body\` [CHOOSE] — page not approved
-
-_This block publishes the destination page’s title and a link, and NOTHING else. Choose the page and type no description._
-
-**Resource section — Title:**
-
-If you rent
-
-**External link 2 — Title:**
-
-Prepare your unit for bed bug treatment
-
-**External link 2 — URL:**
-
-https://api.sf.gov/documents/23140/GuidelinesforUnitPreparation_dP56n7G.pdf
-
-1. Choose page: "Tenant rights when reporting housing conditions" (\`tenantRights\` → /sf.gov/information/tenant-rights-and-reporting-housing-conditions)
-2. Choose page: "What happens after you report a housing or pest problem" (\`afterReport\` → /sf.gov/information/what-happens-after-you-report-housing-pest-problem)
-
-### Body — \`body\` [CHOOSE] — page not approved
-
-_This block publishes the destination page’s title and a link, and NOTHING else. Choose the page and type no description._
-
-**Resource section — Title:**
-
-If you own or manage a building
-
-**External link 3 — Title:**
-
-Residential building owner-operator guidelines for vector control
-
-**External link 3 — URL:**
-
-https://api.sf.gov/documents/52936/R_Residential_Bldg_Owner-Operator_Guidelines_for_Vector_Control_2026_0SYmmSc.html
-
-1. Choose page: "Property owner responsibilities" (\`ownerHub\` → /sf.gov/property-owner-responsibilities-hhvc)
-2. Choose page: "Integrated pest management for property owners and managers" (\`ownerGuidance\` → /sf.gov/information/integrated-pest-management-for-property-owners-and-managers)
-
-### Body — \`body\` [CHOOSE] — page not approved
-
-_This block publishes the destination page’s title and a link, and NOTHING else. Choose the page and type no description._
-
-**Resource section — Title:**
-
-Find forms, records, and rules
-
-**External link 3 — Title:**
-
-Pest control reporting form
-
-**External link 3 — URL:**
-
-https://api.sf.gov/documents/23712/PCOReportingForm_2.xls
-
-1. Choose page: "Look up building records" (\`recordsHub\` → /sf.gov/look-up-building-records)
-2. Choose page: "Health Code Article 11 in plain language" (\`article11Guide\` → /sf.gov/report/health-code-article-11-plain-language)
-
-### Body — \`body\` [TYPE] — page not approved
-
-_This block publishes the destination page’s title and a link, and NOTHING else. Choose the page and type no description._
-
-**Resource section — Title:**
-
-Learn and share healthy-home information
-
-**External link 1 — Title:**
-
-16 Steps to a Healthy Home
-
-**External link 1 — URL:**
-
-https://api.sf.gov/documents/52246/16_Steps_to_a_Healthy_Home.html
-
-**External link 3 — Title:**
-
-Watch a roach-prevention video
-
-**External link 3 — URL:**
-
-https://www.youtube.com/watch?v=S-aJzCk-rNQ
-
-1. Choose page: "Mosquito Control Program" (\`mosquitoControl\` → /sf.gov/mosquito-control-program)
-2. Choose page: "Guides in other languages" (\`languageGuides\` → /sf.gov/resource/guides-in-other-languages)
-3. Choose page: "Rat-free blocks" (\`ratFreeBlocks\` → /sf.gov/rat-free-blocks)
-
-### Body — \`body\` [TYPE] — page not approved
-
-_This block publishes the destination page’s title and a link, and NOTHING else. Choose the page and type no description._
-
-**Resource section — Title:**
-
-More trusted pest guidance
-
-**External link 1 — Title:**
-
-UC IPM resources for homes and buildings
-
-**External link 1 — URL:**
-
-https://ipm.ucanr.edu/home-and-landscape/
-
-**External link 2 — Title:**
-
-Environmental health branch fee schedule
-
-**External link 2 — URL:**
-
-https://api.sf.gov/documents/17453/Website_Fees_FY25-26_fgM2WjX.pdf
-
-1. Choose page: "Healthy Housing and Vector Control" (\`pestsTopic\` → /sf.gov/departments--healthy-housing-and-vector-control)
-
-### Topics — \`topics\` [TYPE] — page not approved
-
-_topicTag is unmapped metadata — the stored values are Agency labels, not Topic chooser references._
-
-### Promote → For search engines — \`promote\` [TYPE] — page not approved
-
-_The slug is REQUIRED and lives on the Promote tab, so a page cannot be saved from the Content tab alone._
-
-**Slug (\`slug\`):**
-
-sf.gov/resource--healthy-housing-and-vermin-information
-
-**Title tag (\`seo_title\`):**
-
-Healthy housing and pest resources | SF.gov
-
-**Meta description (\`search_description\`):**
-
-Find healthy-home guides, pest-treatment resources, forms, and prevention information for San Francisco homes and buildings.
-
-## Unmapped — no documented Karl destination
-
-Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
-
-- \`audience\` — The page carries \`audience\`, and the panel SF.gov puts it in is not on this type. Resource Collection has no \`things_to_know\` panel — it is Transaction-only — and no free-text intro either, so the audience has to move into the body copy or be dropped deliberately. Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list.
 "
 `;
 

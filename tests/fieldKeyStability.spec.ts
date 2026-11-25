@@ -51,7 +51,6 @@ describe('corpus field keys', () => {
 		['sf.gov/information--article-11-compliance-for-property-owners', 'what-you-re-required-to-do'],
 		['sf.gov/integrated-pest-management-education', 'what-you-ll-learn'],
 		// Meta headings rewritten as tasks, per Karl's heading guidance.
-		['sf.gov/look-up-building-records', 'about-this-collection'],
 		['sf.gov/property-owner-responsibilities-hhvc', 'about-this-collection'],
 		['sf.gov/report/health-code-article-11-plain-language', 'how-to-use-this-guide'],
 		[
