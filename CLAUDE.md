@@ -86,43 +86,6 @@ a drive-by edit.
 
 A test placed in the wrong directory gets the wrong environment. E2E is separate: `**/*.e2e.{ts,js}`, matched by `playwright.config.ts`.
 
-### Every e2e spec imports `test` from `tests/fixtures`
-
-```ts
-import { expect, test } from './fixtures'; // not '@playwright/test'
-```
-
-`tests/fixtures.ts` carries an auto-fixture that fails a test when the page raised an uncaught exception, logged a console error, or navigated to a **document** response ≥ 400. Playwright has no config-level auto-fixture — a fixture reaches a test only through the `test` object it imports — so this is opt-in, and a spec importing from `@playwright/test` runs entirely ungated.
-
-**That bypass is silent, and a new file is the dangerous case**: it conflicts with nothing, so a clean merge is exactly what hides it. `tests/e2eFixtureImports.spec.ts` asserts the rule rather than documenting it, and `tests/mockupResponsive.e2e.ts` is the instance that merged cleanly while sitting outside the gate before it existed.
-
-Type-only imports stay legal and are the normal way to get Playwright's types:
-
-```ts
-import type { Page } from '@playwright/test'; // fine — binds nothing at runtime
-```
-
-The guard parses each `from '@playwright/test'` clause and compares specifier names exactly, so it skips a `type`-only import and a `type` specifier inside the braces. An alias still binds the runtime object, so `test as base` is a violation.
-
-Two consequences when writing a spec:
-
-- **Signed out, Supabase reads are expected to fail** — the mockups render from the static corpus while every `TO authenticated` policy denies the review data. `/rest/v1/` and `/auth/v1/` are excluded by **path**, not host, because the host differs per environment (`127.0.0.1:54321` local, a placeholder in CI, the real project in a preview) and a host rule would silently stop matching in one of them.
-- **A test that deliberately visits a 4xx will fail the gate.** That is why `/review/[slug]`'s 404 is covered by `tests/reviewSlug404.spec.ts` as a unit test — the load is pure, so a browser adds nothing, and testing it there keeps the gate strict instead of carving an exception into it.
-
-### Signed-in e2e, and the axe blind spot it closed
-
-`tests/signedIn.ts` puts the app in its signed-in state by stubbing the HTTP boundary — PostgREST responses via `page.route`, the session via a `Storage.prototype.getItem` shim, realtime via `page.routeWebSocket`. `tests/accessibilitySignedIn.e2e.ts` then runs axe over the queue, the decision panel, Checks, Fields and the walkthrough.
-
-**This is not a nicety.** Until it existed, axe had never seen a signed-in surface: the queue, decisions, checks and fields panel all need review data, and e2e runs signed out, so they were never in a scanned page. `--color-sfds-slate-l2` sat at 4.07:1 on the selected queue row's `#edf4f7` tint — below AA — while `no WCAG 2.1 AA violations` reported green. Pointing axe at a signed-in panel for the first time also failed a shadcn `destructive` badge at 3.98:1.
-
-Three properties worth keeping:
-
-- **Stubbed, not signed in for real, and that is forced.** e2e runs `npm run build && npm run preview`, a production build, where `ensureDevSession` is dead code behind `import.meta.env.DEV`; and CI has no Supabase project. Stubbing is what works identically in both.
-- **The session key is matched by pattern, not hardcoded.** It is `sb-<project-ref>-auth-token`, and the ref comes from whatever `SVELTE_PUBLIC_SUPABASE_URL` the bundle was built with — a placeholder in CI, possibly a real project locally. A hardcoded key would miss on a developer's machine and leave the run quietly scanning signed-out pages.
-- **Every test proves its surface rendered before scanning it.** `gotoSignedIn` asserts the queue has rows and the signed-out banner is gone. A panel showing its empty state would scan clean and reinstate the blind spot under a new name.
-
-It does **not** test RLS. The policies live in the database; `supabase/migrations` is where they are asserted. This fixture is about what the signed-in UI renders.
-
 ### Landing page and AI-drafted pages
 
 `/` is a page, not a redirect: signed in, it leads with the reviewer's resume point, the progress denominator and the propose-a-page form, then lists every page; signed out, it explains the tool and offers sign-in. The old root redirect is gone, so nothing should assume `/` forwards anywhere.
@@ -223,10 +186,6 @@ The 3 (4 until `karl-transcript.js`'s `@ts-nocheck` was waived inline, 2026-11-2
 It enumerates `git ls-files` because a tree-wide count is **machine-dependent**, the same defect that had eslint reading 213 on one machine. Measured 2026-11-24 with agent scratch present: `prettier --list-different .` reported **78** files, of which 28 were in `.superpowers/` and `.impeccable/` — untracked but **not gitignored**, so `.prettierignore` does not exclude them and prettier walks in. Tracked files are what CI and a fresh clone have. The 98 this section used to record was such a count. Note `--ignore-unknown` is required, since `git ls-files` includes `.png` and `.sql` that prettier has no parser for.
 
 **`bun run check` is at zero errors**, as of 2026-11-22. It was 23 that morning and 76 before `legacy_main.js` was removed. Expect zero and treat anything else as a regression in your own branch — the long-lived baseline this section used to describe is gone, along with the habit of reading a non-zero number as normal.
-
-Clearing it was mostly four root causes, not 23 problems: `tests/reviewQueue.test.ts`'s `row()` fixture took `status: string` instead of `ReviewPage['status']` (12 errors, one line); two test helpers typed a `buildTranscript` argument `unknown` where its JSDoc declares `@param {object}` (3); two `vi.fn()` spies declared no parameters, so `mock.calls[0]` was `[]` and the cast to `[string, RequestInit]` had no overlap (2); and narrowing a `$state` union in markup does not survive an `{:else if}` chain that narrows by **elimination**, which is why `src/routes/sfgov-components/+page.svelte` now discriminates in a `$derived` and the markup checks a plain value (4).
-
-**One of them was not a type problem.** Removing a `@ts-expect-error` in `tests/karlButtonCap.spec.ts` that was reported as unused exposed that the spec passed `allPages` — an array — where `buildTranscript` wants `Record<string, object>`. `findPageKey` resolves it with `Object.entries(...)` and returns the key, so the spec was building transcripts with `pageKey: '0'`, an array index, where the app produces a corpus key. The spec still passes with `pagesByKey`, but it had been exercising a shape the app never builds.
 
 **`bun run check:ratchet` enforces zero**, as a blocking step inside `test & build` beside `lint:ratchet`. It fails in both directions, so a fixed error has to be banked by lowering the baseline rather than left as slack. The non-blocking `check` in the `review` job stays, for the annotations and the summary table. Raising the baseline is a decision, not a fix.
 
