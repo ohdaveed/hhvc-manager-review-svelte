@@ -82,6 +82,16 @@ This tab overrides the other tabs. Build only what's under **Decided**. Everythi
   - **The Fire Marshal:** when stored materials block exits or create a fire risk
   - Link the SF.gov pages for both. Phrase them as offers of help, not threats of enforcement.
 
+### Pages that aren't transactions (C1, decided Nov 24, 2026)
+
+All 6 change type or merge. Each one changes the page's URL and its `pages.path` row.
+
+- **Fix your HHVC violation:** merge into the step-by-step _Correct a violation and close your case_.
+- **Get ready for a follow-up inspection:** becomes a step in _Correct a violation and close your case_, not an Information page.
+- **Get ready for a housing inspection after you report:** Information page or a step. Open: which one.
+- **What tenants need to do after a Notice of Violation:** Information page.
+- **Find complaints and inspection records** and **Look up residential health code violations:** combine into one Transaction.
+
 ### Sewage page
 
 "Report a sewage leak or backup" covers sewage from a drain, toilet, cleanout or pipe, inside or outside a building, including yards and shared areas. HHVC responds within 48 hours of the complaint. The owner hires a plumber, and HHVC confirms the sewage is removed and the area sanitized. A leaking pipe with no sewage goes to another agency.

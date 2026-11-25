@@ -23,7 +23,7 @@ Production has 0 edits and 0 comments on any page (measured 2026-11-24). Re-coun
 
 ## Track C — Questions for manager review (not built here)
 
-- [ ] **C.** Ten questions (C1–C10 in the detail plan) sent for a ruling. Answers go into the Decisions tab.
+- [ ] **C.** Ten questions (C1–C10 in the detail plan) sent for a ruling. Answers go into the Decisions tab. C1 answered Nov 24 (yes to all; follow-up inspection becomes a step); C2–C10 open.
 
 ## Track D — Docs
 
