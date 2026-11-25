@@ -53,7 +53,7 @@ test('the Transaction review findings show in the panel', async ({ page }) => {
 		await page.screenshot({ path: `${dir}/analysis-karl-fee-1280.png` });
 	}
 
-	await gotoSignedIn(page, '/review/pay-a-healthy-housing-citation');
+	await gotoSignedIn(page, '/review/pay-healthy-housing-citation');
 	await page.getByRole('tab', { name: 'Analysis' }).click();
 	await expect(panel).toContainText('A Transaction should let people act');
 	await expect(panel).toContainText('remove “a”');

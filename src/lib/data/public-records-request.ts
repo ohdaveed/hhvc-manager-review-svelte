@@ -1,5 +1,5 @@
 export const publicRecords = {
-	slug: 'sf.gov/make-a-public-records-request-environmental-health',
+	slug: 'sf.gov/make-public-records-request-environmental-health',
 	type: 'Transaction',
 	title: 'Make a public records request',
 	summary:

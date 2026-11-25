@@ -27,6 +27,13 @@
 -- reviewer work -- a decision, a note, an edit or a comment -- rather than
 -- dropping it silently. `page_checks` is not guarded: sync-checks computes it.
 --
+-- C5 drops the article from three Transaction URLs, so their rows follow:
+--   pay-a-healthy-housing-citation       -> pay-healthy-housing-citation
+--   appeal-a-notice-of-violation         -> appeal-notice-of-violation
+--   make-a-public-records-request-...    -> make-public-records-request-...
+-- A rename keeps the row's id, so its decision, notes, edits and comments
+-- travel with it; nothing needs guarding there.
+--
 -- Idempotent: once the old paths are gone, every statement matches nothing.
 
 DO $$
@@ -60,3 +67,15 @@ $$;
 UPDATE pages
    SET path = 'information-tenant-steps-after-notice-of-violation'
  WHERE path = 'tenant-steps-after-notice-of-violation';
+
+UPDATE pages
+   SET path = 'pay-healthy-housing-citation'
+ WHERE path = 'pay-a-healthy-housing-citation';
+
+UPDATE pages
+   SET path = 'appeal-notice-of-violation'
+ WHERE path = 'appeal-a-notice-of-violation';
+
+UPDATE pages
+   SET path = 'make-public-records-request-environmental-health'
+ WHERE path = 'make-a-public-records-request-environmental-health';

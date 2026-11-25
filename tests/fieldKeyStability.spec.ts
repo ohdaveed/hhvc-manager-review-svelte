@@ -74,7 +74,7 @@ describe('corpus field keys', () => {
 		['sf.gov/find-healthy-housing-inspector-by-neighborhood', 'open-the-lookup-tool'],
 		['sf.gov/find-residential-hotel-and-shelter-records', 'open-the-lookup-tool'],
 		['sf.gov/find-complaints-and-inspection-records', 'open-the-lookup-tool'],
-		['sf.gov/make-a-public-records-request-environmental-health', 'submit-your-request']
+		['sf.gov/make-public-records-request-environmental-health', 'submit-your-request']
 	])('%s still carries the pinned key %s', (slug, key) => {
 		const page = (allPages as unknown[]).find((p) => (p as { slug?: unknown }).slug === slug);
 		expect(page, `no page with slug ${slug}`).toBeDefined();

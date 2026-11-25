@@ -1,5 +1,5 @@
 export const payCitation = {
-	slug: 'sf.gov/pay-a-healthy-housing-citation',
+	slug: 'sf.gov/pay-healthy-housing-citation',
 	type: 'Transaction',
 	title: 'Pay a Healthy Housing citation',
 	summary:
@@ -71,7 +71,7 @@ export const payCitation = {
 						'Contact the investigator named on your notice if you disagree. Do not simply withhold payment.'
 					],
 					bullets: [
-						'[Question a Notice of Violation](appealNotice)',
+						'[Appeal a Notice of Violation](appealNotice)',
 						'Contact the investigator named on your notice before the due date.'
 					],
 					karl: 'Section 4. No dispute deadline is stated. HHVC confirmed on 2026-08-31 that there is no appeal route for a notice — questions go to the investigator named on it — so this step routes there rather than describing a process.'
@@ -87,7 +87,7 @@ export const payCitation = {
 					title: 'Pay your annual Healthy Housing fee for apartment buildings',
 					target: 'payFee'
 				},
-				{ title: 'Question a Notice of Violation', target: 'appealNotice' },
+				{ title: 'Appeal a Notice of Violation', target: 'appealNotice' },
 				{ title: 'Article 11 compliance for property owners', target: 'article11Compliance' }
 			]
 		}

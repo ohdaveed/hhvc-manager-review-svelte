@@ -180,10 +180,9 @@ describe('articles in the slug', () => {
 			)
 			.map((p) => p.slug)
 			.sort();
-		expect(flagged).toEqual([
-			'sf.gov/appeal-a-notice-of-violation',
-			'sf.gov/make-a-public-records-request-environmental-health',
-			'sf.gov/pay-a-healthy-housing-citation'
-		]);
+		// The review named five. C1 removed the two get-ready pages and C5 dropped
+		// the article from the other three, so none is left; the fixtures above
+		// keep the detection itself covered.
+		expect(flagged).toEqual([]);
 	});
 });

@@ -42,7 +42,7 @@ export const PAGE_GROUPS = [
 			'information-learn-what-hhvc-can-inspect',
 			'find-healthy-housing-inspector-by-neighborhood',
 			'step-by-step-correct-a-violation-and-close-your-case',
-			'appeal-a-notice-of-violation',
+			'appeal-notice-of-violation',
 			'information-tenant-steps-after-notice-of-violation',
 			'report-health-code-article-11-plain-language'
 		]
@@ -54,8 +54,8 @@ export const PAGE_GROUPS = [
 			'find-complaints-and-inspection-records',
 			'find-residential-hotel-and-shelter-records',
 			'look-up-building-records',
-			'make-a-public-records-request-environmental-health',
-			'pay-a-healthy-housing-citation',
+			'make-public-records-request-environmental-health',
+			'pay-healthy-housing-citation',
 			'pay-your-annual-healthy-housing-fee-apartment-buildings',
 			'report-healthy-housing-inspections-annual-summary'
 		]
