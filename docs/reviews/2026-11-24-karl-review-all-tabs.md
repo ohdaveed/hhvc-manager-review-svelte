@@ -87,8 +87,8 @@ This tab overrides the other tabs. Build only what's under **Decided**. Everythi
 All 6 change type or merge. Each one changes the page's URL and its `pages.path` row.
 
 - **Fix your HHVC violation:** merge into the step-by-step _Correct a violation and close your case_.
-- **Get ready for a follow-up inspection:** becomes a step in _Correct a violation and close your case_, not an Information page.
-- **Get ready for a housing inspection after you report:** Information page or a step. Open: which one.
+- **Get ready for a follow-up inspection:** folds into _Correct a violation and close your case_, not an Information page. "Document your work" goes into step 5 (_Keep proof of the work_) and "What to expect at the follow-up visit" into step 6 (_Pass the re-inspection_). The page is removed.
+- **Get ready for a housing inspection after you report:** folds into step 3 (_Get ready for the inspection_) of _Report a pest problem, start to finish_. That inspection comes before any violation, so it doesn't belong in the violation step-by-step. The page is removed.
 - **What tenants need to do after a Notice of Violation:** Information page.
 - **Find complaints and inspection records** and **Look up residential health code violations:** combine into one Transaction.
 
