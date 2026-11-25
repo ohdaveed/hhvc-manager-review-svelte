@@ -121,6 +121,10 @@ The 3 Transaction URLs that keep their page lose the "a". The 2 "get ready" page
 
 Rewrite each description that reuses title words, using the Analysis panel's list for that page. Less is more: cut the repeated words rather than replace them with new ones, and keep the description short.
 
+### Annual fee page: no changes in the mockup (C7, decided Nov 24, 2026)
+
+Leave the page as it is: the due-date wording, the $115 vs. $117 half-hour reinspection fee and the "What the annual fee supports" callout. They get fixed when the page moves to Karl.
+
 ### Sewage page
 
 "Report a sewage leak or backup" covers sewage from a drain, toilet, cleanout or pipe, inside or outside a building, including yards and shared areas. HHVC responds within 48 hours of the complaint. The owner hires a plumber, and HHVC confirms the sewage is removed and the area sanitized. A leaking pipe with no sewage goes to another agency.
