@@ -235,11 +235,11 @@ Nothing below has a field to be typed into. It is listed rather than dropped, be
 `;
 
 exports[`transcript Markdown, every corpus page > appealNotice 1`] = `
-"# Appeal a Notice of Violation — Karl transcript
+"# Question a Notice of Violation — Karl transcript
 
 **Karl path:** New: Transaction → Content
 **Decision:** no review recorded
-**Page key:** \`appealNotice\` · **Slug:** \`sf.gov/appeal-notice-of-violation\` · **Type:** Transaction
+**Page key:** \`appealNotice\` · **Slug:** \`sf.gov/question-notice-of-violation\` · **Type:** Transaction
 
 **NOT APPROVED — do not publish from this transcript.** Approval in this tool is per page, not per field, so nothing below is signed off.
 
@@ -249,7 +249,7 @@ exports[`transcript Markdown, every corpus page > appealNotice 1`] = `
 
 **Page title:**
 
-Appeal a Notice of Violation
+Question a Notice of Violation
 
 ### Description — \`description\` [TYPE] — page not approved
 
@@ -372,11 +372,11 @@ _The slug is REQUIRED and lives on the Promote tab, so a page cannot be saved fr
 
 **Slug (\`slug\`):**
 
-sf.gov/appeal-notice-of-violation
+sf.gov/question-notice-of-violation
 
 **Title tag (\`seo_title\`):**
 
-Appeal a Notice of Violation | SF.gov
+Question a Notice of Violation | SF.gov
 
 **Meta description (\`search_description\`):**
 
@@ -3255,7 +3255,7 @@ If you think the citation is wrong
 
 Contact the investigator named on your notice if you disagree. Do not simply withhold payment.
 
-- [Appeal a Notice of Violation](appealNotice)
+- [Question a Notice of Violation](appealNotice)
 - Contact the investigator named on your notice before the due date.
 
 **Links in this text — recreate each with the Link tool, do not paste them:**
@@ -3263,7 +3263,7 @@ Contact the investigator named on your notice if you disagree. Do not simply wit
 - "Environmental Health office" → shape 5 — rich text Link tool → Internal link → "Environmental Health office"
 - "Correct a violation and close your case" → shape 5 — rich text Link tool → Internal link → "Correct a violation and close your case"
 - "Correct a violation and close your case" → shape 5 — rich text Link tool → Internal link → "Correct a violation and close your case"
-- "Appeal a Notice of Violation" → shape 5 — rich text Link tool → Internal link → "Appeal a Notice of Violation"
+- "Question a Notice of Violation" → shape 5 — rich text Link tool → Internal link → "Question a Notice of Violation"
 
 ### Partner agencies — \`partner_agencies\` [CHOOSE] — page not approved
 
@@ -4790,7 +4790,7 @@ Further enforcement can follow an uncorrected notice. This can include a reinspe
 
 Follow the instructions and deadlines in any later notice you receive.
 
-- [Appeal a Notice of Violation](appealNotice)
+- [Question a Notice of Violation](appealNotice)
 - [Pay a Healthy Housing citation](payCitation)
 - [What happens after you report a housing or pest problem](afterReport)
 
@@ -4800,7 +4800,7 @@ Follow the instructions and deadlines in any later notice you receive.
 - "Integrated pest management for property owners and managers" → shape 5 — rich text Link tool → Internal link → "Integrated pest management for property owners and managers"
 - "Prepare your unit for pest treatment" → shape 5 — rich text Link tool → Internal link → "Prepare your unit for pest treatment"
 - "What tenants need to do after a Notice of Violation" → shape 5 — rich text Link tool → Internal link → "What tenants need to do after a Notice of Violation"
-- "Appeal a Notice of Violation" → shape 5 — rich text Link tool → Internal link → "Appeal a Notice of Violation"
+- "Question a Notice of Violation" → shape 5 — rich text Link tool → Internal link → "Question a Notice of Violation"
 - "Pay a Healthy Housing citation" → shape 5 — rich text Link tool → Internal link → "Pay a Healthy Housing citation"
 - "What happens after you report a housing or pest problem" → shape 5 — rich text Link tool → Internal link → "What happens after you report a housing or pest problem"
 

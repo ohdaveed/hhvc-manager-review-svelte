@@ -122,7 +122,7 @@ export const stepCorrectViolation = {
 						'Follow the instructions and deadlines in any later notice you receive.'
 					],
 					bullets: [
-						'[Appeal a Notice of Violation](appealNotice)',
+						'[Question a Notice of Violation](appealNotice)',
 						'[Pay a Healthy Housing citation](payCitation)',
 						'[What happens after you report a housing or pest problem](afterReport)'
 					],
