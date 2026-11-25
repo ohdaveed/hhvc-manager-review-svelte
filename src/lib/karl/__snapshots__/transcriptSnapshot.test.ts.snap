@@ -335,6 +335,26 @@ A notice can cite several conditions. Questioning one does not put the others on
 - "Correct a violation and close your case" → shape 5 — rich text Link tool → Internal link → "Correct a violation and close your case"
 - "Fix your Healthy Housing and Vector Control violation" → shape 5 — rich text Link tool → Internal link → "Fix your Healthy Housing and Vector Control violation"
 
+### Contact us — \`get_help\` [TYPE] — page not approved
+
+_Address is a snippet chooser referencing a stored Address record, not inline fields, and Phone number’s first field is labelled "Owner" rather than "Name"._
+
+**Phone number:**
+
+311 (call or text)
+
+**Phone number:**
+
+415-252-3800
+
+**Email:**
+
+healthyhousing@sf.gov
+
+**Additional info:**
+
+Environmental Health — Healthy Housing and Vector Control
+
 ### Partner agencies — \`partner_agencies\` [CHOOSE] — page not approved
 
 _A page chooser restricted to Agency pages. These entries name real sf.gov department pages outside this mockup, so search Karl for each by title._
@@ -1270,6 +1290,28 @@ Leaving SF.gov
 
 The link opens on the Department of Public Health website. You will leave SF.gov.
 
+### What to Do — \`what_to_do\` [TYPE] — page not approved
+
+_The mockup heading "What to do" is not typed anywhere — Karl's What to Do panel carries its own label. Each step below becomes one Section block._
+
+_A step with text, a button and a callout becomes ONE Section block whose Section specifics holds a Text, a Button link and a Callout as siblings — not fields on the step._
+
+**Section 1 — Section title:**
+
+Open the lookup tool
+
+**Section 1 — Section specifics → Text:**
+
+The lookup opens on the Department of Public Health external site. You will leave SF.gov.
+
+**Section 1 — Section specifics → Button link → Link text:**
+
+Open hotel lookup
+
+**Section 1 — Button link → destination:**
+
+External URL → https://sfdph.org/dph/EH/ResidentialHotels/default.asp
+
 ### Custom Section — \`custom_section\` [TYPE] — page not approved
 
 ⚠ Inferred mapping — verify the destination before saving.
@@ -1287,20 +1329,6 @@ Environmental Health inspects residential hotels, SROs, shelters, and related ho
 Use this page for records about a residential hotel, SRO, or shelter. For a standard apartment or mixed-use building, use the general lookup.
 
 - **Note:** If you are staying at a regular tourist hotel, you may still use the general complaints and inspection lookup. Residential hotel and shelter records use a different program dataset.
-
-### Custom Section — \`custom_section\` [TYPE] — page not approved
-
-⚠ Inferred mapping — verify the destination before saving.
-
-_Inferred mapping — the field map documents this panel only for supporting/flat sections. Transaction has no generic body stream and this is its only repeatable Title-and-text panel, so verify the destination before saving._
-
-**Title:**
-
-Open the lookup tool
-
-**Text:**
-
-The lookup opens on the Department of Public Health external site. You will leave SF.gov.
 
 ### Related — \`related\` [CHOOSE] — page not approved
 
@@ -1347,8 +1375,6 @@ Look up Environmental Health records for San Francisco residential hotels, SROs,
 Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
 
 - \`audience\` — The page carries \`audience\`, and Karl does have a home for it: a **Things to know** entry titled "Who this information is for". Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list. What blocks it is the budget, not the field: the Help Center caps Things to know at 2 entries, and most Transaction pages here already spend both, so placing the audience means deciding which existing entry it replaces. That is a content call, not a missing panel.
-- \`sections.1.button\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
-- \`sections.1.buttonUrl\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
 "
 `;
 
@@ -1407,6 +1433,28 @@ Leaving SF.gov
 
 The link opens on the Department of Public Health website. You will leave SF.gov.
 
+### What to Do — \`what_to_do\` [TYPE] — page not approved
+
+_The mockup heading "What to do" is not typed anywhere — Karl's What to Do panel carries its own label. Each step below becomes one Section block._
+
+_A step with text, a button and a callout becomes ONE Section block whose Section specifics holds a Text, a Button link and a Callout as siblings — not fields on the step._
+
+**Section 1 — Section title:**
+
+Open the lookup tool
+
+**Section 1 — Section specifics → Text:**
+
+The search tool opens on the Department of Public Health external records site. You will leave SF.gov.
+
+**Section 1 — Section specifics → Button link → Link text:**
+
+Open lookup tool
+
+**Section 1 — Button link → destination:**
+
+External URL → https://xnet.sfdph.org:8443/ords/eeop/f?p=119:1
+
 ### Custom Section — \`custom_section\` [TYPE] — page not approved
 
 ⚠ Inferred mapping — verify the destination before saving.
@@ -1427,20 +1475,6 @@ The tool shows about five years of investigated complaint and inspection activit
 - Complaint ID or location ID searches
 - Past inspections and violation history
 - Complaint status for investigated cases
-
-### Custom Section — \`custom_section\` [TYPE] — page not approved
-
-⚠ Inferred mapping — verify the destination before saving.
-
-_Inferred mapping — the field map documents this panel only for supporting/flat sections. Transaction has no generic body stream and this is its only repeatable Title-and-text panel, so verify the destination before saving._
-
-**Title:**
-
-Open the lookup tool
-
-**Text:**
-
-The search tool opens on the Department of Public Health external records site. You will leave SF.gov.
 
 ### Related — \`related\` [CHOOSE] — page not approved
 
@@ -1492,8 +1526,6 @@ Search Environmental Health complaint and inspection records for a San Francisco
 Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
 
 - \`audience\` — The page carries \`audience\`, and Karl does have a home for it: a **Things to know** entry titled "Who this information is for". Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list. What blocks it is the budget, not the field: the Help Center caps Things to know at 2 entries, and most Transaction pages here already spend both, so placing the audience means deciding which existing entry it replaces. That is a content call, not a missing panel.
-- \`sections.1.button\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
-- \`sections.1.buttonUrl\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
 "
 `;
 
@@ -2449,6 +2481,32 @@ _(empty)_
 
 The exact lookup tool and destination have not been confirmed yet.
 
+### What to Do — \`what_to_do\` [TYPE] — page not approved
+
+_The mockup heading "What to do" is not typed anywhere — Karl's What to Do panel carries its own label. Each step below becomes one Section block._
+
+_A step with text, a button and a callout becomes ONE Section block whose Section specifics holds a Text, a Button link and a Callout as siblings — not fields on the step._
+
+**Section 1 — Section title:**
+
+Open the lookup tool
+
+**Section 1 — Section specifics → Text:**
+
+Select your neighborhood to see the assigned inspector and their contact information.
+
+**Section 1 — Section specifics → Button link → Link text:**
+
+Find your inspector
+
+**Section 1 — Button link → destination:**
+
+External URL → #
+
+**Callout (rich text, no title field):**
+
+This button is a placeholder until HHVC confirms the real lookup tool and entry point.
+
 ### Custom Section — \`custom_section\` [TYPE] — page not approved
 
 ⚠ Inferred mapping — verify the destination before saving.
@@ -2462,24 +2520,6 @@ What this tool covers
 **Text:**
 
 Healthy Housing and Vector Control assigns inspectors by neighborhood. Use this page to find contact information for the inspector who covers your area.
-
-### Custom Section — \`custom_section\` [TYPE] — page not approved
-
-⚠ Inferred mapping — verify the destination before saving.
-
-_Inferred mapping — the field map documents this panel only for supporting/flat sections. Transaction has no generic body stream and this is its only repeatable Title-and-text panel, so verify the destination before saving._
-
-**Title:**
-
-Open the lookup tool
-
-**Text:**
-
-Select your neighborhood to see the assigned inspector and their contact information.
-
-**Callout (rich text, no title field):**
-
-This button is a placeholder until HHVC confirms the real lookup tool and entry point.
 
 ### Related — \`related\` [CHOOSE] — page not approved
 
@@ -2519,8 +2559,6 @@ Look up which Healthy Housing and Vector Control inspector covers your San Franc
 Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
 
 - \`audience\` — The page carries \`audience\`, and Karl does have a home for it: a **Things to know** entry titled "Who this information is for". Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list. What blocks it is the budget, not the field: the Help Center caps Things to know at 2 entries, and most Transaction pages here already spend both, so placing the audience means deciding which existing entry it replaces. That is a content call, not a missing panel.
-- \`sections.1.button\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
-- \`sections.1.buttonUrl\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
 "
 `;
 
@@ -4352,6 +4390,28 @@ Leaving SF.gov
 
 Requests are handled through the citywide San Francisco NextRequest portal. You will leave SF.gov.
 
+### What to Do — \`what_to_do\` [TYPE] — page not approved
+
+_The mockup heading "What to do" is not typed anywhere — Karl's What to Do panel carries its own label. Each step below becomes one Section block._
+
+_A step with text, a button and a callout becomes ONE Section block whose Section specifics holds a Text, a Button link and a Callout as siblings — not fields on the step._
+
+**Section 1 — Section title:**
+
+Submit your request
+
+**Section 1 — Section specifics → Text:**
+
+Public records requests are handled through the citywide San Francisco NextRequest portal. You will leave SF.gov.
+
+**Section 1 — Section specifics → Button link → Link text:**
+
+Request records
+
+**Section 1 — Button link → destination:**
+
+External URL → https://sanfrancisco.nextrequest.com/requests/new
+
 ### Custom Section — \`custom_section\` [TYPE] — page not approved
 
 ⚠ Inferred mapping — verify the destination before saving.
@@ -4371,20 +4431,6 @@ Use a formal public records request for certified copies or a broader record set
 - Property address or complaint number
 - Date range for the records you need
 - A clear description of the records you are requesting
-
-### Custom Section — \`custom_section\` [TYPE] — page not approved
-
-⚠ Inferred mapping — verify the destination before saving.
-
-_Inferred mapping — the field map documents this panel only for supporting/flat sections. Transaction has no generic body stream and this is its only repeatable Title-and-text panel, so verify the destination before saving._
-
-**Title:**
-
-Submit your request
-
-**Text:**
-
-Public records requests are handled through the citywide San Francisco NextRequest portal. You will leave SF.gov.
 
 ### Related — \`related\` [CHOOSE] — page not approved
 
@@ -4428,8 +4474,6 @@ Request Environmental Health public records through the citywide San Francisco p
 Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
 
 - \`audience\` — The page carries \`audience\`, and Karl does have a home for it: a **Things to know** entry titled "Who this information is for". Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list. What blocks it is the budget, not the field: the Help Center caps Things to know at 2 entries, and most Transaction pages here already spend both, so placing the audience means deciding which existing entry it replaces. That is a content call, not a missing panel.
-- \`sections.1.button\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
-- \`sections.1.buttonUrl\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
 "
 `;
 

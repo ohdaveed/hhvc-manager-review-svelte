@@ -120,12 +120,13 @@ describe('dead button links', () => {
 	});
 
 	// Decision 14 (docs/plans/2026-11-23-karl-field-mapping-layer.md): PLACEHOLDER
-	// is the literal uppercase string only. The inspector lookup's "#" button sits
-	// outside any step, so it is reported under copy that won't carry over.
-	it('reports the inspector lookup’s unplaced "#" button as copy that won’t carry over', () => {
-		const unplaced = byId('inspectorLookup', 'karl-unplaced');
-		expect(unplaced.status).toBe('issue');
-		expect(unplaced.items.map((i) => i.text)).toContain('“Open the lookup tool” — its button');
+	// is the literal uppercase string only. C2 moved the inspector lookup's "#"
+	// button into a What to do step, so it is now placed, and reported as a
+	// Button link that goes nowhere. C3 keeps the placeholder until the live build.
+	it('reports the inspector lookup’s placed "#" button as a link that goes nowhere', () => {
+		const f = byId('inspectorLookup', 'karl-needs-fix');
+		expect(f.status).toBe('issue');
+		expect(f.items.map((i) => i.detail)).toContain("Button link goes nowhere ('#').");
 	});
 });
 

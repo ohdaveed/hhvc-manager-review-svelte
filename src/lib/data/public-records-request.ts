@@ -45,14 +45,20 @@ export const publicRecords = {
 			]
 		},
 		{
-			heading: 'Submit your request',
-			karl: 'what_to_do -> Section. Section title: "Submit your request". Section specifics: Text block (this paragraph) + Button link block (External URL radio, target = the NextRequest URL).',
+			heading: 'What to do',
+			fieldKey: 'submit-your-request',
+			karl: 'what_to_do, headed "What to do" as Karl shows it (C2, decided Nov 24, 2026). One Section: Section title "Submit your request"; Section specifics: Text block (the paragraph) + Button link block (External URL radio, target = the NextRequest URL).',
 			kind: 'body',
-			paragraphs: [
-				'Public records requests are handled through the citywide San Francisco NextRequest portal. You will leave SF.gov.'
-			],
-			button: 'Request records',
-			buttonUrl: 'https://sanfrancisco.nextrequest.com/requests/new'
+			steps: [
+				{
+					title: 'Submit your request',
+					text: [
+						'Public records requests are handled through the citywide San Francisco NextRequest portal. You will leave SF.gov.'
+					],
+					button: 'Request records',
+					buttonUrl: 'https://sanfrancisco.nextrequest.com/requests/new'
+				}
+			]
 		},
 		{
 			heading: 'Related pages',

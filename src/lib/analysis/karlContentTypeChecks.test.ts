@@ -43,12 +43,9 @@ describe('Karl content-type checks on the current corpus', () => {
 				// Five "1." … "5." headings on an Information page.
 				'sf.gov/information/integrated-pest-management-for-property-owners-and-managers / karl-information-actionable / 5 numbered section headings',
 				// No section placed in What to do. These passed while the check read
-				// note prose that merely mentioned what_to_do.
-				'sf.gov/find-complaints-and-inspection-records / karl-transaction-what-to-do / No What to do section',
-				'sf.gov/find-healthy-housing-inspector-by-neighborhood / karl-transaction-what-to-do / No What to do section',
-				'sf.gov/find-residential-hotel-and-shelter-records / karl-transaction-what-to-do / No What to do section',
+				// note prose that merely mentioned what_to_do. C2 moved the other four
+				// lookup and records pages into What to do; this one merges under C1.
 				'sf.gov/lookup-residential-health-code-violations / karl-transaction-what-to-do / No What to do section',
-				'sf.gov/make-a-public-records-request-environmental-health / karl-transaction-what-to-do / No What to do section',
 				// A custom heading where Karl hard-codes "What to do".
 				'sf.gov/get-ready-for-a-follow-up-inspection / karl-transaction-what-to-do / Document your work',
 				'sf.gov/get-ready-for-a-follow-up-inspection / karl-transaction-what-to-do / What to expect at the follow-up visit',
@@ -206,7 +203,7 @@ describe('a Transaction gives the reader a way to act', () => {
 			.sort();
 		expect(flagged).toEqual(
 			[
-				'appealNotice',
+				// appealNotice passes since C10 gave it a Contact us block.
 				'inspectionPrepFollowup',
 				'inspectionPrepInitial',
 				'noticeOfViolation',

@@ -49,14 +49,20 @@ export const findRecords = {
 			]
 		},
 		{
-			heading: 'Open the lookup tool',
-			karl: 'what_to_do -> Section. Section title: "Open the lookup tool". Section specifics: Text block (this paragraph) + Button link block (External URL radio, target = the xnet URL).',
+			heading: 'What to do',
+			fieldKey: 'open-the-lookup-tool',
+			karl: 'what_to_do, headed "What to do" as Karl shows it (C2, decided Nov 24, 2026). One Section: Section title "Open the lookup tool"; Section specifics: Text block (the paragraph) + Button link block (External URL radio, target = the xnet URL).',
 			kind: 'body',
-			paragraphs: [
-				'The search tool opens on the Department of Public Health external records site. You will leave SF.gov.'
-			],
-			button: 'Open lookup tool',
-			buttonUrl: 'https://xnet.sfdph.org:8443/ords/eeop/f?p=119:1'
+			steps: [
+				{
+					title: 'Open the lookup tool',
+					text: [
+						'The search tool opens on the Department of Public Health external records site. You will leave SF.gov.'
+					],
+					button: 'Open lookup tool',
+					buttonUrl: 'https://xnet.sfdph.org:8443/ords/eeop/f?p=119:1'
+				}
+			]
 		},
 		{
 			heading: 'If you need to report a new problem',

@@ -44,14 +44,20 @@ export const findHotelRecords = {
 			]
 		},
 		{
-			heading: 'Open the lookup tool',
-			karl: 'what_to_do -> Section. Section title: "Open the lookup tool". Section specifics: Text block (this paragraph) + Button link block (External URL radio, target = the sfdph.org URL). No callout in this section.',
+			heading: 'What to do',
+			fieldKey: 'open-the-lookup-tool',
+			karl: 'what_to_do, headed "What to do" as Karl shows it (C2, decided Nov 24, 2026). One Section: Section title "Open the lookup tool"; Section specifics: Text block (the paragraph) + Button link block (External URL radio, target = the sfdph.org URL). No callout in this section.',
 			kind: 'body',
-			paragraphs: [
-				'The lookup opens on the Department of Public Health external site. You will leave SF.gov.'
-			],
-			button: 'Open hotel lookup',
-			buttonUrl: 'https://sfdph.org/dph/EH/ResidentialHotels/default.asp'
+			steps: [
+				{
+					title: 'Open the lookup tool',
+					text: [
+						'The lookup opens on the Department of Public Health external site. You will leave SF.gov.'
+					],
+					button: 'Open hotel lookup',
+					buttonUrl: 'https://sfdph.org/dph/EH/ResidentialHotels/default.asp'
+				}
+			]
 		},
 		{
 			heading: 'Related pages',
