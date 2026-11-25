@@ -96,6 +96,10 @@ All 6 change type or merge. Each one changes the page's URL and its `pages.path`
 
 Rename the custom heading to "What to do" on the Transaction pages that keep their type: public records, inspector lookup, complaints records (the combined lookup from C1) and hotel records. The other 3 of the 7 leave the Transaction type under C1: the 2 "get ready" pages become steps and tenant steps becomes an Information page, so their headings don't need renaming.
 
+### Placeholder pages are not Blocked (C3, decided Nov 24, 2026)
+
+The citation and inspector lookup pages stay as they are. This is a mockup: the payment link and the lookup tool get filled in when the editor builds the live Karl page, so the mockup doesn't wait on them.
+
 ### Sewage page
 
 "Report a sewage leak or backup" covers sewage from a drain, toilet, cleanout or pipe, inside or outside a building, including yards and shared areas. HHVC responds within 48 hours of the complaint. The owner hires a plumber, and HHVC confirms the sewage is removed and the area sanitized. A leaking pipe with no sewage goes to another agency.
