@@ -121,6 +121,8 @@ The 3 Transaction URLs that keep their page lose the "a". The 2 "get ready" page
 
 Rewrite each description that reuses title words, using the Analysis panel's list for that page. Less is more: cut the repeated words rather than replace them with new ones, and keep the description short.
 
+> **Amended Nov 25, 2026:** the owner replaced "cut rather than replace" with this standard: start with a verb, add 1–2 terms the title doesn't have, repeat at most one title word, and stay around 70–100 characters (never over Karl's 110). Reasons: Karl's Description guidance (explain the action, use keywords not in the title) and Google's meta-description guidance (too-short descriptions are an anti-pattern). Implemented in #211 on 18 pages. The annual fee page stays unchanged (C7). Both "get ready" pages and _Fix your HHVC violation_ also stay unchanged, because C1 removes or merges them.
+
 ### Annual fee page: no changes in the mockup (C7, decided Nov 24, 2026)
 
 Leave the page as it is: the due-date wording, the $115 vs. $117 half-hour reinspection fee and the "What the annual fee supports" callout. They get fixed when the page moves to Karl.
