@@ -210,13 +210,13 @@ test.describe('Blueprint', () => {
 		await gotoSignedIn(page, '/review/report-rats-mice-four-legged-problems');
 		await openBlueprint(page);
 		await page
-			.getByRole('button', { name: 'Show on page: “How your report is processed” — its button' })
+			.getByRole('button', { name: 'Show on page: “What the Health Code requires” — its button' })
 			.click();
 
 		await expect(page.getByRole('heading', { name: 'Blueprint', level: 2 })).toHaveCount(0);
 		await expect(page.locator('.karl-outline-summary')).toBeVisible();
 		const field = page.locator(
-			'[data-rewrite-field="sections.how-your-report-is-processed.button"]'
+			'[data-rewrite-field="sections.what-the-health-code-requires.button"]'
 		);
 		await expect(field).toBeFocused();
 		await expect(field).toBeInViewport();

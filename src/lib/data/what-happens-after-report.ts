@@ -77,7 +77,7 @@ export const afterReport = {
 			karl: 'Paragraphs map to a sixth Title and text block (Title = this heading, Text = the two paragraphs). Resolved schema gap: the verified Information form has no confirmed button/CTA block type (button converted to inline link) — folded into this block’s rich text (Internal link → tenantRights) — flag this gap for Digital Services rather than assuming a dedicated button block exists.',
 			kind: 'body',
 			paragraphs: [
-				"Tenants have rights when they ask for repairs or report housing conditions to the City. Reporter identities are only shared with the City Attorney's Office and are not shared in response to public records requests.",
+				'Tenants have rights when they ask for repairs or report housing conditions to the City. We never share your name or contact information.',
 				'A property owner or manager cannot retaliate because a tenant reports a housing condition to 311 or a health department.'
 			],
 			bullets: ['[Tenant rights and reporting](tenantRights)']

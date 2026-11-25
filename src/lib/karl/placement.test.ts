@@ -37,7 +37,7 @@ describe('rats report (Transaction pilot)', () => {
 		expect(p.fields.get('whatToKnow.thingsToKnow.1.label')?.label).toBe(
 			'Things to Know · Block 2 · Title'
 		);
-		expect(p.fields.get('sections.how-your-report-is-processed.heading')?.label).toBe(
+		expect(p.fields.get('sections.what-the-health-code-requires.heading')?.label).toBe(
 			'Custom Section 2 · Title'
 		);
 	});
@@ -50,7 +50,7 @@ describe('rats report (Transaction pilot)', () => {
 	});
 
 	it('reports the section-level button and the audience list as unplaced', () => {
-		expect(statusOf(p, 'sections.how-your-report-is-processed.button')).toBe('unplaced');
+		expect(statusOf(p, 'sections.what-the-health-code-requires.button')).toBe('unplaced');
 		for (let i = 0; i < 4; i++) expect(statusOf(p, `audience.${i}`)).toBe('unplaced');
 	});
 
@@ -59,7 +59,7 @@ describe('rats report (Transaction pilot)', () => {
 		expect(withReason).toEqual([0]);
 		expect(p.unplaced.map((u) => u.subject)).toEqual([
 			'The “Who this is for” list',
-			'“How your report is processed” — its button'
+			'“What the Health Code requires” — its button'
 		]);
 	});
 
@@ -388,7 +388,7 @@ describe('Campaign', () => {
 	});
 
 	it('keeps callouts placed where Karl offers them', () => {
-		expect(of('rodentsReport').fields.get('sections.what-to-do.steps.0.callout.text')?.status).toBe(
+		expect(of('rodentsReport').fields.get('sections.what-to-do.steps.2.callout.text')?.status).toBe(
 			'placed'
 		);
 	});

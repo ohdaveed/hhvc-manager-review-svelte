@@ -20,12 +20,12 @@ export const rodentsReport = {
 		// you can" guidance) to match how real sf.gov Things to know entries
 		// render — each with its own H3, not one joined bullet list. The
 		// response-time fact that used to be a third bullet here is dropped as a
-		// duplicate: "How your report is processed" below already states it
-		// ("It can take a few weekdays for 311 to send your report...").
+		// duplicate. Since 2026-11-24 it lives on What happens after you report,
+		// linked from Related pages (Decisions tab: shared report text moves there).
 		thingsToKnow: [
 			{
 				label: 'Reporting anonymously',
-				text: 'You can report anonymously. 311 does not require your name, and HHVC does not share your identity with the owner or manager.'
+				text: 'You can report anonymously. 311 does not require your name. We never share your name or contact information.'
 			},
 			{
 				label: 'Notify your landlord first',
@@ -46,11 +46,7 @@ export const rodentsReport = {
 						'If the problem is urgent, report now.'
 					],
 					button: 'Report through 311',
-					karl: 'what_to_do -> Section. Section title: "Start your report". Section specifics: Text block (these 2 sentences) + Button link block ("Report through 311") + Callout block below. Keep the 311 action first.',
-					callout: {
-						text: '**Your report is confidential.** The City will never share your name or contact information with your landlord or property manager.',
-						karl: 'Callout block inside the "Start your report" Section specifics: single rich text field only, no separate title field like this mockup callout has. The confidentiality line is the bolded lead-in of that one field, not a heading -- retype it exactly, bold included.'
-					}
+					karl: 'what_to_do -> Section. Section title: "Start your report". Section specifics: Text block (these 2 sentences) + Button link block ("Report through 311"). Keep the 311 action first.'
 				},
 				{
 					title: 'Notify your landlord before reporting',
@@ -139,21 +135,14 @@ export const rodentsReport = {
 			],
 			bullets: [
 				'You can ask 311 for help in your language.',
-				'You do not have to give your name to make a report.',
-				'HHVC does not share the reporter’s identity with the property owner or manager.',
 				'You can ask 311 for a service request number so you can follow up later.'
 			]
 		},
 		{
-			heading: 'How your report is processed',
-			karl: 'custom_section -> title_and_text. Title = this heading, Text = the copy below. MOVED OUT OF things_to_know 2026-08-31, option (b): with this section the page claimed 4 things_to_know entries against the Help Center\'s two-item guidance, and the panel already holds the 2 What-to-know entries. custom_section is the same title_and_text block, repeatable with no recorded cap, so every word is kept and nothing is cut. PLACEMENT CONSEQUENCE, for the editor to judge: custom_section renders AFTER what_to_do and supporting_information, so this section now sits below them rather than above — things_to_know would have placed it above what_to_do. If that reading order matters more than the guidance, revert to option (a) and let the panel run to 4. PRIOR MAPPING, kept for the record: Best real-schema fit: a second things_to_know entry. Title: "How your report is processed". Text: the bulleted list below (after-report expectations, weekday processing note, enforcement statement, tenant rights note, and the Health Code Article 11 property-owner-obligation summary required by HHVC content standards Ch. 8.7.1). Same ordering caveat as the section above — things_to_know sits before what_to_do on the real form. Secondary Button link block ("View Article 11") citing the municipal code per Ch. 8.7.2.',
+			heading: 'What the Health Code requires',
+			karl: 'custom_section -> title_and_text. Title = this heading, Text = the copy below. 2026-11-24: renamed from "How your report is processed" and cut to the Article 11 line and its button; the shared review-time, contact, anonymous-visit, outcome and retaliation bullets now live only on What happens after you report, linked from Related pages (Decisions tab). The 2026-08-31 note that follows predates that cut. MOVED OUT OF things_to_know 2026-08-31, option (b): with this section the page claimed 4 things_to_know entries against the Help Center\'s two-item guidance, and the panel already holds the 2 What-to-know entries. custom_section is the same title_and_text block, repeatable with no recorded cap, so every word is kept and nothing is cut. PLACEMENT CONSEQUENCE, for the editor to judge: custom_section renders AFTER what_to_do and supporting_information, so this section now sits below them rather than above — things_to_know would have placed it above what_to_do. If that reading order matters more than the guidance, revert to option (a) and let the panel run to 4. PRIOR MAPPING, kept for the record: Best real-schema fit: a second things_to_know entry. Title: "How your report is processed". Text: the bulleted list below (after-report expectations, weekday processing note, enforcement statement, tenant rights note, and the Health Code Article 11 property-owner-obligation summary required by HHVC content standards Ch. 8.7.1). Same ordering caveat as the section above — things_to_know sits before what_to_do on the real form. Secondary Button link block ("View Article 11") citing the municipal code per Ch. 8.7.2.',
 			kind: 'body',
 			bullets: [
-				'**Review time:** 311 sends your report to Environmental Health, which assigns an inspector. This can take a few weekdays.',
-				'**If you gave contact information:** An inspector may reach out to ask questions or schedule a visit.',
-				'**If you reported anonymously:** An inspector may still visit without notice. This is more likely with an urgent safety or health risk.',
-				'**If we find a problem:** The City can order the property owner or responsible party to fix the violation.',
-				'**Note:** Tenants have rights to safe and habitable housing. A property owner or manager cannot retaliate because a tenant reports housing conditions to the City.',
 				'San Francisco Health Code Article 11 requires property owners to keep buildings clean, watertight, and completely free of rodent infestations.'
 			],
 			button: 'View Article 11',

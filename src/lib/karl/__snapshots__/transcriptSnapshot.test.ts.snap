@@ -157,7 +157,7 @@ Tenant rights and retaliation
 
 **Text:**
 
-Tenants have rights when they ask for repairs or report housing conditions to the City. Reporter identities are only shared with the City Attorney's Office and are not shared in response to public records requests.
+Tenants have rights when they ask for repairs or report housing conditions to the City. We never share your name or contact information.
 
 A property owner or manager cannot retaliate because a tenant reports a housing condition to 311 or a health department.
 
@@ -1031,7 +1031,7 @@ Reporting anonymously
 
 **Block 1 — Text:**
 
-You can report anonymously. 311 does not require your name, and HHVC does not share your identity with the owner or manager.
+You can report anonymously. 311 does not require your name. We never share your name or contact information.
 
 **Block 2 — Title:**
 
@@ -1064,10 +1064,6 @@ Report through 311
 **Section 1 — Button link → destination:**
 
 None
-
-**Callout (rich text, no title field):**
-
-**Your report is confidential.** The City will never share your name or contact information with your landlord or property manager.
 
 **Section 2 — Section title:**
 
@@ -1111,7 +1107,7 @@ Include only the details that apply:
 
 **Callout (rich text, no title field):**
 
-For mold on walls or ceilings, HHVC can act when the affected area totals at least 10 square feet. Photos are not required. Describe the location and condition clearly. Reporter identities are only shared with the City Attorney's Office and are not shared in response to public records requests.
+For mold on walls or ceilings, HHVC can act when the affected area totals at least 10 square feet. Photos are not required. Describe the location and condition clearly.
 
 ### Accordion title and text — \`supporting_information\` [TYPE] — page not approved
 
@@ -1145,8 +1141,6 @@ Get help making your report
 You can make a report even if you are not the tenant. A friend, family member, advocate, or helper can report for someone else.
 
 - You can ask 311 for help in your language.
-- You do not have to give your name to make a report.
-- HHVC does not share the reporter’s identity with the property owner or manager.
 - You can ask 311 for a service request number so you can follow up later.
 
 **Callout (rich text, no title field):**
@@ -1161,15 +1155,10 @@ _Inferred mapping — the field map documents this panel only for supporting/fla
 
 **Title:**
 
-How your report is processed
+What the Health Code requires
 
 **Text:**
 
-- **Review time:** 311 sends your report to Environmental Health, which assigns an inspector. This can take a few weekdays.
-- **If you gave contact information:** An inspector may reach out to ask questions or schedule a visit.
-- **If you reported anonymously:** An inspector may still visit without notice. This is more likely with an urgent safety or health risk.
-- **If we find a problem:** The City can order the property owner or responsible party to fix the violation.
-- **Note:** Tenants have rights to safe and habitable housing. A property owner or manager cannot retaliate because a tenant reports housing conditions to the City.
 - San Francisco Health Code Article 11 covers this. Property owners must not let trash, filth, animal waste, or overgrown plants build up. Build-up that shelters pests or creates a health hazard is a violation.
 
 ### Related — \`related\` [CHOOSE] — page not approved
@@ -1408,7 +1397,7 @@ Complaint privacy
 
 **Block 1 — Text:**
 
-Complaint records are public. Environmental Health generally does not share the name of the person who filed a complaint.
+Complaint records are public. We never share the name or contact information of the person who reported.
 
 **Block 2 — Title:**
 
@@ -1452,10 +1441,6 @@ Open the lookup tool
 **Text:**
 
 The search tool opens on the Department of Public Health external records site. You will leave SF.gov.
-
-**Callout (rich text, no title field):**
-
-Complaint records are public records. Environmental Health generally does not share the name of a person who filed a complaint.
 
 ### Related — \`related\` [CHOOSE] — page not approved
 
@@ -1797,7 +1782,7 @@ Reporting anonymously
 
 **Block 1 — Text:**
 
-You can report anonymously. 311 does not require your name, and HHVC does not share your identity with the owner or manager.
+You can report anonymously. 311 does not require your name. We never share your name or contact information.
 
 **Block 2 — Title:**
 
@@ -1830,10 +1815,6 @@ Report through 311
 **Section 1 — Button link → destination:**
 
 None
-
-**Callout (rich text, no title field):**
-
-**Your report is confidential.** The City will never share your name or contact information with your landlord or property manager.
 
 **Section 2 — Section title:**
 
@@ -1903,8 +1884,6 @@ Get help making your report
 You can make a report even if you are not the tenant. A friend, family member, advocate, or helper can report for someone else.
 
 - You can ask 311 for help in your language.
-- You do not have to give your name to make a report.
-- HHVC does not share the reporter’s identity with the property owner or manager.
 - You can ask 311 for a service request number so you can follow up later.
 
 ### Custom Section — \`custom_section\` [TYPE] — page not approved
@@ -1915,15 +1894,10 @@ _Inferred mapping — the field map documents this panel only for supporting/fla
 
 **Title:**
 
-How your report is processed
+What the Health Code requires
 
 **Text:**
 
-- **Review time:** 311 sends your report to Environmental Health, which assigns an inspector. This can take a few weekdays.
-- **If you gave contact information:** An inspector may reach out to ask questions or schedule a visit.
-- **If you reported anonymously:** An inspector may still visit without notice. This is more likely with an urgent safety or health risk.
-- **If we find a problem:** The City can order the property owner or responsible party to fix the violation.
-- **Note:** Tenants have rights to safe and habitable housing. A property owner or manager cannot retaliate because a tenant reports housing conditions to the City.
 - San Francisco Health Code Article 11 requires property owners to keep buildings clean, watertight, and completely free of insect infestations. They must also remove places where flies and mosquitoes breed.
 
 ### Related — \`related\` [CHOOSE] — page not approved
@@ -4769,7 +4743,7 @@ Reporting anonymously
 
 **Block 1 — Text:**
 
-You can report anonymously. 311 does not require your name, and HHVC does not share your identity with the owner or manager.
+You can report anonymously. 311 does not require your name. We never share your name or contact information.
 
 **Block 2 — Title:**
 
@@ -4802,10 +4776,6 @@ Report through 311
 **Section 1 — Button link → destination:**
 
 None
-
-**Callout (rich text, no title field):**
-
-**Your report is confidential.** The City will never share your name or contact information with your landlord or property manager.
 
 **Section 2 — Section title:**
 
@@ -4867,8 +4837,6 @@ Get help making your report
 You can make a report even if you are not the tenant. A friend, family member, advocate, or helper can report for someone else.
 
 - You can ask 311 for help in your language.
-- You do not have to give your name to make a report.
-- HHVC does not share the reporter’s identity with the property owner or manager.
 - You can ask 311 for a service request number so you can follow up later.
 
 ### Custom Section — \`custom_section\` [TYPE] — page not approved
@@ -4879,15 +4847,10 @@ _Inferred mapping — the field map documents this panel only for supporting/fla
 
 **Title:**
 
-How your report is processed
+What the Health Code requires
 
 **Text:**
 
-- **Review time:** 311 sends your report to Environmental Health, which assigns an inspector. This can take a few weekdays.
-- **If you gave contact information:** An inspector may reach out to ask questions or schedule a visit.
-- **If you reported anonymously:** An inspector may still visit without notice. This is more likely with an urgent safety or health risk.
-- **If we find a problem:** The City can order the property owner or responsible party to fix the violation.
-- **Note:** Tenants have rights to safe and habitable housing. A property owner or manager cannot retaliate because a tenant reports housing conditions to the City.
 - San Francisco Health Code Article 11 requires property owners to keep buildings clean, watertight, and completely free of rodent infestations.
 
 ### Related — \`related\` [CHOOSE] — page not approved
@@ -5154,7 +5117,7 @@ _(empty)_
 
 **Block 1 — Text:**
 
-You can report anonymously. 311 does not require your name, and HHVC does not share your identity with the owner or operator.
+You can report anonymously. 311 does not require your name. We never share your name or contact information.
 
 **Block 2 — Title:**
 

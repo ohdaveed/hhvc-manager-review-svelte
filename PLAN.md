@@ -1,49 +1,39 @@
-# PLAN — Move the Analysis panel's Karl checks onto the schemas
+# PLAN — Act on the Transaction pages Karl review
 
-Branch `feat/karl-analysis-on-schemas`, cut from `origin/main` at `655027f` (About us, PR #206).
-This is the second half of §5 in `docs/plans/2026-11-23-karl-field-mapping-layer.md`.
+Branch `docs/plan-transaction-review-fixes`, cut from `origin/main` at `4f4d0ea`.
+Detail, evidence and the status of each finding: `docs/superpowers/plans/2026-11-24-transaction-review-fixes.md`.
+Spec: `docs/reviews/2026-11-23-transaction-pages-karl-review.md` and `docs/reviews/2026-11-24-karl-review-all-tabs.md`. That file's **Decisions** tab overrides the other tabs: build only what it lists under Decided.
 
-## Why
+Already fixed before this plan: descriptions over 110 characters (#194) and "What to do: Pass on every page" (#208).
+Production has 0 edits and 0 comments on any page (measured 2026-11-24). Re-count before any task that moves copy.
 
-The Analysis panel judges Karl fit with its own rules, apart from the outline's, so the two can
-disagree on the same page:
+## Track A — Analysis panel (one PR)
 
-- `karlComponentFindings` builds its own component inventory from section tags and checks it
-  against `COMPONENT_SUPPORT`. Campaign's Contact us reads "supported" there, while the schema
-  calls it Unconfirmed. It never asks whether the host page has a Related field.
-- `karl-transaction-what-to-do` passes a page whose `karl` note merely mentions `what_to_do`
-  (`isWhatToDo` matches note prose), which is the known gap: "passes pages without that heading".
-- Nothing checks PLACEHOLDER text, the URL pattern, empty required fields, or copy that won't carry
-  over.
+- [x] **A1.** The Related target check runs on sections placed in Related, so the annual fee page's Resource Collection card reports an issue.
+- [x] **A2.** A placed button whose URL is `#` needs a fix. PLACEHOLDER stays uppercase-only (decision 14 of the field-mapping plan); the inspector lookup's unplaced `#` button was already reported under `karl-unplaced`.
+- [x] **A3.** A `karl-description-reuse` finding lists the title words repeated in the description (issue at 2 or more).
+- [x] **A4.** `karl-url-pattern` flags `a`/`an`/`the` in a slug.
+- [x] **A5.** A `karl-transaction-action` finding flags a Transaction with no button and no Contact us.
+- [x] **A-ship.** verify all green; eslint, svelte-check and prettier ratchets at baseline; full e2e 101/101; Analysis panel screenshots of the fee and citation pages checked by eye; whole-branch review done. PR open; merge waits for approval.
 
-## Design
+## Track B — Decided copy changes
 
-New `src/lib/analysis/karlPlacementChecks.ts` derives findings from `placementsFor` (the outline's
-source), judged on the copy on screen (base plus saved edits):
+- [x] **B1.** Every page says "We never share your name or contact information." once, and the City Attorney line is gone.
+- [x] **B2.** The garbage, rats and insects pages drop the review-time, contact, anonymous-visit, outcome and retaliation text (on *What happens after you report*, which each links) and the repeated "give your name" line. **Deferred:** moving the landlord notice and putting the 311 button last — the 72-hour wait is still open in the Decisions tab, and the 9-page regroup rewrites these steps anyway.
 
-| id                    | Title                       | Status                                                      |
-| --------------------- | --------------------------- | ----------------------------------------------------------- |
-| `karl-unplaced`       | Copy that won't carry over  | issue if the tray has items                                 |
-| `karl-needs-fix`      | Copy that needs a fix       | issue if any section or string needs a fix                  |
-| `karl-unconfirmed`    | Karl rules not settled      | unavailable if any; Karl's own pages disagree               |
-| `karl-empty-fields`   | Karl fields left empty      | issue only for an empty **required** field                  |
-| `karl-url-pattern`    | URL pattern                 | pass or issue against a confirmed pattern; else unavailable |
+## Track C — Questions for manager review (not built here)
 
-- `karl-transaction-what-to-do` reads the placement: a section placed in `what_to_do` whose heading
-  is "What to do". The note-prose regex goes.
-- `karlComponentFindings` keeps only what placements cannot see: whether a Related card's
-  **target** is a type Karl's Related accepts. Its host-type checks (callout, accordion, button,
-  spotlight, resources, contact, table, alert) are now the placements' job, which reports each of
-  them already.
-- The readability, copy and accessibility checks are unchanged.
+- [ ] **C.** Ten questions (C1–C10 in the detail plan) sent for a ruling. Answers go into the Decisions tab.
 
-## Checklist
+## Track D — Docs
 
-- [x] **1. Placement findings.** `karlPlacementChecks.ts` and tests over the whole corpus, wired into
-      `analyzePage` (a `placementFindings` list) and the panel's flattened list.
-- [x] **2. What to do from the placement.** `karl-transaction-what-to-do` reads placements; tests
-      include a page whose note mentions `what_to_do` but has no such section.
-- [x] **3. Component checks narrowed.** `karlComponentFindings` keeps the Related target check;
-      its tests are rewritten to that scope.
-- [x] **4. Verify.** Unit tests, the ratchets, the Analysis panel's e2e and axe, a screenshot of
-      the panel looked at, then a PR. Ask before merging.
+- [x] **D1.** The two review files are in `docs/reviews/`, each with a dated status note.
+- [x] **D2.** The review's stale Analysis-gap line is annotated with what #208 and A1–A5 fixed.
+- [x] **D3.** `docs/karl-transaction-compliance.csv` is updated alongside B1–B2.
+- [x] **D4.** CLAUDE.md needs no change: re-run after track A, the grep matches only the review files, the plans, and the field-mapping plan, whose line 572 (`karlComponentFindings` keeps the Related target type) still holds.
+
+## Deliberately out of scope
+
+The 9-page report regroup, removing the SRO page, the mosquito and pigeon pages, and the Topic fold. All are Decided but come later in the Decisions tab's build order, and several depend on open questions. Each gets its own plan.
+
+The sewage routing fix is out of scope only because it sits on an Information page (*Learn what HHVC can inspect*). The Decisions tab marks it **Fix first**, and it is still pending.

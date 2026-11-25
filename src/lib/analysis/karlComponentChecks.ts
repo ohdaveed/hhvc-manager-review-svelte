@@ -13,6 +13,8 @@
  * `KarlHelpKey`: the citation comes from the same row as the rule.
  */
 import { pagesByKey } from '$lib/data';
+import { deriveFieldKey } from '$lib/corpus/fieldKey';
+import { placementsFor } from '$lib/karl/placement';
 import {
 	COMPONENT_SUPPORT,
 	isSupported,
@@ -49,10 +51,28 @@ const snippet = (text: unknown): string => {
 	return s.length > 80 ? `${s.slice(0, 79)}…` : s;
 };
 
+/** The panels a Related card lands in. */
+const RELATED_PANELS = new Set(['related', 'related_links']);
+
+/**
+ * Whether a section is a Related section: tagged as one, or placed in a Related
+ * panel. Most pages never tag it, so the tag alone left this check running on
+ * none of the Transaction pages.
+ */
+function relatedSections(page: AnyPage): AnyPage[] {
+	const sections: AnyPage[] = Array.isArray(page.sections) ? page.sections : [];
+	if (!sections.some((s) => Array.isArray(s?.cards))) return [];
+	const placed = placementsFor(page as never, null, pagesByKey).sections;
+	return sections.filter(
+		(section, i) =>
+			section?.component === 'related' ||
+			RELATED_PANELS.has(placed.get(deriveFieldKey(section, i))?.rawName ?? '')
+	);
+}
+
 function usesOn(page: AnyPage): Use[] {
 	const uses: Use[] = [];
-	for (const section of page.sections ?? []) {
-		if (section.component !== 'related') continue;
+	for (const section of relatedSections(page)) {
 		const where = `Section “${section.heading ?? ''}”`;
 		for (const card of section.cards ?? []) {
 			// A target outside the corpus has no known type; the site map reports those.

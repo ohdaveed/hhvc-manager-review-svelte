@@ -27,7 +27,7 @@ describe('the Analysis panel reads the same placements as the Karl outline', () 
 		expect(f.status).toBe('issue');
 		expect(f.items.map((i) => i.text)).toEqual([
 			'The “Who this is for” list',
-			'“How your report is processed” — its button'
+			'“What the Health Code requires” — its button'
 		]);
 	});
 
@@ -48,7 +48,7 @@ describe('the Analysis panel reads the same placements as the Karl outline', () 
 		expect(f.status).toBe('unavailable');
 		expect(f.items.map((i) => i.text)).toEqual([
 			'Get help making your report',
-			'How your report is processed'
+			'What the Health Code requires'
 		]);
 		const location = byId('ehOffice', 'karl-unconfirmed');
 		expect(location.items[0]).toMatchObject({ text: 'This page' });
@@ -75,7 +75,7 @@ describe('the Analysis panel reads the same placements as the Karl outline', () 
 		expect(nested.status).toBe('issue');
 	});
 
-	it('gives every corpus page five findings, each citing a Karl help page', () => {
+	it('gives every corpus page six findings, each citing a Karl help page', () => {
 		for (const [key, p] of Object.entries(pagesByKey)) {
 			const findings = karlPlacementFindings(p as never);
 			expect(
@@ -86,7 +86,8 @@ describe('the Analysis panel reads the same placements as the Karl outline', () 
 				'karl-needs-fix',
 				'karl-unconfirmed',
 				'karl-empty-fields',
-				'karl-url-pattern'
+				'karl-url-pattern',
+				'karl-description-reuse'
 			]);
 			for (const f of findings)
 				expect(f.help.url, `${key} ${f.id}`).toMatch(/^https:\/\/sfdigitalservices/);
@@ -96,5 +97,94 @@ describe('the Analysis panel reads the same placements as the Karl outline', () 
 	it('is wired into analyzePage', () => {
 		const analysis = analyzePage({ page: page('rodentsReport') as never });
 		expect(analysis.placementFindings.map((f) => f.id)).toContain('karl-unplaced');
+	});
+});
+
+describe('dead button links', () => {
+	const edit = (field_id: string, value: string) =>
+		[{ field_id, new_content: value, created_at: '2026-11-24T00:00:00Z' }] as never;
+
+	it('flags a placed button whose URL is "#"', () => {
+		const finding = byId('article11Guide', 'karl-needs-fix', edit('spotlight.buttonUrl', '#'));
+		expect(finding.status).toBe('issue');
+		expect(finding.items.map((i) => i.detail).join('\n')).toMatch(
+			/Button link goes nowhere \('#'\)\./
+		);
+	});
+
+	it('says nothing about the same button with a real URL', () => {
+		const details = byId('article11Guide', 'karl-needs-fix')
+			.items.map((i) => i.detail)
+			.join('\n');
+		expect(details).not.toMatch(/goes nowhere/);
+	});
+
+	// Decision 14 (docs/plans/2026-11-23-karl-field-mapping-layer.md): PLACEHOLDER
+	// is the literal uppercase string only. The inspector lookup's "#" button sits
+	// outside any step, so it is reported under copy that won't carry over.
+	it('reports the inspector lookup’s unplaced "#" button as copy that won’t carry over', () => {
+		const unplaced = byId('inspectorLookup', 'karl-unplaced');
+		expect(unplaced.status).toBe('issue');
+		expect(unplaced.items.map((i) => i.text)).toContain('“Open the lookup tool” — its button');
+	});
+});
+
+describe('title words reused in the description', () => {
+	it('flags the annual fee page, which repeats 6 title words', () => {
+		const f = byId('payFee', 'karl-description-reuse');
+		expect(f.status).toBe('issue');
+		expect(f.items[0].text).toBe('pay, annual, healthy, housing, fee, apartment');
+	});
+
+	it('passes the complaints records page, which repeats 1', () => {
+		expect(byId('findRecords', 'karl-description-reuse').status).toBe('pass');
+	});
+
+	it('judges an edited description', () => {
+		const edits = [
+			{
+				field_id: 'summary',
+				new_content: 'Owners of buildings with 3 or more units owe it each year.',
+				created_at: 'z'
+			}
+		];
+		expect(byId('payFee', 'karl-description-reuse', edits as never).status).toBe('pass');
+	});
+});
+
+describe('articles in the slug', () => {
+	const urlOf = (slug: string) =>
+		karlPlacementFindings(
+			{ slug, type: 'Transaction', title: 'T', summary: 'S', sections: [] } as never,
+			[]
+		).find((f) => f.id === 'karl-url-pattern')!;
+
+	it('flags an article as a whole word in the slug', () => {
+		const f = urlOf('sf.gov/report-a-pest-problem');
+		expect(f.status).toBe('issue');
+		expect(f.items.map((i) => i.detail)).toContain('Karl drops articles from URLs: remove “a”.');
+	});
+
+	it('does not flag letters inside a word', () => {
+		expect(urlOf('sf.gov/data-analytics').status).toBe('pass');
+	});
+
+	it('flags exactly the Transaction slugs the review names', () => {
+		const flagged = Object.values(pagesByKey as Record<string, { slug: string; type: string }>)
+			.filter((p) => p.type === 'Transaction')
+			.filter((p) =>
+				karlPlacementFindings(p as never)
+					.find((f) => f.id === 'karl-url-pattern')!
+					.items.some((i) => /articles/.test(i.detail ?? ''))
+			)
+			.map((p) => p.slug)
+			.sort();
+		expect(flagged).toEqual([
+			'sf.gov/appeal-a-notice-of-violation',
+			'sf.gov/get-ready-for-a-follow-up-inspection',
+			'sf.gov/get-ready-for-a-housing-inspection',
+			'sf.gov/make-a-public-records-request-environmental-health',
+			'sf.gov/pay-a-healthy-housing-citation'
+		]);
 	});
 });

@@ -18,6 +18,7 @@ import type { CorpusPage } from '$lib/corpus/fields';
 import type { ComponentFinding } from './karlComponentChecks';
 import type { KarlHelpLink } from './karlHelp';
 import type { EditRow } from './pageCopy';
+import { titleWordsInDescription } from './textChecks';
 import type { FindingItem } from './index';
 
 const TYPES =
@@ -162,6 +163,8 @@ function emptyFieldsFinding(p: PagePlacements, help: KarlHelpLink): ComponentFin
 /** A confirmed `sf.gov/[slug]` pattern: one path segment after the host. */
 const FLAT_SLUG = /^sf\.gov\/[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
+const ARTICLES = new Set(['a', 'an', 'the']);
+
 function urlFinding(
 	page: CorpusPage,
 	p: PagePlacements,
@@ -186,23 +189,56 @@ function urlFinding(
 		};
 	}
 	// The only confirmed pattern is `sf.gov/[slug]`.
-	const ok = FLAT_SLUG.test(slug);
+	const flat = FLAT_SLUG.test(slug);
+	const items: FindingItem[] = [];
+	if (!flat)
+		items.push({
+			text: slug,
+			detail: `Expected ${schema.url.pattern}: lowercase words joined by dashes, with no further path.`
+		});
+	// Karl's URLs page drops articles: `apply-for-cannabis-equity-permit`.
+	const articles = [...new Set(slug.replace(/^sf\.gov\//, '').split('-'))].filter((w) =>
+		ARTICLES.has(w)
+	);
+	for (const a of articles)
+		items.push({ text: slug, detail: `Karl drops articles from URLs: remove “${a}”.` });
 	return {
 		id: 'karl-url-pattern',
 		title: 'URL pattern',
+		status: items.length ? 'issue' : 'pass',
+		summary: !flat
+			? `Karl gives ${schema.url.pattern} for a ${p.type} page; this URL does not follow it.`
+			: items.length
+				? `The URL follows Karl’s ${schema.url.pattern} pattern but keeps an article Karl drops.`
+				: `The URL follows Karl’s ${schema.url.pattern} pattern for a ${p.type} page.`,
+		help,
+		items
+	};
+}
+
+const DESCRIPTION_HELP: KarlHelpLink = {
+	title: 'Description',
+	url: 'https://sfdigitalservices.gitbook.io/karl-sf.gov-editor-help-center/using-karl-the-cms/components/description',
+	why: 'Karl asks a Description not to reuse words from the title.'
+};
+
+/** Pass at 0 or 1 reused words: one shared key word is often unavoidable. */
+function descriptionReuseFinding(page: CorpusPage, record: ReviewRecord): ComponentFinding {
+	const p = page as { title?: unknown; summary?: unknown };
+	const reused = titleWordsInDescription(
+		String(record.edited_title || p.title || ''),
+		String(record.edited_summary || p.summary || '')
+	);
+	const ok = reused.length < 2;
+	return {
+		id: 'karl-description-reuse',
+		title: 'Title words in the description',
 		status: ok ? 'pass' : 'issue',
 		summary: ok
-			? `The URL follows Karl’s ${schema.url.pattern} pattern for a ${p.type} page.`
-			: `Karl gives ${schema.url.pattern} for a ${p.type} page; this URL does not follow it.`,
-		help,
-		items: ok
-			? []
-			: [
-					{
-						text: slug,
-						detail: `Expected ${schema.url.pattern}: lowercase words joined by dashes, with no further path.`
-					}
-				]
+			? 'The description says something the title does not.'
+			: `The description repeats ${reused.length} words from the title. Use the space for what the title leaves out.`,
+		help: DESCRIPTION_HELP,
+		items: ok ? [] : [{ text: reused.join(', '), detail: 'Words the title already says.' }]
 	};
 }
 
@@ -221,6 +257,7 @@ export function karlPlacementFindings(page: CorpusPage, edits: EditRow[] = []): 
 		needsFixFinding(placements, help),
 		unconfirmedFinding(placements, unconfirmedPageNotes, help),
 		emptyFieldsFinding(placements, help),
-		...(url ? [url] : [])
+		...(url ? [url] : []),
+		descriptionReuseFinding(page, record)
 	];
 }

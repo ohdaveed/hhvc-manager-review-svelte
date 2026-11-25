@@ -24,7 +24,7 @@ export const findRecords = {
 		thingsToKnow: [
 			{
 				label: 'Complaint privacy',
-				text: 'Complaint records are public. Environmental Health generally does not share the name of the person who filed a complaint.'
+				text: 'Complaint records are public. We never share the name or contact information of the person who reported.'
 			},
 			{
 				label: 'Leaving SF.gov',
@@ -50,15 +50,11 @@ export const findRecords = {
 		},
 		{
 			heading: 'Open the lookup tool',
-			karl: 'what_to_do -> Section. Section title: "Open the lookup tool". Section specifics: Text block (this paragraph) + Button link block (External URL radio, target = the xnet URL) + Callout block below.',
+			karl: 'what_to_do -> Section. Section title: "Open the lookup tool". Section specifics: Text block (this paragraph) + Button link block (External URL radio, target = the xnet URL).',
 			kind: 'body',
 			paragraphs: [
 				'The search tool opens on the Department of Public Health external records site. You will leave SF.gov.'
 			],
-			callout: {
-				karl: 'Callout block inside the "Open the lookup tool" Section specifics: single rich text field only, no separate title — this mockup callout already has none, so no mismatch.',
-				text: 'Complaint records are public records. Environmental Health generally does not share the name of a person who filed a complaint.'
-			},
 			button: 'Open lookup tool',
 			buttonUrl: 'https://xnet.sfdph.org:8443/ords/eeop/f?p=119:1'
 		},
