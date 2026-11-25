@@ -129,6 +129,10 @@ Leave the page as it is: the due-date wording, the $115 vs. $117 half-hour reins
 
 The Department of Building Inspection handles mold caused by a leak. The mold page's leak referral names DBI.
 
+### Reading level stays at grade 6–7 (C9, decided Nov 24, 2026)
+
+Keep the app's per-page targets of grade 6–7. Don't score against Karl's grade 5 guideline.
+
 ### Sewage page
 
 "Report a sewage leak or backup" covers sewage from a drain, toilet, cleanout or pipe, inside or outside a building, including yards and shared areas. HHVC responds within 48 hours of the complaint. The owner hires a plumber, and HHVC confirms the sewage is removed and the area sanitized. A leaking pipe with no sewage goes to another agency.
