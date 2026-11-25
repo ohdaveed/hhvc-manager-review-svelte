@@ -3,7 +3,7 @@ export const scopeInfo = {
 	type: 'Information',
 	title: 'Learn what Healthy Housing and Vector Control can inspect',
 	summary:
-		'See what Environmental Health may inspect in apartments, residential hotels, and emergency shelters.',
+		'See which conditions Environmental Health checks in apartments, residential hotels, and shelters.',
 	audience: [
 		'This page is for anyone deciding whether to report a pest or housing health problem to HHVC.'
 	],
@@ -12,7 +12,8 @@ export const scopeInfo = {
 	metaDescription: 'Check whether HHVC may review a pest, vector, or housing health condition.',
 	sections: [
 		{
-			heading: 'Use this page before you report',
+			heading: 'Check if HHVC can help before you report',
+			fieldKey: 'use-this-page-before-you-report',
 			karl: 'Maps to an "Information section" → Title and text block: Title = this heading, Text = the two paragraphs plus the bulleted list below (bullets render as a bulleted list inside the same rich text field).',
 			kind: 'body',
 			paragraphs: [
@@ -60,7 +61,8 @@ export const scopeInfo = {
 			]
 		},
 		{
-			heading: 'How to choose the right page',
+			heading: 'Choose where to report your problem',
+			fieldKey: 'how-to-choose-the-right-page',
 			karl: 'Maps to a fourth Title and text block. Resolved schema gap: unstructured tabular content converted to bulleted list.',
 			kind: 'body',
 			bullets: [

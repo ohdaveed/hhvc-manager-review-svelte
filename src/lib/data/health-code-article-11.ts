@@ -3,7 +3,7 @@ export const article11Guide = {
 	type: 'Report',
 	title: 'Health Code Article 11 in plain language',
 	summary:
-		'Read the Article 11 rules most often cited for pests, mold, garbage, and other public health nuisances.',
+		'Read the San Francisco rules most often cited for pests, mold, garbage, and other nuisances.',
 	audience: ['This page is for anyone who wants a plain-language guide to Health Code Article 11.'],
 	reading: 'Grade 7',
 	reportDate: 'August 7, 2026',
@@ -24,7 +24,8 @@ export const article11Guide = {
 	},
 	sections: [
 		{
-			heading: 'How to use this guide',
+			heading: 'See which Article 11 rules apply to housing',
+			fieldKey: 'how-to-use-this-guide',
 			karl: 'Report Content -> Title and text block. Keep this disclaimer before the reference tables so a reader understands that the page translates, but does not replace, the legal code.',
 			kind: 'body',
 			paragraphs: [

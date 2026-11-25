@@ -49,7 +49,27 @@ describe('corpus field keys', () => {
 	it.each([
 		['sf.gov/departments--healthy-housing-and-vector-control', 'need-another-city-housing-service'],
 		['sf.gov/information--article-11-compliance-for-property-owners', 'what-you-re-required-to-do'],
-		['sf.gov/integrated-pest-management-education', 'what-you-ll-learn']
+		['sf.gov/integrated-pest-management-education', 'what-you-ll-learn'],
+		// Meta headings rewritten as tasks, per Karl's heading guidance.
+		['sf.gov/look-up-building-records', 'about-this-collection'],
+		['sf.gov/property-owner-responsibilities-hhvc', 'about-this-collection'],
+		['sf.gov/report/health-code-article-11-plain-language', 'how-to-use-this-guide'],
+		[
+			'sf.gov/information/what-happens-after-you-report-housing-pest-problem',
+			'what-this-page-does-not-promise'
+		],
+		[
+			'sf.gov/information/integrated-pest-management-for-property-owners-and-managers',
+			'why-it-matters'
+		],
+		[
+			'sf.gov/information/integrated-pest-management-for-property-owners-and-managers',
+			'primary-source-uc-ipm-guide-for-property-managers'
+		],
+		['sf.gov/information/learn-what-hhvc-can-inspect', 'use-this-page-before-you-report'],
+		['sf.gov/information/learn-what-hhvc-can-inspect', 'how-to-choose-the-right-page'],
+		['sf.gov/resource/guides-in-other-languages', 'about-these-guides'],
+		['sf.gov/report/healthy-housing-inspections-annual-summary', 'about-these-figures']
 	])('%s still carries the pinned key %s', (slug, key) => {
 		const page = (allPages as unknown[]).find((p) => (p as { slug?: unknown }).slug === slug);
 		expect(page, `no page with slug ${slug}`).toBeDefined();

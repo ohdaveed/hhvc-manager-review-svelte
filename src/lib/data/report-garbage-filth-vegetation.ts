@@ -2,8 +2,7 @@ export const filthReport = {
 	slug: 'sf.gov/report-garbage-filth-vegetation',
 	type: 'Transaction',
 	title: 'Report garbage, mold, and overgrown vegetation',
-	summary:
-		'Report garbage, clutter, mold, animal waste, or overgrown plants that may attract pests.',
+	summary: 'Tell 311 about clutter, animal waste, or plants that may draw pests to a home.',
 	primaryAgency: 'Healthy Housing and Vector Control',
 	audience: [
 		'A tenant or resident affected by garbage, clutter, mold, filth, or overgrown plants',

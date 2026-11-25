@@ -12,7 +12,8 @@ export const ownerHub = {
 		'Resource collection hub for property owners. Reuses existing Transaction and Information pages instead of duplicating content.',
 	sections: [
 		{
-			heading: 'About this collection',
+			heading: 'Keep your building free of health nuisances',
+			fieldKey: 'about-this-collection',
 			karl: 'Maps to the top-level "Introductory text" field (Title + rich-text Text) — a repeatable field separate from the Body stream. Heading → Title, paragraphs → Text.',
 			kind: 'body',
 			paragraphs: [

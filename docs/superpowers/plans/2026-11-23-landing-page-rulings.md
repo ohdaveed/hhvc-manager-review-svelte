@@ -1,7 +1,7 @@
 # Rulings made while executing the landing-page plan
 
 Decisions taken on the repo owner's behalf during subagent-driven execution of
-[`2026-11-23-landing-page-and-ai-drafted-pages.md`](2026-11-23-landing-page-and-ai-drafted-pages.md),
+`2026-11-23-landing-page-and-ai-drafted-pages.md` (shipped in #179; removed, in git history),
 in the order they were made. Each says what it costs if it is wrong, so a wrong
 one can be found and reworked rather than discovered later.
 
