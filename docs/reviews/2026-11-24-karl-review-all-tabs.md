@@ -117,6 +117,10 @@ The 3 Transaction URLs that keep their page lose the "a". The 2 "get ready" page
 - **The appeal page's title changes to match its URL:** "Question a Notice of Violation" becomes "Appeal a Notice of Violation". The URL keeps "appeal" rather than changing to "question".
 - Each rename changes the page's `pages.path` row too.
 
+### Descriptions don't repeat the title (C6, decided Nov 24, 2026)
+
+Rewrite each description that reuses title words, using the Analysis panel's list for that page. Less is more: cut the repeated words rather than replace them with new ones, and keep the description short.
+
 ### Sewage page
 
 "Report a sewage leak or backup" covers sewage from a drain, toilet, cleanout or pipe, inside or outside a building, including yards and shared areas. HHVC responds within 48 hours of the complaint. The owner hires a plumber, and HHVC confirms the sewage is removed and the area sanitized. A leaking pipe with no sewage goes to another agency.

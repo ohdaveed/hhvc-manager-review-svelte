@@ -23,7 +23,7 @@ Production has 0 edits and 0 comments on any page (measured 2026-11-24). Re-coun
 
 ## Track C — Questions for manager review (not built here)
 
-- [ ] **C.** Ten questions (C1–C10 in the detail plan) sent for a ruling. Answers go into the Decisions tab. C1 answered Nov 24 (yes to all; both "get ready" pages become steps), C2 answered (rename to "What to do"), C3 answered (no, not Blocked), C4 answered (wait for the Topic merge), C5 answered (drop articles; appeal title becomes "Appeal a Notice of Violation"); C6–C10 open.
+- [ ] **C.** Ten questions (C1–C10 in the detail plan) sent for a ruling. Answers go into the Decisions tab. C1 answered Nov 24 (yes to all; both "get ready" pages become steps), C2 answered (rename to "What to do"), C3 answered (no, not Blocked), C4 answered (wait for the Topic merge), C5 answered (drop articles; appeal title becomes "Appeal a Notice of Violation"), C6 answered (yes, less is more); C7–C10 open.
 
 ## Track D — Docs
 
