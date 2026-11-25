@@ -100,6 +100,10 @@ Rename the custom heading to "What to do" on the Transaction pages that keep the
 
 The citation and inspector lookup pages stay as they are. This is a mockup: the payment link and the lookup tool get filled in when the editor builds the live Karl page, so the mockup doesn't wait on them.
 
+### Disallowed Related links wait for the Topic merge (C4, decided Nov 24, 2026)
+
+Leave the Related links to _Look up building records_ in place for now. The Topic page merge retires that Resource Collection, and its links go with it. Not covered by the merge: the inspector lookup page's link to the HHVC Agency page.
+
 ### Sewage page
 
 "Report a sewage leak or backup" covers sewage from a drain, toilet, cleanout or pipe, inside or outside a building, including yards and shared areas. HHVC responds within 48 hours of the complaint. The owner hires a plumber, and HHVC confirms the sewage is removed and the area sanitized. A leaking pipe with no sewage goes to another agency.
