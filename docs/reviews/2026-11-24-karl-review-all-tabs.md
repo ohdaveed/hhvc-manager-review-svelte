@@ -42,7 +42,7 @@ This tab overrides the other tabs. Build only what's under **Decided**. Everythi
 | Pests      | Report pigeon droppings, nesting, or feeding | Roosting, nesting, droppings, feathers, and people who feed pigeons                                                                       |
 | Sanitation | Report a sewage leak or backup               | Active sewage from a drain, toilet, cleanout or pipe, inside or outside a building                                                        |
 | Sanitation | Report animal waste on a property            | Dog and cat waste and raccoon droppings, on private property only                                                                         |
-| Sanitation | Report mold                                  | Visible mold, the 10 sq ft threshold, the moisture source, and a referral for leaks                                                       |
+| Sanitation | Report mold                                  | Visible mold, the 10 sq ft threshold, the moisture source, and a referral to DBI for leaks                                                |
 | Sanitation | Report garbage, clutter, or overgrown plants | Garbage, excessive materials, overgrown vegetation, with links to Adult Protective Services and the Fire Marshal                          |
 
 - **SRO:** remove the separate SRO report page. Add a 1-line "Live in an SRO or residential hotel?" note to each report page instead. Confirmed: all complaints go to one clerk, who assigns SRO cases to senior inspectors, so there's no separate intake.
@@ -124,6 +124,10 @@ Rewrite each description that reuses title words, using the Analysis panel's lis
 ### Annual fee page: no changes in the mockup (C7, decided Nov 24, 2026)
 
 Leave the page as it is: the due-date wording, the $115 vs. $117 half-hour reinspection fee and the "What the annual fee supports" callout. They get fixed when the page moves to Karl.
+
+### Mold from a leak goes to DBI (C8, decided Nov 24, 2026)
+
+The Department of Building Inspection handles mold caused by a leak. The mold page's leak referral names DBI.
 
 ### Sewage page
 
