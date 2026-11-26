@@ -16,7 +16,10 @@ The previous plan (manual field editing + vocabulary alignment, all boxes ticked
       edits (hydrated) and unsaved changes. No behaviour change.
 - [x] **5. Karl outline wording.** Decided 2026-11-26: it judges the copy on screen (saved edits plus unsaved
       changes), via `placementsFor(..., { copy: 'as-shown' })`; the Blueprint shares it. Unit-tested.
-- [ ] **6. Verify.** Unit, check, ratchets, e2e, browser check.
+- [x] **6. Verify.** Unit, check, ratchets, e2e, browser check. Verified 2026-11-26 at a80cacb: unit 1229,
+      svelte-check 0/0, eslint 3, prettier 42, e2e 110/110; tasks 1 and 3 had their fix reverted once and
+      their test failed. Browser: an unsaved 41-character button shows the outline badge "Needs a fix"; clean
+      console. Not verified live: a client-chosen edit id against a real insert (grant read, not exercised).
 
 Not in this branch: marking expired edits on the mockup. Edits carry no corpus version, so it needs a
 migration -- and a merge to `main` applies migrations to production -- so it gets its own plan.
