@@ -103,12 +103,11 @@ export const healthyHousingTopic = {
 		{
 			heading: 'Learn more',
 			fieldKey: 'guidance-and-resources',
-			karl: 'Maps to a Resources block. Topic tab, suggested structure item 5, plus the pages the retired Healthy housing and pest resources collection linked that the list above lacks (who to call, guides in other languages, Rat-free blocks, the annual summary). The last two cards are the two workshop Campaigns, which used to sit in their own Related section: Topic has no `related` field (U5), so they moved into this Resources block (2026-11-26).',
+			karl: 'Maps to a Resources block. Topic tab, suggested structure item 5, plus the pages the retired Healthy housing and pest resources collection linked that the list above lacks (guides in other languages, Rat-free blocks, the annual summary). The last two cards are the two workshop Campaigns, which used to sit in their own Related section: Topic has no `related` field (U5), so they moved into this Resources block (2026-11-26).',
 			kind: 'body',
 			component: 'resources',
 			cards: [
 				{ title: 'Learn what Healthy Housing and Vector Control can inspect', target: 'scopeInfo' },
-				{ title: 'Who to call about a housing problem', target: 'whoToCall' },
 				{ title: 'What happens after you report a housing or pest problem', target: 'afterReport' },
 				{ title: 'Tenant rights when reporting housing conditions', target: 'tenantRights' },
 				{ title: 'Health Code Article 11 in plain language', target: 'article11Guide' },

@@ -133,7 +133,6 @@ FROM (
       ('step-by-step-report-a-pest-problem'),
       ('step-by-step-correct-a-violation-and-close-your-case'),
       ('location-environmental-health-office'),
-      ('information-who-to-call-about-a-housing-problem'),
       ('question-notice-of-violation'),
       ('pay-healthy-housing-citation'),
       ('resource-guides-in-other-languages'),

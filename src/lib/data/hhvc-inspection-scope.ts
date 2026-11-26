@@ -13,7 +13,22 @@ export const scopeInfo = {
 			karl: 'Maps to the first "Information section" → Title and text block: Title = this heading, Text = the bulleted list. The heading is the one sf.gov/manage-covid-19-schools-childcare-and-youth-programs gives an audience list (an H3 over bullets). This was the page-level `audience` field until 2026-11-26, when that field was retired; the transcript used to supply this block itself, so what goes into Karl is unchanged.',
 			kind: 'body',
 			bullets: [
-				'This page is for anyone deciding whether to report a pest or housing health problem to HHVC.'
+				'This page is for anyone deciding whether to report a pest or housing health problem to HHVC.',
+				'It is also for anyone who has been sent to the wrong department and needs to find the right one.'
+			]
+		},
+		{
+			heading: 'Start with what you can see',
+			karl: 'Maps to an Information section → Title and text block. The opening paragraph plus the routing bullets fold into one rich text field. Moved here on 2026-11-26 from the retired "Who to call about a housing problem" page, which carried the same boundary as this page and had begun to drift from it. Organised by the condition the reader can see rather than by the department that owns it, because the reader knows the former and not the latter.',
+			kind: 'body',
+			paragraphs: [
+				'San Francisco splits housing problems across several offices. You do not need to know which one — you need to name the condition, and the condition decides.'
+			],
+			bullets: [
+				'Pests, rodents, mold, garbage, or an unsanitary building: Healthy Housing and Vector Control.',
+				'No heat, no hot water, broken plumbing, bad wiring, or a structural repair: the Department of Building Inspection.',
+				'A rent increase, an eviction notice, or a dispute about your lease: the Rent Board.',
+				'Not sure, or more than one of these: start with 311.'
 			]
 		},
 		{
@@ -133,9 +148,24 @@ export const scopeInfo = {
 					unverifiedReason:
 						'The "San Francisco Housing Code (2025)" citation has zero tier-1 support (source-of-truth audit 2026-07-06, cross-cutting finding #1) — the DBI routing split looks intentional, but the statutory citation and "(2025)" edition tag trace only to tier-3 NotebookLM material. Source a real Housing Code citation or soften to "may be routed to DBI" before publication.'
 				},
+				'Rent increases, evictions, and lease disputes go to the Rent Board.',
+				'A fire hazard or a blocked exit goes to the Fire Department.',
 				'If your problem is not on this list, start with 311. They can send your report to the right place.',
 				'For lead, pesticides, water quality, food sanitation, or business hygiene, use the [Citywide health nuisance and hazards reporting service](https://www.sf.gov/report-health-nuisance-or-hazards).',
 				'If you are not sure whether HHVC can review your problem, it is still okay to report it. HHVC will review whether it may involve a housing or pest-related public health concern.'
+			]
+		},
+		{
+			heading: 'When more than one office is involved',
+			karl: 'Maps to an Information section → Title and text block, whose Link tool carries the after-you-report page as an Internal link. Moved here on 2026-11-26 from the retired "Who to call about a housing problem" page: a building with both a rodent problem and no heat is the case people actually get stuck on.',
+			kind: 'body',
+			paragraphs: [
+				'A building can have problems belonging to two offices at once. Report each one to the office that handles it rather than waiting for one report to cover both.'
+			],
+			bullets: [
+				'Reporting to one office does not open a case with another.',
+				'An HHVC inspection covers the conditions in Article 11, not everything wrong with a building.',
+				'[What happens after you report a housing or pest problem](afterReport)'
 			]
 		},
 		{

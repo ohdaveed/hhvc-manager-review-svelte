@@ -34,7 +34,6 @@ export const PAGE_GROUPS = [
 			'report-mold',
 			'report-garbage-clutter-or-overgrown-plants',
 			'step-by-step-report-a-pest-problem',
-			'information-who-to-call-about-a-housing-problem',
 			'information-what-happens-after-you-report-housing-pest-problem',
 			'information-tenant-rights-and-reporting-housing-conditions'
 		]

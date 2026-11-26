@@ -70,7 +70,7 @@ export const languageGuides = {
 			kind: 'body',
 			cards: [
 				{ title: 'Healthy housing conditions', target: 'healthyHousingTopic' },
-				{ title: 'Who to call about a housing problem', target: 'whoToCall' },
+				{ title: 'Learn what Healthy Housing and Vector Control can inspect', target: 'scopeInfo' },
 				{ title: 'Report a pest problem, start to finish', target: 'stepPestReport' }
 			]
 		}

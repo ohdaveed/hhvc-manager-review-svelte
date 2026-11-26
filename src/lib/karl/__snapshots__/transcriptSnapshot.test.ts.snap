@@ -3426,9 +3426,8 @@ _This block publishes the destination page’s title and a link, and NOTHING els
 
 1. Choose page: "What happens after you report a housing or pest problem" (\`afterReport\` → /sf.gov/information/what-happens-after-you-report-housing-pest-problem)
 2. Choose page: "Tenant rights when reporting housing conditions" (\`tenantRights\` → /sf.gov/information/tenant-rights-and-reporting-housing-conditions)
-3. Choose page: "Who to call about a housing problem" (\`whoToCall\` → /sf.gov/information/who-to-call-about-a-housing-problem)
-4. Choose page: "Learn what Healthy Housing and Vector Control can inspect" (\`scopeInfo\` → /sf.gov/information/learn-what-hhvc-can-inspect)
-5. Choose page: "Reduce moisture and mold in your home" (\`reduceMoisture\` → /sf.gov/information/reduce-moisture-and-mold-in-your-home)
+3. Choose page: "Learn what Healthy Housing and Vector Control can inspect" (\`scopeInfo\` → /sf.gov/information/learn-what-hhvc-can-inspect)
+4. Choose page: "Reduce moisture and mold in your home" (\`reduceMoisture\` → /sf.gov/information/reduce-moisture-and-mold-in-your-home)
 
 ### Partner agencies — \`partner_agencies\` [CHOOSE] — page not approved
 
@@ -6219,6 +6218,22 @@ Who this information is for
 **Text:**
 
 - This page is for anyone deciding whether to report a pest or housing health problem to HHVC.
+- It is also for anyone who has been sent to the wrong department and needs to find the right one.
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+Start with what you can see
+
+**Text:**
+
+San Francisco splits housing problems across several offices. You do not need to know which one — you need to name the condition, and the condition decides.
+
+- Pests, rodents, mold, garbage, or an unsanitary building: Healthy Housing and Vector Control.
+- No heat, no hot water, broken plumbing, bad wiring, or a structural repair: the Department of Building Inspection.
+- A rent increase, an eviction notice, or a dispute about your lease: the Rent Board.
+- Not sure, or more than one of these: start with 311.
 
 ### Information section — \`information_section\` [TYPE] — page not approved
 
@@ -6370,6 +6385,8 @@ If your problem is not listed
 **Text:**
 
 - Some housing problems are handled by other City programs. For example, structural water intrusion, leaks, and major heating or utility failures go to the [Department of Building Inspection (DBI)](#). DBI handles these under the San Francisco Housing Code (2025).
+- Rent increases, evictions, and lease disputes go to the Rent Board.
+- A fire hazard or a blocked exit goes to the Fire Department.
 - If your problem is not on this list, start with 311. They can send your report to the right place.
 - For lead, pesticides, water quality, food sanitation, or business hygiene, use the [Citywide health nuisance and hazards reporting service](https://www.sf.gov/report-health-nuisance-or-hazards).
 - If you are not sure whether HHVC can review your problem, it is still okay to report it. HHVC will review whether it may involve a housing or pest-related public health concern.
@@ -6378,6 +6395,24 @@ If your problem is not listed
 
 - "Department of Building Inspection (DBI)" → no destination — the mockup uses \`#\` as an inert sentinel; resolve it before typing
 - "Citywide health nuisance and hazards reporting service" → shape 5 — rich text Link tool → External link
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+When more than one office is involved
+
+**Text:**
+
+A building can have problems belonging to two offices at once. Report each one to the office that handles it rather than waiting for one report to cover both.
+
+- Reporting to one office does not open a case with another.
+- An HHVC inspection covers the conditions in Article 11, not everything wrong with a building.
+- [What happens after you report a housing or pest problem](afterReport)
+
+**Links in this text — recreate each with the Link tool, do not paste them:**
+
+- "What happens after you report a housing or pest problem" → shape 5 — rich text Link tool → Internal link → "What happens after you report a housing or pest problem"
 
 ### Topics — \`topics\` [TYPE] — page not approved
 
@@ -6533,8 +6568,7 @@ _This block publishes the destination page’s title and a link, and NOTHING els
 
 1. Choose page: "What happens after you report a housing or pest problem" (\`afterReport\` → /sf.gov/information/what-happens-after-you-report-housing-pest-problem)
 2. Choose page: "Tenant rights when reporting housing conditions" (\`tenantRights\` → /sf.gov/information/tenant-rights-and-reporting-housing-conditions)
-3. Choose page: "Who to call about a housing problem" (\`whoToCall\` → /sf.gov/information/who-to-call-about-a-housing-problem)
-4. Choose page: "Learn what Healthy Housing and Vector Control can inspect" (\`scopeInfo\` → /sf.gov/information/learn-what-hhvc-can-inspect)
+3. Choose page: "Learn what Healthy Housing and Vector Control can inspect" (\`scopeInfo\` → /sf.gov/information/learn-what-hhvc-can-inspect)
 
 ### Partner agencies — \`partner_agencies\` [CHOOSE] — page not approved
 
@@ -7210,205 +7244,5 @@ Tenant rights when reporting housing conditions | SF.gov
 **Meta description (\`search_description\`):**
 
 Tenant protections and help if you are worried about retaliation after reporting housing conditions.
-"
-`;
-
-exports[`transcript Markdown, every corpus page > whoToCall 1`] = `
-"# Who to call about a housing problem — Karl transcript
-
-**Karl path:** New: Information → Content
-**Decision:** no review recorded
-**Page key:** \`whoToCall\` · **Slug:** \`sf.gov/information/who-to-call-about-a-housing-problem\` · **Type:** Information
-
-**NOT APPROVED — do not publish from this transcript.** Approval in this tool is per page, not per field, so nothing below is signed off.
-
-> Every keystroke below is yours to make. This file is an export, not an approval, and nothing here has been written to Karl.
-
-### Page title — \`title\` [TYPE] — page not approved
-
-**Page title:**
-
-Who to call about a housing problem
-
-### Description — \`description\` [TYPE] — page not approved
-
-**Description:**
-
-Healthy Housing, Building Inspection, the Rent Board, or 311 — find the right office first.
-
-### Primary agency — \`primary_agency\` [FLAG] — page not approved
-
-_U6 — supply the parent Agency page by hand. Where the mockup names the agency it is text, not a page reference, and Karl requires a page: for HHVC pages that is sf.gov/departments--healthy-housing-and-vector-control._
-
-### Information section — \`information_section\` [TYPE] — page not approved
-
-**Title:**
-
-Who this information is for
-
-**Text:**
-
-- A tenant with a problem who does not know which office handles it
-- Someone who has already been routed to the wrong department
-- An advocate or helper directing someone to the right place
-
-### Information section — \`information_section\` [TYPE] — page not approved
-
-**Title:**
-
-Start with what you can see
-
-**Text:**
-
-San Francisco splits housing problems across several offices. You do not need to know which one — you need to name the condition, and the condition decides.
-
-- Pests, rodents, mold, garbage, or an unsanitary building: Healthy Housing and Vector Control.
-- No heat, no hot water, broken plumbing, bad wiring, or a structural repair: the Department of Building Inspection.
-- A rent increase, an eviction notice, or a dispute about your lease: the Rent Board.
-- Not sure, or more than one of these: start with 311.
-
-### Information section — \`information_section\` [TYPE] — page not approved
-
-**Title:**
-
-Pest problems Healthy Housing handles
-
-**Text:**
-
-This team inspects conditions that affect health in and around housing, under Health Code Article 11.
-
-- [Report rats or mice](rodentsReport)
-- [Report bed bugs](bedBugReport)
-- [Report cockroaches or other insects](insectsReport)
-- [Report mosquitoes or standing water](mosquitoReport)
-- [Report pigeon droppings, nesting, or feeding](pigeonReport)
-
-**Links in this text — recreate each with the Link tool, do not paste them:**
-
-- "Report rats or mice" → shape 5 — rich text Link tool → Internal link → "Report rats or mice"
-- "Report bed bugs" → shape 5 — rich text Link tool → Internal link → "Report bed bugs"
-- "Report cockroaches or other insects" → shape 5 — rich text Link tool → Internal link → "Report cockroaches or other insects"
-- "Report mosquitoes or standing water" → shape 5 — rich text Link tool → Internal link → "Report mosquitoes or standing water"
-- "Report pigeon droppings, nesting, or feeding" → shape 5 — rich text Link tool → Internal link → "Report pigeon droppings, nesting, or feeding"
-
-### Information section — \`information_section\` [TYPE] — page not approved
-
-**Title:**
-
-Sanitation and moisture problems Healthy Housing handles
-
-**Text:**
-
-- [Report animal waste on a property](animalWasteReport)
-- [Report a sewage leak or backup](sewageReport)
-- [Report mold](moldReport)
-- [Report garbage, clutter, or overgrown plants](garbageReport)
-
-**Links in this text — recreate each with the Link tool, do not paste them:**
-
-- "Report animal waste on a property" → shape 5 — rich text Link tool → Internal link → "Report animal waste on a property"
-- "Report a sewage leak or backup" → shape 5 — rich text Link tool → Internal link → "Report a sewage leak or backup"
-- "Report mold" → shape 5 — rich text Link tool → Internal link → "Report mold"
-- "Report garbage, clutter, or overgrown plants" → shape 5 — rich text Link tool → Internal link → "Report garbage, clutter, or overgrown plants"
-
-### Information section — \`information_section\` [TYPE] — page not approved
-
-**Title:**
-
-Learn more about what Healthy Housing handles
-
-**Text:**
-
-- [Learn what Healthy Housing and Vector Control can inspect](scopeInfo)
-- [Report a pest problem, start to finish](stepPestReport)
-- [Health Code Article 11 in plain language](article11Guide)
-
-**Links in this text — recreate each with the Link tool, do not paste them:**
-
-- "Learn what Healthy Housing and Vector Control can inspect" → shape 5 — rich text Link tool → Internal link → "Learn what Healthy Housing and Vector Control can inspect"
-- "Report a pest problem, start to finish" → shape 5 — rich text Link tool → Internal link → "Report a pest problem, start to finish"
-- "Health Code Article 11 in plain language" → shape 5 — rich text Link tool → Internal link → "Health Code Article 11 in plain language"
-
-### Information section — \`information_section\` [TYPE] — page not approved
-
-**Title:**
-
-What another office handles
-
-**Text:**
-
-These are real housing problems, and they are not this team’s to inspect. Going straight to the right office is faster than being routed.
-
-- **Heat, hot water, plumbing, electrical, and structural repairs:** the Department of Building Inspection.
-- **Rent increases, evictions, and lease disputes:** the Rent Board.
-- **Lead paint, asbestos, water service, and noise:** Citywide services, not this team.
-- **A fire hazard or a blocked exit:** the Fire Department.
-
-### Information section — \`information_section\` [TYPE] — page not approved
-
-**Title:**
-
-When more than one office is involved
-
-**Text:**
-
-A building can have problems belonging to two offices at once. Report each one to the office that handles it rather than waiting for one report to cover both.
-
-- Reporting to one office does not open a case with another.
-- A Healthy Housing inspection covers the conditions in Article 11, not everything wrong with a building.
-- [What happens after you report a housing or pest problem](afterReport)
-
-**Links in this text — recreate each with the Link tool, do not paste them:**
-
-- "What happens after you report a housing or pest problem" → shape 5 — rich text Link tool → Internal link → "What happens after you report a housing or pest problem"
-
-### Information section — \`information_section\` [TYPE] — page not approved
-
-**Title:**
-
-If you are worried about retaliation
-
-**Text:**
-
-You can report a condition in a building you rent. Reports can be made without giving your name.
-
-- [Tenant rights when reporting housing conditions](tenantRights)
-
-**Links in this text — recreate each with the Link tool, do not paste them:**
-
-- "Tenant rights when reporting housing conditions" → shape 5 — rich text Link tool → Internal link → "Tenant rights when reporting housing conditions"
-
-### Partner agencies — \`partner_agencies\` [CHOOSE] — page not approved
-
-_A page chooser restricted to Agency pages. These entries name real sf.gov department pages outside this mockup, so search Karl for each by title._
-
-1. Choose page: "311 Customer Service Center"
-2. Choose page: "Environmental Health"
-
-### Topics — \`topics\` [TYPE] — page not approved
-
-_topicTag is unmapped metadata — the stored values are Agency labels, not Topic chooser references. Do not paste one into this chooser._
-
-### Related — \`related\` [CHOOSE] — page not approved
-
-_This block publishes the destination page’s title and a link, and NOTHING else. Choose the page and type no description._
-
-1. Choose page: "Healthy housing conditions" (\`healthyHousingTopic\` → /sf.gov/topics--healthy-housing-conditions)
-
-### Promote → For search engines — \`promote\` [TYPE] — page not approved
-
-_The slug is REQUIRED and lives on the Promote tab, so a page cannot be saved from the Content tab alone._
-
-**Slug (\`slug\`):**
-
-sf.gov/information/who-to-call-about-a-housing-problem
-
-**Title tag (\`seo_title\`):**
-
-Who to call about a housing problem | SF.gov
-
-**Meta description (\`search_description\`):**
-
-Healthy Housing, Building Inspection, the Rent Board, or 311 — find the right office first.
 "
 `;

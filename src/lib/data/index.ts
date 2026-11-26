@@ -36,7 +36,6 @@ import { scopeInfo } from './hhvc-inspection-scope';
 import { stepPestReport } from './step-report-a-pest-problem';
 import { stepCorrectViolation } from './step-correct-a-violation';
 import { ehOffice } from './location-environmental-health-office';
-import { whoToCall } from './who-to-call-housing-problem';
 import { appealNotice } from './appeal-notice-of-violation';
 import { payCitation } from './pay-healthy-housing-citation';
 import { languageGuides } from './guides-in-other-languages';
@@ -98,7 +97,6 @@ export const pagesByKey = {
 	stepPestReport,
 	stepCorrectViolation,
 	ehOffice,
-	whoToCall,
 	appealNotice,
 	payCitation,
 	languageGuides,

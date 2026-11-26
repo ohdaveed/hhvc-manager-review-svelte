@@ -6,7 +6,7 @@
  * and gave every other type a bespoke "decision, not a gap" reason; placement
  * numbered Information blocks around it; and the field extractor gave it
  * `audience.N` ids. Yesterday's audit had already removed or folded every list
- * on a page type Karl has no home for. The 13 left, all on Information pages,
+ * on a page type Karl has no home for. The 13 left, all on Information pages (12 since whoToCall was merged into scopeInfo, 2026-11-26),
  * became ordinary "Who this information is for" sections, so what goes into
  * Karl is unchanged. That is what these tests hold.
  */
@@ -44,13 +44,13 @@ describe('the audience field is retired', () => {
 	});
 });
 
-describe('the 13 former Information audiences are ordinary sections', () => {
+describe('the 12 former Information audiences are ordinary sections', () => {
 	const information = (allPages as { type?: string; sections: { heading?: string }[] }[]).filter(
 		(p) => p.sections[0]?.heading === 'Who this information is for' && p.type === 'Information'
 	);
 
-	it('covers all 13', () => {
-		expect(information).toHaveLength(13);
+	it('covers all 12', () => {
+		expect(information).toHaveLength(12);
 	});
 
 	it('is still the first Information section block, titled as the live pattern titles it', () => {
