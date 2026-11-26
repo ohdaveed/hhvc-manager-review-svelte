@@ -282,7 +282,9 @@ The mockup's SiteHeader is **inert**: nav items and search are `<span>`s, not li
 
 ### Edit Target (signature)
 
-Every addressable field in the mockup is a real `<button>` (the `edit-target` utility), reset to inherit the surrounding copy's font, size, alignment and color. It shows only a hover tint and an instant focus ring. It is the one place the chrome touches the page, and it must not change the page's layout: padding only, never negative margins.
+Every addressable field in the mockup is a real `<button>` (the `edit-target` utility), reset to inherit the surrounding copy's font, size, alignment and color. It shows only a hover tint and an instant focus ring. It is the one place the chrome touches the page, and at rest and on hover or focus it must not change the page's layout: inside the mockup it has no padding, and its tint and rings are outer box-shadows, which take no space. Never negative margins.
+
+**The one deliberate exception is selection.** A selected field's label ("1 · SUMMARY", the number matching its card in the Fields panel) sits above the field, and its host opens about 16px of room to hold it, so the copy below shifts while a field is selected. Decided 2026-11-26 over two alternatives: a label on the ring's edge covers the line above in tight bullet lists (`tests/editTargetBadge.e2e.ts` fails any label that covers other copy), and the phone layout's ~21px side margin is too narrow for a marker. The shift happens only while the author is selecting, never while the page is being presented, and clears with the selection.
 
 ## Do's and Don'ts
 
