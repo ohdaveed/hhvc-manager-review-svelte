@@ -7,6 +7,12 @@
 	const detail = $derived($page.error?.message ?? 'Something went wrong.');
 </script>
 
+<svelte:head>
+	<title
+		>{$page.status === 404 ? 'Page not found' : `Error ${$page.status}`} · HHVC mockup review</title
+	>
+</svelte:head>
+
 <!-- SFDS red, not shadcn's `destructive`.
      MEASURED on this page as rendered: the stock variant puts the title at
      4.77:1 (#e7000b on white) and the description at 4.54:1 (#e91923, the
