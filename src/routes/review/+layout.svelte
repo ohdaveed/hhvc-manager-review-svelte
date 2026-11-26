@@ -347,8 +347,23 @@
 	};
 
 	const onWindowKeydown = (event: KeyboardEvent) => {
-		if (event.key === 'Escape' && pageStore.mobileSheet !== 'none') closeSheet();
+		// `defaultPrevented`: an Escape a popover or menu inside the sheet
+		// already handled closes that, not the sheet around it.
+		if (event.key === 'Escape' && !event.defaultPrevented && pageStore.mobileSheet !== 'none')
+			closeSheet();
 	};
+
+	// A sheet exists only below 1024px. Widened past it (a tablet rotating, a
+	// window resized) with one open, nothing reset `mobileSheet`, so the canvas
+	// and the other rail stayed `inert` and the backdrop covered the desktop.
+	$effect(() => {
+		const wide = window.matchMedia('(min-width: 1024px)');
+		const onChange = () => {
+			if (wide.matches && pageStore.mobileSheet !== 'none') pageStore.closeSheet();
+		};
+		wide.addEventListener('change', onChange);
+		return () => wide.removeEventListener('change', onChange);
+	});
 
 	const previewOptions: { value: PreviewWidth; label: string; icon: typeof Monitor }[] = [
 		{ value: 'fit', label: 'Fit to pane', icon: Maximize2 },
@@ -501,7 +516,12 @@
 	     giant box-shadow, because it has to take the click that closes the
 	     sheet. Rendered only when one is open. -->
 	{#if pageStore.mobileSheet !== 'none'}
-		<button type="button" class="sheet-backdrop" aria-label="Close panel" onclick={closeSheet}
+		<button
+			type="button"
+			class="sheet-backdrop"
+			tabindex="-1"
+			aria-label={pageStore.mobileSheet === 'queue' ? 'Close queue' : 'Close review panel'}
+			onclick={closeSheet}
 		></button>
 	{/if}
 
@@ -514,7 +534,11 @@
 
 	     Deliberately the FIRST focusable element in the shell, ahead of the
 	     queue's collapse button, and visible only while focused. -->
-	<a href="#reviewPanel" class="skip-to-panel">Skip to review panel</a>
+	<!-- Inert while a sheet is open: it sits outside both rails, so Tab from
+	     inside the modal sheet could reach it, and its target may be inert. -->
+	<a href="#reviewPanel" class="skip-to-panel" inert={pageStore.mobileSheet !== 'none'}
+		>Skip to review panel</a
+	>
 
 	<!-- Left Sidebar: Global Navigation & Review Queue -->
 	<!-- Below 1024px either rail can open as a sheet over the canvas. Open, it is
