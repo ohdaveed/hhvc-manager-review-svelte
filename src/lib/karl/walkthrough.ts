@@ -265,7 +265,12 @@ export type Walkthrough = {
 	 *   the walkthrough carried none of them.
 	 */
 	gaps: { path: string; reason: string; kind: 'flag' | 'unmapped' }[];
-	/** How many steps offer something to copy; the header counts against this. */
+	/**
+	 * How many steps offer something to copy. Shown beside the step total, not
+	 * as the copied count's denominator: every step can be marked copied,
+	 * choosers and flagged steps included, so "N of copyableCount" could exceed
+	 * its total (the drawer reads "0 of 13 steps copied · 8 have values to paste").
+	 */
 	copyableCount: number;
 	/** Saved edits that no longer answer their base copy, for the editor to settle first. */
 	stale: StaleEdit[];
