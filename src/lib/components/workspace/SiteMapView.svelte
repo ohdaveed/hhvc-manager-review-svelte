@@ -128,13 +128,13 @@
 	.sm-title {
 		margin: 0;
 		font-family: var(--font-display);
-		font-size: 15px;
+		font-size: 0.9375rem;
 		font-weight: 700;
 	}
 
 	.sm-meta {
 		margin: 0;
-		font-size: 13px;
+		font-size: 0.8125rem;
 		color: var(--text-secondary, #5a7a92);
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -148,7 +148,7 @@
 		border: 1px solid var(--sfds-color-grey-l2);
 		border-radius: 6px;
 		background: #f7f7f7;
-		font-size: 12px;
+		font-size: 0.75rem;
 		font-weight: 600;
 		cursor: pointer;
 	}
@@ -197,7 +197,7 @@
 		padding: 0 8px;
 		border-radius: 4px;
 		background: #f0f0f0;
-		font-size: 11px;
+		font-size: 0.6875rem;
 		font-weight: 700;
 		letter-spacing: 0.08em;
 		text-transform: uppercase;
@@ -206,14 +206,14 @@
 
 	.card-count {
 		margin-left: auto;
-		font-size: 12px;
+		font-size: 0.75rem;
 		color: var(--text-secondary, #5a7a92);
 	}
 
 	.card-title {
 		margin: 8px 0 2px;
-		font-size: 15px;
-		line-height: 21px;
+		font-size: 0.9375rem;
+		line-height: 1.3125rem;
 	}
 
 	.card-open {
@@ -233,8 +233,8 @@
 	.card-slug {
 		margin: 0;
 		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-		font-size: 11px;
-		line-height: 16px;
+		font-size: 0.6875rem;
+		line-height: 1rem;
 		color: var(--text-secondary, #5a7a92);
 	}
 
@@ -270,8 +270,8 @@
 
 	.link-title {
 		display: block;
-		font-size: 14px;
-		line-height: 19px;
+		font-size: 0.875rem;
+		line-height: 1.1875rem;
 		font-weight: 600;
 		color: var(--color-sfds-action, #495ed4);
 		text-decoration: underline;
@@ -285,15 +285,15 @@
 
 	.link-meta {
 		display: block;
-		font-size: 12px;
-		line-height: 17px;
+		font-size: 0.75rem;
+		line-height: 1.0625rem;
 		color: var(--text-secondary, #5a7a92);
 	}
 
 	.links-empty {
 		margin: 0;
 		padding: 12px 18px 16px;
-		font-size: 13px;
+		font-size: 0.8125rem;
 		color: var(--text-secondary, #5a7a92);
 	}
 </style>

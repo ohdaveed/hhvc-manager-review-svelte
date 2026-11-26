@@ -2,13 +2,14 @@
 	import { page as routePage } from '$app/stores';
 	import { resolve } from '$app/paths';
 	import { pagesStore, editsStore, QUEUE_STATUS_ORDER } from '$lib/stores/reviewState';
+	import { review } from '$lib/review/review.svelte';
 	import { pageStore } from '$lib/stores/pageData.svelte';
 	import { routePathFor } from '$lib/corpus/draftPath';
 	import { pageTitleFor } from '$lib/corpus/pageTitle';
 	import { draftsStore } from '$lib/stores/draftPages';
 	import { Badge } from '$lib/components/ui/badge/index.js';
 	import { sessionStore } from '$lib/stores/session.svelte';
-	import { STATUS_LABELS, type ReviewStatus } from '$lib/review/statusLabels';
+	import { STATUS_LABELS } from '$lib/review/statusLabels';
 	import StatusBar from '$lib/components/review/StatusBar.svelte';
 	import PageRow from '$lib/components/review/PageRow.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
@@ -53,11 +54,13 @@
 		heading: STATUS_LABELS[status].label
 	}));
 
-	// Decided = anything a reviewer has ruled on. `needs-review` is the initial
-	// status every seeded row carries, so it is the only one that is not a
-	// decision -- counting it would show the review as complete on load.
-	const decided = $derived($pagesStore.filter((p) => p.status !== 'needs-review').length);
-	const total = $derived($pagesStore.length);
+	// The review squared with the corpus (`review`, from `$lib/review/review.svelte`):
+	// retired pages' rows are left out, corpus pages with no row are listed and
+	// counted, and the landing page reads the same numbers. `loaded` is about the
+	// load, not the corpus -- the empty, loading and failed states below key on it.
+	const loaded = $derived(review.loaded);
+	const decided = $derived(review.decided);
+	const total = $derived(review.total);
 	const pct = $derived(total === 0 ? 0 : Math.round((decided / total) * 100));
 
 	// One edit row per (page, field) -- `saveInlineEdit` replaces rather than
@@ -68,19 +71,17 @@
 	// "N of M decided" describes the review, not the current search.
 	let query = $state('');
 	const needle = $derived(query.trim().toLowerCase());
-	const shown = $derived(
-		needle === ''
-			? $pagesStore
-			: $pagesStore.filter(
-					(p) =>
-						titleFor(p.path).toLowerCase().includes(needle) || p.path.toLowerCase().includes(needle)
-				)
-	);
+	const matches = (path: string) =>
+		needle === '' ||
+		titleFor(path).toLowerCase().includes(needle) ||
+		path.toLowerCase().includes(needle);
+	const shown = $derived(review.rows.filter((p) => matches(p.path)));
+	const unreviewedShown = $derived(review.unreviewed.filter(matches));
 
 	// Signed out, the review data is unreadable but the corpus is not, so the
 	// queue lists the mockups in corpus order. No status, notes or progress:
 	// those are review data.
-	const browsing = $derived(total === 0 && sessionStore.knownSignedOut);
+	const browsing = $derived(!loaded && sessionStore.knownSignedOut);
 	const corpusShown = $derived(
 		needle === ''
 			? pageStore.pages
@@ -104,11 +105,7 @@
 			.join(' · ');
 	};
 
-	const counts = $derived.by(() => {
-		const tally: Partial<Record<ReviewStatus, number>> = {};
-		for (const p of $pagesStore) tally[p.status] = (tally[p.status] ?? 0) + 1;
-		return tally;
-	});
+	const counts = $derived(review.counts);
 
 	// Keep the current row on screen. Without this, landing on a page near the
 	// bottom of the queue left the sidebar showing 30 other rows and not the one
@@ -130,7 +127,10 @@
 		if (!row || !box) return;
 		const r = row.getBoundingClientRect();
 		const b = box.getBoundingClientRect();
-		if (r.top < b.top) box.scrollTop += r.top - b.top - 8;
+		// Below the pinned progress and filter, not under them.
+		const top =
+			b.top + (navEl?.querySelector<HTMLElement>('[data-queue-pinned]')?.offsetHeight ?? 0);
+		if (r.top < top) box.scrollTop += r.top - top - 8;
 		else if (r.bottom > b.bottom) box.scrollTop += r.bottom - b.bottom + 8;
 	});
 </script>
@@ -150,7 +150,9 @@
 	/>
 {/snippet}
 
-<nav bind:this={navEl} class="space-y-5 px-5 pt-4 pb-6" aria-label="Review queue">
+<!-- Named apart from the rail around it (`aside`, "Review queue"): two
+     landmarks with one name read as the same region twice in a landmark list. -->
+<nav bind:this={navEl} class="space-y-5 px-5 pb-6" aria-label="Pages in this review">
 	<!-- The empty state is not a loading state, and saying so was misleading.
 	     An empty `pagesStore` here means one of two things, and the old
 	     "No pages loaded. (Waiting for Supabase data)" described neither: it
@@ -162,9 +164,9 @@
 	     render from the static corpus, which is exactly when a reviewer is
 	     most likely to think the tool is broken. That case gets the action
 	     that fixes it. -->
-	{#if total === 0}
+	{#if !loaded}
 		{#if sessionStore.knownSignedOut}
-			<p class="text-sm text-sfds-slate-l3">
+			<p class="pt-4 text-sm text-sfds-slate-l3">
 				<a href={resolve('/login')} class="font-semibold text-sfds-action hover:underline"
 					>Sign in</a
 				> to load the review queue.
@@ -172,7 +174,7 @@
 		{:else if loadState === 'failed'}
 			<!-- Announced: it replaces a loading line the reviewer was waiting on.
 			     Never disabled while retrying, as on the landing page's card. -->
-			<div role="alert" class="space-y-2">
+			<div role="alert" class="space-y-2 pt-4">
 				<p class="text-sm font-semibold text-sfds-red">The queue didn't load</p>
 				<p class="text-sm text-sfds-black">
 					The review data couldn't be reached. Your decisions are safe.
@@ -182,38 +184,51 @@
 				</Button>
 			</div>
 		{:else if loadState === 'loading' || sessionStore.signedIn === undefined}
-			<p role="status" class="text-sm text-sfds-slate-l3">Loading the queue…</p>
+			<p role="status" class="pt-4 text-sm text-sfds-slate-l3">Loading the queue…</p>
 		{:else}
-			<p class="text-sm text-sfds-slate-l3">This review has no pages yet.</p>
+			<p class="pt-4 text-sm text-sfds-slate-l3">This review has no pages yet.</p>
 		{/if}
-	{:else}
-		<section aria-label="Review progress">
-			<div class="flex items-baseline justify-between">
-				<span class="text-[13px] font-semibold text-sfds-black">
-					{decided} of {total} decided
-				</span>
-				<span class="text-[13px] font-semibold text-sfds-slate-l3 tabular-nums">{pct}%</span>
-			</div>
-
-			<div class="mt-2">
-				<StatusBar size="sm" {counts} {total} />
-			</div>
-		</section>
 	{/if}
 
-	{#if total > 0 || browsing}
-		<div>
-			<label for="queue-filter" class="sr-only">Filter pages</label>
-			<input
-				id="queue-filter"
-				type="search"
-				bind:value={query}
-				placeholder="Filter by title or path"
-				autocomplete="off"
-				class="w-full rounded-[3px] border border-sfds-grey-l2 bg-white px-2.5 py-1.5 text-[13px] text-sfds-black placeholder:text-sfds-slate-l3 focus:border-sfds-action focus:ring-1 focus:ring-sfds-action focus:outline-none"
-			/>
+	{#if loaded || browsing}
+		<!-- Pinned to the top of the rail's scroll area. The effect above scrolls
+		     the current row into view, and for a page low in the queue that put
+		     "N of M decided" and the filter 726px above the top of the rail
+		     (measured at 1440x900), so the review's progress was off screen on
+		     the page a reviewer had just opened. -->
+		<div
+			class="sticky top-0 z-10 -mx-5 space-y-4 border-b border-sfds-grey-l2 bg-background px-5 pt-4 pb-3"
+			data-queue-pinned
+		>
+			{#if loaded}
+				<section aria-label="Review progress">
+					<div class="flex items-baseline justify-between">
+						<span class="text-[0.8125rem] font-semibold text-sfds-black">
+							{decided} of {total} decided
+						</span>
+						<span class="text-[0.8125rem] font-semibold text-sfds-slate-l3 tabular-nums"
+							>{pct}%</span
+						>
+					</div>
+
+					<div class="mt-2">
+						<StatusBar size="sm" {counts} {total} />
+					</div>
+				</section>
+			{/if}
+			<div>
+				<label for="queue-filter" class="sr-only">Filter pages</label>
+				<input
+					id="queue-filter"
+					type="search"
+					bind:value={query}
+					placeholder="Filter by title or path"
+					autocomplete="off"
+					class="w-full rounded-[3px] border border-sfds-grey-l2 bg-white px-2.5 py-1.5 text-[0.8125rem] text-sfds-black placeholder:text-sfds-slate-l3 focus:border-sfds-action focus:ring-1 focus:ring-sfds-action focus:outline-none"
+				/>
+			</div>
 		</div>
-		{#if (browsing ? corpusShown : shown).length === 0}
+		{#if (browsing ? corpusShown.length : shown.length + unreviewedShown.length) === 0}
 			<p role="status" class="text-sm text-sfds-slate-l3">No pages match “{query.trim()}”.</p>
 		{/if}
 	{/if}
@@ -231,11 +246,11 @@
 		{#if pages.length > 0}
 			<section>
 				<h3 class="mb-2 flex items-center justify-between">
-					<span class="text-[11px] font-bold tracking-[0.08em] text-sfds-slate-l3 uppercase">
+					<span class="text-[0.6875rem] font-bold tracking-[0.08em] text-sfds-slate-l3 uppercase">
 						{group.heading}
 					</span>
 					<span
-						class="inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-sfds-grey-l2/70 px-1.5 text-[11px] font-bold text-sfds-black tabular-nums"
+						class="inline-flex h-[1.125rem] min-w-[1.125rem] items-center justify-center rounded-full bg-sfds-grey-l2/70 px-1.5 text-[0.6875rem] font-bold text-sfds-black tabular-nums"
 					>
 						{pages.length}
 					</span>
@@ -249,4 +264,43 @@
 			</section>
 		{/if}
 	{/each}
+
+	<!-- Corpus pages with no review row. They open like any other page, but the
+	     decision control has no row to write to and the app cannot create one
+	     (the table has no INSERT policy), so they are listed apart rather than
+	     mixed into Undecided, where they would look decidable. -->
+	{#if loaded && unreviewedShown.length > 0}
+		<section data-testid="queue-unreviewed">
+			<h3 class="mb-1 flex items-center justify-between">
+				<span class="text-[0.6875rem] font-bold tracking-[0.08em] text-sfds-slate-l3 uppercase">
+					Not in the review yet
+				</span>
+				<span
+					class="inline-flex h-[1.125rem] min-w-[1.125rem] items-center justify-center rounded-full bg-sfds-grey-l2/70 px-1.5 text-[0.6875rem] font-bold text-sfds-black tabular-nums"
+				>
+					{unreviewedShown.length}
+				</span>
+			</h3>
+			<p class="mb-2 text-xs text-sfds-slate-l3">
+				These pages have no review record, so they can't be decided until one is added.
+			</p>
+			<ul class="space-y-0.5">
+				{#each unreviewedShown as id (id)}
+					<li>{@render queueLink(id, titleFor(id), corpusFor(id)?.type)}</li>
+				{/each}
+			</ul>
+		</section>
+	{/if}
+
+	<!-- Rows for pages retired from the corpus. Not links: `/review/[slug]`
+	     404s on a slug the corpus no longer has. Named, so the gap between the
+	     table and the count is explained rather than silent. -->
+	{#if review.retired.length > 0}
+		<p class="text-xs text-sfds-slate-l3" data-testid="queue-retired">
+			{review.retired.length}
+			{review.retired.length === 1 ? 'review record belongs' : 'review records belong'} to pages no longer
+			in the mockups, and {review.retired.length === 1 ? 'is' : 'are'} left out of the count:
+			{review.retired.map((p) => p.path).join(', ')}.
+		</p>
+	{/if}
 </nav>

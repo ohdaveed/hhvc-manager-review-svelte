@@ -231,7 +231,9 @@ describe('landing page', () => {
 		session.signedIn = true;
 		pagesStore.set([row('topic-x--about', 'approved'), row('draft:abc', 'needs-review')]);
 		render(Page);
-		expect(await screen.findByText(/1 of 2 decided/i)).toBeTruthy();
+		// 1 of 3: the approved page, the draft, and `topic-x--report`, a corpus
+		// page with no row -- counted, as the queue counts it (`reconcileReview`).
+		expect(await screen.findByText(/1 of 3 decided/i)).toBeTruthy();
 	});
 
 	it('names a drafting draft by its stored title in All pages', () => {

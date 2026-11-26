@@ -12,20 +12,16 @@
 	import { reviewProgress } from '$lib/landing/progress';
 	import { draftsStore } from '$lib/stores/draftPages';
 	import { pageStore } from '$lib/stores/pageData.svelte';
-	import { loadReview, pagesStore, queueOrder } from '$lib/stores/reviewState';
+	import { loadReview, queueOrder } from '$lib/stores/reviewState';
+	import { review } from '$lib/review/review.svelte';
 	import { sessionStore } from '$lib/stores/session.svelte';
 
-	const progress = $derived(reviewProgress($pagesStore));
+	// The review squared with the corpus (`review`): the same rows, denominator
+	// and counts the queue reads, so the two "N of M" lines cannot disagree.
+	const progress = $derived({ ...reviewProgress(review.rows), total: review.total });
 
-	// Per-status counts for the bar and its shortcuts. Computed here rather than
-	// added to `reviewProgress`, whose contract is "how far through, and where
-	// next" and is tested as such.
-	const counts = $derived(
-		$pagesStore.reduce<Partial<Record<(typeof $pagesStore)[number]['status'], number>>>(
-			(acc, p) => ({ ...acc, [p.status]: (acc[p.status] ?? 0) + 1 }),
-			{}
-		)
-	);
+	// Per-status counts for the bar and its shortcuts.
+	const counts = $derived(review.counts);
 	const nextTitle = $derived(
 		progress.nextPath === undefined
 			? undefined
@@ -42,7 +38,7 @@
 	// The Karl section's links, in queue order. Titles resolve the same way the
 	// next-up card's does, so a draft is named by its draft title.
 	const approvedPages = $derived(
-		queueOrder($pagesStore.filter((p) => p.status === 'approved')).map((path) => ({
+		queueOrder(review.rows.filter((p) => p.status === 'approved')).map((path) => ({
 			path,
 			title: pageTitleFor(path, pageStore.pages, $draftsStore)
 		}))
@@ -114,7 +110,10 @@
 		if (sessionStore.signedIn !== true) return 'checking' as const;
 		if (failed) return 'failed' as const;
 		if (!ready) return 'loading' as const;
-		return progress.total > 0 ? ('progress' as const) : ('empty' as const);
+		// Rows, not `progress.total`: the total now also counts corpus pages with
+		// no row, so it is never zero once the corpus loads, and an empty table
+		// would have shown a progress card over a review that does not exist.
+		return review.rows.length > 0 ? ('progress' as const) : ('empty' as const);
 	});
 
 	/**
@@ -138,7 +137,7 @@
 	});
 </script>
 
-<div class="mx-auto max-w-6xl space-y-8 px-4 py-8">
+<main class="mx-auto max-w-6xl space-y-8 px-4 py-8">
 	<header class="space-y-4">
 		<h1 class="text-2xl font-bold text-slate-900">HHVC mockup review</h1>
 		{#if card === 'progress'}
@@ -149,6 +148,7 @@
 				nextHref={progress.nextHref}
 				{nextTitle}
 				{nextMeta}
+				unreviewed={review.unreviewed.length}
 				onShow={showStatus}
 			/>
 		{:else if card === 'checking' || card === 'loading'}
@@ -184,4 +184,4 @@
 	</div>
 
 	<AllPagesList bind:query bind:status />
-</div>
+</main>

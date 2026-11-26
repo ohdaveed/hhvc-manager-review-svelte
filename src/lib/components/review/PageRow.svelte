@@ -41,8 +41,8 @@
 {#snippet titleLine()}
 	<span
 		class="block text-sfds-black {comfortable
-			? 'text-[15px] leading-[22px]'
-			: 'text-[13px] leading-[18px]'} {current ? 'font-semibold' : ''}"
+			? 'text-[0.9375rem] leading-[1.375rem]'
+			: 'text-[0.8125rem] leading-[1.125rem]'} {current ? 'font-semibold' : ''}"
 	>
 		{title}
 	</span>
@@ -53,8 +53,8 @@
 		<span
 			data-slot="page-row-meta"
 			class="mt-0.5 block {comfortable
-				? 'text-[13px] leading-[18px]'
-				: 'text-[11px] leading-[14px]'} {metaTone === 'danger'
+				? 'text-[0.8125rem] leading-[1.125rem]'
+				: 'text-[0.6875rem] leading-[0.875rem]'} {metaTone === 'danger'
 				? 'text-sfds-red'
 				: comfortable
 					? 'text-slate-700'
@@ -102,14 +102,19 @@
 		     DOM order is the order a screen reader announces the name in: putting
 		     the badge after the meta would have it read "title, type, status" while
 		     the eye reads "title, status, type" (WCAG 1.3.2). -->
-		<span class="block min-w-0 flex-1">
-			<span class="flex items-start justify-between gap-3">
-				<span class="block min-w-0 flex-1">{@render titleLine()}</span>
-				{#if badge}
-					<span data-slot="page-row-badge" class="shrink-0">{@render badge()}</span>
-				{/if}
-			</span>
-			{@render metaLine()}
+		<!-- A grid, not a flex row: in the title's row the ~26px badge set that
+		     row's height, so a row with a badge had its type line pushed 10px
+		     further from its title than a row without one, and the list's rhythm
+		     changed row to row. Spanning both lines and centred, the badge no
+		     longer touches the text's spacing. DOM order is unchanged. -->
+		<span class="grid min-w-0 flex-1 grid-cols-[minmax(0,1fr)_auto] gap-x-3">
+			<span class="col-start-1 row-start-1 block min-w-0">{@render titleLine()}</span>
+			{#if badge}
+				<span data-slot="page-row-badge" class="col-start-2 row-span-2 row-start-1 self-center"
+					>{@render badge()}</span
+				>
+			{/if}
+			<span class="col-start-1 row-start-2 block min-w-0">{@render metaLine()}</span>
 		</span>
 	{:else}
 		<!-- Stacked: the sidebar is too narrow to spare a column for it. -->

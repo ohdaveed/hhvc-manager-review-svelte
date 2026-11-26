@@ -13,6 +13,12 @@
 	const pageData = $derived(pageStore.pages.find((p) => p.id === draftPathFor(data.id)));
 </script>
 
+<svelte:head>
+	<title
+		>{draft ? `Draft: ${draft.title} · HHVC mockup review` : 'Draft · HHVC mockup review'}</title
+	>
+</svelte:head>
+
 {#if draft}
 	<DraftBanner {draft} />
 	{#if pageData}

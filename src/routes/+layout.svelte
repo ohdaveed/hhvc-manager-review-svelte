@@ -22,6 +22,8 @@
 	<title>HHVC mockup review</title>
 </svelte:head>
 
-<main class="min-h-screen bg-slate-50 antialiased">
+<!-- Not <main>: each route owns its landmark (`review/+layout`, `login`,
+     `/`), and a <main> here nested a second one inside every page. -->
+<div class="min-h-screen bg-slate-50 antialiased">
 	{@render children?.()}
-</main>
+</div>

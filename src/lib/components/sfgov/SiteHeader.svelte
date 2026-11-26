@@ -58,7 +58,12 @@
 			</span>
 		</div>
 
-		<nav aria-label="Primary" class="sfgov-nav">
+		<!-- `role="none"`: kept a <nav> for fidelity with sf.gov's markup, but
+		     these items are inert spans, so exposing a "Primary" navigation
+		     landmark announced a menu that goes nowhere -- inside the review
+		     tool, a landmark list should name the tool's regions, not the
+		     mockup's furniture. -->
+		<nav role="none" class="sfgov-nav">
 			<span class="inline-flex items-center gap-1">
 				Services
 				<img src="/sfgov/icons/chevron-down.svg" alt="" class="sfgov-chevron brightness-0 invert" />

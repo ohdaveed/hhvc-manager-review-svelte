@@ -10,6 +10,12 @@
 	const pageData = $derived(pageStore.pages.find((p) => p.id === $page.params.slug));
 </script>
 
+<!-- Page first, tool second: in a row of tabs or the history list the page is
+     the part that differs. Overrides the root layout's default. -->
+<svelte:head>
+	<title>{pageData ? `${pageData.title} · HHVC mockup review` : 'HHVC mockup review'}</title>
+</svelte:head>
+
 {#if pageData}
 	<Page page={pageData} />
 {/if}

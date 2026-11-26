@@ -34,7 +34,9 @@ const page = {
 const fields = (c: HTMLElement) =>
 	[...c.querySelectorAll<HTMLElement>('.callout [data-rewrite-field]')].map((el) => [
 		el.dataset.rewriteField,
-		el.getAttribute('aria-label')
+		// The field name is the button's description; its name is the copy.
+		el.ownerDocument.getElementById(el.getAttribute('aria-describedby')?.split(' ')[0] ?? '')
+			?.textContent ?? null
 	]);
 
 describe('CalloutBlock', () => {

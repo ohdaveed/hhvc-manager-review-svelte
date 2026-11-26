@@ -1,4 +1,5 @@
 import AxeBuilder from '@axe-core/playwright';
+import type { Page } from '@playwright/test';
 import { expect, test } from './fixtures';
 
 /**
@@ -15,6 +16,20 @@ import { expect, test } from './fixtures';
  * is editing.
  */
 const RULES = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];
+
+/**
+ * Two checks, because they fail apart. HTML allows one visible `<main>`
+ * element; the root layout used to wrap every page in one, nesting each
+ * route's own inside it. And there must be exactly one main LANDMARK: the
+ * review layout's `<main>` carried `role="presentation"`, so removing the
+ * root wrapper left review pages with none, and an element count passed
+ * over it. Axe's landmark rules are best-practice, outside RULES.
+ */
+async function scan(page: Page) {
+	await expect(page.locator('main:visible'), 'exactly one visible <main>').toHaveCount(1);
+	await expect(page.getByRole('main'), 'exactly one main landmark').toHaveCount(1);
+	return new AxeBuilder({ page }).withTags(RULES).analyze();
+}
 
 // Signed out, which is what an unauthenticated Playwright run sees. The mockup
 // content is static, so the page renders fully either way.
@@ -40,7 +55,7 @@ for (const path of PAGES) {
 		await page.goto(path);
 		await page.waitForLoadState('networkidle');
 
-		const { violations } = await new AxeBuilder({ page }).withTags(RULES).analyze();
+		const { violations } = await scan(page);
 
 		// Name the rules in the failure: "3 violations" sends the next reader to
 		// the HTML report, whereas the rule ids usually identify the fix.
@@ -72,7 +87,7 @@ for (const view of [
 		await page.getByRole('button', { name: view.open }).click();
 		await page.waitForSelector(view.ready);
 
-		const { violations } = await new AxeBuilder({ page }).withTags(RULES).analyze();
+		const { violations } = await scan(page);
 
 		expect(
 			violations,

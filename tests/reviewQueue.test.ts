@@ -131,6 +131,11 @@ describe('ReviewQueue', () => {
 	});
 
 	it('counts decisions, not rows', () => {
+		pageStore.pages = [
+			...pageStore.pages,
+			{ id: 'topic-x--third', title: 'Third page', type: 'Information', sections: [] },
+			{ id: 'topic-x--fourth', title: 'Fourth page', type: 'Information', sections: [] }
+		];
 		pagesStore.set([
 			row('topic-x--about', 'approved'),
 			row('topic-x--report', 'needs-review'),
@@ -208,6 +213,52 @@ describe('ReviewQueue', () => {
 		expect(container.querySelector('li .rounded-full')).toBeNull();
 	});
 
+	/**
+	 * The table and the corpus drift apart in both directions (see
+	 * `reconcileReview`). Measured on the local stack: five corpus pages with no
+	 * row, and two rows for retired pages, under a queue that said "0 of 38".
+	 */
+	describe('when the review table and the corpus disagree', () => {
+		it('counts and lists corpus pages that have no review row', () => {
+			pagesStore.set([row('topic-x--about', 'approved')]);
+			render(ReviewQueue);
+
+			expect(screen.getByText('1 of 2 decided')).toBeTruthy();
+			const group = screen.getByTestId('queue-unreviewed');
+			expect(group.textContent).toContain('Not in the review yet');
+			expect(group.textContent).toMatch(/can't be decided/);
+			expect(screen.getByRole('link', { name: /Report a problem/ }).getAttribute('href')).toBe(
+				'/review/topic-x--report'
+			);
+		});
+
+		it('leaves rows for retired pages out of the count, and names them without a link', () => {
+			pagesStore.set([
+				row('topic-x--about', 'needs-review'),
+				row('topic-x--report', 'needs-review'),
+				row('topic-x--retired', 'approved')
+			]);
+			render(ReviewQueue);
+
+			expect(screen.getByText('0 of 2 decided')).toBeTruthy();
+			expect(screen.queryByText('Approved')).toBeNull();
+			expect(screen.getByTestId('queue-retired').textContent).toContain('topic-x--retired');
+			expect(
+				screen
+					.getAllByRole('link')
+					.some((a) => a.getAttribute('href') === '/review/topic-x--retired')
+			).toBe(false);
+		});
+
+		it('says nothing extra when they agree', () => {
+			pagesStore.set([row('topic-x--about', 'approved'), row('topic-x--report', 'needs-review')]);
+			render(ReviewQueue);
+
+			expect(screen.queryByTestId('queue-unreviewed')).toBeNull();
+			expect(screen.queryByTestId('queue-retired')).toBeNull();
+		});
+	});
+
 	describe('filter', () => {
 		const filterTo = async (text: string) => {
 			const box = screen.getByRole('searchbox', { name: 'Filter pages' });
@@ -215,6 +266,10 @@ describe('ReviewQueue', () => {
 		};
 
 		beforeEach(() => {
+			pageStore.pages = [
+				...pageStore.pages,
+				{ id: 'topic-x--third', title: 'Third page', type: 'Information', sections: [] }
+			];
 			pagesStore.set([
 				row('topic-x--about', 'approved'),
 				row('topic-x--report', 'needs-review'),

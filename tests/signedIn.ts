@@ -340,11 +340,21 @@ export async function gotoSignedIn(
 	const total = PAGE_ROWS.length + (withDrafts ? DRAFT_PAGE_ROWS.length : 0);
 	if (path === '/') {
 		// The landing page has no queue. Its proof of a populated, signed-in
-		// render is the progress line, whose total is the number of review rows.
-		await expect(page.getByText(new RegExp(`^\\d+ of ${total} decided$`))).toBeVisible();
+		// render is the progress line, which shows only once review rows have
+		// loaded (an empty table shows the "no review yet" card instead). Its
+		// total is every page a reviewer can open (`reconcileReview`), corpus
+		// pages with no row included, so it is not the stub's row count.
+		await expect(page.getByText(/^\d+ of \d+ decided$/)).toBeVisible();
 		return;
 	}
-	await expect(page.locator('nav[aria-label="Review queue"] a')).toHaveCount(total);
+	// Rows only: the stub holds six review rows over a 40-odd page corpus, so
+	// the queue also lists the rest under "Not in the review yet", which is
+	// corpus, not review data, and would pass this guard with no rows at all.
+	await expect(
+		page.locator(
+			'nav[aria-label="Pages in this review"] section:not([data-testid="queue-unreviewed"]) a'
+		)
+	).toHaveCount(total);
 	await expect(page.getByText('Viewing signed out.')).toHaveCount(0);
 }
 

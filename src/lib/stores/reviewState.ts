@@ -1,6 +1,7 @@
 import { writable, get } from 'svelte/store';
 import { supabase, ensureDevSession } from '$lib/supabase';
 import { loadDrafts } from './draftPages';
+import { isDraftPath } from '$lib/corpus/draftPath';
 
 // Define the shape of our data
 export type PageCheck = { status: string; message: string };
@@ -78,6 +79,33 @@ export function queueOrder(pages: ReviewPage[]): string[] {
 	return QUEUE_STATUS_ORDER.flatMap((status) =>
 		pages.filter((p) => p.status === status).map((p) => p.path)
 	);
+}
+
+/**
+ * The `pages` table squared with the static corpus, which drift apart in both
+ * directions. A corpus page added after the seed ran has no row (measured: the
+ * five pages of #221 on a stack seeded before them), and a page retired from the
+ * corpus keeps its row, because retiring one ships no migration (#244, #245).
+ * Read alone, the table under-counts the review and lists rows whose link 404s
+ * on `/review/[slug]`'s static guard.
+ *
+ * - `rows` -- rows a reviewer can open: a corpus page or a draft. Store order.
+ * - `unreviewed` -- corpus ids with no row. Viewable, but undecidable: the
+ *   table has no INSERT policy, so nothing in the app can create their row.
+ * - `retired` -- rows for a page that is no longer in the corpus.
+ * - `total` -- every page a reviewer can open, the progress denominator.
+ */
+export function reconcileReview(
+	pages: ReviewPage[],
+	corpusIds: readonly string[]
+): { rows: ReviewPage[]; unreviewed: string[]; retired: ReviewPage[]; total: number } {
+	const corpus = new Set(corpusIds);
+	const rows: ReviewPage[] = [];
+	const retired: ReviewPage[] = [];
+	for (const p of pages) (corpus.has(p.path) || isDraftPath(p.path) ? rows : retired).push(p);
+	const rowed = new Set(rows.map((p) => p.path));
+	const unreviewed = corpusIds.filter((id) => !rowed.has(id));
+	return { rows, unreviewed, retired, total: rows.length + unreviewed.length };
 }
 
 /**

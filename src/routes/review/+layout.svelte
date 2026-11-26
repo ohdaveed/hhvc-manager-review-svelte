@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { review } from '$lib/review/review.svelte';
 	import { onMount, tick, untrack } from 'svelte';
 	import { hydrateMockup } from '$lib/stores/applySavedEdits';
 	import { classifyLatestEdits } from '$lib/stores/editStatus';
@@ -108,10 +109,12 @@
 	// a draft IS in `pageStore.pages`, and its content type is the model's guess,
 	// so a placement there would read as more settled than it is (decision 12).
 	const onDraft = $derived(Boolean(currentPath && isDraftPath(currentPath)));
-	// Built once for both Karl views: the outline over the mockup and the
-	// Blueprint. Neither is built while neither is showing.
+	// Built once for every Karl reader: the outline over the mockup, the
+	// Blueprint, and the decision panel's readiness line. No longer gated on a
+	// Karl view being open, because the readiness line is shown beside every
+	// decision; `$derived` is lazy, so it still only runs while something reads it.
 	const placementsHere = $derived(
-		(pageStore.karlOutline || pageStore.mode === 'blueprint') && pageData && !onDraft
+		pageData && !onDraft
 			? placementsFor(
 					pageData as unknown as Parameters<typeof placementsFor>[0],
 					reviewRecordFor(
@@ -128,6 +131,9 @@
 	);
 	const outlinePlacements = $derived(pageStore.karlOutline ? placementsHere : null);
 	const blueprintPlacements = $derived(pageStore.mode === 'blueprint' ? placementsHere : null);
+	// The outline's own one-line summary, so the decision panel and the outline
+	// bar can never describe the same page two ways.
+	const karlReadiness = $derived(placementsHere ? outlineSummary(placementsHere) : null);
 
 	/**
 	 * Blueprint → page: back to the mockup with the outline on, the field
@@ -230,13 +236,30 @@
 	const unsavedCount = $derived(pageStore.unsavedChangeCount());
 
 	// The toolbar's previous / next buttons step through the queue in the order
-	// the sidebar renders it, so they land on the row above or below the current
-	// one. Signed out the queue lists the corpus, so the fallback is corpus order.
-	// (They replace a single "First page" link, which jumped to the queue's top
-	// and was the toolbar's only navigation.)
+	// the sidebar renders it -- status groups, then the pages not in the review
+	// yet -- so they land on the row above or below the current one. Signed out
+	// the queue lists the corpus, so the fallback is corpus order. (They replace
+	// a single "First page" link, which jumped to the queue's top and was the
+	// toolbar's only navigation.)
+	//
+	// The order is taken when the queue's MEMBERSHIP changes, not on every
+	// decision. A decision moves its row to another group, so an order that
+	// followed it sent Next somewhere else the moment a reviewer chose Approved:
+	// measured on 2026-11-26, approving the About page moved it to the end of
+	// the queue and greyed Next out, with 37 undecided pages still to go. Held,
+	// Next still means the row that came after this one, and Prev from there
+	// comes back here. A reload regroups.
+	const queueMembership = $derived(
+		review.rows.map((p) => p.path).join('\n') + '\n\n' + review.unreviewed.join('\n')
+	);
 	const order = $derived.by(() => {
-		const queued = queueOrder($pagesStore);
-		return queued.length > 0 ? queued : pageStore.pages.map((p) => p.id);
+		void queueMembership;
+		return untrack(() => {
+			const queued = queueOrder(review.rows);
+			return queued.length > 0
+				? [...queued, ...review.unreviewed]
+				: pageStore.pages.map((p) => p.id);
+		});
 	});
 	const at = $derived(currentPath ? order.indexOf(currentPath) : -1);
 	const prevPath = $derived(at > 0 ? order[at - 1] : undefined);
@@ -273,7 +296,10 @@
 	const frameStyle = $derived.by(() => {
 		const preset = PREVIEW_WIDTHS[pageStore.previewWidth];
 		if (preset) return `width:${preset}px;max-width:none;flex:none`;
-		if (fit) return `width:${fit.width}px;max-width:none;flex:none;zoom:${fit.scale}`;
+		// `--fit-scale` lets review annotations inside the frame undo the zoom
+		// (app.css): the page is previewed small, the tool's own marks are not.
+		if (fit)
+			return `width:${fit.width}px;max-width:none;flex:none;zoom:${fit.scale};--fit-scale:${fit.scale}`;
 		return '';
 	});
 
@@ -292,15 +318,23 @@
 	/** Returns focus to whichever button opened the sheet. */
 	let sheetOpener: HTMLElement | null = null;
 
-	const openSheet = (which: 'queue' | 'panel', event: MouseEvent) => {
+	const openSheet = async (which: 'queue' | 'panel', event: MouseEvent) => {
 		sheetOpener = event.currentTarget as HTMLElement;
 		pageStore.openSheet(which);
+		// A modal sheet takes focus: left on the opener, focus sat behind the
+		// sheet in content the `inert` below has just made unreachable.
+		await tick();
+		document.getElementById(which === 'panel' ? 'reviewPanel' : 'reviewQueueRail')?.focus();
 	};
 
-	const closeSheet = () => {
+	const closeSheet = async () => {
 		pageStore.closeSheet();
-		sheetOpener?.focus();
+		// After the render that lifts `inert` from the toolbar: focusing the
+		// opener while it is still inert is silently ignored.
+		const opener = sheetOpener;
 		sheetOpener = null;
+		await tick();
+		opener?.focus();
 	};
 
 	/** Stays on this page: the banner and read-only mode follow
@@ -313,8 +347,23 @@
 	};
 
 	const onWindowKeydown = (event: KeyboardEvent) => {
-		if (event.key === 'Escape' && pageStore.mobileSheet !== 'none') closeSheet();
+		// `defaultPrevented`: an Escape a popover or menu inside the sheet
+		// already handled closes that, not the sheet around it.
+		if (event.key === 'Escape' && !event.defaultPrevented && pageStore.mobileSheet !== 'none')
+			closeSheet();
 	};
+
+	// A sheet exists only below 1024px. Widened past it (a tablet rotating, a
+	// window resized) with one open, nothing reset `mobileSheet`, so the canvas
+	// and the other rail stayed `inert` and the backdrop covered the desktop.
+	$effect(() => {
+		const wide = window.matchMedia('(min-width: 1024px)');
+		const onChange = () => {
+			if (wide.matches && pageStore.mobileSheet !== 'none') pageStore.closeSheet();
+		};
+		wide.addEventListener('change', onChange);
+		return () => wide.removeEventListener('change', onChange);
+	});
 
 	const previewOptions: { value: PreviewWidth; label: string; icon: typeof Monitor }[] = [
 		{ value: 'fit', label: 'Fit to pane', icon: Maximize2 },
@@ -429,6 +478,19 @@
 	onbeforeunload={(e) => warnBeforeLeaving(e, pageStore.unsavedChangeCount())}
 />
 
+<!-- Without JS nothing measures the pane, so the frame would stay unpainted
+     (see `.mockup-frame[data-measured='false']`). The mockups are static and
+     readable signed out, so they stay readable with scripts off too. -->
+<svelte:head>
+	<noscript>
+		<style>
+			.mockup-frame[data-measured='false'] {
+				visibility: visible !important;
+			}
+		</style>
+	</noscript>
+</svelte:head>
+
 <!-- The decision as a dot: the bar colour for a decided status, a ring for
      "Undecided" (an empty slot, as the queue's progress bar shows it).
      Decorative wherever it appears beside the words; the collapsed panel
@@ -454,7 +516,12 @@
 	     giant box-shadow, because it has to take the click that closes the
 	     sheet. Rendered only when one is open. -->
 	{#if pageStore.mobileSheet !== 'none'}
-		<button type="button" class="sheet-backdrop" aria-label="Close panel" onclick={closeSheet}
+		<button
+			type="button"
+			class="sheet-backdrop"
+			tabindex="-1"
+			aria-label={pageStore.mobileSheet === 'queue' ? 'Close queue' : 'Close review panel'}
+			onclick={closeSheet}
 		></button>
 	{/if}
 
@@ -467,13 +534,23 @@
 
 	     Deliberately the FIRST focusable element in the shell, ahead of the
 	     queue's collapse button, and visible only while focused. -->
-	<a href="#reviewPanel" class="skip-to-panel">Skip to review panel</a>
+	<!-- Inert while a sheet is open: it sits outside both rails, so Tab from
+	     inside the modal sheet could reach it, and its target may be inert. -->
+	<a href="#reviewPanel" class="skip-to-panel" inert={pageStore.mobileSheet !== 'none'}
+		>Skip to review panel</a
+	>
 
 	<!-- Left Sidebar: Global Navigation & Review Queue -->
+	<!-- Below 1024px either rail can open as a sheet over the canvas. Open, it is
+	     a modal dialog: `inert` on everything else keeps focus and the reading
+	     cursor inside it, and its close control says Close, not Collapse. -->
 	<aside
 		id="reviewQueueRail"
 		tabindex="-1"
 		aria-label="Review queue"
+		role={pageStore.mobileSheet === 'queue' ? 'dialog' : undefined}
+		aria-modal={pageStore.mobileSheet === 'queue' ? 'true' : undefined}
+		inert={pageStore.mobileSheet === 'panel'}
 		class="queue-rail flex h-full min-w-0 flex-col border-r bg-background"
 	>
 		<!-- Every column's top row is `h-12` with a bottom border, so the queue,
@@ -512,7 +589,7 @@
 			<div class="flex h-12 flex-none items-center gap-2 border-b border-sfds-grey-l2 pr-3 pl-5">
 				<a
 					href={resolve('/')}
-					class="flex min-w-0 flex-1 items-center gap-1.5 text-[13px] font-semibold text-sfds-action hover:underline"
+					class="flex min-w-0 flex-1 items-center gap-1.5 text-[0.8125rem] font-semibold text-sfds-action hover:underline"
 					data-testid="all-pages-link"
 				>
 					<ArrowLeft class="size-3.5 flex-none" aria-hidden="true" />
@@ -522,9 +599,10 @@
 					variant="outline"
 					size="icon"
 					class="size-7 flex-none"
-					title="Collapse queue"
-					aria-label="Collapse queue"
-					onclick={() => pageStore.toggleRail('queue')}
+					title={pageStore.mobileSheet === 'queue' ? 'Close queue' : 'Collapse queue'}
+					aria-label={pageStore.mobileSheet === 'queue' ? 'Close queue' : 'Collapse queue'}
+					onclick={() =>
+						pageStore.mobileSheet === 'queue' ? closeSheet() : pageStore.toggleRail('queue')}
 				>
 					<ChevronsLeft class="size-3.5" />
 				</Button>
@@ -550,7 +628,7 @@
 					>
 				</div>
 				{#if signOutError}
-					<p class="px-5 pt-1 text-xs text-red-700" role="alert">{signOutError}</p>
+					<p class="px-5 pt-1 text-xs text-sfds-red" role="alert">{signOutError}</p>
 				{/if}
 			{/if}
 			<div class="flex items-center justify-between gap-2 px-5 py-3">
@@ -561,7 +639,7 @@
 				     button, since it switches a mode rather than loading a URL. -->
 				<button
 					type="button"
-					class="text-[13px] font-semibold text-sfds-action underline-offset-2 hover:underline"
+					class="shrink-0 text-[0.8125rem] font-semibold whitespace-nowrap text-sfds-action underline-offset-2 hover:underline"
 					onclick={() => pageStore.showSitemap()}>Site map</button
 				>
 				<!-- Client-side export of live review statuses, checks, notes, and
@@ -590,12 +668,12 @@
 	     rather than repointed at `clearSelection()`: that would ALSO drop pending
 	     cards and the typed instruction, so a stray click on the canvas would
 	     discard work. Restoring the affordance is a design call, not a rename.
-	     `role="presentation"` is left as-is for the same reason -- it suppresses
-	     the `main` landmark and was there for the handler, but changing landmark
-	     semantics is its own decision. -->
+	     It also carried `role="presentation"`, there only for that handler. Once
+	     the root layout stopped wrapping every page in its own <main>, the role
+	     left review pages with NO main landmark, so it is gone too. -->
 	<main
 		class="relative flex h-full cursor-default flex-col overflow-hidden bg-muted"
-		role="presentation"
+		inert={pageStore.mobileSheet !== 'none'}
 	>
 		{#if sessionStore.knownSignedOut}
 			<!-- Anonymous browsing is supported on purpose: the mockups come from
@@ -606,7 +684,7 @@
 			     edit simply vanished on reload with no signal. EditTarget also
 			     drops the affordance entirely. -->
 			<div
-				class="border-b border-amber-300 bg-amber-50 px-4 py-2 text-sm text-amber-900"
+				class="border-b border-sfds-amber bg-sfds-amber-l1 px-4 py-2 text-sm text-sfds-black"
 				role="status"
 			>
 				<strong class="font-semibold">Viewing signed out.</strong> You can read every mockup, but
@@ -637,6 +715,7 @@
 				/>
 			{:else}
 				<nav
+					aria-label="Page toolbar"
 					class="review-toolbar @container/toolbar flex h-12 flex-none items-center justify-between border-b border-sfds-grey-l2 bg-background px-3 sm:px-5"
 				>
 					<!-- `grow` with no `min-w-0`: the group never shrinks below its
@@ -709,15 +788,19 @@
 						     only with the queue collapsed, the slug otherwise), the slug in
 						     its tooltip. `w-0 grow` truncates instead of letting a long
 						     title decide where the bar wraps. Hidden on a phone, where the
-						     mockup's own heading is the first thing under the bar. -->
+						     mockup's own heading is the first thing under the bar.
+						     `min-w-40` is the floor: below it the bar wraps its right-hand
+						     group onto a second row rather than squeezing the title, which
+						     measured 12px wide at 768px and 24px at 1280px -- "A." -- with
+						     270px of title to show. -->
 						<span
-							class="w-0 grow truncate text-sm font-semibold text-sfds-black max-sm:hidden"
+							class="w-0 min-w-40 grow truncate text-sm font-semibold text-sfds-black max-sm:hidden"
 							title={pageData?.slug ?? ''}
 							data-testid="toolbar-title">{pageData?.title ?? titleOf(currentPath ?? '')}</span
 						>
 						{#if status}
 							<span
-								class="inline-flex flex-none items-center rounded-full border px-2 py-0.5 text-xs font-medium max-sm:hidden {STATUS_LABELS[
+								class="wide-only inline-flex flex-none items-center rounded-full border px-2 py-0.5 text-xs font-medium {STATUS_LABELS[
 									status
 								].badge}"
 								data-testid="toolbar-status">{statusLabel}</span
@@ -728,7 +811,7 @@
 					<div class="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-sm">
 						{#if unsavedCount > 0}
 							<span
-								class="inline-flex items-center rounded-full border border-violet-200 bg-violet-50 px-2.5 py-[3px] text-xs font-semibold text-violet-900"
+								class="inline-flex items-center rounded-full border border-sfds-action/40 bg-sfds-blue-l1 px-2.5 py-[3px] text-xs font-semibold text-sfds-blue-dark"
 								role="status"
 							>
 								{unsavedCount} unsaved {unsavedCount === 1 ? 'change' : 'changes'}
@@ -740,15 +823,20 @@
 						     button at 1280px. Each carries an aria-label and a title. -->
 						<div class="flex flex-none items-center gap-2">
 							<span
-								class="text-[11px] font-semibold text-sfds-slate-l3 tabular-nums"
+								class="text-[0.6875rem] font-semibold text-sfds-slate-l3 tabular-nums"
 								data-testid="preview-width"
 								title="Rendered at {frameWidth}px: the sf.gov {previewBand(
 									frameWidth
 								).toLowerCase()} layout"
 							>
 								<!-- The layout and the zoom are what a reviewer reads off this;
-								     the pixel width is a detail, so it moved to the tooltip. -->
-								{previewBand(frameWidth)}{scale < 1 ? ` · ${Math.round(scale * 100)}%` : ''}
+								     the pixel width is a detail, so it moved to the tooltip.
+								     Blank until the frame is measured: `frameWidth` starts at 0,
+								     which `previewBand` calls Phone, so every load said "Phone"
+								     before settling on "Desktop · 70%". -->
+								{#if frameWidth > 0}
+									{previewBand(frameWidth)}{scale < 1 ? ` · ${Math.round(scale * 100)}%` : ''}
+								{/if}
 							</span>
 							<ToggleGroup.Root
 								type="single"
@@ -777,9 +865,10 @@
 						     rails; exiting puts them back as they were. The accessible name
 						     stays "Open Karl walkthrough" (it contains the visible label,
 						     WCAG 2.5.3). The visible label drops to "Karl" when the BAR is
-						     narrow, not the window -- the rails decide its width -- which
-						     keeps it to one row at 1080px with both rails open, as before
-						     this button existed, and to two on a phone. -->
+						     narrow, not the window -- the rails decide its width. At 52rem
+						     rather than 32rem since the title got a floor: with both rails
+						     open at 1440px the full label left the title 184px, and at
+						     1280px pushed the bar to the title floor. -->
 						<Button
 							size="sm"
 							class="h-7 flex-none gap-1.5 text-xs font-semibold"
@@ -791,7 +880,7 @@
 							     `&nbsp;` because Svelte trims a span's leading whitespace. -->
 							<span
 								><span class="sr-only">Open&nbsp;</span>Karl<span
-									class="@max-[32rem]/toolbar:sr-only">&nbsp;walkthrough</span
+									class="@max-[52rem]/toolbar:sr-only">&nbsp;walkthrough</span
 								></span
 							>
 						</Button>
@@ -826,7 +915,7 @@
 												onCheckedChange={(on: boolean) => pageStore.setKarlOutline(on)}
 											/>
 										</label>
-										<p class="text-sfds-slate text-xs">
+										<p class="text-xs text-sfds-slate-l3">
 											Marks where each part of the page goes in Karl, and what won’t carry over.
 										</p>
 										<Separator />
@@ -912,7 +1001,8 @@
 					<figure
 						bind:clientWidth={frameWidth}
 						style={frameStyle}
-						class="mockup-frame mx-auto w-full self-start overflow-hidden rounded-[4px] border border-gray-200 bg-site-surface shadow-[0_2px_4px_rgba(12,20,100,.06),0_4px_12px_rgba(12,20,100,.1)]"
+						data-measured={paneBox ? 'true' : 'false'}
+						class="mockup-frame mx-auto w-full self-start overflow-hidden rounded-[4px] border border-sfds-grey-l2 bg-site-surface shadow-[0_2px_4px_rgba(12,20,100,.06),0_4px_12px_rgba(12,20,100,.1)]"
 					>
 						<SiteHeader />
 
@@ -951,6 +1041,9 @@
 		id="reviewPanel"
 		tabindex="-1"
 		aria-label="Review panel"
+		role={pageStore.mobileSheet === 'panel' ? 'dialog' : undefined}
+		aria-modal={pageStore.mobileSheet === 'panel' ? 'true' : undefined}
+		inert={pageStore.mobileSheet === 'queue'}
 		class="panel-rail flex h-full min-w-0 flex-col overflow-hidden border-l bg-background"
 	>
 		{#if panelCollapsed}
@@ -983,7 +1076,7 @@
 				     it is repeated here rather than hidden with the tabs. -->
 				{#if unsavedCount > 0}
 					<span
-						class="inline-flex size-6 items-center justify-center rounded-full bg-sfds-action text-[11px] font-bold text-white"
+						class="inline-flex size-6 items-center justify-center rounded-full bg-sfds-action text-[0.6875rem] font-bold text-white"
 						role="status"
 						aria-label="{unsavedCount} unsaved {unsavedCount === 1 ? 'change' : 'changes'}"
 					>
@@ -992,7 +1085,16 @@
 				{/if}
 			</div>
 		{:else}
-			<ReviewWorkspace {pageData} {livePageId} onCollapse={() => pageStore.toggleRail('panel')} />
+			<ReviewWorkspace
+				{pageData}
+				{livePageId}
+				{karlReadiness}
+				collapseLabel={pageStore.mobileSheet === 'panel'
+					? 'Close review panel'
+					: 'Collapse review panel'}
+				onCollapse={() =>
+					pageStore.mobileSheet === 'panel' ? closeSheet() : pageStore.toggleRail('panel')}
+			/>
 		{/if}
 	</section>
 </div>
@@ -1007,7 +1109,7 @@
 		border-radius: 0 0 4px 0;
 		background: var(--color-sfds-action);
 		padding: 0.625rem 1rem;
-		font-size: 13px;
+		font-size: 0.8125rem;
 		font-weight: 600;
 		color: #fff;
 	}
@@ -1025,6 +1127,16 @@
 	.mockup-frame {
 		container: mockup / inline-size;
 		max-width: 1440px;
+	}
+
+	/* Unpainted until the pane is measured. Before then `fit` has no width to
+	   work from, so the frame took the pane's width unzoomed -- sf.gov's tablet
+	   layout -- and then jumped to the zoomed desktop one. Measured on a
+	   production build at 1440px: 716px wide with a 32px title, then a 1024px
+	   frame at 70% with a 46px title. Measurement lands on the first frame
+	   after hydration; `noscript` in <svelte:head> shows it without JS. */
+	.mockup-frame[data-measured='false'] {
+		visibility: hidden;
 	}
 
 	/* sf.gov's gutters step rather than scale: 20px on a phone, 28px from a
@@ -1142,6 +1254,13 @@
 		   rule. */
 		:global(.narrow-only) {
 			display: inline-flex;
+		}
+
+		/* The toolbar's status badge. Down here the Review sheet trigger
+		   carries the status as a dot and in its name, so the badge only
+		   repeated it, in width the page title needed. */
+		:global(.wide-only) {
+			display: none;
 		}
 	}
 

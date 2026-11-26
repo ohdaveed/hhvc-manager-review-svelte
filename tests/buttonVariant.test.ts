@@ -15,7 +15,8 @@ describe('section buttonStyle', () => {
 	const variants = (page: object) => {
 		const { container, unmount } = render(Page, { page: toStorePage(page) });
 		const found = [...container.querySelectorAll<HTMLElement>('.button-block')].map(
-			(el) => `${el.dataset.variant}: ${el.querySelector('.button-block-cta')?.textContent?.trim()}`
+			(el) =>
+				`${el.dataset.variant}: ${(el.querySelector('.button-block-cta button') ?? el.querySelector('.button-block-cta'))?.textContent?.trim()}`
 		);
 		unmount();
 		return found;

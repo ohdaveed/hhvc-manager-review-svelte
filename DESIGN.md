@@ -79,6 +79,25 @@ typography:
     fontSize: '0.75rem'
     fontWeight: 600
     lineHeight: '1rem'
+  chrome-row-lg:
+    fontFamily: 'Roboto Flex Variable, sans-serif'
+    fontSize: '0.9375rem'
+    lineHeight: '1.375rem'
+  chrome-row:
+    fontFamily: 'Roboto Flex Variable, sans-serif'
+    fontSize: '0.8125rem'
+    lineHeight: '1.125rem'
+  chrome-caption:
+    fontFamily: 'Roboto Flex Variable, sans-serif'
+    fontSize: '0.6875rem'
+    lineHeight: '0.875rem'
+  chrome-micro:
+    fontFamily: 'Roboto Flex Variable, sans-serif'
+    fontSize: '0.625rem'
+    fontWeight: 700
+  chrome-code:
+    fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace'
+    fontSize: '0.6875rem'
   karl-chip:
     fontFamily: 'Roboto Flex Variable, system-ui, sans-serif'
     fontSize: '12px'
@@ -163,7 +182,7 @@ components:
 
 Think of a printer's proof. The SF.gov mockup is the page exactly as it will ship, and the review tool is the reviewer's pencil marks around it. Two layers share every screen, and keeping them apart is the system's main job. The **mockup layer** reproduces SF.gov faithfully, from the Figma file "Public — User Interface Components" (`wv6CXpGGH0W8mAmkXKpiex`). The **chrome layer** (queue, panels, toolbars, landing page) is a neutral utility built on shadcn-svelte, tinted with the older SFDS blues and slates. It is plainly a tool and can't be mistaken for an SF.gov page.
 
-The chrome is dense and small (mostly 12–14px), with light surfaces and few accents. The one thing allowed to speak loudly is a **review mark**: Karl placement chips, review-status pills, and the expired, unverified and drafted-by-AI banners. Marks annotate the page; they never restyle it. A reviewer judges copy in the setting it will publish in, so anything that makes the mockup look less like SF.gov is a defect, however good it looks.
+The chrome is dense and small (mostly 11–15px), with light surfaces and few accents. The one thing allowed to speak loudly is a **review mark**: Karl placement chips, review-status pills, and the expired, unverified and drafted-by-AI banners. Marks annotate the page; they never restyle it. A reviewer judges copy in the setting it will publish in, so anything that makes the mockup look less like SF.gov is a defect, however good it looks.
 
 **Key Characteristics:**
 
@@ -213,8 +232,9 @@ The mockup uses SF.gov's cool civic blues on near-white. The chrome uses quiet n
 
 **Display Font:** Roboto Slab (with ui-serif, Georgia)
 **Body Font:** Roboto Flex Variable (with system-ui)
+**Code Font:** the system monospace stack (`ui-monospace, SFMono-Regular, Menlo, monospace`), chrome only
 
-**Character:** Both layers use the same civic pair: a slab serif for authority and a variable grotesque for running text. The mockup sets it at public-site size; the chrome sets it small and tight.
+**Character:** Both layers use the same civic pair: a slab serif for authority and a variable grotesque for running text. The mockup sets it at public-site size; the chrome sets it small and tight. The monospace stack is a third role, not a third voice: it marks text a reviewer may have to type or match exactly in Karl, and nothing else.
 
 ### Hierarchy
 
@@ -223,13 +243,27 @@ The mockup uses SF.gov's cool civic blues on near-white. The chrome uses quiet n
 - **Site title ladder** (Slab, 2rem → 1.75rem → 1.25rem): mockup section headings. The mobile step lives in `@theme` and the desktop step in a scoped media block.
 - **Site body** (400, 16px / 24px): mockup paragraphs and bullets.
 - **Chrome title** (Slab 600, about 18px): panel and landing-page headings, set with `font-display`.
-- **Chrome body** (14px / 20px): panel copy, queue rows, form text.
+- **Chrome body** (14px / 20px): panel copy and form text.
 - **Chrome label** (600, 12px): field labels, status pills, toolbar labels.
 - **Karl chip** (400, 12px / 16px, no letter-spacing or text-transform): annotations on the page.
+
+The chrome also has a dense small step between and below those, used where a list or panel has to hold many rows:
+
+| Step           | Size                        | Used for                                                                                                                                                                                                                                                                         |
+| -------------- | --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Chrome row lg  | 0.9375rem (15px) / 22px     | Page titles in the full-width landing list (`PageRow` comfortable), the landing filter input, and the Slab titles of the walkthrough, site map and blueprint views.                                                                                                              |
+| Chrome row     | 0.8125rem (13px) / 18px     | Queue row titles (`PageRow` compact), the queue filter input, the queue's progress line, and the comfortable row's second line.                                                                                                                                                  |
+| Chrome caption | 0.6875rem (11px) / 14px     | The queue's status group headings and their counts (700, uppercase, 0.08em tracking) and the compact row's second line.                                                                                                                                                          |
+| Chrome micro   | 0.625rem (10px)             | Count badges (700, the selected-fields count on the Fields tab) and the field key under an analysis finding.                                                                                                                                                                     |
+| Chrome code    | 0.6875rem (11px), monospace | Karl field names, page keys and link targets in the walkthrough, and page slugs on site-map cards. The walkthrough's field path and an analysis finding's quoted text sit at 0.75rem and the finding's key at 0.625rem, in the same stack. Code and data only, never decorative. |
+
+**Chrome sizes are written in rem** (16px root: 10px → 0.625rem, 11px → 0.6875rem, 12px → 0.75rem, 13px → 0.8125rem, 15px → 0.9375rem), so the chrome follows the reader's browser font size (WCAG 1.4.4). The mockup interior keeps Figma's px values, because it has to match the published page rather than the reader's setting.
 
 ### Named Rules
 
 **The Small-But-Strong Rule.** Below 14px, chrome text gets its legibility from weight and the darker slate (`sfds-slate-l3`), never from a lighter grey.
+
+**The Code-Is-Data Rule.** The monospace stack is for strings a reviewer copies into or matches against Karl: field names, paths, keys, slugs, URLs. It never sets headings, labels or prose for texture.
 
 ## Layout
 
@@ -278,11 +312,15 @@ The mockup uses SF.gov's crisp 4px radius (`--site-radius`) on buttons, fields, 
 
 ### Navigation
 
-The mockup's SiteHeader is **inert**: nav items and search are `<span>`s, not links, because a non-working control exposed as a real one fails the axe gate. Chrome navigation is the review queue (PageRow list with status dots) and shadcn tabs.
+The mockup's SiteHeader is **inert**: nav items and search are `<span>`s, not links, because a non-working control exposed as a real one fails the axe gate. Chrome navigation is the review queue and shadcn tabs.
+
+The queue groups its `PageRow`s under status headings (uppercase chrome caption, with a count), so a row carries no status dot: inside a group a dot only repeated the group's colour. A row's second line says what is worth a glance in words, joining the page type, "N edited fields" and "has notes" with `·`. Corpus pages that have no review row are listed last under **Not in the review yet**, with a line saying they can't be decided until a record is added. They open like any other page but are kept out of Undecided, where they would look decidable.
 
 ### Edit Target (signature)
 
-Every addressable field in the mockup is a real `<button>` (the `edit-target` utility), reset to inherit the surrounding copy's font, size, alignment and color. It shows only a hover tint and an instant focus ring. It is the one place the chrome touches the page, and it must not change the page's layout: padding only, never negative margins.
+Every addressable field in the mockup is a real `<button>` (the `edit-target` utility), reset to inherit the surrounding copy's font, size, alignment and color. It shows only a hover tint and an instant focus ring. It is the one place the chrome touches the page, and at rest and on hover or focus it must not change the page's layout: inside the mockup it has no padding, and its tint and rings are outer box-shadows, which take no space. Never negative margins.
+
+**The one deliberate exception is selection.** A selected field's label ("1 · SUMMARY", the number matching its card in the Fields panel) sits above the field, and its host opens about 16px of room to hold it, so the copy below shifts while a field is selected. Decided 2026-11-26 over two alternatives: a label on the ring's edge covers the line above in tight bullet lists (`tests/editTargetBadge.e2e.ts` fails any label that covers other copy), and the phone layout's ~21px side margin is too narrow for a marker. The shift happens only while the author is selecting, never while the page is being presented, and clears with the selection.
 
 ## Do's and Don'ts
 

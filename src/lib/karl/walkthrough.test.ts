@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { allPages, pagesByKey } from '$lib/data';
 import { buildWalkthrough, karlFormUrl, staleEditsMarkdown } from './walkthrough';
 import { gapPages, pagesByKeyWithGaps } from './gapFixtures';
+import { toStorePage } from '$lib/stores/pageData.svelte';
 
 /**
  * The walkthrough is GENERATED from the Karl panel inventory, so these tests
@@ -235,4 +236,22 @@ describe('stale edits in the transcript', () => {
 		expect(plain.stale).toEqual([]);
 		expect(plain.markdown).not.toContain('Saved edits that need a decision');
 	});
+});
+
+describe('the page object the layout hands over', () => {
+	// `pageStore.pages[n]` is built by `toStorePage`, which adds the routable
+	// `id`. It is not copy, but the transcript's sweep reports any page key it
+	// does not recognise, so the drawer listed "`id` — The page carries `id`,
+	// and no About us panel documented in the field map accepts it." under No
+	// Karl field for this content, on every page. Placement already strips it.
+	it.each(allPages.map((p) => [(p as { slug: string }).slug, p] as const))(
+		'%s: no derived key reported as unmapped',
+		(_slug, page) => {
+			const corpusKeys = new Set(Object.keys(page as object));
+			const derived = Object.keys(toStorePage(page as object)).filter((k) => !corpusKeys.has(k));
+			const w = buildWalkthrough(toStorePage(page as object) as never, pagesByKey);
+			const unmapped = w.gaps.filter((g) => g.kind === 'unmapped').map((g) => g.path);
+			expect(unmapped.filter((path) => derived.includes(path))).toEqual([]);
+		}
+	);
 });

@@ -448,7 +448,7 @@
 			>
 				<h3
 					id="{uid}-waiting"
-					class="text-[12px] font-bold tracking-[0.06em] text-sfds-black uppercase"
+					class="text-xs font-bold tracking-[0.06em] text-sfds-black uppercase"
 				>
 					{otherUnsavedChanges.length} unsaved {otherUnsavedChanges.length === 1
 						? 'change'
@@ -458,7 +458,7 @@
 					{#each otherUnsavedChanges as change (change.fieldId)}
 						{@const name =
 							resolveFields(pageData as never, [change.fieldId])[0]?.field.name ?? change.fieldId}
-						<li class="text-[12px] leading-[17px] text-sfds-black">
+						<li class="text-xs leading-[1.0625rem] text-sfds-black">
 							<span class="font-semibold">{name}:</span>
 							<span class="line-clamp-2">{change.value}</span>
 							{#if change.savedElsewhere}
@@ -473,21 +473,21 @@
 								<Button
 									variant="ghost"
 									size="sm"
-									class="h-7 px-2 text-[12px]"
+									class="h-7 px-2 text-xs"
 									aria-label="Edit {name} again"
 									onclick={() => pageStore.select(change.fieldId, true)}>Edit</Button
 								>
 								<Button
 									variant="ghost"
 									size="sm"
-									class="h-7 px-2 text-[12px]"
+									class="h-7 px-2 text-xs"
 									aria-label="Discard the change to {name}"
 									disabled={isSavingChange(change.fieldId)}
 									onclick={() => cancelChange(change.fieldId)}>Discard</Button
 								>
 								<Button
 									size="sm"
-									class="h-7 px-2 text-[12px]"
+									class="h-7 px-2 text-xs"
 									aria-label="Save the change to {name}"
 									disabled={isSavingChange(change.fieldId)}
 									onclick={() => saveChange(change.fieldId)}
@@ -501,7 +501,7 @@
 			</section>
 		{/if}
 		{#if changesElsewhere > 0}
-			<p class="mx-5 mt-3 text-[12px] leading-[17px] text-sfds-slate-l3" role="status">
+			<p class="mx-5 mt-3 text-xs leading-[1.0625rem] text-sfds-slate-l3" role="status">
 				{changesElsewhere} unsaved {changesElsewhere === 1 ? 'change is' : 'changes are'} waiting on other
 				pages. They are still there when you go back.
 			</p>
@@ -509,7 +509,7 @@
 		{#if selected.length === 0}
 			<div class="px-5 py-6 text-sm text-sfds-slate-l3">
 				<p class="font-semibold text-sfds-black">No field selected</p>
-				<p class="mt-1.5 leading-[20px]">
+				<p class="mt-1.5 leading-5">
 					Click any piece of copy in the mockup to select it. Shift-click to add more, and the
 					assistant will rewrite them together.
 				</p>
@@ -517,7 +517,7 @@
 		{:else}
 			<!-- Selection header -->
 			<div class="flex items-center justify-between gap-2 border-b px-5 py-3">
-				<span class="text-[13px] font-semibold text-sfds-black">
+				<span class="text-[0.8125rem] font-semibold text-sfds-black">
 					{selected.length}
 					{selected.length === 1 ? 'field' : 'fields'} selected
 				</span>
@@ -536,10 +536,10 @@
 					{@const inputId = `${uid}-edit-${i}`}
 					{@const dirty = pageStore.hasUnsavedChange(pageId, fieldId)}
 					{@const error = errorFor(fieldId)}
-					<li class="text-[13px]">
+					<li class="text-[0.8125rem]">
 						<label for={inputId} class="flex items-start gap-2">
 							<span
-								class="mt-px inline-flex size-[18px] flex-none items-center justify-center rounded-[3px] bg-sfds-action text-[11px] font-bold text-white"
+								class="mt-px inline-flex size-[18px] flex-none items-center justify-center rounded-[3px] bg-sfds-action text-[0.6875rem] font-bold text-white"
 							>
 								{i + 1}
 							</span>
@@ -551,7 +551,7 @@
 							id={inputId}
 							value={field.value}
 							rows={2}
-							class="mt-1.5 text-[13px]"
+							class="mt-1.5 text-[0.8125rem]"
 							aria-describedby="{inputId}-hint{error ? ` ${inputId}-error` : ''}"
 							aria-invalid={error ? true : undefined}
 							oninput={(e) => typeChange(fieldId, e.currentTarget.value)}
@@ -561,14 +561,14 @@
 						{#if error}
 							<p
 								id="{inputId}-error"
-								class="mt-1.5 text-[12px] leading-[17px] text-sfds-red"
+								class="mt-1.5 text-xs leading-[1.0625rem] text-sfds-red"
 								role="alert"
 							>
 								{error}
 							</p>
 						{/if}
 						{#if pageStore.getChange(pageId, fieldId)?.savedElsewhere}
-							<p class="mt-1.5 text-[12px] leading-[17px] text-sfds-amber" role="status">
+							<p class="mt-1.5 text-xs leading-[1.0625rem] text-sfds-amber" role="status">
 								Someone else saved this field after you started. Saving replaces their wording.
 							</p>
 						{/if}
@@ -577,7 +577,7 @@
 						     change; Save records it as a new edit anchored to the base now. -->
 						{#if !dirty && pageId && pageStore.editStatusOf(pageId, fieldId) === 'expired'}
 							<div
-								class="mt-1.5 rounded-[4px] border border-sfds-amber bg-sfds-amber-l1 px-2 py-1.5 text-[12px] leading-[17px] text-sfds-black"
+								class="mt-1.5 rounded-[4px] border border-sfds-amber bg-sfds-amber-l1 px-2 py-1.5 text-xs leading-[1.0625rem] text-sfds-black"
 								role="group"
 								aria-label="Expired wording for {field.name}"
 							>
@@ -594,13 +594,13 @@
 									<Button
 										variant="ghost"
 										size="sm"
-										class="h-7 px-2 text-[12px]"
+										class="h-7 px-2 text-xs"
 										onclick={() => pageId && pageStore.keepBaseCopy(pageId, fieldId)}
 										>Use the base copy</Button
 									>
 									<Button
 										size="sm"
-										class="h-7 px-2 text-[12px]"
+										class="h-7 px-2 text-xs"
 										onclick={() => pageId && pageStore.reconfirmChange(pageId, fieldId)}
 										>Re-confirm wording</Button
 									>
@@ -609,20 +609,20 @@
 						{/if}
 						{#if dirty}
 							<div class="mt-1.5 flex items-center justify-end gap-1">
-								<span class="mr-auto text-[11px] text-sfds-slate-l3" aria-hidden="true">
+								<span class="mr-auto text-[0.6875rem] text-sfds-slate-l3" aria-hidden="true">
 									Enter to save · Esc to cancel
 								</span>
 								<Button
 									variant="ghost"
 									size="sm"
-									class="h-7 px-2 text-[12px]"
+									class="h-7 px-2 text-xs"
 									aria-label="Cancel the change to {field.name}"
 									disabled={isSavingChange(fieldId)}
 									onclick={() => cancelChange(fieldId)}>Cancel</Button
 								>
 								<Button
 									size="sm"
-									class="h-7 px-2 text-[12px]"
+									class="h-7 px-2 text-xs"
 									aria-label="Save the change to {field.name}"
 									disabled={isSavingChange(fieldId)}
 									onclick={() => saveChange(fieldId)}
@@ -637,7 +637,7 @@
 
 			{#if stale.length > 0}
 				<p
-					class="mx-5 rounded-[4px] border-l-2 border-sfds-red bg-sfds-red-l1 px-3 py-2 text-[12px] text-sfds-red"
+					class="mx-5 rounded-[4px] border-l-2 border-sfds-red bg-sfds-red-l1 px-3 py-2 text-xs text-sfds-red"
 				>
 					{stale.length}
 					{stale.length === 1 ? 'selection is' : 'selections are'} no longer on this page and will be
@@ -649,15 +649,15 @@
 				<div
 					class="mx-5 mt-3 rounded-[4px] border-l-2 border-sfds-amber bg-sfds-amber-l1 px-3 py-2"
 				>
-					<p class="text-[12px] font-bold tracking-[0.06em] text-sfds-amber uppercase">
+					<p class="text-xs font-bold tracking-[0.06em] text-sfds-amber uppercase">
 						Unverified copy
 					</p>
-					<p class="mt-1 text-[12px] leading-[17px] text-sfds-black">
+					<p class="mt-1 text-xs leading-[1.0625rem] text-sfds-black">
 						{unverified.length}
 						{unverified.length === 1 ? 'field has' : 'fields have'} no confirmed source. HHVC has to confirm
 						the facts before this ships, whatever the wording.
 					</p>
-					<ul class="mt-1.5 list-disc space-y-0.5 pl-4 text-[12px] text-sfds-black">
+					<ul class="mt-1.5 list-disc space-y-0.5 pl-4 text-xs text-sfds-black">
 						{#each unverified as { fieldId, field } (fieldId)}
 							<li>{field.name}{field.unverifiedReason ? ` — ${field.unverifiedReason}` : ''}</li>
 						{/each}
@@ -668,13 +668,13 @@
 			<!-- Agent recommendation -->
 			<section class="mx-5 mt-4 rounded-[4px] border p-3" aria-label="Assistant recommendation">
 				<div class="flex items-center justify-between gap-2">
-					<span class="text-[12px] font-bold tracking-[0.06em] text-sfds-black uppercase">
+					<span class="text-xs font-bold tracking-[0.06em] text-sfds-black uppercase">
 						What to change
 					</span>
 					<Button
 						variant="outline"
 						size="sm"
-						class="h-7 px-2 text-[12px]"
+						class="h-7 px-2 text-xs"
 						disabled={pageStore.agentRec.state === 'loading'}
 						onclick={recommend}
 					>
@@ -683,17 +683,19 @@
 				</div>
 
 				{#if pageStore.agentRec.state === 'idle'}
-					<p class="mt-2 text-[12px] leading-[17px] text-sfds-slate-l3">
+					<p class="mt-2 text-xs leading-[1.0625rem] text-sfds-slate-l3">
 						Ask the assistant what it would change about the selected copy before rewriting it.
 					</p>
 				{:else if pageStore.agentRec.state === 'loading'}
-					<p class="mt-2 text-[12px] text-sfds-slate-l3" role="status">Reading the selection…</p>
+					<p class="mt-2 text-xs text-sfds-slate-l3" role="status">Reading the selection…</p>
 				{:else if pageStore.agentRec.state === 'error'}
-					<p class="mt-2 text-[12px] leading-[17px] text-sfds-red" role="alert">
+					<p class="mt-2 text-xs leading-[1.0625rem] text-sfds-red" role="alert">
 						{pageStore.agentRec.text}
 					</p>
 				{:else}
-					<p class="mt-2 text-[13px] leading-[19px] text-sfds-black">{pageStore.agentRec.text}</p>
+					<p class="mt-2 text-[0.8125rem] leading-[1.1875rem] text-sfds-black">
+						{pageStore.agentRec.text}
+					</p>
 				{/if}
 			</section>
 
@@ -704,7 +706,7 @@
 						<Button
 							variant="outline"
 							size="sm"
-							class="h-8 text-[12px]"
+							class="h-8 text-xs"
 							disabled={rewriting}
 							onclick={() => rewrite(preset.instruction)}
 						>
@@ -716,24 +718,24 @@
 				<Textarea
 					bind:value={pageStore.rewriteInstruction}
 					rows={2}
-					class="mt-2 text-[13px]"
+					class="mt-2 text-[0.8125rem]"
 					maxlength={MAX_INSTRUCTION_CHARS}
 					aria-label="Rewrite instruction"
 					placeholder="Or describe the change in your own words…"
 				/>
 				{#if instructionError}
-					<p class="mt-1.5 text-[12px] leading-[17px] text-sfds-red" role="alert">
+					<p class="mt-1.5 text-xs leading-[1.0625rem] text-sfds-red" role="alert">
 						{instructionError}
 					</p>
 				{/if}
 				{#if rewriteNotice}
-					<p class="mt-1.5 text-[12px] leading-[17px] text-sfds-amber" role="status">
+					<p class="mt-1.5 text-xs leading-[1.0625rem] text-sfds-amber" role="status">
 						{rewriteNotice}
 					</p>
 				{/if}
 				<Button
 					size="sm"
-					class="mt-2 h-8 w-full text-[12px]"
+					class="mt-2 h-8 w-full text-xs"
 					disabled={rewriting || pageStore.rewriteInstruction.trim() === ''}
 					onclick={() => rewrite(pageStore.rewriteInstruction.trim())}
 				>
@@ -747,7 +749,7 @@
 			{#if cards.length > 0}
 				<section class="mt-5" aria-label="Suggestions">
 					<div class="flex items-center justify-between px-5">
-						<span class="text-[12px] font-bold tracking-[0.06em] text-sfds-black uppercase">
+						<span class="text-xs font-bold tracking-[0.06em] text-sfds-black uppercase">
 							Suggestions
 						</span>
 						<span class="flex gap-1">
@@ -759,7 +761,7 @@
 								<Button
 									variant="ghost"
 									size="sm"
-									class="h-7 px-2 text-[12px]"
+									class="h-7 px-2 text-xs"
 									onclick={() => decideAll('pending')}>Undo all</Button
 								>
 							{/if}
@@ -767,13 +769,13 @@
 								<Button
 									variant="ghost"
 									size="sm"
-									class="h-7 px-2 text-[12px]"
+									class="h-7 px-2 text-xs"
 									onclick={() => decideAll('rejected')}>Reject all</Button
 								>
 								<Button
 									variant="ghost"
 									size="sm"
-									class="h-7 px-2 text-[12px] text-sfds-action"
+									class="h-7 px-2 text-xs text-sfds-action"
 									onclick={() => decideAll('accepted')}>Accept all</Button
 								>
 							{/if}
@@ -787,23 +789,27 @@
 								<div class="flex items-center gap-2">
 									{#if badge > 0}
 										<span
-											class="inline-flex size-[18px] flex-none items-center justify-center rounded-[3px] bg-sfds-action text-[11px] font-bold text-white"
+											class="inline-flex size-[18px] flex-none items-center justify-center rounded-[3px] bg-sfds-action text-[0.6875rem] font-bold text-white"
 										>
 											{badge}
 										</span>
 									{/if}
-									<span class="min-w-0 flex-1 truncate text-[12px] text-sfds-slate-l3">
+									<span class="min-w-0 flex-1 truncate text-xs text-sfds-slate-l3">
 										{resolveFields(pageData as never, [fieldId])[0]?.field.name ?? fieldId}
 									</span>
 									{#if suggestion.status === 'accepted'}
-										<span class="text-[11px] font-bold text-sfds-green uppercase">Accepted</span>
+										<span class="text-[0.6875rem] font-bold text-sfds-green uppercase"
+											>Accepted</span
+										>
 									{:else if suggestion.status === 'rejected'}
-										<span class="text-[11px] font-bold text-sfds-slate-l3 uppercase">Rejected</span>
+										<span class="text-[0.6875rem] font-bold text-sfds-slate-l3 uppercase"
+											>Rejected</span
+										>
 									{/if}
 								</div>
 
 								{#if suggestion.status === 'error'}
-									<p class="mt-2 text-[12px] leading-[17px] text-sfds-red" role="alert">
+									<p class="mt-2 text-xs leading-[1.0625rem] text-sfds-red" role="alert">
 										{suggestion.message}
 									</p>
 								{:else}
@@ -811,12 +817,12 @@
 									     interleaved: these are two different sentences, and an
 									     inline word-diff of prose reads as neither of them. -->
 									<p
-										class="mt-2 rounded-[3px] bg-sfds-red-l1 px-2 py-1.5 text-[13px] leading-[19px] text-sfds-black line-through decoration-1"
+										class="mt-2 rounded-[3px] bg-sfds-red-l1 px-2 py-1.5 text-[0.8125rem] leading-[1.1875rem] text-sfds-black line-through decoration-1"
 									>
 										{suggestion.original}
 									</p>
 									<p
-										class="mt-1.5 rounded-[3px] bg-sfds-green-l1 px-2 py-1.5 text-[13px] leading-[19px] text-sfds-black"
+										class="mt-1.5 rounded-[3px] bg-sfds-green-l1 px-2 py-1.5 text-[0.8125rem] leading-[1.1875rem] text-sfds-black"
 									>
 										{suggestion.suggested}
 									</p>
@@ -827,12 +833,12 @@
 										<Button
 											variant="ghost"
 											size="sm"
-											class="h-7 px-2 text-[12px]"
+											class="h-7 px-2 text-xs"
 											onclick={() => decide(fieldId, 'rejected')}>Reject</Button
 										>
 										<Button
 											size="sm"
-											class="h-7 px-2 text-[12px]"
+											class="h-7 px-2 text-xs"
 											disabled={pageStore.hasUnsavedChange(pageId, fieldId)}
 											title={pageStore.hasUnsavedChange(pageId, fieldId)
 												? 'Save or cancel your unsaved change to this field first'
@@ -849,7 +855,7 @@
 										<Button
 											variant="ghost"
 											size="sm"
-											class="h-7 px-2 text-[12px]"
+											class="h-7 px-2 text-xs"
 											aria-label="Undo {suggestion.status === 'accepted'
 												? 'accepting'
 												: 'rejecting'} this rewrite"
@@ -871,10 +877,10 @@
 	     panel, not counted here: this button cannot save them. -->
 	<div class="flex-none border-t px-5 py-3">
 		{#if saveError}
-			<p class="mb-2 text-[12px] leading-[17px] text-sfds-amber" role="status">{saveError}</p>
+			<p class="mb-2 text-xs leading-[1.0625rem] text-sfds-amber" role="status">{saveError}</p>
 		{/if}
 		{#if sessionStore.knownSignedOut}
-			<p class="mb-2 text-[12px] leading-[17px] text-sfds-slate-l3">
+			<p class="mb-2 text-xs leading-[1.0625rem] text-sfds-slate-l3">
 				<a
 					href={resolve('/login')}
 					class="font-semibold text-sfds-action underline underline-offset-2">Sign in</a
@@ -888,7 +894,13 @@
 			disabled={unsavedHere === 0 || saving || sessionStore.knownSignedOut}
 			onclick={saveAll}
 		>
-			{saving ? 'Saving…' : `Save ${unsavedHere} ${unsavedHere === 1 ? 'change' : 'changes'}`}
+			<!-- "Save 0 changes" named an action that cannot happen; at zero the
+			     disabled button says why it is disabled instead. -->
+			{saving
+				? 'Saving…'
+				: unsavedHere === 0
+					? 'No changes to save'
+					: `Save ${unsavedHere} ${unsavedHere === 1 ? 'change' : 'changes'}`}
 		</Button>
 	</div>
 </div>
