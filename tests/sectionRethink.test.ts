@@ -4,6 +4,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { render, fireEvent, screen } from '@testing-library/svelte';
 import Section from '../src/lib/components/Section.svelte';
+import SectionOutlineHarness from './SectionOutlineHarness.svelte';
 import { pageStore } from '../src/lib/stores/pageData.svelte.js';
 import { sessionStore } from '../src/lib/stores/session.svelte.js';
 
@@ -60,5 +61,67 @@ describe('Section rethink control', () => {
 
 		expect(button1.getAttribute('aria-label')).toBe('Rethink What we do');
 		expect(button2.getAttribute('aria-label')).toBe('Rethink How to report');
+	});
+});
+
+describe('Section Karl gap pill (outline off)', () => {
+	const placements = (status: string) =>
+		({
+			fields: new Map(),
+			sections: new Map([
+				[
+					'what-we-do',
+					{
+						sectionKey: 'what-we-do',
+						heading: 'What we do',
+						rawName: null,
+						label: '',
+						status,
+						reasons: ['Why.']
+					}
+				]
+			])
+		}) as never;
+
+	beforeEach(() => {
+		sessionStore.signedIn = true;
+	});
+
+	it.each([
+		['unconfirmed', 'Karl’s rule unconfirmed'],
+		['unplaced', 'Won’t carry over to Karl']
+	])('names a %s section beside its Rethink control', (status, text) => {
+		const { container } = render(SectionOutlineHarness, {
+			props: { section, index: 1, always: placements(status) }
+		});
+		const chrome = container.querySelector('.page-section-chrome')!;
+		expect(chrome.querySelector(`[data-karl-chip="${status}"]`)?.textContent).toContain(text);
+		expect(chrome.querySelector('[data-rethink-section="what-we-do"]')).toBeTruthy();
+	});
+
+	it('stays quiet for a section that goes into Karl', () => {
+		const { container } = render(SectionOutlineHarness, {
+			props: { section, index: 1, always: placements('placed') }
+		});
+		expect(container.querySelector('.page-section-chrome .karl-chip')).toBeNull();
+	});
+
+	it('defers to the outline when it is on, so the status is not said twice', () => {
+		const p = placements('unconfirmed');
+		const { container } = render(SectionOutlineHarness, {
+			props: { section, index: 1, placements: p, always: p }
+		});
+		expect(container.querySelectorAll('.karl-chip')).toHaveLength(1);
+		expect(container.querySelector('.page-section-chrome .karl-chip')).toBeNull();
+	});
+
+	it('still shows signed out, where there is no Rethink control', () => {
+		sessionStore.signedIn = false;
+		const { container } = render(SectionOutlineHarness, {
+			props: { section, index: 1, always: placements('unplaced') }
+		});
+		expect(
+			container.querySelector('.page-section-chrome [data-karl-chip="unplaced"]')
+		).toBeTruthy();
 	});
 });
