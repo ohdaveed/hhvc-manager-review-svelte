@@ -536,16 +536,21 @@ body {
 		line-height: 1.5rem;
 	}
 
+	/* Live sf.gov's rich-text rhythm is 20px: paragraph to paragraph, and
+	   paragraph to list either way, where a list's own 16px/20px margins
+	   collapse into the paragraph's 20px. Measured 2026-11-26 on
+	   `report-health-nuisance-or-hazards` and
+	   `information--keeping-your-building-free-vermin` at 1074px. */
 	& p {
-		margin-block: 0 1rem;
+		margin-block: 0 20px;
 	}
 	/* 40px indent and 12px between items: live sf.gov's rich-text lists,
 	   measured 2026-11-26 on `dph-leaves-absence` and
 	   `report-health-nuisance-or-hazards` at 390 and 1074px. */
 	& ul,
 	& ol {
-		margin-top: 0.35rem;
-		margin-bottom: 1rem;
+		margin-top: 16px;
+		margin-bottom: 20px;
 		padding-left: 40px;
 	}
 	& li {

@@ -237,7 +237,8 @@ function subLabel(rest: string, type = ''): string {
 }
 
 const HAS_PLACEHOLDER = /PLACEHOLDER/;
-const RELATED_HEADING = /^\s*related\b/i;
+/** How a section is recognised as Related; Section.svelte renders by the same rule. */
+export const RELATED_HEADING = /^\s*related\b/i;
 const RELATED_PANELS = new Set(['related', 'related_links']);
 
 /** "a Campaign page", "an Information page". */

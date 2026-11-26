@@ -9,6 +9,7 @@
 	import TableBlock from './blocks/TableBlock.svelte';
 	import KarlChip from './KarlChip.svelte';
 	import { outlineContext } from '$lib/karl/outlineContext';
+	import { RELATED_HEADING } from '$lib/karl/placement';
 	import { entryText, entryUnverified } from '$lib/corpus/fieldResolver';
 	import { pageStore } from '$lib/stores/pageData.svelte';
 	import { sessionStore } from '$lib/stores/session.svelte';
@@ -121,14 +122,21 @@
 		{/if}
 
 		<!-- Related renders as sf.gov's 3-column link list, not cards. Same
-		     `sections.<key>.cards.<i>.*` ids and `Card [n]` names as CardsBlock. -->
-		{#if section.cards && section.component === 'related'}
+		     `sections.<key>.cards.<i>.*` ids and `Card [n]` names as CardsBlock.
+		     A section is Related by its tag OR its heading -- the heading rule is
+		     the one Karl placement uses (`RELATED_HEADING`), and 27 of the 34
+		     "Related pages" sections carry no `component: 'related'` tag, so
+		     keying on the tag alone drew them as stacked cards. The orphan check
+		     stays on the tag: on some page types placement puts an untagged
+		     Related section in another panel, and flagging it here would
+		     contradict the Analysis panel (`karlComponentChecks`). -->
+		{#if section.cards && (section.component === 'related' || RELATED_HEADING.test(section.heading ?? ''))}
 			<LinkGrid
 				items={section.cards}
 				fieldPrefix={`sections.${key}.cards`}
 				label={`${label} Card`}
 				columns={3}
-				checkRelated
+				checkRelated={section.component === 'related'}
 			/>
 		{:else if section.cards}
 			<CardsBlock cards={section.cards} sectionKey={key} {label} />
