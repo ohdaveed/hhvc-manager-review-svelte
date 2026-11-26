@@ -173,7 +173,7 @@
 								<span class="block text-sfds-slate-l3">{item.detail}</span>
 							{/if}
 							{#if item.key}
-								<span class="block font-mono text-[10px] break-all text-sfds-slate-l3">
+								<span class="block font-mono text-[0.625rem] break-all text-sfds-slate-l3">
 									{item.key}
 								</span>
 							{/if}
@@ -253,7 +253,7 @@
 						{/each}
 					</ul>
 
-					<p class="text-[11px] leading-relaxed text-sfds-slate-l3">
+					<p class="text-[0.6875rem] leading-relaxed text-sfds-slate-l3">
 						Measured over {analysis.measuredFields} copy fields —
 						{analysis.readability.wordCount} words, {analysis.readability.sentenceCount} sentences,
 						{analysis.readability.wordsPerSentence.toFixed(1)} words per sentence.
@@ -307,7 +307,7 @@
 
 		<Separator />
 
-		<p class="text-[11px] leading-relaxed text-sfds-slate-l3">
+		<p class="text-[0.6875rem] leading-relaxed text-sfds-slate-l3">
 			Copy checks read the corpus module, so they cover <strong
 				>steps and cards the mockup does not render</strong
 			>. Markup checks read the rendered page. Ported from the Karl Jr. browser extension, which

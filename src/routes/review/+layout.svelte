@@ -571,7 +571,7 @@
 			<div class="flex h-12 flex-none items-center gap-2 border-b border-sfds-grey-l2 pr-3 pl-5">
 				<a
 					href={resolve('/')}
-					class="flex min-w-0 flex-1 items-center gap-1.5 text-[13px] font-semibold text-sfds-action hover:underline"
+					class="flex min-w-0 flex-1 items-center gap-1.5 text-[0.8125rem] font-semibold text-sfds-action hover:underline"
 					data-testid="all-pages-link"
 				>
 					<ArrowLeft class="size-3.5 flex-none" aria-hidden="true" />
@@ -621,7 +621,7 @@
 				     button, since it switches a mode rather than loading a URL. -->
 				<button
 					type="button"
-					class="text-[13px] font-semibold text-sfds-action underline-offset-2 hover:underline"
+					class="text-[0.8125rem] font-semibold text-sfds-action underline-offset-2 hover:underline"
 					onclick={() => pageStore.showSitemap()}>Site map</button
 				>
 				<!-- Client-side export of live review statuses, checks, notes, and
@@ -805,7 +805,7 @@
 						     button at 1280px. Each carries an aria-label and a title. -->
 						<div class="flex flex-none items-center gap-2">
 							<span
-								class="text-[11px] font-semibold text-sfds-slate-l3 tabular-nums"
+								class="text-[0.6875rem] font-semibold text-sfds-slate-l3 tabular-nums"
 								data-testid="preview-width"
 								title="Rendered at {frameWidth}px: the sf.gov {previewBand(
 									frameWidth
@@ -1058,7 +1058,7 @@
 				     it is repeated here rather than hidden with the tabs. -->
 				{#if unsavedCount > 0}
 					<span
-						class="inline-flex size-6 items-center justify-center rounded-full bg-sfds-action text-[11px] font-bold text-white"
+						class="inline-flex size-6 items-center justify-center rounded-full bg-sfds-action text-[0.6875rem] font-bold text-white"
 						role="status"
 						aria-label="{unsavedCount} unsaved {unsavedCount === 1 ? 'change' : 'changes'}"
 					>
@@ -1091,7 +1091,7 @@
 		border-radius: 0 0 4px 0;
 		background: var(--color-sfds-action);
 		padding: 0.625rem 1rem;
-		font-size: 13px;
+		font-size: 0.8125rem;
 		font-weight: 600;
 		color: #fff;
 	}
