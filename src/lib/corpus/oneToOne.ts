@@ -122,6 +122,21 @@ export function findOneToOneViolations(pages: AnyPage[]): OneToOneViolation[] {
 				reason: `No panel on a ${type || 'page'} holds an image.`
 			});
 		}
+
+		// The same rule for a photo attached to one section. Whether the image
+		// also meets Karl's size, alt-text and credit rules is a separate
+		// question, answered by `findImageIssues` in `./sectionImage`.
+		(Array.isArray(page?.sections) ? page.sections : []).forEach((section: AnyPage, i: number) => {
+			if (!section?.image || acceptsImage(type)) return;
+			violations.push({
+				slug,
+				type,
+				where: `sections.${i}.image`,
+				text: String(section.image.alt ?? section.image.src ?? '(image)'),
+				rule: 'image-without-panel',
+				reason: `No panel on a ${type || 'page'} holds an image.`
+			});
+		});
 	}
 
 	return violations;
