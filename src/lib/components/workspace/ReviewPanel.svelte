@@ -104,7 +104,7 @@
 	// into. Labels are all noun-phrases describing the state the page is IN,
 	// rather than the old mix of two verbs and an adjective.
 	//
-	// The LABELS are `STATUS_LABELS[].decisionLabel`, shared with the queue and
+	// The LABELS are `STATUS_LABELS[].label`, shared with the queue and
 	// the landing page. `tone` stays here: it is the toggle's filled selected
 	// state, written against `data-[state=on]` and this control's hover
 	// override, and it is not the badge colour (white on a solid fill, where a
@@ -128,7 +128,7 @@
 				tone: 'text-destructive data-[state=on]:border-destructive data-[state=on]:bg-destructive data-[state=on]:hover:bg-destructive'
 			}
 		] satisfies { value: Decision; tone: string }[]
-	).map((d) => ({ ...d, label: STATUS_LABELS[d.value].decisionLabel }));
+	).map((d) => ({ ...d, label: STATUS_LABELS[d.value].label }));
 
 	// The RENDERED decision, kept in step with the stored row.
 	//
@@ -274,7 +274,7 @@
 					<ToggleGroup.Item
 						value={decision.value}
 						aria-label={decision.label}
-						class="h-auto min-h-7 min-w-0 flex-1 shrink px-0! py-1 leading-tight whitespace-normal disabled:text-sfds-slate-l2 disabled:opacity-100 data-[state=on]:text-white data-[state=on]:hover:text-white @max-[18rem]/decision:rounded-md! @max-[18rem]/decision:border-l! {decision.tone}"
+						class="h-auto min-h-7 min-w-0 flex-auto shrink px-0! py-1 leading-tight whitespace-normal disabled:text-sfds-slate-l2 disabled:opacity-100 data-[state=on]:text-white data-[state=on]:hover:text-white @max-[18rem]/decision:rounded-md! @max-[18rem]/decision:border-l! {decision.tone}"
 					>
 						{decision.label}
 					</ToggleGroup.Item>

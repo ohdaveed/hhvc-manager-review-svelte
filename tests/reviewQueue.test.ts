@@ -116,7 +116,7 @@ describe('ReviewQueue', () => {
 
 		expect(screen.queryByRole('region', { name: 'Review progress' })).toBeNull();
 		expect(screen.queryByText(/decided/)).toBeNull();
-		expect(screen.queryByText('Needs review')).toBeNull();
+		expect(screen.queryByText('Undecided')).toBeNull();
 	});
 
 	it('filters the signed-out corpus list', async () => {
@@ -229,7 +229,7 @@ describe('ReviewQueue', () => {
 			expect(screen.getAllByRole('link').map((a) => a.getAttribute('href'))).toEqual([
 				'/review/topic-x--report'
 			]);
-			expect(screen.getByText('Needs review').parentElement?.textContent).toContain('1');
+			expect(screen.getByText('Undecided').parentElement?.textContent).toContain('1');
 			expect(screen.queryByText('Approved')).toBeNull();
 		});
 
@@ -259,6 +259,43 @@ describe('ReviewQueue', () => {
 
 			expect(screen.queryByRole('searchbox')).toBeNull();
 			sessionStore.signedIn = false;
+		});
+	});
+
+	// Signed in with an empty store, the queue said "This review has no pages
+	// yet." while the load was still in flight -- seen 1.5s into a normal load.
+	// The empty message is now reserved for a load that resolved with nothing.
+	describe('while the review is empty and signed in', () => {
+		beforeEach(() => {
+			pagesStore.set([]);
+			sessionStore.signedIn = true;
+			return () => {
+				sessionStore.signedIn = false;
+			};
+		});
+
+		it('says it is loading, not that the review is empty', () => {
+			render(ReviewQueue, { loadState: 'loading' });
+
+			expect(screen.getByRole('status').textContent).toBe('Loading the queue…');
+			expect(screen.queryByText(/no pages yet/)).toBeNull();
+		});
+
+		it('says the load failed and offers Try again', async () => {
+			const onRetry = vi.fn(async () => {});
+			render(ReviewQueue, { loadState: 'failed', onRetry });
+
+			expect(screen.getByRole('alert').textContent).toMatch(/The queue didn't load/);
+			expect(screen.queryByText(/no pages yet/)).toBeNull();
+			await fireEvent.click(screen.getByRole('button', { name: 'Try again' }));
+			expect(onRetry).toHaveBeenCalledOnce();
+		});
+
+		it('says the review has no pages only once the load resolved', () => {
+			render(ReviewQueue, { loadState: 'ready' });
+
+			expect(screen.getByText('This review has no pages yet.')).toBeTruthy();
+			expect(screen.queryByRole('alert')).toBeNull();
 		});
 	});
 });

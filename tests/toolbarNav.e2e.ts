@@ -50,15 +50,15 @@ test('keeps the decision on screen when the panel is collapsed', async ({ page }
 	await page.setViewportSize({ width: 1440, height: 900 });
 	await gotoSignedIn(page, FIRST);
 
-	await expect(page.getByTestId('toolbar-status')).toHaveText('Needs review');
+	await expect(page.getByTestId('toolbar-status')).toHaveText('Undecided');
 	await page.getByRole('button', { name: 'Collapse review panel' }).click();
-	await expect(page.getByRole('img', { name: 'Decision: Needs review' })).toBeVisible();
+	await expect(page.getByRole('img', { name: 'Decision: Undecided' })).toBeVisible();
 });
 
 test('carries the decision on the phone Review button', async ({ page }) => {
 	await page.setViewportSize({ width: 375, height: 812 });
 	await gotoSignedIn(page, FIRST);
-	await expect(page.getByRole('button', { name: 'Review (Needs review)' })).toBeVisible();
+	await expect(page.getByRole('button', { name: 'Review (Undecided)' })).toBeVisible();
 });
 
 test('renders the export review data button in the queue footer', async ({ page }) => {
