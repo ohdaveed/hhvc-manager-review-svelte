@@ -104,6 +104,8 @@ Page content lives as plain TypeScript modules in `src/lib/data/`, one per mocku
 
 `src/lib/stores/pageData.svelte.ts` derives the routable id at construction time: `sf.gov/topic-x--about` becomes `topic-x--about` (strip `sf.gov/`, slashes to dashes). So `/review/[slug]` matches that derived id, **not** the `slug` field in the data module. Adding a page means adding the module and exporting it from `index.ts`; nothing else registers it.
 
+**A section can carry an `image`** (`{ src, alt, width, height, credit }`), with the file under `static/images/mockup/`. Karl has a verified home for one in only two places — an Information section's `Image` block and a Campaign Spotlight's image — and `findImageIssues` in `$lib/corpus/sectionImage` enforces Karl's image rules against the real files (minimum size per placement, alt text, attribution). Two rules it cannot check were checked by eye when each photo was chosen: no text in the image, and no abstract or posed-stock photography. A watermark counts as text, which is why no photo comes from the NYSIPM gallery.
+
 ### Two parallel state systems
 
 These are unrelated and easy to confuse:

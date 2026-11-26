@@ -592,6 +592,29 @@ function emitContact(context, entry, contact) {
 	if (entry.fields.length) context.transcript.entries.push(entry);
 }
 
+/**
+ * The fields an editor needs to place one photo: which file to upload, the alt
+ * text to type, and the attribution. The attribution is printed for every
+ * image, but only a Creative Commons licence makes it a requirement (Karl,
+ * "Image guidance": title, creator, source link, licence).
+ */
+function pushImageFields(context, entry, image, altPath, labelPrefix) {
+	const alt = resolveValue(context.page, context.reviewRecord, altPath);
+	entry.overlaid = entry.overlaid || alt.overlaid;
+	entry.fields.push({
+		label: `${labelPrefix} — file`,
+		value: `${image.src} (${image.width}×${image.height})`
+	});
+	entry.fields.push({ label: `${labelPrefix} — alt text`, value: String(alt.value || '') });
+	const credit = image.credit || {};
+	const attribution = `${credit.title ? `“${credit.title}” by ` : ''}${credit.creator}, ${credit.license} — ${credit.sourceUrl}`;
+	const required = /^CC BY/i.test(String(credit.license || ''));
+	entry.fields.push({
+		label: `${labelPrefix} — attribution${required ? ' (REQUIRED by the licence)' : ' (not required)'}`,
+		value: attribution
+	});
+}
+
 /** Karl's Spotlight block, wherever it is hosted. */
 function emitSpotlightValue(context, entry, spotlight, basePath) {
 	if (spotlight.title) entry.fields.push({ label: 'Spotlight title', value: spotlight.title });
@@ -601,10 +624,13 @@ function emitSpotlightValue(context, entry, spotlight, basePath) {
 		collectLinks(context, entry, description);
 	}
 	if (spotlight.image) {
-		entry.fields.push({
-			label: 'Spotlight image (chooser, min 1080×350)',
-			value: spotlight.image.alt || '(image)'
-		});
+		pushImageFields(
+			context,
+			entry,
+			spotlight.image,
+			`${basePath}.image.alt`,
+			'Spotlight image (chooser, min 1080×350)'
+		);
 	}
 	if (spotlight.button) {
 		entry.fields.push({ label: 'Button link — Link text', value: spotlight.button });
@@ -868,6 +894,24 @@ function emitSectionProse(context, entry, section, index, options) {
 		// On any other type the table is left unconsumed and reported by the sweep:
 		// Report is the only Karl content type with a Table block, so there is
 		// genuinely nowhere for one to go.
+	}
+
+	// Information's stream offers Title and text | Image | Callout, so a section
+	// photo becomes its own Image block right after this one. Any other type is
+	// left unconsumed for the sweep, the same as a table: `imagePlacement` in
+	// $lib/corpus/sectionImage refuses those placements too.
+	if (section.image && context.type === 'Information') {
+		pushImageFields(
+			context,
+			entry,
+			section.image,
+			`sections.${index}.image.alt`,
+			'Then add an Image block'
+		);
+		entry.notes.push(
+			'The Image is a separate block in the Information section stream: add it directly after this Title and text block (+ → Image → Choose an image → Upload), then type the alt text. Information images show uncropped and need to be at least 700px wide.'
+		);
+		claim(context, `sections.${index}.image`);
 	}
 
 	if (section.callout) emitCallout(context, entry, section.callout, `sections.${index}.callout`);

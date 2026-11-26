@@ -367,7 +367,9 @@ describe('extractFields/extractCopy coverage of the real corpus', () => {
 		'topicTag',
 		'whatToKnow'
 	];
-	const COPY_ONLY_SECTION = ['button', 'buttonUrl', 'cards', 'facts', 'steps', 'table'];
+	// `image` is copy-only for its `alt`: the file path, pixel size and credit
+	// are provenance, which `extractCopy` deliberately leaves out of the hash.
+	const COPY_ONLY_SECTION = ['button', 'buttonUrl', 'cards', 'facts', 'image', 'steps', 'table'];
 	const COPY_ONLY_CALLOUT: string[] = [];
 
 	// Metadata, annotations, and structural/config keys. These are correctly

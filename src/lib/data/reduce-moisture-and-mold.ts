@@ -20,7 +20,20 @@ export const reduceMoisture = {
 		},
 		{
 			heading: 'Mold is a moisture problem',
-			karl: 'Maps to an "Information section" → Title and text block: Title = this heading, Text = the two paragraphs below.',
+			image: {
+				src: '/images/mockup/mold-above-light-switch.webp',
+				alt: 'Dark spots of mold spread across a damp wall above a light switch.',
+				width: 1280,
+				height: 960,
+				credit: {
+					title: 'Mold grows above a switch plate in this home',
+					creator: 'FEMA',
+					sourceUrl:
+						'https://commons.wikimedia.org/wiki/File:Flooding_%5E_Severe_Storm_-_Memphis,_Tenn._,_May_28,_2011_--_Mold_grows_above_a_switch_plate_in_this_home._FEMA_mitigation_teams_are_emphatic_about_the_dangers_of_mold_and_have_precau_-_DPLA_-_ca96e17a8de030703b06da269682a80d.jpg',
+					license: 'Public domain'
+				}
+			},
+			karl: 'Maps to an "Information section" → Title and text block: Title = this heading, Text = the two paragraphs below. Then an Information section → Image block right after it, holding the mold photo: it shows what "visible mold" on a wet wall looks like, which the paragraphs describe but do not picture. Upload the 1280×960 file (Information images need 700px+ wide, shown uncropped) with the alt text as written. It is a landscape crop of a portrait FEMA photo (Memphis, 2011), cropped so it does not run a full screen tall; the switch-plate markings are incidental text, which Karl allows. Public domain (US federal work) — no attribution required.',
 			kind: 'body',
 			paragraphs: [
 				'Tiny mold spores are in every home. They only grow into visible mold when a surface stays wet. Stop the water, and you stop the mold.',

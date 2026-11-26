@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "corpusHash": "36a862aecc9ab61053889097d5873631209ba15ef5b201f9ae37594b694dc157",
+  "corpusHash": "a3db7db7473058bb165880a2e813351e2f6e2083e2db1eeff47adeaab6bd4407",
   "pages": {
     "departments--healthy-housing-and-vector-control": {
       "contentHash": "0dbd9dd7bbad4361a566c5cd2c714223d97028f482b3ba8c958c082887615fc9",
@@ -132,7 +132,7 @@
       }
     },
     "information-bed-bugs-prevent-find-and-prepare-for-treatment": {
-      "contentHash": "1669f7bfce3fc19ad4f986e6389b10b07eeec49f6981b02065f44090a202ca96",
+      "contentHash": "cdc995febcf8fc83d5cca68efb58cf002e15e09a4cd92c661203649117ff9c51",
       "fieldHashes": {
         "sections.check-for-bed-bugs.bullets.0": "d44bd88de28668418bb15ed6a197fde5c64af320f1ced1a98a0821c8470ea84a",
         "sections.check-for-bed-bugs.bullets.1": "4ab10d6d5a0ec5bf846e4bc8349194f960760ba1d35f80cb471d57e42e2357ab",
@@ -326,7 +326,7 @@
       }
     },
     "information-keep-rats-and-mice-out-of-your-home": {
-      "contentHash": "01756450f2900d284db7342a266d247d68a8a16e4bb818a3e8f151fbd68c0d87",
+      "contentHash": "7a9a4e8c9f71d59d25d9aa679a930797141a5f7445545d935da48c0e109853df",
       "fieldHashes": {
         "sections.cut-off-their-food-and-water.bullets.0": "5333f6aee365feb73e9aa44b3519238ca69d14fd12700dd2d21f53e4710ce07b",
         "sections.cut-off-their-food-and-water.bullets.1": "ce559519a2c60850bebf4cbc2fe407a941950bd17a63a9376abcff97992c23ad",
@@ -443,7 +443,7 @@
       }
     },
     "information-reduce-moisture-and-mold-in-your-home": {
-      "contentHash": "ad664ddfd4b6a5479c58d0b41d4cfebcf2760946e663ff7761020a2f6af997c3",
+      "contentHash": "09ed1da5ea4afb42a22fa01fd94d706bf3e1129b3e86e4a1808ed2345f694db3",
       "fieldHashes": {
         "sections.check-your-humidity.heading": "176d73e25a9b61ef5f05eba77fc7558e452eb30aebdad4d371d301af8205196d",
         "sections.check-your-humidity.paragraphs.0": "86cbcb02153e8e73185506baf3a91d44a9184591ac37449ca3844b8417d3c4b2",
@@ -791,7 +791,7 @@
       }
     },
     "mosquito-education-workshop": {
-      "contentHash": "4a02f02918185e4434800e500485ee5088c19288d7bd90e4d6d2e9ec879e20c1",
+      "contentHash": "e65210cccd7120b836bc003f9745a04c8d67ca6f3bc8c67bf12dcd30872ff05f",
       "fieldHashes": {
         "sections.aligned-with-california-education-standards.bullets.0": "96c484416a37bb9ffe2c03febc6a78685d1e3b3124626728bfdf3f897cf82a97",
         "sections.aligned-with-california-education-standards.bullets.1": "11ffb777af0f6dba7b9242ae1d9b0967d79ac1d01530346fad90d49e943c2e75",

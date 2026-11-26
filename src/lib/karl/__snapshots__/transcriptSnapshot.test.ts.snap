@@ -1320,6 +1320,8 @@ Prevent bed bugs
 
 ### Information section — \`information_section\` [TYPE] — page not approved
 
+_The Image is a separate block in the Information section stream: add it directly after this Title and text block (+ → Image → Choose an image → Upload), then type the alt text. Information images show uncropped and need to be at least 700px wide._
+
 **Title:**
 
 Check for bed bugs
@@ -1335,6 +1337,18 @@ Most bed bugs hide in or near the bed, so check there first. Use a flashlight on
 - **Tiny pale shells** that bed bugs shed as they grow
 - **Live bugs**, which are reddish brown and flat
 - **Hiding spots farther away**, like couch cushions, behind outlet covers, and electronics such as clocks, radios, and TVs. Bed bugs can be 10 to 20 feet from where people sleep or sit.
+
+**Then add an Image block — file:**
+
+/images/mockup/bed-bug-adult.webp (1280×853)
+
+**Then add an Image block — alt text:**
+
+An adult bed bug, reddish brown with a flat oval body, feeding on a person’s arm.
+
+**Then add an Image block — attribution (not required):**
+
+“Adult bed bug, Cimex lectularius” by CDC / Piotr Naskrecki, Public domain — https://commons.wikimedia.org/wiki/File:Adult_bed_bug,_Cimex_lectularius.jpg
 
 ### Information section — \`information_section\` [TYPE] — page not approved
 
@@ -3751,6 +3765,18 @@ Healthy Housing and Vector Control (HHVC) offers a free mosquito education works
 
 Our team sets up interactive science stations. Students explore mosquito biology, breeding habitats, and disease prevention through hands-on learning.
 
+**Spotlight image (chooser, min 1080×350) — file:**
+
+/images/mockup/culex-mosquito-magnified.webp (1390×1043)
+
+**Spotlight image (chooser, min 1080×350) — alt text:**
+
+A Culex mosquito’s head under magnification, with its large green compound eye and long antennae.
+
+**Spotlight image (chooser, min 1080×350) — attribution (not required):**
+
+“Culex” by Alex Wild, Insects Unlocked, University of Texas at Austin, CC0 (public domain) — https://commons.wikimedia.org/wiki/File:Culex_(25414001085).jpg
+
 **Callout (rich text, no title field):**
 
 This is a free City service for eligible schools, summer camps, museums, and science fairs within San Francisco.
@@ -5593,6 +5619,8 @@ Who this information is for
 
 ### Information section — \`information_section\` [TYPE] — page not approved
 
+_The Image is a separate block in the Information section stream: add it directly after this Title and text block (+ → Image → Choose an image → Upload), then type the alt text. Information images show uncropped and need to be at least 700px wide._
+
 **Title:**
 
 Mold is a moisture problem
@@ -5602,6 +5630,18 @@ Mold is a moisture problem
 Tiny mold spores are in every home. They only grow into visible mold when a surface stays wet. Stop the water, and you stop the mold.
 
 Mold can trigger asthma and allergies, especially in children and people with breathing problems. Mold can start to grow in just a couple of days, so act quickly.
+
+**Then add an Image block — file:**
+
+/images/mockup/mold-above-light-switch.webp (1280×960)
+
+**Then add an Image block — alt text:**
+
+Dark spots of mold spread across a damp wall above a light switch.
+
+**Then add an Image block — attribution (not required):**
+
+“Mold grows above a switch plate in this home” by FEMA, Public domain — https://commons.wikimedia.org/wiki/File:Flooding_%5E_Severe_Storm_-_Memphis,_Tenn._,_May_28,_2011_--_Mold_grows_above_a_switch_plate_in_this_home._FEMA_mitigation_teams_are_emphatic_about_the_dangers_of_mold_and_have_precau_-_DPLA_-_ca96e17a8de030703b06da269682a80d.jpg
 
 ### Information section — \`information_section\` [TYPE] — page not approved
 
@@ -5787,6 +5827,8 @@ They chew through food containers and electrical wires. A small problem grows fa
 
 ### Information section — \`information_section\` [TYPE] — page not approved
 
+_The Image is a separate block in the Information section stream: add it directly after this Title and text block (+ → Image → Choose an image → Upload), then type the alt text. Information images show uncropped and need to be at least 700px wide._
+
 **Title:**
 
 Signs of rats and mice
@@ -5798,6 +5840,18 @@ Signs of rats and mice
 - **Greasy rub marks** along walls where they travel
 - **Scratching sounds** in walls or ceilings, mostly at night
 - **Nests** made of shredded paper or fabric
+
+**Then add an Image block — file:**
+
+/images/mockup/brown-rat-sidewalk.webp (1024×768)
+
+**Then add an Image block — alt text:**
+
+A brown rat eats crumbs on a brick sidewalk next to a building wall.
+
+**Then add an Image block — attribution (REQUIRED by the licence):**
+
+“Brown Rat” by oatsy40, CC BY 2.0 — https://www.flickr.com/photos/68089229@N06/7832536462
 
 ### Information section — \`information_section\` [TYPE] — page not approved
 

@@ -56,7 +56,19 @@ export const bedBugsInfo = {
 		},
 		{
 			heading: 'Check for bed bugs',
-			karl: 'Maps to a fourth Title and text block: Title = this heading, Text = the two paragraphs plus the bulleted list below. Outlet covers as a hiding spot is an HHVC decision 2026-11-26. The 10-to-20-foot range and electronics hiding spots are from the SF Environment / Pestec, Guidelines for IPM in San Francisco Multi-Family Housing Communities (2013; local copy docs/source/hhvc-policy/2026-07-07-pestec-ipm-multifamily-housing.pdf), Appendix I (Bed Bug FAQ).',
+			image: {
+				src: '/images/mockup/bed-bug-adult.webp',
+				alt: 'An adult bed bug, reddish brown with a flat oval body, feeding on a person’s arm.',
+				width: 1280,
+				height: 853,
+				credit: {
+					title: 'Adult bed bug, Cimex lectularius',
+					creator: 'CDC / Piotr Naskrecki',
+					sourceUrl: 'https://commons.wikimedia.org/wiki/File:Adult_bed_bug,_Cimex_lectularius.jpg',
+					license: 'Public domain'
+				}
+			},
+			karl: 'Maps to a fourth Title and text block: Title = this heading, Text = the two paragraphs plus the bulleted list below. Then an Information section → Image block right after it, holding the bed bug photo: the page tells readers to find the bugs themselves, and a photo of an adult is what makes "reddish brown and flat" recognizable. Upload the 1280×853 file (Information images need 700px+ wide, shown uncropped) with the alt text as written. Source: CDC Public Health Image Library #9820, public domain — no attribution required, but add "Photo: CDC / Piotr Naskrecki" if the block offers a caption. Outlet covers as a hiding spot is an HHVC decision 2026-11-26. The 10-to-20-foot range and electronics hiding spots are from the SF Environment / Pestec, Guidelines for IPM in San Francisco Multi-Family Housing Communities (2013; local copy docs/source/hhvc-policy/2026-07-07-pestec-ipm-multifamily-housing.pdf), Appendix I (Bed Bug FAQ).',
 			kind: 'body',
 			paragraphs: [
 				'Bites alone cannot tell you it is bed bugs. Bites from fleas, mosquitoes, and bed bugs look alike. The only way to know is to find the bugs or their signs.',
