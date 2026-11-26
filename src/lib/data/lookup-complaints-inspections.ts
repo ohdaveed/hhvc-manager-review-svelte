@@ -54,6 +54,9 @@ export const findRecords = {
 					text: [
 						'The search tool opens on the Department of Public Health external records site. You will leave SF.gov.'
 					],
+					bullets: [
+						'To report a new problem instead, start from [Healthy Housing and Vector Control](pestsTopic).'
+					],
 					button: 'Open lookup tool',
 					buttonUrl: 'https://xnet.sfdph.org:8443/ords/eeop/f?p=119:1'
 				}
@@ -61,14 +64,9 @@ export const findRecords = {
 		},
 		{
 			heading: 'If you need to report a new problem',
-			karl: 'Maps to the same repeatable `related` field as the "Related pages" section below — Transaction\'s related panel has no observed max and no sub-heading/grouping support, so in real Karl these 3 cards and the 2 below would become one flat list without this section break. Digital Services should decide ordering if the two-heading grouping matters editorially.',
+			karl: 'The Healthy Housing and Vector Control card that opened this list is now an Internal link in the "Open the lookup tool" step (2026-11-26): Karl’s Related takes only Transaction, Information, Campaign and Topic pages (Help Center › Components › Related), and this is an Agency page. Maps to the same repeatable `related` field as the "Related pages" section below — Transaction\'s related panel has no observed max and no sub-heading/grouping support, so in real Karl these 2 cards and the 2 below would become one flat list without this section break. Digital Services should decide ordering if the two-heading grouping matters editorially.',
 			kind: 'placement',
 			cards: [
-				{
-					title: 'Healthy Housing and Vector Control',
-					target: 'pestsTopic',
-					karl: 'related panel entry — page chooser only; this description text is not supported in the real schema (see section-level karl note above).'
-				},
 				{
 					title: 'Report rats or mice',
 					target: 'rodentsReport',

@@ -195,14 +195,9 @@ export const ownerGuidance = {
 		{
 			heading: 'Related pages',
 			component: 'related',
-			karl: 'Maps to the Related field: a generic unrestricted "Page" chooser, repeatable.',
+			karl: 'Maps to the Related field: a generic unrestricted "Page" chooser, repeatable. Property owner responsibilities left this list on 2026-11-26 (Karl’s Related takes only Transaction, Information, Campaign and Topic pages (Help Center › Components › Related), and this is a Resource Collection); "1. Follow San Francisco owner responsibilities" already links it in the body.',
 			kind: 'placement',
 			cards: [
-				{
-					title: 'Property owner responsibilities',
-					target: 'ownerHub'
-				},
-
 				{
 					title: 'Report rats or mice',
 					target: 'rodentsReport'

@@ -71,14 +71,15 @@ export const article11Compliance = {
 		},
 		{
 			heading: 'Fees and full requirements',
-			karl: "Maps to a fourth Title and text block: Title = this heading, Text = the paragraph plus the two linked bullets below. This content was the page's `whatToKnow` (cost + two Things to know) until U23 was resolved 2026-11-21: Information has no `cost` and no `things_to_know` — those sit only under Transaction's \"What to know before you start\" grouping — so it moved here, where Information can carry it. Fee figures match `payFee`'s `cost` and tier list; `payFee` stays the source of truth for amounts and is also in Related.",
+			karl: "Maps to a fourth Title and text block: Title = this heading, Text = the paragraph plus the three linked bullets below (the third, to Property owner responsibilities, was a Related card until 2026-11-26: Karl’s Related cannot take a Resource Collection). This content was the page's `whatToKnow` (cost + two Things to know) until U23 was resolved 2026-11-21: Information has no `cost` and no `things_to_know` — those sit only under Transaction's \"What to know before you start\" grouping — so it moved here, where Information can carry it. Fee figures match `payFee`'s `cost` and tier list; `payFee` stays the source of truth for amounts and is also in Related.",
 			kind: 'body',
 			paragraphs: [
 				'Buildings with 3 or more rental units pay an annual Healthy Housing fee. Current certified rates range from $103 to $808 or more, depending on unit count.'
 			],
 			bullets: [
 				'[See the full fee schedule for exact tier amounts and reinspection rates](payFee)',
-				'[See the full Article 11 guide for the complete section-by-section mapping](article11Guide)'
+				'[See the full Article 11 guide for the complete section-by-section mapping](article11Guide)',
+				'[See all property owner responsibilities](ownerHub)'
 			]
 		},
 		{
@@ -109,10 +110,6 @@ export const article11Compliance = {
 			karl: 'Maps to the Related field: a generic unrestricted "Page" chooser, repeatable.',
 			kind: 'placement',
 			cards: [
-				{
-					title: 'Property owner responsibilities',
-					target: 'ownerHub'
-				},
 				{
 					title: 'Integrated pest management for property owners and managers',
 					target: 'ownerGuidance'

@@ -109,11 +109,9 @@ describe('the corpus', () => {
 			'report-health-code-article-11-plain-language': ['callout'],
 			// No 'contact' since 2026-11-26: Information has no Contact us panel, so
 			// both pages' contact boxes became a Title and text section in the body.
-			'information-integrated-pest-management-for-property-owners-and-managers': [
-				'resources',
-				'related'
-			],
-			'information--article-11-compliance-for-property-owners': ['related']
+			// No 'related' on either since the same day: their Related cards to a
+			// Resource Collection moved into the body.
+			'information-integrated-pest-management-for-property-owners-and-managers': ['resources']
 		});
 	}, 20_000);
 });

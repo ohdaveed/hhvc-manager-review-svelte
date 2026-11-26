@@ -37,6 +37,7 @@ export const inspectorLookup = {
 					text: [
 						'Select your neighborhood to see the assigned inspector and their contact information.'
 					],
+					bullets: ['[Healthy Housing and Vector Control](pestsTopic)'],
 					button: 'Find your inspector',
 					buttonUrl: '#',
 					callout: {
@@ -47,7 +48,7 @@ export const inspectorLookup = {
 		},
 		{
 			heading: 'Related pages',
-			karl: 'Maps to the Related field: a generic unrestricted "Page" chooser, repeatable.',
+			karl: 'Maps to the Related field: a generic unrestricted "Page" chooser, repeatable. The Healthy Housing and Vector Control card is now an Internal link in the "Open the lookup tool" step (2026-11-26): Karl’s Related takes only Transaction, Information, Campaign and Topic pages (Help Center › Components › Related), and this is an Agency page.',
 			kind: 'placement',
 			cards: [
 				{
@@ -57,11 +58,6 @@ export const inspectorLookup = {
 				{
 					title: 'Find complaints and inspection records',
 					target: 'findRecords'
-				},
-
-				{
-					title: 'Healthy Housing and Vector Control',
-					target: 'pestsTopic'
 				}
 			]
 		}

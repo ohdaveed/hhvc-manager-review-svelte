@@ -25,14 +25,12 @@ describe('Related targets on the current corpus', () => {
 	it('finds exactly these issues', () => {
 		expect(corpusIssues()).toEqual(
 			[
-				'sf.gov/find-complaints-and-inspection-records / karl-related / Healthy Housing and Vector Control',
-				'sf.gov/find-healthy-housing-inspector-by-neighborhood / karl-related / Healthy Housing and Vector Control',
-				'sf.gov/information--article-11-compliance-for-property-owners / karl-related / Property owner responsibilities',
-				'sf.gov/information/integrated-pest-management-for-property-owners-and-managers / karl-related / Property owner responsibilities',
-				'sf.gov/information/learn-what-hhvc-can-inspect / karl-related / Healthy Housing and Vector Control',
+				// Campaign's Related is `related_links`, which the live admin shows as a
+				// Page block taking an SF.gov page or an External URL, so whether the
+				// Help Center's four-type rule for the Related component applies to it
+				// is unconfirmed. Left in place, and pinned, until that is settled.
 				'sf.gov/integrated-pest-management-education / karl-related / Healthy Housing and Vector Control',
-				'sf.gov/mosquito-education-workshop / karl-related / Healthy Housing and Vector Control',
-				'sf.gov/pay-your-annual-healthy-housing-fee-apartment-buildings / karl-related / Property owner responsibilities'
+				'sf.gov/mosquito-education-workshop / karl-related / Healthy Housing and Vector Control'
 			].sort()
 		);
 	});
@@ -55,9 +53,19 @@ describe('karlComponentFindings', () => {
 	});
 
 	it('judges a Related section the placements put in Related, without a component tag', () => {
-		const page = pages.find(
-			(p) => p.slug === 'sf.gov/pay-your-annual-healthy-housing-fee-apartment-buildings'
-		)!;
+		// payFee's own Related section, as it stood before its Resource
+		// Collection card moved into the body (2026-11-26).
+		const page = {
+			type: 'Transaction',
+			sections: [
+				{
+					heading: 'Related pages',
+					karl: 'Maps to the related panel: repeatable "Page" chooser entries.',
+					kind: 'placement',
+					cards: [{ title: 'Property owner responsibilities', target: 'ownerHub' }]
+				}
+			]
+		};
 		const finding = karlComponentFindings(page).find((f) => f.id === 'karl-related');
 		expect(finding?.status).toBe('issue');
 		expect(finding?.items.map((i) => i.text)).toContain('Property owner responsibilities');

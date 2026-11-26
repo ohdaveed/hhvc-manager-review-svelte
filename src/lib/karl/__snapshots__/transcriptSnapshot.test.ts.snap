@@ -709,11 +709,13 @@ Buildings with 3 or more rental units pay an annual Healthy Housing fee. Current
 
 - [See the full fee schedule for exact tier amounts and reinspection rates](payFee)
 - [See the full Article 11 guide for the complete section-by-section mapping](article11Guide)
+- [See all property owner responsibilities](ownerHub)
 
 **Links in this text — recreate each with the Link tool, do not paste them:**
 
 - "See the full fee schedule for exact tier amounts and reinspection rates" → shape 5 — rich text Link tool → Internal link → "Pay your annual Healthy Housing fee for apartment buildings"
 - "See the full Article 11 guide for the complete section-by-section mapping" → shape 5 — rich text Link tool → Internal link → "Health Code Article 11 in plain language"
+- "See all property owner responsibilities" → shape 5 — rich text Link tool → Internal link → "Property owner responsibilities"
 
 ### Information section — \`information_section\` [TYPE] — page not approved
 
@@ -756,10 +758,9 @@ _topicTag is unmapped metadata — the stored values are Agency labels, not Topi
 
 _This block publishes the destination page’s title and a link, and NOTHING else. Choose the page and type no description._
 
-1. Choose page: "Property owner responsibilities" (\`ownerHub\` → /sf.gov/property-owner-responsibilities-hhvc)
-2. Choose page: "Integrated pest management for property owners and managers" (\`ownerGuidance\` → /sf.gov/information/integrated-pest-management-for-property-owners-and-managers)
-3. Choose page: "Learn what Healthy Housing and Vector Control can inspect" (\`scopeInfo\` → /sf.gov/information/learn-what-hhvc-can-inspect)
-4. Choose page: "Pay your annual Healthy Housing fee for apartment buildings" (\`payFee\` → /sf.gov/pay-your-annual-healthy-housing-fee-apartment-buildings)
+1. Choose page: "Integrated pest management for property owners and managers" (\`ownerGuidance\` → /sf.gov/information/integrated-pest-management-for-property-owners-and-managers)
+2. Choose page: "Learn what Healthy Housing and Vector Control can inspect" (\`scopeInfo\` → /sf.gov/information/learn-what-hhvc-can-inspect)
+3. Choose page: "Pay your annual Healthy Housing fee for apartment buildings" (\`payFee\` → /sf.gov/pay-your-annual-healthy-housing-fee-apartment-buildings)
 
 ### Promote → For search engines — \`promote\` [TYPE] — page not approved
 
@@ -1985,6 +1986,8 @@ Open the lookup tool
 
 The search tool opens on the Department of Public Health external records site. You will leave SF.gov.
 
+- To report a new problem instead, start from [Healthy Housing and Vector Control](pestsTopic).
+
 **Section 1 — Section specifics → Button link → Link text:**
 
 Open lookup tool
@@ -1992,6 +1995,10 @@ Open lookup tool
 **Section 1 — Button link → destination:**
 
 External URL → https://xnet.sfdph.org:8443/ords/eeop/f?p=119:1
+
+**Links in this text — recreate each with the Link tool, do not paste them:**
+
+- "Healthy Housing and Vector Control" → shape 5 — rich text Link tool → Internal link → "Healthy Housing and Vector Control"
 
 ### Custom Section — \`custom_section\` [TYPE] — page not approved
 
@@ -2018,9 +2025,8 @@ The tool shows about five years of investigated complaint and inspection activit
 
 _This block publishes the destination page’s title and a link, and NOTHING else. Choose the page and type no description._
 
-1. Choose page: "Healthy Housing and Vector Control" (\`pestsTopic\` → /sf.gov/departments--healthy-housing-and-vector-control)
-2. Choose page: "Report rats or mice" (\`rodentsReport\` → /sf.gov/report-rats-or-mice)
-3. Choose page: "What happens after you report a housing or pest problem" (\`afterReport\` → /sf.gov/information/what-happens-after-you-report-housing-pest-problem)
+1. Choose page: "Report rats or mice" (\`rodentsReport\` → /sf.gov/report-rats-or-mice)
+2. Choose page: "What happens after you report a housing or pest problem" (\`afterReport\` → /sf.gov/information/what-happens-after-you-report-housing-pest-problem)
 
 ### Related — \`related\` [CHOOSE] — page not approved
 
@@ -2786,6 +2792,8 @@ Open the lookup tool
 
 Select your neighborhood to see the assigned inspector and their contact information.
 
+- [Healthy Housing and Vector Control](pestsTopic)
+
 **Section 1 — Section specifics → Button link → Link text:**
 
 Find your inspector
@@ -2797,6 +2805,10 @@ External URL → #
 **Callout (rich text, no title field):**
 
 This button is a placeholder until HHVC confirms the real lookup tool and entry point.
+
+**Links in this text — recreate each with the Link tool, do not paste them:**
+
+- "Healthy Housing and Vector Control" → shape 5 — rich text Link tool → Internal link → "Healthy Housing and Vector Control"
 
 ### Custom Section — \`custom_section\` [TYPE] — page not approved
 
@@ -2818,7 +2830,6 @@ _This block publishes the destination page’s title and a link, and NOTHING els
 
 1. Choose page: "Healthy housing conditions" (\`healthyHousingTopic\` → /sf.gov/topics--healthy-housing-conditions)
 2. Choose page: "Find complaints and inspection records" (\`findRecords\` → /sf.gov/find-complaints-and-inspection-records)
-3. Choose page: "Healthy Housing and Vector Control" (\`pestsTopic\` → /sf.gov/departments--healthy-housing-and-vector-control)
 
 ### Topics — \`topics\` [TYPE] — page not approved
 
@@ -4157,9 +4168,8 @@ _topicTag is unmapped metadata — the stored values are Agency labels, not Topi
 
 _This block publishes the destination page’s title and a link, and NOTHING else. Choose the page and type no description._
 
-1. Choose page: "Property owner responsibilities" (\`ownerHub\` → /sf.gov/property-owner-responsibilities-hhvc)
-2. Choose page: "Report rats or mice" (\`rodentsReport\` → /sf.gov/report-rats-or-mice)
-3. Choose page: "Learn what Healthy Housing and Vector Control can inspect" (\`scopeInfo\` → /sf.gov/information/learn-what-hhvc-can-inspect)
+1. Choose page: "Report rats or mice" (\`rodentsReport\` → /sf.gov/report-rats-or-mice)
+2. Choose page: "Learn what Healthy Housing and Vector Control can inspect" (\`scopeInfo\` → /sf.gov/information/learn-what-hhvc-can-inspect)
 
 ### Promote → For search engines — \`promote\` [TYPE] — page not approved
 
@@ -4499,6 +4509,7 @@ You need to pay if you own an apartment building with 3 or more rental units dur
 - If you rent fewer than 3 units, complete, sign, and return the certification on your invoice.
 - Vacant units and units occupied by relatives still count as rental units.
 - Condominium, commercial, and tenancy-in-common buildings do not pay this fee. Send the proof requested on your invoice.
+- [Property owner responsibilities](ownerHub)
 
 **Section 2 — Section title:**
 
@@ -4569,12 +4580,15 @@ Pay within 30 days of the invoice due date. Keep your invoice number or property
 
 **What the annual fee supports:** Healthy Housing uses these fees to support inspections of apartment buildings. Inspectors look at common areas, yards, garbage storage areas, and lobbies. They check for conditions that may support pests or create housing health hazards.
 
+**Links in this text — recreate each with the Link tool, do not paste them:**
+
+- "Property owner responsibilities" → shape 5 — rich text Link tool → Internal link → "Property owner responsibilities"
+
 ### Related — \`related\` [CHOOSE] — page not approved
 
 _This block publishes the destination page’s title and a link, and NOTHING else. Choose the page and type no description._
 
-1. Choose page: "Property owner responsibilities" (\`ownerHub\` → /sf.gov/property-owner-responsibilities-hhvc)
-2. Choose page: "Healthy housing conditions" (\`healthyHousingTopic\` → /sf.gov/topics--healthy-housing-conditions)
+1. Choose page: "Healthy housing conditions" (\`healthyHousingTopic\` → /sf.gov/topics--healthy-housing-conditions)
 
 ### Partner agencies — \`partner_agencies\` [CHOOSE] — page not approved
 
@@ -6187,6 +6201,7 @@ Choose where to report your problem
 - **Garbage, clutter, or overgrown plants:** [Report garbage, clutter, or overgrown plants](garbageReport)
 - **Dead birds:** [Report a dead bird to the State West Nile virus program](https://westnile.ca.gov/report)
 - **Health Code Article 11:** [Read Article 11 in plain language](article11Guide)
+- **Every report in one place:** [Healthy Housing and Vector Control](pestsTopic)
 
 **Links in this text — recreate each with the Link tool, do not paste them:**
 
@@ -6201,6 +6216,7 @@ Choose where to report your problem
 - "Report garbage, clutter, or overgrown plants" → shape 5 — rich text Link tool → Internal link → "Report garbage, clutter, or overgrown plants"
 - "Report a dead bird to the State West Nile virus program" → shape 5 — rich text Link tool → External link
 - "Read Article 11 in plain language" → shape 5 — rich text Link tool → Internal link → "Health Code Article 11 in plain language"
+- "Healthy Housing and Vector Control" → shape 5 — rich text Link tool → Internal link → "Healthy Housing and Vector Control"
 
 ### Information section — \`information_section\` [TYPE] — page not approved
 
@@ -6228,9 +6244,8 @@ _topicTag is unmapped metadata — the stored values are Agency labels, not Topi
 
 _This block publishes the destination page’s title and a link, and NOTHING else. Choose the page and type no description._
 
-1. Choose page: "Healthy Housing and Vector Control" (\`pestsTopic\` → /sf.gov/departments--healthy-housing-and-vector-control)
-2. Choose page: "What happens after you report a housing or pest problem" (\`afterReport\` → /sf.gov/information/what-happens-after-you-report-housing-pest-problem)
-3. Choose page: "Tenant rights when reporting housing conditions" (\`tenantRights\` → /sf.gov/information/tenant-rights-and-reporting-housing-conditions)
+1. Choose page: "What happens after you report a housing or pest problem" (\`afterReport\` → /sf.gov/information/what-happens-after-you-report-housing-pest-problem)
+2. Choose page: "Tenant rights when reporting housing conditions" (\`tenantRights\` → /sf.gov/information/tenant-rights-and-reporting-housing-conditions)
 
 ### Promote → For search engines — \`promote\` [TYPE] — page not approved
 

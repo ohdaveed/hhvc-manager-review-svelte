@@ -43,9 +43,10 @@ export const payFee = {
 						'If you own and live in the building, count the rental units. If you rent 3 or more units, you still need to pay.',
 						'If you rent fewer than 3 units, complete, sign, and return the certification on your invoice.',
 						'Vacant units and units occupied by relatives still count as rental units.',
-						'Condominium, commercial, and tenancy-in-common buildings do not pay this fee. Send the proof requested on your invoice.'
+						'Condominium, commercial, and tenancy-in-common buildings do not pay this fee. Send the proof requested on your invoice.',
+						'[Property owner responsibilities](ownerHub)'
 					],
-					karl: 'what_to_do -> Section. Section title: "Check your invoice and whether the fee applies". Section specifics: one Text block (two paragraphs plus four bullets). Leads with the decision that prevents an owner from starting a payment before knowing whether the annual program fee applies.'
+					karl: 'what_to_do -> Section. Section title: "Check your invoice and whether the fee applies". Section specifics: one Text block (two paragraphs plus five bullets, the last an Internal link to Property owner responsibilities). Leads with the decision that prevents an owner from starting a payment before knowing whether the annual program fee applies.'
 				},
 				{
 					title: 'Confirm your annual fee',
@@ -119,15 +120,9 @@ export const payFee = {
 		},
 		{
 			heading: 'Related pages',
-			karl: 'Maps to the related panel: repeatable "Page" chooser entries. Related pages give owners a next step without reprinting compliance or enforcement guidance on this payment Transaction.',
+			karl: 'Maps to the related panel: repeatable "Page" chooser entries. Property owner responsibilities is now an Internal link in the first What to do section (2026-11-26): Karl’s Related takes only Transaction, Information, Campaign and Topic pages (Help Center › Components › Related), and this is a Resource Collection. Related pages give owners a next step without reprinting compliance or enforcement guidance on this payment Transaction.',
 			kind: 'placement',
 			cards: [
-				{
-					title: 'Property owner responsibilities',
-					target: 'ownerHub',
-					karl: 'Related panel page chooser entry.'
-				},
-
 				{
 					title: 'Healthy housing conditions',
 					target: 'healthyHousingTopic',

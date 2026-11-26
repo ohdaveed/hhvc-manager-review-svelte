@@ -51,6 +51,34 @@ broke the rule. Each moved into the body as a rich-text Internal link:
 - appealNotice → "Health Code Article 11 in plain language" (Report): into the
   "Tell them what you disagree with" step.
 
+## Pre-existing Related links to Agency and Resource Collection pages
+
+The same rule covered eight older Related cards, which pointed at the HHVC Agency
+page or at "Property owner responsibilities" (a Resource Collection). Six moved
+into the body:
+
+| Page                | Link                               | Now                                                              |
+| ------------------- | ---------------------------------- | ---------------------------------------------------------------- |
+| findRecords         | Healthy Housing and Vector Control | "Open the lookup tool" step: "To report a new problem instead…"  |
+| inspectorLookup     | Healthy Housing and Vector Control | "Open the lookup tool" step                                      |
+| scopeInfo           | Healthy Housing and Vector Control | last bullet of "Choose where to report your problem"             |
+| article11Compliance | Property owner responsibilities    | "Fees and full requirements"                                     |
+| payFee              | Property owner responsibilities    | first What to do section                                         |
+| ownerGuidance       | Property owner responsibilities    | dropped from Related; "1. Follow …" already links it in the body |
+
+Two were left in place: the two workshop Campaigns' cards to the Agency page.
+Campaign's Related is `related_links`, which the live admin shows as a Page
+block taking an SF.gov page or an External URL; the mosquito workshop already
+holds external links there. Whether the Related component's four-type rule
+applies to it is **unconfirmed**, so they stay pinned in
+`karlComponentChecks.test.ts` rather than being moved on a guess.
+
+The Help Center contradicts itself on Resource Collections: its September 2022
+release notes say they "can now be added in the related resource section on
+information & transaction pages". Those notes describe the Drupal-era SF.gov,
+and the current Components › Related page omits them, so the current page was
+followed. Moving a link into the body is allowed under either reading.
+
 ## AI schema conflict (resolved by the follow-up below)
 
 `src/lib/server/ai/vendor/schemas.js` required `audience` on a whole-page

@@ -82,7 +82,8 @@ export const scopeInfo = {
 				'**Mold from humidity or condensation:** [Report mold](moldReport)',
 				'**Garbage, clutter, or overgrown plants:** [Report garbage, clutter, or overgrown plants](garbageReport)',
 				'**Dead birds:** [Report a dead bird to the State West Nile virus program](https://westnile.ca.gov/report)',
-				'**Health Code Article 11:** [Read Article 11 in plain language](article11Guide)'
+				'**Health Code Article 11:** [Read Article 11 in plain language](article11Guide)',
+				'**Every report in one place:** [Healthy Housing and Vector Control](pestsTopic)'
 			]
 		},
 		{
@@ -103,13 +104,9 @@ export const scopeInfo = {
 		},
 		{
 			heading: 'Related pages',
-			karl: 'Maps to the Related field: a generic unrestricted "Page" chooser, repeatable.',
+			karl: 'Maps to the Related field: a generic unrestricted "Page" chooser, repeatable. The Healthy Housing and Vector Control card is now the last bullet of "Choose where to report your problem" (2026-11-26): Karl’s Related takes only Transaction, Information, Campaign and Topic pages (Help Center › Components › Related), and this is an Agency page.',
 			kind: 'placement',
 			cards: [
-				{
-					title: 'Healthy Housing and Vector Control',
-					target: 'pestsTopic'
-				},
 				{
 					title: 'What happens after you report a housing or pest problem',
 					target: 'afterReport'

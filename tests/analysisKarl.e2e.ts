@@ -44,13 +44,21 @@ test('a Transaction’s What to do section is reported in the panel', async ({ p
 	);
 });
 
+// payFee used to carry the corpus's live Related-type finding (a card to a
+// Resource Collection); that card moved into its body on 2026-11-26. The one
+// left is a Campaign's card to the Agency page, so the panel is checked there.
+test('a Related card Karl cannot hold shows in the panel', async ({ page }) => {
+	await gotoSignedIn(page, '/review/integrated-pest-management-education');
+	await page.getByRole('tab', { name: 'Analysis' }).click();
+	await expect(page.getByRole('tabpanel')).toContainText('not Agency pages');
+});
+
 test('the Transaction review findings show in the panel', async ({ page }) => {
 	await page.setViewportSize({ width: 1280, height: 900 });
 	await gotoSignedIn(page, '/review/pay-your-annual-healthy-housing-fee-apartment-buildings');
 	await page.getByRole('tab', { name: 'Analysis' }).click();
 	const panel = page.getByRole('tabpanel');
 	await expect(panel).toContainText('Title words in the description');
-	await expect(panel).toContainText('not Resource Collection pages');
 
 	const dir = process.env.KARL_SHOTS;
 	if (dir) {
