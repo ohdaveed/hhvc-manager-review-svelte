@@ -593,13 +593,10 @@
 	     rather than repointed at `clearSelection()`: that would ALSO drop pending
 	     cards and the typed instruction, so a stray click on the canvas would
 	     discard work. Restoring the affordance is a design call, not a rename.
-	     `role="presentation"` is left as-is for the same reason -- it suppresses
-	     the `main` landmark and was there for the handler, but changing landmark
-	     semantics is its own decision. -->
-	<main
-		class="relative flex h-full cursor-default flex-col overflow-hidden bg-muted"
-		role="presentation"
-	>
+	     It also carried `role="presentation"`, there only for that handler. Once
+	     the root layout stopped wrapping every page in its own <main>, the role
+	     left review pages with NO main landmark, so it is gone too. -->
+	<main class="relative flex h-full cursor-default flex-col overflow-hidden bg-muted">
 		{#if sessionStore.knownSignedOut}
 			<!-- Anonymous browsing is supported on purpose: the mockups come from
 			     static modules, so a stakeholder can read them without an account.

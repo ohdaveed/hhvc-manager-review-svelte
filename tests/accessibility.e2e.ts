@@ -18,14 +18,16 @@ import { expect, test } from './fixtures';
 const RULES = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];
 
 /**
- * Axe cannot see a nested `<main>`. The root layout wrapped every page in one,
- * so each route's own `<main>` sat inside it, and even with axe's landmark
- * rules switched on (`landmark-no-duplicate-main`, `-main-is-top-level`) axe
- * evaluated only the outer element and passed -- measured 2026-11-26. HTML
- * allows one visible `<main>` per document, so this counts them directly.
+ * Two checks, because they fail apart. HTML allows one visible `<main>`
+ * element; the root layout used to wrap every page in one, nesting each
+ * route's own inside it. And there must be exactly one main LANDMARK: the
+ * review layout's `<main>` carried `role="presentation"`, so removing the
+ * root wrapper left review pages with none, and an element count passed
+ * over it. Axe's landmark rules are best-practice, outside RULES.
  */
 async function scan(page: Page) {
 	await expect(page.locator('main:visible'), 'exactly one visible <main>').toHaveCount(1);
+	await expect(page.getByRole('main'), 'exactly one main landmark').toHaveCount(1);
 	return new AxeBuilder({ page }).withTags(RULES).analyze();
 }
 
