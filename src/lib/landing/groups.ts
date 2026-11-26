@@ -72,7 +72,12 @@ export const PAGE_GROUPS = [
 			'integrated-pest-management-education',
 			'mosquito-control-program',
 			'mosquito-education-workshop',
-			'step-by-step-prepare-your-unit-for-pest-treatment'
+			'step-by-step-prepare-your-unit-for-pest-treatment',
+			'information-bed-bugs-prevent-find-and-prepare-for-treatment',
+			'information-keep-rats-and-mice-out-of-your-home',
+			'information-get-rid-of-cockroaches-without-heavy-pesticides',
+			'information-reduce-moisture-and-mold-in-your-home',
+			'information-what-to-expect-when-your-building-is-treated-for-pests'
 		]
 	},
 	{

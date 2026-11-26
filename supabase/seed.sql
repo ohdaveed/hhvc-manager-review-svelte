@@ -102,6 +102,7 @@ INSERT INTO pages (review_id, path)
 SELECT '22222222-2222-2222-2222-222222222222', path
 FROM (
     VALUES
+      ('report-garbage-clutter-or-overgrown-plants'),
       ('find-healthy-housing-inspector-by-neighborhood'),
       ('report-health-code-article-11-plain-language'),
       ('departments--healthy-housing-and-vector-control--about'),
@@ -113,7 +114,6 @@ FROM (
       ('report-rats-or-mice'),
       ('report-mosquitoes-or-standing-water'),
       ('report-mold'),
-      ('report-garbage-clutter-or-overgrown-plants'),
       ('report-bed-bugs'),
       ('report-pigeon-droppings-nesting-or-feeding'),
       ('report-sewage-leak-or-backup'),
@@ -139,7 +139,12 @@ FROM (
       ('pay-healthy-housing-citation'),
       ('resource-guides-in-other-languages'),
       ('rat-free-blocks'),
-      ('report-healthy-housing-inspections-annual-summary')
+      ('report-healthy-housing-inspections-annual-summary'),
+      ('information-bed-bugs-prevent-find-and-prepare-for-treatment'),
+      ('information-reduce-moisture-and-mold-in-your-home'),
+      ('information-keep-rats-and-mice-out-of-your-home'),
+      ('information-get-rid-of-cockroaches-without-heavy-pesticides'),
+      ('information-what-to-expect-when-your-building-is-treated-for-pests')
 ) AS corpus(path)
 WHERE NOT EXISTS (
     SELECT 1 FROM pages p
