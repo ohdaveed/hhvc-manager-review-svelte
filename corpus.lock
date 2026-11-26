@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "corpusHash": "f16e1f8009394439d0a22b84d0987bab09253196f99e2e284dfa4ce5f0754646",
+  "corpusHash": "aa94a01612a01413565472ac44b8b112ac2caa4341547beda8c8c8e19dc826d0",
   "pages": {
     "departments--healthy-housing-and-vector-control": {
       "contentHash": "0dbd9dd7bbad4361a566c5cd2c714223d97028f482b3ba8c958c082887615fc9",
@@ -184,7 +184,7 @@
         "sections.what-tenants-need-to-do-before-treatment.callout.text": "bc08d3ce8963b29249c2b42ac71397a53f3be8e234f8c4f558077252b678f576",
         "sections.what-tenants-need-to-do-before-treatment.heading": "c52ffdc607c009fee591a8a8b488eefd2bf7d65bd87d050827d254abf1f8a044",
         "sections.what-tenants-need-to-do-before-treatment.paragraphs.0": "e9fc4113ba704a806f82a32a3e90526805587717ca56581630b989aee91771d7",
-        "sections.what-tenants-need-to-do-before-treatment.paragraphs.1": "4c7207c4a7ce13826d1a662a74c2d1044cf9c92b427c2529cfce7a90a93ac766",
+        "sections.what-tenants-need-to-do-before-treatment.bullets.5~2": "4c7207c4a7ce13826d1a662a74c2d1044cf9c92b427c2529cfce7a90a93ac766",
         "audience.0": "52c9fecd89adf1d0bd070cfd2575b42f99ae47abcb81fd3b6b1686d705a55037",
         "sections.who-this-information-is-for.heading": "46c502c4c2c97e0ef59078280882f103e27790dbf304ac81dfa6c5a41ae5d2b9",
         "summary": "56ce50e77da65016ae0b19de620c99e2c00b2f83920687ca58b4e6852d5f0c36",
@@ -849,7 +849,7 @@
       }
     },
     "property-owner-responsibilities-hhvc": {
-      "contentHash": "10c770653f396ca6bfd1befcb88d1e3bed08a583e4564ecbbed56104ca0ccb19",
+      "contentHash": "50c018a0b19bb25858057bdea6709aa6b3b99232c0c10b47b71988ec5f5a7a63",
       "fieldHashes": {
         "sections.about-this-collection.heading": "4d07da7c322136cd91b01bf97e8ad975d8d8abdc6620e8bc46e7a1ba5c6d48e3",
         "sections.about-this-collection.paragraphs.0": "a02d3a88f3ecb9f3fb829d74d286f5ee3460acc949000d4f864412f40cecc4a1",
