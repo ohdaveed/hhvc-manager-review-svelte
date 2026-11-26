@@ -301,15 +301,23 @@
 	/** Returns focus to whichever button opened the sheet. */
 	let sheetOpener: HTMLElement | null = null;
 
-	const openSheet = (which: 'queue' | 'panel', event: MouseEvent) => {
+	const openSheet = async (which: 'queue' | 'panel', event: MouseEvent) => {
 		sheetOpener = event.currentTarget as HTMLElement;
 		pageStore.openSheet(which);
+		// A modal sheet takes focus: left on the opener, focus sat behind the
+		// sheet in content the `inert` below has just made unreachable.
+		await tick();
+		document.getElementById(which === 'panel' ? 'reviewPanel' : 'reviewQueueRail')?.focus();
 	};
 
-	const closeSheet = () => {
+	const closeSheet = async () => {
 		pageStore.closeSheet();
-		sheetOpener?.focus();
+		// After the render that lifts `inert` from the toolbar: focusing the
+		// opener while it is still inert is silently ignored.
+		const opener = sheetOpener;
 		sheetOpener = null;
+		await tick();
+		opener?.focus();
 	};
 
 	/** Stays on this page: the banner and read-only mode follow
@@ -479,10 +487,16 @@
 	<a href="#reviewPanel" class="skip-to-panel">Skip to review panel</a>
 
 	<!-- Left Sidebar: Global Navigation & Review Queue -->
+	<!-- Below 1024px either rail can open as a sheet over the canvas. Open, it is
+	     a modal dialog: `inert` on everything else keeps focus and the reading
+	     cursor inside it, and its close control says Close, not Collapse. -->
 	<aside
 		id="reviewQueueRail"
 		tabindex="-1"
 		aria-label="Review queue"
+		role={pageStore.mobileSheet === 'queue' ? 'dialog' : undefined}
+		aria-modal={pageStore.mobileSheet === 'queue' ? 'true' : undefined}
+		inert={pageStore.mobileSheet === 'panel'}
 		class="queue-rail flex h-full min-w-0 flex-col border-r bg-background"
 	>
 		<!-- Every column's top row is `h-12` with a bottom border, so the queue,
@@ -531,9 +545,10 @@
 					variant="outline"
 					size="icon"
 					class="size-7 flex-none"
-					title="Collapse queue"
-					aria-label="Collapse queue"
-					onclick={() => pageStore.toggleRail('queue')}
+					title={pageStore.mobileSheet === 'queue' ? 'Close queue' : 'Collapse queue'}
+					aria-label={pageStore.mobileSheet === 'queue' ? 'Close queue' : 'Collapse queue'}
+					onclick={() =>
+						pageStore.mobileSheet === 'queue' ? closeSheet() : pageStore.toggleRail('queue')}
 				>
 					<ChevronsLeft class="size-3.5" />
 				</Button>
@@ -602,7 +617,10 @@
 	     It also carried `role="presentation"`, there only for that handler. Once
 	     the root layout stopped wrapping every page in its own <main>, the role
 	     left review pages with NO main landmark, so it is gone too. -->
-	<main class="relative flex h-full cursor-default flex-col overflow-hidden bg-muted">
+	<main
+		class="relative flex h-full cursor-default flex-col overflow-hidden bg-muted"
+		inert={pageStore.mobileSheet !== 'none'}
+	>
 		{#if sessionStore.knownSignedOut}
 			<!-- Anonymous browsing is supported on purpose: the mockups come from
 			     static modules, so a stakeholder can read them without an account.
@@ -958,6 +976,9 @@
 		id="reviewPanel"
 		tabindex="-1"
 		aria-label="Review panel"
+		role={pageStore.mobileSheet === 'panel' ? 'dialog' : undefined}
+		aria-modal={pageStore.mobileSheet === 'panel' ? 'true' : undefined}
+		inert={pageStore.mobileSheet === 'queue'}
 		class="panel-rail flex h-full min-w-0 flex-col overflow-hidden border-l bg-background"
 	>
 		{#if panelCollapsed}
@@ -1003,7 +1024,11 @@
 				{pageData}
 				{livePageId}
 				{karlReadiness}
-				onCollapse={() => pageStore.toggleRail('panel')}
+				collapseLabel={pageStore.mobileSheet === 'panel'
+					? 'Close review panel'
+					: 'Collapse review panel'}
+				onCollapse={() =>
+					pageStore.mobileSheet === 'panel' ? closeSheet() : pageStore.toggleRail('panel')}
 			/>
 		{/if}
 	</section>

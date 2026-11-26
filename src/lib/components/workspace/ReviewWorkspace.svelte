@@ -12,8 +12,11 @@
 		pageData,
 		livePageId,
 		karlReadiness = null,
+		collapseLabel = 'Collapse review panel',
 		onCollapse
 	}: {
+		/** "Close review panel" when the panel is the narrow-viewport sheet. */
+		collapseLabel?: string;
 		pageData: unknown;
 		livePageId?: string;
 		/** The Karl outline's summary for this page, for the decision panel. */
@@ -135,8 +138,8 @@
 				variant="outline"
 				size="icon"
 				class="size-7 flex-none"
-				title="Collapse review panel"
-				aria-label="Collapse review panel"
+				title={collapseLabel}
+				aria-label={collapseLabel}
 				onclick={onCollapse}
 			>
 				<ChevronsRight class="size-3.5" />
