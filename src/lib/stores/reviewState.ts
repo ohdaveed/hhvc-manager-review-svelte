@@ -28,6 +28,8 @@ export type Edit = {
 	created_at?: string;
 	/** The author. Null once their account is deleted; absent on optimistic rows. */
 	user_id?: string | null;
+	/** sha256 of the field's base copy when saved; required since 20261126100000. */
+	base_hash?: string;
 };
 
 // Our central stores
@@ -331,13 +333,16 @@ export async function updatePageNotes(pageId: string, notes: string): Promise<bo
 export async function saveInlineEdit(
 	pageId: string,
 	fieldId: string,
-	newContent: string
+	newContent: string,
+	/** sha256 of the field's base copy as the reviewer saw it -- the edit's anchor. */
+	baseHash: string
 ): Promise<boolean> {
 	const optimisticEdit: Edit = {
 		id: 'temp-' + Date.now(),
 		page_id: pageId,
 		field_id: fieldId,
 		new_content: newContent,
+		base_hash: baseHash,
 		created_at: new Date().toISOString()
 	};
 
@@ -376,6 +381,7 @@ export async function saveInlineEdit(
 			page_id: pageId,
 			field_id: fieldId,
 			new_content: newContent,
+			base_hash: baseHash,
 			user_id: user.id
 		})
 		.select()

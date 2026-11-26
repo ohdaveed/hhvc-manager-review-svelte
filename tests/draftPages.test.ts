@@ -92,6 +92,17 @@ describe('mergeDraftPages', () => {
 		expect(pageStore.pages.some((p) => p.id.startsWith('draft:'))).toBe(false);
 	});
 
+	it('records the drafted text as the base copy, and a re-merge replaces it', () => {
+		pageStore.mergeDraftPages([readyDraft()]);
+		expect(pageStore.baseCopyOf('draft:abc', 'title')).toBe(content.title);
+		// Writes into the page (a hydrated edit, typing) never move the base.
+		pageStore.pages.find((p) => p.id === 'draft:abc')!.title = 'On screen';
+		expect(pageStore.baseCopyOf('draft:abc', 'title')).toBe(content.title);
+
+		pageStore.mergeDraftPages([readyDraft({ content: { ...content, title: 'Redrafted' } })]);
+		expect(pageStore.baseCopyOf('draft:abc', 'title')).toBe('Redrafted');
+	});
+
 	it('keeps an unsaved change on the mockup when the draft page is merged again', () => {
 		pageStore.mergeDraftPages([readyDraft()]);
 		pageStore.setChange('draft:abc', 'title', 'Typed on the draft');

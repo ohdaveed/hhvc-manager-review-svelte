@@ -1,28 +1,33 @@
-# PLAN — Follow-ups from the unsaved-change review (PR #225)
+# PLAN — Expired edits
 
-Branch `fix/review-follow-ups`, cut from `origin/main` at `ff59b13`.
-The previous plan (manual field editing + vocabulary alignment, all boxes ticked) is in git history at
-`ff59b13:PLAN.md`. Terms are `CONTEXT.md`'s: unsaved change, suggestion, accepted, draft page.
+Branch `feat/expired-edits`, cut from `origin/main`. Design:
+`docs/superpowers/specs/2026-11-26-expired-edits-design.md`; decision:
+`docs/adr/0001-edits-anchor-to-base-copy-hash.md`. Terms are `CONTEXT.md`'s.
 
-- [x] **1. Draft pages keep unsaved changes.** `mergeDraftPages` re-applies each unsaved change's value to
-      the replaced page object, so returning to a draft page shows what the count says. Unit-tested.
-- [x] **2. Saved-elsewhere is per tab.** The notice compares against the edit ids THIS tab inserted, not the
-      user id: the reviewer's own save from another tab raises it, this tab's own saves never do, and an
-      authorless row is still ignored. Unit-tested through `hydrateMockup`.
-- [x] **3. A rewrite never overwrites an accepted suggestion.** A rewrite result for a field whose
-      suggestion is accepted (here or on another page) is dropped rather than replacing it, and the
-      reviewer is told why. Unit-tested.
-- [x] **4. Rethink grounding comment.** `RethinkPanel.svelte` ~107 says what grounding now contains: saved
-      edits (hydrated) and unsaved changes. No behaviour change.
-- [x] **5. Karl outline wording.** Decided 2026-11-26: it judges the copy on screen (saved edits plus unsaved
-      changes), via `placementsFor(..., { copy: 'as-shown' })`; the Blueprint shares it. Unit-tested.
-- [x] **6. Verify.** Unit, check, ratchets, e2e, browser check. Verified 2026-11-26 at a80cacb: unit 1229,
-      svelte-check 0/0, eslint 3, prettier 42, e2e 110/110; tasks 1 and 3 had their fix reverted once and
-      their test failed. Browser: an unsaved 41-character button shows the outline badge "Needs a fix"; clean
-      console. Not verified live: a client-chosen edit id against a real insert (grant read, not exercised).
-
-Not in this branch: marking expired edits on the mockup. Edits carry no corpus version, so it needs a
-migration -- and a merge to `main` applies migrations to production -- so it gets its own plan.
+- [x] **0. Design.** Glossary (Base copy, Expired, Orphaned, Transcript), ADR 0001 and the spec committed.
+- [x] **1. Browser-safe field hash.** A WebCrypto SHA-256 whose hex equals `hashText` for the same input,
+      pinned by a test over real corpus fields.
+- Production checked read-only 2026-11-26 (Supabase connector, project kiynekyzqxneepjipqhg): 0 edits,
+  20 migrations applied (latest 20261125150000, matching the repo), 2 corpus versions.
+- [x] **2. Migration.** `edits.base_hash text NOT NULL`; fails if any existing edit would be un-anchored;
+      `latest_edits` exposes it. Applied and tested on the local stack only.
+- [x] **3. Save path records the anchor.** `saveInlineEdit` sends the base copy's hash; corpus and draft
+      pages both. Unit-tested.
+- [x] **4. Expiry and orphan resolution.** A pure function classifies each latest edit as current, expired
+      or orphaned against the base copy now. Unit-tested, including copy that changes back.
+- [x] **5. Mockup marking.** Expired edits show their text marked expired, with the base copy one step away;
+      re-confirm / rewrite / keep base each create an unsaved change. Orphaned edits do not render.
+- [x] **6. Transcript.** Expired and orphaned edits appear flagged. Done as a section above the first panel
+      (`staleEditsMarkdown`) and a walkthrough-drawer block, fed by `reviewRecordFor`'s new `stale` argument;
+      `karl-transcript.js` is untouched. Snapshots needed no update: the section renders only when an edit is
+      stale, and the snapshot pages have none.
+- [x] **7. Verify.** Unit, check, ratchets, e2e, browser check; re-confirm production still has 0 edits
+      immediately before merge.
+      Verified 2026-11-26: unit 1249, svelte-check 0/0, eslint 3, prettier 42, e2e 110/110. Local stack, real
+      browser: a save wrote a row whose base_hash = sha256 of the corpus title (and whose browser-chosen id
+      the database accepted); with that row pointed at an older base the title showed "Expired", the panel
+      showed the base copy, and Re-confirm + Save recorded a second row anchored to the base now and cleared
+      the mark. Console clean. Test rows deleted. Production re-check is still due right before merge.
 
 ## Carried over from earlier plans -- audited 2026-11-26
 

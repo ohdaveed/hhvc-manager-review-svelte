@@ -15,6 +15,10 @@ What makes "the mockup changed between v2 and v3" answerable. Only
 reader-visible copy counts toward whether a version is new: annotations and
 metadata travel in the snapshot but do not mint a version.
 
+**Base copy** — what a field says before any edit: the corpus text for a page in
+the corpus, the drafted text for a draft page. Drafting a page again changes its
+base copy just as a re-port changes the corpus.
+
 **Overlay** — the accepted edits a review has produced, applied on top of the
 base copy at render time. Never folded back into the corpus except by an
 explicit, deliberate act.
@@ -90,10 +94,20 @@ are what the overlay renders.
 the approved text no longer answers the copy it was approved against. Expiry is
 per field: unrelated copy moving elsewhere on the page must not retire it. An
 expired acceptance stays visible on the mockup, marked as expired — neither
-hidden nor passed off as current.
+hidden nor passed off as current. The accepted text is what shows; the base copy
+it no longer answers is one step away. Expiry is judged against the base copy
+as it is now, so copy that changes and then changes back un-expires the
+acceptance. It is resolved only by a new edit: re-confirming the same text,
+rewriting it, or keeping the base copy — each an unsaved change until saved.
+
+**Orphaned** — a saved edit whose field no longer exists, because the field was
+removed or its id changed. Kept, not shown on the mockup, and listed in the
+transcript. Distinct from expired: there is no current copy to re-confirm
+against.
 
 **Transcript** — the readable record of a page's review, written for whoever
-rebuilds the page in the CMS. The deliverable this tool exists to produce.
+rebuilds the page in the CMS. The deliverable this tool exists to produce. Expired and
+orphaned edits appear in it, flagged, rather than being left out.
 
 ## Rethink
 

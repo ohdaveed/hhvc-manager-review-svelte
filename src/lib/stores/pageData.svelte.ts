@@ -3,6 +3,7 @@ import { allPages } from '$lib/data';
 import { deriveFieldKey } from '$lib/corpus/fieldKey.js';
 import { routableId } from '$lib/corpus/pageId';
 import { resolveField } from '$lib/corpus/fieldResolver';
+import { extractCopy, type CopyMap, type CorpusPage } from '$lib/corpus/fields';
 import type { DraftPage } from './draftPages';
 import type { Op } from '$lib/rethink/diff';
 import type { RethinkResult } from '$lib/rethink/request';
@@ -63,7 +64,18 @@ export type UnsavedChange = {
 	baseEditId?: string | null;
 	/** Another reviewer saved this field after the change started. */
 	savedElsewhere?: boolean;
+	/**
+	 * Saving the same wording again, deliberately: re-confirming an expired edit
+	 * against the base copy now. Makes the change worth saving although its
+	 * value equals what the field already shows.
+	 */
+	reconfirm?: boolean;
 };
+
+/** Whether an unsaved change would record anything if saved. */
+export function isChanged(c: UnsavedChange): boolean {
+	return c.value !== c.original || c.reconfirm === true;
+}
 
 /** Field ids are page-relative, so an unsaved change is named by both. */
 export function changeKey(pageId: string, fieldId: string): string {
@@ -250,8 +262,75 @@ class PageStore {
 	/** Per-user, per-device chrome. Not review data, so it never leaves the browser. */
 	railCollapsed = $state<{ queue: boolean; panel: boolean }>({ queue: false, panel: false });
 
+	/**
+	 * Each page's BASE COPY, by field id, captured before anything is written
+	 * into the page: the corpus text for a corpus page, the drafted text for a
+	 * draft page. The page objects themselves cannot answer "what did the base
+	 * say" once hydration has written saved edits into them, and an edit's
+	 * `base_hash` and its expiry are both about the base, not the screen.
+	 * Plain, not `$state`: it changes only when a page is (re)built.
+	 */
+	private baseCopy: Record<string, CopyMap> = {};
+
+	/**
+	 * Saved edits that no longer answer their field's base copy, keyed like
+	 * `changeKey(path, fieldId)`: `expired` or `orphaned`. A key's absence means
+	 * current. Filled by the review layout from `classifyLatestEdits`.
+	 */
+	editStatus = $state<Record<string, 'expired' | 'orphaned'>>({});
+
+	editStatusOf(pageId: string | undefined, fieldId: string): 'expired' | 'orphaned' | undefined {
+		return pageId === undefined ? undefined : this.editStatus[changeKey(pageId, fieldId)];
+	}
+
+	/**
+	 * `pageId`'s stale edits in the shape `reviewRecordFor` takes: each expired
+	 * field with its base copy now, and the orphaned field ids.
+	 */
+	staleEditsOn(pageId: string): { expired: Record<string, string>; orphaned: string[] } {
+		const expired: Record<string, string> = {};
+		const orphaned: string[] = [];
+		const prefix = changeKey(pageId, '');
+		for (const [key, status] of Object.entries(this.editStatus)) {
+			if (!key.startsWith(prefix)) continue;
+			const fieldId = key.slice(prefix.length);
+			if (status === 'expired') expired[fieldId] = this.baseCopyOf(pageId, fieldId) ?? '';
+			else orphaned.push(fieldId);
+		}
+		return { expired, orphaned };
+	}
+
+	/**
+	 * Resolving an expired edit by re-confirming its wording: an unsaved change
+	 * carrying the same text, marked so that Save records it -- a new edit,
+	 * anchored to the base copy now.
+	 */
+	reconfirmChange(pageId: string, fieldId: string): boolean {
+		const field = this.resolveOn(pageId, fieldId);
+		if (!field || !this.setChange(pageId, fieldId, field.value)) return false;
+		const key = changeKey(pageId, fieldId);
+		this.unsavedChanges = {
+			...this.unsavedChanges,
+			[key]: { ...this.unsavedChanges[key], reconfirm: true }
+		};
+		return true;
+	}
+
+	/** Resolving an expired edit by keeping the base copy: an unsaved change to it. */
+	keepBaseCopy(pageId: string, fieldId: string): boolean {
+		const base = this.baseCopyOf(pageId, fieldId);
+		return base === undefined ? false : this.setChange(pageId, fieldId, base);
+	}
+
+	/** The base copy of one field, or undefined when the page has no such field. */
+	baseCopyOf(pageId: string, fieldId: string): string | undefined {
+		return this.baseCopy[pageId]?.[fieldId];
+	}
+
 	constructor() {
-		this.pages = allPages.map(toStorePage);
+		const pages = allPages.map(toStorePage);
+		for (const page of pages) this.baseCopy[page.id] = extractCopy(page as CorpusPage);
+		this.pages = pages;
 	}
 
 	/**
@@ -269,6 +348,8 @@ class PageStore {
 			// the rest of the merge, nor reject `loadReview`. Skipped and named.
 			try {
 				const page = { ...toStorePage(draft.content), id: draft.path };
+				// A re-merge is the draft as the database now holds it: its base.
+				this.baseCopy[draft.path] = extractCopy(page as CorpusPage);
 				const at = this.pages.findIndex((p) => p.id === draft.path);
 				if (at === -1) this.pages.push(page);
 				else this.pages[at] = page;
@@ -295,6 +376,7 @@ class PageStore {
 	}
 
 	addPage(page: Page) {
+		this.baseCopy[page.id] = extractCopy(page as CorpusPage);
 		this.pages.push(page);
 	}
 
@@ -459,7 +541,7 @@ class PageStore {
 
 	/** Unsaved changes on every page: what the toolbar pill counts. */
 	unsavedChangeCount(): number {
-		return Object.values(this.unsavedChanges).filter((c) => c.value !== c.original).length;
+		return Object.values(this.unsavedChanges).filter(isChanged).length;
 	}
 
 	/** Drops one suggestion, once its edit is known to have persisted. */
@@ -536,21 +618,18 @@ class PageStore {
 	/** Whether the field has typing that has not been saved. */
 	hasUnsavedChange(pageId: string | undefined, fieldId: string): boolean {
 		const change = this.getChange(pageId, fieldId);
-		return Boolean(change && change.value !== change.original);
+		return Boolean(change && isChanged(change));
 	}
 
 	/** Unsaved changes on `pageId`, in the order they were started. */
 	unsavedChangesOn(pageId: string | undefined): UnsavedChange[] {
-		return Object.values(this.unsavedChanges).filter(
-			(d) => d.pageId === pageId && d.value !== d.original
-		);
+		return Object.values(this.unsavedChanges).filter((d) => d.pageId === pageId && isChanged(d));
 	}
 
 	/** Unsaved changes waiting on OTHER pages -- said, not hidden. */
 	unsavedChangesElsewhere(pageId: string | undefined): number {
-		return Object.values(this.unsavedChanges).filter(
-			(d) => d.pageId !== pageId && d.value !== d.original
-		).length;
+		return Object.values(this.unsavedChanges).filter((d) => d.pageId !== pageId && isChanged(d))
+			.length;
 	}
 
 	/**
@@ -583,7 +662,7 @@ class PageStore {
 		const next: Record<string, UnsavedChange> = {};
 		for (const [key, d] of Object.entries(this.unsavedChanges)) {
 			const kept = d.pageId === this.activePageId && keep.includes(d.fieldId);
-			if (d.value !== d.original || kept) next[key] = d;
+			if (isChanged(d) || kept) next[key] = d;
 			else this.unaccept(d.pageId, d.fieldId);
 		}
 		this.unsavedChanges = next;
