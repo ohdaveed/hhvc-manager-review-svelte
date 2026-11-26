@@ -194,8 +194,8 @@ describe('credentialsAgree', () => {
 
 	it('catches a connection string naming a different hosted project', () => {
 		// The failure this variable introduced the risk of: the app and both keys
-		// on staging while `corpus:import` writes the corpus version to
-		// production, with nothing in the UI to say so.
+		// on one hosted project while `corpus:import` writes the corpus version
+		// to another, with nothing in the UI to say so.
 		const { verdict, reason } = credentialsAgree({
 			SVELTE_PUBLIC_SUPABASE_URL: PROJECT_URL,
 			SVELTE_PUBLIC_SUPABASE_ANON_KEY: hostedKey(PROJECT),

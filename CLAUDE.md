@@ -224,34 +224,31 @@ Supabase auth URLs must include any new origin, or magic links redirect to a dea
 - **Update `site_url` and `uri_allow_list` on both Supabase projects** (Dashboard → Authentication → URL Configuration, or `PATCH /v1/projects/<ref>/config/auth`), plus `SITE_URL` in `scripts/verify.sh`. `verify:live` is the one that notices: it probes the old host and gets a 404.
 - **Remove the old host from the allow-lists. Do not just add the new one.** A released `*.netlify.app` name can be claimed by anyone, and magic-link redirects carry the session in the URL fragment, so a stale entry would hand sign-in tokens to whoever registers it.
 
-### Two hosted Supabase projects, split by deploy context
+### One hosted Supabase project, shared by every deploy context
 
-There are two, and which one a build talks to is decided by its Netlify deploy context:
+Every Netlify deploy context talks to the production project:
 
-| Context                    | Supabase project              | Ref                    |
-| -------------------------- | ----------------------------- | ---------------------- |
-| `production`               | `hhvc-manager-review-svelte`  | `kiynekyzqxneepjipqhg` |
-| `deploy-preview`           | `hhvc-manager-review-staging` | `aplbsgacqnxhzjuquvft` |
-| `branch-deploy`            | `hhvc-manager-review-staging` | `aplbsgacqnxhzjuquvft` |
-| `dev` (`netlify dev` only) | `hhvc-manager-review-svelte`  | `kiynekyzqxneepjipqhg` |
+| Context                    | Supabase project             | Ref                    |
+| -------------------------- | ---------------------------- | ---------------------- |
+| `production`               | `hhvc-manager-review-svelte` | `kiynekyzqxneepjipqhg` |
+| `deploy-preview`           | `hhvc-manager-review-svelte` | `kiynekyzqxneepjipqhg` |
+| `branch-deploy`            | `hhvc-manager-review-svelte` | `kiynekyzqxneepjipqhg` |
+| `dev` (`netlify dev` only) | `hhvc-manager-review-svelte` | `kiynekyzqxneepjipqhg` |
 
-**Before this split every context was `contexts=all`, so every deploy preview read and wrote the real review database.** A reviewer clicking through a PR preview and editing copy was editing production. That is what the split fixes, and it is the reason not to "simplify" these back to one value.
+**A deploy preview reads and writes the production database.** A reviewer editing copy on a PR preview is editing the real review. That is accepted, not overlooked: the production database still holds only mockup review data, so a separate preview database buys little. Revisit this if production ever holds data that matters.
 
-`SVELTE_PUBLIC_*` are inlined at **build time**, so the context is fixed when the build runs — you cannot tell which database a deploy uses by looking at it at runtime. To check, build under a context and read the bundle:
+There used to be a staging project, `hhvc-manager-review-staging` (`aplbsgacqnxhzjuquvft`), that previews and branch deploys read. **It is gone**: measured 2026-11-26, it was absent from `supabase projects list`, its API host answered nothing, and `db.aplbsgacqnxhzjuquvft.supabase.co` no longer resolved. So every preview was building against a database that did not exist. The `deploy-preview` and `branch-deploy` values of `SVELTE_PUBLIC_SUPABASE_URL`, `SVELTE_PUBLIC_SUPABASE_ANON_KEY` and `SUPABASE_SERVICE_ROLE_KEY` were then pointed at production on the Netlify site. To split them again, create a project, run `supabase db push`, `supabase/seed.hosted.sql` and `bun run corpus:import` against it, and set those three variables per context.
+
+`SVELTE_PUBLIC_*` are inlined at **build time**, so the context is fixed when the build runs. You cannot tell which database a deploy uses by looking at it at runtime, and a preview built before a variable changed keeps the old target until it is rebuilt. To check, build under a context and read the bundle:
 
 ```sh
 netlify build --context deploy-preview
-grep -rhoE 'https://[a-z0-9]+\.supabase\.co' build/   # expect aplbsgac…
+grep -rhoE 'https://[a-z0-9]+\.supabase\.co' build/   # expect kiynekyz…
 ```
 
-Two consequences worth knowing before using a preview:
+**Magic links from a preview need production's allow-list to cover preview hosts** (`https://*--sfhealthyhousing.netlify.app/**`), since previews now sign in against production's `auth.users`.
 
-- **A reviewer needs an invite on the staging project to sign in.** Staging has its own `auth.users`, and `seed.hosted.sql` deliberately creates no identity. A production invite does not work on a preview.
-- **Staging is free-tier and pauses after about 7 days idle.** A preview against a paused project fails to read; wake it from the dashboard.
-
-Staging was built from the repo, not by hand: `supabase db push` applied every migration then in the repo, `supabase/seed.hosted.sql` wrote the review and its 29 page rows, and `bun run corpus:import` wrote the corpus version. Its auth allow-list is `https://*--sfhealthyhousing.netlify.app/**,http://localhost:5173/**` — deliberately **not** the production origin. To rebuild it, repeat those three steps against the staging ref.
-
-**`GEMINI_API_KEY` is shared across every context**, so a preview's AI rewrites spend the production key. Unlike the database, that has not been split.
+**`GEMINI_API_KEY` is shared across every context**, so a preview's AI rewrites spend the production key.
 
 ### Merging to `main` applies migrations to production
 
@@ -276,11 +273,10 @@ Two consequences worth knowing before merging anything with a migration in it:
   merging rather than after, because the merge changes the production schema
   with nobody running a command — a wider blast radius than the Netlify deploy
   it arrives alongside.
-- **Staging is not covered.** The integration names the production ref only, so
-  `aplbsgacqnxhzjuquvft` stays wherever the last manual push left it. After #64
-  merged, staging sat one migration behind production while deploy previews —
-  which read staging — queried a view it did not have. Push it by hand:
-  `supabase link --project-ref aplbsgacqnxhzjuquvft && supabase db push`.
+- **Previews see the migration only after the merge.** They read production,
+  so a PR's preview runs its new frontend against a schema that does not yet
+  have that PR's migrations. A preview that depends on a new table, column or
+  view will fail to read until the merge applies it.
 
 `verify:live` cannot see any of this. Its gates passed against a frontend
 querying `latest_edits`, and would have passed identically had the view been

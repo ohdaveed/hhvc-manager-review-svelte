@@ -1,7 +1,7 @@
 ---
 name: hhvc-supabase-migrations-audit-and-apply
-description: 'Audit Supabase migrations against best practices, identify and fix findings, and safely coordinate application across development, staging, and production environments. Use this skill when auditing Supabase migrations against best practices, identifying findings that need fixing, writing and testing migrations, and coordinating their application across development, staging, and production.'
-trigger: 'Use this skill when auditing Supabase migrations against best practices, identifying findings that need fixing, writing and testing migrations, and coordinating their application across development, staging, and production.'
+description: 'Audit Supabase migrations against best practices, identify and fix findings, and safely coordinate application across local development and production. Use this skill when auditing Supabase migrations against best practices, identifying findings that need fixing, writing and testing migrations, and coordinating their application across local development and production.'
+trigger: 'Use this skill when auditing Supabase migrations against best practices, identifying findings that need fixing, writing and testing migrations, and coordinating their application across local development and production.'
 author: arrizon.david
 source_sessions:
   - arrizon.david_arrizon.david's Organization_default_bbe13a83-bd8e-43ce-8723-90ff7ffd6933
@@ -23,7 +23,7 @@ Use this skill when:
 - Auditing existing Supabase migrations against best practices
 - Identifying database schema issues, constraint problems, or RLS policy gaps
 - Writing and testing migrations to fix those issues
-- Coordinating application of migrations across local dev, staging, and production
+- Coordinating application of migrations across local dev and production
 
 ## The Audit and Apply Workflow
 
@@ -96,28 +96,23 @@ bunx supabase db push --local
 
 Brings your dev database in line without wiping review data.
 
-### 6. Apply to Staging
+### 6. There Is No Staging Step
 
-Verify staging is the linked target:
-
-```sh
-cat supabase/.temp/project-ref
-# Expected: aplbsgacqnxhzjuquvft (staging for this repo)
-```
-
-```sh
-bunx supabase db push
-```
-
-Interactively confirms and prompts for the database password. Staging is free-tier; it pauses after ~7 days idle — wake it from the dashboard if the connection fails.
+The staging project (`aplbsgacqnxhzjuquvft`) no longer exists (measured
+2026-11-26), and every Netlify deploy context — previews included — reads
+production. Do not link to or push to that ref. The consequence to plan for: a
+PR's deploy preview runs its new frontend against production's schema **before**
+the merge applies the PR's migrations, so a preview that depends on a new table,
+column or view fails to read until the merge.
 
 ### 7. Precondition Check for Production
 
 Before merging (which auto-applies to production), **switch to production and
 verify the link took** before running anything against it. `supabase link`
 writes a checkout-wide `supabase/.temp/project-ref`, so whichever project was
-linked last is what an unqualified command hits — and in this repo that is
-usually staging, because staging is the one synced by hand.
+linked last is what an unqualified command hits. Production is the only hosted
+project, but the checkout may still be linked to the old staging ref or to
+another project entirely.
 
 ```sh
 bunx supabase link --project-ref kiynekyzqxneepjipqhg
@@ -125,14 +120,9 @@ cat supabase/.temp/project-ref
 # Expected: kiynekyzqxneepjipqhg (production for this repo)
 ```
 
-Restore the staging link afterwards, or the next hand-run `db push` goes to
-production:
-
-```sh
-bunx supabase link --project-ref aplbsgacqnxhzjuquvft
-```
-
-A separate worktree sidesteps this entirely — `supabase/.temp/` is
+Leaving the checkout linked to production means the next unqualified hand-run
+`db push` goes to production. Prefer a separate worktree, which sidesteps this
+entirely — `supabase/.temp/` is
 per-worktree, so a link there cannot move the shared checkout's target.
 
 Then verify no data conflicts:
@@ -147,12 +137,12 @@ SELECT review_id, path, COUNT(*)
 
 ### 8. Merge to Main (Production Auto-Apply)
 
-A Supabase GitHub App integration applies pending migrations to **production only** on merge to `main`. Staging is not covered — the integration targets `kiynekyzqxneepjipqhg` (production) exclusively.
+A Supabase GitHub App integration applies pending migrations to **production** (`kiynekyzqxneepjipqhg`) on merge to `main`. It is the only hosted project, so there is nothing else to sync.
 
 **Consequences:**
 
 - The merge is the production apply; CI/Netlify do not apply migrations
-- Staging must be pushed by hand (step 6)
+- Deploy previews read production, so they see the PR's migrations only after the merge (step 6)
 - `verify:live` cannot detect schema issues; all gates pass against a frontend that queries missing views
 
 After merge, verify production caught up:
@@ -184,8 +174,7 @@ Both must pass before closing the work.
 
 ## Gotchas
 
-- **Auto-migration is production-only** — staging always needs manual push, done at step 6 before the merge
-- **Staging pauses after ~7 days idle** — free-tier behavior; wake from Supabase dashboard
+- **The staging project is gone** — `aplbsgacqnxhzjuquvft` no longer exists; previews read production, so never link or push to that ref
 - **`supabase/.temp/project-ref` determines the link target** — check it before any `db push` to avoid the wrong environment
 - **Dry-run recreates schema from scratch** — it rebuilds in a shadow DB, so state differs from your current database
 - **`verify:live` cannot catch schema issues** — green gates prove the frontend deployed, not that the schema is correct
