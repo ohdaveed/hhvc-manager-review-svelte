@@ -1028,3 +1028,141 @@ body {
 	box-shadow: 0 0 0 4px #ffbe2e;
 	transition: box-shadow 0.2s;
 }
+
+/* Step by step pages draw their steps as a timeline; Transaction pages keep
+   the numbered headings above, which is also what live does on them
+   ("1. Check if your issue...", `report-health-nuisance-or-hazards`).
+   Measured 2026-11-26 on
+   `step-by-step--fix-your-building-and-housing-code-violation` at 390, 768
+   and 1074px:
+
+   - Desktop: a 60px #DAEFF0 circle, numeral Roboto Slab 32/44 600 in
+     #00646C, its left edge 4px outside the content edge; the title (Slab
+     24/32 500) starts 20px right of it, level with its top; step copy sits
+     under the title in a column capped at 623px; a 2px #6ABABF line runs
+     through the circles' centres from each step to the next.
+   - Tablet: a 40px circle with a 24px numeral, a 20/28 title, copy to the
+     full width.
+   - Phone: the circle centred on the title row (68px), no line, and the
+     copy dropping to the full width 16px below the title.
+
+   Step paragraphs are 20px apart and a step's last line sits ~52px above
+   the next step at every width. Live also has "and"/"or" connector steps
+   and Cost/Time boxes; the corpus models neither, so every step here is a
+   numbered one. The queries read #mockPage's content box: 830-882px at
+   Desktop, 710px at Tablet, 348px at Phone. */
+#mockPage [data-page-type='Step by step'] .steps-block {
+	gap: 0;
+	margin: 40px 0;
+}
+#mockPage [data-page-type='Step by step'] .steps-block-item {
+	position: relative;
+	isolation: isolate;
+	display: grid;
+	grid-template-columns: 40px minmax(0, 1fr);
+	column-gap: 20px;
+	align-content: start;
+	padding-bottom: 52px;
+}
+#mockPage [data-page-type='Step by step'] .steps-block-item > * {
+	grid-column: 1 / -1;
+}
+#mockPage [data-page-type='Step by step'] .steps-block-item > :last-child {
+	margin-bottom: 0;
+}
+#mockPage [data-page-type='Step by step'] .steps-block-item::before {
+	content: counter(step);
+	z-index: 1;
+	display: flex;
+	grid-row: 1;
+	grid-column: 1;
+	align-self: center;
+	align-items: center;
+	justify-content: center;
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	background: #daeff0;
+	color: #00646c;
+	font-family: var(--site-font-display);
+	font-size: 24px;
+	font-weight: 600;
+	line-height: 32px;
+}
+#mockPage [data-page-type='Step by step'] .steps-block-title {
+	display: flex;
+	grid-row: 1;
+	grid-column: 2;
+	align-items: center;
+	min-height: 68px;
+	margin: 0 0 16px;
+	font-size: 20px;
+	font-weight: 500;
+	line-height: 28px;
+}
+#mockPage [data-page-type='Step by step'] .steps-block-title::before {
+	content: none;
+}
+#mockPage [data-page-type='Step by step'] .steps-block-item p {
+	margin-bottom: 20px;
+}
+
+@container mockup (min-width: 600px) {
+	/* Live insets the step column from the right by the same 17px the line
+	   sits in from the left. */
+	#mockPage [data-page-type='Step by step'] .steps-block-item {
+		margin-left: -2px;
+		padding-right: 17px;
+	}
+	#mockPage [data-page-type='Step by step'] .steps-block-item > * {
+		grid-column: 2;
+	}
+	#mockPage [data-page-type='Step by step'] .steps-block-item::before {
+		align-self: start;
+	}
+	#mockPage [data-page-type='Step by step'] .steps-block-item::after {
+		content: '';
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 19px;
+		border-left: 2px solid #6ababf;
+	}
+	#mockPage [data-page-type='Step by step'] .steps-block-item:last-child::after {
+		content: none;
+	}
+	#mockPage [data-page-type='Step by step'] .steps-block-title {
+		align-items: flex-start;
+		min-height: 0;
+		margin-bottom: 28px;
+	}
+}
+
+@container mockup (min-width: 800px) {
+	/* The timeline is wider than the 7/12 reading column it sits in: 76px of
+	   circle and gap plus a 623px copy column. */
+	#mockPage [data-page-type='Step by step'] .steps-block {
+		width: min(699px, 100cqi);
+	}
+	#mockPage [data-page-type='Step by step'] .steps-block-item {
+		grid-template-columns: 60px minmax(0, 1fr);
+		margin-left: -4px;
+		padding-right: 0;
+	}
+	#mockPage [data-page-type='Step by step'] .steps-block-item > :not(.steps-block-title) {
+		max-width: 623px;
+	}
+	#mockPage [data-page-type='Step by step'] .steps-block-item::before {
+		width: 60px;
+		height: 60px;
+		font-size: 32px;
+		line-height: 44px;
+	}
+	#mockPage [data-page-type='Step by step'] .steps-block-item::after {
+		left: 29px;
+	}
+	#mockPage [data-page-type='Step by step'] .steps-block-title {
+		font-size: 24px;
+		line-height: 32px;
+	}
+}
