@@ -147,7 +147,10 @@
 		if (!row || !box) return;
 		const r = row.getBoundingClientRect();
 		const b = box.getBoundingClientRect();
-		if (r.top < b.top) box.scrollTop += r.top - b.top - 8;
+		// Below the pinned progress and filter, not under them.
+		const top =
+			b.top + (navEl?.querySelector<HTMLElement>('[data-queue-pinned]')?.offsetHeight ?? 0);
+		if (r.top < top) box.scrollTop += r.top - top - 8;
 		else if (r.bottom > b.bottom) box.scrollTop += r.bottom - b.bottom + 8;
 	});
 </script>
@@ -167,7 +170,7 @@
 	/>
 {/snippet}
 
-<nav bind:this={navEl} class="space-y-5 px-5 pt-4 pb-6" aria-label="Review queue">
+<nav bind:this={navEl} class="space-y-5 px-5 pb-6" aria-label="Review queue">
 	<!-- The empty state is not a loading state, and saying so was misleading.
 	     An empty `pagesStore` here means one of two things, and the old
 	     "No pages loaded. (Waiting for Supabase data)" described neither: it
@@ -181,7 +184,7 @@
 	     that fixes it. -->
 	{#if !loaded}
 		{#if sessionStore.knownSignedOut}
-			<p class="text-sm text-sfds-slate-l3">
+			<p class="pt-4 text-sm text-sfds-slate-l3">
 				<a href={resolve('/login')} class="font-semibold text-sfds-action hover:underline"
 					>Sign in</a
 				> to load the review queue.
@@ -189,7 +192,7 @@
 		{:else if loadState === 'failed'}
 			<!-- Announced: it replaces a loading line the reviewer was waiting on.
 			     Never disabled while retrying, as on the landing page's card. -->
-			<div role="alert" class="space-y-2">
+			<div role="alert" class="space-y-2 pt-4">
 				<p class="text-sm font-semibold text-sfds-red">The queue didn't load</p>
 				<p class="text-sm text-sfds-black">
 					The review data couldn't be reached. Your decisions are safe.
@@ -199,36 +202,47 @@
 				</Button>
 			</div>
 		{:else if loadState === 'loading' || sessionStore.signedIn === undefined}
-			<p role="status" class="text-sm text-sfds-slate-l3">Loading the queue…</p>
+			<p role="status" class="pt-4 text-sm text-sfds-slate-l3">Loading the queue…</p>
 		{:else}
-			<p class="text-sm text-sfds-slate-l3">This review has no pages yet.</p>
+			<p class="pt-4 text-sm text-sfds-slate-l3">This review has no pages yet.</p>
 		{/if}
-	{:else}
-		<section aria-label="Review progress">
-			<div class="flex items-baseline justify-between">
-				<span class="text-[13px] font-semibold text-sfds-black">
-					{decided} of {total} decided
-				</span>
-				<span class="text-[13px] font-semibold text-sfds-slate-l3 tabular-nums">{pct}%</span>
-			</div>
-
-			<div class="mt-2">
-				<StatusBar size="sm" {counts} {total} />
-			</div>
-		</section>
 	{/if}
 
 	{#if loaded || browsing}
-		<div>
-			<label for="queue-filter" class="sr-only">Filter pages</label>
-			<input
-				id="queue-filter"
-				type="search"
-				bind:value={query}
-				placeholder="Filter by title or path"
-				autocomplete="off"
-				class="w-full rounded-[3px] border border-sfds-grey-l2 bg-white px-2.5 py-1.5 text-[13px] text-sfds-black placeholder:text-sfds-slate-l3 focus:border-sfds-action focus:ring-1 focus:ring-sfds-action focus:outline-none"
-			/>
+		<!-- Pinned to the top of the rail's scroll area. The effect above scrolls
+		     the current row into view, and for a page low in the queue that put
+		     "N of M decided" and the filter 726px above the top of the rail
+		     (measured at 1440x900), so the review's progress was off screen on
+		     the page a reviewer had just opened. -->
+		<div
+			class="sticky top-0 z-10 -mx-5 space-y-4 border-b border-sfds-grey-l2 bg-background px-5 pt-4 pb-3"
+			data-queue-pinned
+		>
+			{#if loaded}
+				<section aria-label="Review progress">
+					<div class="flex items-baseline justify-between">
+						<span class="text-[13px] font-semibold text-sfds-black">
+							{decided} of {total} decided
+						</span>
+						<span class="text-[13px] font-semibold text-sfds-slate-l3 tabular-nums">{pct}%</span>
+					</div>
+
+					<div class="mt-2">
+						<StatusBar size="sm" {counts} {total} />
+					</div>
+				</section>
+			{/if}
+			<div>
+				<label for="queue-filter" class="sr-only">Filter pages</label>
+				<input
+					id="queue-filter"
+					type="search"
+					bind:value={query}
+					placeholder="Filter by title or path"
+					autocomplete="off"
+					class="w-full rounded-[3px] border border-sfds-grey-l2 bg-white px-2.5 py-1.5 text-[13px] text-sfds-black placeholder:text-sfds-slate-l3 focus:border-sfds-action focus:ring-1 focus:ring-sfds-action focus:outline-none"
+				/>
+			</div>
 		</div>
 		{#if (browsing ? corpusShown.length : shown.length + unreviewedShown.length) === 0}
 			<p role="status" class="text-sm text-sfds-slate-l3">No pages match “{query.trim()}”.</p>
