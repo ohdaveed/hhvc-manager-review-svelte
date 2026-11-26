@@ -34,6 +34,7 @@
 	} = $props();
 
 	const slots = $derived(placements.panels.filter((p) => !p.inert));
+	const filledCount = $derived(slots.filter((s) => s.filled).length);
 	const MAX_VALUES = 3;
 	const statusWord: Record<string, string> = {
 		placed: 'placed',
@@ -47,13 +48,19 @@
 	<nav class="bp-header" aria-label="Blueprint">
 		<div class="bp-head-left">
 			<h2 class="bp-title">Blueprint</h2>
-			<p class="bp-meta">{title} · {placements.type} form, in Karl’s order</p>
+			<!-- The cards are Karl panels; the summary below counts the mockup's
+			     sections. Naming both units keeps "4 sections" over 14 cards from
+			     reading as a miscount. -->
+			<p class="bp-meta">
+				{title} · {placements.type} form, {slots.length}
+				{slots.length === 1 ? 'panel' : 'panels'} in Karl’s order, {filledCount} with copy
+			</p>
 		</div>
 		<button type="button" class="bp-exit" onclick={onExit}>Back to review</button>
 	</nav>
 
 	<div class="bp-body">
-		<p class="bp-summary">{outlineSummary(placements)}</p>
+		<p class="bp-summary"><strong>On the mockup:</strong> {outlineSummary(placements)}</p>
 
 		{#if placements.url}
 			<p class="bp-url">
@@ -178,13 +185,13 @@
 	.bp-title {
 		margin: 0;
 		font-family: var(--font-display);
-		font-size: 15px;
+		font-size: 0.9375rem;
 		font-weight: 700;
 	}
 
 	.bp-meta {
 		margin: 0;
-		font-size: 13px;
+		font-size: 0.8125rem;
 		color: #3d4551;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -200,7 +207,7 @@
 		border-radius: 6px;
 		background: #f7f7f7;
 		color: #1c2b39;
-		font-size: 12px;
+		font-size: 0.75rem;
 		font-weight: 600;
 		cursor: pointer;
 	}
@@ -221,7 +228,7 @@
 	.bp-url {
 		max-width: 760px;
 		margin: 0 auto 12px;
-		font-size: 14px;
+		font-size: 0.875rem;
 		color: #1c2b39;
 	}
 
@@ -231,7 +238,7 @@
 		padding: 8px 12px;
 		border-left: 3px solid #545b64;
 		background: #eef0f3;
-		font-size: 14px;
+		font-size: 0.875rem;
 		color: #1c2b39;
 	}
 
@@ -272,7 +279,7 @@
 
 	.bp-slot-title {
 		margin: 0;
-		font-size: 15px;
+		font-size: 0.9375rem;
 		font-weight: 700;
 		color: #1c2b39;
 	}
@@ -288,28 +295,28 @@
 
 	.bp-reason {
 		margin: 6px 0 0;
-		font-size: 13px;
+		font-size: 0.8125rem;
 		color: #6f4a00;
 	}
 
 	.bp-note,
 	.bp-caveat {
 		margin: 6px 0 0;
-		font-size: 13px;
+		font-size: 0.8125rem;
 		color: #3d4551;
 	}
 
 	.bp-required {
 		margin: 4px 0 0;
-		font-size: 13px;
+		font-size: 0.8125rem;
 		color: #8c1d18;
 	}
 
 	.bp-values {
 		margin: 8px 0 0;
 		padding-left: 18px;
-		font-size: 13px;
-		line-height: 18px;
+		font-size: 0.8125rem;
+		line-height: 1.125rem;
 		color: #1c2b39;
 	}
 
@@ -327,7 +334,7 @@
 
 	.bp-more {
 		margin: 4px 0 0;
-		font-size: 12px;
+		font-size: 0.75rem;
 		color: #3d4551;
 	}
 
@@ -342,7 +349,7 @@
 
 	.bp-tray-title {
 		margin: 0 0 8px;
-		font-size: 15px;
+		font-size: 0.9375rem;
 		font-weight: 700;
 		color: #8c1d18;
 	}
@@ -350,7 +357,7 @@
 	.bp-tray-empty,
 	.bp-tray-reason {
 		margin: 0;
-		font-size: 13px;
+		font-size: 0.8125rem;
 		color: #1c2b39;
 	}
 
@@ -366,7 +373,7 @@
 	.bp-tray-subject {
 		margin: 0 0 2px;
 		font-weight: 700;
-		font-size: 14px;
+		font-size: 0.875rem;
 		color: #1c2b39;
 	}
 </style>
