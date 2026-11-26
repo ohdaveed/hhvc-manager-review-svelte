@@ -20,11 +20,44 @@
  * knowing: this script now needs `SUPABASE_DB_URL` and no longer needs
  * `SUPABASE_SERVICE_ROLE_KEY`. Both are managed by `bun run env:local` /
  * `env:hosted`, so they move together -- see scripts/env-target.ts.
+ *
+ * **Records the committed `corpus.lock`, and refuses to run without a current
+ * one.** It used to call `buildLock(allPages)` with no previous lock, which
+ * treats every field as new: it minted different field ids from the ones
+ * `corpus.lock` froze, and so a different `corpusHash`, for an identical
+ * corpus. `corpus_versions.corpus_hash` then never equalled the committed
+ * lock's, the lookup below keyed on a hash nothing else computed, and the
+ * `page_versions.field_hashes` it wrote were filed under ids the edit-expiry
+ * design (freeze.ts) never assigned. Rebuilding with the lock as the ledger
+ * would fix the hash only when the lock happens to be current; on a stale one
+ * it would record a version no commit carries. So it goes through
+ * `verifyCorpusLock` -- the same function `corpus:check` uses -- and a lock
+ * that check would fail stops the import before any connection is opened.
  */
 import { Client } from 'pg';
+import { readFileSync } from 'node:fs';
 import { execSync } from 'node:child_process';
 import { allPages } from '../src/lib/data/index.js';
-import { buildLock, derivePagePath } from '../src/lib/corpus/lock.js';
+import { derivePagePath, verifyCorpusLock } from '../src/lib/corpus/lock.js';
+
+let parsedLock: unknown;
+try {
+	parsedLock = JSON.parse(readFileSync(new URL('../corpus.lock', import.meta.url), 'utf8'));
+} catch {
+	console.error('corpus.lock is missing or unreadable. Run `bun run corpus:lock` and commit it.');
+	process.exit(1);
+}
+
+const verdict = verifyCorpusLock(parsedLock, allPages);
+if (!verdict.ok) {
+	console.error(
+		`corpus.lock is not current for this tree (${verdict.kind}). Run \`bun run corpus:check\` ` +
+			'for the details, then `bun run corpus:lock` and commit the result before importing -- ' +
+			'the import records the committed lock, so it will not invent one.'
+	);
+	process.exit(1);
+}
+const lock = verdict.lock;
 
 const connectionString = process.env.SUPABASE_DB_URL;
 
@@ -49,8 +82,6 @@ async function done(code: number): Promise<never> {
 	await client.end();
 	process.exit(code);
 }
-
-const lock = buildLock(allPages);
 
 const existing = await client.query<{ id: string; imported_at: string }>(
 	'SELECT id, imported_at FROM public.corpus_versions WHERE corpus_hash = $1',

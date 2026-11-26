@@ -129,3 +129,102 @@ export function buildLock(pages: CorpusPage[], previous?: CorpusLock): CorpusLoc
 
 	return { version: 1, corpusHash: hashLockPages(byPath), pages: byPath };
 }
+
+/**
+ * Why a parsed `corpus.lock` cannot be used for the corpus in the tree.
+ *
+ * - `version` -- not a v1 file. Checked before shape, because a later format
+ *   is free to change what `pages` looks like.
+ * - `malformed` -- `pages` is missing, or an entry's hashes are not 64-hex.
+ * - `inconsistent` -- the file's own `pages` do not hash to its `corpusHash`:
+ *   corruption (a hand-resolved merge), not drift.
+ * - `stale` -- a well-formed file for a different corpus: someone changed
+ *   `src/lib/data` without running `bun run corpus:lock`.
+ */
+export type CorpusLockProblem =
+	| { kind: 'version'; version: unknown }
+	| { kind: 'malformed' }
+	| { kind: 'inconsistent'; recomputedHash: string }
+	| { kind: 'stale'; expected: CorpusLock; added: string[]; removed: string[]; changed: string[] };
+
+export type CorpusLockVerdict =
+	{ ok: true; lock: CorpusLock } | ({ ok: false } & CorpusLockProblem);
+
+/**
+ * Decide whether a parsed `corpus.lock` describes `pages`, and if it does,
+ * return the lock to record.
+ *
+ * This is the one definition of "the committed lock is current", shared by
+ * `scripts/check-corpus-lock.ts` (CI) and `scripts/corpus-import.ts` (the
+ * database). The two used to disagree. The import called `buildLock(allPages)`
+ * with no ledger, so every field was treated as new: it minted different field
+ * ids from the ones `corpus.lock` froze, and so a different `corpusHash`, for
+ * an identical corpus. `corpus_versions.corpus_hash` could never equal the
+ * committed lock's hash, and the import's idempotency lookup keyed on a hash
+ * no other tool computed. Measured 2026-11-26 on `main` at a7d93f0: lock
+ * `a91786fcd1b4…`, ledger-less `buildLock(allPages)` `bc89dbc708bf…`.
+ *
+ * The checks run in the order `corpus:check` always used: version, then shape,
+ * then internal consistency, and only then is the file trusted as the id
+ * ledger. Built any earlier, a corrupt file would be feeding the comparison
+ * meant to catch it. The ledger only chooses ids: every hash value is
+ * recomputed from the copy, so a ledger whose values disagree with the tree
+ * lands in `stale`. What it cannot catch is a ledger whose ids were exchanged
+ * between two fields -- `freezeFieldIds` adopts ids by content, so that is a
+ * self-consistent assignment indistinguishable from real history.
+ *
+ * On `ok` the returned lock is the committed file itself, not the rebuilt one.
+ * They hash identically, and `hashLockPages` covers every path, content hash
+ * and field-hash map, so they are the same manifest -- but returning the file
+ * makes "what the import records is what git holds" true by construction
+ * rather than by that argument.
+ */
+export function verifyCorpusLock(committed: unknown, pages: CorpusPage[]): CorpusLockVerdict {
+	const file = committed as Partial<CorpusLock> | null;
+
+	if (file === null || typeof file !== 'object' || file.version !== 1) {
+		return { ok: false, kind: 'version', version: file?.version };
+	}
+
+	const entries = file.pages;
+	if (
+		entries === null ||
+		entries === undefined ||
+		typeof entries !== 'object' ||
+		Array.isArray(entries) ||
+		Object.values(entries).some(
+			(entry) =>
+				entry === null ||
+				typeof entry !== 'object' ||
+				typeof entry.contentHash !== 'string' ||
+				!HEX64.test(entry.contentHash) ||
+				!isValidFieldHashMap(entry.fieldHashes)
+		)
+	) {
+		return { ok: false, kind: 'malformed' };
+	}
+
+	const lock = file as CorpusLock;
+	const recomputedHash = hashLockPages(lock.pages);
+	if (recomputedHash !== lock.corpusHash) {
+		return { ok: false, kind: 'inconsistent', recomputedHash };
+	}
+
+	const expected = buildLock(pages, lock);
+	if (expected.corpusHash === lock.corpusHash) {
+		return { ok: true, lock };
+	}
+
+	const expectedPaths = new Set(Object.keys(expected.pages));
+	const actualPaths = new Set(Object.keys(lock.pages));
+	return {
+		ok: false,
+		kind: 'stale',
+		expected,
+		added: [...expectedPaths].filter((p) => !actualPaths.has(p)),
+		removed: [...actualPaths].filter((p) => !expectedPaths.has(p)),
+		changed: [...expectedPaths].filter(
+			(p) => actualPaths.has(p) && lock.pages[p].contentHash !== expected.pages[p].contentHash
+		)
+	};
+}
