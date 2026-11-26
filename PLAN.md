@@ -53,7 +53,13 @@ suggestion. Saving is the acceptance; there is no accepted-but-unsaved state.
 - [x] **13. Someone else saved this field.** While a field has an unsaved change, a newer confirmed edit
       to it from elsewhere shows a one-line notice on that field; Save still proceeds (last write wins).
       Unit-tested.
-- [ ] **14. Verify.** `bun run verify` PASS, ratchets at baseline, e2e green, Playwright check by eye.
+- [x] **14. Verify.** `bun run verify` PASS, ratchets at baseline, e2e green, Playwright check by eye.
+
+Verified 2026-11-26 at 5008b1c: unit 1204 passed, svelte-check 0/0, eslint 3, prettier 42 (all at baseline),
+e2e 106/106; in the browser, typing shows on the mockup with the pill at "1 unsaved change" and the footer at
+"Save 1 change". The saved-elsewhere notice is unit-tested only: it needs a second reviewer saving the same
+field, and its layout glue (the user_id filter) has no test. The local stack is missing the `draft_pages`
+migration (PGRST205 in the console) -- an environment gap, not this branch.
 
 Deferred, not this branch: rename the suggestion status `'accepted'` (pre-dates this branch; touches
 Rethink, `decideAll` and the export fold -- follow-up PR after merge); marking expired edits on the
