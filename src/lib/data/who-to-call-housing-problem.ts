@@ -63,10 +63,10 @@ export const whoToCall = {
 				'These are real housing problems, and they are not this team’s to inspect. Going straight to the right office is faster than being routed.'
 			],
 			bullets: [
-				'Heat, hot water, plumbing, electrical, and structural repairs: the Department of Building Inspection.',
-				'Rent increases, evictions, and lease disputes: the Rent Board.',
-				'Lead paint, asbestos, water service, and noise: Citywide services, not this team.',
-				'A fire hazard or a blocked exit: the Fire Department.'
+				'**Heat, hot water, plumbing, electrical, and structural repairs:** the Department of Building Inspection.',
+				'**Rent increases, evictions, and lease disputes:** the Rent Board.',
+				'**Lead paint, asbestos, water service, and noise:** Citywide services, not this team.',
+				'**A fire hazard or a blocked exit:** the Fire Department.'
 			]
 		},
 		{

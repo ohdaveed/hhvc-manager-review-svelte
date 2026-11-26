@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "corpusHash": "34f066a6e549dae4922492510224320ae35cb4e8dbdedb68d4b82e7189dc9fe1",
+  "corpusHash": "fec301f607d52c90850d094f165a9197f2a6cfe35a81001a92dee0c9071f954f",
   "pages": {
     "departments--healthy-housing-and-vector-control": {
       "contentHash": "c94fd18bc0a62eac3f3e89ca0b2f3844f233a95c62d55c3851d41bf94e217361",
@@ -245,13 +245,13 @@
       }
     },
     "information-integrated-pest-management-for-property-owners-and-managers": {
-      "contentHash": "6f3b9c772c31f5af1a8344dc01c43a7b333b299c4c3b7db1e0833b6f574518aa",
+      "contentHash": "0aa81174011be2865410fd157c33f87ae4b93a554122436a6983743873024938",
       "fieldHashes": {
-        "sections.1-follow-san-francisco-owner-responsibilities.bullets.0": "6131955502c90e30e44194c2418e3542681223fb7af718c2276ee9b6150bde9c",
-        "sections.1-follow-san-francisco-owner-responsibilities.bullets.1": "e69d2fafddfedd8cc2070b1fde755e6659a4d35643967be3f85cd14edf818cb9",
-        "sections.1-follow-san-francisco-owner-responsibilities.bullets.2": "68bbfd6c429724ceac2b9af26eb4edfdce3b13750379f1ef18cfe7223ac52d1f",
-        "sections.1-follow-san-francisco-owner-responsibilities.bullets.3": "bcbfda5a798fe73145a79f5bbf5de90f34f8d80fe68b9ec47240cad3d23f29f7",
-        "sections.1-follow-san-francisco-owner-responsibilities.bullets.4": "0ec92685a93e42f2b564a1213e6de3670bd393a6fe9b2f36e8721698700eeb58",
+        "sections.1-follow-san-francisco-owner-responsibilities.bullets.0": "477e91471218dee6d65ea350bf6839ed2decbf7c900445309f635dc321c9bb5f",
+        "sections.1-follow-san-francisco-owner-responsibilities.bullets.1": "02c69febeffc11da77e046f1c6ecef0badae06ad0b9f2964bece1667a4828ab0",
+        "sections.1-follow-san-francisco-owner-responsibilities.bullets.2": "1a085ca3816cb40e586b1755764b72ba82a40458f2acaa0154efcb769b0ff75a",
+        "sections.1-follow-san-francisco-owner-responsibilities.bullets.3": "d1c901f87b0738f13007d49e9334cad86350823b43d0c61340ced7d4c3654c69",
+        "sections.1-follow-san-francisco-owner-responsibilities.bullets.4": "93d7500b5c5de78e010cbcc15789c278e01ae113793d26311ef5d0c9e474d3db",
         "sections.1-follow-san-francisco-owner-responsibilities.heading": "5d1425906d51118c765f574dc810c8aaf991eb4ddba1514281e1d477f171c624",
         "sections.1-follow-san-francisco-owner-responsibilities.paragraphs.0": "dd2980fd7621e3c918ff927cb75380e9a2489bce59c1340bf2a1eedbd5628f54",
         "sections.2-set-policies-plans-and-lease-expectations.bullets.0": "1431fa279c8b315e45b7ed067e0be61a960d717a7dd442b8b3b81ab4afa17f06",
@@ -541,7 +541,7 @@
       }
     },
     "information-what-happens-after-you-report-housing-pest-problem": {
-      "contentHash": "310993c52eb4d9fdb9d1936f73f1adaf965a3433c067099baa779d4772ef1ba8",
+      "contentHash": "2c95fe566a35d5e09f9048961fb536bb3bf1a4de834d908735d6bd6bc11a0005",
       "fieldHashes": {
         "sections.how-a-report-moves-through-the-city.bullets.0": "9d6e74b59346d39437ca8f7f4fb021bee9a96ab270f10366f0b6b4a0d5246ef3",
         "sections.how-a-report-moves-through-the-city.bullets.1": "f55f10bd725a1847bb9f05703a57ed1d622326822e4e92d4977edbe6e17373d4",
@@ -556,11 +556,11 @@
         "sections.how-to-follow-up-on-your-report.heading": "d5a672b1c39ef7cebd05cc455ac9281c3ed0e87ad9617433d152db0898f756ea",
         "sections.how-to-follow-up-on-your-report.paragraphs.0": "855aca1a91b42c28711d76fd263561133cfbedacb3199a2231f914ee383aa6a6",
         "sections.if-a-problem-is-found.bullets.0": "7a360fb033bcd75894a5f2d70da7a442d08cea8223103d3a1ccec1a28eea044c",
-        "sections.if-a-problem-is-found.bullets.1": "8291ea3a0493a617f394bdb32bfc1c804e9709e46d4153384caa8eea75980943",
-        "sections.if-a-problem-is-found.bullets.2": "ea043b32bc96e1b554a78bea4779026c99247cadea3fb4a2a2c2de0e841161ab",
+        "sections.if-a-problem-is-found.bullets.1": "bb05a247ca922a27602110f1578a87089119687ee7860cd48c5e82df88a06c73",
+        "sections.if-a-problem-is-found.bullets.2": "4852928a0af5af2f6a9c01c6c154cb020dda606d9f0293d2b04aad41cd15e788",
         "sections.if-a-problem-is-found.bullets.3": "85cade130e6596cf22449f646b7372db25d03e73418616181d908e8e59b9d2c3",
-        "sections.if-a-problem-is-found.bullets.4": "5604203b3ea0e180d4824f68444e035f1aadd1f33a975de16cd4184a47808e12",
-        "sections.if-a-problem-is-found.bullets.5": "952f8d527b75920b133232d244c6db1fea6ba996bd94989c179c84234ca3454c",
+        "sections.if-a-problem-is-found.bullets.4": "20a29c06044e966c1ab98d65a92b0cc7e3221a4ae359246ea779c8084382b364",
+        "sections.if-a-problem-is-found.bullets.5": "353cfe29d88b1b45a4a23ba47813c3ebd453ac21736936b524d760da9fac8158",
         "sections.if-a-problem-is-found.bullets.6": "e78fcbb69da3aa350853a8701129182fc99e223a52f029ab752cc2db40b9d393",
         "sections.if-a-problem-is-found.bullets.7": "fd3a91d5216533a5df28ab9fcbb3a917699051ad1ba45809dc4270c6bd28967b",
         "sections.if-a-problem-is-found.heading": "9895baa9750e1a0711e781788a6520e394a8f5917dc1a115b19ccd31b08866f4",
@@ -640,7 +640,7 @@
       }
     },
     "information-who-to-call-about-a-housing-problem": {
-      "contentHash": "f5ad76dbc79c40fecd65cf9393cb57853bc30f6d7c89c66ec81e4a638cdd1707",
+      "contentHash": "bce83d571367016ca5cdc04506a674aa5dfbfb36728d50dd142ec447e9d5f720",
       "fieldHashes": {
         "sections.if-you-are-worried-about-retaliation.bullets.0": "81d65eef6f25855d5cb58a295dec6de2992e44622225325d2dd2cafe97aa62eb",
         "sections.if-you-are-worried-about-retaliation.heading": "169611b7968cf9c83d952e026226c8f07b64ab0b7f5dfb26537b78537975f909",
@@ -652,10 +652,10 @@
         "sections.start-with-what-you-can-see.bullets.3": "8cafd313ea31f8ae165cdd5bb5c13a5c6cf9fdc9a46bff84f53a2c567199b92f",
         "sections.start-with-what-you-can-see.heading": "763b127b20c96d750284a7970d3deec115413cb622d9073b0ee785862e44e0e6",
         "sections.start-with-what-you-can-see.paragraphs.0": "c515901c9b7778f5ee8b09d2799752bd9d507478ff3e038c0bb9ff77858bedcf",
-        "sections.what-another-office-handles.bullets.0": "b6da856b0b68842866887ab38f82a20de16349ef1c3be5f64caaeefa49f260b9",
-        "sections.what-another-office-handles.bullets.1": "f644376611f0f6f8bc9448aa6cbccfccb64e834e046e489b92df1c7be029642c",
-        "sections.what-another-office-handles.bullets.2": "3f29e6e18c2a8a3dd4d83be6e9dedb0408e65de61e62b6e8aaf3ac25e0212ba8",
-        "sections.what-another-office-handles.bullets.3": "aaaafde34eade243c01f2e53f8b0eb06feb66e186d25181b435fa2aa02668d39",
+        "sections.what-another-office-handles.bullets.0": "f9b23ac3d4da91b14c991bd889b43b15e62cca9f25c1a6b97a0c4e1ab5c10390",
+        "sections.what-another-office-handles.bullets.1": "982a9a0986c9f8511ff82c6186a7eb895e683365f17de50664d9f0afb26ef03e",
+        "sections.what-another-office-handles.bullets.2": "bccc4cae40a2cac172945fb73ab33ca376c85539a9046755260a5d31bb646e13",
+        "sections.what-another-office-handles.bullets.3": "d33a3626eb20372d928875eced82e60df55365092ad7fb2a7527332ca575da55",
         "sections.what-another-office-handles.heading": "de8e76be712283e121b7ffc24ab8b5118f59eaabdba6048824a2d9515c49bfb2",
         "sections.what-another-office-handles.paragraphs.0": "9bf4a153534f9e7d7de401d441c4f618b63fc7743996109dc23586300b10513c",
         "sections.what-healthy-housing-handles.bullets.0": "038a49ce37a7b81c6ea7452c11d38ab1cde9669ab4a78088e6ea4c8a58084d1e",
@@ -825,7 +825,7 @@
       }
     },
     "pay-your-annual-healthy-housing-fee-apartment-buildings": {
-      "contentHash": "74571f533a7001916056c95b807f5b3f1c291bdf387428f5b1920f6e301bb45f",
+      "contentHash": "a5f72576e76c07157f516a869a7d6d3314cd529fe842443c8784a31c276c028d",
       "fieldHashes": {
         "primaryAgency": "8a2847f0ee854052d30378a2ef091f979c9737bbd8219086a1e04dc0abd84f9f",
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",

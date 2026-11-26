@@ -105,11 +105,11 @@ export const ownerGuidance = {
 				"San Francisco Department of Public Health (SFDPH) Director's Rules and Regulations set legal requirements for owners and managers. These apply to rental property and cover preventing and controlling rodents and other vectors."
 			],
 			bullets: [
-				"Investigate reports: Investigate any tenant reports of pest activity within 72 hours (Director's Rules §V.2).",
-				'Recordkeeping: Keep accurate records of pest complaints, inspections, and pest control services for at least 2 years. Make these records available to DPH on request.',
-				'Hire licensed professionals: Hire only licensed Pest Control Operators (PCOs) to apply pesticides or conduct rat trapping.',
-				'Garbage management: Provide enough rigid plastic or metal containers with tight-fitting lids. Ensure the garbage area is clean and serviced regularly to prevent overflow.',
-				'Staff training: Train building staff on pest recognition, sanitation, exclusion, and safe disposal of infested items.'
+				"**Investigate reports:** Investigate any tenant reports of pest activity within 72 hours (Director's Rules §V.2).",
+				'**Recordkeeping:** Keep accurate records of pest complaints, inspections, and pest control services for at least 2 years. Make these records available to DPH on request.',
+				'**Hire licensed professionals:** Hire only licensed Pest Control Operators (PCOs) to apply pesticides or conduct rat trapping.',
+				'**Garbage management:** Provide enough rigid plastic or metal containers with tight-fitting lids. Ensure the garbage area is clean and serviced regularly to prevent overflow.',
+				'**Staff training:** Train building staff on pest recognition, sanitation, exclusion, and safe disposal of infested items.'
 			],
 			cards: [
 				{
