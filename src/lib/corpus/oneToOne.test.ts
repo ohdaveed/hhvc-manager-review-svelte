@@ -66,6 +66,17 @@ describe('findOneToOneViolations', () => {
 		expect(findOneToOneViolations(onInformation)).toEqual([]);
 	});
 
+	it('applies the same rule to a photo attached to one section', () => {
+		const section = { heading: 'H', image: { alt: 'A yard', src: '/a.webp' } };
+		const onTransaction = [{ slug: 'a', type: 'Transaction', sections: [section] }];
+		const onInformation = [{ slug: 'b', type: 'Information', sections: [section] }];
+
+		expect(findOneToOneViolations(onTransaction)).toMatchObject([
+			{ rule: 'image-without-panel', where: 'sections.0.image', text: 'A yard' }
+		]);
+		expect(findOneToOneViolations(onInformation)).toEqual([]);
+	});
+
 	it('fails closed on a type with no panel inventory', () => {
 		const unknown = [{ slug: 'c', type: 'Newsletter', photo: { alt: 'x' } }];
 

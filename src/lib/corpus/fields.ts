@@ -19,6 +19,7 @@ type Section = {
 	facts?: unknown;
 	steps?: unknown;
 	table?: unknown;
+	image?: { alt?: unknown };
 };
 export type CorpusPage = {
 	title?: unknown;
@@ -161,6 +162,10 @@ export function extractCopy(page: CorpusPage): CopyMap {
 
 		set(`sections.${key}.button`, section.button);
 		set(`sections.${key}.buttonUrl`, section.buttonUrl);
+		// Alt text is copy an editor types into Karl beside the upload, so it is
+		// hashed like any other field. The file path, pixel size and credit are
+		// provenance, not copy, and stay unread.
+		set(`sections.${key}.image.alt`, section.image?.alt);
 
 		list(section.cards).forEach((raw, i) => {
 			const card = (raw ?? {}) as Card;

@@ -29,7 +29,19 @@ export const rodentsPrevention = {
 		},
 		{
 			heading: 'Signs of rats and mice',
-			karl: 'Maps to a second Title and text block: Title = this heading, Text = the bulleted list below.',
+			image: {
+				src: '/images/mockup/brown-rat-sidewalk.webp',
+				alt: 'A brown rat eats crumbs on a brick sidewalk next to a building wall.',
+				width: 1024,
+				height: 768,
+				credit: {
+					title: 'Brown Rat',
+					creator: 'oatsy40',
+					sourceUrl: 'https://www.flickr.com/photos/68089229@N06/7832536462',
+					license: 'CC BY 2.0'
+				}
+			},
+			karl: 'Maps to a second Title and text block: Title = this heading, Text = the bulleted list below. Then an Information section → Image block right after it, holding the rat photo: it shows the brown (Norway) rat that lives along building walls, the travel route the "greasy rub marks" bullet describes. Upload the 1024×768 file (Information images need 700px+ wide) with the alt text as written. The photo is CC BY 2.0, so the attribution is REQUIRED: "“Brown Rat” by oatsy40, CC BY 2.0" with links to the Flickr page and to creativecommons.org/licenses/by/2.0. Licence confirmed on the Flickr page 2026-11-26.',
 			kind: 'body',
 			bullets: [
 				'**Droppings** about the size and shape of a grain of rice, often near food, under sinks, or along walls',
