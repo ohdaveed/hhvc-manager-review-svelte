@@ -4,6 +4,7 @@ import {
 	derivePagePath,
 	hashLockPages,
 	isValidFieldHashMap,
+	verifyCorpusLock,
 	type CorpusLock
 } from './lock.js';
 import { hashFieldMap, hashFields, hashText } from './hash.js';
@@ -135,5 +136,81 @@ describe('isValidFieldHashMap', () => {
 		const { fieldHashes } = hashFields({ title: 'T', summary: 'S' });
 		expect(isValidFieldHashMap(fieldHashes)).toBe(true);
 		expect(isValidFieldHashMap({})).toBe(true);
+	});
+});
+
+describe('verifyCorpusLock', () => {
+	const page = (paragraphs: string[]) => ({
+		slug: 'sf.gov/topic-a',
+		title: 'A',
+		sections: [{ heading: 'H', paragraphs }]
+	});
+	// A lock whose ids went through an insertion: 'First' and 'Second' keep the
+	// ids they were frozen under, and 'Inserted' gets a new one. This is the
+	// shape a committed lock has once the corpus has been edited, and the one a
+	// ledger-less rebuild gets wrong.
+	const before = buildLock([page(['First', 'Second'])]);
+	const after = [page(['Inserted', 'First', 'Second'])];
+	const committed = buildLock(after, before);
+
+	it('returns the committed lock itself when it is current', () => {
+		const verdict = verifyCorpusLock(committed, after);
+		expect(verdict).toEqual({ ok: true, lock: committed });
+	});
+
+	it('keeps frozen ids that a ledger-less rebuild would renumber -- the corpus:import regression', () => {
+		expect(buildLock(after).corpusHash).not.toBe(committed.corpusHash);
+		const verdict = verifyCorpusLock(committed, after);
+		expect(verdict.ok && verdict.lock.corpusHash).toBe(committed.corpusHash);
+	});
+
+	it('reports a lock for a different corpus as stale, naming the changed page', () => {
+		const verdict = verifyCorpusLock(before, after);
+		expect(verdict.ok).toBe(false);
+		if (verdict.ok || verdict.kind !== 'stale') throw new Error(`expected stale`);
+		expect(verdict.changed).toEqual(['topic-a']);
+		expect(verdict.expected.corpusHash).toBe(committed.corpusHash);
+	});
+
+	it('reports a ledger whose hash values do not match the copy as stale', () => {
+		// A ledger chooses which ids fields are filed under; it cannot make a
+		// hash lie. Rewriting one value (and re-sealing corpusHash so the file
+		// is internally consistent) rebuilds to the real hashes and fails.
+		// Note what this does NOT cover: exchanging two ids' values is a
+		// different, self-consistent id assignment, and freezeFieldIds adopts
+		// it by content -- nothing in the tree can tell it from real history.
+		const tampered = structuredClone(committed);
+		const fields = tampered.pages['topic-a'].fieldHashes;
+		fields[Object.keys(fields)[0]] = 'f'.repeat(64);
+		tampered.corpusHash = hashLockPages(tampered.pages);
+		expect(verifyCorpusLock(tampered, after)).toMatchObject({ ok: false, kind: 'stale' });
+	});
+
+	it('checks version before shape', () => {
+		expect(verifyCorpusLock({ version: 2, pages: 'anything' }, after)).toEqual({
+			ok: false,
+			kind: 'version',
+			version: 2
+		});
+		expect(verifyCorpusLock(null, after)).toMatchObject({ ok: false, kind: 'version' });
+	});
+
+	it('rejects a malformed pages map', () => {
+		expect(verifyCorpusLock({ version: 1, corpusHash: '' }, after)).toEqual({
+			ok: false,
+			kind: 'malformed'
+		});
+		const bad = structuredClone(committed);
+		bad.pages['topic-a'].fieldHashes = { x: 'short' };
+		expect(verifyCorpusLock(bad, after)).toEqual({ ok: false, kind: 'malformed' });
+	});
+
+	it('reports a pages map that does not hash to its own corpusHash as inconsistent', () => {
+		const bad = { ...committed, corpusHash: 'e'.repeat(64) };
+		expect(verifyCorpusLock(bad, after)).toEqual({
+			ok: false,
+			kind: 'inconsistent',
+			recomputedHash: committed.corpusHash
+		});
 	});
 });
