@@ -306,3 +306,116 @@ describe('FieldsPanel', () => {
 		expect(page.title).toBe('About vector control');
 	});
 });
+
+/**
+ * Typing into a selected field edits the mockup copy directly. The draft lives
+ * in `pageStore`, which resolves against `pageStore.pages` -- so the fixture is
+ * added there, and the panel is handed that same object, as the layout does.
+ */
+describe('FieldsPanel manual edits', () => {
+	const PAGE_ID = 'manual-edit--fixture';
+	const livePage = () => {
+		let page = pageStore.pages.find((p) => p.id === PAGE_ID);
+		if (!page) {
+			pageStore.addPage({ ...fixture(), id: PAGE_ID } as never);
+			page = pageStore.pages.find((p) => p.id === PAGE_ID)!;
+		}
+		page.title = 'About vector control';
+		return page;
+	};
+
+	beforeEach(() => {
+		pageStore.clearSelection();
+		pageStore.suggestions = {};
+		pageStore.manualDrafts = {};
+		saveInlineEdit.mockReset();
+		saveInlineEdit.mockResolvedValue(true);
+		session.knownSignedOut = false;
+	});
+
+	const renderTitle = (livePageId: string | null = 'live-1') => {
+		const page = livePage();
+		pageStore.selectedFieldIds = ['title'];
+		render(FieldsPanel, { props: { pageData: page, livePageId: livePageId ?? undefined } });
+		return { page, input: screen.getByRole('textbox', { name: /Title$/ }) as HTMLTextAreaElement };
+	};
+
+	it('shows the current copy in a labelled control', () => {
+		const { input } = renderTitle();
+		expect(input.value).toBe('About vector control');
+		expect(screen.queryByRole('button', { name: /Save the edit/ })).toBeNull();
+	});
+
+	it('writes each keystroke to the mockup copy', async () => {
+		const { page, input } = renderTitle();
+		await fireEvent.input(input, { target: { value: 'About pest control' } });
+		expect(page.title).toBe('About pest control');
+		expect(saveInlineEdit).not.toHaveBeenCalled();
+		expect(screen.getByRole('button', { name: 'Save the edit to Title' })).toBeTruthy();
+	});
+
+	it('Cancel puts the original copy back', async () => {
+		const { page, input } = renderTitle();
+		await fireEvent.input(input, { target: { value: 'Changed' } });
+		await fireEvent.click(screen.getByRole('button', { name: 'Cancel the edit to Title' }));
+		expect(page.title).toBe('About vector control');
+		expect(pageStore.manualDrafts.title).toBeUndefined();
+	});
+
+	it('Escape cancels too', async () => {
+		const { page, input } = renderTitle();
+		await fireEvent.input(input, { target: { value: 'Changed' } });
+		await fireEvent.keyDown(input, { key: 'Escape' });
+		expect(page.title).toBe('About vector control');
+	});
+
+	it('Save persists once, under the field id, and keeps the copy', async () => {
+		const { page, input } = renderTitle();
+		await fireEvent.input(input, { target: { value: 'Saved title' } });
+		await fireEvent.click(screen.getByRole('button', { name: 'Save the edit to Title' }));
+		await vi.waitFor(() => expect(pageStore.manualDrafts.title).toBeUndefined());
+		expect(saveInlineEdit).toHaveBeenCalledTimes(1);
+		expect(saveInlineEdit).toHaveBeenCalledWith('live-1', 'title', 'Saved title');
+		expect(page.title).toBe('Saved title');
+	});
+
+	it('a failed save keeps the draft and says so', async () => {
+		saveInlineEdit.mockResolvedValue(false);
+		const { page, input } = renderTitle();
+		await fireEvent.input(input, { target: { value: 'Not saved' } });
+		await fireEvent.click(screen.getByRole('button', { name: 'Save the edit to Title' }));
+		expect(await screen.findByText(/could not be saved/)).toBeTruthy();
+		expect(pageStore.manualDrafts.title?.value).toBe('Not saved');
+		expect(page.title).toBe('Not saved');
+	});
+
+	it('does not save with no live review row, and keeps the draft', async () => {
+		const { input } = renderTitle(null);
+		await fireEvent.input(input, { target: { value: 'Preview only' } });
+		await fireEvent.click(screen.getByRole('button', { name: 'Save the edit to Title' }));
+		expect(saveInlineEdit).not.toHaveBeenCalled();
+		expect(screen.getByText(/can only be shown, not saved/)).toBeTruthy();
+		expect(pageStore.manualDrafts.title?.value).toBe('Preview only');
+	});
+
+	it('disables Accept on a suggestion while the field has unsaved typing', async () => {
+		pageStore.suggestions = {
+			title: { pageId: PAGE_ID, original: 'a', suggested: 'b', status: 'pending' }
+		};
+		const { input } = renderTitle();
+		const accept = screen.getByRole('button', { name: 'Accept' });
+		expect(accept.hasAttribute('disabled')).toBe(false);
+		await fireEvent.input(input, { target: { value: 'Typed' } });
+		expect(accept.hasAttribute('disabled')).toBe(true);
+	});
+
+	it('a saved edit drops the suggestion it replaced', async () => {
+		pageStore.suggestions = {
+			title: { pageId: PAGE_ID, original: 'a', suggested: 'b', status: 'pending' }
+		};
+		const { input } = renderTitle();
+		await fireEvent.input(input, { target: { value: 'Mine' } });
+		await fireEvent.click(screen.getByRole('button', { name: 'Save the edit to Title' }));
+		await vi.waitFor(() => expect(pageStore.suggestions.title).toBeUndefined());
+	});
+});

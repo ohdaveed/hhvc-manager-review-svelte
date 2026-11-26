@@ -11,12 +11,12 @@ Decisions (approved 2026-11-26): live preview per keystroke, persist only on Sav
 selected field; no schema change, no new dependency; the reload-hydration gap is fixed in this branch.
 
 - [x] **1. Draft state.** `pageStore.manualDrafts` keyed by field id (`original`, `value`, `pageId`), with
-      `startDraft` / `updateDraft` / `cancelDraft` / `forgetDraft`. Selection replacement, `clearSelection`
+      `updateDraft` / `isDirty` / `cancelDraft` / `forgetDraft`. Selection replacement, `clearSelection`
       and page change revert unsaved drafts on the mockup and clear them. Unit-tested in `tests/pageData.test.ts`.
-- [ ] **2. Panel controls.** The name-only list in `FieldsPanel.svelte` becomes one labelled textarea per
+- [x] **2. Panel controls.** The name-only list in `FieldsPanel.svelte` becomes one labelled textarea per
       selected field, numbered like its badge, with Save / Cancel and Esc-to-cancel. Typing calls the
       resolved field's `set()` so the mockup re-renders.
-- [ ] **3. Save.** Save calls `saveInlineEdit`, skips no-op saves, keeps the draft and shows an error on
+- [x] **3. Save.** Save calls `saveInlineEdit`, skips no-op saves, keeps the draft and shows an error on
       failure, and drops a pending AI suggestion for that field once saved. Accept is disabled on a field
       with an unsaved draft.
 - [ ] **4. Hydrate saved edits.** After `loadReview` and on each realtime insert into `edits`, the latest edit per

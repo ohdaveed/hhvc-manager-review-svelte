@@ -18,6 +18,7 @@
 	import { resolve } from '$app/paths';
 
 	let { pageData, livePageId }: { pageData: unknown; livePageId?: string } = $props();
+	const uid = $props.id();
 
 	/**
 	 * The BACKEND's caps, not the proxy's.
@@ -76,6 +77,73 @@
 	let rewriting = $state(false);
 	let saving = $state(false);
 	let saveError = $state('');
+
+	/** Per-field state for the manual edit controls, keyed by field id. */
+	let draftErrors = $state<Record<string, string>>({});
+	let savingDrafts = $state<Record<string, boolean>>({});
+
+	function setDraftError(fieldId: string, message: string) {
+		const next = { ...draftErrors };
+		if (message) next[fieldId] = message;
+		else delete next[fieldId];
+		draftErrors = next;
+	}
+
+	function typeDraft(fieldId: string, value: string) {
+		if (!pageId) return;
+		setDraftError(fieldId, '');
+		if (!pageStore.updateDraft(pageId, fieldId, value)) {
+			setDraftError(fieldId, 'This field is no longer on the page, so the edit was not applied.');
+		}
+	}
+
+	function cancelDraft(fieldId: string) {
+		setDraftError(fieldId, '');
+		pageStore.cancelDraft(fieldId);
+	}
+
+	/**
+	 * Persists one typed edit. The mockup already shows it, so success only has
+	 * to drop the draft; failure keeps it, so the text is still there to retry.
+	 *
+	 * A suggestion for the same field is dropped once the save lands: its
+	 * `original` is the copy the reviewer has just replaced, and accepting it
+	 * later would quietly overwrite the edit that was saved.
+	 */
+	async function saveDraft(fieldId: string) {
+		const draft = pageStore.manualDrafts[fieldId];
+		if (!draft || savingDrafts[fieldId] || draft.pageId !== pageId) return;
+		if (draft.value === draft.original) {
+			pageStore.forgetDraft(fieldId);
+			return;
+		}
+		if (!livePageId) {
+			setDraftError(
+				fieldId,
+				'This page is not part of a loaded review, so the edit can only be shown, not saved.'
+			);
+			return;
+		}
+		const value = draft.value;
+		savingDrafts = { ...savingDrafts, [fieldId]: true };
+		setDraftError(fieldId, '');
+		const persisted = await saveInlineEdit(livePageId, fieldId, value);
+		savingDrafts = { ...savingDrafts, [fieldId]: false };
+		if (!persisted) {
+			setDraftError(fieldId, 'The edit could not be saved. It is still here to retry.');
+			return;
+		}
+		// Typing may have continued while the request was out; only a draft that
+		// still says what was saved is finished.
+		if (pageStore.manualDrafts[fieldId]?.value === value) pageStore.forgetDraft(fieldId);
+		else if (pageStore.manualDrafts[fieldId]) {
+			pageStore.manualDrafts = {
+				...pageStore.manualDrafts,
+				[fieldId]: { ...pageStore.manualDrafts[fieldId], original: value }
+			};
+		}
+		if (pageStore.suggestions[fieldId]) pageStore.forgetSuggestion(fieldId);
+	}
 	/** Local, pre-flight: the instruction is over the backend's 2,000-char cap. */
 	let instructionError = $state('');
 
@@ -220,6 +288,8 @@
 	function decide(fieldId: string, status: 'accepted' | 'rejected' | 'pending') {
 		const current = pageStore.suggestions[fieldId];
 		if (!current || current.status === 'error') return;
+		// Accepting over unsaved typing would let Save overwrite it unseen.
+		if (status === 'accepted' && pageStore.isDirty(fieldId)) return;
 		pageStore.suggestions = { ...pageStore.suggestions, [fieldId]: { ...current, status } };
 	}
 
@@ -236,6 +306,7 @@
 		const from = status === 'pending' ? ['accepted', 'rejected'] : ['pending'];
 		const next = { ...pageStore.suggestions };
 		for (const [id, s] of cards) {
+			if (status === 'accepted' && pageStore.isDirty(id)) continue;
 			if (from.includes(s.status)) next[id] = { ...s, status };
 		}
 		pageStore.suggestions = next;
@@ -295,6 +366,9 @@
 
 			resolved.field.set(suggestion.suggested);
 			pageStore.forgetSuggestion(fieldId);
+			// The saved rewrite replaces any typing; a draft left behind would
+			// put its stale `original` back on Cancel.
+			pageStore.forgetDraft(fieldId);
 		}
 
 		if (failed.length > 0) {
@@ -336,15 +410,64 @@
 				</Button>
 			</div>
 
-			<ol class="space-y-1 px-5 py-3" aria-label="Selected fields">
+			<ol class="space-y-3 px-5 py-3" aria-label="Selected fields">
 				{#each selected as { fieldId, field }, i (fieldId)}
-					<li class="flex items-start gap-2 text-[13px]">
-						<span
-							class="mt-px inline-flex size-[18px] flex-none items-center justify-center rounded-[3px] bg-sfds-action text-[11px] font-bold text-white"
-						>
-							{i + 1}
-						</span>
-						<span class="min-w-0 truncate text-sfds-slate-l3">{field.name}</span>
+					{@const inputId = `${uid}-edit-${i}`}
+					{@const dirty = pageStore.isDirty(fieldId)}
+					<li class="text-[13px]">
+						<label for={inputId} class="flex items-start gap-2">
+							<span
+								class="mt-px inline-flex size-[18px] flex-none items-center justify-center rounded-[3px] bg-sfds-action text-[11px] font-bold text-white"
+							>
+								{i + 1}
+							</span>
+							<span class="min-w-0 truncate text-sfds-slate-l3">{field.name}</span>
+						</label>
+						<!-- One-way value: the field IS the draft, because every keystroke
+						     is written to the mockup through its setter. Esc cancels. -->
+						<Textarea
+							id={inputId}
+							value={field.value}
+							rows={2}
+							class="mt-1.5 text-[13px]"
+							aria-describedby={draftErrors[fieldId] ? `${inputId}-error` : undefined}
+							oninput={(e) => typeDraft(fieldId, e.currentTarget.value)}
+							onkeydown={(e) => {
+								if (e.key === 'Escape' && pageStore.manualDrafts[fieldId]) {
+									e.preventDefault();
+									cancelDraft(fieldId);
+								}
+							}}
+						/>
+						{#if draftErrors[fieldId]}
+							<p
+								id="{inputId}-error"
+								class="mt-1.5 text-[12px] leading-[17px] text-sfds-red"
+								role="alert"
+							>
+								{draftErrors[fieldId]}
+							</p>
+						{/if}
+						{#if dirty}
+							<div class="mt-1.5 flex justify-end gap-1">
+								<Button
+									variant="ghost"
+									size="sm"
+									class="h-7 px-2 text-[12px]"
+									aria-label="Cancel the edit to {field.name}"
+									onclick={() => cancelDraft(fieldId)}>Cancel</Button
+								>
+								<Button
+									size="sm"
+									class="h-7 px-2 text-[12px]"
+									aria-label="Save the edit to {field.name}"
+									disabled={savingDrafts[fieldId] === true}
+									onclick={() => saveDraft(fieldId)}
+								>
+									{savingDrafts[fieldId] ? 'Saving…' : 'Save'}
+								</Button>
+							</div>
+						{/if}
 					</li>
 				{/each}
 			</ol>
@@ -542,6 +665,10 @@
 										<Button
 											size="sm"
 											class="h-7 px-2 text-[12px]"
+											disabled={pageStore.isDirty(fieldId)}
+											title={pageStore.isDirty(fieldId)
+												? 'Save or cancel your own edit to this field first'
+												: undefined}
 											onclick={() => decide(fieldId, 'accepted')}>Accept</Button
 										>
 									</div>
