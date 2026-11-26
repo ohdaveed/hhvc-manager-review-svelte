@@ -82,7 +82,7 @@ const related = (cards: { title: string; target: string }[]): Section => ({
 
 /** Step by step has no Related panel. */
 const stepPages = Object.fromEntries(
-	(['stepPestReport', 'stepCorrectViolation', 'stepPrepUnit'] as const).map((key) => [
+	(['stepPestReport', 'stepCorrectViolation'] as const).map((key) => [
 		key,
 		{
 			...base(key),
@@ -94,7 +94,7 @@ const stepPages = Object.fromEntries(
 			]
 		}
 	])
-) as Record<'stepPestReport' | 'stepCorrectViolation' | 'stepPrepUnit', Page>;
+) as Record<'stepPestReport' | 'stepCorrectViolation', Page>;
 
 /** U5: Topic has no Related panel. */
 const healthyHousingTopic: Page = {

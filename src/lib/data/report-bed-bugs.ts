@@ -17,7 +17,7 @@ export const bedBugReport = {
 			},
 			{
 				label: 'Get your unit ready',
-				text: 'Treatment works only if the unit is ready. [Prepare your unit for pest treatment](stepPrepUnit) explains what to move, wash, and bag.'
+				text: 'Treatment works only if the unit is ready. [Bed bugs: prevent them, find them, and get ready for treatment](bedBugsInfo) explains what to wash, bag, and leave in place.'
 			}
 		]
 	},

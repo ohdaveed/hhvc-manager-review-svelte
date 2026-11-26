@@ -63,11 +63,11 @@ export const stepCorrectViolation = {
 						'Follow the preparation instructions you were given before a treatment visit.',
 						'Allow properly noticed access for inspection or work.',
 						'A Notice of Violation does not change a tenant’s right to safe and habitable housing.',
-						'[Prepare your unit for pest treatment](stepPrepUnit)',
+						'[What to expect when your building is treated for pests](pestTreatmentInfo)',
 						'[What tenants need to do after a Notice of Violation](tenantNoticeSteps)',
 						'[Tenant rights when reporting housing conditions](tenantRights)'
 					],
-					karl: 'Step 3. The companion half of Step 2. Links to the proposed unit-preparation Step by step, which holds the detail this step only summarises.'
+					karl: 'Step 3. The companion half of Step 2. Links to the treatment Information page, which holds the preparation detail this step only summarises.'
 				},
 				{
 					title: 'Ask for more time before the deadline, not after',

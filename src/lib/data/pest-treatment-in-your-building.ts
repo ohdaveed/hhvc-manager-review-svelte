@@ -7,7 +7,7 @@ export const pestTreatmentInfo = {
 	reading: 'Grade 4–6',
 	editorStatus: 'needs-review',
 	editorNote:
-		"New community-education Information page connecting the tenant and owner sides of a treatment. Sources: Residential Building Owner/Operator Guidelines for Vector Control (Director's Rules excerpt: owner investigates within 72 hours, keeps a pest logbook for the PCO, hires a licensed PCO, gives advance notice naming the product and the Poison Control number; tenant housekeeping duty); SFDPH bed bug tenant guidelines (grant entry on notice, follow the PCO checklist, request help); UC IPM Pest Notes: Hiring a Pest Control Company and Understanding Pesticides; Pestec multifamily IPM guide (pesticides as a last resort). Poison Control number 1-800-222-1222 is the national line — confirm HHVC wants it printed. UC IPM and Structural Pest Control Board links verified 200 on 2026-11-26.",
+		"New community-education Information page connecting the tenant and owner sides of a treatment. Sources: Residential Building Owner/Operator Guidelines for Vector Control (Director's Rules excerpt: owner investigates within 72 hours, keeps a pest logbook for the PCO, hires a licensed PCO, gives advance notice naming the product and the Poison Control number; tenant housekeeping duty); SFDPH bed bug tenant guidelines (grant entry on notice, follow the PCO checklist, request help); UC IPM Pest Notes: Hiring a Pest Control Company and Understanding Pesticides; Pestec multifamily IPM guide (pesticides as a last resort). Poison Control number 1-800-222-1222 is the national line — confirm HHVC wants it printed. UC IPM and Structural Pest Control Board links verified 200 on 2026-11-26. On 2026-11-26 this page absorbed the retired Step by step “Prepare your unit for pest treatment” (stepPrepUnit), whose own note called its list generic and due for replacement: only the higher-risk clause on asking what product will be used and the bed bug pointer came across, and neither has a tier-1 source. Its “take everything off the floor” step was dropped because it contradicts the bed bug Tenant Guidelines (“do not remove items before treatment”).",
 	topicTag: 'Agency: Healthy Housing and Vector Control',
 	sections: [
 		{
@@ -64,7 +64,8 @@ export const pestTreatmentInfo = {
 				'**Clear the floor along walls** and under sinks so the technician can reach cracks and corners.',
 				'**Put food and dishes away** in sealed containers or the fridge.',
 				'**Plan for children and pets.** Ask if anyone needs to leave, and for how long.',
-				'**Ask what product will be used** if the notice does not say.',
+				'**Ask what product will be used** if the notice does not say, especially if anyone at home is pregnant, under two, or has asthma.',
+				'**For bed bugs, there are extra laundry and bagging steps.** [Bed bugs: prevent them, find them, and get ready for treatment](bedBugsInfo)',
 				'**Ask for the treatment plan.** The pest control company should give you a plan that lists its methods and products, and what the landlord and tenants need to do.'
 			]
 		},
