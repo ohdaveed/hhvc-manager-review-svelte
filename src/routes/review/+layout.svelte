@@ -249,7 +249,7 @@
 	 * when there is no decision to show.
 	 */
 	const status = $derived($pagesStore.find((p) => p.path === currentPath)?.status);
-	const statusLabel = $derived(status ? STATUS_LABELS[status].queueHeading : '');
+	const statusLabel = $derived(status ? STATUS_LABELS[status].label : '');
 
 	/**
 	 * The mockup frame's real rendered width, bound from the element.
@@ -339,30 +339,45 @@
 		pageStore.loadKarlOutline();
 		pageStore.loadCopiedSteps();
 
-		// If the layout is torn down before loadReview resolves -- a slow Supabase
-		// round trip plus quick navigation -- the destroy callback fires while
-		// cleanup is still undefined, and the subscription then installs after
-		// teardown with nothing left to remove it. Remounting would stack channels.
-		let disposed = false;
-		let cleanup: (() => void) | undefined;
-
-		loadReview()
-			.then((fn) => {
-				if (disposed) fn();
-				else cleanup = fn;
-			})
-			.catch((err: unknown) => {
-				// A rejection means loadReview returned no cleanup, so there is none to
-				// store and nothing believed subscribed. `warn`, not `error`: the e2e
-				// console gate fails on `console.error` only.
-				console.warn('Review workspace: could not load the review:', err);
-			});
+		loadQueue();
 
 		return () => {
 			disposed = true;
 			cleanup?.();
 		};
 	});
+
+	// Where the review load stands, for the queue. An empty `pagesStore` means
+	// three different things -- still loading, the load failed, or a review with
+	// no pages -- and the queue said "This review has no pages yet." for all
+	// three, measured 1.5s into a normal load. The landing page tells them apart
+	// the same way.
+	let queueLoad = $state<'loading' | 'ready' | 'failed'>('loading');
+
+	// If the layout is torn down before loadReview resolves -- a slow Supabase
+	// round trip plus quick navigation -- the destroy callback fires while
+	// cleanup is still undefined, and the subscription then installs after
+	// teardown with nothing left to remove it. Remounting would stack channels.
+	// Plain `let`s, at this scope so Try again can reach them.
+	let disposed = false;
+	let cleanup: (() => void) | undefined;
+
+	function loadQueue() {
+		queueLoad = 'loading';
+		return loadReview()
+			.then((fn) => {
+				if (disposed) fn();
+				else cleanup = fn;
+				queueLoad = 'ready';
+			})
+			.catch((err: unknown) => {
+				// A rejection means loadReview returned no cleanup, so there is none to
+				// store and nothing believed subscribed. `warn`, not `error`: the e2e
+				// console gate fails on `console.error` only.
+				console.warn('Review workspace: could not load the review:', err);
+				queueLoad = 'failed';
+			});
+	}
 
 	// ---- the walkthrough's deep link (`?view=walkthrough`) ----------------
 	//
@@ -415,7 +430,7 @@
 />
 
 <!-- The decision as a dot: the bar colour for a decided status, a ring for
-     "Needs review" (an empty slot, as the queue's progress bar shows it).
+     "Undecided" (an empty slot, as the queue's progress bar shows it).
      Decorative wherever it appears beside the words; the collapsed panel
      gives its own a label. -->
 {#snippet statusDot(s: NonNullable<typeof status>)}
@@ -515,7 +530,7 @@
 				</Button>
 			</div>
 			<ScrollArea class="min-h-0 flex-1">
-				<ReviewQueue />
+				<ReviewQueue loadState={queueLoad} onRetry={loadQueue} />
 			</ScrollArea>
 			<Separator />
 			<!-- Who is signed in, and the way out: account business, so it sits with
@@ -643,7 +658,7 @@
 						</Button>
 						<!-- Below 1024px the panel is off screen, so this button carries the
 						     decision: a dot, and the status in the accessible name after
-						     the visible "Review", as "Review (Needs review)" (WCAG 2.5.3). -->
+						     the visible "Review", as "Review (Undecided)" (WCAG 2.5.3). -->
 						<Button
 							variant="outline"
 							size="sm"

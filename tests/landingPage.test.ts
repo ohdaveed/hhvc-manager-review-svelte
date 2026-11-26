@@ -7,6 +7,7 @@
  */
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { fireEvent, render, screen, within } from '@testing-library/svelte';
+import { tick } from 'svelte';
 
 const goto = vi.fn();
 vi.mock('$app/navigation', () => ({ goto: (...args: unknown[]) => goto(...args) }));
@@ -169,6 +170,35 @@ describe('landing page', () => {
 			'true'
 		);
 		expect(document.activeElement?.id).toBe('all-pages');
+	});
+
+	// A chip at zero filtered to an empty list. The status card already drops
+	// zeroes; the list's chips now follow the same rule.
+	it('offers no status chip for a status with no pages', async () => {
+		session.signedIn = true;
+		pagesStore.set([row('topic-x--about', 'approved'), row('topic-x--report', 'needs-review')]);
+		render(Page);
+		await screen.findByText(/1 of 2 decided/i);
+
+		const chips = screen
+			.getAllByRole('radio')
+			.map((r) => r.textContent?.replace(/\s+/g, ' ').trim());
+		// `All` counts every listed corpus page, not just these two rows.
+		expect(chips.slice(1)).toEqual(['Undecided 1', 'Approved 1']);
+	});
+
+	it('keeps the active chip when its status empties, so the filter can be left', async () => {
+		session.signedIn = true;
+		pagesStore.set([row('topic-x--about', 'approved'), row('topic-x--report', 'needs-review')]);
+		render(Page);
+
+		await fireEvent.click(await screen.findByRole('button', { name: /^1 approved/ }));
+		pagesStore.set([row('topic-x--about', 'needs-review'), row('topic-x--report', 'needs-review')]);
+		await tick();
+
+		const approved = screen.getByRole('radio', { name: /Approved/ });
+		expect(approved.getAttribute('aria-checked')).toBe('true');
+		expect(approved.textContent).toMatch(/0/);
 	});
 
 	it('names the active filter when nothing matches, and clears both', async () => {

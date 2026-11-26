@@ -1,11 +1,11 @@
 /**
  * @vitest-environment jsdom
  *
- * The landing page's pointer to the Karl walkthrough. It is always open (the
- * walkthrough used to be discoverable only by opening a toolbar disclosure),
- * and what closes it depends on the review: a direct walkthrough link per
- * approved page, a nudge when there are none, nothing while no review is
- * loaded.
+ * The landing page's pointer to the Karl walkthrough. It is a disclosure that
+ * starts open once a page is approved and closed until then, so five steps for
+ * a job the reviewer cannot do yet do not push All pages down the screen. What
+ * closes it depends on the review: a direct walkthrough link per approved page,
+ * a nudge when there are none, nothing while no review is loaded.
  */
 import { describe, it, expect, vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/svelte';
@@ -57,6 +57,24 @@ describe('KarlWalkthroughGuide', () => {
 		render(KarlWalkthroughGuide, { approved: pages(2), onShowApproved: () => {} });
 		expect(screen.getAllByRole('link')).toHaveLength(2);
 		expect(screen.queryByRole('button')).toBeNull();
+	});
+
+	const details = () => document.querySelector('details') as HTMLDetailsElement;
+
+	it('starts closed while nothing is approved, keeping its name', () => {
+		render(KarlWalkthroughGuide, { approved: [], onShowApproved: () => {} });
+		expect(details().open).toBe(false);
+		expect(screen.getByRole('region', { name: 'Move a page into Karl' })).toBeTruthy();
+	});
+
+	it('starts closed while no review is loaded', () => {
+		render(KarlWalkthroughGuide, { approved: undefined, onShowApproved: () => {} });
+		expect(details().open).toBe(false);
+	});
+
+	it('starts open once there is a page to move', () => {
+		render(KarlWalkthroughGuide, { approved: pages(1), onShowApproved: () => {} });
+		expect(details().open).toBe(true);
 	});
 
 	it('nudges instead when nothing is approved', () => {

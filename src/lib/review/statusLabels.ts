@@ -5,16 +5,17 @@ export type ReviewStatus = ReviewPage['status'];
 /**
  * The one place a review status becomes words or a colour.
  *
- * THREE vocabularies, side by side on purpose. The app says different things
- * for the same four statuses depending on where you are standing, and plan
- * decision D3 (2026-11-23) is that the landing page gets the requested words
- * while nothing else is renamed in that change. Holding all three here is what
- * makes the difference visible in one screen instead of spread across three
- * components; unifying them is follow-up F1, and is a decision, not a tidy-up.
+ * ONE vocabulary, everywhere a status is shown: the landing page, the queue's
+ * group headings, the toolbar and the decision control. Plan decision D3
+ * (2026-11-23) gave the landing page these words and left the workspace
+ * saying "Needs review" and "Revise"; follow-up F1 was decided on 2026-11-26 in
+ * favour of the landing page's words, because a reviewer moving between the two
+ * met "Undecided" and "Needs review" for one status, and "Needs review" and
+ * "Needs revision" -- one word apart -- for two different ones.
  *
- * - `label`         -- the landing page ("Undecided").
- * - `queueHeading`  -- the queue sidebar's group headings ("Needs review").
- * - `decisionLabel` -- the decision control in the review panel ("Revise").
+ * The Karl transcript's decision words are NOT these: `$lib/karl/reviewRecord`
+ * spells them the way `karl-transcript.js`'s approval test matches them, and
+ * changing them there changes which pages read as approved.
  *
  * `badge` and `bar` share a record so a page's badge in a list and its slice of
  * the progress bar cannot be different colours for the same status.
@@ -37,33 +38,22 @@ export type ReviewStatus = ReviewPage['status'];
 export const STATUS_LABELS = {
 	'needs-review': {
 		label: 'Undecided',
-		queueHeading: 'Needs review',
-		decisionLabel: 'Needs review',
 		badge: 'border-transparent bg-sfds-grey-l2 text-sfds-black',
 		bar: 'bg-sfds-grey-l2'
 	},
 	approved: {
 		label: 'Approved',
-		queueHeading: 'Approved',
-		decisionLabel: 'Approved',
 		badge: 'border-transparent bg-sfds-green-l1 text-sfds-green',
 		bar: 'bg-sfds-green'
 	},
 	revise: {
 		label: 'Needs revision',
-		queueHeading: 'Needs revision',
-		decisionLabel: 'Revise',
 		badge: 'border-transparent bg-sfds-amber-l1 text-sfds-amber',
 		bar: 'bg-sfds-amber'
 	},
 	blocked: {
 		label: 'Blocked',
-		queueHeading: 'Blocked',
-		decisionLabel: 'Blocked',
 		badge: 'border-transparent bg-sfds-red-l1 text-sfds-red',
 		bar: 'bg-sfds-red'
 	}
-} as const satisfies Record<
-	ReviewStatus,
-	{ label: string; queueHeading: string; decisionLabel: string; badge: string; bar: string }
->;
+} as const satisfies Record<ReviewStatus, { label: string; badge: string; bar: string }>;
