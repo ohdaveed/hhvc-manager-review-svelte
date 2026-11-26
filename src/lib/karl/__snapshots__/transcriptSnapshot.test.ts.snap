@@ -6189,59 +6189,110 @@ You can make an HHVC report through 311. Having these details ready helps 311 se
 
 **Title:**
 
-Problems HHVC may inspect
+Indoor pests HHVC may inspect
 
 **Text:**
 
 - Rats or mice
 - Cockroaches
 - Bed bugs
-- Mosquitoes or standing water
-- Birds, pigeons, or bird-related nuisances tied to unsanitary conditions
 - Mite concerns linked to rodents, birds, or other pest sources in housing
-- Garbage, clutter, or animal waste that may attract pests
-- Overgrown vegetation that may support pests or vectors
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+Outdoor pests and birds HHVC may inspect
+
+**Text:**
+
+- Mosquitoes or standing water
 - House flies breeding in garbage or organic waste
 - Ground wasp nests on or near residential property
+- Birds, pigeons, or bird-related nuisances tied to unsanitary conditions
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+Sanitation and moisture problems HHVC may inspect
+
+**Text:**
+
+- Garbage, clutter, or animal waste that may attract pests
+- Overgrown vegetation that may support pests or vectors
 - Mold from humidity, condensation, or poor ventilation when the affected area is about 10 square feet or more
+- Active sewage leaks or backups from a drain, toilet, cleanout, or pipe, inside or outside a building
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+Other conditions HHVC may inspect
+
+**Text:**
+
 - Shared SRO kitchens, bathrooms, garbage areas, or other shared spaces
 - Pest harborage or infestation conditions including burrows, nesting materials, and wildlife activity that may create a public health nuisance
 - Rodent-borne disease prevention under Article 2, Section 92: rodent access, droppings, gnaw marks, or failure to keep conditions rodent-free
-- Active sewage leaks or backups from a drain, toilet, cleanout, or pipe, inside or outside a building
 - Other conditions the Director determines to be a threat to public health or safety
 
 ### Information section — \`information_section\` [TYPE] — page not approved
 
 **Title:**
 
-Choose where to report your problem
+Choose where to report a pest problem
 
 **Text:**
 
 - **Rats or mice:** [Report rats or mice](rodentsReport)
-- **Dog or cat waste, or raccoon droppings, on private property:** [Report animal waste on a property](animalWasteReport)
 - **Bed bugs:** [Report bed bugs](bedBugReport)
 - **Cockroaches, fleas, flies, wasps, or mites:** [Report cockroaches or other insects](insectsReport)
 - **Mosquitoes or standing water:** [Report mosquitoes or standing water](mosquitoReport)
 - **Pigeon droppings, nesting, roosting, or feeding:** [Report pigeon droppings, nesting, or feeding](pigeonReport)
+
+**Links in this text — recreate each with the Link tool, do not paste them:**
+
+- "Report rats or mice" → shape 5 — rich text Link tool → Internal link → "Report rats or mice"
+- "Report bed bugs" → shape 5 — rich text Link tool → Internal link → "Report bed bugs"
+- "Report cockroaches or other insects" → shape 5 — rich text Link tool → Internal link → "Report cockroaches or other insects"
+- "Report mosquitoes or standing water" → shape 5 — rich text Link tool → Internal link → "Report mosquitoes or standing water"
+- "Report pigeon droppings, nesting, or feeding" → shape 5 — rich text Link tool → Internal link → "Report pigeon droppings, nesting, or feeding"
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+Choose where to report a sanitation or moisture problem
+
+**Text:**
+
+- **Dog or cat waste, or raccoon droppings, on private property:** [Report animal waste on a property](animalWasteReport)
 - **Sewage from a drain, toilet, cleanout, or pipe:** [Report a sewage leak or backup](sewageReport)
 - **Mold from humidity or condensation:** [Report mold](moldReport)
 - **Garbage, clutter, or overgrown plants:** [Report garbage, clutter, or overgrown plants](garbageReport)
+
+**Links in this text — recreate each with the Link tool, do not paste them:**
+
+- "Report animal waste on a property" → shape 5 — rich text Link tool → Internal link → "Report animal waste on a property"
+- "Report a sewage leak or backup" → shape 5 — rich text Link tool → Internal link → "Report a sewage leak or backup"
+- "Report mold" → shape 5 — rich text Link tool → Internal link → "Report mold"
+- "Report garbage, clutter, or overgrown plants" → shape 5 — rich text Link tool → Internal link → "Report garbage, clutter, or overgrown plants"
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+Other places to report or learn more
+
+**Text:**
+
 - **Dead birds:** [Report a dead bird to the State West Nile virus program](https://westnile.ca.gov/report)
 - **Health Code Article 11:** [Read Article 11 in plain language](article11Guide)
 - **Every report in one place:** [Healthy Housing and Vector Control](pestsTopic)
 
 **Links in this text — recreate each with the Link tool, do not paste them:**
 
-- "Report rats or mice" → shape 5 — rich text Link tool → Internal link → "Report rats or mice"
-- "Report animal waste on a property" → shape 5 — rich text Link tool → Internal link → "Report animal waste on a property"
-- "Report bed bugs" → shape 5 — rich text Link tool → Internal link → "Report bed bugs"
-- "Report cockroaches or other insects" → shape 5 — rich text Link tool → Internal link → "Report cockroaches or other insects"
-- "Report mosquitoes or standing water" → shape 5 — rich text Link tool → Internal link → "Report mosquitoes or standing water"
-- "Report pigeon droppings, nesting, or feeding" → shape 5 — rich text Link tool → Internal link → "Report pigeon droppings, nesting, or feeding"
-- "Report a sewage leak or backup" → shape 5 — rich text Link tool → Internal link → "Report a sewage leak or backup"
-- "Report mold" → shape 5 — rich text Link tool → Internal link → "Report mold"
-- "Report garbage, clutter, or overgrown plants" → shape 5 — rich text Link tool → Internal link → "Report garbage, clutter, or overgrown plants"
 - "Report a dead bird to the State West Nile virus program" → shape 5 — rich text Link tool → External link
 - "Read Article 11 in plain language" → shape 5 — rich text Link tool → Internal link → "Health Code Article 11 in plain language"
 - "Healthy Housing and Vector Control" → shape 5 — rich text Link tool → Internal link → "Healthy Housing and Vector Control"
@@ -7327,36 +7378,60 @@ San Francisco splits housing problems across several offices. You do not need to
 
 **Title:**
 
-What Healthy Housing handles
+Pest problems Healthy Housing handles
 
 **Text:**
 
 This team inspects conditions that affect health in and around housing, under Health Code Article 11.
 
 - [Report rats or mice](rodentsReport)
-- [Report animal waste on a property](animalWasteReport)
 - [Report bed bugs](bedBugReport)
 - [Report cockroaches or other insects](insectsReport)
 - [Report mosquitoes or standing water](mosquitoReport)
 - [Report pigeon droppings, nesting, or feeding](pigeonReport)
+
+**Links in this text — recreate each with the Link tool, do not paste them:**
+
+- "Report rats or mice" → shape 5 — rich text Link tool → Internal link → "Report rats or mice"
+- "Report bed bugs" → shape 5 — rich text Link tool → Internal link → "Report bed bugs"
+- "Report cockroaches or other insects" → shape 5 — rich text Link tool → Internal link → "Report cockroaches or other insects"
+- "Report mosquitoes or standing water" → shape 5 — rich text Link tool → Internal link → "Report mosquitoes or standing water"
+- "Report pigeon droppings, nesting, or feeding" → shape 5 — rich text Link tool → Internal link → "Report pigeon droppings, nesting, or feeding"
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+Sanitation and moisture problems Healthy Housing handles
+
+**Text:**
+
+- [Report animal waste on a property](animalWasteReport)
 - [Report a sewage leak or backup](sewageReport)
 - [Report mold](moldReport)
 - [Report garbage, clutter, or overgrown plants](garbageReport)
+
+**Links in this text — recreate each with the Link tool, do not paste them:**
+
+- "Report animal waste on a property" → shape 5 — rich text Link tool → Internal link → "Report animal waste on a property"
+- "Report a sewage leak or backup" → shape 5 — rich text Link tool → Internal link → "Report a sewage leak or backup"
+- "Report mold" → shape 5 — rich text Link tool → Internal link → "Report mold"
+- "Report garbage, clutter, or overgrown plants" → shape 5 — rich text Link tool → Internal link → "Report garbage, clutter, or overgrown plants"
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+Learn more about what Healthy Housing handles
+
+**Text:**
+
 - [Learn what Healthy Housing and Vector Control can inspect](scopeInfo)
 - [Report a pest problem, start to finish](stepPestReport)
 - [Health Code Article 11 in plain language](article11Guide)
 
 **Links in this text — recreate each with the Link tool, do not paste them:**
 
-- "Report rats or mice" → shape 5 — rich text Link tool → Internal link → "Report rats or mice"
-- "Report animal waste on a property" → shape 5 — rich text Link tool → Internal link → "Report animal waste on a property"
-- "Report bed bugs" → shape 5 — rich text Link tool → Internal link → "Report bed bugs"
-- "Report cockroaches or other insects" → shape 5 — rich text Link tool → Internal link → "Report cockroaches or other insects"
-- "Report mosquitoes or standing water" → shape 5 — rich text Link tool → Internal link → "Report mosquitoes or standing water"
-- "Report pigeon droppings, nesting, or feeding" → shape 5 — rich text Link tool → Internal link → "Report pigeon droppings, nesting, or feeding"
-- "Report a sewage leak or backup" → shape 5 — rich text Link tool → Internal link → "Report a sewage leak or backup"
-- "Report mold" → shape 5 — rich text Link tool → Internal link → "Report mold"
-- "Report garbage, clutter, or overgrown plants" → shape 5 — rich text Link tool → Internal link → "Report garbage, clutter, or overgrown plants"
 - "Learn what Healthy Housing and Vector Control can inspect" → shape 5 — rich text Link tool → Internal link → "Learn what Healthy Housing and Vector Control can inspect"
 - "Report a pest problem, start to finish" → shape 5 — rich text Link tool → Internal link → "Report a pest problem, start to finish"
 - "Health Code Article 11 in plain language" → shape 5 — rich text Link tool → Internal link → "Health Code Article 11 in plain language"
