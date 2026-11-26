@@ -332,3 +332,17 @@ describe('unsaved changes', () => {
 		expect(pageStore.getChange(A().id, 'title')?.savedElsewhere).toBeUndefined();
 	});
 });
+
+describe('base copy', () => {
+	it('is the corpus text, captured before anything is written into the page', () => {
+		const page = pageStore.pages[0];
+		const before = page.title;
+		page.title = 'A saved edit, hydrated';
+		expect(pageStore.baseCopyOf(page.id, 'title')).toBe(before);
+		page.title = before;
+	});
+
+	it('is undefined for a field the page does not have', () => {
+		expect(pageStore.baseCopyOf(pageStore.pages[0].id, 'sections.nope.heading')).toBeUndefined();
+	});
+});

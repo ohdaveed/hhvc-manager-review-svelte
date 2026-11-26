@@ -12,6 +12,7 @@
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
 	import { requestGeneration } from '$lib/ai/generate';
 	import { resolveFields } from '$lib/corpus/fieldResolver';
+	import { hashTextBrowser } from '$lib/corpus/hashBrowser';
 	import { changeKey, pageStore, type Suggestion } from '$lib/stores/pageData.svelte';
 	import { saveInlineEdit } from '$lib/stores/reviewState';
 	import { sessionStore } from '$lib/stores/session.svelte';
@@ -167,10 +168,20 @@
 			);
 			return false;
 		}
+		// Every edit is anchored to the base copy it answers (ADR 0001). A field
+		// with no base copy on record cannot be anchored, so it is not saved.
+		const base = pageStore.baseCopyOf(changePageId, fieldId);
+		if (base === undefined) {
+			setChangeError(
+				key,
+				'This field has no base copy on record, so the change cannot be saved against it.'
+			);
+			return false;
+		}
 		const value = change.value;
 		savingChanges = { ...savingChanges, [key]: true };
 		setChangeError(key, '');
-		const persisted = await saveInlineEdit(liveId, fieldId, value);
+		const persisted = await saveInlineEdit(liveId, fieldId, value, await hashTextBrowser(base));
 		savingChanges = { ...savingChanges, [key]: false };
 		if (!persisted) {
 			setChangeError(key, 'The change could not be saved. It is still here to retry.');
