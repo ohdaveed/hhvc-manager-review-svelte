@@ -61,6 +61,30 @@ test('carries the decision on the phone Review button', async ({ page }) => {
 	await expect(page.getByRole('button', { name: 'Review (Undecided)' })).toBeVisible();
 });
 
+// A decision moves the row to another queue group. Next used to follow it, so
+// approving a page sent Next to the next APPROVED page (or greyed it out at the
+// end of the queue). The round trip is the point: Next goes on to the row that
+// came after, and Prev from there comes back.
+test('keeps stepping from where the reviewer was after a decision', async ({ page }) => {
+	await page.setViewportSize({ width: 1440, height: 900 });
+	await gotoSignedIn(page, FIRST);
+
+	const next = page.getByTestId('next-page');
+	const before = await next.getAttribute('href');
+	expect(before).toContain('find-healthy-housing-inspector-by-neighborhood');
+
+	await page.getByRole('radio', { name: 'Approved' }).click();
+	await expect(page.getByTestId('toolbar-status')).toHaveText('Approved');
+	await expect(next).toHaveAttribute('href', before!);
+
+	await next.click();
+	await page.waitForURL('**/find-healthy-housing-inspector-by-neighborhood');
+	await expect(page.getByTestId('prev-page')).toHaveJSProperty(
+		'href',
+		new URL(FIRST, page.url()).href
+	);
+});
+
 test('renders the export review data button in the queue footer', async ({ page }) => {
 	await page.goto(FIRST);
 	const exportBtn = page.getByTestId('export-review-data');
