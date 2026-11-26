@@ -82,7 +82,7 @@ describe('FieldsPanel', () => {
 		pageStore.selectedFieldIds = ['summary', 'title'];
 		render(FieldsPanel, { props: { pageData: fixture() } });
 
-		const items = screen.getByLabelText('Selected fields').querySelectorAll('li');
+		const items = screen.getByLabelText('Selected fields').querySelectorAll('li > label');
 		expect([...items].map((li) => li.textContent?.trim().replace(/\s+/g, ' '))).toEqual([
 			'1 Summary',
 			'2 Title'
@@ -359,7 +359,7 @@ describe('FieldsPanel manual edits', () => {
 		await fireEvent.input(input, { target: { value: 'Changed' } });
 		await fireEvent.click(screen.getByRole('button', { name: 'Cancel the edit to Title' }));
 		expect(page.title).toBe('About vector control');
-		expect(pageStore.manualDrafts.title).toBeUndefined();
+		expect(pageStore.getDraft(PAGE_ID, 'title')).toBeUndefined();
 	});
 
 	it('Escape cancels too', async () => {
@@ -373,7 +373,7 @@ describe('FieldsPanel manual edits', () => {
 		const { page, input } = renderTitle();
 		await fireEvent.input(input, { target: { value: 'Saved title' } });
 		await fireEvent.click(screen.getByRole('button', { name: 'Save the edit to Title' }));
-		await vi.waitFor(() => expect(pageStore.manualDrafts.title).toBeUndefined());
+		await vi.waitFor(() => expect(pageStore.getDraft(PAGE_ID, 'title')).toBeUndefined());
 		expect(saveInlineEdit).toHaveBeenCalledTimes(1);
 		expect(saveInlineEdit).toHaveBeenCalledWith('live-1', 'title', 'Saved title');
 		expect(page.title).toBe('Saved title');
@@ -385,7 +385,7 @@ describe('FieldsPanel manual edits', () => {
 		await fireEvent.input(input, { target: { value: 'Not saved' } });
 		await fireEvent.click(screen.getByRole('button', { name: 'Save the edit to Title' }));
 		expect(await screen.findByText(/could not be saved/)).toBeTruthy();
-		expect(pageStore.manualDrafts.title?.value).toBe('Not saved');
+		expect(pageStore.getDraft(PAGE_ID, 'title')?.value).toBe('Not saved');
 		expect(page.title).toBe('Not saved');
 	});
 
@@ -395,7 +395,7 @@ describe('FieldsPanel manual edits', () => {
 		await fireEvent.click(screen.getByRole('button', { name: 'Save the edit to Title' }));
 		expect(saveInlineEdit).not.toHaveBeenCalled();
 		expect(screen.getByText(/can only be shown, not saved/)).toBeTruthy();
-		expect(pageStore.manualDrafts.title?.value).toBe('Preview only');
+		expect(pageStore.getDraft(PAGE_ID, 'title')?.value).toBe('Preview only');
 	});
 
 	it('disables Accept on a suggestion while the field has unsaved typing', async () => {
@@ -407,6 +407,46 @@ describe('FieldsPanel manual edits', () => {
 		expect(accept.hasAttribute('disabled')).toBe(false);
 		await fireEvent.input(input, { target: { value: 'Typed' } });
 		expect(accept.hasAttribute('disabled')).toBe(true);
+	});
+
+	it('Enter saves rather than adding a line break', async () => {
+		const { page, input } = renderTitle();
+		await fireEvent.input(input, { target: { value: 'Saved with Enter' } });
+		await fireEvent.keyDown(input, { key: 'Enter' });
+		await vi.waitFor(() => expect(pageStore.getDraft(PAGE_ID, 'title')).toBeUndefined());
+		expect(saveInlineEdit).toHaveBeenCalledWith('live-1', 'title', 'Saved with Enter');
+		expect(page.title).toBe('Saved with Enter');
+	});
+
+	it('turns pasted line breaks into spaces', async () => {
+		const { page, input } = renderTitle();
+		await fireEvent.input(input, { target: { value: 'Two\n\nlines' } });
+		expect(page.title).toBe('Two lines');
+		expect(input.value).toBe('Two lines');
+	});
+
+	it('keeps typing when the selection moves, and lists it to save or discard', async () => {
+		const { page, input } = renderTitle();
+		await fireEvent.input(input, { target: { value: 'Parked' } });
+		pageStore.select('summary');
+		await vi.waitFor(() => expect(screen.getByText('1 unsaved edit')).toBeTruthy());
+		expect(page.title).toBe('Parked');
+
+		await fireEvent.click(screen.getByRole('button', { name: 'Discard the edit to Title' }));
+		expect(page.title).toBe('About vector control');
+		expect(screen.queryByText('1 unsaved edit')).toBeNull();
+	});
+
+	it('a parked edit can be saved from the list', async () => {
+		const { input } = renderTitle();
+		await fireEvent.input(input, { target: { value: 'Parked then saved' } });
+		pageStore.select('summary');
+		// Wait for the list: until the re-render lands, the Save button on screen
+		// is the selected field's own, which the re-render then removes.
+		await screen.findByText('1 unsaved edit');
+		await fireEvent.click(screen.getByRole('button', { name: 'Save the edit to Title' }));
+		await vi.waitFor(() => expect(pageStore.getDraft(PAGE_ID, 'title')).toBeUndefined());
+		expect(saveInlineEdit).toHaveBeenCalledWith('live-1', 'title', 'Parked then saved');
 	});
 
 	it('a saved edit drops the suggestion it replaced', async () => {

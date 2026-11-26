@@ -10,9 +10,9 @@ survive a reload.
 Decisions (approved 2026-11-26): live preview per keystroke, persist only on Save; one control per
 selected field; no schema change, no new dependency; the reload-hydration gap is fixed in this branch.
 
-- [x] **1. Draft state.** `pageStore.manualDrafts` keyed by field id (`original`, `value`, `pageId`), with
-      `updateDraft` / `isDirty` / `cancelDraft` / `forgetDraft`. Selection replacement, `clearSelection`
-      and page change revert unsaved drafts on the mockup and clear them. Unit-tested in `tests/pageData.test.ts`.
+- [x] **1. Draft state.** `pageStore.manualDrafts` keyed by `draftKey(pageId, fieldId)`, with
+      `updateDraft` / `isDirty` / `cancelDraft` / `forgetDraft`. Unit-tested in `tests/pageData.test.ts`.
+      (Revised after review: drafts are no longer reverted by a selection or page change -- see 7.)
 - [x] **2. Panel controls.** The name-only list in `FieldsPanel.svelte` becomes one labelled textarea per
       selected field, numbered like its badge, with Save / Cancel and Esc-to-cancel. Typing calls the
       resolved field's `set()` so the mockup re-renders.
@@ -26,6 +26,18 @@ selected field; no schema change, no new dependency; the reload-hydration gap is
 - [x] **6. Verify.** `bun run verify` PASS, lint/check/format ratchets at baseline, a Playwright check of the
       real page (select, type, see mockup change) with a clean console. PR open.
 
+## Fixes from the self-review (2026-11-26)
+
+- [x] **7. Typing is never discarded silently.** A selection change or navigation keeps an unsaved draft
+      on the mockup; the panel lists this page's parked drafts with Edit / Discard / Save and says how
+      many wait on other pages. Drafts are keyed by page and field, since field ids are page-relative.
+- [x] **8. Saved-edit hydration ignores optimistic rows.** `applySavedEdits` skips a field whose newest
+      row is `saveInlineEdit`'s `temp-` row, so a failed AI save no longer leaves its text on the mockup.
+      Covered by unit tests only: an e2e test of a deliberately failed save trips the console-error gate
+      in `tests/fixtures.ts` on the app's own `Failed to save edit` log.
+- [x] **9. No line breaks.** No corpus field holds one (measured over every string in `pageStore.pages`),
+      so Enter saves and pasted line breaks become spaces.
+
 ## Notes
 
 - Verified 2026-11-26: verify PASS (1186 unit), ratchets at baseline (svelte-check 0/0, eslint 3, prettier 42),
@@ -33,5 +45,13 @@ selected field; no schema change, no new dependency; the reload-hydration gap is
   screenshot checked by eye.
 - Skipped from the plan: a character counter on the manual edit control (the 8,000 cap is the AI
   backend's, and a manual edit does not go through it).
-- Follow-up, not built: the footer's `Save N edits` counts accepted AI suggestions only, so it reads
-  `Save 0 edits` beside an unsaved manual draft. Each draft has its own Save.
+- Follow-up, not built: the footer's `Save N edits` and the toolbar's unsaved pill count accepted AI
+  suggestions only, so they read 0 beside an unsaved manual draft. Each draft has its own Save.
+
+## Carried over from the previous plan (`c0427d2:PLAN.md`), still open
+
+- The sewage routing fix is out of scope only because it sits on an Information page (*Learn what HHVC
+  can inspect*). The Decisions tab marks it **Fix first**, and it is still pending.
+- Also deferred there, each needing its own plan: the 9-page report regroup, removing the SRO page, the
+  mosquito and pigeon pages, and the Topic fold. Track B2 deferred moving the landlord notice and
+  putting the 311 button last (the 72-hour wait is still open in the Decisions tab).

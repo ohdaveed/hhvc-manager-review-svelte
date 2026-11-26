@@ -83,3 +83,43 @@ describe('applySavedEdits', () => {
 		expect(applySavedEdits([p], live, edits, never)).toBe(0);
 	});
 });
+
+describe('applySavedEdits and optimistic rows', () => {
+	it('does not apply a row the database has not confirmed', () => {
+		const p = page();
+		const n = applySavedEdits(
+			[p],
+			live,
+			[{ ...edit('title', 'In flight', '2026-11-26T00:00:00Z'), id: 'temp-1764000000000' }],
+			never
+		);
+		expect(n).toBe(0);
+		expect(p.title).toBe('Original title');
+	});
+
+	it('does not fall back to an older confirmed row while a newer one is in flight', () => {
+		const p = page();
+		p.title = 'Shown now';
+		applySavedEdits(
+			[p],
+			live,
+			[
+				{ ...edit('title', 'Older', '2026-11-26T00:00:00Z'), id: 'row-a' },
+				{ ...edit('title', 'In flight', '2026-11-26T01:00:00Z'), id: 'temp-1' }
+			],
+			never
+		);
+		expect(p.title).toBe('Shown now');
+	});
+
+	it('applies the row once the insert returns it under its real id', () => {
+		const p = page();
+		applySavedEdits(
+			[p],
+			live,
+			[{ ...edit('title', 'Saved', '2026-11-26T00:00:00Z'), id: 'row-b' }],
+			never
+		);
+		expect(p.title).toBe('Saved');
+	});
+});

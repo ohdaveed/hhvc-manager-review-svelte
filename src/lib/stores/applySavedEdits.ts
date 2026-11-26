@@ -8,12 +8,27 @@
  * This closes that gap with the same fold they use: last write wins, ordered
  * explicitly by `created_at`.
  *
+ * Only edits the database has confirmed. `saveInlineEdit` puts an optimistic
+ * row (`id: 'temp-…'`) into `editsStore` before its insert, and rolls it back
+ * if the insert fails. Applying that row would put copy on the mockup the
+ * moment Save is pressed, and nothing would take it off again on failure:
+ * this function only ever applies, it never un-applies.
+ *
  * A field the reviewer is typing into is left alone. Its draft is on screen,
  * and replacing it with another reviewer's save would throw the typing away.
  */
 import { resolveField } from '$lib/corpus/fieldResolver';
 
-type EditLike = { page_id: string; field_id: string; new_content: string; created_at?: string };
+type EditLike = {
+	id?: string;
+	page_id: string;
+	field_id: string;
+	new_content: string;
+	created_at?: string;
+};
+/** The id `saveInlineEdit` gives its optimistic row until the insert returns. */
+const OPTIMISTIC_PREFIX = 'temp-';
+
 type LivePageLike = { id: string; path: string };
 type PageLike = { id: string };
 
@@ -35,6 +50,9 @@ export function applySavedEdits(
 
 	let changed = 0;
 	for (const edit of latest.values()) {
+		// The newest row is still in flight: skip the field rather than fall back
+		// to an older confirmed row, which would put stale copy back.
+		if (edit.id?.startsWith(OPTIMISTIC_PREFIX)) continue;
 		if (isDrafting(edit.path, edit.field_id)) continue;
 		const field = resolveField(
 			pages.find((p) => p.id === edit.path),

@@ -172,7 +172,7 @@
 				pages,
 				live,
 				edits,
-				(path, fieldId) => pageStore.manualDrafts[fieldId]?.pageId === path
+				(path, fieldId) => pageStore.getDraft(path, fieldId) !== undefined
 			)
 		);
 	});
