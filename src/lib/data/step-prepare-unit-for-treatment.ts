@@ -35,9 +35,10 @@ export const stepPrepUnit = {
 					bullets: [
 						'Ask your owner or manager for the instructions if you did not get them.',
 						'Ask what the product is if anyone in the home is pregnant, has asthma, or is under two.',
-						'[Integrated pest management for property owners and managers](ownerGuidance)'
+						'[Integrated pest management for property owners and managers](ownerGuidance)',
+						'[What to expect when your building is treated for pests](pestTreatmentInfo)'
 					],
-					karl: 'Step 1. Placed first on purpose: it establishes that this page is a general checklist and the operator’s notice is the authority, which is what keeps the page from contradicting a real treatment plan.'
+					karl: 'Step 1. Placed first on purpose: it establishes that this page is a general checklist and the operator’s notice is the authority, which is what keeps the page from contradicting a real treatment plan. The pestTreatmentInfo link (added 2026-11-26) is a rich-text Internal link in the Step description: Step by step has no Related panel, and that page covers what owners and tenants each do around the visit, which this checklist does not.'
 				},
 				{
 					title: 'Wash and bag fabric',

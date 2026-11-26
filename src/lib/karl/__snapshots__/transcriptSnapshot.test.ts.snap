@@ -1191,6 +1191,7 @@ _This block publishes the destination page’s title and a link, and NOTHING els
 2. Choose page: "Tenant rights when reporting housing conditions" (\`tenantRights\` → /sf.gov/information/tenant-rights-and-reporting-housing-conditions)
 3. Choose page: "Report cockroaches or other insects" (\`insectsReport\` → /sf.gov/report-cockroaches-or-other-insects)
 4. Choose page: "Learn what Healthy Housing and Vector Control can inspect" (\`scopeInfo\` → /sf.gov/information/learn-what-hhvc-can-inspect)
+5. Choose page: "Bed bugs: prevent them, find them, and get ready for treatment" (\`bedBugsInfo\` → /sf.gov/information/bed-bugs-prevent-find-and-prepare-for-treatment)
 
 ### Partner agencies — \`partner_agencies\` [CHOOSE] — page not approved
 
@@ -2545,6 +2546,7 @@ _This block publishes the destination page’s title and a link, and NOTHING els
 2. Choose page: "Tenant rights when reporting housing conditions" (\`tenantRights\` → /sf.gov/information/tenant-rights-and-reporting-housing-conditions)
 3. Choose page: "Report bed bugs" (\`bedBugReport\` → /sf.gov/report-bed-bugs)
 4. Choose page: "Learn what Healthy Housing and Vector Control can inspect" (\`scopeInfo\` → /sf.gov/information/learn-what-hhvc-can-inspect)
+5. Choose page: "Get rid of cockroaches without heavy pesticides" (\`cockroachesPrevention\` → /sf.gov/information/get-rid-of-cockroaches-without-heavy-pesticides)
 
 ### Partner agencies — \`partner_agencies\` [CHOOSE] — page not approved
 
@@ -3364,6 +3366,7 @@ _This block publishes the destination page’s title and a link, and NOTHING els
 2. Choose page: "Tenant rights when reporting housing conditions" (\`tenantRights\` → /sf.gov/information/tenant-rights-and-reporting-housing-conditions)
 3. Choose page: "Who to call about a housing problem" (\`whoToCall\` → /sf.gov/information/who-to-call-about-a-housing-problem)
 4. Choose page: "Learn what Healthy Housing and Vector Control can inspect" (\`scopeInfo\` → /sf.gov/information/learn-what-hhvc-can-inspect)
+5. Choose page: "Reduce moisture and mold in your home" (\`reduceMoisture\` → /sf.gov/information/reduce-moisture-and-mold-in-your-home)
 
 ### Partner agencies — \`partner_agencies\` [CHOOSE] — page not approved
 
@@ -6057,6 +6060,7 @@ _This block publishes the destination page’s title and a link, and NOTHING els
 3. Choose page: "Report garbage, clutter, or overgrown plants" (\`garbageReport\` → /sf.gov/report-garbage-clutter-or-overgrown-plants)
 4. Choose page: "Learn what Healthy Housing and Vector Control can inspect" (\`scopeInfo\` → /sf.gov/information/learn-what-hhvc-can-inspect)
 5. Choose page: "Rat-free blocks" (\`ratFreeBlocks\` → /sf.gov/rat-free-blocks)
+6. Choose page: "Keep rats and mice out of your home" (\`rodentsPrevention\` → /sf.gov/information/keep-rats-and-mice-out-of-your-home)
 
 ### Partner agencies — \`partner_agencies\` [CHOOSE] — page not approved
 
@@ -6866,6 +6870,7 @@ Your pest control operator sends instructions for your unit and the product bein
 - Ask your owner or manager for the instructions if you did not get them.
 - Ask what the product is if anyone in the home is pregnant, has asthma, or is under two.
 - [Integrated pest management for property owners and managers](ownerGuidance)
+- [What to expect when your building is treated for pests](pestTreatmentInfo)
 
 **Step 2 — Title:**
 
@@ -6932,6 +6937,7 @@ Do not clean the treated surfaces until your operator says it is safe — cleani
 **Links in this text — recreate each with the Link tool, do not paste them:**
 
 - "Integrated pest management for property owners and managers" → shape 5 — rich text Link tool → Internal link → "Integrated pest management for property owners and managers"
+- "What to expect when your building is treated for pests" → shape 5 — rich text Link tool → Internal link → "What to expect when your building is treated for pests"
 - "Report cockroaches or other insects" → shape 5 — rich text Link tool → Internal link → "Report cockroaches or other insects"
 - "Correct a violation and close your case" → shape 5 — rich text Link tool → Internal link → "Correct a violation and close your case"
 - "Tenant rights when reporting housing conditions" → shape 5 — rich text Link tool → Internal link → "Tenant rights when reporting housing conditions"

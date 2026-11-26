@@ -110,7 +110,7 @@ export const rodentsReport = {
 		},
 		{
 			heading: 'Related pages',
-			karl: 'Maps to the related panel: repeatable field "Page *" with a "Choose a page" button. 5 cards below = 5 related "Page" entries. All internal SF.gov pages — Karl Related is a page chooser and cannot hold external links.',
+			karl: 'Maps to the related panel: repeatable field "Page *" with a "Choose a page" button. 6 cards below = 6 related "Page" entries. The last card links the community-education Information page for this condition (added 2026-11-26, appended so the earlier cards keep their `cards.N` field ids): it was reachable only from the Topic and the home page, so a reader who came to report had no route to prevention. All internal SF.gov pages — Karl Related is a page chooser and cannot hold external links.',
 			kind: 'placement',
 			cards: [
 				{
@@ -132,6 +132,10 @@ export const rodentsReport = {
 				{
 					title: 'Rat-free blocks',
 					target: 'ratFreeBlocks'
+				},
+				{
+					title: 'Keep rats and mice out of your home',
+					target: 'rodentsPrevention'
 				}
 			]
 		}
