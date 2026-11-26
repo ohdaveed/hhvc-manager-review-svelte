@@ -14,7 +14,8 @@ The previous plan (manual field editing + vocabulary alignment, all boxes ticked
       reviewer is told why. Unit-tested.
 - [x] **4. Rethink grounding comment.** `RethinkPanel.svelte` ~107 says what grounding now contains: saved
       edits (hydrated) and unsaved changes. No behaviour change.
-- [ ] **5. Karl outline wording.** Pending a decision: which copy the outline judges (see below).
+- [x] **5. Karl outline wording.** Decided 2026-11-26: it judges the copy on screen (saved edits plus unsaved
+      changes), via `placementsFor(..., { copy: 'as-shown' })`; the Blueprint shares it. Unit-tested.
 - [ ] **6. Verify.** Unit, check, ratchets, e2e, browser check.
 
 Not in this branch: marking expired edits on the mockup. Edits carry no corpus version, so it needs a
