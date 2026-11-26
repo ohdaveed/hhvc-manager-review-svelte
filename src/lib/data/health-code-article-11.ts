@@ -210,8 +210,10 @@ export const article11Guide = {
 			karl: 'Report Content -> Title and text plus a two-column Table. Covers Sec. 596 and 600 without assigning a generic correction deadline, repeating a fine amount, or promising a particular outcome. Case-specific requirements belong in the Notice of Violation.',
 			kind: 'body',
 			paragraphs: [
-				'If HHVC confirms a public health nuisance, the City may use the Article 11 enforcement process to require correction. The notice for a specific case identifies the condition, responsible party, required work, and deadline.'
+				'If HHVC confirms a public health nuisance, the City may use the Article 11 enforcement process to require correction.',
+				'The notice for a specific case identifies:'
 			],
+			bullets: ['The condition', 'The responsible party', 'The required work', 'The deadline'],
 			table: [
 				['Health code', 'In plain language'],
 				[
