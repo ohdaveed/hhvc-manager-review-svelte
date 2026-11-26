@@ -98,8 +98,8 @@
 	const scoreTone = $derived.by(() => {
 		const a = analysis;
 		if (!a || !a.readability.hasContent) return 'bg-muted-foreground';
-		if (a.targetStatus === 'pass') return 'bg-emerald-500';
-		if (a.readability.score <= SFGOV_READING_GUIDELINE + 3) return 'bg-amber-500';
+		if (a.targetStatus === 'pass') return 'bg-sfds-green';
+		if (a.readability.score <= SFGOV_READING_GUIDELINE + 3) return 'bg-sfds-amber';
 		return 'bg-destructive';
 	});
 
@@ -143,7 +143,7 @@
 	>
 		<ExternalLink class="mt-[1px] size-3 flex-none" aria-hidden="true" />
 		<span>
-			{help.title}<span class="font-normal text-muted-foreground">{` — ${help.why}`}</span>
+			{help.title}<span class="font-normal text-sfds-slate-l3">{` — ${help.why}`}</span>
 		</span>
 	</a>
 {/snippet}
@@ -160,20 +160,20 @@
 				</Badge>
 				<div class="min-w-0 flex-1">
 					<p class="text-sm font-semibold">{finding.title}</p>
-					<p class="mt-0.5 text-xs text-muted-foreground">{finding.summary}</p>
+					<p class="mt-0.5 text-xs text-sfds-slate-l3">{finding.summary}</p>
 				</div>
 			</div>
 
 			{#if finding.items.length > 0}
-				<ul class="space-y-1.5 border-l-2 border-amber-300 pl-3">
+				<ul class="space-y-1.5 border-l-2 border-sfds-amber pl-3">
 					{#each finding.items as item, i (i)}
 						<li class="text-xs">
 							<span class="rounded bg-muted px-1 py-0.5 font-mono break-all">{item.text}</span>
 							{#if item.detail}
-								<span class="block text-muted-foreground">{item.detail}</span>
+								<span class="block text-sfds-slate-l3">{item.detail}</span>
 							{/if}
 							{#if item.key}
-								<span class="block font-mono text-[10px] break-all text-muted-foreground/70">
+								<span class="block font-mono text-[10px] break-all text-sfds-slate-l3">
 									{item.key}
 								</span>
 							{/if}
@@ -209,7 +209,7 @@
 						</span>
 						<div class="min-w-0">
 							<p class="text-sm font-semibold">{analysis.readability.gradeLevel}</p>
-							<p class="text-xs text-muted-foreground">{analysis.readability.interpretation}</p>
+							<p class="text-xs text-sfds-slate-l3">{analysis.readability.interpretation}</p>
 						</div>
 					</div>
 
@@ -237,13 +237,13 @@
 
 					<p class="text-sm">{analysis.readability.recommendation}</p>
 
-					<ul class="list-disc space-y-1 pl-4 text-xs text-muted-foreground">
+					<ul class="list-disc space-y-1 pl-4 text-xs text-sfds-slate-l3">
 						{#each analysis.readability.factors as factor, i (i)}
 							<li>{factor}</li>
 						{/each}
 					</ul>
 
-					<p class="text-[11px] leading-relaxed text-muted-foreground">
+					<p class="text-[11px] leading-relaxed text-sfds-slate-l3">
 						Measured over {analysis.measuredFields} copy fields —
 						{analysis.readability.wordCount} words, {analysis.readability.sentenceCount} sentences,
 						{analysis.readability.wordsPerSentence.toFixed(1)} words per sentence.
@@ -285,7 +285,7 @@
 		{#if unavailable.length > 0}
 			<div class="space-y-2">
 				<h3 class="text-sm font-bold">Nothing to check ({unavailable.length})</h3>
-				<p class="text-xs text-muted-foreground">
+				<p class="text-xs text-sfds-slate-l3">
 					These report no data rather than a pass — this mockup has nothing for them to look at, or
 					Karl’s help center does not settle the rule.
 				</p>
@@ -297,7 +297,7 @@
 
 		<Separator />
 
-		<p class="text-[11px] leading-relaxed text-muted-foreground">
+		<p class="text-[11px] leading-relaxed text-sfds-slate-l3">
 			Copy checks read the corpus module, so they cover <strong
 				>steps and cards the mockup does not render</strong
 			>. Markup checks read the rendered page. Ported from the Karl Jr. browser extension, which

@@ -424,7 +424,7 @@
 		<div class="flex items-baseline justify-between gap-2">
 			<h3 id="karl-handoff" class="text-sm font-bold">Move it into Karl</h3>
 			{#if liveRecord?.status === 'approved'}
-				<span class="text-xs font-semibold text-emerald-800">Ready to move</span>
+				<span class="text-xs font-semibold text-sfds-green">Ready to move</span>
 			{/if}
 		</div>
 		<p class="text-sm text-slate-800">
@@ -471,7 +471,7 @@
 								<p class="text-sm font-medium capitalize">
 									{checkId.replace(/([A-Z])/g, ' $1').trim()}
 								</p>
-								<p class="mt-1 text-xs text-muted-foreground">{check.message}</p>
+								<p class="mt-1 text-xs text-sfds-slate-l3">{check.message}</p>
 							</div>
 						</Card.Content>
 					</Card.Root>

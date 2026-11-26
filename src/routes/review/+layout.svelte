@@ -630,7 +630,7 @@
 			     edit simply vanished on reload with no signal. EditTarget also
 			     drops the affordance entirely. -->
 			<div
-				class="border-b border-amber-300 bg-amber-50 px-4 py-2 text-sm text-amber-900"
+				class="border-b border-sfds-amber bg-sfds-amber-l1 px-4 py-2 text-sm text-sfds-black"
 				role="status"
 			>
 				<strong class="font-semibold">Viewing signed out.</strong> You can read every mockup, but
@@ -753,7 +753,7 @@
 					<div class="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-sm">
 						{#if unsavedCount > 0}
 							<span
-								class="inline-flex items-center rounded-full border border-violet-200 bg-violet-50 px-2.5 py-[3px] text-xs font-semibold text-violet-900"
+								class="inline-flex items-center rounded-full border border-sfds-action/40 bg-sfds-blue-l1 px-2.5 py-[3px] text-xs font-semibold text-sfds-blue-dark"
 								role="status"
 							>
 								{unsavedCount} unsaved {unsavedCount === 1 ? 'change' : 'changes'}
@@ -851,7 +851,7 @@
 												onCheckedChange={(on: boolean) => pageStore.setKarlOutline(on)}
 											/>
 										</label>
-										<p class="text-sfds-slate text-xs">
+										<p class="text-xs text-sfds-slate-l3">
 											Marks where each part of the page goes in Karl, and what won’t carry over.
 										</p>
 										<Separator />
