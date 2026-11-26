@@ -409,8 +409,10 @@
 		{:else if liveRecord}
 			<p class="text-sm text-sfds-slate-l3">
 				{liveRecord.status === 'needs-review'
-					? 'This is the last page without a decision.'
-					: 'Every page has a decision.'}
+					? 'This is the last page in the review without a decision.'
+					: review.unreviewed.length > 0
+						? `Every page in the review has a decision. ${review.unreviewed.length} ${review.unreviewed.length === 1 ? 'page is' : 'pages are'} not in the review yet.`
+						: 'Every page has a decision.'}
 			</p>
 		{/if}
 	</div>

@@ -14,6 +14,7 @@
 		nextHref,
 		nextTitle,
 		nextMeta,
+		unreviewed = 0,
 		onShow
 	}: {
 		decided: number;
@@ -24,6 +25,11 @@
 		nextTitle: string | undefined;
 		/** The next page's type, or "Proposed page" for a draft. */
 		nextMeta: string | undefined;
+		/**
+		 * Corpus pages with no review row. They are in `total` but can never be
+		 * decided here, so "every page has a decision" must not be said over them.
+		 */
+		unreviewed?: number;
 		/** Show the All pages list filtered to one status. */
 		onShow: (status: StatusFilter) => void;
 	} = $props();
@@ -100,10 +106,13 @@
 	<div
 		class="mt-4 flex flex-col gap-3 border-t border-sfds-grey-l2 pt-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6"
 	>
-		<!-- `nextHref` is undefined ONLY when every page has a decision, because
-		     `reviewProgress` picks the first `needs-review` rather than the
-		     queue's first row. So there is deliberately no link in that state:
-		     Continue would point at a page with nothing left to resume. -->
+		<!-- `nextHref` is undefined only when every page IN THE REVIEW (every
+		     row) has a decision, because `reviewProgress` picks the first
+		     `needs-review` row rather than the queue's first row. So there is
+		     deliberately no link in that state: Continue would point at a page
+		     with nothing left to resume. Pages with no row (`unreviewed`) are in
+		     `total` but undecidable, so the message then names them rather than
+		     claim every page is done over a count that says otherwise. -->
 		{#if nextHref}
 			<div class="min-w-0">
 				<p class="text-sm text-slate-700">Next up</p>
@@ -122,7 +131,14 @@
 				<ArrowRight aria-hidden="true" data-icon="inline-end" />
 			</Button>
 		{:else}
-			<p class="font-medium text-slate-800">Every page has a decision.</p>
+			<p class="font-medium text-slate-800">
+				{#if unreviewed > 0}
+					Every page in the review has a decision. {unreviewed}
+					{unreviewed === 1 ? 'page is' : 'pages are'} not in the review yet.
+				{:else}
+					Every page has a decision.
+				{/if}
+			</p>
 			{#if blocked > 0}
 				<Button
 					variant="outline"

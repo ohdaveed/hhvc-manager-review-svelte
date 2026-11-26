@@ -148,6 +148,7 @@
 				nextHref={progress.nextHref}
 				{nextTitle}
 				{nextMeta}
+				unreviewed={review.unreviewed.length}
 				onShow={showStatus}
 			/>
 		{:else if card === 'checking' || card === 'loading'}
