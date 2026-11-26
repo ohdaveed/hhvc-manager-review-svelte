@@ -33,7 +33,6 @@ function withKeys(page: CorpusShape): CorpusShape {
 function expectedIds(page: CorpusShape): string[] {
 	const ids: string[] = ['title'];
 	if (page.summary) ids.push('summary');
-	(page.audience ?? []).forEach((_: unknown, i: number) => ids.push(`audience.${i}`));
 	for (const s of page.sections ?? []) {
 		const k = s.fieldKey;
 		if (s.heading) ids.push(`sections.${k}.heading`);
@@ -275,20 +274,20 @@ describe('resolveField — extractCopy parity (Group D)', () => {
 	});
 
 	it('sections.<key>.steps.N.text.J keeps the unverified flag through a write', () => {
-		const page = findPage('sf.gov/information/what-happens-after-you-report-housing-pest-problem');
-		const id = 'sections.how-a-report-moves-through-the-city.steps.2.text.0';
+		const page = findPage('sf.gov/report-animal-waste-on-property');
+		const id = 'sections.what-to-do.steps.0.text.1';
 
 		const before = resolveField(page, id)!;
-		expect(before.value).toMatch(/structural water intrusion/);
+		expect(before.value).toMatch(/dog waste on a sidewalk/);
 		expect(before.unverified).toBe(true);
-		expect(before.unverifiedReason).toMatch(/San Francisco Housing Code/);
+		expect(before.unverifiedReason).toBeTruthy();
 
 		before.set('Rewritten step text.');
 
 		const after = resolveField(page, id)!;
 		expect(after.value).toBe('Rewritten step text.');
 		expect(after.unverified).toBe(true);
-		expect(after.unverifiedReason).toMatch(/San Francisco Housing Code/);
+		expect(after.unverifiedReason).toBe(before.unverifiedReason);
 	});
 
 	it('sections.<key>.steps.N.bullets.J', () => {
@@ -351,7 +350,7 @@ describe('resolveField — extractCopy parity (Group D)', () => {
 	});
 
 	it('contact.{phone,email,other}.N', () => {
-		const page = findPage('sf.gov/information--article-11-compliance-for-property-owners');
+		const page = findPage('sf.gov/question-notice-of-violation');
 		expect(resolveField(page, 'contact.phone.0')!.value).toBe('311 (call or text)');
 		expect(resolveField(page, 'contact.email.0')!.value).toBe('healthyhousing@sf.gov');
 		expect(resolveField(page, 'contact.other.0')!.value).toMatch(/Environmental Health/);

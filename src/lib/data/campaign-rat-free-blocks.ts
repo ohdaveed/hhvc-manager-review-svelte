@@ -2,15 +2,9 @@ export const ratFreeBlocks = {
 	slug: 'sf.gov/rat-free-blocks',
 	type: 'Campaign',
 	title: 'Rat-free blocks',
-	summary: 'A neighborhood push to cut rat sightings through coordinated cleanup and prevention.',
-	audience: [
-		'A resident who wants their block to act together',
-		'A neighborhood or merchant association organizing a cleanup',
-		'A property owner or manager on a block with a rodent problem'
-	],
 	reading: 'Grade 6',
 	editorNote:
-		'PROPOSED PAGE — not in the current 29. `design/HHVC Page Ideas.dc.html` makes a pointed observation: both existing Campaigns offer a free workshop, "which makes the type read as a booking page". Campaign is meant for a message-led push, and this page uses it that way — there is no form and no session to request. The IPM framing is deliberate and matches the enforcement model: rats leave when food, water, harborage and entry go, so the asks below are root-cause actions a block can verify on itself rather than a request to report more. NO SIGHTING STATISTICS, TARGET, OR DATE RANGE APPEARS. A campaign normally carries a number and a season; none is confirmed here, and inventing a "40% fewer sightings" figure would be exactly the fabricated statistic the content standard forbids. Campaign has no things_to_know and no intro panel, so the audience stays in `audience` and is reported as a gap.',
+		'PROPOSED PAGE — not in the current 29. `design/HHVC Page Ideas.dc.html` makes a pointed observation: both existing Campaigns offer a free workshop, "which makes the type read as a booking page". Campaign is meant for a message-led push, and this page uses it that way — there is no form and no session to request. The IPM framing is deliberate and matches the enforcement model: rats leave when food, water, harborage and entry go, so the asks below are root-cause actions a block can verify on itself rather than a request to report more. NO SIGHTING STATISTICS, TARGET, OR DATE RANGE APPEARS. A campaign normally carries a number and a season; none is confirmed here, and inventing a "40% fewer sightings" figure would be exactly the fabricated statistic the content standard forbids. Campaign has no things_to_know and no intro panel, so the audience list was folded into the body (2026-11-26): neighborhood and merchant associations into "Start with your own block"; owners and managers already have their own Spotlight.',
 	editorStatus: 'needs-review',
 	sections: [
 		{
@@ -50,10 +44,12 @@ export const ratFreeBlocks = {
 		},
 		{
 			heading: 'Start with your own block',
-			karl: 'Maps to Additional content → Title and text block. The bullets fold into the same rich text field; the Link tool carries the internal links.',
+			karl: 'Maps to Additional content → Accordion section: Title = this heading, Accordion sidebar (rich text) = the paragraph and the bulleted list, with the Link tool carrying the internal links. Additional content offers Image with text, Video, Accordion section, Embed and Resources — there is no Title and text block, which is what this note used to name. Uses the mockup-only open flag so the copy shows without a click; the real accordion renders collapsed.',
 			kind: 'body',
+			component: 'supporting',
+			open: true,
 			paragraphs: [
-				'A coordinated week does more than a year of single properties acting alone. Neighbors do not need permission from the City to organize one.'
+				'A coordinated week does more than a year of single properties acting alone. Neighbors, and neighborhood or merchant associations, do not need permission from the City to organize one.'
 			],
 			bullets: [
 				'Agree a week when everyone clears clutter and checks their bins.',
@@ -81,9 +77,10 @@ export const ratFreeBlocks = {
 			// Campaign's single "About" rich-text panel (`about_campaign`). A tag, not
 			// prose, so the inventory can match it structurally (U27).
 			component: 'about',
-			karl: 'Maps to About the campaign. PLACEHOLDER — this campaign has no confirmed start date, area, or partner list. A Campaign page normally carries all three.',
+			karl: 'Maps to About the campaign. The first paragraph is the line the mockup used to show as a page summary: Campaign has no Description panel, so it moved here (2026-11-26). PLACEHOLDER — this campaign has no confirmed start date, area, or partner list. A Campaign page normally carries all three.',
 			kind: 'body',
 			paragraphs: [
+				'Rat-free blocks is a neighborhood push to cut rat sightings through coordinated cleanup and prevention.',
 				'PLACEHOLDER: which neighborhoods, over what period, and with which partners. None is confirmed.'
 			]
 		},

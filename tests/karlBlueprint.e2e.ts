@@ -40,13 +40,13 @@ const PILOTS = [
 		slug: 'report-rats-or-mice',
 		first: ['title', 'description', 'primary_agency', 'cost', 'things_to_know', 'what_to_do'],
 		empty: ['Contact us (empty)', 'Topics (empty)'],
-		tray: 2
+		tray: 0
 	},
 	{
 		slug: 'information-what-happens-after-you-report-housing-pest-problem',
 		first: ['title', 'description', 'primary_agency', 'part_of', 'information_section'],
 		empty: ['Primary agency (empty)', 'Part of (empty)'],
-		tray: 1
+		tray: 0
 	},
 	{
 		slug: 'property-owner-responsibilities-hhvc',
@@ -59,49 +59,49 @@ const PILOTS = [
 			'body'
 		],
 		empty: ['Data dashboard (empty)', 'Custom section (empty)'],
-		tray: 1
+		tray: 0
 	},
 	{
 		slug: 'step-by-step-report-a-pest-problem',
 		first: ['title', 'primary_agency', 'description', 'intro', 'steps'],
 		empty: ['Primary agency (empty)', 'Topics (empty)'],
-		tray: 2
+		tray: 0
 	},
 	{
 		slug: 'topics--healthy-housing-conditions',
 		first: ['title', 'primary_agency', 'description', 'top_level_topic', 'content_fields'],
 		empty: ['Primary agency (empty)', 'Set top-level? (empty)'],
-		tray: 2
+		tray: 0
 	},
 	{
 		slug: 'rat-free-blocks',
 		first: ['title', 'primary_agency', 'logo', 'background_header_image', 'theme', 'spotlight_1'],
 		empty: ['Logo (empty)', 'Color theme (empty)'],
-		tray: 3
+		tray: 0
 	},
 	{
 		slug: 'report-health-code-article-11-plain-language',
 		first: ['title', 'date', 'primary_agency', 'spotlight', 'content'],
 		empty: ['Primary agency (empty)', 'Print version (empty)'],
-		tray: 2
+		tray: 0
 	},
 	{
 		slug: 'departments--healthy-housing-and-vector-control',
 		first: ['title', 'show_agency_list', 'description', 'logo', 'main_image'],
 		empty: ['Logo (empty)', 'Public records (empty)'],
-		tray: 5
+		tray: 0
 	},
 	{
 		slug: 'location-environmental-health-office',
 		first: ['title', 'primary_agency', 'description', 'alert', 'image', 'body', 'intro'],
 		empty: ['Primary agency (empty)', 'Alert (empty)'],
-		tray: 1
+		tray: 0
 	},
 	{
 		slug: 'departments--healthy-housing-and-vector-control--about',
 		first: ['title', 'primary_agency', 'about_info', 'resources'],
 		empty: ['Primary agency (empty)'],
-		tray: 2
+		tray: 0
 	}
 ] as const;
 
@@ -209,14 +209,14 @@ test.describe('Blueprint', () => {
 	test('"Show on page" lands on the field, focused, with the outline on', async ({ page }) => {
 		await gotoSignedIn(page, '/review/report-rats-or-mice');
 		await openBlueprint(page);
-		await page
-			.getByRole('button', { name: 'Show on page: “What the Health Code requires” — its button' })
-			.click();
+		// A slot, not a tray item: the tray is empty on every corpus page since
+		// the 2026-11-26 audit.
+		await page.getByRole('button', { name: 'Show on page: Custom Section, unconfirmed' }).click();
 
 		await expect(page.getByRole('heading', { name: 'Blueprint', level: 2 })).toHaveCount(0);
 		await expect(page.locator('.karl-outline-summary')).toBeVisible();
 		const field = page.locator(
-			'[data-rewrite-field="sections.what-the-health-code-requires.button"]'
+			'[data-rewrite-field="sections.what-the-health-code-requires.heading"]'
 		);
 		await expect(field).toBeFocused();
 		await expect(field).toBeInViewport();

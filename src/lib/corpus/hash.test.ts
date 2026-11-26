@@ -14,8 +14,8 @@ describe('hashText', () => {
 
 describe('hashFields', () => {
 	it('is stable under key insertion order', () => {
-		const a = hashFields({ title: 'T', summary: 'S', 'audience.0': 'A' });
-		const b = hashFields({ 'audience.0': 'A', title: 'T', summary: 'S' });
+		const a = hashFields({ title: 'T', summary: 'S', 'sections.a.heading': 'A' });
+		const b = hashFields({ 'sections.a.heading': 'A', title: 'T', summary: 'S' });
 		expect(a.pageHash).toBe(b.pageHash);
 		expect(a.fieldHashes).toEqual(b.fieldHashes);
 	});

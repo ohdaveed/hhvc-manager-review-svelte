@@ -25,7 +25,7 @@
 	{/if}
 
 	<!-- Ordering follows a live sf.gov page: eyebrow, breadcrumb, title, summary,
-	     the owning agency, the What-to-know box, audience, then the sections.
+	     the owning agency, the What-to-know box, then the sections.
 	     
 	     The prototype put an "On this page" TOC between summary and What-to-know
 	     and `OnThisPage.svelte` says plainly that no Karl field backs it. Three
@@ -58,14 +58,6 @@
 	{/if}
 
 	<WhatToKnow whatToKnow={page.whatToKnow} type={page.type} />
-
-	{#if page.audience && page.audience.length > 0}
-		<div class="page-audience">
-			{#each page.audience as a, i (i)}
-				<EditTarget name={`Audience [${i + 1}]`} fieldId={`audience.${i}`} value={a} />
-			{/each}
-		</div>
-	{/if}
 
 	<div class="page-content">
 		{#if page.sections}

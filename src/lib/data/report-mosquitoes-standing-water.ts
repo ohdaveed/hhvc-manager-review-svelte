@@ -5,11 +5,6 @@ export const mosquitoReport = {
 	summary:
 		'Biting insects or breeding water in a yard, building, public space, or nearby catch basin.',
 	primaryAgency: 'Healthy Housing and Vector Control',
-	audience: [
-		'A resident bothered by biting mosquitoes',
-		'A neighbor who sees standing water where mosquitoes can breed',
-		'A friend, family member, advocate, or helper reporting for someone else'
-	],
 	reading: 'Grade 6',
 	editorNote:
 		'Report regroup (Decided, Nov 24, 2026), built 2026-11-25. New page, one of the 9 condition pages: HHVC finds water sources and treats them, so mosquitoes get their own Transaction. The dead-bird West Nile referral moves here from the insects page, and Mosquito Control Program now links here instead of holding its own report section. Things to know follows the Decided order: item 1 is what HHVC checks, item 2 is access. The old insects page was rebuilt as "Report cockroaches or other insects" without its mosquito content (2026-11-25). Decided: move this page up in the Topic and Agency lists during mosquito season. Shared report text lives on What happens after you report and Tenant rights.',
@@ -35,7 +30,7 @@ export const mosquitoReport = {
 				{
 					title: 'Start your report',
 					text: [
-						'Use 311 to report mosquitoes or standing water to the City. If the problem is urgent, report now.',
+						'Use 311 to report mosquitoes or standing water to the City. If the problem is urgent, report now. You can report mosquitoes where you live or standing water you see nearby, or report for someone else.',
 						'Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.'
 					],
 					button: 'Report through 311',
@@ -100,14 +95,12 @@ export const mosquitoReport = {
 		},
 		{
 			heading: 'What the Health Code requires',
-			karl: 'custom_section -> title_and_text. Title = this heading, Text = the Article 11 line (HHVC content standards Ch. 8.7.1). Secondary Button link block ("View Article 11") citing the municipal code per Ch. 8.7.2.',
+			karl: 'custom_section -> title_and_text. Title = this heading, Text = the Article 11 line (HHVC content standards Ch. 8.7.1). The municipal code is cited per Ch. 8.7.2 as an inline link, the last bullet: custom_section has no Button link block (U1), so the "View Article 11" button it used to carry had no Karl destination.',
 			kind: 'body',
 			bullets: [
-				'San Francisco Health Code Article 11 requires property owners to remove places where mosquitoes breed.'
-			],
-			button: 'View Article 11',
-			buttonUrl: 'https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890',
-			buttonStyle: 'secondary'
+				'San Francisco Health Code Article 11 requires property owners to remove places where mosquitoes breed.',
+				'[View Health Code Article 11](https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890)'
+			]
 		},
 		{
 			heading: 'Related pages',

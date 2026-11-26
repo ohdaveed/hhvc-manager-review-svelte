@@ -38,8 +38,9 @@ describe('Karl content-type checks on the current corpus', () => {
 				'sf.gov/step-by-step/correct-a-violation-and-close-your-case / karl-step-count / 7 steps',
 				'sf.gov/step-by-step/prepare-your-unit-for-pest-treatment / karl-step-count / 6 steps',
 				'sf.gov/step-by-step/report-a-pest-problem / karl-step-count / 6 steps',
-				// Steps on an Information page.
-				'sf.gov/information/what-happens-after-you-report-housing-pest-problem / karl-information-actionable / How a report moves through the City',
+				// afterReport's "How a report moves through the City" left this list on
+				// 2026-11-26: its steps became one Title and text block, which suits a
+				// sequence of what the City does rather than tasks for the reader.
 				// Five "1." … "5." headings on an Information page.
 				'sf.gov/information/integrated-pest-management-for-property-owners-and-managers / karl-information-actionable / 5 numbered section headings'
 				// No What to do findings remain: C2 moved the lookup and records pages

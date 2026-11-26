@@ -7,8 +7,8 @@ import { gotoSignedIn } from './signedIn';
  * outside the text (src/app.css, "every edit-target indicator is drawn
  * OUTSIDE the text"), so the field badge sits above the ring instead of in
  * the padding. Wherever there is too little room above a field, the badge
- * lands on other copy -- the summary's badge on the title, an audience line's
- * on the line above, a button URL's on its button. Those were all found by
+ * lands on other copy -- the summary's badge on the title (and, while the page-level
+ * audience list existed, each of its lines on the one above), a button URL's on its button. Those were all found by
  * selecting every field and are what this pins.
  *
  * Signed in, because signed out there are no edit targets and no badges.

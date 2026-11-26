@@ -8,7 +8,6 @@ const page = {
 	title: 'About vector control',
 	type: 'About us',
 	reading: 'Grade 6',
-	audience: ['This page is for tenants.'],
 	sections: [
 		{ fieldKey: 'who-we-are', heading: 'Who we are', karl: 'Information block 1.' },
 		{

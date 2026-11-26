@@ -158,6 +158,8 @@ const draftRowsNow = () => [
 			type: 'Transaction',
 			title: 'Report a noisy construction site',
 			summary: 'Tell us about construction noise outside permitted hours.',
+			// Drafted before the page-level audience field was retired (2026-11-26):
+			// stored drafts can still carry one, and the page must render without it.
 			audience: ['A resident bothered by construction noise'],
 			sections: [
 				{

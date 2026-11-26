@@ -3,19 +3,19 @@ export const ownerGuidance = {
 	type: 'Information',
 	title: 'Integrated pest management for property owners and managers',
 	summary: 'Use prevention, monitoring, and resident outreach tools for your building.',
-	audience: [
-		'This page is for property owners, managers, and maintenance staff looking for pest prevention best practices.'
-	],
 	reading: 'Grade 7',
 	editorNote:
 		'Information page for property owners and managers. UC ANR IPM guide is the primary external source — verify link stability and whether HHVC wants additional SFDPH Director’s Rules citations before publication.',
 	topicTag: 'Agency: Healthy Housing and Vector Control',
-	contact: {
-		phone: ['311 (call or text)', '415-252-3800'],
-		email: ['healthyhousing@sf.gov'],
-		other: ['Environmental Health — Healthy Housing and Vector Control']
-	},
 	sections: [
+		{
+			heading: 'Who this information is for',
+			karl: 'Maps to the first "Information section" → Title and text block: Title = this heading, Text = the bulleted list. The heading is the one sf.gov/manage-covid-19-schools-childcare-and-youth-programs gives an audience list (an H3 over bullets). This was the page-level `audience` field until 2026-11-26, when that field was retired; the transcript used to supply this block itself, so what goes into Karl is unchanged.',
+			kind: 'body',
+			bullets: [
+				'This page is for property owners, managers, and maintenance staff looking for pest prevention best practices.'
+			]
+		},
 		{
 			heading: 'Protect residents’ health',
 			fieldKey: 'why-it-matters',
@@ -184,16 +184,20 @@ export const ownerGuidance = {
 			]
 		},
 		{
+			heading: 'Contact Healthy Housing and Vector Control',
+			karl: 'Maps to an "Information section" → Title and text block: Title = this heading, Text = the two lines below. Information has no Contact us panel (Transaction has get_help, Campaign and Agency have contact; Information has neither), so the phone and email the mockup used to show in a contact box move into the body (2026-11-26). The box\'s third line, the team name, is this heading.',
+			kind: 'body',
+			paragraphs: [
+				'Call or text 311.',
+				'Call Healthy Housing and Vector Control at 415-252-3800, or email healthyhousing@sf.gov.'
+			]
+		},
+		{
 			heading: 'Related pages',
 			component: 'related',
-			karl: 'Maps to the Related field: a generic unrestricted "Page" chooser, repeatable.',
+			karl: 'Maps to the Related field: a generic unrestricted "Page" chooser, repeatable. Property owner responsibilities left this list on 2026-11-26 (Karl’s Related takes only Transaction, Information, Campaign and Topic pages (Help Center › Components › Related), and this is a Resource Collection); "1. Follow San Francisco owner responsibilities" already links it in the body.',
 			kind: 'placement',
 			cards: [
-				{
-					title: 'Property owner responsibilities',
-					target: 'ownerHub'
-				},
-
 				{
 					title: 'Report rats or mice',
 					target: 'rodentsReport'

@@ -4,15 +4,20 @@ export const pestTreatmentInfo = {
 	title: 'What to expect when your building is treated for pests',
 	summary:
 		'Learn what tenants and owners each need to do before, during, and after a pest control visit so treatment works.',
-	audience: [
-		'This page is for tenants and residents whose building is being treated for pests, and the owners and managers who arrange treatment.'
-	],
 	reading: 'Grade 4–6',
 	editorStatus: 'needs-review',
 	editorNote:
 		"New community-education Information page connecting the tenant and owner sides of a treatment. Sources: Residential Building Owner/Operator Guidelines for Vector Control (Director's Rules excerpt: owner investigates within 72 hours, keeps a pest logbook for the PCO, hires a licensed PCO, gives advance notice naming the product and the Poison Control number; tenant housekeeping duty); SFDPH bed bug tenant guidelines (grant entry on notice, follow the PCO checklist, request help); UC IPM Pest Notes: Hiring a Pest Control Company and Understanding Pesticides; Pestec multifamily IPM guide (pesticides as a last resort). Poison Control number 1-800-222-1222 is the national line — confirm HHVC wants it printed. UC IPM and Structural Pest Control Board links verified 200 on 2026-11-26.",
 	topicTag: 'Agency: Healthy Housing and Vector Control',
 	sections: [
+		{
+			heading: 'Who this information is for',
+			karl: 'Maps to the first "Information section" → Title and text block: Title = this heading, Text = the bulleted list. The heading is the one sf.gov/manage-covid-19-schools-childcare-and-youth-programs gives an audience list (an H3 over bullets). This was the page-level `audience` field until 2026-11-26, when that field was retired; the transcript used to supply this block itself, so what goes into Karl is unchanged.',
+			kind: 'body',
+			bullets: [
+				'This page is for tenants and residents whose building is being treated for pests, and the owners and managers who arrange treatment.'
+			]
+		},
 		{
 			heading: 'Treatment works best when everyone helps',
 			karl: 'Maps to an "Information section" → Title and text block: Title = this heading, Text = the two paragraphs below.',

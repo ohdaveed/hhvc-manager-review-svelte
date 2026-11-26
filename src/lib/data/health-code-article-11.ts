@@ -2,9 +2,6 @@ export const article11Guide = {
 	slug: 'sf.gov/report/health-code-article-11-plain-language',
 	type: 'Report',
 	title: 'Health Code Article 11 in plain language',
-	summary:
-		'Read the San Francisco rules most often cited for pests, mold, garbage, and other nuisances.',
-	audience: ['This page is for anyone who wants a plain-language guide to Health Code Article 11.'],
 	reading: 'Grade 7',
 	reportDate: 'August 7, 2026',
 	editorStatus: 'needs-review',

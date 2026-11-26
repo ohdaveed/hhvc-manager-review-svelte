@@ -23,7 +23,6 @@ const fixture = {
 	id: 'topic-x--about',
 	title: 'Article 11',
 	summary: 'Plain-language translations.',
-	audience: ['Residents'],
 	sections: [
 		{
 			heading: 'Sections at a glance',

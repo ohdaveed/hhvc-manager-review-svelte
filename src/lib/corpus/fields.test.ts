@@ -7,7 +7,6 @@ const page = {
 	type: 'About us',
 	title: 'About vector control',
 	summary: 'What the program does.',
-	audience: ['Residents', 'Property owners'],
 	reading: 'Grade 6',
 	editorStatus: 'placeholder',
 	editorNote: 'An annotation that must not be hashed.',
@@ -30,8 +29,6 @@ describe('extractFields', () => {
 	it('produces the exact id shapes the UI advertises', () => {
 		expect(Object.keys(extractFields(page)).sort()).toEqual(
 			[
-				'audience.0',
-				'audience.1',
 				'sections.how-to-report.bullets.0',
 				'sections.how-to-report.heading',
 				'sections.how-to-report.paragraphs.0',
@@ -49,7 +46,6 @@ describe('extractFields', () => {
 	it('maps ids to their text', () => {
 		const fields = extractFields(page);
 		expect(fields['title']).toBe('About vector control');
-		expect(fields['audience.1']).toBe('Property owners');
 		expect(fields['sections.how-to-report.paragraphs.1']).toBe('Second paragraph.');
 		expect(fields['sections.what-happens-next.callout.text']).toBe('Callout body.');
 	});
@@ -114,7 +110,6 @@ const richPage = {
 	type: 'Resource hub',
 	title: 'Resources',
 	summary: 'Where to find help.',
-	audience: ['Residents'],
 	editorNote: 'An annotation that must not be hashed.',
 	editorStatus: 'placeholder',
 	topicTag: 'Agency: Healthy Housing and Vector Control',
@@ -333,7 +328,7 @@ describe('extractCopy', () => {
  * Guards against `extractFields`/`extractCopy` silently falling behind the
  * real corpus.
  *
- * `extractFields` deliberately reads only `title`, `summary`, `audience[]`,
+ * `extractFields` deliberately reads only `title`, `summary`, `primaryAgency`,
  * and per-section `heading`/`paragraphs`/`bullets`/`callout.title`/
  * `callout.text` (see the doc comment on `extractFields` in `fields.ts`) --
  * those are the only keys that mint `field_id`s. Everything else copy-bearing
@@ -351,7 +346,7 @@ describe('extractCopy', () => {
  */
 describe('extractFields/extractCopy coverage of the real corpus', () => {
 	// Keys `extractFields` actually reads, per level of the page shape.
-	const HANDLED_TOP = ['title', 'summary', 'primaryAgency', 'audience', 'sections'];
+	const HANDLED_TOP = ['title', 'summary', 'primaryAgency', 'sections'];
 	const HANDLED_SECTION = ['heading', 'paragraphs', 'bullets', 'callout'];
 	const HANDLED_CALLOUT = ['title', 'text'];
 
@@ -385,15 +380,11 @@ describe('extractFields/extractCopy coverage of the real corpus', () => {
 	// edits stored against it. `deriveFieldKey` reads it; neither extractor
 	// treats it as text, and it must never reach `content_hash` -- pinning a key
 	// changes no reader-visible copy.
-	const NON_COPY_SECTION = [
-		'buttonStyle',
-		'buttonTarget',
-		'component',
-		'fieldKey',
-		'karl',
-		'kind',
-		'open'
-	];
+	// `buttonStyle` left this list when the corpus stopped using it (2026-11-26,
+	// the last section-level button had no Karl destination). `extractFields`
+	// still ignores it; a page that brings it back fails the unknown-key test
+	// above, which is the prompt to put it back here.
+	const NON_COPY_SECTION = ['buttonTarget', 'component', 'fieldKey', 'karl', 'kind', 'open'];
 	const NON_COPY_CALLOUT = ['karl', 'variant'];
 
 	// Deeper levels `extractCopy` walks into that `extractFields` never

@@ -4,11 +4,6 @@ export const animalWasteReport = {
 	title: 'Report animal waste on a property',
 	summary: 'Dog poop, cat waste, or raccoon droppings in a yard, building, or shared area.',
 	primaryAgency: 'Healthy Housing and Vector Control',
-	audience: [
-		'A tenant or resident affected by animal waste where they live',
-		'A neighbor reporting animal waste on a nearby property',
-		'A friend, family member, advocate, or helper reporting for someone else'
-	],
 	reading: 'Grade 6',
 	editorNote:
 		"Report regroup (Decided, Nov 24, 2026), built 2026-11-25. New page, one of the 9 condition pages, and one of HHVC's largest complaint areas, so it is listed high in the Topic and Agency report groups (Decided). The description is the Decided search-words example. Private property only, said at the top (Decided): HHVC does not respond to dog waste on sidewalks or streets. Raccoon droppings are cited here because of the roundworm egg risk (Decided): the page says to report them rather than clean them, links the CDC raccoon roundworm guidance, and gives no cleanup steps. Pigeon droppings moved to their own page, which this one links. TO CONFIRM: which 311 service takes dog waste on public property (likely Public Works street cleaning), so that line is flagged unverified; and whether HHVC cites the owner in every raccoon latrine case (§596 also allows a manager or whoever created the condition), so the page does not say who is cited.",
@@ -34,7 +29,7 @@ export const animalWasteReport = {
 				{
 					title: 'Start your report',
 					text: [
-						'Use 311 to report animal waste on private property.',
+						'Use 311 to report animal waste on private property. You can report animal waste where you live or on a nearby property, or report for someone else.',
 						{
 							text: 'For dog waste on a sidewalk or street, ask 311 for street cleaning instead.',
 							unverified: true,
@@ -90,14 +85,12 @@ export const animalWasteReport = {
 		},
 		{
 			heading: 'What the Health Code requires',
-			karl: 'custom_section -> title_and_text. Title = this heading, Text = the Article 11 line, carried from the old combined garbage page (HHVC content standards Ch. 8.7.1). Secondary Button link block ("View Article 11") citing the municipal code per Ch. 8.7.2.',
+			karl: 'custom_section -> title_and_text. Title = this heading, Text = the Article 11 line, carried from the old combined garbage page (HHVC content standards Ch. 8.7.1). The municipal code is cited per Ch. 8.7.2 as an inline link, the last bullet: custom_section has no Button link block (U1), so the "View Article 11" button it used to carry had no Karl destination.',
 			kind: 'body',
 			bullets: [
-				'San Francisco Health Code Article 11 covers this. Property owners must not let animal waste build up. Build-up that shelters pests or creates a health hazard is a violation.'
-			],
-			button: 'View Article 11',
-			buttonUrl: 'https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890',
-			buttonStyle: 'secondary'
+				'San Francisco Health Code Article 11 covers this. Property owners must not let animal waste build up. Build-up that shelters pests or creates a health hazard is a violation.',
+				'[View Health Code Article 11](https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890)'
+			]
 		},
 		{
 			heading: 'Related pages',

@@ -5,11 +5,6 @@ export const garbageReport = {
 	summary:
 		'Trash build-up, stored materials, or brush that draws pests to a home, yard, or shared area.',
 	primaryAgency: 'Healthy Housing and Vector Control',
-	audience: [
-		'A tenant or resident affected by garbage, clutter, or overgrown plants',
-		'A neighbor reporting conditions on a nearby property',
-		'A friend, family member, advocate, or helper reporting for someone else'
-	],
 	reading: 'Grade 6',
 	editorNote:
 		'Report regroup (Decided, Nov 24, 2026), built 2026-11-25. New page, one of the 9 condition pages. Scope is the Decided one: garbage, excessive materials and overgrown vegetation, with links to Adult Protective Services and the Fire Marshal, phrased as offers of help rather than threats of enforcement. Both link targets were checked live on 2026-11-25: the APS page answers 200, and the fire safety page redirects to the Fire Department\'s own report form. Text is carried from "Report garbage, mold, and overgrown vegetation", which was retired once pigeons and animal waste got their own pages (2026-11-25). Shared report text lives on What happens after you report and Tenant rights.',
@@ -35,7 +30,7 @@ export const garbageReport = {
 				{
 					title: 'Start your report',
 					text: [
-						'Use 311 to report garbage, clutter, or overgrown plants to the City. If the problem is urgent, report now.',
+						'Use 311 to report garbage, clutter, or overgrown plants to the City. If the problem is urgent, report now. You can report a problem where you live or on a nearby property, or report for someone else.',
 						'Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.'
 					],
 					button: 'Report through 311',
@@ -86,14 +81,12 @@ export const garbageReport = {
 		},
 		{
 			heading: 'What the Health Code requires',
-			karl: 'custom_section -> title_and_text. Title = this heading, Text = the Article 11 line (HHVC content standards Ch. 8.7.1). Secondary Button link block ("View Article 11") citing the municipal code per Ch. 8.7.2.',
+			karl: 'custom_section -> title_and_text. Title = this heading, Text = the Article 11 line (HHVC content standards Ch. 8.7.1). The municipal code is cited per Ch. 8.7.2 as an inline link, the last bullet: custom_section has no Button link block (U1), so the "View Article 11" button it used to carry had no Karl destination.',
 			kind: 'body',
 			bullets: [
-				'San Francisco Health Code Article 11 covers this. Property owners must not let trash, filth, or overgrown plants build up. Build-up that shelters pests or creates a health hazard is a violation.'
-			],
-			button: 'View Article 11',
-			buttonUrl: 'https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890',
-			buttonStyle: 'secondary'
+				'San Francisco Health Code Article 11 covers this. Property owners must not let trash, filth, or overgrown plants build up. Build-up that shelters pests or creates a health hazard is a violation.',
+				'[View Health Code Article 11](https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890)'
+			]
 		},
 		{
 			heading: 'Related pages',

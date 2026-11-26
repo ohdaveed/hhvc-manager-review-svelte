@@ -4,15 +4,20 @@ export const bedBugsInfo = {
 	title: 'Bed bugs: prevent them, find them, and get ready for treatment',
 	summary:
 		'Learn how bed bugs spread, how to check for them, and what tenants and owners each need to do before treatment.',
-	audience: [
-		'This page is for tenants, residents of SROs and shelters, and property owners and managers dealing with bed bugs.'
-	],
 	reading: 'Grade 4–6',
 	editorStatus: 'needs-review',
 	editorNote:
 		"New community-education Information page, planned in the source register as `bedBugsInfo` (docs/source/hhvc-policy/2026-07-02-bed-bug-directors-rules-tenant-guidelines.md, \"Phase used\"). Sources: SFDPH Tenant Guidelines for Unit Preparation Prior to Bed Bug Treatment (Director's Rules sections Tenant 3.1-3.4, Owner 3.3-3.5), UC IPM Pest Notes: Bed Bugs (2013), and the owner 72-hour investigation rule in the Residential Building Owner/Operator Guidelines for Vector Control. The Director's Rules PDF URL cited in the tenant guidelines (sfdph.org/.../BedBugRegs_070112.pdf) now redirects to the DPH home page, so it is not linked here — confirm the current published location, and whether the v4 Director's Rules draft changes any duty below, before publication. UC IPM link verified 200 on 2026-11-26.",
 	topicTag: 'Agency: Healthy Housing and Vector Control',
 	sections: [
+		{
+			heading: 'Who this information is for',
+			karl: 'Maps to the first "Information section" → Title and text block: Title = this heading, Text = the bulleted list. The heading is the one sf.gov/manage-covid-19-schools-childcare-and-youth-programs gives an audience list (an H3 over bullets). This was the page-level `audience` field until 2026-11-26, when that field was retired; the transcript used to supply this block itself, so what goes into Karl is unchanged.',
+			kind: 'body',
+			bullets: [
+				'This page is for tenants, residents of SROs and shelters, and property owners and managers dealing with bed bugs.'
+			]
+		},
 		{
 			heading: 'What bed bugs are',
 			karl: 'Maps to an "Information section" → Title and text block: Title = this heading, Text = the two paragraphs below.',

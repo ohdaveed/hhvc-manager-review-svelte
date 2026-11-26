@@ -4,9 +4,6 @@ export const healthyHousingTopic = {
 	title: 'Healthy housing conditions',
 	summary:
 		'Report pests, mold, or garbage, look up building records, and find help keeping your home safe.',
-	audience: [
-		'This page is for tenants, property owners and managers, and anyone researching healthy-housing services in San Francisco.'
-	],
 	reading: 'Grade 6',
 	editorNote:
 		"New Topic-type page mock, verified against the real, currently-live sf.gov/topics--healthy-housing-conditions — a Topic page that sits exactly where HHVC's own program belongs in SF.gov's real information architecture, one level above where this mockup's Agency page (pestsTopic) sits. Field mapping confirmed against docs/wagtail-content-mapping.md's \"Verified against the real Karl 'Topic' add-page form\" section (2026-07-05) plus this live re-check (2026-08-12). Every card below targets a page this mockup already has — no invented pages. The live page's own 'Lead poisoning issues'/asbestos content has no equivalent anywhere in this mockup and sits outside HHVC's established Article 11 scope (CLAUDE.md's banned-terms list), so it is not reproduced; the second Services sub-group below (\"Look up records\") substitutes this mockup's own records Resource Collection in its place. Mockup fields with no equivalent here, matching every other page type's own documented gaps: Primary agency, Set top-level?, Child topics, Timeline (no other Topic pages exist in this mockup to nest under or list as children). MERGED 2026-11-25 (Topic merge, Decided Nov 24, 2026): the Healthy housing and pest resources and Look up building records Resource Collections fold into this page and are retired. Every page and outside document they linked is listed here, under the Topic tab's suggested structure with the reports grouped as Pests and Sanitation; their intro paragraphs have no Topic field to go into. The Agency page card is dropped: the Topic tab notes an Agency page isn't a service. Live on sf.gov this page is titled 'Healthy housing and vector control'; the mockup title is unchanged.",
@@ -106,7 +103,7 @@ export const healthyHousingTopic = {
 		{
 			heading: 'Learn more',
 			fieldKey: 'guidance-and-resources',
-			karl: 'Maps to a Resources block. Topic tab, suggested structure item 5, plus the pages the retired Healthy housing and pest resources collection linked that the list above lacks (who to call, guides in other languages, Rat-free blocks, the annual summary).',
+			karl: 'Maps to a Resources block. Topic tab, suggested structure item 5, plus the pages the retired Healthy housing and pest resources collection linked that the list above lacks (who to call, guides in other languages, Rat-free blocks, the annual summary). The last two cards are the two workshop Campaigns, which used to sit in their own Related section: Topic has no `related` field (U5), so they moved into this Resources block (2026-11-26).',
 			kind: 'body',
 			component: 'resources',
 			cards: [
@@ -118,7 +115,9 @@ export const healthyHousingTopic = {
 				{ title: 'Mosquito Control Program', target: 'mosquitoControl' },
 				{ title: 'Rat-free blocks', target: 'ratFreeBlocks' },
 				{ title: 'Guides in other languages', target: 'languageGuides' },
-				{ title: 'Healthy Housing inspections: annual summary', target: 'inspectionsAnnual' }
+				{ title: 'Healthy Housing inspections: annual summary', target: 'inspectionsAnnual' },
+				{ title: 'Free mosquito education workshop', target: 'mosquitoWorkshop' },
+				{ title: 'Free IPM education workshop', target: 'ipmEducation' }
 			]
 		},
 		{
@@ -177,16 +176,6 @@ export const healthyHousingTopic = {
 					title: 'Environmental health branch fee schedule',
 					url: 'https://api.sf.gov/documents/17453/Website_Fees_FY25-26_fgM2WjX.pdf'
 				}
-			]
-		},
-		{
-			heading: 'Related',
-			karl: 'BLOCKED on U5. Topic has NO `related` field — confirmed at E1 on the live form, unlike Transaction, Information and Campaign, which do. This note previously cited the Karl Help Center as confirming Related support for Topic; the 2026-08-15 form capture contradicts it, and a measurement beats the Help Center. The two Campaign-type programs linked here are a sound editorial choice with nowhere on the Topic form to go: either they move into `content_fields` as a Resources block, or the page drops the panel. Needs a content decision.',
-			kind: 'placement',
-			component: 'related',
-			cards: [
-				{ title: 'Free mosquito education workshop', target: 'mosquitoWorkshop' },
-				{ title: 'Free IPM education workshop', target: 'ipmEducation' }
 			]
 		}
 	],

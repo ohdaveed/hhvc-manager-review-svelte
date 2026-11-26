@@ -245,7 +245,9 @@ const pageSchema = z.object({
 	type: z.enum(PAGE_TYPES),
 	title: z.string().min(1),
 	summary: z.string().min(1),
-	audience: z.array(z.string()).min(1),
+	// DIVERGES FROM UPSTREAM: no `audience`. This repo retired the page-level
+	// audience list on 2026-11-26 (Karl has a home for it on almost no page
+	// type), so a draft that carried one would render nothing for it.
 	reading: z.string().min(1),
 	seoTitle: z.string().optional(),
 	metaDescription: z.string().optional(),

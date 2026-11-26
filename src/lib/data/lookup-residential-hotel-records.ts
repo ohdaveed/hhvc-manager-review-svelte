@@ -4,12 +4,6 @@ export const findHotelRecords = {
 	title: 'Find residential hotel and shelter records',
 	summary: 'Look up inspection and program history for SROs and emergency shelters.',
 	primaryAgency: 'Healthy Housing and Vector Control',
-	audience: [
-		'A resident of a single room occupancy (SRO) hotel or residential hotel',
-		'A shelter resident or advocate',
-		'A property owner or operator of a residential hotel or shelter',
-		'A tenant representative researching program inspection history'
-	],
 	reading: 'Grade 7',
 	editorNote:
 		'SF.gov landing page for a separate external lookup from the general complaint search. SME placeholder — the button below links to the public Residential Hotel Program context page as an illustrative interim destination for mockup review; confirm the final xnet lookup entry point with HHVC before publication.',

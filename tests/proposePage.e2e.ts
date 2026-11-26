@@ -63,7 +63,6 @@ async function stubApi(
 					type: 'Transaction',
 					title: 'Report a broken elevator',
 					summary: 'Report an elevator that is out of service.',
-					audience: ['Tenants'],
 					sections: []
 				},
 				valid: true,

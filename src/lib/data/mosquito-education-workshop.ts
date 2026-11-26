@@ -2,10 +2,6 @@ export const mosquitoWorkshop = {
 	slug: 'sf.gov/mosquito-education-workshop',
 	type: 'Campaign',
 	title: 'Free mosquito education workshop',
-	summary: 'Request a no-cost science session for schools, camps, museums, and science fairs.',
-	audience: [
-		'This page is for teachers, youth program leaders, and families who want to host a free mosquito science workshop.'
-	],
 	reading: 'Grade 7',
 	editorNote:
 		'Campaign page mock. Maps conceptually to Karl\'s "Campaign" content type (see docs/wagtail-content-mapping.md). Spotlight, Additional-content Accordion sections, and Top facts now render as their own real-Karl-matching components (verified live against sf.gov/shop-dine-sf and sf.gov/1865-til-infinity) — remaining Campaign page-level fields with no mockup equivalent: Primary agency, Logo, Background header image, Color theme (no source image assets exist for this illustrative program). Workshop form: the CTA links OUT to a Fillout form, matching how SF.gov form pages behave — the page describes the service and hands off to the real form rather than embedding one. The URL is a REPLACE-ME sentinel: no Fillout form exists for this workshop yet. The embedded mock at forms/mosquito-workshop-request/ is retained as a design reference for what that form should capture, but nothing links to it and it has no intake backend. SME placeholder — production form URL, intake backend, capacity, service area, lead time, and standards crosswalk below are illustrative example content for mockup review; confirm actual values with HHVC before publication. In Karl Button: screenreader label “Go to mosquito workshop request form.”',
@@ -37,7 +33,7 @@ export const mosquitoWorkshop = {
 				'Science fairs and youth STEM events'
 			],
 			paragraphs: [
-				'Workshops are designed for elementary and middle school audiences. HHVC can help you choose the right station setup for your group size and space.'
+				'Workshops are designed for elementary and middle school audiences. [Healthy Housing and Vector Control](pestsTopic) can help you choose the right station setup for your group size and space.'
 			]
 		},
 		{
@@ -131,7 +127,7 @@ export const mosquitoWorkshop = {
 		},
 		{
 			heading: 'Related pages',
-			karl: "Maps to Campaign's Related field (raw name `related_links`, a repeatable StreamField — confirmed via live admin, 2026-07-06; each entry is a Page block: Link to radio SF.gov page/External URL/None, Page chooser, Link text). Corrected from an earlier assumption that this field was single-item — it isn't. All 4 cards below can map directly to separate related_links entries (Link to = SF.gov page, Page = target, Link text = title).",
+			karl: "Maps to Campaign's Related field (raw name `related_links`, a repeatable StreamField — confirmed via live admin, 2026-07-06; each entry is a Page block: Link to radio SF.gov page/External URL/None, Page chooser, Link text). Corrected from an earlier assumption that this field was single-item — it isn't. All 3 cards below can map directly to separate related_links entries (Link to = SF.gov page, Page = target, Link text = title). The Healthy Housing and Vector Control card that ended this list is now an Internal link in the “Who can request” accordion sidebar (2026-11-26): the Help Center's Related page lists only Transaction, Information, Campaign and Topic pages, and whether that rule binds a Campaign's `related_links` is unconfirmed, so the link moved rather than wait on it.",
 			kind: 'placement',
 			cards: [
 				{
@@ -148,11 +144,6 @@ export const mosquitoWorkshop = {
 					title: 'Report a dead bird to the State',
 					url: 'https://westnile.ca.gov/report',
 					karl: 'Maps to a related_links entry (Link to = External URL, Link text = this title). Replaces the retired City dead-bird transaction page — the State runs this reporting line.'
-				},
-				{
-					title: 'Healthy Housing and Vector Control',
-					target: 'pestsTopic',
-					karl: 'Maps to a related_links entry (Link to = SF.gov page, Page = this target, Link text = this title).'
 				}
 			]
 		}

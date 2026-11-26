@@ -108,7 +108,7 @@ export const OPEN_QUESTIONS: OpenQuestion[] = [
 		note: 'The drafts say 2 working days (writing audit row 132); the Nov 24 decisions record lists it under To confirm.',
 		fields: [
 			{ slug: 'sf.gov/report-bed-bugs', path: 'sections.0.steps.0.bullets.0' },
-			{ slug: HAPPENS, path: 'sections.4.bullets.5' }
+			{ slug: HAPPENS, path: 'sections.5.bullets.5' }
 		]
 	},
 	{
@@ -124,8 +124,8 @@ export const OPEN_QUESTIONS: OpenQuestion[] = [
 			'What is the correct legal citation, if any, for routing structural water intrusion to DBI?',
 		note: '"San Francisco Housing Code (2025)" has no tier-1 source. If there is no citation, the copy should say it "may be routed to DBI".',
 		fields: [
-			{ slug: HAPPENS, path: 'sections.1.steps.2.text.0' },
-			{ slug: 'sf.gov/information/learn-what-hhvc-can-inspect', path: 'sections.4.bullets.0' }
+			{ slug: HAPPENS, path: 'sections.2.bullets.3' },
+			{ slug: 'sf.gov/information/learn-what-hhvc-can-inspect', path: 'sections.5.bullets.0' }
 		]
 	},
 	{
@@ -168,19 +168,19 @@ export const OPEN_QUESTIONS: OpenQuestion[] = [
 		id: 'standard-correction-window',
 		question: 'Is there a standard correction window for violations, and how long is it?',
 		note: 'Mockup says 30 days. The only tier-1 "30 days" is the fee late-payment period.',
-		fields: [{ slug: HAPPENS, path: 'sections.4.bullets.2' }]
+		fields: [{ slug: HAPPENS, path: 'sections.5.bullets.2' }]
 	},
 	{
 		id: 'sewage-correction-window',
 		question: 'Is there a shorter correction window for sewage backups, and how long is it?',
 		note: 'Mockup says 48 to 72 hours; no tier-1 source mentions sewage backups.',
-		fields: [{ slug: HAPPENS, path: 'sections.4.bullets.1' }]
+		fields: [{ slug: HAPPENS, path: 'sections.5.bullets.1' }]
 	},
 	{
 		id: 'enforcement-chain',
 		question:
 			"Can persistent violations lead to citations, civil liability, or a Director's Hearing that recovers attorneys' fees and abatement costs?",
-		fields: [{ slug: HAPPENS, path: 'sections.4.bullets.7' }]
+		fields: [{ slug: HAPPENS, path: 'sections.5.bullets.7' }]
 	},
 	{
 		id: 'partial-correction',
@@ -198,18 +198,18 @@ export const OPEN_QUESTIONS: OpenQuestion[] = [
 		id: 'unit-prep-requirements',
 		question:
 			'What must a tenant do to have a unit ready for treatment or repair (move furniture, bag belongings)?',
-		fields: [{ slug: TENANT, path: 'sections.0.bullets.1' }]
+		fields: [{ slug: TENANT, path: 'sections.1.bullets.1' }]
 	},
 	{
 		id: 'unit-prep-instructions',
 		question: 'Who issues unit-preparation instructions: the owner or manager, HHVC, or either?',
-		fields: [{ slug: TENANT, path: 'sections.0.bullets.2' }]
+		fields: [{ slug: TENANT, path: 'sections.1.bullets.2' }]
 	},
 	{
 		id: 'entry-notice-period',
 		question:
 			'How much notice must an owner give a tenant before entering for treatment, repair or a follow-up inspection?',
-		fields: [{ slug: TENANT, path: 'sections.0.bullets.3' }]
+		fields: [{ slug: TENANT, path: 'sections.1.bullets.3' }]
 	},
 
 	// --- Fees
@@ -277,7 +277,7 @@ export const OPEN_QUESTIONS: OpenQuestion[] = [
 		fields: [
 			{
 				slug: 'sf.gov/information/bed-bugs-prevent-find-and-prepare-for-treatment',
-				path: 'sections.4.bullets.0'
+				path: 'sections.5.bullets.0'
 			}
 		]
 	},
@@ -289,7 +289,7 @@ export const OPEN_QUESTIONS: OpenQuestion[] = [
 		fields: [
 			{
 				slug: 'sf.gov/information/bed-bugs-prevent-find-and-prepare-for-treatment',
-				path: 'sections.6.bullets.2'
+				path: 'sections.7.bullets.2'
 			}
 		]
 	},
@@ -301,7 +301,7 @@ export const OPEN_QUESTIONS: OpenQuestion[] = [
 		fields: [
 			{
 				slug: 'sf.gov/information/reduce-moisture-and-mold-in-your-home',
-				path: 'sections.5.bullets.0'
+				path: 'sections.6.bullets.0'
 			}
 		]
 	},
@@ -313,11 +313,11 @@ export const OPEN_QUESTIONS: OpenQuestion[] = [
 		fields: [
 			{
 				slug: 'sf.gov/information/keep-rats-and-mice-out-of-your-home',
-				path: 'sections.4.bullets.3'
+				path: 'sections.5.bullets.3'
 			},
 			{
 				slug: 'sf.gov/information/what-to-expect-when-your-building-is-treated-for-pests',
-				path: 'sections.1.bullets.0'
+				path: 'sections.2.bullets.0'
 			}
 		]
 	}

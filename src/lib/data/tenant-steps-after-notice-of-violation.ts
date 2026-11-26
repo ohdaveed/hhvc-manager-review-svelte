@@ -4,15 +4,20 @@ export const tenantNoticeSteps = {
 	title: 'What tenants need to do after a Notice of Violation',
 	summary: 'Learn your part when corrective actions are listed for your unit or building.',
 	primaryAgency: 'Healthy Housing and Vector Control',
-	audience: [
-		'A tenant with corrective actions listed on a Notice of Violation',
-		'A tenant representative helping someone understand their next steps'
-	],
 	reading: 'Grade 6',
 	editorStatus: 'placeholder',
 	editorNote:
 		'New page expanding the tenant half of noticeOfViolation\'s shared "Make a plan to correct the conditions" step into dedicated depth, per docs/superpowers/specs/2026-08-11-hhvc-page-gap-additions-design.md. Reuses noticeOfViolation\'s already-verified statements (the notice does not change tenant habitability rights; contact the investigator named on the notice) rather than restating unsourced enforcement-timeline figures, which stay on afterReport. Unit-prep and access-notice specifics below are unconfirmed and flagged unverified. RETYPED 2026-11-25 from Transaction to Information (C1, decided Nov 24, 2026): it explains a tenant\'s part rather than offering an action with the City. Information has no Cost or Things to know, so "Free" is dropped, the retaliation line moves into "Know your rights during this process", and "Your Notice of Violation lists which actions apply to your unit" is already the first bullet below. Information has no steps container (U3), so the three steps become one bulleted Information section.',
 	sections: [
+		{
+			heading: 'Who this information is for',
+			karl: 'Maps to the first "Information section" → Title and text block: Title = this heading, Text = the bulleted list. The heading is the one sf.gov/manage-covid-19-schools-childcare-and-youth-programs gives an audience list (an H3 over bullets). This was the page-level `audience` field until 2026-11-26, when that field was retired; the transcript used to supply this block itself, so what goes into Karl is unchanged.',
+			kind: 'body',
+			bullets: [
+				'A tenant with corrective actions listed on a Notice of Violation',
+				'A tenant representative helping someone understand their next steps'
+			]
+		},
 		{
 			heading: 'Prepare your unit',
 			karl: 'Maps to an Information section -> Title and text block: Title = this heading, Text = the bulleted list below. Before 2026-11-25 these were three what_to_do Sections on a Transaction; Information has no steps container (U3), so each step is now a bullet.',
