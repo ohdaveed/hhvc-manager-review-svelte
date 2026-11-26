@@ -2,63 +2,50 @@
 	// Inert mockup furniture, same rule as SiteHeader: every link is a plain
 	// <span>, never an <a>, so nothing here is focusable or announced as
 	// interactive to assistive tech.
+	const social = [
+		{ src: '/sfgov/icons/facebook.svg', alt: 'Facebook' },
+		{ src: '/sfgov/icons/instagram.svg', alt: 'Instagram' },
+		{ src: '/sfgov/icons/threads.svg', alt: 'Threads' },
+		{ src: '/sfgov/icons/x.svg', alt: 'X' },
+		{ src: '/sfgov/icons/bluesky.svg', alt: 'Bluesky' }
+	];
+	const columns = [
+		{ heading: 'Our City', links: ['Services', 'Departments', 'Jobs', 'City Hall'] },
+		{ heading: 'Policy', links: ['Privacy policy', 'Disclaimer'] },
+		{
+			heading: 'Get help',
+			links: ['Contact the City', 'Report a problem', 'Contact 311', 'Accessibility']
+		}
+	];
 </script>
 
 <footer class="bg-site-navy text-white">
-	<div class="footer-grid grid grid-cols-[1.5fr_1fr_1fr_1.1fr] gap-6 px-8 pt-10 pb-7">
-		<div>
+	<div class="footer-grid">
+		<div class="footer-brand">
 			<img
 				src="/sfgov/Lockup_CCSF_White.png"
 				alt="City and County of San Francisco"
-				class="block h-auto w-full max-w-[213px]"
+				class="footer-lockup"
 			/>
-			<div class="mt-5 flex items-center gap-4">
-				<img
-					src="/sfgov/icons/facebook.svg"
-					alt="Facebook"
-					class="block h-6 w-6 brightness-0 invert"
-				/>
-				<img
-					src="/sfgov/icons/instagram.svg"
-					alt="Instagram"
-					class="block h-6 w-6 brightness-0 invert"
-				/>
-				<img
-					src="/sfgov/icons/threads.svg"
-					alt="Threads"
-					class="block h-6 w-6 brightness-0 invert"
-				/>
-				<img src="/sfgov/icons/x.svg" alt="X" class="block h-6 w-6 brightness-0 invert" />
+			<div class="footer-social">
+				{#each social as icon (icon.alt)}
+					<span class="footer-social-icon">
+						<img src={icon.src} alt={icon.alt} class="block h-6 w-6 brightness-0 invert" />
+					</span>
+				{/each}
 			</div>
 		</div>
 
-		<div>
-			<h2 class="mb-3.5 font-heading text-[17px] leading-[22px] font-bold">Our City</h2>
-			<ul class="m-0 flex list-none flex-col gap-3 p-0 text-[15px]">
-				<li><span class="underline underline-offset-[3px]">Services</span></li>
-				<li><span class="underline underline-offset-[3px]">Departments</span></li>
-				<li><span class="underline underline-offset-[3px]">Jobs</span></li>
-				<li><span class="underline underline-offset-[3px]">City Hall</span></li>
-			</ul>
-		</div>
-
-		<div>
-			<h2 class="mb-3.5 font-heading text-[17px] leading-[22px] font-bold">Policy</h2>
-			<ul class="m-0 flex list-none flex-col gap-3 p-0 text-[15px]">
-				<li><span class="underline underline-offset-[3px]">Privacy policy</span></li>
-				<li><span class="underline underline-offset-[3px]">Disclaimer</span></li>
-			</ul>
-		</div>
-
-		<div>
-			<h2 class="mb-3.5 font-heading text-[17px] leading-[22px] font-bold">Get help</h2>
-			<ul class="m-0 flex list-none flex-col gap-3 p-0 text-[15px]">
-				<li><span class="underline underline-offset-[3px]">Contact the City</span></li>
-				<li><span class="underline underline-offset-[3px]">Report a problem</span></li>
-				<li><span class="underline underline-offset-[3px]">Contact 311</span></li>
-				<li><span class="underline underline-offset-[3px]">Accessibility</span></li>
-			</ul>
-		</div>
+		{#each columns as column (column.heading)}
+			<div>
+				<h2 class="footer-heading">{column.heading}</h2>
+				<ul class="footer-links">
+					{#each column.links as link (link)}
+						<li><span class="underline underline-offset-[3px]">{link}</span></li>
+					{/each}
+				</ul>
+			</div>
+		{/each}
 	</div>
 
 	<div aria-hidden="true" class="flex items-end justify-between overflow-hidden">
@@ -69,24 +56,86 @@
 
 <style>
 	/* Queries the `mockup` frame declared in src/routes/review/+layout.svelte,
-	   not the viewport. The mockup renders inside a pane far narrower than the
-	   window -- at a 1280px window this footer is ~540px wide while
-	   `@media (max-width: 900px)` still reports desktop -- so a viewport query
-	   would keep four columns at phone width and never fire. The whole point of
-	   the mockup is to show what the built page does, and four 1fr columns in
-	   540px is not what SF.gov does.
+	   not the viewport: the mockup renders in a pane far narrower than the
+	   window, so a viewport query would never leave the desktop layout.
 
-	   Two steps rather than one: sf.gov pairs the columns before stacking them,
-	   so the logo block keeps a partner beside it down to tablet. */
-	@container mockup (max-width: 900px) {
+	   Measured on live sf.gov (`dph-leaves-absence`) 2026-11-26 at 390, 768
+	   and 1074px. The footer sits on the page's own grid -- 20px gutters on a
+	   phone, 28px on a tablet, 96px (then the 1076px grid) on desktop -- so the
+	   lockup lines up with the page title. From tablet up it is ONE row: the
+	   lockup takes 5 of 12 columns and the three link columns share the other
+	   7, which is what the first track's `calc` states with 28px gutters.
+	   Breakpoints are 760/1000 for the same frame-border reason as SiteHeader. */
+	.footer-grid {
+		display: grid;
+		grid-template-columns: 1fr;
+		row-gap: 28px;
+		padding: 28px 20px;
+	}
+	.footer-lockup {
+		display: block;
+		width: 215px;
+		height: auto;
+	}
+	/* 48px boxes, 4px apart, a 24px glyph centred in each: live's icon links. */
+	.footer-social {
+		display: flex;
+		gap: 4px;
+		margin-top: 16px;
+	}
+	.footer-social-icon {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 48px;
+		height: 48px;
+	}
+	.footer-heading {
+		margin: 0 0 12px;
+		font-family: var(--site-font-display);
+		font-size: 20px;
+		font-weight: 500;
+		line-height: 28px;
+	}
+	.footer-links {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		margin: 0;
+		padding: 0;
+		font-size: 16px;
+		line-height: 24px;
+		list-style: none;
+	}
+
+	@container mockup (min-width: 760px) {
 		.footer-grid {
-			grid-template-columns: 1fr 1fr;
+			grid-template-columns: calc((100% + 28px) * 5 / 12 - 28px) repeat(3, minmax(0, 1fr));
+			column-gap: 28px;
+			padding: 48px 28px 28px;
+		}
+		.footer-brand {
+			padding-top: 43px;
+		}
+		.footer-lockup {
+			width: 264px;
 		}
 	}
 
-	@container mockup (max-width: 560px) {
+	@container mockup (min-width: 1000px) {
 		.footer-grid {
-			grid-template-columns: 1fr;
+			padding-inline: max(96px, calc((100cqi - 1076px) / 2));
+		}
+		.footer-brand {
+			padding-top: 24px;
+		}
+		.footer-lockup {
+			width: 100%;
+			max-width: 344px;
+		}
+		.footer-heading {
+			font-size: 24px;
+			line-height: 32px;
 		}
 	}
 </style>
