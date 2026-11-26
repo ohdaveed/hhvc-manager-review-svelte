@@ -536,16 +536,21 @@ body {
 		line-height: 1.5rem;
 	}
 
+	/* Live sf.gov's rich-text rhythm is 20px: paragraph to paragraph, and
+	   paragraph to list either way, where a list's own 16px/20px margins
+	   collapse into the paragraph's 20px. Measured 2026-11-26 on
+	   `report-health-nuisance-or-hazards` and
+	   `information--keeping-your-building-free-vermin` at 1074px. */
 	& p {
-		margin-block: 0 1rem;
+		margin-block: 0 20px;
 	}
 	/* 40px indent and 12px between items: live sf.gov's rich-text lists,
 	   measured 2026-11-26 on `dph-leaves-absence` and
 	   `report-health-nuisance-or-hazards` at 390 and 1074px. */
 	& ul,
 	& ol {
-		margin-top: 0.35rem;
-		margin-bottom: 1rem;
+		margin-top: 16px;
+		margin-bottom: 20px;
 		padding-left: 40px;
 	}
 	& li {
@@ -1164,5 +1169,90 @@ body {
 	#mockPage [data-page-type='Step by step'] .steps-block-title {
 		font-size: 24px;
 		line-height: 32px;
+	}
+}
+
+/* Topic pages: cards as live sf.gov's link rows, and the Services band.
+   Measured 2026-11-26 on `topics--housing` at 390, 768 and 1074px.
+
+   - A row is a 2-column grid: the title (Roboto Flex 16/24 700, #1B519E,
+     underlined) and an 8px-lower description (16/24, ink) on the left, a
+     20x24 #1B519E arrow in a 26px box 12px to their right. A 1px #C9CACA
+     rule sits 24px below the copy and the next row 24px below the rule
+     (20px under the desktop step); the last row has neither.
+   - Rows run 730px wide on desktop -- wider than the 7/12 reading column --
+     and full width below.
+   - Services sections sit on a full-bleed #F7F8F8 band, padded 40/28/20px
+     top and bottom by step. Adjacent Services sections merge into one band,
+     as live's "Services" and "More services" share one. */
+#mockPage [data-page-type='Topic'] .cards-block {
+	display: block;
+	margin: 20px 0 0;
+	padding-left: 0;
+}
+#mockPage [data-page-type='Topic'] .cards-block-item {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) 26px;
+	column-gap: 12px;
+	margin: 0 0 20px;
+	padding: 0 0 20px;
+	border: 0;
+	border-bottom: 1px solid #c9caca;
+	border-radius: 0;
+}
+#mockPage [data-page-type='Topic'] .cards-block-item:last-child {
+	margin-bottom: 0;
+	padding-bottom: 0;
+	border-bottom: 0;
+}
+#mockPage [data-page-type='Topic'] .cards-block-item > * {
+	grid-column: 1;
+}
+#mockPage [data-page-type='Topic'] .cards-block-title {
+	margin: 0;
+	color: var(--color-site-action);
+	font-family: var(--site-font-body);
+	font-size: 16px;
+	font-weight: 700;
+	line-height: 24px;
+	text-decoration: underline;
+}
+#mockPage [data-page-type='Topic'] .cards-block-item p {
+	margin: 8px 0 0;
+}
+#mockPage [data-page-type='Topic'] .cards-block-arrow {
+	display: flex;
+	grid-row: 1;
+	grid-column: 2;
+	justify-content: flex-end;
+	color: var(--color-site-action);
+}
+#mockPage [data-page-type='Topic'] .page-section[data-component='services'] {
+	padding-block: 20px;
+	background: #f7f8f8;
+	box-shadow: 0 0 0 100vmax #f7f8f8;
+	clip-path: inset(0 -100vmax);
+}
+
+@container mockup (min-width: 600px) {
+	#mockPage [data-page-type='Topic'] .page-section[data-component='services'] {
+		padding-block: 28px;
+	}
+}
+
+@container mockup (min-width: 800px) {
+	#mockPage [data-page-type='Topic'] .cards-block {
+		width: min(730px, 100cqi);
+	}
+	#mockPage [data-page-type='Topic'] .cards-block-item {
+		margin-bottom: 24px;
+		padding-bottom: 24px;
+	}
+	#mockPage [data-page-type='Topic'] .cards-block-item:last-child {
+		margin-bottom: 0;
+		padding-bottom: 0;
+	}
+	#mockPage [data-page-type='Topic'] .page-section[data-component='services'] {
+		padding-block: 40px;
 	}
 }
