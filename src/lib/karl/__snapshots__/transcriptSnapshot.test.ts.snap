@@ -3530,36 +3530,6 @@ The San Francisco Mosquito Control Program is part of Healthy Housing and Vector
 
 Mosquitoes can spread diseases such as West Nile virus. Reducing standing water around homes and buildings is the most effective way to prevent breeding.
 
-### Information section — \`information_section\` [TYPE] — page not approved
-
-**Title:**
-
-More mosquito resources
-
-**Entry 1 — Title:**
-
-San Francisco Mosquito Control Program (SFMosquito.org)
-
-**Entry 1 — Text:**
-
-Find program information, surveillance updates, and West Nile virus resources.
-
-**Entry 2 — Title:**
-
-West Nile virus information (California)
-
-**Entry 2 — Text:**
-
-State guidance on West Nile virus risk, dead bird reporting, and prevention.
-
-**Entry 3 — Title:**
-
-Report a dead bird to the State
-
-**Entry 3 — Text:**
-
-Dead birds help track West Nile virus. Report them to the State West Nile virus program.
-
 ### Topics — \`topics\` [TYPE] — page not approved
 
 _topicTag is unmapped metadata — the stored values are Agency labels, not Topic chooser references. Do not paste one into this chooser._
@@ -3586,6 +3556,12 @@ Mosquito Control Program | SF.gov
 **Meta description (\`search_description\`):**
 
 San Francisco mosquito control, catch-basin treatment, and how to report standing water or mosquito activity.
+
+## Unmapped — no documented Karl destination
+
+Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
+
+- \`sections.2.cards\` — \`cards\` on this section reached no panel in the Information inventory.
 "
 `;
 
