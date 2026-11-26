@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "corpusHash": "db37452ac448690c164cafa0574fc500f80d210bf121214bff9565637cca28f7",
+  "corpusHash": "34f066a6e549dae4922492510224320ae35cb4e8dbdedb68d4b82e7189dc9fe1",
   "pages": {
     "departments--healthy-housing-and-vector-control": {
       "contentHash": "c94fd18bc0a62eac3f3e89ca0b2f3844f233a95c62d55c3851d41bf94e217361",
@@ -541,15 +541,13 @@
       }
     },
     "information-what-happens-after-you-report-housing-pest-problem": {
-      "contentHash": "de7a16cb9937ececa92201719048ce942b99e30d00fa0d46e04e956dee4b151c",
+      "contentHash": "310993c52eb4d9fdb9d1936f73f1adaf965a3433c067099baa779d4772ef1ba8",
       "fieldHashes": {
         "sections.how-a-report-moves-through-the-city.bullets.0": "9d6e74b59346d39437ca8f7f4fb021bee9a96ab270f10366f0b6b4a0d5246ef3",
         "sections.how-a-report-moves-through-the-city.bullets.1": "f55f10bd725a1847bb9f05703a57ed1d622326822e4e92d4977edbe6e17373d4",
-        "sections.how-a-report-moves-through-the-city.bullets.2": "3894cd75a72bc0a8ced2ca561e988257433a6c09bd34989ec1ff126a880a75a5",
-        "sections.how-a-report-moves-through-the-city.bullets.3": "6b504065b8248b4bbc46fe9b6930b735001c67f29810ae1a1c58fc873b2aa820",
+        "sections.how-a-report-moves-through-the-city.bullets.2": "e62f0cf1c75f5ddafe98c13666210584b71956749fc2abaa83bfdd58fc91d6db",
         "sections.how-a-report-moves-through-the-city.bullets.4": "a20b7428ba9a7a03dfa52d976c5edd85d0709c55f6487fbc514a6400894a1080",
-        "sections.how-a-report-moves-through-the-city.bullets.5": "1c83f3be5bdddabeb4222c4f9bfd3c9a532f0f0f27bddb9a8601290ed1b8dfc9",
-        "sections.how-a-report-moves-through-the-city.bullets.6": "044a75b0cc27ce92e2fa945cd299fe248d03e85fa26fad3a4e16598aa3585122",
+        "sections.how-a-report-moves-through-the-city.bullets.4~2": "b2165a76a31b1bc5b174b3a1bba575b820adc723ecc9a9facdff54f17943558d",
         "sections.how-a-report-moves-through-the-city.heading": "3cc3a9df7c21b4e31184b297456da9056a3d154a27b16e6c582322658b55a28e",
         "sections.how-to-follow-up-on-your-report.bullets.0": "a7f6ee85c831fb3644c837418dc3a538d7ad77aad769a1aeff2931f94b73f1de",
         "sections.how-to-follow-up-on-your-report.bullets.1": "bd028a23b7bec0596611c6db6393dab71ca42c0a4f51f4b0588c8fcd6fb085f2",
@@ -901,7 +899,7 @@
       }
     },
     "report-bed-bugs": {
-      "contentHash": "e9b5f464cab1387811d887158e7405f9f517b741f2159db6e4f77628bf9bbe74",
+      "contentHash": "2d6eabcefd5b4626cdd7c418f9a009e390d0d79a455917d05ba678b5335ceb24",
       "fieldHashes": {
         "primaryAgency": "8a2847f0ee854052d30378a2ef091f979c9737bbd8219086a1e04dc0abd84f9f",
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",
@@ -918,7 +916,7 @@
       }
     },
     "report-cockroaches-or-other-insects": {
-      "contentHash": "dcf255d6f7dc6fa2abd23d980328bc8490926527f48e25ee5bde814409e2d8cb",
+      "contentHash": "be37d81f06b7a9c936fc332d2e8d1898d1c1186e8d73adb34460a361566ca1be",
       "fieldHashes": {
         "primaryAgency": "8a2847f0ee854052d30378a2ef091f979c9737bbd8219086a1e04dc0abd84f9f",
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",
@@ -999,7 +997,7 @@
       }
     },
     "report-mold": {
-      "contentHash": "9f0cfb81325801f6f85973c345d34cfb50fae3bd00c1e0d5e49abdef1ade9380",
+      "contentHash": "351fceab892320c8e114762de1db22c83a0de15cce82ed8ca82118bdb34ea13e",
       "fieldHashes": {
         "primaryAgency": "8a2847f0ee854052d30378a2ef091f979c9737bbd8219086a1e04dc0abd84f9f",
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",
@@ -1050,7 +1048,7 @@
       }
     },
     "report-rats-or-mice": {
-      "contentHash": "23c292e163b40be6ea0c01ac6601b33118cc8b5021fb3a3c7ba4ed7e17c9ec12",
+      "contentHash": "3838839856e9b0beb29bad66c4eda1d51723ba606493868d9657bbd137fc0715",
       "fieldHashes": {
         "primaryAgency": "8a2847f0ee854052d30378a2ef091f979c9737bbd8219086a1e04dc0abd84f9f",
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",
@@ -1114,7 +1112,7 @@
       }
     },
     "step-by-step-prepare-your-unit-for-pest-treatment": {
-      "contentHash": "3ebb734449b3a3fb1cdb9e3acbfc6a3f1892c292040fe4abf54d67f759d98895",
+      "contentHash": "45748dcc9e6dcf127b1fd6f41e37c58c8715f69ef3a0ea0650b6d6bbcacad0bd",
       "fieldHashes": {
         "sections.what-to-do.heading": "f47f1edc44ed92664871471b0cf8f463813788468c23680c12f52a36c2827e26",
         "sections.who-this-information-is-for.bullets.0": "35eb65326ceab69215a5cfc7c0b69c2702ff41ed3739e008d73d2ad435416efc",

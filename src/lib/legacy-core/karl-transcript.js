@@ -150,14 +150,19 @@ function itemText(item) {
  * then bullets, matching how js/mockup/page-render.js paints them.
  * @param {Array<string|{text: string}>|undefined} paragraphs
  * @param {Array<string|{text: string}>|undefined} bullets
+ * @param {boolean} [ordered] the section's `ordered` flag: the list goes into
+ *   Karl's rich text as a numbered list, so the transcript numbers it rather
+ *   than handing the builder bullets for a sequence whose order matters.
  * @returns {string}
  */
-function foldTextAndBullets(paragraphs, bullets) {
+function foldTextAndBullets(paragraphs, bullets, ordered = false) {
 	const prose = (paragraphs || []).map(itemText).filter(Boolean);
 	const list = (bullets || []).map(itemText).filter(Boolean);
 	const parts = [];
 	if (prose.length) parts.push(prose.join('\n\n'));
-	if (list.length) parts.push(list.map((item) => `- ${item}`).join('\n'));
+	if (list.length) {
+		parts.push(list.map((item, i) => (ordered ? `${i + 1}. ${item}` : `- ${item}`)).join('\n'));
+	}
 	return parts.join('\n\n');
 }
 
@@ -841,7 +846,7 @@ function emitSectionProse(context, entry, section, index, options) {
 	const bulletsPath = `sections.${index}.bullets`;
 	const paragraphs = resolveValue(context.page, context.reviewRecord, paragraphsPath);
 	const bullets = resolveValue(context.page, context.reviewRecord, bulletsPath);
-	const text = foldTextAndBullets(paragraphs.value, bullets.value);
+	const text = foldTextAndBullets(paragraphs.value, bullets.value, section.ordered === true);
 	if (text) {
 		entry.fields.push({ label: 'Text', value: text });
 		entry.overlaid = entry.overlaid || paragraphs.overlaid || bullets.overlaid;
