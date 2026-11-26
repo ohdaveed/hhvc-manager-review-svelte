@@ -1367,3 +1367,87 @@ body {
 		line-height: 28px;
 	}
 }
+
+/* About us hero: labelled placeholders for the banner photo and department
+   logo, in live's geometry. Phone: a 100px full-bleed band, the white card
+   overlapping its last 12px, the 88x37 logo above the title. Tablet: 200px,
+   60px overlap, a 178x75 logo. Desktop: 400px, the card on the content grid
+   200px down it with 40px padding and the 180x75 logo at its right. */
+#mockPage [data-page-type='About us'] .about-hero {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100px;
+	margin-inline: -20px;
+	background: var(--color-site-border-subtle);
+	color: var(--color-site-ink-secondary);
+	font-size: 14px;
+	line-height: 20px;
+}
+#mockPage [data-page-type='About us'] .about-card {
+	position: relative;
+	margin: -12px -20px 0;
+	padding: 20px 20px 0;
+	background: var(--color-site-surface);
+}
+#mockPage [data-page-type='About us'] .about-logo {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 88px;
+	height: 37px;
+	margin-bottom: 20px;
+	border: 1px dashed var(--color-site-meta-icon);
+	color: var(--color-site-ink-secondary);
+	font-size: 10px;
+	line-height: 12px;
+	text-align: center;
+}
+#mockPage [data-page-type='About us'] .about-card .about-back {
+	margin-bottom: 0;
+}
+
+@container mockup (min-width: 600px) {
+	#mockPage [data-page-type='About us'] .about-hero {
+		height: 200px;
+		margin-inline: -28px;
+	}
+	#mockPage [data-page-type='About us'] .about-card {
+		margin: -60px -28px 0;
+		padding: 20px 28px 0;
+	}
+	#mockPage [data-page-type='About us'] .about-logo {
+		width: 178px;
+		height: 75px;
+		font-size: 12px;
+	}
+}
+
+@container mockup (min-width: 800px) {
+	/* The card covers the photo's lower 200px, so the label centres in the
+	   visible top half. */
+	#mockPage [data-page-type='About us'] .about-hero {
+		align-items: flex-start;
+		height: 400px;
+		margin-inline: calc(-96px - (100cqi - min(100cqi, 1076px)) / 2);
+		padding-top: 90px;
+	}
+	#mockPage [data-page-type='About us'] .about-card {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) 180px;
+		column-gap: 28px;
+		align-items: center;
+		margin: -200px 0 0;
+		padding: 40px;
+	}
+	#mockPage [data-page-type='About us'] .about-logo {
+		grid-row: 1;
+		grid-column: 2;
+		width: 180px;
+		margin-bottom: 0;
+	}
+	#mockPage [data-page-type='About us'] .about-card-text {
+		grid-row: 1;
+		grid-column: 1;
+	}
+}
