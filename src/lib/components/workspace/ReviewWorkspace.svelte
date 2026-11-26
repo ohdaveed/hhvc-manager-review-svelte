@@ -11,8 +11,15 @@
 	let {
 		pageData,
 		livePageId,
+		karlReadiness = null,
 		onCollapse
-	}: { pageData: unknown; livePageId?: string; onCollapse?: () => void } = $props();
+	}: {
+		pageData: unknown;
+		livePageId?: string;
+		/** The Karl outline's summary for this page, for the decision panel. */
+		karlReadiness?: string | null;
+		onCollapse?: () => void;
+	} = $props();
 
 	let activeTab = $state('overview');
 
@@ -144,7 +151,7 @@
 		<RethinkPanel {pageData} />
 	</Tabs.Content>
 	<Tabs.Content value="overview" class="min-h-0 flex-1 overflow-y-auto bg-background">
-		<ReviewPanel {pageData} />
+		<ReviewPanel {pageData} {karlReadiness} />
 	</Tabs.Content>
 	<!-- Karl Jr.'s accessibility tests and readability score, computed here.
 	     These are NOT the Page Checks shown under the decision: those are

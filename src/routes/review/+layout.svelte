@@ -108,10 +108,12 @@
 	// a draft IS in `pageStore.pages`, and its content type is the model's guess,
 	// so a placement there would read as more settled than it is (decision 12).
 	const onDraft = $derived(Boolean(currentPath && isDraftPath(currentPath)));
-	// Built once for both Karl views: the outline over the mockup and the
-	// Blueprint. Neither is built while neither is showing.
+	// Built once for every Karl reader: the outline over the mockup, the
+	// Blueprint, and the decision panel's readiness line. No longer gated on a
+	// Karl view being open, because the readiness line is shown beside every
+	// decision; `$derived` is lazy, so it still only runs while something reads it.
 	const placementsHere = $derived(
-		(pageStore.karlOutline || pageStore.mode === 'blueprint') && pageData && !onDraft
+		pageData && !onDraft
 			? placementsFor(
 					pageData as unknown as Parameters<typeof placementsFor>[0],
 					reviewRecordFor(
@@ -128,6 +130,9 @@
 	);
 	const outlinePlacements = $derived(pageStore.karlOutline ? placementsHere : null);
 	const blueprintPlacements = $derived(pageStore.mode === 'blueprint' ? placementsHere : null);
+	// The outline's own one-line summary, so the decision panel and the outline
+	// bar can never describe the same page two ways.
+	const karlReadiness = $derived(placementsHere ? outlineSummary(placementsHere) : null);
 
 	/**
 	 * Blueprint → page: back to the mockup with the outline on, the field
@@ -992,7 +997,12 @@
 				{/if}
 			</div>
 		{:else}
-			<ReviewWorkspace {pageData} {livePageId} onCollapse={() => pageStore.toggleRail('panel')} />
+			<ReviewWorkspace
+				{pageData}
+				{livePageId}
+				{karlReadiness}
+				onCollapse={() => pageStore.toggleRail('panel')}
+			/>
 		{/if}
 	</section>
 </div>

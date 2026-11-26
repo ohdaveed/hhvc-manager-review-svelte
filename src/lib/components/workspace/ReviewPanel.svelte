@@ -12,7 +12,7 @@
 	import { draftsStore } from '$lib/stores/draftPages';
 	import { pageTitleFor } from '$lib/corpus/pageTitle';
 	import { ArrowRight, ClipboardList } from '@lucide/svelte';
-	import { pageStore } from '$lib/stores/pageData.svelte';
+	import { pageStore, isChanged } from '$lib/stores/pageData.svelte';
 	import { sessionStore } from '$lib/stores/session.svelte';
 	import { STATUS_LABELS } from '$lib/review/statusLabels';
 	import {
@@ -23,7 +23,23 @@
 		type PageCheck
 	} from '$lib/stores/reviewState';
 
-	let { pageData } = $props();
+	let { pageData, karlReadiness = null } = $props();
+
+	// What a decision is being made over. PRODUCT.md: a review succeeds when
+	// the Karl builder never has to go back to the manager, so Approve should
+	// not be pressed blind to the page's Karl outline or to edits still in
+	// flight. Shown, not enforced -- the decision stays the reviewer's.
+	const unsavedHere = $derived(
+		pageData?.id
+			? Object.values(pageStore.unsavedChanges).filter(
+					(c) => c.pageId === pageData.id && isChanged(c)
+				).length
+			: 0
+	);
+	const expiredHere = $derived(
+		pageData?.id ? Object.keys(pageStore.staleEditsOn(pageData.id).expired).length : 0
+	);
+	const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
 
 	// Where "Next undecided" goes. Only meaningful once a review has loaded:
 	// with no live rows (signed out) there is nothing to move on to.
@@ -74,6 +90,7 @@
 			notesValue = liveRecord?.manager_notes ?? '';
 			notesError = false;
 			pendingNote = null;
+			receipt = null;
 			// A write still in flight for the page just left must not report
 			// "Saved" here; the guards below also check `lastRecordId`.
 			clearTimeout(savedTimeout);
@@ -88,8 +105,9 @@
 	// ~380px panel it was easy to miss. The fills are the SFDS status triplets
 	// the pills, the progress bar and DESIGN.md use, so a status is one colour
 	// everywhere (they were Tailwind emerald/amber-700 here, a second green and
-	// amber). Undecided fills neutral slate, not `sfds-action`: the action blue
-	// made the one non-decision the loudest thing in the panel. Unselected, all
+	// amber). Undecided is ringed in slate rather than filled: the action blue
+	// it once had made the one non-decision the loudest thing in the panel,
+	// and any fill reads as a choice made. Unselected, all
 	// four read alike; a red "Blocked" at rest looked like an error. White text
 	// on each fill, measured 2026-11-26: slate-l3 8.9, green 5.4, amber 5.7,
 	// red 6.4. The hover override keeps the outline variant's `hover:bg-muted`
@@ -118,7 +136,9 @@
 		[
 			{
 				value: 'needs-review',
-				tone: 'data-[state=on]:border-sfds-slate-l3 data-[state=on]:bg-sfds-slate-l3 data-[state=on]:hover:bg-sfds-slate-l3'
+				// Ringed, not filled: only a decision gets a fill. A filled
+				// Undecided read as a choice already made.
+				tone: 'data-[state=on]:bg-background data-[state=on]:hover:bg-background data-[state=on]:font-semibold data-[state=on]:text-sfds-black! data-[state=on]:hover:text-sfds-black! data-[state=on]:shadow-[inset_0_0_0_2px_var(--color-sfds-slate-l3)]'
 			},
 			{
 				value: 'approved',
@@ -154,6 +174,12 @@
 	});
 
 	let decisionError = $state(false);
+	// Proof the write landed. Before this the only signs were the fill
+	// changing and the queue row moving -- possibly out of view -- for the
+	// one action whose output is which pages may publish. Cleared on page
+	// change, and shown only while it still matches the stored status, so a
+	// realtime change from elsewhere cannot leave a stale receipt behind.
+	let receipt = $state<{ status: Decision; at: string } | null>(null);
 
 	const handleDecision = async (status: string) => {
 		// No row to write to (signed out, or no review record). The controls are
@@ -170,11 +196,18 @@
 		}
 		if (status === liveRecord.status) return;
 		decisionError = false;
-		const saved = await updatePageStatus(liveRecord.id, status as Decision);
+		receipt = null;
+		const recordId = liveRecord.id;
+		const saved = await updatePageStatus(recordId, status as Decision);
 		// The optimistic update already moved the queue row; on failure the
 		// store rolls back, the `$effect` above pulls `decision` with it, and
 		// this is the only thing that tells the reviewer their click was lost.
 		if (!saved) decisionError = true;
+		else if (lastRecordId === recordId)
+			receipt = {
+				status: status as Decision,
+				at: new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })
+			};
 	};
 
 	/** Re-send the note the debounce already gave up on. */
@@ -263,7 +296,45 @@
 				{#if decisionError}
 					<span class="text-xs text-destructive" role="alert">Not saved — try again</span>
 				{/if}
+				<!-- Always in the DOM so the live region exists before its text
+				     does; a region inserted with its content is not announced. -->
+				<span aria-live="polite" class="text-xs text-sfds-slate-l3">
+					{#if receipt && !decisionError && receipt.status === liveRecord?.status}
+						{#if receipt.status === 'needs-review'}
+							<span class="font-semibold text-sfds-black">Decision cleared</span> · {receipt.at}
+						{:else}
+							<span class="font-semibold text-sfds-black"
+								>{STATUS_LABELS[receipt.status].label}</span
+							>
+							· recorded {receipt.at}
+						{/if}
+					{/if}
+				</span>
 			</div>
+			{#if liveRecord && (karlReadiness || unsavedHere || expiredHere)}
+				<!-- Read before the buttons, and tied to them by aria-describedby, so
+				     a screen reader hears it with the choice. Words only; nothing
+				     here is a status colour, because nothing here is a decision. -->
+				<ul id="decision-readiness" class="space-y-0.5 text-xs leading-[18px] text-sfds-slate-l3">
+					{#if karlReadiness}
+						<li><span class="font-semibold text-sfds-black">Karl:</span> {karlReadiness}</li>
+					{/if}
+					{#if unsavedHere}
+						<li>
+							<span class="font-semibold text-sfds-black"
+								>{plural(unsavedHere, 'unsaved change', 'unsaved changes')}</span
+							> on this page. Save or discard in Fields first.
+						</li>
+					{/if}
+					{#if expiredHere}
+						<li>
+							<span class="font-semibold text-sfds-black"
+								>{plural(expiredHere, 'saved edit has', 'saved edits have')} expired</span
+							>: the page copy changed under them. Resolve in Fields.
+						</li>
+					{/if}
+				</ul>
+			{/if}
 			<ToggleGroup.Root
 				type="single"
 				variant="outline"
@@ -271,6 +342,9 @@
 				spacing={0}
 				class="grid w-full grid-cols-2 items-stretch gap-1 @min-[18rem]/decision:flex @min-[18rem]/decision:gap-0"
 				aria-labelledby="decision-label"
+				aria-describedby={liveRecord && (karlReadiness || unsavedHere || expiredHere)
+					? 'decision-readiness'
+					: undefined}
 				bind:value={decision}
 				onValueChange={handleDecision}
 				disabled={!liveRecord}

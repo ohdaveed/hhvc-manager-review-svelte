@@ -222,3 +222,64 @@ describe('ReviewPanel', () => {
 		expect(saveStatus).toHaveBeenCalledWith('row-1', 'approved');
 	});
 });
+
+describe('ReviewPanel decision moment', () => {
+	beforeEach(() => {
+		vi.useFakeTimers();
+		saveStatus.mockReset();
+		Object.assign(session, { signedIn: true, knownSignedOut: false });
+		setRow();
+	});
+	afterEach(() => vi.useRealTimers());
+
+	// The store is mocked, so the write does not move the row; this stands in
+	// for the optimistic update the real `updatePageStatus` makes.
+	const approve = async () => {
+		saveStatus.mockImplementation(async (_id, status) => {
+			pagesStore.update((rows) => rows.map((r) => ({ ...r, status })));
+			return true;
+		});
+		await fireEvent.click(screen.getByRole('radio', { name: 'Approved' }));
+		await vi.advanceTimersByTimeAsync(0);
+	};
+
+	it('confirms a saved decision in a live region', async () => {
+		render(ReviewPanel, { pageData: { id: PATH } });
+		await approve();
+		const receipt = screen.getByText(/· recorded/).closest('[aria-live]');
+		expect(receipt?.getAttribute('aria-live')).toBe('polite');
+		expect(receipt?.textContent).toMatch(/Approved\s*· recorded/);
+	});
+
+	it('shows no receipt when the write fails, only the error', async () => {
+		saveStatus.mockResolvedValue(false);
+		render(ReviewPanel, { pageData: { id: PATH } });
+		await fireEvent.click(screen.getByRole('radio', { name: 'Approved' }));
+		await vi.advanceTimersByTimeAsync(0);
+		expect(screen.queryByText(/· recorded/)).toBeNull();
+		expect(screen.getByRole('alert').textContent).toMatch(/Not saved/);
+	});
+
+	it('drops the receipt once the stored status moves on from elsewhere', async () => {
+		render(ReviewPanel, { pageData: { id: PATH } });
+		await approve();
+		pagesStore.update((rows) => rows.map((r) => ({ ...r, status: 'blocked' as const })));
+		await vi.advanceTimersByTimeAsync(0);
+		expect(screen.queryByText(/· recorded/)).toBeNull();
+	});
+
+	it('describes the decision with the Karl readiness line', () => {
+		render(ReviewPanel, {
+			pageData: { id: PATH },
+			karlReadiness: '4 sections: 3 go into Karl, 1 unconfirmed.'
+		});
+		const group = screen.getAllByRole('radio')[0].closest('[aria-describedby]');
+		const line = document.getElementById(group!.getAttribute('aria-describedby')!);
+		expect(line?.textContent).toMatch(/Karl:\s*4 sections: 3 go into Karl, 1 unconfirmed\./);
+	});
+
+	it('shows no readiness line when there is nothing to report', () => {
+		render(ReviewPanel, { pageData: { id: PATH } });
+		expect(document.getElementById('decision-readiness')).toBeNull();
+	});
+});
