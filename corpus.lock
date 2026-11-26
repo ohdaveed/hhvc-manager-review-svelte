@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "corpusHash": "db37452ac448690c164cafa0574fc500f80d210bf121214bff9565637cca28f7",
+  "corpusHash": "c747c40700df17218fac78c2f25eb85b7c41f4c21c93e475e6d84701699ec317",
   "pages": {
     "departments--healthy-housing-and-vector-control": {
       "contentHash": "c94fd18bc0a62eac3f3e89ca0b2f3844f233a95c62d55c3851d41bf94e217361",
@@ -541,15 +541,13 @@
       }
     },
     "information-what-happens-after-you-report-housing-pest-problem": {
-      "contentHash": "de7a16cb9937ececa92201719048ce942b99e30d00fa0d46e04e956dee4b151c",
+      "contentHash": "310993c52eb4d9fdb9d1936f73f1adaf965a3433c067099baa779d4772ef1ba8",
       "fieldHashes": {
         "sections.how-a-report-moves-through-the-city.bullets.0": "9d6e74b59346d39437ca8f7f4fb021bee9a96ab270f10366f0b6b4a0d5246ef3",
         "sections.how-a-report-moves-through-the-city.bullets.1": "f55f10bd725a1847bb9f05703a57ed1d622326822e4e92d4977edbe6e17373d4",
-        "sections.how-a-report-moves-through-the-city.bullets.2": "3894cd75a72bc0a8ced2ca561e988257433a6c09bd34989ec1ff126a880a75a5",
-        "sections.how-a-report-moves-through-the-city.bullets.3": "6b504065b8248b4bbc46fe9b6930b735001c67f29810ae1a1c58fc873b2aa820",
+        "sections.how-a-report-moves-through-the-city.bullets.2": "e62f0cf1c75f5ddafe98c13666210584b71956749fc2abaa83bfdd58fc91d6db",
         "sections.how-a-report-moves-through-the-city.bullets.4": "a20b7428ba9a7a03dfa52d976c5edd85d0709c55f6487fbc514a6400894a1080",
-        "sections.how-a-report-moves-through-the-city.bullets.5": "1c83f3be5bdddabeb4222c4f9bfd3c9a532f0f0f27bddb9a8601290ed1b8dfc9",
-        "sections.how-a-report-moves-through-the-city.bullets.6": "044a75b0cc27ce92e2fa945cd299fe248d03e85fa26fad3a4e16598aa3585122",
+        "sections.how-a-report-moves-through-the-city.bullets.4~2": "b2165a76a31b1bc5b174b3a1bba575b820adc723ecc9a9facdff54f17943558d",
         "sections.how-a-report-moves-through-the-city.heading": "3cc3a9df7c21b4e31184b297456da9056a3d154a27b16e6c582322658b55a28e",
         "sections.how-to-follow-up-on-your-report.bullets.0": "a7f6ee85c831fb3644c837418dc3a538d7ad77aad769a1aeff2931f94b73f1de",
         "sections.how-to-follow-up-on-your-report.bullets.1": "bd028a23b7bec0596611c6db6393dab71ca42c0a4f51f4b0588c8fcd6fb085f2",

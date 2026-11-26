@@ -163,8 +163,15 @@
 {#snippet bulletsSnippet(bullets: unknown[])}
 	<!-- `list-style-position: outside` is the default and must stay: the badge on
 	     a selected bullet is absolutely positioned, and `inside` pulls the marker
-	     into the tinted highlight box with it. -->
-	<ul class="list-disc pl-5">
+	     into the tinted highlight box with it.
+	     `ordered` is for a sequence that goes into Karl as a numbered list in
+	     rich text (afterReport's "How a report moves through the City"): the
+	     mockup has to show the numbers Karl will, or the manager reviews a
+	     bulleted list that is not what gets built. Field ids stay `bullets.N`. -->
+	<svelte:element
+		this={section.ordered ? 'ol' : 'ul'}
+		class={section.ordered ? 'list-decimal pl-5' : 'list-disc pl-5'}
+	>
 		{#each bullets as b, i (i)}
 			<EditTarget
 				as="li"
@@ -175,7 +182,7 @@
 				unverified={entryUnverified(b)}
 			/>
 		{/each}
-	</ul>
+	</svelte:element>
 {/snippet}
 
 {#snippet calloutSnippet(callout: { title?: string; text: string })}
