@@ -9,7 +9,19 @@ export const mosquitoWorkshop = {
 	sections: [
 		{
 			heading: 'Bring mosquito science to your students',
-			karl: 'Maps to Spotlight 1: Spotlight title = this heading, Spotlight description = the paragraphs below. Spotlight requires a Spotlight image (min 1080×350px) with no mockup equivalent — flag for Digital Services. No button set here; the workshop CTA lives in Spotlight 2 ("Request a workshop" section below) instead. Renders as a light-blue Spotlight box, confirmed live against sf.gov/shop-dine-sf and sf.gov/1865-til-infinity.',
+			image: {
+				src: '/images/mockup/culex-mosquito-magnified.webp',
+				alt: 'A Culex mosquito’s head under magnification, with its large green compound eye and long antennae.',
+				width: 1390,
+				height: 1043,
+				credit: {
+					title: 'Culex',
+					creator: 'Alex Wild, Insects Unlocked, University of Texas at Austin',
+					sourceUrl: 'https://commons.wikimedia.org/wiki/File:Culex_(25414001085).jpg',
+					license: 'CC0 (public domain)'
+				}
+			},
+			karl: 'Maps to Spotlight 1: Spotlight title = this heading, Spotlight description = the paragraphs below. Spotlight image = the magnified mosquito, which is what students see at the workshop\'s microscope stations — it carries the page\'s point rather than decorating it. Upload the 1390×1043 file (Spotlight needs 1080×350px+, 4:3 recommended; this is 4:3) with Image alignment "Full width", which puts the text under the image as the mockup shows. The source photo had a caption band printed along its bottom; that band is cropped off, because text in an image is not allowed on SF.gov. CC0, so no attribution is required. Spotlight 2 ("Request a workshop") still needs its own image — flag for Digital Services. No button set here; the workshop CTA lives in Spotlight 2 ("Request a workshop" section below) instead. Renders as a light-blue Spotlight box, confirmed live against sf.gov/shop-dine-sf and sf.gov/1865-til-infinity.',
 			kind: 'body',
 			component: 'spotlight',
 			paragraphs: [

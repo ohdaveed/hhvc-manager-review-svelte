@@ -4,6 +4,7 @@
 	import CalloutBlock from './blocks/CalloutBlock.svelte';
 	import CardsBlock from './blocks/CardsBlock.svelte';
 	import FactsBlock from './blocks/FactsBlock.svelte';
+	import ImageBlock from './blocks/ImageBlock.svelte';
 	import LinkGrid from './blocks/LinkGrid.svelte';
 	import StepsBlock from './blocks/StepsBlock.svelte';
 	import TableBlock from './blocks/TableBlock.svelte';
@@ -94,6 +95,14 @@
 	<!-- Everything under the heading, as one box: the `supporting` accordion paints
 	     its open panel on it (app.css). Other sections give it no style. -->
 	<div class="page-section-body">
+		<!-- A Spotlight image goes above the text: Karl's "Full width" alignment,
+		     which puts the text under the image. Anywhere else the image is its own
+		     Information-section Image block after the Title and text block, so it
+		     renders after the copy (see the end of this box). -->
+		{#if section.image && section.component === 'spotlight'}
+			<ImageBlock image={section.image} />
+		{/if}
+
 		{#if section.paragraphs}
 			{#each section.paragraphs as p, i (i)}
 				<EditTarget
@@ -164,6 +173,10 @@
 				name={`${label} Button`}
 				variant={section.buttonStyle}
 			/>
+		{/if}
+
+		{#if section.image && section.component !== 'spotlight'}
+			<ImageBlock image={section.image} />
 		{/if}
 	</div>
 </div>

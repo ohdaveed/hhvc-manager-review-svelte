@@ -289,6 +289,10 @@ export function resolveField(
 		return stringField(section, rest[0], `${label} ${kind}`);
 	}
 
+	if (rest.length === 2 && rest[0] === 'image' && rest[1] === 'alt') {
+		return stringField(section.image, 'alt', `${label} Image Alt Text`);
+	}
+
 	if (rest.length === 3 && rest[0] === 'cards') {
 		const CARD_NAMES: Record<string, string> = { title: 'Title', text: 'Text', url: 'URL' };
 		const kind = CARD_NAMES[rest[2]];
