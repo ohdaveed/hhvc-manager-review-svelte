@@ -983,15 +983,20 @@
 		max-width: 1440px;
 	}
 
-	/* 40px/32px around the reading column is the design's measure at desktop.
-	   It cannot stay fixed once the frame can be phone-width: 32px of padding
-	   either side of a 390px frame leaves 326px of copy. Scaling the padding
-	   with the container keeps the proportion and stops the column being
-	   crushed, while `clamp` holds it between a usable minimum and the value
-	   the design specifies. */
+	/* sf.gov's gutters step rather than scale: 20px on a phone, 28px from a
+	   768px viewport (measured on `dph-leaves-absence` 2026-11-26), 96px from
+	   1024 (below). SiteHeader and SiteFooter use the same steps, so the page
+	   title, the header seal and the footer lockup share one left edge. 760
+	   rather than 768 because the frame's border makes the Tablet preset a
+	   766px box. */
 	.mock-page {
 		padding-block: clamp(1.25rem, 4cqi, 2.5rem);
-		padding-inline: clamp(1rem, 3.5cqi, 2rem);
+		padding-inline: 20px;
+	}
+	@container mockup (min-width: 760px) {
+		.mock-page {
+			padding-inline: 28px;
+		}
 	}
 
 	/* sf.gov's desktop gutter is 96px (`lg:mx-96`) from a 1024px viewport, the
