@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "corpusHash": "bd2dee98f366dddfbb9f4f24d05c9a5fef1d0134d66a77426a6f46d4815f7d61",
+  "corpusHash": "5caa19a8fadcbd1c26f91c29d559cb4ee6e1b9843a1e2c1ffea9048bdb7a81ce",
   "pages": {
     "departments--healthy-housing-and-vector-control": {
       "contentHash": "0dbd9dd7bbad4361a566c5cd2c714223d97028f482b3ba8c958c082887615fc9",
@@ -128,7 +128,7 @@
       }
     },
     "information-bed-bugs-prevent-find-and-prepare-for-treatment": {
-      "contentHash": "c7821feb3b79c809a55ab0448e2217785c7428d2dd3753288304dc9b693af836",
+      "contentHash": "9462d028a34e2b1078546a9715d90c5b70f4869faa8de3fd78bf7cfae78f7ea9",
       "fieldHashes": {
         "sections.check-for-bed-bugs.bullets.0": "d44bd88de28668418bb15ed6a197fde5c64af320f1ced1a98a0821c8470ea84a",
         "sections.check-for-bed-bugs.bullets.1": "4ab10d6d5a0ec5bf846e4bc8349194f960760ba1d35f80cb471d57e42e2357ab",
@@ -184,7 +184,7 @@
         "sections.what-tenants-need-to-do-before-treatment.callout.text": "bc08d3ce8963b29249c2b42ac71397a53f3be8e234f8c4f558077252b678f576",
         "sections.what-tenants-need-to-do-before-treatment.heading": "c52ffdc607c009fee591a8a8b488eefd2bf7d65bd87d050827d254abf1f8a044",
         "sections.what-tenants-need-to-do-before-treatment.paragraphs.0": "e9fc4113ba704a806f82a32a3e90526805587717ca56581630b989aee91771d7",
-        "sections.what-tenants-need-to-do-before-treatment.bullets.5~2": "4c7207c4a7ce13826d1a662a74c2d1044cf9c92b427c2529cfce7a90a93ac766",
+        "sections.what-tenants-need-to-do-before-treatment.paragraphs.1": "c69608fed04ada384933445e06690fc993eb2dcf6b8b9f12a49980d9da99bd4f",
         "audience.0": "52c9fecd89adf1d0bd070cfd2575b42f99ae47abcb81fd3b6b1686d705a55037",
         "sections.who-this-information-is-for.heading": "46c502c4c2c97e0ef59078280882f103e27790dbf304ac81dfa6c5a41ae5d2b9",
         "summary": "56ce50e77da65016ae0b19de620c99e2c00b2f83920687ca58b4e6852d5f0c36",
@@ -616,12 +616,13 @@
       }
     },
     "information-what-to-expect-when-your-building-is-treated-for-pests": {
-      "contentHash": "081e32c055fb2a86ccdb20ac18c471d7315b14faa275826f0d5c380cedaf373b",
+      "contentHash": "fdf83df2203994d69cafff9258af89292e32ed45c314206a59f8fceb0e18e5bb",
       "fieldHashes": {
         "sections.before-the-visit.bullets.0": "8f6ff022addc2d31961e2300d75b487a3fc4ef6261ca5bde103ab64e01c8b889",
         "sections.before-the-visit.bullets.1": "220887098e4f888cea70100b098ed46bcd65ac091c964b8256c08130f96ce1e3",
         "sections.before-the-visit.bullets.2": "857d5f8604ad66f1be8192db9d820227d22cde66c8e1da8adc1d94a58b04d65a",
-        "sections.before-the-visit.bullets.3": "c57d61801efd84fb296f8db6dd425c690161d1f3dfe703e4f0776585c12738f1",
+        "sections.before-the-visit.bullets.3": "e03a7d0b4dd464ba6e98a34f0c9714778d968cbb6cc30cd966ac19f58e966767",
+        "sections.before-the-visit.bullets.4~2": "51fe331bc89f47af32c9d9d6cc8d6ec5e3637e191126cf5cacdb77cc508239d4",
         "sections.before-the-visit.bullets.4": "4c77ba185f87abd711b1f5de83510d1c92a87115e93c1519de3f79a711143ec3",
         "sections.before-the-visit.heading": "ed50aca56eda3c935833533e6887478c18935d9cb57d467a9ccec1e497934aed",
         "sections.before-the-visit.paragraphs.0": "ae3e6e6c5dfaccfc7f6695f79a73aa74e1b0ab106c1a9064433a94885af4f331",
@@ -878,7 +879,7 @@
       }
     },
     "report-bed-bugs": {
-      "contentHash": "2d6eabcefd5b4626cdd7c418f9a009e390d0d79a455917d05ba678b5335ceb24",
+      "contentHash": "c3e284d5947204b4a9658ffe9e56d9fd473ad89934d3e0b12e961cbd8fbd6234",
       "fieldHashes": {
         "primaryAgency": "8a2847f0ee854052d30378a2ef091f979c9737bbd8219086a1e04dc0abd84f9f",
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",
@@ -1082,7 +1083,7 @@
       }
     },
     "step-by-step-correct-a-violation-and-close-your-case": {
-      "contentHash": "13a962e51a617562aedac0935017f4ab4bbec2c82fe75b2493851b72aaae48c0",
+      "contentHash": "251d9fb60802ece17e43ac4f25d78eb121ee35b7ff38eafb57d6a2df628a91c2",
       "fieldHashes": {
         "sections.what-to-do.heading": "f47f1edc44ed92664871471b0cf8f463813788468c23680c12f52a36c2827e26",
         "sections.who-this-information-is-for.bullets.0": "571b7a788578e4db4dceea1fe9f27697489128cce582e5697dff5200dcd46611",
@@ -1092,19 +1093,6 @@
         "sections.who-this-information-is-for.paragraphs.0": "35d8db564641e4f32778a20da7beb8fd578bf073d188ae79aca5dbf175bb64a5",
         "summary": "8c11f4022977b87c7f55c32ed0a9e57674513cc6974fdc870793a7a789745f55",
         "title": "81482246196430ff38bfcc47b77ffe3dbdd56482a8027505b0859917b91c4e8a"
-      }
-    },
-    "step-by-step-prepare-your-unit-for-pest-treatment": {
-      "contentHash": "45748dcc9e6dcf127b1fd6f41e37c58c8715f69ef3a0ea0650b6d6bbcacad0bd",
-      "fieldHashes": {
-        "sections.what-to-do.heading": "f47f1edc44ed92664871471b0cf8f463813788468c23680c12f52a36c2827e26",
-        "sections.who-this-information-is-for.bullets.0": "35eb65326ceab69215a5cfc7c0b69c2702ff41ed3739e008d73d2ad435416efc",
-        "sections.who-this-information-is-for.bullets.1": "4864001c985551f3d8f1f55ce7b45992d5a1422dbd156c02605f974306e6ddaa",
-        "sections.who-this-information-is-for.bullets.2": "2a5e2fb2ada44ef5e9c6a40ca5b8a73ba141e941b101cb0d0754bf3aae97c0a3",
-        "sections.who-this-information-is-for.heading": "46c502c4c2c97e0ef59078280882f103e27790dbf304ac81dfa6c5a41ae5d2b9",
-        "sections.who-this-information-is-for.paragraphs.0": "41b467f2afc73932b37c383c4087b8125b48d1f61edabe031330ae39fdab5d60",
-        "summary": "6aa4ca91925b09dc276cd91b32f1a010d2c3d891a5a33a4c6267395643238a70",
-        "title": "270a2c2e35338cf459c5a56939496a71c0e045893e0a3654d8b08f7646dd1293"
       }
     },
     "step-by-step-report-a-pest-problem": {

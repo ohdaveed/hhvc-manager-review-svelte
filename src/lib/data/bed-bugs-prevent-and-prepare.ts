@@ -105,7 +105,7 @@ export const bedBugsInfo = {
 			kind: 'body',
 			paragraphs: [
 				'Treatment only works if the unit is ready. The pest control company will give you a checklist. If it is different from the list below, follow their checklist.',
-				'[Prepare your unit for pest treatment](stepPrepUnit)'
+				'[What to expect when your building is treated for pests](pestTreatmentInfo)'
 			],
 			bullets: [
 				'**Let them in.** You must allow the owner or pest control company into your unit after you get notice that they will inspect or treat.',
