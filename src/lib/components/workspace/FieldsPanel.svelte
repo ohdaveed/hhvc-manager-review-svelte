@@ -194,6 +194,9 @@
 	/** Local, pre-flight: the instruction is over the backend's 2,000-char cap. */
 	let instructionError = $state('');
 
+	/** Says which selected fields a rewrite left out, and why. */
+	let rewriteNotice = $state('');
+
 	/**
 	 * One request per selected field, not one for the whole batch.
 	 *
@@ -209,10 +212,25 @@
 			return;
 		}
 		instructionError = '';
+
+		// Suggestions are keyed by field id alone, so a new rewrite would replace
+		// an accepted one -- on this page, or for the same field id on another --
+		// and its unsaved change could no longer be undone back to a waiting
+		// card. Those fields are left out, and said so, rather than requested.
+		const held = selected.filter(
+			({ fieldId }) => pageStore.suggestions[fieldId]?.status === 'accepted'
+		);
+		rewriteNotice =
+			held.length === 0
+				? ''
+				: `${held.length} ${held.length === 1 ? 'field was' : 'fields were'} not rewritten: ${held.length === 1 ? 'it has' : 'they have'} an accepted rewrite, here or on another page, that is not saved yet. Save or undo it first.`;
+		const requested = selected
+			.filter(({ fieldId }) => pageStore.suggestions[fieldId]?.status !== 'accepted')
+			.map(({ fieldId, field }) => ({ fieldId, field }));
+		if (requested.length === 0) return;
 		rewriting = true;
 
 		const requestPageId = pageId;
-		const requested = selected.map(({ fieldId, field }) => ({ fieldId, field }));
 
 		/**
 		 * Merges ONE result into the live map.
@@ -229,6 +247,8 @@
 		const commit = (fieldId: string, suggestion: Omit<Suggestion, 'pageId'>) => {
 			if (pageId !== requestPageId) return;
 			if (!pageStore.isSelected(fieldId)) return;
+			// Accepted while this request was out: the acceptance stands.
+			if (pageStore.suggestions[fieldId]?.status === 'accepted') return;
 			pageStore.suggestions = {
 				...pageStore.suggestions,
 				[fieldId]: { ...suggestion, pageId: requestPageId as string }
@@ -658,6 +678,11 @@
 				{#if instructionError}
 					<p class="mt-1.5 text-[12px] leading-[17px] text-sfds-red" role="alert">
 						{instructionError}
+					</p>
+				{/if}
+				{#if rewriteNotice}
+					<p class="mt-1.5 text-[12px] leading-[17px] text-sfds-amber" role="status">
+						{rewriteNotice}
 					</p>
 				{/if}
 				<Button

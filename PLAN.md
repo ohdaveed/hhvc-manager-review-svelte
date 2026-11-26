@@ -9,7 +9,7 @@ The previous plan (manual field editing + vocabulary alignment, all boxes ticked
 - [x] **2. Saved-elsewhere is per tab.** The notice compares against the edit ids THIS tab inserted, not the
       user id: the reviewer's own save from another tab raises it, this tab's own saves never do, and an
       authorless row is still ignored. Unit-tested through `hydrateMockup`.
-- [ ] **3. A rewrite never overwrites an accepted suggestion.** A rewrite result for a field whose
+- [x] **3. A rewrite never overwrites an accepted suggestion.** A rewrite result for a field whose
       suggestion is accepted (here or on another page) is dropped rather than replacing it, and the
       reviewer is told why. Unit-tested.
 - [ ] **4. Rethink grounding comment.** `RethinkPanel.svelte` ~107 says what grounding now contains: saved
