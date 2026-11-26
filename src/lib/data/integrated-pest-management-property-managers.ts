@@ -89,17 +89,25 @@ export const ownerGuidance = {
 			}
 		},
 		{
-			heading: 'Common building conditions that attract pests',
-			karl: 'Maps to a fourth Title and text block: Title = this heading, Text = the paragraph plus the bulleted list below. Frames the prevention steps that follow.',
+			heading: 'Conditions inside the building that attract pests',
+			fieldKey: 'common-building-conditions-that-attract-pests',
+			karl: "Maps to a Title and text block: Title = this heading, Text = the paragraph plus the bulleted list below. Frames the prevention steps that follow. Split on 2026-11-26 from one 6-item list: SF.gov keeps a bulleted list to 3 to 5 items (A-to-Z, Bullets). Split by where an owner looks: inside, then outside and in shared areas. The fieldKey keeps this section's original ids.",
 			kind: 'body',
 			paragraphs: [
 				'Most pest problems in buildings start with a few common conditions. Fixing them early prevents infestations.'
 			],
 			bullets: [
 				'Unsealed gaps, cracks, and utility openings that let pests enter',
-				'Overflowing, uncovered, or poorly serviced garbage areas',
 				'Standing water, leaks, and damp spaces',
-				'Clutter, cardboard storage, and unused materials that offer shelter',
+				'Clutter, cardboard storage, and unused materials that offer shelter'
+			]
+		},
+		{
+			heading: 'Conditions outside and in shared areas that attract pests',
+			karl: 'Maps to a Title and text block: Title = this heading, Text = the bulleted list below. Split on 2026-11-26 from one 6-item list: SF.gov keeps a bulleted list to 3 to 5 items (A-to-Z, Bullets). The pet waste bullet carries the Decided cross-link line ("Pick up pet waste daily. It feeds rats.", Karl review 2026-11-24).',
+			kind: 'body',
+			bullets: [
+				'Overflowing, uncovered, or poorly serviced garbage areas',
 				'Overgrown landscaping and debris close to walls and foundations',
 				'Pet waste in yards and shared areas. Pick up pet waste daily. It feeds rats. [Report animal waste on a property](animalWasteReport)'
 			]
@@ -144,14 +152,13 @@ export const ownerGuidance = {
 		},
 		{
 			heading: '3. Prevent pests and seal entry points',
-			karl: 'Maps to a seventh Title and text block: Title = this heading, Text = the paragraph plus the bulleted list below.',
+			karl: 'Maps to a seventh Title and text block: Title = this heading, Text = the paragraphs plus the bulleted list below. The two resource links were the first two bullets until 2026-11-26; they are a paragraph now, as in "2. Set policies, plans, and lease expectations", leaving a list of 5.',
 			kind: 'placement',
 			paragraphs: [
-				'Prevent pest problems by fixing the conditions that let pests enter, hide, feed, or breed. Maintenance, landscape management, and sanitation are core parts of IPM.'
+				'Prevent pest problems by fixing the conditions that let pests enter, hide, feed, or breed. Maintenance, landscape management, and sanitation are core parts of IPM.',
+				'[UC IPM: Pest prevention](https://ipm.ucanr.edu/home-and-landscape/guide-for-property-managers/pest-prevention/) and [SF Environment: Pest Prevention by Design](https://sfenvironment.org/download/pest-prevention-by-design-guidelines)'
 			],
 			bullets: [
-				'[UC IPM: Pest prevention](https://ipm.ucanr.edu/home-and-landscape/guide-for-property-managers/pest-prevention/)',
-				'[SF Environment: Pest Prevention by Design](https://sfenvironment.org/download/pest-prevention-by-design-guidelines)',
 				'Seal gaps larger than 1/4 inch around doors, windows, pipes, vents, and utility openings with rodent-proof materials. Examples include hardware cloth, copper mesh, sheet metal, concrete, mortar, or steel wool backed by sealant.',
 				"Keep tree and shrub branches at least 6 feet from walls or roofs. This stops rodents climbing onto structures (Pest Prevention by Design). Director's Rules require at least 3 feet for enforcement inspections.",
 				'Keep a 24-inch clear space along fences and exterior walls to reduce rodent movement and allow visibility.',

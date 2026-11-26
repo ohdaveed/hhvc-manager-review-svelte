@@ -44,7 +44,9 @@
 		flex-wrap: wrap;
 		align-items: center;
 		gap: 12px;
-		margin: 16px 0;
+		/* 40px above, 20px below: live's list-to-button and button-to-callout
+		   gaps on `report-health-nuisance-or-hazards`, 2026-11-26. */
+		margin: 40px 0 20px;
 	}
 
 	/* `.edit-target` is a global Tailwind `@utility` (`block w-full ...`), built
