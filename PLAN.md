@@ -10,7 +10,7 @@ survive a reload.
 Decisions (approved 2026-11-26): live preview per keystroke, persist only on Save; one control per
 selected field; no schema change, no new dependency; the reload-hydration gap is fixed in this branch.
 
-- [ ] **1. Draft state.** `pageStore.manualDrafts` keyed by field id (`original`, `value`, `pageId`), with
+- [x] **1. Draft state.** `pageStore.manualDrafts` keyed by field id (`original`, `value`, `pageId`), with
       `startDraft` / `updateDraft` / `cancelDraft` / `forgetDraft`. Selection replacement, `clearSelection`
       and page change revert unsaved drafts on the mockup and clear them. Unit-tested in `tests/pageData.test.ts`.
 - [ ] **2. Panel controls.** The name-only list in `FieldsPanel.svelte` becomes one labelled textarea per

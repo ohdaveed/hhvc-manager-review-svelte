@@ -2,6 +2,7 @@
 import { allPages } from '$lib/data';
 import { deriveFieldKey } from '$lib/corpus/fieldKey.js';
 import { routableId } from '$lib/corpus/pageId';
+import { resolveField } from '$lib/corpus/fieldResolver';
 import type { DraftPage } from './draftPages';
 import type { Op } from '$lib/rethink/diff';
 import type { RethinkResult } from '$lib/rethink/request';
@@ -38,6 +39,20 @@ export type Suggestion = {
 	status: 'pending' | 'accepted' | 'rejected' | 'error';
 	/** Present only on `error`; shown on the card rather than in an alert. */
 	message?: string;
+};
+
+/**
+ * A field the reviewer is typing into directly, from the Fields panel.
+ *
+ * The mockup already shows `value` -- every keystroke goes through the field's
+ * setter so the preview is live -- but nothing is persisted until Save.
+ * `original` is what the field said before typing started: what Cancel puts
+ * back, and how a save that changes nothing is recognised and skipped.
+ */
+export type ManualDraft = {
+	pageId: string;
+	original: string;
+	value: string;
 };
 
 export type AgentRec = {
@@ -195,6 +210,9 @@ class PageStore {
 	/** Pending/decided rewrites, keyed by field id. */
 	suggestions = $state<Record<string, Suggestion>>({});
 
+	/** Unsaved manual edits, keyed by field id. See `ManualDraft`. */
+	manualDrafts = $state<Record<string, ManualDraft>>({});
+
 	/**
 	 * The routable id of the page on screen, as `enterPage` last set it.
 	 *
@@ -280,6 +298,7 @@ class PageStore {
 		if (!additive) {
 			this.selectedFieldIds = [fieldId];
 			this.suggestions = this.pruneSuggestions([fieldId]);
+			this.revertDrafts([fieldId]);
 			return;
 		}
 
@@ -287,6 +306,7 @@ class PageStore {
 			const next = this.selectedFieldIds.filter((id) => id !== fieldId);
 			this.selectedFieldIds = next;
 			this.suggestions = this.pruneSuggestions(next);
+			this.revertDrafts(next);
 		} else {
 			this.selectedFieldIds = [...this.selectedFieldIds, fieldId];
 		}
@@ -295,12 +315,14 @@ class PageStore {
 	clearSelection() {
 		this.selectedFieldIds = [];
 		this.suggestions = this.pruneSuggestions([]);
+		this.revertDrafts([]);
 		this.rewriteInstruction = '';
 	}
 
 	selectSection(sectionKey: string) {
 		this.selectedFieldIds = [];
 		this.suggestions = this.pruneSuggestions([]);
+		this.revertDrafts([]);
 
 		// Only reset the rethink when the selection actually MOVES. Re-clicking
 		// the section already selected used to drop it back to `idle`, which
@@ -365,6 +387,7 @@ class PageStore {
 	enterPage(pageId: string | undefined) {
 		if (pageId === this.activePageId) return;
 		this.activePageId = pageId;
+		this.revertDrafts([]);
 		this.selectedFieldIds = [];
 		this.rewriteInstruction = '';
 		this.agentRec = { state: 'idle', text: '' };
@@ -401,6 +424,63 @@ class PageStore {
 		const rest = { ...this.suggestions };
 		delete rest[fieldId];
 		this.suggestions = rest;
+	}
+
+	// ---- manual drafts ---------------------------------------------------
+	// The mockup shows a draft as it is typed, so a draft that is abandoned has
+	// to be put back on the page, not merely forgotten: otherwise the preview
+	// keeps copy that was never saved and silently loses it on reload.
+
+	/** The field as it is on the page now, resolved fresh -- never captured. */
+	private resolveOn(pageId: string, fieldId: string) {
+		return resolveField(
+			this.pages.find((p) => p.id === pageId),
+			fieldId
+		);
+	}
+
+	/**
+	 * Sets the draft for one field and shows it on the mockup. The first call
+	 * records what the field said, which is what `cancelDraft` restores.
+	 * Returns false when the field no longer resolves, and writes nothing.
+	 */
+	updateDraft(pageId: string, fieldId: string, value: string): boolean {
+		const field = this.resolveOn(pageId, fieldId);
+		if (!field) return false;
+		const existing = this.manualDrafts[fieldId];
+		const original = existing && existing.pageId === pageId ? existing.original : field.value;
+		field.set(value);
+		this.manualDrafts = { ...this.manualDrafts, [fieldId]: { pageId, original, value } };
+		return true;
+	}
+
+	/** Whether the field has typing that has not been saved. */
+	isDirty(fieldId: string): boolean {
+		const draft = this.manualDrafts[fieldId];
+		return Boolean(draft && draft.value !== draft.original);
+	}
+
+	/** Puts the original copy back on the mockup and drops the draft. */
+	cancelDraft(fieldId: string) {
+		const draft = this.manualDrafts[fieldId];
+		if (!draft) return;
+		this.resolveOn(draft.pageId, fieldId)?.set(draft.original);
+		this.forgetDraft(fieldId);
+	}
+
+	/** Drops a draft whose value is now the saved one. Leaves the mockup as is. */
+	forgetDraft(fieldId: string) {
+		if (!(fieldId in this.manualDrafts)) return;
+		const rest = { ...this.manualDrafts };
+		delete rest[fieldId];
+		this.manualDrafts = rest;
+	}
+
+	/** Cancels every draft except those for `keep`. */
+	private revertDrafts(keep: string[]) {
+		for (const fieldId of Object.keys(this.manualDrafts)) {
+			if (!keep.includes(fieldId)) this.cancelDraft(fieldId);
+		}
 	}
 
 	/**

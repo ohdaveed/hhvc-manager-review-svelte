@@ -203,3 +203,80 @@ describe('rail default', () => {
 		expect(pageStore.railCollapsed).toEqual({ queue: false, panel: false });
 	});
 });
+
+describe('manual drafts', () => {
+	const A = () => pageStore.pages[0];
+	const B = () => pageStore.pages[1];
+	let titleA: string;
+	let titleB: string;
+
+	beforeEach(() => {
+		pageStore.enterPage(undefined);
+		pageStore.manualDrafts = {};
+		titleA = A().title;
+		titleB = B().title;
+		pageStore.enterPage(A().id);
+		pageStore.select('title');
+	});
+
+	it('shows the draft on the page as it is typed and remembers the original', () => {
+		expect(pageStore.updateDraft(A().id, 'title', 'Typed')).toBe(true);
+		expect(A().title).toBe('Typed');
+		expect(pageStore.manualDrafts.title).toEqual({
+			pageId: A().id,
+			original: titleA,
+			value: 'Typed'
+		});
+		pageStore.updateDraft(A().id, 'title', 'Typed more');
+		expect(pageStore.manualDrafts.title.original).toBe(titleA);
+		expect(pageStore.isDirty('title')).toBe(true);
+	});
+
+	it('is not dirty when typed back to the original', () => {
+		pageStore.updateDraft(A().id, 'title', 'Typed');
+		pageStore.updateDraft(A().id, 'title', titleA);
+		expect(pageStore.isDirty('title')).toBe(false);
+		pageStore.cancelDraft('title');
+	});
+
+	it('cancel restores the original copy', () => {
+		pageStore.updateDraft(A().id, 'title', 'Typed');
+		pageStore.cancelDraft('title');
+		expect(A().title).toBe(titleA);
+		expect(pageStore.manualDrafts.title).toBeUndefined();
+	});
+
+	it('forget keeps the typed copy on the page', () => {
+		pageStore.updateDraft(A().id, 'title', 'Saved copy');
+		pageStore.forgetDraft('title');
+		expect(A().title).toBe('Saved copy');
+		expect(pageStore.manualDrafts.title).toBeUndefined();
+		A().title = titleA;
+	});
+
+	it('writes nothing for a field that does not resolve', () => {
+		expect(pageStore.updateDraft(A().id, 'sections.nope.paragraphs.0', 'x')).toBe(false);
+		expect(pageStore.manualDrafts).toEqual({});
+	});
+
+	it.each([
+		['clearing the selection', () => pageStore.clearSelection()],
+		['replacing the selection', () => pageStore.select('summary')],
+		['shift-clicking the field off', () => pageStore.select('title', true)],
+		['selecting a section', () => pageStore.selectSection('any')],
+		['changing page', () => pageStore.enterPage(B().id)]
+	])('reverts an unsaved draft on %s', (_label, act) => {
+		pageStore.updateDraft(A().id, 'title', 'Unsaved');
+		act();
+		expect(A().title).toBe(titleA);
+		expect(B().title).toBe(titleB);
+		expect(pageStore.manualDrafts).toEqual({});
+	});
+
+	it('keeps a draft when another field is shift-clicked in', () => {
+		pageStore.updateDraft(A().id, 'title', 'Unsaved');
+		pageStore.select('summary', true);
+		expect(A().title).toBe('Unsaved');
+		pageStore.cancelDraft('title');
+	});
+});
