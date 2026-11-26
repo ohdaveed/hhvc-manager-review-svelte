@@ -27,7 +27,7 @@ The mockups render as real SF.gov pages, and each section is checked against the
 ## Operating Context
 
 - Sign-in is a Supabase magic link. `/` resumes the reviewer's place, shows progress, and offers to propose a page.
-- The corpus pages live as static modules in `src/lib/data/`, one per page (43 on 2026-11-26; `corpus.lock` records the current count). Pages drafted by AI live in the database, under a banner that says where they came from.
+- The corpus pages live as static modules in `src/lib/data/`, one per page (42 on 2026-11-26; `corpus.lock` records the current count). Pages drafted by AI live in the database, under a banner that says where they came from.
 - The data model allows several reviewers on one review, and decisions belong to the page, not to whoever made them. In practice there is one author; that is a property of the schema, not a goal to design for. Edits are append-only, and the latest edit to a field wins.
 - AI rewrites (suggestions) and section Rethinks (proposals made of ops) come from Gemini through a server proxy. Nothing is recorded until a reviewer saves.
 - Terminology is fixed by `CONTEXT.md`: unsaved change, suggestion, edit, accepted, expired, draft page, placement, Karl panel. UI copy follows it.
