@@ -21,7 +21,9 @@
 		ChevronRight,
 		ChevronsLeft,
 		ChevronsRight,
+		ClipboardList,
 		Download,
+		Layers,
 		Maximize2,
 		Monitor,
 		Smartphone,
@@ -513,7 +515,7 @@
 				/>
 			{:else}
 				<nav
-					class="review-toolbar flex h-12 flex-none items-center justify-between border-b border-sfds-grey-l2 bg-background px-3 sm:px-5"
+					class="review-toolbar @container/toolbar flex h-12 flex-none items-center justify-between border-b border-sfds-grey-l2 bg-background px-3 sm:px-5"
 				>
 					<!-- `grow` with no `min-w-0`: the group never shrinks below its
 					     fixed controls, so a narrow bar wraps the right-hand group
@@ -647,34 +649,47 @@
 								{/each}
 							</ToggleGroup.Root>
 						</div>
-						<!-- The tool's second job, and the only way into it. Entering
-					     collapses both rails; exiting puts them back as they were. -->
-						{#if onDraft}
-							<Button
-								variant="outline"
-								size="sm"
-								class="h-7 flex-none text-xs"
-								onclick={() => pageStore.enterWalkthrough()}
+						<!-- The tool's second job, so it is a labelled, filled button of its
+						     own rather than an item behind the Karl views disclosure, where
+						     nothing on screen said it existed. Entering collapses both
+						     rails; exiting puts them back as they were. The accessible name
+						     stays "Open Karl walkthrough" (it contains the visible label,
+						     WCAG 2.5.3). The visible label drops to "Karl" when the BAR is
+						     narrow, not the window -- the rails decide its width -- which
+						     keeps it to one row at 1080px with both rails open, as before
+						     this button existed, and to two on a phone. -->
+						<Button
+							size="sm"
+							class="h-7 flex-none gap-1.5 text-xs font-semibold"
+							onclick={() => pageStore.enterWalkthrough()}
+							data-testid="karl-walkthrough"
+						>
+							<ClipboardList class="size-3.5" aria-hidden="true" />
+							<!-- One span, so the button's flex gap does not land between words;
+							     `&nbsp;` because Svelte trims a span's leading whitespace. -->
+							<span
+								><span class="sr-only">Open&nbsp;</span>Karl<span
+									class="@max-[32rem]/toolbar:sr-only">&nbsp;walkthrough</span
+								></span
 							>
-								<!-- "Karl" alone on a phone keeps the bar to two rows; the
-								     hidden words keep the accessible name, which tests and
-								     screen readers both use, unchanged. -->
-								<span class="max-sm:sr-only">Open</span> Karl
-								<span class="max-sm:sr-only">walkthrough</span>
-							</Button>
-						{:else}
-							<!-- The Karl views, in the walkthrough button's old slot so the
-							     toolbar -- measured at zero slack between 1080px and 1400px --
-							     gains no width. A disclosure of plain buttons and a switch,
-							     NOT `role="menu"`: the walkthrough keeps its exact name and
-							     role, and Popover handles Escape, outside clicks and focus
-							     return. -->
+						</Button>
+						{#if !onDraft}
+							<!-- The other two Karl views. A disclosure of a switch and a plain
+							     button, NOT `role="menu"`; Popover handles Escape, outside
+							     clicks and focus return. Off on drafts (decision 12). -->
 							<Popover.Root bind:open={karlMenuOpen}>
 								<Popover.Trigger
-									class="{buttonVariants({ variant: 'outline', size: 'sm' })} h-7 flex-none text-xs"
+									class="{buttonVariants({
+										variant: 'outline',
+										size: 'sm'
+									})} size-7 flex-none px-0"
 									aria-label="Karl views"
+									title="Karl views: field outline and Blueprint"
 								>
-									Karl
+									<!-- Icon-only: the labelled walkthrough button beside it spent
+									     the width, and at 1080px a labelled trigger wrapped the bar
+									     onto a third row. Named by aria-label, described by title. -->
+									<Layers class="size-3.5" aria-hidden="true" />
 								</Popover.Trigger>
 								<Popover.Portal>
 									<Popover.Content
@@ -703,17 +718,6 @@
 											}}
 										>
 											Show Blueprint
-										</Button>
-										<Button
-											variant="outline"
-											size="sm"
-											class="h-8 justify-start text-xs"
-											onclick={() => {
-												karlMenuOpen = false;
-												pageStore.enterWalkthrough();
-											}}
-										>
-											Open Karl walkthrough
 										</Button>
 									</Popover.Content>
 								</Popover.Portal>

@@ -90,7 +90,6 @@ test('no WCAG 2.1 AA violations in the Analysis panel', async ({ page }) => {
 
 test('no WCAG 2.1 AA violations in the signed-in Karl walkthrough', async ({ page }) => {
 	await gotoSignedIn(page, PAGE);
-	await page.getByRole('button', { name: 'Karl views' }).click();
 	await page.getByRole('button', { name: 'Open Karl walkthrough' }).click();
 	await page.waitForSelector('.drawer');
 

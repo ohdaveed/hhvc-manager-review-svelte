@@ -1,5 +1,6 @@
 <script lang="ts">
 	import * as Card from '$lib/components/ui/card/index.js';
+	import { Button } from '$lib/components/ui/button/index.js';
 	import { Badge } from '$lib/components/ui/badge/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { Separator } from '$lib/components/ui/separator/index.js';
@@ -10,7 +11,7 @@
 	import { reviewHrefFor } from '$lib/corpus/draftPath';
 	import { draftsStore } from '$lib/stores/draftPages';
 	import { pageTitleFor } from '$lib/corpus/pageTitle';
-	import { ArrowRight } from '@lucide/svelte';
+	import { ArrowRight, ClipboardList } from '@lucide/svelte';
 	import { pageStore } from '$lib/stores/pageData.svelte';
 	import { sessionStore } from '$lib/stores/session.svelte';
 	import { STATUS_LABELS } from '$lib/review/statusLabels';
@@ -34,6 +35,11 @@
 	// Find the live record in the store matching the static corpus id
 	let liveRecord = $derived($pagesStore.find((p) => p.path === pageData?.id));
 	const checks = $derived(Object.entries(liveRecord?.page_checks ?? {}));
+
+	// Steps already ticked off in the walkthrough, on this device. A count, not
+	// "N of M": the total needs the walkthrough built, and the panel is not the
+	// place to walk the page against the whole Karl inventory just to say it.
+	const copiedHere = $derived(pageData?.id ? (pageStore.copiedSteps[pageData.id]?.length ?? 0) : 0);
 
 	let notesValue = $state('');
 	let debounceTimeout: ReturnType<typeof setTimeout> | undefined;
@@ -327,6 +333,38 @@
 			</p>
 		{/if}
 	</div>
+
+	<!-- The way into the walkthrough from where the decision is made. The
+	     toolbar has the same entry; this one says what it is for, because a
+	     button name alone did not tell anyone the transfer step existed. -->
+	<Separator />
+	<section class="space-y-3 p-6" aria-labelledby="karl-handoff">
+		<div class="flex items-baseline justify-between gap-2">
+			<h3 id="karl-handoff" class="text-sm font-bold">Move it into Karl</h3>
+			{#if liveRecord?.status === 'approved'}
+				<span class="text-xs font-semibold text-emerald-800">Ready to move</span>
+			{/if}
+		</div>
+		<p class="text-sm text-slate-800">
+			The Karl walkthrough takes you through this page one Karl field at a time, with the copy ready
+			to paste and anything that won’t carry over flagged.
+		</p>
+		<Button
+			variant={liveRecord?.status === 'approved' ? 'default' : 'outline'}
+			size="sm"
+			class="w-full gap-1.5"
+			onclick={() => pageStore.enterWalkthrough()}
+		>
+			<ClipboardList class="size-4" aria-hidden="true" />
+			{copiedHere > 0 ? 'Resume' : 'Start'} the Karl walkthrough
+		</Button>
+		{#if copiedHere > 0}
+			<p class="text-xs text-sfds-slate-l3">
+				{copiedHere}
+				{copiedHere === 1 ? 'field' : 'fields'} copied so far on this device.
+			</p>
+		{/if}
+	</section>
 
 	{#if checks.length > 0}
 		<Separator />

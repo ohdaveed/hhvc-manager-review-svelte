@@ -2,6 +2,7 @@
 	import { onMount, tick } from 'svelte';
 	import AllPagesList from '$lib/components/landing/AllPagesList.svelte';
 	import HowItWorks from '$lib/components/landing/HowItWorks.svelte';
+	import KarlWalkthroughGuide from '$lib/components/landing/KarlWalkthroughGuide.svelte';
 	import ProgressSummary from '$lib/components/landing/ProgressSummary.svelte';
 	import ProposePageForm from '$lib/components/landing/ProposePageForm.svelte';
 	import StatusCard from '$lib/components/landing/StatusCard.svelte';
@@ -157,7 +158,13 @@
 	     grid would otherwise stretch a collapsed How it works into a bordered box
 	     of empty space as tall as the propose form. -->
 	<div class="grid items-start gap-8 md:grid-cols-2">
-		<HowItWorks startOpen={howItWorksOpen} />
+		<div class="space-y-8">
+			<HowItWorks startOpen={howItWorksOpen} />
+			<KarlWalkthroughGuide
+				approved={card === 'progress' ? (counts.approved ?? 0) : undefined}
+				onShowApproved={() => showStatus('approved')}
+			/>
+		</div>
 		<section aria-labelledby="propose-a-page">
 			<h2 id="propose-a-page" class="mb-3 text-lg font-semibold text-slate-900">Propose a page</h2>
 			<ProposePageForm />
