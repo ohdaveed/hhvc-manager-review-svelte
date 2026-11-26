@@ -70,7 +70,7 @@ export const pestTreatmentInfo = {
 		},
 		{
 			heading: 'During and after the visit',
-			karl: 'Maps to a fifth Title and text block: Title = this heading, Text = the paragraph plus the bulleted list below. The Caution label rule is from SF Environment\'s 2024 "Pest management in your home" handout. The Callout below is its own Callout stream item. The "Caution" bullet joined the own-sprays bullet on 2026-11-26, leaving a list of 5: they are one piece of advice.',
+			karl: 'Maps to a fifth Title and text block: Title = this heading, Text = the paragraph plus the bulleted list below. The Caution label rule is from SF Environment\'s 2024 "Pest management in your home" handout. The Callout below is its own Callout stream item. The "Caution" bullet joined the own-sprays bullet on 2026-11-26, leaving a list of 5: they are one piece of advice. The label rule is one sentence so the bullet stays within SF.gov\'s 3.',
 			kind: 'body',
 			paragraphs: [
 				'Most treatments need more than one visit. Pests that were missed or hatched later may still show up for a few weeks.'
@@ -79,7 +79,7 @@ export const pestTreatmentInfo = {
 				'**Stay out until you are told it is safe** to come back.',
 				'**Do not clean away baits or dusts** the technician left in cracks and corners.',
 				'**For bed bugs, leave monitors in place.** Monitoring continues for 4 weeks after the last treatment.',
-				'**Do not use your own sprays or bug bombs.** They can stop the treatment from working. If you buy a product yourself, choose one labeled "Caution." Avoid products labeled "Warning" or "Danger."',
+				'**Do not use your own sprays or bug bombs.** They can stop the treatment from working. If you buy a product yourself, choose a "Caution" label, not a "Warning" or "Danger" label.',
 				'**Keep notes and photos** of pests you still see, and share them with your landlord in writing.'
 			],
 			callout: {

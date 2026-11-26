@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "corpusHash": "515bb28fd7f33f6a87ad6e300b1492052aa6822f1b8e4853b485da5ca3212316",
+  "corpusHash": "f16e1f8009394439d0a22b84d0987bab09253196f99e2e284dfa4ce5f0754646",
   "pages": {
     "departments--healthy-housing-and-vector-control": {
       "contentHash": "0dbd9dd7bbad4361a566c5cd2c714223d97028f482b3ba8c958c082887615fc9",
@@ -601,7 +601,7 @@
       }
     },
     "information-what-to-expect-when-your-building-is-treated-for-pests": {
-      "contentHash": "319bac566a029ffe4e0baf427a5795d98f6155dffd03ce632e47f1b393f48eb1",
+      "contentHash": "081e32c055fb2a86ccdb20ac18c471d7315b14faa275826f0d5c380cedaf373b",
       "fieldHashes": {
         "sections.before-the-visit.bullets.0": "8f6ff022addc2d31961e2300d75b487a3fc4ef6261ca5bde103ab64e01c8b889",
         "sections.before-the-visit.bullets.1": "220887098e4f888cea70100b098ed46bcd65ac091c964b8256c08130f96ce1e3",
@@ -613,7 +613,7 @@
         "sections.during-and-after-the-visit.bullets.0": "c550d33b2b69c25358523f3cb3da7f0a7100ae93f9088f66ad2d0c93157e3c49",
         "sections.during-and-after-the-visit.bullets.1": "f0c63dda7ea5889518f51da1198abb5b7c246f3ff6d8f9192b947d297a56c077",
         "sections.during-and-after-the-visit.bullets.2": "a11e6830f7ab95f661270c42e099ce6994c770645cc54e87e01d9ec84088560d",
-        "sections.during-and-after-the-visit.bullets.3": "d3031c750a7b6033bbca394ff6d433d4b72bea44fa937aa421a2e5a92b3023dd",
+        "sections.during-and-after-the-visit.bullets.3": "f9780a200c39f489edc111b8ff6ee190144d54e4540970ecee8a9417ed7675c5",
         "sections.during-and-after-the-visit.bullets.5": "0588f43f44dbd18b6151a7bafbe2c01a665e99f10e0d135042c7c318a8f3d924",
         "sections.during-and-after-the-visit.callout.text": "da5480ac9f4cfdbeae25ec5a9280a7f4b724d9a3a30304ff9a84630136381b75",
         "sections.during-and-after-the-visit.heading": "184b649de44138c8cae19847805ed5d47c02ae4072792c8a9dcb80db356ef952",
@@ -1065,7 +1065,7 @@
       }
     },
     "report-rats-or-mice": {
-      "contentHash": "00e643bc42bb13a11e4294c7da96c6c13d7ba5870754c0f38f95c8490849bb7f",
+      "contentHash": "107ca6b2ac83242c22f37795a357a0f92541ff5cbed776de15d2f2d91bcfae01",
       "fieldHashes": {
         "primaryAgency": "8a2847f0ee854052d30378a2ef091f979c9737bbd8219086a1e04dc0abd84f9f",
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",
@@ -1073,9 +1073,9 @@
         "sections.what-the-health-code-requires.bullets.1": "25a2e6bd8a855755d056579e8de1cbc3e7231c10927332092b18995d3ae0d4fd",
         "sections.what-the-health-code-requires.heading": "13e7f9679361d6015ff823a78c3727f0056246ddc3619f6327039a4177b39212",
         "sections.what-to-do.heading": "f47f1edc44ed92664871471b0cf8f463813788468c23680c12f52a36c2827e26",
-        "sections.while-you-wait-tips-to-help-with-the-problem.bullets.0": "0c23cf615a2ebfb3eb8e27541e2d41d03141c6c8d9a660fde398329b8a935e12",
-        "sections.while-you-wait-tips-to-help-with-the-problem.bullets.1": "9c57ed262af32675ad7328dfa24af644d29ac08f8c2bcf52b8585e764e557a25",
-        "sections.while-you-wait-tips-to-help-with-the-problem.bullets.3": "3e9daf3550a30a0e0642569250d225a756a2578ba0e90a453753e4d8561fb36f",
+        "sections.while-you-wait-tips-to-help-with-the-problem.bullets.0": "542dde764015024306eed5995ef3f52a9cb371a1fb167cf4ef0eb739e838a122",
+        "sections.while-you-wait-tips-to-help-with-the-problem.bullets.1": "667dd35d2f3b8558849ea999a5fd2f4cbe8819e40bced4fec614837d405ec108",
+        "sections.while-you-wait-tips-to-help-with-the-problem.bullets.2": "dffe04fd69fa97a4e4b28e2b9611bd663e971215b0bc4141679d1150381aac31",
         "sections.while-you-wait-tips-to-help-with-the-problem.bullets.4": "6b3d3c43b7546097a1a0efc8a9043fba738448f76fe29e491208640859aabdd7",
         "sections.while-you-wait-tips-to-help-with-the-problem.bullets.5": "84dd61f7aeea411c4aee0dbb03cf776c58d697412821a85296ad46fcc0b7698d",
         "sections.while-you-wait-tips-to-help-with-the-problem.heading": "2a48c1f432e88393905002da6aa167655da242c845c0b5d3b6a2c5ac736416c1",
