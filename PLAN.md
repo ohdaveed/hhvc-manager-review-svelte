@@ -23,5 +23,15 @@ selected field; no schema change, no new dependency; the reload-hydration gap is
       field is applied to the mockup through `resolveField().set`, last-write-wins, never over an open draft.
 - [x] **5. Tests.** `tests/fieldsPanel.test.ts` covers type → mockup changes, Cancel reverts, Save calls
       `saveInlineEdit` once with the right `field_id`, failed save keeps the draft; hydration has its own test.
-- [ ] **6. Verify.** `bun run verify` PASS, lint/check/format ratchets at baseline, a Playwright check of the
+- [x] **6. Verify.** `bun run verify` PASS, lint/check/format ratchets at baseline, a Playwright check of the
       real page (select, type, see mockup change) with a clean console. PR open.
+
+## Notes
+
+- Verified 2026-11-26: verify PASS (1186 unit), ratchets at baseline (svelte-check 0/0, eslint 3, prettier 42),
+  e2e 104/104 including `tests/manualFieldEdit.e2e.ts` and the signed-in axe scan of the Fields panel,
+  screenshot checked by eye.
+- Skipped from the plan: a character counter on the manual edit control (the 8,000 cap is the AI
+  backend's, and a manual edit does not go through it).
+- Follow-up, not built: the footer's `Save N edits` counts accepted AI suggestions only, so it reads
+  `Save 0 edits` beside an unsaved manual draft. Each draft has its own Save.
