@@ -24,10 +24,14 @@ The previous plan (manual field editing + vocabulary alignment, all boxes ticked
 Not in this branch: marking expired edits on the mockup. Edits carry no corpus version, so it needs a
 migration -- and a merge to `main` applies migrations to production -- so it gets its own plan.
 
-## Carried over from earlier plans (`c0427d2:PLAN.md`), still open
+## Carried over from earlier plans -- audited 2026-11-26
 
-- The sewage routing fix is out of scope only because it sits on an Information page (*Learn what HHVC
-  can inspect*). The Decisions tab marks it **Fix first**, and it is still pending.
-- Also deferred there, each needing its own plan: the 9-page report regroup, removing the SRO page, the
-  mosquito and pigeon pages, and the Topic fold. Track B2 deferred moving the landlord notice and
-  putting the 311 button last (the 72-hour wait is still open in the Decisions tab).
+Checked against `main` at `2e69c2f`; every item but the last has shipped:
+
+- Sewage routing fix ("Fix first" in `docs/reviews/2026-11-24-karl-review-all-tabs.md`): done in #212.
+  `hhvc-inspection-scope.ts` no longer sends sewage to the Citywide service and links the sewage report.
+- 9-page report regroup: done in #217 and #219. SRO page removed in #219. Mosquito and pigeon report pages
+  built in #217 / #219. Topic fold (the two hub pages): done in #216.
+- **Still open, and not ours to build yet:** on the report pages, the landlord step first and the 311 button
+  last. The review files it under _Revise_, not _Decided_ ("Build only what's under Decided"), and it hangs
+  on the 72-hour landlord wait, still open. Needs a manager decision first.
