@@ -187,10 +187,12 @@ export function longParagraphs(entries: CopyEntry[], maxSentences = 3): TextIssu
 		if (entry.kind !== 'prose') continue;
 		// Measured on the rendered reading, so a long URL inside a markdown link
 		// does not read as a sentence boundary at every dot in the hostname.
+		// A fragment with no letter or digit is not a sentence: it is what is
+		// left after a closing quote (`labeled "Danger."`) or bold marker
+		// (`**Do not.**`) that follows the terminal punctuation.
 		const sentences = withoutMarkdownLinks(entry.text)
 			.split(/[.!?]+/)
-			.map((s) => s.trim())
-			.filter((s) => s.length > 0);
+			.filter((s) => /[\p{L}\p{N}]/u.test(s));
 		if (sentences.length > maxSentences) {
 			issues.push({
 				key: entry.key,

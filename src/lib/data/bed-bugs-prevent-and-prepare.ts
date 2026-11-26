@@ -41,17 +41,25 @@ export const bedBugsInfo = {
 			]
 		},
 		{
-			heading: 'Prevent bed bugs',
-			karl: 'Maps to a third Title and text block: Title = this heading, Text = the bulleted list below. Encasements and interceptors are from SF Environment\'s 2024 "Pest management in your home" handout; clear plastic bags when moving from the SF Environment / Pestec, Guidelines for IPM in San Francisco Multi-Family Housing Communities (2013; local copy docs/source/hhvc-policy/2026-07-07-pestec-ipm-multifamily-housing.pdf), Appendix I.',
+			heading: 'Keep bed bugs out of your home',
+			fieldKey: 'prevent-bed-bugs',
+			karl: 'Maps to a third Title and text block: Title = this heading, Text = the bulleted list below. Encasements and interceptors are from SF Environment\'s 2024 "Pest management in your home" handout; clear plastic bags when moving from the SF Environment / Pestec, Guidelines for IPM in San Francisco Multi-Family Housing Communities (2013; local copy docs/source/hhvc-policy/2026-07-07-pestec-ipm-multifamily-housing.pdf), Appendix I. Split on 2026-11-26 from one 7-item list: SF.gov keeps a bulleted list to 3 to 5 items (A-to-Z, Bullets). Split into home (this section) and travel. The fieldKey keeps this section\'s original ids.',
 			kind: 'body',
 			bullets: [
 				'**Check used furniture before you bring it home.** Look closely at seams, cracks, and the underside.',
 				'**Do not take furniture left on the curb.** It may have been thrown out because of bed bugs.',
-				'**Check hotel beds when you travel.** Look behind the headboard and along the mattress seams.',
-				'**Wash and dry clothes on the hottest setting** as soon as you get home from a trip.',
-				'**Keep luggage out of the bedroom**, such as in a hall closet.',
 				'**Use mattress and box spring encasements** and climb-up interceptor cups under the bed legs.',
 				'**When you move, pack clothes in clear plastic bags** so you can see if anything is hiding.'
+			]
+		},
+		{
+			heading: 'Prevent bed bugs when you travel',
+			karl: 'Maps to a Title and text block: Title = this heading, Text = the bulleted list below. Split on 2026-11-26 from one 7-item list: SF.gov keeps a bulleted list to 3 to 5 items (A-to-Z, Bullets).',
+			kind: 'body',
+			bullets: [
+				'**Check hotel beds when you travel.** Look behind the headboard and along the mattress seams.',
+				'**Wash and dry clothes on the hottest setting** as soon as you get home from a trip.',
+				'**Keep luggage out of the bedroom**, such as in a hall closet.'
 			]
 		},
 		{
@@ -91,20 +99,20 @@ export const bedBugsInfo = {
 			]
 		},
 		{
-			heading: 'What tenants need to do before treatment',
-			karl: "Maps to a sixth Title and text block: Title = this heading, Text = the paragraph plus the bulleted list below. Paraphrases SFDPH Tenant Guidelines for Unit Preparation Prior to Bed Bug Treatment (Director's Rules Tenant 3.1-3.4). Dryer time is 45 minutes by HHVC decision 2026-11-26, following SF Environment's 2024 'Pest management in your home' handout; the 2012-era Director's Rules Tenant 3.4 states 30 minutes as the minimum. The 4-week monitoring bullet is also an HHVC decision 2026-11-26, consistent with bed bug Director's Rules Owner 6.1 (monitoring devices used for at least four weeks). The Callout below is its own Callout stream item.",
+			heading: 'What tenants need to do for treatment',
+			fieldKey: 'what-tenants-need-to-do-before-treatment',
+			karl: "Maps to a sixth Title and text block: Title = this heading, Text = the paragraph plus the bulleted list below. Paraphrases SFDPH Tenant Guidelines for Unit Preparation Prior to Bed Bug Treatment (Director's Rules Tenant 3.1-3.4). Dryer time is 45 minutes by HHVC decision 2026-11-26, following SF Environment's 2024 'Pest management in your home' handout; the 2012-era Director's Rules Tenant 3.4 states 30 minutes as the minimum. The 4-week monitoring bullet is also an HHVC decision 2026-11-26, consistent with bed bug Director's Rules Owner 6.1 (monitoring devices used for at least four weeks). The Callout below is its own Callout stream item. On 2026-11-26 the list went from 7 items to 5: the Prepare your unit link became a paragraph of its own, and the monitors bullet, which is about after treatment, joined \"Wait until you are cleared\" word for word. The heading says \"for treatment\" for that reason; the fieldKey keeps the original ids.",
 			kind: 'body',
 			paragraphs: [
-				'Treatment only works if the unit is ready. The pest control company will give you a checklist. If it is different from the list below, follow their checklist.'
+				'Treatment only works if the unit is ready. The pest control company will give you a checklist. If it is different from the list below, follow their checklist.',
+				'[What to expect when your building is treated for pests](pestTreatmentInfo)'
 			],
 			bullets: [
 				'**Let them in.** You must allow the owner or pest control company into your unit after you get notice that they will inspect or treat.',
 				'**Make space.** Move furniture away from the walls and clear clutter so they can reach every area.',
 				'**Do not remove items before treatment.** Only take out bagged clothing for laundry, or items the pest control company tells you to remove.',
 				'**Wash and dry all clothing and bedding.** Use hot water and the hottest dryer setting for at least 45 minutes. Then store it in new, clean, sealed plastic bags.',
-				'**Wait until you are cleared.** Do not move back in until the pest control company says it is safe.',
-				'[What to expect when your building is treated for pests](pestTreatmentInfo)',
-				'**Leave bed bug monitors in place.** Monitoring continues for 4 weeks after the last treatment to make sure the bed bugs are gone.'
+				'**Wait until you are cleared.** Do not move back in until the pest control company says it is safe. Leave bed bug monitors in place: monitoring continues for 4 weeks after the last treatment to make sure the bed bugs are gone.'
 			],
 			callout: {
 				karl: 'Maps to its own Callout stream item (a sibling of the Title and text item above). Single rich text field only, no separate title field — this callout has none, so no mismatch.',

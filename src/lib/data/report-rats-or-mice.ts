@@ -57,7 +57,7 @@ export const rodentsReport = {
 		},
 		{
 			heading: 'While you wait: tips to help with the problem',
-			karl: 'Maps to supporting_information (Accordions). This accordion uses the mockup-only open flag so the tips are visible without a click — flag for Digital Services that the real accordion renders collapsed. Contents: one Text block (lead paragraph + IPM bullets) + a Resources-style external links list (UC IPM, CDC, NEHA). The pet waste tip is the Decided cross-link line ("Pick up pet waste daily. It feeds rats."), linked to the animal waste page.',
+			karl: 'Maps to supporting_information (Accordions). This accordion uses the mockup-only open flag so the tips are visible without a click — flag for Digital Services that the real accordion renders collapsed. Contents: one Text block (lead paragraph + IPM bullets) + a Resources-style external links list (UC IPM, CDC, NEHA). The pet waste tip is the Decided cross-link line ("Pick up pet waste daily. It feeds rats."), linked to the animal waste page. The list went from 6 bullets to 5 on 2026-11-26 (SF.gov keeps a bulleted list to 3 to 5 items): "Remove hiding places" joined "Close off entry points", whose label now names both. Joining the pet waste tip to "Cut off food" instead would have made a 5-sentence bullet, past SF.gov\'s 3.',
 			kind: 'body',
 			component: 'supporting',
 			open: true,
@@ -65,10 +65,9 @@ export const rodentsReport = {
 				'It may take us a few weekdays to get back to you. In the meantime, here are a few things you can do to help with the problem.'
 			],
 			bullets: [
-				'**Close off entry points:** Seal any gap bigger than 1/4 inch. Use rodent-proof materials like hardware cloth, copper mesh, or sheet metal.',
+				'**Close off entry points and hiding places:** Seal any gap bigger than 1/4 inch. Use rodent-proof materials like hardware cloth, copper mesh, or sheet metal. Clear clutter and trim overgrown plants where rats and mice hide or nest.',
 				'**Cut off food:** Store food and garbage in bins with tight-fitting lids. Do not leave pet food out overnight.',
 				'**Pick up pet waste daily:** It feeds rats. [Report animal waste on a property](animalWasteReport)',
-				'**Remove hiding places:** Clear clutter and trim overgrown plants where rats and mice hide or nest.',
 				'**Trap safely:** Use snap traps indoors. Do not use poisons — they can harm children, pets, and wildlife.',
 				'**Clean up safely:** Wet down droppings with a disinfectant and wear gloves. Never dry-sweep or vacuum droppings.'
 			],

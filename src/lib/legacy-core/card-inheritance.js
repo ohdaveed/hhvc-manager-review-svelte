@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- untyped legacy port; waived so the staged-file hook can commit edits here (ratchet 3 -> 2)
 // @ts-nocheck
 /* Shared card-inheritance classifier: the single place that decides how a
    section's cards reach the published page — whether Karl renders the
@@ -29,7 +30,7 @@
  *
  * Checked third, so a section naming an authored block or a Related panel wins.
  */
-const INHERITS = /services subsection|resources subsection|page.{0,3} chooser/i
+const INHERITS = /services subsection|resources subsection|page.{0,3} chooser/i;
 
 /**
  * Karl blocks that render the destination's Title and a link — and NOTHING
@@ -71,14 +72,35 @@ const INHERITS = /services subsection|resources subsection|page.{0,3} chooser/i
  * Checked BEFORE INHERITS: the Related karl notes also contain the phrase
  * 'a generic unrestricted "Page" chooser', which INHERITS would otherwise claim.
  */
-const TITLE_ONLY = /related field|related panel|related_links|resource section/i
+const TITLE_ONLY = /related field|related panel|related_links|resource section/i;
 
 /**
  * Karl blocks that hold authored card content. A table row or a rich-text
  * block writes its own words, so a difference from the destination page is
  * expected and correct. Checked first.
  */
-const AUTHORED = /table block|title and text/i
+const AUTHORED = /table block|title and text/i;
+
+/**
+ * A negation that ends within three words of the text after it. Karl notes
+ * describe a block by denying it as often as by naming it ("Transaction has no
+ * per-step page chooser", "there's no accompanying Title and text block"), and
+ * a bare regex read both as naming the block. Bounded to three words with no
+ * punctuation between, so a clause that denies one block and then names
+ * another ("has no Contact us panel, so this maps to a Title and text block")
+ * still matches the second.
+ */
+const NEGATED =
+	/\b(?:no|not|never|without|rather than|instead of)\s+(?:[\w’'"-]+\s+){0,3}$|n[’']t\s+(?:[\w’'"-]+\s+){0,3}$/i;
+
+/** True when `re` names a block somewhere in `karl` without denying it. */
+function names(re, karl) {
+	const all = new RegExp(re.source, re.flags.includes('g') ? re.flags : re.flags + 'g');
+	for (const m of karl.matchAll(all)) {
+		if (!NEGATED.test(karl.slice(0, m.index))) return true;
+	}
+	return false;
+}
 
 /**
  * Decide how a section's cards reach the page.
@@ -87,11 +109,11 @@ const AUTHORED = /table block|title and text/i
  * @returns {'authored'|'title-only'|'inherits'|'unknown'}
  */
 function classifySection(section) {
-  const karl = section.karl || ''
-  if (AUTHORED.test(karl)) return 'authored'
-  if (TITLE_ONLY.test(karl)) return 'title-only'
-  if (INHERITS.test(karl)) return 'inherits'
-  return 'unknown'
+	const karl = section.karl || '';
+	if (names(AUTHORED, karl)) return 'authored';
+	if (names(TITLE_ONLY, karl)) return 'title-only';
+	if (names(INHERITS, karl)) return 'inherits';
+	return 'unknown';
 }
 
 export { classifySection, AUTHORED, INHERITS, TITLE_ONLY };

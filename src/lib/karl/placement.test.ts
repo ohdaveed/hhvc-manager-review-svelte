@@ -145,7 +145,9 @@ describe('what happens after you report (Information pilot)', () => {
 		expect(p.fields.get('sections.how-to-follow-up-on-your-report.heading')?.label).toBe(
 			'Information section 4 · Title'
 		);
-		expect(p.sections.get('what-this-page-does-not-promise')?.label).toBe('Information section 7');
+		// Two slots later again since "If a problem is found" split into three
+		// sections on 2026-11-26 (deadlines, and what happens if one is missed).
+		expect(p.sections.get('what-this-page-does-not-promise')?.label).toBe('Information section 9');
 		expect(p.unplaced).toEqual([]);
 	});
 
@@ -290,8 +292,9 @@ describe('outline summary', () => {
 			'4 sections: 3 go into Karl, 1 unconfirmed. 1 thing won’t carry over to Karl.'
 		);
 		expect(outlineSummary(of('rodentsReport'))).toBe('4 sections: 3 go into Karl, 1 unconfirmed.');
+		// 9, not 7, since "If a problem is found" split into three sections (2026-11-26).
 		expect(outlineSummary(gap('afterReport'))).toBe(
-			'7 sections: 7 go into Karl. 1 thing won’t carry over to Karl.'
+			'9 sections: 9 go into Karl. 1 thing won’t carry over to Karl.'
 		);
 		expect(outlineSummary(of('ownerHub'))).toBe('4 sections: 3 go into Karl, 1 needs a fix.');
 	});
