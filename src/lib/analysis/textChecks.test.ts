@@ -102,6 +102,31 @@ describe('longParagraphs', () => {
 		]);
 		expect(issues).toEqual([]);
 	});
+
+	it('does not count a closing quote after the final period as a sentence', () => {
+		const text = 'One thing. Two thing. Choose one labeled "Caution," not "Warning" or "Danger."';
+		expect(longParagraphs([prose('p', text)])).toEqual([]);
+		expect(longParagraphs([prose('p', `${text} Four thing.`)])[0].detail).toContain('4 sentences');
+	});
+
+	it('counts a quoted sentence ending mid-text once', () => {
+		const text = 'One thing. Choose one labeled "Caution." Avoid "Danger."';
+		expect(longParagraphs([prose('p', text)])).toEqual([]);
+		expect(longParagraphs([prose('p', text)], 2)[0].detail).toContain('3 sentences');
+	});
+
+	it('does not count bold markers after a period as a sentence', () => {
+		const text = '**Do not use your own sprays.** They can stop it working. **Call us.**';
+		expect(longParagraphs([prose('p', text)])).toEqual([]);
+		expect(longParagraphs([prose('p', text)], 2)[0].detail).toContain('3 sentences');
+	});
+
+	it('counts the PR #236 bullet as 3 sentences, not 4', () => {
+		const text =
+			'**Do not use your own sprays or bug bombs.** They can stop the treatment from working. If you buy a product yourself, choose one labeled "Caution," not "Warning" or "Danger."';
+		expect(longParagraphs([prose('p', text)])).toEqual([]);
+		expect(longParagraphs([prose('p', text)], 2)[0].detail).toContain('3 sentences');
+	});
 });
 
 describe('labelCount', () => {
