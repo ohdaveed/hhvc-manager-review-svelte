@@ -7,7 +7,7 @@
  * returning reviewer, and `undefined` -- closed -- until that is known, so the
  * returning case never flashes open and collapses.
  *
- * All four steps stay in the DOM either way -- a `<details>` hides its content
+ * All five steps stay in the DOM either way -- a `<details>` hides its content
  * visually but keeps it findable by in-page search, which is the reason for
  * using the native element rather than mounting the list conditionally.
  */
@@ -44,7 +44,7 @@ describe('HowItWorks', () => {
 	it('keeps every step in the DOM when collapsed', () => {
 		render(HowItWorks, { startOpen: false });
 		expect(panel()?.open).toBe(false);
-		expect(screen.getAllByRole('listitem')).toHaveLength(4);
+		expect(screen.getAllByRole('listitem')).toHaveLength(5);
 		expect(screen.getByText(/Record a decision/)).toBeTruthy();
 	});
 
