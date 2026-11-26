@@ -61,9 +61,38 @@ e2e 106/106; in the browser, typing shows on the mockup with the pill at "1 unsa
 field, and its layout glue (the user_id filter) has no test. The local stack is missing the `draft_pages`
 migration (PGRST205 in the console) -- an environment gap, not this branch.
 
-Deferred, not this branch: rename the suggestion status `'accepted'` (pre-dates this branch; touches
-Rethink, `decideAll` and the export fold -- follow-up PR after merge); marking expired edits on the
-mockup (edits carry no corpus version yet).
+## Fixes from the second review (2026-11-26)
+
+Glossary settled with the user: "accept" is the reviewer's act (suggestion, op, or own wording), and
+accepted wording is an unsaved change until saved; "reject", never "dismiss". The suggestion status
+`'accepted'` therefore matches the glossary, so its planned rename is dropped.
+
+- [x] **15. Glossary.** `CONTEXT.md` **Accepted**, **Suggestion**, **Unsaved change**, **Expired** say the above.
+- [ ] **16. Save all keeps its page.** `saveAll` captures the page and live row once and passes them to every
+      `saveChange`; navigating mid-save neither saves another page's change nor skips one as a success. Tested.
+- [ ] **17. Undo keeps typing.** Undo / Undo all on an accepted card restores the field only while it still
+      holds the suggestion's text; after further typing the card just goes back to waiting. Tested.
+- [ ] **18. No Cancel during a save.** Cancel, Discard and Esc do nothing while that field's save is in
+      flight. Tested.
+- [ ] **19. No false saved-elsewhere notice.** A change is stamped only once the review's edits have loaded.
+      Tested.
+- [ ] **20. Prune after dropping.** `select` / `clearSelection` / `selectSection` drop no-op changes before
+      pruning, so an un-accepted card does not outlive its selection. Tested.
+- [ ] **21. Leaving asks first.** A `beforeunload` guard while `unsavedChangeCount() > 0`. Tested.
+- [ ] **22. Stale wording.** Comments, tooltips, test names and the `-parked` id use the glossary's terms.
+- [ ] **23. Verify.** Unit, check, ratchets, e2e, browser check.
+
+Deferred, not this branch:
+- Marking expired edits on the mockup (edits carry no corpus version yet).
+- Draft pages: `mergeDraftPages` replaces the page object, so an unsaved change on a draft page drops off
+  the mockup but stays counted (review item 5). Re-apply unsaved changes after a merge.
+- The saved-elsewhere notice filters by user, not tab: the reviewer's own save from another tab never
+  raises it (review item 6). Track this tab's inserted edit ids instead.
+- A rewrite overwrites an accepted suggestion for the same field id (review item 8).
+- The Karl outline judges saved edits over a mockup that now carries unsaved changes
+  (`placement.ts` ~297): decide which it judges, and say so.
+- `RethinkPanel.svelte` ~107: its grounding comment predates saved-edit hydration, and a Rethink can now be
+  grounded on unsaved wording.
 
 ## Notes
 

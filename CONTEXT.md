@@ -68,24 +68,27 @@ one. Reserved for the persisted record — not for the reviewer's act of
 accepting, not for a suggestion, and not for an unsaved change.
 
 **Unsaved change** — new wording for one field, shown on the mockup but not yet
-saved: either typed by the reviewer or taken from a suggestion they accepted. Saving it records an edit; cancelling it restores
-what the field said before, and a suggestion it came from goes back to waiting
-rather than being dismissed. It survives moving to another field or page — only
-Save or Cancel ends it.
+saved: either typed by the reviewer or taken from a suggestion they accepted.
+Saving it records an edit. Cancelling it restores what the field said before,
+and a suggestion it came from goes back to waiting rather than being rejected.
+It survives moving to another field or page; leaving the tool while any exist
+asks first.
 _Avoid_: draft (reserved for draft pages), parked draft, manual draft
 
 **Suggestion** — one AI rewrite of one field, waiting for a reviewer to accept or
-dismiss it. Accepting it makes it an unsaved change; nothing is recorded until
+reject it. Accepting it makes it an unsaved change; nothing is recorded until
 that is saved. Distinct from a proposal, which covers a whole section.
+_Avoid_: dismiss (the act is rejecting)
 
-**Accepted** — a change has been saved as an edit, whether the wording came from
-a suggestion or the reviewer typed it. Saving is the acceptance; there is no
-edit awaiting someone else's approval, and an accepted-but-unsaved state does
-not exist. Acceptance is what the overlay renders.
+**Accepted** — a reviewer has taken a change: accepted a suggestion or an op, or
+typed their own wording. Accepting is the reviewer's act and is not yet a record:
+accepted wording is an unsaved change until it is saved as an edit. A saved edit
+is final — there is no edit awaiting someone else's approval. Saved acceptances
+are what the overlay renders.
 
-**Expired** — an acceptance whose underlying base copy has since changed, so the
-approved text no longer answers the copy it was approved against. Expiry is per
-field: unrelated copy moving elsewhere on the page must not retire it. An
+**Expired** — a saved acceptance whose underlying base copy has since changed, so
+the approved text no longer answers the copy it was approved against. Expiry is
+per field: unrelated copy moving elsewhere on the page must not retire it. An
 expired acceptance stays visible on the mockup, marked as expired — neither
 hidden nor passed off as current.
 
