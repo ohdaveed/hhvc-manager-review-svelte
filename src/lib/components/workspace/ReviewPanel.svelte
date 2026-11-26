@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { reviewPagesStore } from '$lib/review/reviewable';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Badge } from '$lib/components/ui/badge/index.js';
@@ -21,6 +20,7 @@
 		updatePageNotes,
 		nextUndecidedPath,
 		pagesStore,
+		reconcileReview,
 		type PageCheck
 	} from '$lib/stores/reviewState';
 
@@ -43,10 +43,16 @@
 	const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
 
 	// Where "Next undecided" goes. Only meaningful once a review has loaded:
-	// with no live rows (signed out) there is nothing to move on to.
-	const nextPath = $derived(
-		pageData?.id ? nextUndecidedPath($reviewPagesStore, pageData.id) : undefined
+	// with no live rows (signed out) there is nothing to move on to. Searched
+	// over rows the queue lists, so it never names a retired page's row, whose
+	// link would 404.
+	const reviewRows = $derived(
+		reconcileReview(
+			$pagesStore,
+			pageStore.pages.map((p) => p.id)
+		).rows
 	);
+	const nextPath = $derived(pageData?.id ? nextUndecidedPath(reviewRows, pageData.id) : undefined);
 	const nextTitle = $derived(
 		nextPath ? pageTitleFor(nextPath, pageStore.pages, $draftsStore, 'empty') : ''
 	);

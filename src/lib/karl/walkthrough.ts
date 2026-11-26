@@ -52,13 +52,21 @@ const panelFor = (type: string, rawName: string): KarlPanel =>
 type Corpus = Record<string, AnyEntry>;
 
 /* `buildTranscript` is untyped legacy JS, so this is the boundary where the
-   call is narrowed -- rather than reshaping a 1185-line module around it. */
-const transcriptFor = (page: AnyEntry, pages: Corpus, record: ReviewRecord | null): AnyEntry =>
-	(buildTranscript as unknown as (p: unknown, r: unknown, ps: unknown) => AnyEntry)(
-		page,
+   call is narrowed -- rather than reshaping a 1185-line module around it.
+
+   The layout passes `pageStore.pages[n]`, which `toStorePage` gives a routable
+   `id`. It is not copy, and the transcript's sweep reports any page key it does
+   not know, so every page's drawer said "The page carries `id`" under No Karl
+   field for this content. Stripped here, as `placementsFor` already does. */
+const transcriptFor = (page: AnyEntry, pages: Corpus, record: ReviewRecord | null): AnyEntry => {
+	const { id: _routableId, ...corpusPage } = page;
+	void _routableId;
+	return (buildTranscript as unknown as (p: unknown, r: unknown, ps: unknown) => AnyEntry)(
+		corpusPage,
 		record,
 		pages
 	);
+};
 
 const markdownFor = (transcript: AnyEntry): string =>
 	(renderTranscriptMarkdown as unknown as (t: unknown) => string)(transcript);

@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { reviewPagesStore } from '$lib/review/reviewable';
 	import { onMount, tick } from 'svelte';
 	import AllPagesList from '$lib/components/landing/AllPagesList.svelte';
 	import HowItWorks from '$lib/components/landing/HowItWorks.svelte';
@@ -13,16 +12,25 @@
 	import { reviewProgress } from '$lib/landing/progress';
 	import { draftsStore } from '$lib/stores/draftPages';
 	import { pageStore } from '$lib/stores/pageData.svelte';
-	import { loadReview, queueOrder } from '$lib/stores/reviewState';
+	import { loadReview, pagesStore, queueOrder, reconcileReview } from '$lib/stores/reviewState';
 	import { sessionStore } from '$lib/stores/session.svelte';
 
-	const progress = $derived(reviewProgress($reviewPagesStore));
+	// The table squared with the corpus, as the queue does (`reconcileReview`):
+	// retired pages' rows are left out, and the denominator counts every page a
+	// reviewer can open, so this and the queue's "N of M" cannot disagree.
+	const review = $derived(
+		reconcileReview(
+			$pagesStore,
+			pageStore.pages.map((p) => p.id)
+		)
+	);
+	const progress = $derived({ ...reviewProgress(review.rows), total: review.total });
 
 	// Per-status counts for the bar and its shortcuts. Computed here rather than
 	// added to `reviewProgress`, whose contract is "how far through, and where
 	// next" and is tested as such.
 	const counts = $derived(
-		$reviewPagesStore.reduce<Partial<Record<(typeof $reviewPagesStore)[number]['status'], number>>>(
+		review.rows.reduce<Partial<Record<(typeof review.rows)[number]['status'], number>>>(
 			(acc, p) => ({ ...acc, [p.status]: (acc[p.status] ?? 0) + 1 }),
 			{}
 		)
@@ -43,7 +51,7 @@
 	// The Karl section's links, in queue order. Titles resolve the same way the
 	// next-up card's does, so a draft is named by its draft title.
 	const approvedPages = $derived(
-		queueOrder($reviewPagesStore.filter((p) => p.status === 'approved')).map((path) => ({
+		queueOrder(review.rows.filter((p) => p.status === 'approved')).map((path) => ({
 			path,
 			title: pageTitleFor(path, pageStore.pages, $draftsStore)
 		}))
@@ -115,7 +123,10 @@
 		if (sessionStore.signedIn !== true) return 'checking' as const;
 		if (failed) return 'failed' as const;
 		if (!ready) return 'loading' as const;
-		return progress.total > 0 ? ('progress' as const) : ('empty' as const);
+		// Rows, not `progress.total`: the total now also counts corpus pages with
+		// no row, so it is never zero once the corpus loads, and an empty table
+		// would have shown a progress card over a review that does not exist.
+		return review.rows.length > 0 ? ('progress' as const) : ('empty' as const);
 	});
 
 	/**

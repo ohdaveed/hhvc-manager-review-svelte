@@ -230,6 +230,11 @@ async function measureFocusIndicators(page: import('@playwright/test').Page) {
 			)
 		)
 			.filter((n) => n.offsetParent !== null)
+			// The stub's six review rows leave ~35 corpus pages listed under "Not
+			// in the review yet". They are the same `PageRow` the measured queue
+			// rows use, and in DOM order they would spend the whole depth before
+			// the walk reached a single edit target.
+			.filter((n) => !n.closest('[data-testid="queue-unreviewed"]'))
 			.slice(0, tabDepth);
 
 		for (const el of focusables) {

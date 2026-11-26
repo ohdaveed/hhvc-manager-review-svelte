@@ -101,6 +101,14 @@
 	}
 </script>
 
+<!-- A gap's reason is written for the Markdown export, so a field name in it is
+     wrapped in backticks. Shown as text, those backticks reached the reviewer
+     literally; split on them instead, every odd part being code. -->
+{#snippet reasonText(reason: string)}
+	{#each reason.split('`') as part, i (i)}{#if i % 2 === 1}<code>{part}</code
+			>{:else}{part}{/if}{/each}
+{/snippet}
+
 <div class="drawer" aria-label="Karl rebuild steps">
 	<div class="drawer-head">
 		<div class="drawer-head-row">
@@ -270,7 +278,7 @@
 			<div class="gap gap-advisory page-gap">
 				<p class="gap-title">Resolve before saving</p>
 				{#each flagGaps as gap (gap.path)}
-					<p class="gap-body"><code>{gap.path}</code> — {gap.reason}</p>
+					<p class="gap-body"><code>{gap.path}</code> — {@render reasonText(gap.reason)}</p>
 				{/each}
 			</div>
 		{/if}
@@ -283,7 +291,7 @@
 					absence reads as “there was nothing there”.
 				</p>
 				{#each unmappedGaps as gap (gap.path)}
-					<p class="gap-body"><code>{gap.path}</code> — {gap.reason}</p>
+					<p class="gap-body"><code>{gap.path}</code> — {@render reasonText(gap.reason)}</p>
 				{/each}
 			</div>
 		{/if}

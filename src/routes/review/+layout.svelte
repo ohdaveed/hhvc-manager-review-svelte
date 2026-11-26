@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { reviewPagesStore } from '$lib/review/reviewable';
 	import { onMount, tick, untrack } from 'svelte';
 	import { hydrateMockup } from '$lib/stores/applySavedEdits';
 	import { classifyLatestEdits } from '$lib/stores/editStatus';
@@ -22,7 +21,8 @@
 		isOwnEdit,
 		loadReview,
 		pagesStore,
-		queueOrder
+		queueOrder,
+		reconcileReview
 	} from '$lib/stores/reviewState';
 	import { STATUS_LABELS } from '$lib/review/statusLabels';
 	import { sessionStore } from '$lib/stores/session.svelte';
@@ -236,13 +236,36 @@
 	const unsavedCount = $derived(pageStore.unsavedChangeCount());
 
 	// The toolbar's previous / next buttons step through the queue in the order
-	// the sidebar renders it, so they land on the row above or below the current
-	// one. Signed out the queue lists the corpus, so the fallback is corpus order.
-	// (They replace a single "First page" link, which jumped to the queue's top
-	// and was the toolbar's only navigation.)
+	// the sidebar renders it -- status groups, then the pages not in the review
+	// yet -- so they land on the row above or below the current one. Signed out
+	// the queue lists the corpus, so the fallback is corpus order. (They replace
+	// a single "First page" link, which jumped to the queue's top and was the
+	// toolbar's only navigation.)
+	//
+	// The order is taken when the queue's MEMBERSHIP changes, not on every
+	// decision. A decision moves its row to another group, so an order that
+	// followed it sent Next somewhere else the moment a reviewer chose Approved:
+	// measured on 2026-11-26, approving the About page moved it to the end of
+	// the queue and greyed Next out, with 37 undecided pages still to go. Held,
+	// Next still means the row that came after this one, and Prev from there
+	// comes back here. A reload regroups.
+	const queueReview = $derived(
+		reconcileReview(
+			$pagesStore,
+			pageStore.pages.map((p) => p.id)
+		)
+	);
+	const queueMembership = $derived(
+		queueReview.rows.map((p) => p.path).join('\n') + '\n\n' + queueReview.unreviewed.join('\n')
+	);
 	const order = $derived.by(() => {
-		const queued = queueOrder($reviewPagesStore);
-		return queued.length > 0 ? queued : pageStore.pages.map((p) => p.id);
+		void queueMembership;
+		return untrack(() => {
+			const queued = queueOrder(queueReview.rows);
+			return queued.length > 0
+				? [...queued, ...queueReview.unreviewed]
+				: pageStore.pages.map((p) => p.id);
+		});
 	});
 	const at = $derived(currentPath ? order.indexOf(currentPath) : -1);
 	const prevPath = $derived(at > 0 ? order[at - 1] : undefined);
@@ -445,6 +468,19 @@
 	onkeydown={onWindowKeydown}
 	onbeforeunload={(e) => warnBeforeLeaving(e, pageStore.unsavedChangeCount())}
 />
+
+<!-- Without JS nothing measures the pane, so the frame would stay unpainted
+     (see `.mockup-frame[data-measured='false']`). The mockups are static and
+     readable signed out, so they stay readable with scripts off too. -->
+<svelte:head>
+	<noscript>
+		<style>
+			.mockup-frame[data-measured='false'] {
+				visibility: visible !important;
+			}
+		</style>
+	</noscript>
+</svelte:head>
 
 <!-- The decision as a dot: the bar colour for a decided status, a ring for
      "Undecided" (an empty slot, as the queue's progress bar shows it).
@@ -734,15 +770,19 @@
 						     only with the queue collapsed, the slug otherwise), the slug in
 						     its tooltip. `w-0 grow` truncates instead of letting a long
 						     title decide where the bar wraps. Hidden on a phone, where the
-						     mockup's own heading is the first thing under the bar. -->
+						     mockup's own heading is the first thing under the bar.
+						     `min-w-40` is the floor: below it the bar wraps its right-hand
+						     group onto a second row rather than squeezing the title, which
+						     measured 12px wide at 768px and 24px at 1280px -- "A." -- with
+						     270px of title to show. -->
 						<span
-							class="w-0 grow truncate text-sm font-semibold text-sfds-black max-sm:hidden"
+							class="w-0 min-w-40 grow truncate text-sm font-semibold text-sfds-black max-sm:hidden"
 							title={pageData?.slug ?? ''}
 							data-testid="toolbar-title">{pageData?.title ?? titleOf(currentPath ?? '')}</span
 						>
 						{#if status}
 							<span
-								class="inline-flex flex-none items-center rounded-full border px-2 py-0.5 text-xs font-medium max-sm:hidden {STATUS_LABELS[
+								class="wide-only inline-flex flex-none items-center rounded-full border px-2 py-0.5 text-xs font-medium {STATUS_LABELS[
 									status
 								].badge}"
 								data-testid="toolbar-status">{statusLabel}</span
@@ -772,8 +812,13 @@
 								).toLowerCase()} layout"
 							>
 								<!-- The layout and the zoom are what a reviewer reads off this;
-								     the pixel width is a detail, so it moved to the tooltip. -->
-								{previewBand(frameWidth)}{scale < 1 ? ` · ${Math.round(scale * 100)}%` : ''}
+								     the pixel width is a detail, so it moved to the tooltip.
+								     Blank until the frame is measured: `frameWidth` starts at 0,
+								     which `previewBand` calls Phone, so every load said "Phone"
+								     before settling on "Desktop · 70%". -->
+								{#if frameWidth > 0}
+									{previewBand(frameWidth)}{scale < 1 ? ` · ${Math.round(scale * 100)}%` : ''}
+								{/if}
 							</span>
 							<ToggleGroup.Root
 								type="single"
@@ -802,9 +847,10 @@
 						     rails; exiting puts them back as they were. The accessible name
 						     stays "Open Karl walkthrough" (it contains the visible label,
 						     WCAG 2.5.3). The visible label drops to "Karl" when the BAR is
-						     narrow, not the window -- the rails decide its width -- which
-						     keeps it to one row at 1080px with both rails open, as before
-						     this button existed, and to two on a phone. -->
+						     narrow, not the window -- the rails decide its width. At 52rem
+						     rather than 32rem since the title got a floor: with both rails
+						     open at 1440px the full label left the title 184px, and at
+						     1280px pushed the bar to the title floor. -->
 						<Button
 							size="sm"
 							class="h-7 flex-none gap-1.5 text-xs font-semibold"
@@ -816,7 +862,7 @@
 							     `&nbsp;` because Svelte trims a span's leading whitespace. -->
 							<span
 								><span class="sr-only">Open&nbsp;</span>Karl<span
-									class="@max-[32rem]/toolbar:sr-only">&nbsp;walkthrough</span
+									class="@max-[52rem]/toolbar:sr-only">&nbsp;walkthrough</span
 								></span
 							>
 						</Button>
@@ -937,6 +983,7 @@
 					<figure
 						bind:clientWidth={frameWidth}
 						style={frameStyle}
+						data-measured={paneBox ? 'true' : 'false'}
 						class="mockup-frame mx-auto w-full self-start overflow-hidden rounded-[4px] border border-gray-200 bg-site-surface shadow-[0_2px_4px_rgba(12,20,100,.06),0_4px_12px_rgba(12,20,100,.1)]"
 					>
 						<SiteHeader />
@@ -1064,6 +1111,16 @@
 		max-width: 1440px;
 	}
 
+	/* Unpainted until the pane is measured. Before then `fit` has no width to
+	   work from, so the frame took the pane's width unzoomed -- sf.gov's tablet
+	   layout -- and then jumped to the zoomed desktop one. Measured on a
+	   production build at 1440px: 716px wide with a 32px title, then a 1024px
+	   frame at 70% with a 46px title. Measurement lands on the first frame
+	   after hydration; `noscript` in <svelte:head> shows it without JS. */
+	.mockup-frame[data-measured='false'] {
+		visibility: hidden;
+	}
+
 	/* sf.gov's gutters step rather than scale: 20px on a phone, 28px from a
 	   768px viewport (measured on `dph-leaves-absence` 2026-11-26), 96px from
 	   1024 (below). SiteHeader and SiteFooter use the same steps, so the page
@@ -1179,6 +1236,13 @@
 		   rule. */
 		:global(.narrow-only) {
 			display: inline-flex;
+		}
+
+		/* The toolbar's status badge. Down here the Review sheet trigger
+		   carries the status as a dot and in its name, so the badge only
+		   repeated it, in width the page title needed. */
+		:global(.wide-only) {
+			display: none;
 		}
 	}
 
