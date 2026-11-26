@@ -78,6 +78,7 @@
 		chip || (karlStatus === 'unplaced' && !sectionUnplaced) ? '' : undefined
 	);
 	const chipId = $derived(`karl-chip-${fieldId.replace(/[^a-zA-Z0-9_-]/g, '-')}`);
+	const descId = $derived(`edit-desc-${fieldId.replace(/[^a-zA-Z0-9_-]/g, '-')}`);
 	// Text inside a heading becomes part of its name, so a chip there is never
 	// read inline -- signed in, the button's description carries it.
 	const inHeading = $derived(/^h[1-6]$/.test(as));
@@ -111,8 +112,7 @@
 			class="edit-target {selected ? 'edit-target-selected' : ''}"
 			data-rewrite-field={fieldId}
 			aria-pressed={selected}
-			aria-label={`${selected ? `${name}, selected, field ${badge}` : name}${expired ? ', saved wording expired' : ''}`}
-			aria-describedby={chip ? chipId : undefined}
+			aria-describedby={chip ? `${descId} ${chipId}` : descId}
 			onclick={select}
 		>
 			{#if selected}
@@ -127,6 +127,15 @@
 			     panel and what any rewrite writes back. -->
 			<MarkdownText {value} interactive={false} />
 		</button>
+		<!-- The button is named by its copy -- the words under review -- and this
+		     says which field it is. It was the other way round: an `aria-label`
+		     of the field name replaced the copy, so tabbing through a page read
+		     "Summary, Description, Button text" and never the wording. `hidden`
+		     still works as a description target, and unlike visually-hidden
+		     text it cannot join a heading's name when the host is an h1-h6. -->
+		<span id={descId} hidden
+			>{name}{selected ? `, field ${badge}` : ''}{expired ? ', saved wording expired' : ''}</span
+		>
 		{#if chip}
 			<!-- Inside the host, never beside it: the host may be an `li`, `dt` or
 			     `dd`, where a sibling would be invalid markup. Hidden, because the

@@ -643,6 +643,7 @@
 				/>
 			{:else}
 				<nav
+					aria-label="Page toolbar"
 					class="review-toolbar @container/toolbar flex h-12 flex-none items-center justify-between border-b border-sfds-grey-l2 bg-background px-3 sm:px-5"
 				>
 					<!-- `grow` with no `min-w-0`: the group never shrinks below its

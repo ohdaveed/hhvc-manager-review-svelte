@@ -344,7 +344,7 @@ export async function gotoSignedIn(
 		await expect(page.getByText(new RegExp(`^\\d+ of ${total} decided$`))).toBeVisible();
 		return;
 	}
-	await expect(page.locator('nav[aria-label="Review queue"] a')).toHaveCount(total);
+	await expect(page.locator('nav[aria-label="Pages in this review"] a')).toHaveCount(total);
 	await expect(page.getByText('Viewing signed out.')).toHaveCount(0);
 }
 

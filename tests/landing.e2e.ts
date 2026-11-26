@@ -31,7 +31,7 @@ test.describe('signed in', () => {
 		await next.click();
 
 		await expect(page).toHaveURL(/\/review\/report-garbage-clutter-or-overgrown-plants$/);
-		await expect(page.locator('nav[aria-label="Review queue"] a').first()).toBeVisible();
+		await expect(page.locator('nav[aria-label="Pages in this review"] a').first()).toBeVisible();
 	});
 
 	test('Continue to a draft goes to the draft route, never a draft: URL', async ({ page }) => {
@@ -90,13 +90,13 @@ test.describe('the draft route', () => {
 		await gotoSignedIn(page, draftUrl(DRAFT_IDS.drafting), { drafts: true });
 
 		const row = page.locator(
-			`nav[aria-label="Review queue"] a[href="${draftUrl(DRAFT_IDS.drafting)}"]`
+			`nav[aria-label="Pages in this review"] a[href="${draftUrl(DRAFT_IDS.drafting)}"]`
 		);
 		await expect(row).toHaveCount(1);
 		await expect(row).toHaveAttribute('aria-current', 'page');
 		await expect(row).toContainText('Report a leaking roof');
 		const hrefs = await page
-			.locator('nav[aria-label="Review queue"] a')
+			.locator('nav[aria-label="Pages in this review"] a')
 			.evaluateAll((as) => as.map((a) => a.getAttribute('href') ?? ''));
 		expect(hrefs.filter((h) => h.includes('draft:'))).toEqual([]);
 	});

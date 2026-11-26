@@ -151,7 +151,9 @@
 	/>
 {/snippet}
 
-<nav bind:this={navEl} class="space-y-5 px-5 pt-4 pb-6" aria-label="Review queue">
+<!-- Named apart from the rail around it (`aside`, "Review queue"): two
+     landmarks with one name read as the same region twice in a landmark list. -->
+<nav bind:this={navEl} class="space-y-5 px-5 pt-4 pb-6" aria-label="Pages in this review">
 	<!-- The empty state is not a loading state, and saying so was misleading.
 	     An empty `pagesStore` here means one of two things, and the old
 	     "No pages loaded. (Waiting for Supabase data)" described neither: it

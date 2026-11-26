@@ -100,8 +100,11 @@ describe('TableBlock', () => {
 		// identically and a reviewer could not tell which cell was selected.
 		const { container } = renderPage();
 
-		const names = [...container.querySelectorAll('table [data-rewrite-field]')].map((n) =>
-			n.getAttribute('aria-label')
+		const names = [...container.querySelectorAll('table [data-rewrite-field]')].map(
+			(n) =>
+				// The field name is the button's description; its name is the copy.
+				n.ownerDocument.getElementById(n.getAttribute('aria-describedby')?.split(' ')[0] ?? '')
+					?.textContent ?? null
 		);
 
 		expect(names.length).toBe(6);
