@@ -223,10 +223,12 @@
 			{#if loaded}
 				<section aria-label="Review progress">
 					<div class="flex items-baseline justify-between">
-						<span class="text-[13px] font-semibold text-sfds-black">
+						<span class="text-[0.8125rem] font-semibold text-sfds-black">
 							{decided} of {total} decided
 						</span>
-						<span class="text-[13px] font-semibold text-sfds-slate-l3 tabular-nums">{pct}%</span>
+						<span class="text-[0.8125rem] font-semibold text-sfds-slate-l3 tabular-nums"
+							>{pct}%</span
+						>
 					</div>
 
 					<div class="mt-2">
@@ -242,7 +244,7 @@
 					bind:value={query}
 					placeholder="Filter by title or path"
 					autocomplete="off"
-					class="w-full rounded-[3px] border border-sfds-grey-l2 bg-white px-2.5 py-1.5 text-[13px] text-sfds-black placeholder:text-sfds-slate-l3 focus:border-sfds-action focus:ring-1 focus:ring-sfds-action focus:outline-none"
+					class="w-full rounded-[3px] border border-sfds-grey-l2 bg-white px-2.5 py-1.5 text-[0.8125rem] text-sfds-black placeholder:text-sfds-slate-l3 focus:border-sfds-action focus:ring-1 focus:ring-sfds-action focus:outline-none"
 				/>
 			</div>
 		</div>
@@ -264,11 +266,11 @@
 		{#if pages.length > 0}
 			<section>
 				<h3 class="mb-2 flex items-center justify-between">
-					<span class="text-[11px] font-bold tracking-[0.08em] text-sfds-slate-l3 uppercase">
+					<span class="text-[0.6875rem] font-bold tracking-[0.08em] text-sfds-slate-l3 uppercase">
 						{group.heading}
 					</span>
 					<span
-						class="inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-sfds-grey-l2/70 px-1.5 text-[11px] font-bold text-sfds-black tabular-nums"
+						class="inline-flex h-[1.125rem] min-w-[1.125rem] items-center justify-center rounded-full bg-sfds-grey-l2/70 px-1.5 text-[0.6875rem] font-bold text-sfds-black tabular-nums"
 					>
 						{pages.length}
 					</span>
@@ -290,11 +292,11 @@
 	{#if loaded && unreviewedShown.length > 0}
 		<section data-testid="queue-unreviewed">
 			<h3 class="mb-1 flex items-center justify-between">
-				<span class="text-[11px] font-bold tracking-[0.08em] text-sfds-slate-l3 uppercase">
+				<span class="text-[0.6875rem] font-bold tracking-[0.08em] text-sfds-slate-l3 uppercase">
 					Not in the review yet
 				</span>
 				<span
-					class="inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-sfds-grey-l2/70 px-1.5 text-[11px] font-bold text-sfds-black tabular-nums"
+					class="inline-flex h-[1.125rem] min-w-[1.125rem] items-center justify-center rounded-full bg-sfds-grey-l2/70 px-1.5 text-[0.6875rem] font-bold text-sfds-black tabular-nums"
 				>
 					{unreviewedShown.length}
 				</span>

@@ -41,8 +41,8 @@
 {#snippet titleLine()}
 	<span
 		class="block text-sfds-black {comfortable
-			? 'text-[15px] leading-[22px]'
-			: 'text-[13px] leading-[18px]'} {current ? 'font-semibold' : ''}"
+			? 'text-[0.9375rem] leading-[1.375rem]'
+			: 'text-[0.8125rem] leading-[1.125rem]'} {current ? 'font-semibold' : ''}"
 	>
 		{title}
 	</span>
@@ -53,8 +53,8 @@
 		<span
 			data-slot="page-row-meta"
 			class="mt-0.5 block {comfortable
-				? 'text-[13px] leading-[18px]'
-				: 'text-[11px] leading-[14px]'} {metaTone === 'danger'
+				? 'text-[0.8125rem] leading-[1.125rem]'
+				: 'text-[0.6875rem] leading-[0.875rem]'} {metaTone === 'danger'
 				? 'text-sfds-red'
 				: comfortable
 					? 'text-slate-700'

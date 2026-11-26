@@ -145,41 +145,39 @@
 		{#if !sectionKey}
 			<div class="px-5 py-6 text-sm">
 				<p class="font-semibold">No section selected</p>
-				<p class="mt-1.5 leading-[20px]">
+				<p class="mt-1.5 leading-5">
 					Choose <strong>Rethink section</strong> on any section of the mockup. The assistant will reconsider
 					how it is written and structured, and say what it thinks is missing.
 				</p>
 			</div>
 		{:else}
 			<div class="border-b px-5 py-3">
-				<span class="text-[13px] font-semibold">{heading}</span>
+				<span class="text-[0.8125rem] font-semibold">{heading}</span>
 			</div>
 
 			<section class="mx-5 mt-4" aria-label="Rethink">
 				<Textarea
 					bind:value={instruction}
 					rows={2}
-					class="text-[13px]"
+					class="text-[0.8125rem]"
 					aria-label="What should this section accomplish?"
 					placeholder="Optional: what should this section accomplish?"
 				/>
 				<div class="mt-2 flex gap-2">
 					<Button
 						size="sm"
-						class="h-8 flex-1 text-[12px]"
+						class="h-8 flex-1 text-xs"
 						disabled={pageStore.rethink.state === 'loading'}
 						onclick={run}
 					>
 						{pageStore.rethink.state === 'loading' ? 'Rethinking…' : 'Rethink this section'}
 					</Button>
 					{#if pageStore.rethink.state === 'loading'}
-						<Button variant="outline" size="sm" class="h-8 text-[12px]" onclick={cancel}>
-							Cancel
-						</Button>
+						<Button variant="outline" size="sm" class="h-8 text-xs" onclick={cancel}>Cancel</Button>
 					{/if}
 				</div>
 				{#if pageStore.rethink.state === 'loading'}
-					<p class="mt-2 text-[12px]" role="status">
+					<p class="mt-2 text-xs" role="status">
 						Reading the whole section. This usually takes about 30 seconds.
 					</p>
 				{/if}
@@ -187,7 +185,7 @@
 
 			{#if pageStore.rethink.state === 'error'}
 				{@const cancelled = pageStore.rethink.message === 'Cancelled.'}
-				<p class="mx-5 mt-4 text-[12px] leading-[17px]" role={cancelled ? 'status' : 'alert'}>
+				<p class="mx-5 mt-4 text-xs leading-[1.0625rem]" role={cancelled ? 'status' : 'alert'}>
 					{pageStore.rethink.message}
 				</p>
 			{/if}
@@ -196,8 +194,8 @@
 				{@const result = pageStore.rethink.result}
 				{#if result.rationale}
 					<section class="mx-5 mt-4 rounded-[4px] border p-3" aria-label="Why">
-						<span class="text-[12px] font-bold tracking-[0.06em] uppercase">Why</span>
-						<p class="mt-1.5 text-[13px] leading-[19px]">{result.rationale}</p>
+						<span class="text-xs font-bold tracking-[0.06em] uppercase">Why</span>
+						<p class="mt-1.5 text-[0.8125rem] leading-[1.1875rem]">{result.rationale}</p>
 					</section>
 				{/if}
 
@@ -208,11 +206,11 @@
 					     normalized `karlChanged` flag, not a raw string compare here --
 					     see request.ts's `normalizeKarl` for why. -->
 					<section class="mx-5 mt-4 rounded-[4px] border-2 p-3" aria-label="Karl mapping changed">
-						<span class="text-[12px] font-bold tracking-[0.06em] uppercase"
-							>Karl mapping changed</span
-						>
-						<p class="mt-1.5 text-[13px] leading-[19px] line-through">{result.karlBefore}</p>
-						<p class="mt-1.5 text-[13px] leading-[19px]">{result.karlAfter}</p>
+						<span class="text-xs font-bold tracking-[0.06em] uppercase">Karl mapping changed</span>
+						<p class="mt-1.5 text-[0.8125rem] leading-[1.1875rem] line-through">
+							{result.karlBefore}
+						</p>
+						<p class="mt-1.5 text-[0.8125rem] leading-[1.1875rem]">{result.karlAfter}</p>
 					</section>
 				{/if}
 
@@ -225,10 +223,10 @@
 						class="mx-5 mt-4 rounded-[4px] border-2 p-3"
 						aria-label="Steps and cards not shown"
 					>
-						<span class="text-[12px] font-bold tracking-[0.06em] uppercase"
+						<span class="text-xs font-bold tracking-[0.06em] uppercase"
 							>Steps and cards not shown</span
 						>
-						<p class="mt-1.5 text-[13px] leading-[19px]">
+						<p class="mt-1.5 text-[0.8125rem] leading-[1.1875rem]">
 							The assistant also changed this section's steps or cards. This tool cannot review
 							those yet, so they are not in the list below and will not be applied.
 						</p>
@@ -238,7 +236,7 @@
 				<ul class="mt-4 space-y-2 px-5 pb-4" aria-label="Proposed changes">
 					{#each result.ops.filter((op) => op.type !== 'keep') as op (op.id)}
 						<li class="rounded-[4px] border p-3">
-							<label class="flex items-start gap-2 text-[12px]">
+							<label class="flex items-start gap-2 text-xs">
 								<input
 									type="checkbox"
 									class="mt-0.5"
@@ -250,33 +248,41 @@
 							</label>
 
 							{#if op.type === 'rewrite'}
-								<p class="mt-2 rounded-[3px] px-2 py-1.5 text-[13px] leading-[19px] line-through">
+								<p
+									class="mt-2 rounded-[3px] px-2 py-1.5 text-[0.8125rem] leading-[1.1875rem] line-through"
+								>
 									{op.from}
 								</p>
-								<p class="mt-1.5 rounded-[3px] px-2 py-1.5 text-[13px] leading-[19px]">{op.to}</p>
+								<p class="mt-1.5 rounded-[3px] px-2 py-1.5 text-[0.8125rem] leading-[1.1875rem]">
+									{op.to}
+								</p>
 								{#if op.moved}
-									<p class="mt-1 text-[12px]">Also moves position.</p>
+									<p class="mt-1 text-xs">Also moves position.</p>
 								{/if}
 							{:else if op.type === 'add'}
-								<p class="mt-2 rounded-[3px] px-2 py-1.5 text-[13px] leading-[19px]">{op.text}</p>
-								<p class="mt-1 text-[12px]">
+								<p class="mt-2 rounded-[3px] px-2 py-1.5 text-[0.8125rem] leading-[1.1875rem]">
+									{op.text}
+								</p>
+								<p class="mt-1 text-xs">
 									Unverified — proposed by the assistant, with no confirmed source.
 								</p>
 							{:else}
-								<p class="mt-2 rounded-[3px] px-2 py-1.5 text-[13px] leading-[19px]">{op.text}</p>
+								<p class="mt-2 rounded-[3px] px-2 py-1.5 text-[0.8125rem] leading-[1.1875rem]">
+									{op.text}
+								</p>
 							{/if}
 						</li>
 					{/each}
 				</ul>
 
 				{#if result.otherSections.length > 0}
-					<p class="mx-5 mb-4 text-[12px] leading-[17px]" role="status">
+					<p class="mx-5 mb-4 text-xs leading-[1.0625rem]" role="status">
 						The assistant also proposed changes to {result.otherSections.join(', ')}. Those are not
 						applied here — rethink that section to see them.
 					</p>
 				{/if}
 
-				<p class="mx-5 mb-4 text-[12px] leading-[17px]">
+				<p class="mx-5 mb-4 text-xs leading-[1.0625rem]">
 					{result.disclosure}
 					{result.model ? ` (${result.model})` : ''}
 				</p>
