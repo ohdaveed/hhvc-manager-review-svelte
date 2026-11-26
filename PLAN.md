@@ -1,42 +1,33 @@
-# PLAN — Expired edits
+# PLAN — Report page structure (bed bug page review)
 
-Branch `feat/expired-edits`, cut from `origin/main`. Design:
-`docs/superpowers/specs/2026-11-26-expired-edits-design.md`; decision:
-`docs/adr/0001-edits-anchor-to-base-copy-hash.md`. Terms are `CONTEXT.md`'s.
+Branch `feat/report-pages-structure`, cut from `origin/main` at `9789a0a`. Source: a reviewer's five-point
+critique of `report-bed-bugs`. Scope chosen by the user (2026-11-26): structural fixes on all nine
+condition report pages, option B for the step order (keep three steps, details before the 311 button).
 
-- [x] **0. Design.** Glossary (Base copy, Expired, Orphaned, Transcript), ADR 0001 and the spec committed.
-- [x] **1. Browser-safe field hash.** A WebCrypto SHA-256 whose hex equals `hashText` for the same input,
-      pinned by a test over real corpus fields.
-- Production checked read-only 2026-11-26 (Supabase connector, project kiynekyzqxneepjipqhg): 0 edits,
-  20 migrations applied (latest 20261125150000, matching the repo), 2 corpus versions.
-- [x] **2. Migration.** `edits.base_hash text NOT NULL`; fails if any existing edit would be un-anchored;
-      `latest_edits` exposes it. Applied and tested on the local stack only.
-- [x] **3. Save path records the anchor.** `saveInlineEdit` sends the base copy's hash; corpus and draft
-      pages both. Unit-tested.
-- [x] **4. Expiry and orphan resolution.** A pure function classifies each latest edit as current, expired
-      or orphaned against the base copy now. Unit-tested, including copy that changes back.
-- [x] **5. Mockup marking.** Expired edits show their text marked expired, with the base copy one step away;
-      re-confirm / rewrite / keep base each create an unsaved change. Orphaned edits do not render.
-- [x] **6. Transcript.** Expired and orphaned edits appear flagged. Done as a section above the first panel
-      (`staleEditsMarkdown`) and a walkthrough-drawer block, fed by `reviewRecordFor`'s new `stale` argument;
-      `karl-transcript.js` is untouched. Snapshots needed no update: the section renders only when an edit is
-      stale, and the snapshot pages have none.
-- [x] **7. Verify.** Unit, check, ratchets, e2e, browser check; re-confirm production still has 0 edits
-      immediately before merge.
-      Verified 2026-11-26: unit 1249, svelte-check 0/0, eslint 3, prettier 42, e2e 110/110. Local stack, real
-      browser: a save wrote a row whose base_hash = sha256 of the corpus title (and whose browser-chosen id
-      the database accepted); with that row pointed at an older base the title showed "Expired", the panel
-      showed the base copy, and Re-confirm + Save recorded a second row anchored to the base now and cleared
-      the mark. Console clean. Test rows deleted. Production re-check is still due right before merge.
+Checked before editing:
 
-## Carried over from earlier plans -- audited 2026-11-26
+- Live SF.gov `report-health-nuisance-or-hazards` and `report-residential-building-concern` have no Cost
+  block and list the details before the 311 button. Phone wording on both: "415-701-2311 if you are
+  outside of San Francisco", "TDD/TTY 711". Neither says "24/7" or "free interpretation" — not added.
+- Karl: `cost` is optional (field map E3); Things to know is capped at 2 (confirmed); a Section's
+  specifics can hold a `Phone number` block.
+- Production holds no edits or comments on the bed bug page, so re-keyed step field ids orphan nothing.
 
-Checked against `main` at `2e69c2f`; every item but the last has shipped:
+Decisions forced by constraints:
 
-- Sewage routing fix ("Fix first" in `docs/reviews/2026-11-24-karl-review-all-tabs.md`): done in #212.
-  `hhvc-inspection-scope.ts` no longer sends sewage to the Citywide service and links the sewage report.
-- 9-page report regroup: done in #217 and #219. SRO page removed in #219. Mosquito and pigeon report pages
-  built in #217 / #219. Topic fold (the two hub pages): done in #216.
-- **Still open, and not ours to build yet:** on the report pages, the landlord step first and the 311 button
-  last. The review files it under _Revise_, not _Decided_ ("Build only what's under Decided"), and it hangs
-  on the 72-hour landlord wait, still open. Needs a manager decision first.
+- Every condition page already has 2 Things to know items (Karl's cap). The privacy sentence moves into
+  What to know only on bed bugs, where both items move out. On the other eight it stays in the details
+  step's callout, which the reorder now puts above the 311 button.
+- Sewage keeps "Report it right away" first: that order is Decided (48-hour response, urgent).
+
+- [ ] **1. All nine pages.** `cost: 'Free'` removed; the details step (renamed "Gather your details")
+      moved above the 311 button step (sewage excepted); the 311 phone/TTY lines added to the button step,
+      Karl note naming a Phone number block. Karl notes updated to match.
+- [ ] **2. Bed bug copy.** Action-first subtitle; Nearby units folded into Step 1 as its second bullet;
+      prep link and privacy sentence placed per the review; While you wait cut to two tips plus the prep
+      link, with UC IPM and EPA moved onto `bed-bugs-prevent-and-prepare`; Step 1→2 bridge says you can
+      report without waiting.
+- [ ] **3. Gates.** Unit tests green (transcript snapshot updated after reading its diff), build green,
+      page checked in the browser.
+- [ ] **4. PR opened, CI green.**
+- [ ] **5. Separate PR: "Unconfirmed in Karl" pill** beside the section's Rethink control (review item 5).
