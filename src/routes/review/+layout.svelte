@@ -17,6 +17,7 @@
 	import {
 		editsLoaded,
 		editsStore,
+		isOwnEdit,
 		loadReview,
 		pagesStore,
 		queueOrder
@@ -108,7 +109,9 @@
 			? placementsFor(
 					pageData as unknown as Parameters<typeof placementsFor>[0],
 					reviewRecordFor(pageData.id, $pagesStore, $editsStore),
-					pagesByKey
+					pagesByKey,
+					// Judge the wording on screen, unsaved changes included.
+					{ copy: 'as-shown' }
 				)
 			: null
 	);
@@ -185,7 +188,7 @@
 				livePages: live,
 				edits,
 				editsLoaded: loaded,
-				userId: sessionStore.userId,
+				isOwnEdit,
 				changes: pageStore
 			})
 		);

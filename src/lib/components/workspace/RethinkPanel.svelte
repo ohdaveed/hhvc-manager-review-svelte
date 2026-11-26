@@ -104,16 +104,13 @@
 				pageId: requestPageId,
 				sectionKey: requestSectionKey,
 				instruction: instruction.trim() || undefined,
-				// `pageData` is the in-memory corpus object for this page, already
-				// mutated in place by THIS session's own edits -- `Section.svelte`
-				// and `EditTarget` write through the same `$lib/corpus/fieldResolver`
-				// helpers that this object holds. So the grounding the assistant sees
-				// reflects what this reviewer changed this session, but NOT a
-				// persisted `edits` row saved by an earlier session or another
-				// reviewer: there is no overlay of the `edits` table onto the
-				// pristine corpus here. That overlay is decision 8's full answer, and
-				// it is slice 3's work -- building it now would be scope creep on a
-				// read-only slice.
+				// `pageData` is the in-memory corpus object for this page, and it holds
+				// what the mockup shows: the base corpus, then saved edits (the review
+				// layout writes each field's newest `edits` row onto it, from any
+				// session or reviewer), then this reviewer's unsaved changes -- typed or
+				// accepted suggestions -- which sit on top of a saved edit until saved.
+				// So a Rethink is grounded on what the reviewer is looking at, which can
+				// include wording nobody has saved yet.
 				signal: mine.signal
 			});
 			if (!current()) return;

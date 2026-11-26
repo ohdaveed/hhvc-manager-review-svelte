@@ -272,9 +272,25 @@ class PageStore {
 				const at = this.pages.findIndex((p) => p.id === draft.path);
 				if (at === -1) this.pages.push(page);
 				else this.pages[at] = page;
+				this.reapplyUnsavedChanges(draft.path);
 			} catch (err) {
 				console.error(`Skipped malformed draft ${draft.path}:`, err);
 			}
+		}
+	}
+
+	/**
+	 * Puts `pageId`'s unsaved changes back onto its page object after that
+	 * object was replaced. An unsaved change lives on the mockup by having been
+	 * written through the field's setter; a re-merged draft page is a fresh
+	 * object from the database, so without this the change was still counted,
+	 * listed and saveable while the mockup showed the drafted text instead.
+	 * Saved edits need nothing here: the layout re-hydrates on a page swap.
+	 */
+	private reapplyUnsavedChanges(pageId: string) {
+		for (const change of Object.values(this.unsavedChanges)) {
+			if (change.pageId !== pageId) continue;
+			this.resolveOn(pageId, change.fieldId)?.set(change.value);
 		}
 	}
 
