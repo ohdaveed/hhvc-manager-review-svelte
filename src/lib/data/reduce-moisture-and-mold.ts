@@ -44,8 +44,9 @@ export const reduceMoisture = {
 			}
 		},
 		{
-			heading: 'Keep your home dry every day',
-			karl: 'Maps to a third Title and text block: Title = this heading, Text = the paragraph plus the bulleted list below. Tips are condensed from SFDPH "Tips to Control Moisture and Prevent Mold".',
+			heading: 'Let damp air out',
+			fieldKey: 'keep-your-home-dry-every-day',
+			karl: 'Maps to a third Title and text block: Title = this heading, Text = the paragraph plus the bulleted list below. Tips are condensed from SFDPH "Tips to Control Moisture and Prevent Mold". Split on 2026-11-26 from one 7-item list: SF.gov keeps a bulleted list to 3 to 5 items (A-to-Z, Bullets). Split into letting damp air out (this section) and keeping air moving. The fieldKey keeps this section\'s original ids.',
 			kind: 'body',
 			paragraphs: [
 				'Fresh, moving air is your best tool against mold. These steps cost little or nothing.'
@@ -54,7 +55,14 @@ export const reduceMoisture = {
 				'**Open windows for 5 to 15 minutes a day.** This lets damp air out and drier air in, even on a foggy day.',
 				'**Run the fan when you cook or shower.** Leave it on for 15 to 20 minutes after. To test a fan, see if it holds up a square of toilet paper. If a fan or vent is broken, tell your landlord.',
 				'**Put lids on pots** when you cook.',
-				'**Dry laundry in a dryer**, not on racks indoors.',
+				'**Dry laundry in a dryer**, not on racks indoors.'
+			]
+		},
+		{
+			heading: 'Keep air moving along walls and in closets',
+			karl: 'Maps to a Title and text block: Title = this heading, Text = the bulleted list below. Split on 2026-11-26 from one 7-item list: SF.gov keeps a bulleted list to 3 to 5 items (A-to-Z, Bullets).',
+			kind: 'body',
+			bullets: [
 				'**Move furniture at least 6 inches away from outside walls** so air can flow behind it.',
 				'**Wipe water off windows and sills** when you see it.',
 				'**Do not overstuff closets**, and leave closet doors a little open.'

@@ -57,7 +57,7 @@ export const rodentsReport = {
 		},
 		{
 			heading: 'While you wait: tips to help with the problem',
-			karl: 'Maps to supporting_information (Accordions). This accordion uses the mockup-only open flag so the tips are visible without a click — flag for Digital Services that the real accordion renders collapsed. Contents: one Text block (lead paragraph + IPM bullets) + a Resources-style external links list (UC IPM, CDC, NEHA). The pet waste tip is the Decided cross-link line ("Pick up pet waste daily. It feeds rats."), linked to the animal waste page.',
+			karl: 'Maps to supporting_information (Accordions). This accordion uses the mockup-only open flag so the tips are visible without a click — flag for Digital Services that the real accordion renders collapsed. Contents: one Text block (lead paragraph + IPM bullets) + a Resources-style external links list (UC IPM, CDC, NEHA). The pet waste tip is the Decided cross-link line ("Pick up pet waste daily. It feeds rats."), linked to the animal waste page. It was its own sixth bullet until 2026-11-26, when it joined "Cut off food" word for word: SF.gov keeps a bulleted list to 3 to 5 items.',
 			kind: 'body',
 			component: 'supporting',
 			open: true,
@@ -66,8 +66,7 @@ export const rodentsReport = {
 			],
 			bullets: [
 				'**Close off entry points:** Seal any gap bigger than 1/4 inch. Use rodent-proof materials like hardware cloth, copper mesh, or sheet metal.',
-				'**Cut off food:** Store food and garbage in bins with tight-fitting lids. Do not leave pet food out overnight.',
-				'**Pick up pet waste daily:** It feeds rats. [Report animal waste on a property](animalWasteReport)',
+				'**Cut off food:** Store food and garbage in bins with tight-fitting lids. Do not leave pet food out overnight. Pick up pet waste daily. It feeds rats. [Report animal waste on a property](animalWasteReport)',
 				'**Remove hiding places:** Clear clutter and trim overgrown plants where rats and mice hide or nest.',
 				'**Trap safely:** Use snap traps indoors. Do not use poisons — they can harm children, pets, and wildlife.',
 				'**Clean up safely:** Wet down droppings with a disinfectant and wear gloves. Never dry-sweep or vacuum droppings.'
