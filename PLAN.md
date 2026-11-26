@@ -38,6 +38,27 @@ selected field; no schema change, no new dependency; the reload-hydration gap is
 - [x] **9. No line breaks.** No corpus field holds one (measured over every string in `pageStore.pages`),
       so Enter saves and pasted line breaks become spaces.
 
+## Vocabulary alignment (grilled 2026-11-26; terms in `CONTEXT.md`)
+
+An **unsaved change** is new wording on the mockup not yet saved -- typed, or from an accepted
+suggestion. Saving is the acceptance; there is no accepted-but-unsaved state.
+
+- [ ] **10. Rename to "unsaved change".** UI copy says "unsaved change(s)", never "unsaved edit(s)";
+      `ManualDraft` / `manualDrafts` / `parkedDrafts` / `draftsElsewhere` and their methods use
+      unsaved-change names. No "draft" left meaning field-level typing in this branch's code.
+- [ ] **11. One count, one Save.** The footer reads `Save N changes` and saves every unsaved change on
+      this page, typed or accepted; the toolbar pill counts unsaved changes on every page. Unit-tested.
+- [ ] **12. Cancel un-accepts.** Cancel on a field holding an accepted suggestion restores the field and
+      returns the suggestion to pending, not dismissed. Unit-tested.
+- [ ] **13. Someone else saved this field.** While a field has an unsaved change, a newer confirmed edit
+      to it from elsewhere shows a one-line notice on that field; Save still proceeds (last write wins).
+      Unit-tested.
+- [ ] **14. Verify.** `bun run verify` PASS, ratchets at baseline, e2e green, Playwright check by eye.
+
+Deferred, not this branch: rename the suggestion status `'accepted'` (pre-dates this branch; touches
+Rethink, `decideAll` and the export fold -- follow-up PR after merge); marking expired edits on the
+mockup (edits carry no corpus version yet).
+
 ## Notes
 
 - Verified 2026-11-26: verify PASS (1186 unit), ratchets at baseline (svelte-check 0/0, eslint 3, prettier 42),
@@ -45,8 +66,7 @@ selected field; no schema change, no new dependency; the reload-hydration gap is
   screenshot checked by eye.
 - Skipped from the plan: a character counter on the manual edit control (the 8,000 cap is the AI
   backend's, and a manual edit does not go through it).
-- Follow-up, not built: the footer's `Save N edits` and the toolbar's unsaved pill count accepted AI
-  suggestions only, so they read 0 beside an unsaved manual draft. Each draft has its own Save.
+- The footer/pill count gap noted here earlier is now task 11.
 
 ## Carried over from the previous plan (`c0427d2:PLAN.md`), still open
 

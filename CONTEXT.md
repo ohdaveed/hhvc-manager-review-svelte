@@ -28,6 +28,11 @@ with the corpus version it was written against.
 publish at; its **id** is the routable identifier derived from that slug. The
 two are not interchangeable, and only the id addresses a page inside this tool.
 
+**Draft page** — a page a reviewer described and the assistant wrote, which is
+not in the corpus. Reviewed like any other page, under a banner saying where it
+came from.
+_Avoid_: draft (unqualified), proposed page
+
 **Section** — one titled part of a page. The unit a reviewer reads as a whole
 and the unit a Rethink operates on.
 
@@ -60,14 +65,29 @@ of pages and their decisions.
 **Edit** — one persisted change to one field, recorded permanently. Edits are
 never modified or removed; a later edit to the same field supersedes an earlier
 one. Reserved for the persisted record — not for the reviewer's act of
-accepting, and not for an unsaved suggestion.
+accepting, not for a suggestion, and not for an unsaved change.
 
-**Accepted** — a reviewer has approved a change. Acceptance is what the overlay
-renders.
+**Unsaved change** — new wording for one field, shown on the mockup but not yet
+saved: either typed by the reviewer or taken from a suggestion they accepted. Saving it records an edit; cancelling it restores
+what the field said before, and a suggestion it came from goes back to waiting
+rather than being dismissed. It survives moving to another field or page — only
+Save or Cancel ends it.
+_Avoid_: draft (reserved for draft pages), parked draft, manual draft
+
+**Suggestion** — one AI rewrite of one field, waiting for a reviewer to accept or
+dismiss it. Accepting it makes it an unsaved change; nothing is recorded until
+that is saved. Distinct from a proposal, which covers a whole section.
+
+**Accepted** — a change has been saved as an edit, whether the wording came from
+a suggestion or the reviewer typed it. Saving is the acceptance; there is no
+edit awaiting someone else's approval, and an accepted-but-unsaved state does
+not exist. Acceptance is what the overlay renders.
 
 **Expired** — an acceptance whose underlying base copy has since changed, so the
 approved text no longer answers the copy it was approved against. Expiry is per
-field: unrelated copy moving elsewhere on the page must not retire it.
+field: unrelated copy moving elsewhere on the page must not retire it. An
+expired acceptance stays visible on the mockup, marked as expired — neither
+hidden nor passed off as current.
 
 **Transcript** — the readable record of a page's review, written for whoever
 rebuilds the page in the CMS. The deliverable this tool exists to produce.
