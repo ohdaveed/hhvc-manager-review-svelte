@@ -35,9 +35,7 @@ import { scopeInfo } from './hhvc-inspection-scope';
 // rather than a plausible value.
 import { stepPestReport } from './step-report-a-pest-problem';
 import { stepCorrectViolation } from './step-correct-a-violation';
-import { stepPrepUnit } from './step-prepare-unit-for-treatment';
 import { ehOffice } from './location-environmental-health-office';
-import { whoToCall } from './who-to-call-housing-problem';
 import { appealNotice } from './appeal-notice-of-violation';
 import { payCitation } from './pay-healthy-housing-citation';
 import { languageGuides } from './guides-in-other-languages';
@@ -48,7 +46,8 @@ import { inspectionsAnnual } from './report-inspections-annual-summary';
 // (merged there as #251, 2026-11-26). Each carries `editorStatus: 'needs-review'`;
 // owner duties drawn from the Director's Rules are flagged `unverified`. Their links
 // were remapped to this repo's page keys: bed bug links go to bedBugReport, the mold
-// report link to moldReport, and the SRO-report card to stepPrepUnit.
+// report link to moldReport, and the SRO-report card to stepPrepUnit — retargeted to pestTreatmentInfo
+// when that Step by step was retired into it (2026-11-26).
 import { bedBugsInfo } from './bed-bugs-prevent-and-prepare';
 import { reduceMoisture } from './reduce-moisture-and-mold';
 import { rodentsPrevention } from './keep-rats-and-mice-out';
@@ -97,9 +96,7 @@ export const pagesByKey = {
 	scopeInfo,
 	stepPestReport,
 	stepCorrectViolation,
-	stepPrepUnit,
 	ehOffice,
-	whoToCall,
 	appealNotice,
 	payCitation,
 	languageGuides,

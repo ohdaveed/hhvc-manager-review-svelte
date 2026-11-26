@@ -36,7 +36,6 @@ describe('Karl content-type checks on the current corpus', () => {
 			[
 				// Over Karl's recommended 5 steps (all within the 15 limit).
 				'sf.gov/step-by-step/correct-a-violation-and-close-your-case / karl-step-count / 7 steps',
-				'sf.gov/step-by-step/prepare-your-unit-for-pest-treatment / karl-step-count / 6 steps',
 				'sf.gov/step-by-step/report-a-pest-problem / karl-step-count / 6 steps',
 				// afterReport's "How a report moves through the City" left this list on
 				// 2026-11-26: its steps became one Title and text block, which suits a

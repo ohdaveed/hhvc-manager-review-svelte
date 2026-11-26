@@ -49,8 +49,11 @@ import { spawnSync } from 'node:child_process';
  *
  * Lowered 43 -> 42 when `skills update` rewrote skills-lock.json and the
  * pre-commit formatter left it formatted.
+ *
+ * Lowered 42 -> 41 when the card classifier's negation fix left
+ * src/lib/legacy-core/card-inheritance.js formatted.
  */
-const BASELINE = 42;
+const BASELINE = 41;
 
 const tracked = spawnSync('git', ['ls-files'], {
 	encoding: 'utf-8',

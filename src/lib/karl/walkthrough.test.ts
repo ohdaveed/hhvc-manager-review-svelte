@@ -162,10 +162,17 @@ describe('buildWalkthrough', () => {
 		});
 
 		it('reports unmapped content as its own register, not as a flag', () => {
-			// The corpus has no unmapped content since the 2026-11-26 audit, so
-			// the register is exercised through the gap fixtures.
-			const corpusGaps = allPages.flatMap((page) => buildWalkthrough(page, pagesByKey).gaps);
-			expect(corpusGaps.filter((g) => g.kind === 'unmapped')).toEqual([]);
+			// One corpus section is unmapped: mosquitoControl's external-link cards,
+			// whose karl note flags them as having no clean mapping. Until
+			// 2026-11-26 the card classifier read that note's "no accompanying
+			// Title and text block" as naming one, which hid them here. The rest
+			// of the register is exercised through the gap fixtures.
+			const corpusUnmapped = allPages.flatMap((page) =>
+				buildWalkthrough(page, pagesByKey)
+					.gaps.filter((g) => g.kind === 'unmapped')
+					.map((g) => `${page.slug} ${g.path}`)
+			);
+			expect(corpusUnmapped).toEqual(['sf.gov/mosquito-control-program sections.2.cards']);
 			const gaps = Object.values(gapPages).flatMap(
 				(page) => buildWalkthrough(page as never, pagesByKeyWithGaps).gaps
 			);

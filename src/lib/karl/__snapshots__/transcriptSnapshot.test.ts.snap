@@ -1130,11 +1130,11 @@ Get your unit ready
 
 **Block 2 — Text:**
 
-Treatment works only if the unit is ready. [Prepare your unit for pest treatment](stepPrepUnit) explains what to move, wash, and bag.
+Treatment works only if the unit is ready. [Bed bugs: prevent them, find them, and get ready for treatment](bedBugsInfo) explains what to wash, bag, and leave in place.
 
 **Links in this text — recreate each with the Link tool, do not paste them:**
 
-- "Prepare your unit for pest treatment" → shape 5 — rich text Link tool → Internal link → "Prepare your unit for pest treatment"
+- "Bed bugs: prevent them, find them, and get ready for treatment" → shape 5 — rich text Link tool → Internal link → "Bed bugs: prevent them, find them, and get ready for treatment"
 
 ### What to Do — \`what_to_do\` [TYPE] — page not approved
 
@@ -1403,7 +1403,7 @@ What tenants need to do for treatment
 
 Treatment only works if the unit is ready. The pest control company will give you a checklist. If it is different from the list below, follow their checklist.
 
-[Prepare your unit for pest treatment](stepPrepUnit)
+[What to expect when your building is treated for pests](pestTreatmentInfo)
 
 - **Let them in.** You must allow the owner or pest control company into your unit after you get notice that they will inspect or treat.
 - **Make space.** Move furniture away from the walls and clear clutter so they can reach every area.
@@ -1417,7 +1417,7 @@ If you cannot do these steps because of a disability or a medical need, tell you
 
 **Links in this text — recreate each with the Link tool, do not paste them:**
 
-- "Prepare your unit for pest treatment" → shape 5 — rich text Link tool → Internal link → "Prepare your unit for pest treatment"
+- "What to expect when your building is treated for pests" → shape 5 — rich text Link tool → Internal link → "What to expect when your building is treated for pests"
 
 ### Information section — \`information_section\` [TYPE] — page not approved
 
@@ -3426,9 +3426,8 @@ _This block publishes the destination page’s title and a link, and NOTHING els
 
 1. Choose page: "What happens after you report a housing or pest problem" (\`afterReport\` → /sf.gov/information/what-happens-after-you-report-housing-pest-problem)
 2. Choose page: "Tenant rights when reporting housing conditions" (\`tenantRights\` → /sf.gov/information/tenant-rights-and-reporting-housing-conditions)
-3. Choose page: "Who to call about a housing problem" (\`whoToCall\` → /sf.gov/information/who-to-call-about-a-housing-problem)
-4. Choose page: "Learn what Healthy Housing and Vector Control can inspect" (\`scopeInfo\` → /sf.gov/information/learn-what-hhvc-can-inspect)
-5. Choose page: "Reduce moisture and mold in your home" (\`reduceMoisture\` → /sf.gov/information/reduce-moisture-and-mold-in-your-home)
+3. Choose page: "Learn what Healthy Housing and Vector Control can inspect" (\`scopeInfo\` → /sf.gov/information/learn-what-hhvc-can-inspect)
+4. Choose page: "Reduce moisture and mold in your home" (\`reduceMoisture\` → /sf.gov/information/reduce-moisture-and-mold-in-your-home)
 
 ### Partner agencies — \`partner_agencies\` [CHOOSE] — page not approved
 
@@ -3516,36 +3515,6 @@ The San Francisco Mosquito Control Program is part of Healthy Housing and Vector
 
 Mosquitoes can spread diseases such as West Nile virus. Reducing standing water around homes and buildings is the most effective way to prevent breeding.
 
-### Information section — \`information_section\` [TYPE] — page not approved
-
-**Title:**
-
-More mosquito resources
-
-**Entry 1 — Title:**
-
-San Francisco Mosquito Control Program (SFMosquito.org)
-
-**Entry 1 — Text:**
-
-Find program information, surveillance updates, and West Nile virus resources.
-
-**Entry 2 — Title:**
-
-West Nile virus information (California)
-
-**Entry 2 — Text:**
-
-State guidance on West Nile virus risk, dead bird reporting, and prevention.
-
-**Entry 3 — Title:**
-
-Report a dead bird to the State
-
-**Entry 3 — Text:**
-
-Dead birds help track West Nile virus. Report them to the State West Nile virus program.
-
 ### Topics — \`topics\` [TYPE] — page not approved
 
 _topicTag is unmapped metadata — the stored values are Agency labels, not Topic chooser references. Do not paste one into this chooser._
@@ -3572,6 +3541,12 @@ Mosquito Control Program | SF.gov
 **Meta description (\`search_description\`):**
 
 San Francisco mosquito control, catch-basin treatment, and how to report standing water or mosquito activity.
+
+## Unmapped — no documented Karl destination
+
+Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
+
+- \`sections.2.cards\` — \`cards\` on this section reached no panel in the Information inventory.
 "
 `;
 
@@ -4798,8 +4773,13 @@ Your checklist comes first. These steps are common for most treatments.
 - **Clear the floor along walls** and under sinks so the technician can reach cracks and corners.
 - **Put food and dishes away** in sealed containers or the fridge.
 - **Plan for children and pets.** Ask if anyone needs to leave, and for how long.
-- **Ask what product will be used** if the notice does not say.
+- **Ask what product will be used** if the notice does not say, especially if anyone at home is pregnant, under two, or has asthma.
+- **For bed bugs, there are extra laundry and bagging steps.** [Bed bugs: prevent them, find them, and get ready for treatment](bedBugsInfo)
 - **Ask for the treatment plan.** The pest control company should give you a plan that lists its methods and products, and what the landlord and tenants need to do.
+
+**Links in this text — recreate each with the Link tool, do not paste them:**
+
+- "Bed bugs: prevent them, find them, and get ready for treatment" → shape 5 — rich text Link tool → Internal link → "Bed bugs: prevent them, find them, and get ready for treatment"
 
 ### Information section — \`information_section\` [TYPE] — page not approved
 
@@ -6238,6 +6218,22 @@ Who this information is for
 **Text:**
 
 - This page is for anyone deciding whether to report a pest or housing health problem to HHVC.
+- It is also for anyone who has been sent to the wrong department and needs to find the right one.
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+Start with what you can see
+
+**Text:**
+
+San Francisco splits housing problems across several offices. You do not need to know which one — you need to name the condition, and the condition decides.
+
+- Pests, rodents, mold, garbage, or an unsanitary building: Healthy Housing and Vector Control.
+- No heat, no hot water, broken plumbing, bad wiring, or a structural repair: the Department of Building Inspection.
+- A rent increase, an eviction notice, or a dispute about your lease: the Rent Board.
+- Not sure, or more than one of these: start with 311.
 
 ### Information section — \`information_section\` [TYPE] — page not approved
 
@@ -6389,6 +6385,8 @@ If your problem is not listed
 **Text:**
 
 - Some housing problems are handled by other City programs. For example, structural water intrusion, leaks, and major heating or utility failures go to the [Department of Building Inspection (DBI)](#). DBI handles these under the San Francisco Housing Code (2025).
+- Rent increases, evictions, and lease disputes go to the Rent Board.
+- A fire hazard or a blocked exit goes to the Fire Department.
 - If your problem is not on this list, start with 311. They can send your report to the right place.
 - For lead, pesticides, water quality, food sanitation, or business hygiene, use the [Citywide health nuisance and hazards reporting service](https://www.sf.gov/report-health-nuisance-or-hazards).
 - If you are not sure whether HHVC can review your problem, it is still okay to report it. HHVC will review whether it may involve a housing or pest-related public health concern.
@@ -6397,6 +6395,24 @@ If your problem is not listed
 
 - "Department of Building Inspection (DBI)" → no destination — the mockup uses \`#\` as an inert sentinel; resolve it before typing
 - "Citywide health nuisance and hazards reporting service" → shape 5 — rich text Link tool → External link
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+When more than one office is involved
+
+**Text:**
+
+A building can have problems belonging to two offices at once. Report each one to the office that handles it rather than waiting for one report to cover both.
+
+- Reporting to one office does not open a case with another.
+- An HHVC inspection covers the conditions in Article 11, not everything wrong with a building.
+- [What happens after you report a housing or pest problem](afterReport)
+
+**Links in this text — recreate each with the Link tool, do not paste them:**
+
+- "What happens after you report a housing or pest problem" → shape 5 — rich text Link tool → Internal link → "What happens after you report a housing or pest problem"
 
 ### Topics — \`topics\` [TYPE] — page not approved
 
@@ -6552,8 +6568,7 @@ _This block publishes the destination page’s title and a link, and NOTHING els
 
 1. Choose page: "What happens after you report a housing or pest problem" (\`afterReport\` → /sf.gov/information/what-happens-after-you-report-housing-pest-problem)
 2. Choose page: "Tenant rights when reporting housing conditions" (\`tenantRights\` → /sf.gov/information/tenant-rights-and-reporting-housing-conditions)
-3. Choose page: "Who to call about a housing problem" (\`whoToCall\` → /sf.gov/information/who-to-call-about-a-housing-problem)
-4. Choose page: "Learn what Healthy Housing and Vector Control can inspect" (\`scopeInfo\` → /sf.gov/information/learn-what-hhvc-can-inspect)
+3. Choose page: "Learn what Healthy Housing and Vector Control can inspect" (\`scopeInfo\` → /sf.gov/information/learn-what-hhvc-can-inspect)
 
 ### Partner agencies — \`partner_agencies\` [CHOOSE] — page not approved
 
@@ -6680,7 +6695,7 @@ Unit preparation and access are the tenant’s part. Treatment that cannot reach
 - Follow the preparation instructions you were given before a treatment visit.
 - Allow properly noticed access for inspection or work.
 - A Notice of Violation does not change a tenant’s right to safe and habitable housing.
-- [Prepare your unit for pest treatment](stepPrepUnit)
+- [What to expect when your building is treated for pests](pestTreatmentInfo)
 - [What tenants need to do after a Notice of Violation](tenantNoticeSteps)
 - [Tenant rights when reporting housing conditions](tenantRights)
 
@@ -6739,7 +6754,7 @@ Follow the instructions and deadlines in any later notice you receive.
 - "Property owner responsibilities" → shape 5 — rich text Link tool → Internal link → "Property owner responsibilities"
 - "Integrated pest management for property owners and managers" → shape 5 — rich text Link tool → Internal link → "Integrated pest management for property owners and managers"
 - "Article 11 compliance for property owners" → shape 5 — rich text Link tool → Internal link → "Article 11 compliance for property owners"
-- "Prepare your unit for pest treatment" → shape 5 — rich text Link tool → Internal link → "Prepare your unit for pest treatment"
+- "What to expect when your building is treated for pests" → shape 5 — rich text Link tool → Internal link → "What to expect when your building is treated for pests"
 - "What tenants need to do after a Notice of Violation" → shape 5 — rich text Link tool → Internal link → "What tenants need to do after a Notice of Violation"
 - "Tenant rights when reporting housing conditions" → shape 5 — rich text Link tool → Internal link → "Tenant rights when reporting housing conditions"
 - "Question a Notice of Violation" → shape 5 — rich text Link tool → Internal link → "Question a Notice of Violation"
@@ -6955,172 +6970,6 @@ Report a pest problem, start to finish | SF.gov
 **Meta description (\`search_description\`):**
 
 Follow a 311 pest report through inspection, notice, and re-inspection, with the page for each stage.
-"
-`;
-
-exports[`transcript Markdown, every corpus page > stepPrepUnit 1`] = `
-"# Prepare your unit for pest treatment — Karl transcript
-
-**Karl path:** New: Step by step → Content
-**Decision:** no review recorded
-**Page key:** \`stepPrepUnit\` · **Slug:** \`sf.gov/step-by-step/prepare-your-unit-for-pest-treatment\` · **Type:** Step by step
-
-**NOT APPROVED — do not publish from this transcript.** Approval in this tool is per page, not per field, so nothing below is signed off.
-
-> Every keystroke below is yours to make. This file is an export, not an approval, and nothing here has been written to Karl.
-
-### Title — \`title\` [TYPE] — page not approved
-
-**Title:**
-
-Prepare your unit for pest treatment
-
-### Primary agency — \`primary_agency\` [FLAG] — page not approved
-
-_U6 — the mockup has no primary_agency field, and Karl requires it. Supply the parent Agency page by hand: HHVC was approved for its own Agency page (sf.gov/departments--healthy-housing-and-vector-control), so that is the value for HHVC pages rather than Environmental Health or DPH. Those two remain Partner agencies._
-
-### Description — \`description\` [TYPE] — page not approved
-
-**Description:**
-
-What to move, wash, and bag before an exterminator treats for bed bugs or cockroaches.
-
-### Intro — \`intro\` [TYPE] — page not approved
-
-⚠ Inferred mapping — verify the destination before saving.
-
-_Step by step has no things_to_know and no page-level cost, so a Transaction page's whatToKnow has nowhere to go here. Intro is the one free-text slot before the steps, which makes it where an audience line ("Who this information is for") belongs on this type._
-
-_Inferred mapping — the field map documents this panel only for supporting/flat sections. Transaction has no generic body stream and this is its only repeatable Title-and-text panel, so verify the destination before saving._
-
-**Title:**
-
-Who this information is for
-
-**Text:**
-
-Treatment works better when the unit is ready. A visit that cannot reach the walls, floors, or furniture may have to be repeated.
-
-- Tenants with a treatment visit scheduled
-- Owners and managers giving tenants instructions
-- Anyone helping prepare a unit
-
-### Steps — \`steps\` [TYPE] — page not approved
-
-_The block 27 mockup karl notes were describing. Unlike Transaction's what_to_do Section, a Step carries its own cost and time, and a Transaction link chooser — which is how a Step by step points at the Transaction pages holding the detail._
-
-_The mockup heading "What to do" is not typed anywhere — Karl's What to Do panel carries its own label. Each step below becomes one Section block._
-
-_Each step is one Step block: its Title, then its Step description (text and bullets together). A step can link to one Transaction page or none, chosen with the page chooser rather than typed._
-
-**Step 1 — Title:**
-
-Read the instructions you were given
-
-**Step 1 — Step description:**
-
-Your pest control operator sends instructions for your unit and the product being used. Those instructions come first — where they differ from this page, follow them.
-
-- Ask your owner or manager for the instructions if you did not get them.
-- Ask what the product is if anyone in the home is pregnant, has asthma, or is under two.
-- [Integrated pest management for property owners and managers](ownerGuidance)
-- [What to expect when your building is treated for pests](pestTreatmentInfo)
-
-**Step 2 — Title:**
-
-Wash and bag fabric
-
-**Step 2 — Step description:**
-
-Bed bugs and cockroaches travel in fabric. Washing and sealing is the part that most often gets missed.
-
-- Wash bedding, curtains, and clothing on the hottest setting the fabric allows, then dry them fully.
-- Seal everything you have washed in bags and keep it sealed until treatment is finished.
-- Do not move sealed bags to another unit — that is how an infestation spreads to a neighbor.
-
-**Step 3 — Title:**
-
-Clear access to walls, floors, and furniture
-
-**Step 3 — Step description:**
-
-Treatment reaches the edges of a room. Anything against a wall has to move.
-
-- Pull furniture away from the walls.
-- Empty the bottom of closets and clear the floor.
-- Take everything off the floor of the room being treated.
-- Vacuum floors and edges, then seal and bin the vacuum bag straight away.
-
-**Step 4 — Title:**
-
-Protect food, dishes, and medicine
-
-**Step 4 — Step description:**
-
-Anything that goes in a mouth needs to be sealed or out of the room.
-
-- Seal food, or move it out of the rooms being treated.
-- Put dishes, utensils, and food preparation surfaces away or cover them.
-- Move medicine, baby bottles, and pet bowls out.
-
-**Step 5 — Title:**
-
-Plan for people and pets
-
-**Step 5 — Step description:**
-
-Ask your operator how long everyone needs to stay out and what has to happen before you go back in.
-
-- Arrange somewhere for pets, including fish tanks and birds, which need special handling.
-- Tell your operator about anyone in the home who is pregnant, older, or has a breathing condition.
-
-**Step 6 — Title:**
-
-After the visit
-
-**Step 6 — Step description:**
-
-Do not clean the treated surfaces until your operator says it is safe — cleaning too early removes the treatment.
-
-- Keep washed items sealed until you are told otherwise.
-- Report what you still see. A second visit is normal for some pests.
-- [Report cockroaches or other insects](insectsReport)
-- [Correct a violation and close your case](stepCorrectViolation)
-- [Tenant rights when reporting housing conditions](tenantRights)
-
-**Links in this text — recreate each with the Link tool, do not paste them:**
-
-- "Integrated pest management for property owners and managers" → shape 5 — rich text Link tool → Internal link → "Integrated pest management for property owners and managers"
-- "What to expect when your building is treated for pests" → shape 5 — rich text Link tool → Internal link → "What to expect when your building is treated for pests"
-- "Report cockroaches or other insects" → shape 5 — rich text Link tool → Internal link → "Report cockroaches or other insects"
-- "Correct a violation and close your case" → shape 5 — rich text Link tool → Internal link → "Correct a violation and close your case"
-- "Tenant rights when reporting housing conditions" → shape 5 — rich text Link tool → Internal link → "Tenant rights when reporting housing conditions"
-
-### Topics — \`topics\` [TYPE] — page not approved
-
-_topicTag is unmapped metadata — the stored values are Agency labels, not Topic chooser references._
-
-### Partner agencies — \`partner_agencies\` [CHOOSE] — page not approved
-
-_A page chooser restricted to Agency pages. These entries name real sf.gov department pages outside this mockup, so search Karl for each by title._
-
-1. Choose page: "Environmental Health"
-
-### Promote → For search engines — \`promote\` [TYPE] — page not approved
-
-_The slug is REQUIRED and lives on the Promote tab, so a page cannot be saved from the Content tab alone._
-
-**Slug (\`slug\`):**
-
-sf.gov/step-by-step/prepare-your-unit-for-pest-treatment
-
-**Title tag (\`seo_title\`):**
-
-Prepare your unit for pest treatment | SF.gov
-
-**Meta description (\`search_description\`):**
-
-What to move, wash, and bag before an exterminator treats a unit for bed bugs or cockroaches.
 "
 `;
 
@@ -7395,205 +7244,5 @@ Tenant rights when reporting housing conditions | SF.gov
 **Meta description (\`search_description\`):**
 
 Tenant protections and help if you are worried about retaliation after reporting housing conditions.
-"
-`;
-
-exports[`transcript Markdown, every corpus page > whoToCall 1`] = `
-"# Who to call about a housing problem — Karl transcript
-
-**Karl path:** New: Information → Content
-**Decision:** no review recorded
-**Page key:** \`whoToCall\` · **Slug:** \`sf.gov/information/who-to-call-about-a-housing-problem\` · **Type:** Information
-
-**NOT APPROVED — do not publish from this transcript.** Approval in this tool is per page, not per field, so nothing below is signed off.
-
-> Every keystroke below is yours to make. This file is an export, not an approval, and nothing here has been written to Karl.
-
-### Page title — \`title\` [TYPE] — page not approved
-
-**Page title:**
-
-Who to call about a housing problem
-
-### Description — \`description\` [TYPE] — page not approved
-
-**Description:**
-
-Healthy Housing, Building Inspection, the Rent Board, or 311 — find the right office first.
-
-### Primary agency — \`primary_agency\` [FLAG] — page not approved
-
-_U6 — supply the parent Agency page by hand. Where the mockup names the agency it is text, not a page reference, and Karl requires a page: for HHVC pages that is sf.gov/departments--healthy-housing-and-vector-control._
-
-### Information section — \`information_section\` [TYPE] — page not approved
-
-**Title:**
-
-Who this information is for
-
-**Text:**
-
-- A tenant with a problem who does not know which office handles it
-- Someone who has already been routed to the wrong department
-- An advocate or helper directing someone to the right place
-
-### Information section — \`information_section\` [TYPE] — page not approved
-
-**Title:**
-
-Start with what you can see
-
-**Text:**
-
-San Francisco splits housing problems across several offices. You do not need to know which one — you need to name the condition, and the condition decides.
-
-- Pests, rodents, mold, garbage, or an unsanitary building: Healthy Housing and Vector Control.
-- No heat, no hot water, broken plumbing, bad wiring, or a structural repair: the Department of Building Inspection.
-- A rent increase, an eviction notice, or a dispute about your lease: the Rent Board.
-- Not sure, or more than one of these: start with 311.
-
-### Information section — \`information_section\` [TYPE] — page not approved
-
-**Title:**
-
-Pest problems Healthy Housing handles
-
-**Text:**
-
-This team inspects conditions that affect health in and around housing, under Health Code Article 11.
-
-- [Report rats or mice](rodentsReport)
-- [Report bed bugs](bedBugReport)
-- [Report cockroaches or other insects](insectsReport)
-- [Report mosquitoes or standing water](mosquitoReport)
-- [Report pigeon droppings, nesting, or feeding](pigeonReport)
-
-**Links in this text — recreate each with the Link tool, do not paste them:**
-
-- "Report rats or mice" → shape 5 — rich text Link tool → Internal link → "Report rats or mice"
-- "Report bed bugs" → shape 5 — rich text Link tool → Internal link → "Report bed bugs"
-- "Report cockroaches or other insects" → shape 5 — rich text Link tool → Internal link → "Report cockroaches or other insects"
-- "Report mosquitoes or standing water" → shape 5 — rich text Link tool → Internal link → "Report mosquitoes or standing water"
-- "Report pigeon droppings, nesting, or feeding" → shape 5 — rich text Link tool → Internal link → "Report pigeon droppings, nesting, or feeding"
-
-### Information section — \`information_section\` [TYPE] — page not approved
-
-**Title:**
-
-Sanitation and moisture problems Healthy Housing handles
-
-**Text:**
-
-- [Report animal waste on a property](animalWasteReport)
-- [Report a sewage leak or backup](sewageReport)
-- [Report mold](moldReport)
-- [Report garbage, clutter, or overgrown plants](garbageReport)
-
-**Links in this text — recreate each with the Link tool, do not paste them:**
-
-- "Report animal waste on a property" → shape 5 — rich text Link tool → Internal link → "Report animal waste on a property"
-- "Report a sewage leak or backup" → shape 5 — rich text Link tool → Internal link → "Report a sewage leak or backup"
-- "Report mold" → shape 5 — rich text Link tool → Internal link → "Report mold"
-- "Report garbage, clutter, or overgrown plants" → shape 5 — rich text Link tool → Internal link → "Report garbage, clutter, or overgrown plants"
-
-### Information section — \`information_section\` [TYPE] — page not approved
-
-**Title:**
-
-Learn more about what Healthy Housing handles
-
-**Text:**
-
-- [Learn what Healthy Housing and Vector Control can inspect](scopeInfo)
-- [Report a pest problem, start to finish](stepPestReport)
-- [Health Code Article 11 in plain language](article11Guide)
-
-**Links in this text — recreate each with the Link tool, do not paste them:**
-
-- "Learn what Healthy Housing and Vector Control can inspect" → shape 5 — rich text Link tool → Internal link → "Learn what Healthy Housing and Vector Control can inspect"
-- "Report a pest problem, start to finish" → shape 5 — rich text Link tool → Internal link → "Report a pest problem, start to finish"
-- "Health Code Article 11 in plain language" → shape 5 — rich text Link tool → Internal link → "Health Code Article 11 in plain language"
-
-### Information section — \`information_section\` [TYPE] — page not approved
-
-**Title:**
-
-What another office handles
-
-**Text:**
-
-These are real housing problems, and they are not this team’s to inspect. Going straight to the right office is faster than being routed.
-
-- **Heat, hot water, plumbing, electrical, and structural repairs:** the Department of Building Inspection.
-- **Rent increases, evictions, and lease disputes:** the Rent Board.
-- **Lead paint, asbestos, water service, and noise:** Citywide services, not this team.
-- **A fire hazard or a blocked exit:** the Fire Department.
-
-### Information section — \`information_section\` [TYPE] — page not approved
-
-**Title:**
-
-When more than one office is involved
-
-**Text:**
-
-A building can have problems belonging to two offices at once. Report each one to the office that handles it rather than waiting for one report to cover both.
-
-- Reporting to one office does not open a case with another.
-- A Healthy Housing inspection covers the conditions in Article 11, not everything wrong with a building.
-- [What happens after you report a housing or pest problem](afterReport)
-
-**Links in this text — recreate each with the Link tool, do not paste them:**
-
-- "What happens after you report a housing or pest problem" → shape 5 — rich text Link tool → Internal link → "What happens after you report a housing or pest problem"
-
-### Information section — \`information_section\` [TYPE] — page not approved
-
-**Title:**
-
-If you are worried about retaliation
-
-**Text:**
-
-You can report a condition in a building you rent. Reports can be made without giving your name.
-
-- [Tenant rights when reporting housing conditions](tenantRights)
-
-**Links in this text — recreate each with the Link tool, do not paste them:**
-
-- "Tenant rights when reporting housing conditions" → shape 5 — rich text Link tool → Internal link → "Tenant rights when reporting housing conditions"
-
-### Partner agencies — \`partner_agencies\` [CHOOSE] — page not approved
-
-_A page chooser restricted to Agency pages. These entries name real sf.gov department pages outside this mockup, so search Karl for each by title._
-
-1. Choose page: "311 Customer Service Center"
-2. Choose page: "Environmental Health"
-
-### Topics — \`topics\` [TYPE] — page not approved
-
-_topicTag is unmapped metadata — the stored values are Agency labels, not Topic chooser references. Do not paste one into this chooser._
-
-### Related — \`related\` [CHOOSE] — page not approved
-
-_This block publishes the destination page’s title and a link, and NOTHING else. Choose the page and type no description._
-
-1. Choose page: "Healthy housing conditions" (\`healthyHousingTopic\` → /sf.gov/topics--healthy-housing-conditions)
-
-### Promote → For search engines — \`promote\` [TYPE] — page not approved
-
-_The slug is REQUIRED and lives on the Promote tab, so a page cannot be saved from the Content tab alone._
-
-**Slug (\`slug\`):**
-
-sf.gov/information/who-to-call-about-a-housing-problem
-
-**Title tag (\`seo_title\`):**
-
-Who to call about a housing problem | SF.gov
-
-**Meta description (\`search_description\`):**
-
-Healthy Housing, Building Inspection, the Rent Board, or 311 — find the right office first.
 "
 `;

@@ -34,7 +34,6 @@ export const PAGE_GROUPS = [
 			'report-mold',
 			'report-garbage-clutter-or-overgrown-plants',
 			'step-by-step-report-a-pest-problem',
-			'information-who-to-call-about-a-housing-problem',
 			'information-what-happens-after-you-report-housing-pest-problem',
 			'information-tenant-rights-and-reporting-housing-conditions'
 		]
@@ -71,7 +70,6 @@ export const PAGE_GROUPS = [
 			'integrated-pest-management-education',
 			'mosquito-control-program',
 			'mosquito-education-workshop',
-			'step-by-step-prepare-your-unit-for-pest-treatment',
 			'information-bed-bugs-prevent-find-and-prepare-for-treatment',
 			'information-keep-rats-and-mice-out-of-your-home',
 			'information-get-rid-of-cockroaches-without-heavy-pesticides',

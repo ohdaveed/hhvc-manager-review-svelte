@@ -86,10 +86,6 @@ export const sewageReport = {
 					target: 'tenantRights'
 				},
 				{
-					title: 'Who to call about a housing problem',
-					target: 'whoToCall'
-				},
-				{
 					title: 'Learn what Healthy Housing and Vector Control can inspect',
 					target: 'scopeInfo'
 				}

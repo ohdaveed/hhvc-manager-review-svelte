@@ -82,7 +82,7 @@ describe('buildSitemap', () => {
 describe('typeBreakdown', () => {
 	it('reads back the corpus composition, commonest type first', () => {
 		expect(typeBreakdown(hydrate())).toBe(
-			'16 Transaction · 13 Information · 3 Campaign · 3 Step by step · 2 Report · 2 Resource Collection · 1 About us · 1 Agency · 1 Location · 1 Topic'
+			'16 Transaction · 12 Information · 3 Campaign · 2 Report · 2 Resource Collection · 2 Step by step · 1 About us · 1 Agency · 1 Location · 1 Topic'
 		);
 	});
 });
@@ -211,11 +211,11 @@ describe('the real corpus', () => {
 	// The weaker `incoming === 0` test reports five pages and misses those
 	// five, which is why this is a reachability pass rather than a count.
 	// Ten before Track C (2026-11-25), six after it, three after the Topic merge,
-	// which put tenant steps, the citation page and Question a NOV on the Topic.
-	it('has three pages unreachable from the Agency and Topic hubs', () => {
+	// which put tenant steps, the citation page and Question a NOV on the Topic, and
+	// two after the unit-preparation Step by step was retired (2026-11-26).
+	it('has two pages unreachable from the Agency and Topic hubs', () => {
 		expect(findOrphans(entries).map((e) => e.id)).toEqual([
 			'departments--healthy-housing-and-vector-control--about',
-			'step-by-step-prepare-your-unit-for-pest-treatment',
 			'location-environmental-health-office'
 		]);
 	});
