@@ -97,7 +97,7 @@ export const OPEN_QUESTIONS: OpenQuestion[] = [
 		id: 'mold-test-kits',
 		question:
 			'Should residents be told not to rely on third-party mold test kits when they report?',
-		fields: [{ slug: 'sf.gov/report-mold', path: 'sections.0.steps.3.bullets.6' }]
+		fields: [{ slug: 'sf.gov/report-mold', path: 'sections.0.steps.2.bullets.6' }]
 	},
 	// The SRO intake question was answered (Decided, Nov 24, 2026: one clerk
 	// takes every report), and the SRO report page it was flagged on is removed.
@@ -116,7 +116,7 @@ export const OPEN_QUESTIONS: OpenQuestion[] = [
 		question:
 			'Which 311 service takes reports of dog waste on public sidewalks and streets, which HHVC does not handle?',
 		note: 'Decided Nov 24, 2026: likely Public Works street cleaning; the agency is still to confirm.',
-		fields: [{ slug: 'sf.gov/report-animal-waste-on-property', path: 'sections.0.steps.0.text.1' }]
+		fields: [{ slug: 'sf.gov/report-animal-waste-on-property', path: 'sections.0.steps.1.text.1' }]
 	},
 	{
 		id: 'dbi-routing-citation',

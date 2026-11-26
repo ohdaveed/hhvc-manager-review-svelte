@@ -38,11 +38,10 @@ describe('transcript claims', () => {
 		expect(claims).toMatchObject({
 			title: 'title',
 			summary: 'description',
-			'whatToKnow.cost': 'cost',
 			'whatToKnow.thingsToKnow': 'things_to_know',
 			'sections.0.heading': 'what_to_do',
-			'sections.0.steps.0.button': 'what_to_do',
-			'sections.0.steps.1.callout.text': 'what_to_do',
+			'sections.0.steps.1.button': 'what_to_do',
+			'sections.0.steps.0.callout.text': 'what_to_do',
 			'sections.1.heading': 'supporting_information',
 			'sections.2.heading': 'custom_section',
 			'sections.3.cards': 'related',

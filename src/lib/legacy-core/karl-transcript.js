@@ -471,6 +471,17 @@ function matchedSectionIndexes(context, source) {
  * of which 16 say nothing.
  */
 function emitEmptyPanel(context, panel) {
+	// `yes (radio)` is a requirement inside a block the page need not have (Cost,
+	// field map E3) -- the same trap `blocksSave` in `$lib/karl/walkthrough`
+	// avoids. Flagging it would send the editor inventing a value.
+	if (panel.required && String(panel.requiredDoc ?? '').includes('radio')) {
+		const entry = newEntry(panel, 'TYPE');
+		entry.notes.push(
+			`Optional, and this page leaves it out. If the form has inserted a ${panel.uiLabel} block, remove it: its radio is required only while the block exists.`
+		);
+		context.transcript.entries.push(entry);
+		return;
+	}
 	if (!panel.required && !panel.note) return;
 	const entry = newEntry(panel, panel.required ? 'FLAG' : 'TYPE');
 	entry.notes.push(

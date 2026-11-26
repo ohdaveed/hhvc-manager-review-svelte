@@ -5,11 +5,20 @@ export const moldReport = {
 	summary:
 		'Visible growth on a wall or ceiling from humidity, condensation, or a leak in a home or building.',
 	primaryAgency: 'Healthy Housing and Vector Control',
+	// Karl's Contact us block (get_help -> Phone number), in the order and wording
+	// live SF.gov 311 report pages use (2026-11-26 page review). In the step text
+	// it would push the 311 step past the three-sentence paragraph limit.
+	contact: {
+		phone: [
+			'311',
+			'415-701-2311 if you are outside of San Francisco',
+			'TDD/TTY 711 if you are deaf, hard of hearing, or have a speech disability'
+		]
+	},
 	reading: 'Grade 6',
 	editorNote:
 		'Report regroup (Decided, Nov 24, 2026), built 2026-11-25. New page, one of the 9 condition pages. Scope is the Decided one: visible mold, the 10 sq ft threshold, the moisture source, and a referral to DBI for leaks. C8 (decided Nov 24, 2026): the Department of Building Inspection handles mold caused by a leak, so the leak referral names DBI. Text is carried from the mold half of "Report garbage, mold, and overgrown vegetation", which was retired once all 9 condition pages existed (2026-11-25). That page stated the 10 sq ft rule three times; here it is stated once, in Things to know. The third-party test-kit line stays flagged unverified, as it was there.',
 	whatToKnow: {
-		cost: 'Free',
 		thingsToKnow: [
 			{
 				label: 'When we can act',
@@ -45,17 +54,10 @@ export const moldReport = {
 					karl: 'what_to_do -> Section. Section title: "Tell the owner in writing". Section specifics: one Text block. Mold-specific, so it stays here; the general landlord notice lives on Tenant rights (Decided shared-content rule).'
 				},
 				{
-					title: 'Start your report',
+					title: 'Gather your details',
 					text: [
-						'Use 311 to report mold caused by humidity or condensation. You can report mold in your home or in a shared area, or report for someone else.',
-						'Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.'
+						'Have these details ready before you start. Only share what applies to your situation:'
 					],
-					button: 'Report through 311',
-					karl: 'what_to_do -> Section. Section title: "Start your report". Section specifics: Text block (these 2 paragraphs, the second being the one-line SRO note every report page carries, Decided) + Button link block ("Report through 311").'
-				},
-				{
-					title: 'Describe the mold',
-					text: ['Include only the details that apply:'],
 					bullets: [
 						'The address, and the room or shared area',
 						'Whether the mold is on a wall, ceiling, or somewhere else',
@@ -71,11 +73,20 @@ export const moldReport = {
 						}
 					],
 					callout: {
-						karl: 'Callout block inside the "Describe the mold" Section specifics: single rich text field, no separate title. Text: the one confidentiality sentence (Decided: the same on every page, once per page) plus the photo note.',
+						karl: 'Callout block inside the "Gather your details" Section specifics: single rich text field, no separate title. Text: the one confidentiality sentence (Decided: the same on every page, once per page) plus the photo note.',
 						text: 'We never share your name or contact information. You do not need to send photos.',
 						title: false
 					},
-					karl: 'what_to_do -> Section. Section title: "Describe the mold". Section specifics: Text block (intro sentence + bulleted checklist) + Callout block below.'
+					karl: 'what_to_do -> Section. Section title: "Gather your details". Section specifics: Text block (intro sentence + bulleted checklist) + Callout block below.'
+				},
+				{
+					title: 'Start your report',
+					text: [
+						'Use 311 to report mold caused by humidity or condensation. You can report mold in your home or in a shared area, or report for someone else.',
+						'Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.'
+					],
+					button: 'Report through 311',
+					karl: 'what_to_do -> Section. Section title: "Start your report". Section specifics: Text block (these 2 paragraphs, the second being the one-line SRO note every report page carries, Decided) + Button link block ("Report through 311").'
 				}
 			]
 		},

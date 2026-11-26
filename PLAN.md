@@ -20,14 +20,17 @@ Decisions forced by constraints:
   step's callout, which the reorder now puts above the 311 button.
 - Sewage keeps "Report it right away" first: that order is Decided (48-hour response, urgent).
 
-- [ ] **1. All nine pages.** `cost: 'Free'` removed; the details step (renamed "Gather your details")
-      moved above the 311 button step (sewage excepted); the 311 phone/TTY lines added to the button step,
-      Karl note naming a Phone number block. Karl notes updated to match.
-- [ ] **2. Bed bug copy.** Action-first subtitle; Nearby units folded into Step 1 as its second bullet;
+- [x] **1. All nine pages.** `cost: 'Free'` removed; the details step (renamed "Gather your details")
+      moved above the 311 button step (sewage excepted); Karl notes updated to match. The 311 phone/TTY
+      lines went into Karl's Contact us block (`contact.phone`), NOT the step: in the step they broke the
+      three-sentence paragraph / three-item text limits `validate-output` enforces on five pages.
+      Also fixed: the transcript and the schema read Cost's `yes (radio)` as "Karl won't save without it";
+      both now treat it as optional, as `walkthrough.ts` already did.
+- [x] **2. Bed bug copy.** Action-first subtitle; Nearby units folded into Step 1 as its second bullet;
       prep link and privacy sentence placed per the review; While you wait cut to two tips plus the prep
       link, with UC IPM and EPA moved onto `bed-bugs-prevent-and-prepare`; Step 1→2 bridge says you can
       report without waiting.
-- [ ] **3. Gates.** Unit tests green (transcript snapshot updated after reading its diff), build green,
-      page checked in the browser.
+- [x] **3. Gates.** `bun run verify` green (1345 tests, build), check/lint/format ratchets at baseline,
+      corpus.lock regenerated, bed bug page checked on :5173 (no console errors).
 - [ ] **4. PR opened, CI green.**
 - [ ] **5. Separate PR: "Unconfirmed in Karl" pill** beside the section's Rethink control (review item 5).
