@@ -12,9 +12,11 @@
  * Every URL here was resolved against the live help center on 2026-08-29 via
  * the Karl documentation MCP server, not composed from a slug pattern. Two of
  * them are not where you would guess: readability lives under `writing-on-sf.gov`
- * while plain language lives under `sf.gov-and-karl-foundations`, and the only
- * published guidance on heading levels is a paragraph on the *Report* content
- * type's body page. Re-verify with `searchDocumentation` before editing a URL —
+ * while plain language lives under `sf.gov-and-karl-foundations`. Heading levels
+ * used to cite a paragraph on the *Report* content type's body page, the only
+ * guidance there was; it showed as "Body on a Report page" on every page type.
+ * Re-resolved on 2026-11-26: the Heading component now has its own "Create a
+ * logical reading order" page. Re-verify with `searchDocumentation` before editing a URL —
  * GitBook reorganises, and a citation that 404s is worse than no citation.
  */
 
@@ -89,9 +91,9 @@ export const KARL_HELP: Record<KarlHelpKey, KarlHelpLink> = {
 		why: 'WCAG 2.1 Level AA is a compliance deadline for CCSF, not a preference.'
 	},
 	headingLevels: {
-		title: 'Body on a Report page',
-		url: `${BASE}/using-karl-the-cms/content-types/building-a-page-by-content-type/report/body-on-a-report-page`,
-		why: 'Karl’s own guidance on heading levels and what each one does.'
+		title: 'Create a logical reading order',
+		url: `${BASE}/using-karl-the-cms/components/heading/create-a-logical-reading-order`,
+		why: 'Karl’s guidance on nesting headings, for any page type.'
 	},
 	altText: {
 		title: 'Alt text',

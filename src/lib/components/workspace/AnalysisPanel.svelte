@@ -231,9 +231,19 @@
 							</Badge>
 						{:else}
 							<Badge variant="outline">No target declared in this page's corpus module</Badge>
+							<Badge variant="outline">SF.gov guideline: grade {SFGOV_READING_GUIDELINE}</Badge>
 						{/if}
-						<Badge variant="outline">SF.gov guideline: grade {SFGOV_READING_GUIDELINE}</Badge>
 					</div>
+					<!-- One number to judge by. The target and the guideline used to sit
+					     side by side as two badges ("Over this page's target of grade 6",
+					     "SF.gov guideline: grade 5"), which read as two rules that
+					     disagree. The target is the one the verdict uses; the guideline
+					     is context for why it differs. -->
+					{#if analysis.target !== null && analysis.target !== SFGOV_READING_GUIDELINE}
+						<p class="text-xs text-muted-foreground" data-testid="readability-target-note">
+							The target is set for this page. SF.gov’s general guideline is grade {SFGOV_READING_GUIDELINE}.
+						</p>
+					{/if}
 
 					<p class="text-sm">{analysis.readability.recommendation}</p>
 
