@@ -6,7 +6,7 @@
  * it shows progress and a Continue link a person clicks.
  */
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { fireEvent, render, screen } from '@testing-library/svelte';
+import { fireEvent, render, screen, within } from '@testing-library/svelte';
 
 const goto = vi.fn();
 vi.mock('$app/navigation', () => ({ goto: (...args: unknown[]) => goto(...args) }));
@@ -161,8 +161,10 @@ describe('landing page', () => {
 
 		await fireEvent.click(await screen.findByRole('button', { name: /^1 approved/ }));
 
-		expect(screen.getByRole('link', { name: /About vector control/ })).toBeTruthy();
-		expect(screen.queryByRole('link', { name: /^Report a problem/ })).toBeNull();
+		// Scoped to the list: the Karl section above it links approved pages too.
+		const list = within(screen.getByRole('region', { name: 'All pages' }));
+		expect(list.getByRole('link', { name: /About vector control/ })).toBeTruthy();
+		expect(list.queryByRole('link', { name: /^Report a problem/ })).toBeNull();
 		expect(screen.getByRole('radio', { name: /Approved/ }).getAttribute('aria-checked')).toBe(
 			'true'
 		);

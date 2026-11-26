@@ -3,6 +3,7 @@
 	import { hydrateMockup } from '$lib/stores/applySavedEdits';
 	import { warnBeforeLeaving } from '$lib/stores/leaveGuard';
 	import { page } from '$app/stores';
+	import { afterNavigate, replaceState } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
 	import { Switch } from '$lib/components/ui/switch/index.js';
@@ -29,7 +30,9 @@
 		ChevronRight,
 		ChevronsLeft,
 		ChevronsRight,
+		ClipboardList,
 		Download,
+		Layers,
 		Maximize2,
 		Monitor,
 		Smartphone,
@@ -51,6 +54,7 @@
 	import SiteMapView from '$lib/components/workspace/SiteMapView.svelte';
 	import BlueprintView from '$lib/components/workspace/BlueprintView.svelte';
 	import { buildWalkthrough } from '$lib/karl/walkthrough';
+	import { wantsWalkthrough, withWalkthrough } from '$lib/karl/walkthroughLink';
 	import { reviewRecordFor } from '$lib/karl/reviewRecord';
 	import { outlineSummary, placementsFor } from '$lib/karl/placement';
 	import { setOutlineContext } from '$lib/karl/outlineContext';
@@ -327,6 +331,46 @@
 			cleanup?.();
 		};
 	});
+
+	// ---- the walkthrough's deep link (`?view=walkthrough`) ----------------
+	//
+	// URL -> view: a navigation that arrives with the parameter opens the
+	// walkthrough. It is held as `pendingWalkthrough` until the page exists,
+	// because a draft route renders before its draft has loaded. Registered
+	// AFTER the onMount above, so on first load the rail state is read before
+	// `enterWalkthrough` captures it to restore on exit.
+	let pendingWalkthrough = $state(false);
+	// False until SvelteKit's first `afterNavigate`. The hydration effects run
+	// INSIDE the root component's constructor, before the client has assigned
+	// `root`, and `replaceState` calls `root.$set` -- measured: an uncaught
+	// "Cannot read properties of undefined (reading '$set')" on a deep-linked
+	// load. SvelteKit fires `afterNavigate` only once that assignment is done.
+	let routerReady = $state(false);
+	afterNavigate(({ to }) => {
+		routerReady = true;
+		pendingWalkthrough = Boolean(to && wantsWalkthrough(to.url));
+	});
+	$effect(() => {
+		if (!pendingWalkthrough || !pageData) return;
+		pendingWalkthrough = false;
+		if (pageStore.mode !== 'walkthrough') pageStore.enterWalkthrough();
+	});
+
+	// View -> URL: entering adds the parameter, so the address bar can be
+	// bookmarked or sent; leaving strips it, so a reload after Exit lands on
+	// the mockup. Read from `location`, not `$page.url`: this effect should run
+	// on a change of view or page, not on its own `replaceState`.
+	$effect(() => {
+		if (!routerReady) return;
+		const on = pageStore.mode === 'walkthrough';
+		void currentPath;
+		const here = new URL(location.href);
+		if (wantsWalkthrough(here) === on) return;
+		// The current location with one query parameter changed: it is already a
+		// resolved URL (base path included), so there is nothing to resolve().
+		// eslint-disable-next-line svelte/no-navigation-without-resolve
+		replaceState(withWalkthrough(here, on), $page.state);
+	});
 </script>
 
 <!-- 280 / 1fr / 380, up from 250 / 1fr / 300. The review panel needs the extra
@@ -546,7 +590,7 @@
 				/>
 			{:else}
 				<nav
-					class="review-toolbar flex h-12 flex-none items-center justify-between border-b border-sfds-grey-l2 bg-background px-3 sm:px-5"
+					class="review-toolbar @container/toolbar flex h-12 flex-none items-center justify-between border-b border-sfds-grey-l2 bg-background px-3 sm:px-5"
 				>
 					<!-- `grow` with no `min-w-0`: the group never shrinks below its
 					     fixed controls, so a narrow bar wraps the right-hand group
@@ -680,34 +724,47 @@
 								{/each}
 							</ToggleGroup.Root>
 						</div>
-						<!-- The tool's second job, and the only way into it. Entering
-					     collapses both rails; exiting puts them back as they were. -->
-						{#if onDraft}
-							<Button
-								variant="outline"
-								size="sm"
-								class="h-7 flex-none text-xs"
-								onclick={() => pageStore.enterWalkthrough()}
+						<!-- The tool's second job, so it is a labelled, filled button of its
+						     own rather than an item behind the Karl views disclosure, where
+						     nothing on screen said it existed. Entering collapses both
+						     rails; exiting puts them back as they were. The accessible name
+						     stays "Open Karl walkthrough" (it contains the visible label,
+						     WCAG 2.5.3). The visible label drops to "Karl" when the BAR is
+						     narrow, not the window -- the rails decide its width -- which
+						     keeps it to one row at 1080px with both rails open, as before
+						     this button existed, and to two on a phone. -->
+						<Button
+							size="sm"
+							class="h-7 flex-none gap-1.5 text-xs font-semibold"
+							onclick={() => pageStore.enterWalkthrough()}
+							data-testid="karl-walkthrough"
+						>
+							<ClipboardList class="size-3.5" aria-hidden="true" />
+							<!-- One span, so the button's flex gap does not land between words;
+							     `&nbsp;` because Svelte trims a span's leading whitespace. -->
+							<span
+								><span class="sr-only">Open&nbsp;</span>Karl<span
+									class="@max-[32rem]/toolbar:sr-only">&nbsp;walkthrough</span
+								></span
 							>
-								<!-- "Karl" alone on a phone keeps the bar to two rows; the
-								     hidden words keep the accessible name, which tests and
-								     screen readers both use, unchanged. -->
-								<span class="max-sm:sr-only">Open</span> Karl
-								<span class="max-sm:sr-only">walkthrough</span>
-							</Button>
-						{:else}
-							<!-- The Karl views, in the walkthrough button's old slot so the
-							     toolbar -- measured at zero slack between 1080px and 1400px --
-							     gains no width. A disclosure of plain buttons and a switch,
-							     NOT `role="menu"`: the walkthrough keeps its exact name and
-							     role, and Popover handles Escape, outside clicks and focus
-							     return. -->
+						</Button>
+						{#if !onDraft}
+							<!-- The other two Karl views. A disclosure of a switch and a plain
+							     button, NOT `role="menu"`; Popover handles Escape, outside
+							     clicks and focus return. Off on drafts (decision 12). -->
 							<Popover.Root bind:open={karlMenuOpen}>
 								<Popover.Trigger
-									class="{buttonVariants({ variant: 'outline', size: 'sm' })} h-7 flex-none text-xs"
+									class="{buttonVariants({
+										variant: 'outline',
+										size: 'sm'
+									})} size-7 flex-none px-0"
 									aria-label="Karl views"
+									title="Karl views: field outline and Blueprint"
 								>
-									Karl
+									<!-- Icon-only: the labelled walkthrough button beside it spent
+									     the width, and at 1080px a labelled trigger wrapped the bar
+									     onto a third row. Named by aria-label, described by title. -->
+									<Layers class="size-3.5" aria-hidden="true" />
 								</Popover.Trigger>
 								<Popover.Portal>
 									<Popover.Content
@@ -736,17 +793,6 @@
 											}}
 										>
 											Show Blueprint
-										</Button>
-										<Button
-											variant="outline"
-											size="sm"
-											class="h-8 justify-start text-xs"
-											onclick={() => {
-												karlMenuOpen = false;
-												pageStore.enterWalkthrough();
-											}}
-										>
-											Open Karl walkthrough
 										</Button>
 									</Popover.Content>
 								</Popover.Portal>

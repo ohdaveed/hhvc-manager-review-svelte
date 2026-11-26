@@ -16,7 +16,8 @@
 		'Open a page from the queue. Each mockup renders the way it would appear on SF.gov.',
 		'Read it and edit the copy inline. An AI rewrite can suggest alternatives for any field.',
 		'Record a decision: approved, needs revision or blocked, with a note for the content team.',
-		'Move on to the next undecided page until every page has a decision.'
+		'Move on to the next undecided page until every page has a decision.',
+		'Once a page is approved, open its Karl walkthrough to rebuild it in Karl field by field.'
 	];
 
 	/**
