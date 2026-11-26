@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { review } from '$lib/review/review.svelte';
 	import { onMount, tick, untrack } from 'svelte';
 	import { hydrateMockup } from '$lib/stores/applySavedEdits';
 	import { classifyLatestEdits } from '$lib/stores/editStatus';
@@ -21,8 +22,7 @@
 		isOwnEdit,
 		loadReview,
 		pagesStore,
-		queueOrder,
-		reconcileReview
+		queueOrder
 	} from '$lib/stores/reviewState';
 	import { STATUS_LABELS } from '$lib/review/statusLabels';
 	import { sessionStore } from '$lib/stores/session.svelte';
@@ -249,21 +249,15 @@
 	// the queue and greyed Next out, with 37 undecided pages still to go. Held,
 	// Next still means the row that came after this one, and Prev from there
 	// comes back here. A reload regroups.
-	const queueReview = $derived(
-		reconcileReview(
-			$pagesStore,
-			pageStore.pages.map((p) => p.id)
-		)
-	);
 	const queueMembership = $derived(
-		queueReview.rows.map((p) => p.path).join('\n') + '\n\n' + queueReview.unreviewed.join('\n')
+		review.rows.map((p) => p.path).join('\n') + '\n\n' + review.unreviewed.join('\n')
 	);
 	const order = $derived.by(() => {
 		void queueMembership;
 		return untrack(() => {
-			const queued = queueOrder(queueReview.rows);
+			const queued = queueOrder(review.rows);
 			return queued.length > 0
-				? [...queued, ...queueReview.unreviewed]
+				? [...queued, ...review.unreviewed]
 				: pageStore.pages.map((p) => p.id);
 		});
 	});

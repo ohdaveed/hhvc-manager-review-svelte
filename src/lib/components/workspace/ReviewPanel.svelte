@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { review } from '$lib/review/review.svelte';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Badge } from '$lib/components/ui/badge/index.js';
@@ -18,9 +19,7 @@
 	import {
 		updatePageStatus,
 		updatePageNotes,
-		nextUndecidedPath,
 		pagesStore,
-		reconcileReview,
 		type PageCheck
 	} from '$lib/stores/reviewState';
 
@@ -44,15 +43,9 @@
 
 	// Where "Next undecided" goes. Only meaningful once a review has loaded:
 	// with no live rows (signed out) there is nothing to move on to. Searched
-	// over rows the queue lists, so it never names a retired page's row, whose
-	// link would 404.
-	const reviewRows = $derived(
-		reconcileReview(
-			$pagesStore,
-			pageStore.pages.map((p) => p.id)
-		).rows
-	);
-	const nextPath = $derived(pageData?.id ? nextUndecidedPath(reviewRows, pageData.id) : undefined);
+	// over the rows the queue lists (`review`), so it never names a retired
+	// page's row, whose link would 404.
+	const nextPath = $derived(pageData?.id ? review.nextUndecided(pageData.id) : undefined);
 	const nextTitle = $derived(
 		nextPath ? pageTitleFor(nextPath, pageStore.pages, $draftsStore, 'empty') : ''
 	);

@@ -12,29 +12,16 @@
 	import { reviewProgress } from '$lib/landing/progress';
 	import { draftsStore } from '$lib/stores/draftPages';
 	import { pageStore } from '$lib/stores/pageData.svelte';
-	import { loadReview, pagesStore, queueOrder, reconcileReview } from '$lib/stores/reviewState';
+	import { loadReview, queueOrder } from '$lib/stores/reviewState';
+	import { review } from '$lib/review/review.svelte';
 	import { sessionStore } from '$lib/stores/session.svelte';
 
-	// The table squared with the corpus, as the queue does (`reconcileReview`):
-	// retired pages' rows are left out, and the denominator counts every page a
-	// reviewer can open, so this and the queue's "N of M" cannot disagree.
-	const review = $derived(
-		reconcileReview(
-			$pagesStore,
-			pageStore.pages.map((p) => p.id)
-		)
-	);
+	// The review squared with the corpus (`review`): the same rows, denominator
+	// and counts the queue reads, so the two "N of M" lines cannot disagree.
 	const progress = $derived({ ...reviewProgress(review.rows), total: review.total });
 
-	// Per-status counts for the bar and its shortcuts. Computed here rather than
-	// added to `reviewProgress`, whose contract is "how far through, and where
-	// next" and is tested as such.
-	const counts = $derived(
-		review.rows.reduce<Partial<Record<(typeof review.rows)[number]['status'], number>>>(
-			(acc, p) => ({ ...acc, [p.status]: (acc[p.status] ?? 0) + 1 }),
-			{}
-		)
-	);
+	// Per-status counts for the bar and its shortcuts.
+	const counts = $derived(review.counts);
 	const nextTitle = $derived(
 		progress.nextPath === undefined
 			? undefined
