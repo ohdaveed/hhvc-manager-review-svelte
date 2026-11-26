@@ -1027,6 +1027,16 @@ body {
 	line-height: 18px;
 }
 
+/* Under Fit the frame is zoomed down (to 0.5 at most) so the page keeps its
+   desktop layout. That zoom is the preview; it was also shrinking the tool's
+   own annotations, leaving Karl chips at ~6px and the Rethink button 12px
+   tall (below WCAG 2.5.8's 24px), measured 2026-11-26 at 1280px with both
+   rails open. `zoom` compounds, so the inverse here renders them at true
+   size. The mockup copy itself keeps the preview scale: it is the page. */
+#mockPage :is(.karl-chip, .karl-outline-summary, .rethink-section, [data-edit-expired]) {
+	zoom: calc(1 / var(--fit-scale, 1));
+}
+
 /* Blueprint → page: a brief mark on the field the reviewer asked to see. The
    focus ring says the same thing, so this is reinforcement, not the only cue. */
 .karl-jump-highlight {

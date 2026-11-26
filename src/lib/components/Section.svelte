@@ -213,6 +213,8 @@
 	.rethink-section {
 		font-size: 12px;
 		line-height: 1;
+		/* WCAG 2.5.8's 24px floor; 12px type + padding + border was 22. */
+		min-height: 24px;
 		padding: 4px 8px;
 		border: 1px solid currentColor;
 		border-radius: 3px;

@@ -273,7 +273,10 @@
 	const frameStyle = $derived.by(() => {
 		const preset = PREVIEW_WIDTHS[pageStore.previewWidth];
 		if (preset) return `width:${preset}px;max-width:none;flex:none`;
-		if (fit) return `width:${fit.width}px;max-width:none;flex:none;zoom:${fit.scale}`;
+		// `--fit-scale` lets review annotations inside the frame undo the zoom
+		// (app.css): the page is previewed small, the tool's own marks are not.
+		if (fit)
+			return `width:${fit.width}px;max-width:none;flex:none;zoom:${fit.scale};--fit-scale:${fit.scale}`;
 		return '';
 	});
 
