@@ -23,6 +23,10 @@ class SessionStore {
 	 *  Null whenever `signedIn` is not true. Never logged. */
 	email = $state<string | null>(null);
 
+	/** The signed-in user's id, to tell the reviewer's own edits from others'.
+	 *  Null whenever `signedIn` is not true. */
+	userId = $state<string | null>(null);
+
 	constructor() {
 		// getSession touches browser storage; on the server there is no session
 		// to find and no listener worth attaching.
@@ -40,6 +44,7 @@ class SessionStore {
 	#apply(session: Session | null) {
 		this.signedIn = Boolean(session);
 		this.email = session?.user.email ?? null;
+		this.userId = session?.user.id ?? null;
 	}
 
 	/** True only once we know there is no session — never during the initial

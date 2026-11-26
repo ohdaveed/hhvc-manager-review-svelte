@@ -1,5 +1,7 @@
 <script lang="ts">
-	import { onMount, tick } from 'svelte';
+	import { onMount, tick, untrack } from 'svelte';
+	import { hydrateMockup } from '$lib/stores/applySavedEdits';
+	import { warnBeforeLeaving } from '$lib/stores/leaveGuard';
 	import { page } from '$app/stores';
 	import { afterNavigate, replaceState } from '$app/navigation';
 	import { resolve } from '$app/paths';
@@ -12,7 +14,13 @@
 	import { pageTitleFor } from '$lib/corpus/pageTitle';
 	import { isDraftPath, reviewHrefFor, routePathFor } from '$lib/corpus/draftPath';
 	import { pageStore } from '$lib/stores/pageData.svelte';
-	import { editsStore, loadReview, pagesStore, queueOrder } from '$lib/stores/reviewState';
+	import {
+		editsLoaded,
+		editsStore,
+		loadReview,
+		pagesStore,
+		queueOrder
+	} from '$lib/stores/reviewState';
 	import { STATUS_LABELS } from '$lib/review/statusLabels';
 	import { sessionStore } from '$lib/stores/session.svelte';
 	import { supabase } from '$lib/supabase';
@@ -161,11 +169,33 @@
 		pageStore.enterPage(pageData?.id);
 	});
 
-	// Unsaved = accepted suggestions not yet committed, FOR THIS PAGE. Deliberately
-	// NOT the selected-field count: the footer's "Save N edits" counts the same
-	// thing, and two numbers that look alike but differ is worse than one. Work
-	// parked on other pages is the panel's line to make, not a number here.
-	const unsavedCount = $derived(pageStore.acceptedFor(pageData?.id));
+	// Saved edits onto the mockup: after `loadReview`, on every realtime insert,
+	// and when an unsaved change closes (a save that arrived during the typing was held
+	// back for it). Tracks the stores, the page list shallowly and the unsaved change
+	// keys -- not the copy itself, which this effect writes.
+	$effect(() => {
+		const edits = $editsStore;
+		const loaded = $editsLoaded;
+		const live = $pagesStore;
+		const pages = [...pageStore.pages];
+		void Object.keys(pageStore.unsavedChanges);
+		untrack(() =>
+			hydrateMockup({
+				pages,
+				livePages: live,
+				edits,
+				editsLoaded: loaded,
+				userId: sessionStore.userId,
+				changes: pageStore
+			})
+		);
+	});
+
+	// Unsaved changes on EVERY page, typed or accepted -- work does not follow the
+	// reviewer, and a pill that dropped to zero on navigating would say it was
+	// gone. Deliberately NOT the selected-field count; the footer's "Save N
+	// changes" is this page's share of the same number.
+	const unsavedCount = $derived(pageStore.unsavedChangeCount());
 
 	// The toolbar's previous / next buttons step through the queue in the order
 	// the sidebar renders it, so they land on the row above or below the current
@@ -347,7 +377,10 @@
      80px for the diff cards; the queue needs it for the sub-lines. Collapsed
      rails are 52px (design 2a) — the buttons live here, the rail contents are
      the 2a pass. -->
-<svelte:window onkeydown={onWindowKeydown} />
+<svelte:window
+	onkeydown={onWindowKeydown}
+	onbeforeunload={(e) => warnBeforeLeaving(e, pageStore.unsavedChangeCount())}
+/>
 
 <!-- The decision as a dot: the bar colour for a decided status, a ring for
      "Needs review" (an empty slot, as the queue's progress bar shows it).
@@ -651,7 +684,7 @@
 								class="inline-flex items-center rounded-full border border-violet-200 bg-violet-50 px-2.5 py-[3px] text-xs font-semibold text-violet-900"
 								role="status"
 							>
-								{unsavedCount} unsaved {unsavedCount === 1 ? 'edit' : 'edits'}
+								{unsavedCount} unsaved {unsavedCount === 1 ? 'change' : 'changes'}
 							</span>
 						{/if}
 						<!-- Which rendering is on screen, and how to change it.
@@ -905,7 +938,7 @@
 					<span
 						class="inline-flex size-6 items-center justify-center rounded-full bg-sfds-action text-[11px] font-bold text-white"
 						role="status"
-						aria-label="{unsavedCount} unsaved edits"
+						aria-label="{unsavedCount} unsaved {unsavedCount === 1 ? 'change' : 'changes'}"
 					>
 						{unsavedCount}
 					</span>

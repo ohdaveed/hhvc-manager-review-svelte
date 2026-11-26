@@ -193,7 +193,7 @@ describe('edit targets', () => {
 
 			await click(container, 'summary');
 
-			// An accepted suggestion is an unsaved edit the reviewer approved --
+			// An accepted suggestion is an unsaved change the reviewer approved --
 			// dropping it here would retract work with no undo. A pending one
 			// carries no such commitment.
 			expect(pageStore.suggestions.title?.status).toBe('accepted');
@@ -222,8 +222,6 @@ describe('edit targets', () => {
 			// Accepted work still survives -- it just cannot be saved from here.
 			expect(pageStore.suggestions.title?.status).toBe('accepted');
 			expect(pageStore.suggestions.summary).toBeUndefined();
-			expect(pageStore.acceptedFor('some-other-page')).toBe(0);
-			expect(pageStore.acceptedElsewhere('some-other-page')).toBe(1);
 		});
 
 		it('leaves a live selection alone when the page id has not moved', async () => {
