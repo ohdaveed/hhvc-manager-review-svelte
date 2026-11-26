@@ -44,7 +44,7 @@ export const ratFreeBlocks = {
 		},
 		{
 			heading: 'Start with your own block',
-			karl: 'Maps to Additional content → Accordion section: Title = this heading, Accordion sidebar (rich text) = the paragraph and the bulleted list, with the Link tool carrying the internal links. Additional content offers Image with text, Video, Accordion section, Embed and Resources — there is no Title and text block, which is what this note used to name. Uses the mockup-only open flag so the copy shows without a click; the real accordion renders collapsed.',
+			karl: 'Maps to Additional content → Accordion section: Title = this heading, Accordion sidebar (rich text) = the paragraph and the bulleted list, with the Link tool carrying the internal links. Additional content offers Image with text, Video, Accordion section, Embed and Resources — there is no Title and text block, which is what this note used to name. Uses the mockup-only open flag so the copy shows without a click; the real accordion renders collapsed. The three report links were bullets of their own until 2026-11-26; they are inline links in the "Report what is left" bullet now, which also lost its dash (SF.gov avoids dashes), leaving a list of 4.',
 			kind: 'body',
 			component: 'supporting',
 			open: true,
@@ -54,11 +54,8 @@ export const ratFreeBlocks = {
 			bullets: [
 				'Agree a week when everyone clears clutter and checks their bins.',
 				'Walk the block together afterwards and look for the gaps that remain.',
-				'Report what is left — especially anything on a property no one is maintaining.',
-				'Pick up pet waste daily. It feeds rats.',
-				'[Report rats or mice](rodentsReport)',
-				'[Report animal waste on a property](animalWasteReport)',
-				'[Report garbage, clutter, or overgrown plants](garbageReport)'
+				'Report what is left, especially anything on a property no one is maintaining: [rats or mice](rodentsReport), [animal waste](animalWasteReport), or [garbage, clutter, or overgrown plants](garbageReport).',
+				'Pick up pet waste daily. It feeds rats.'
 			]
 		},
 		{

@@ -207,14 +207,36 @@ If a problem is found
 
 If an inspection identifies a violation, Environmental Health will issue a Notice of Violation (NOV) to the responsible parties. The NOV will outline required corrections and set a specific compliance deadline based on severity.
 
-- **Complaint → Inspection → Notice of Violation → Compliance period → Follow-up inspection → Reinspection fee → Citation or Director's Hearing if unresolved.**
+**Complaint → Inspection → Notice of Violation → Compliance period → Follow-up inspection → Reinspection fee → Citation or Director's Hearing if unresolved.**
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+Deadlines to fix a violation
+
+**Text:**
+
+These timelines represent general enforcement standards. Actual correction deadlines are established on the official Notice of Violation based on the severity of the health hazard.
+
 - **Sewage Backups (48 to 72 hours):** Raw sewage backups need immediate correction. The standard 30-day compliance window does not apply.
 - **All Other Violations (30 days):** Most cited conditions must be corrected within 30 days. These include overgrown vegetation, trash piles, rodent harborages, general sanitation problems, minor gaps or cracks, and mold remediation.
-- These timelines represent general enforcement standards. Actual correction deadlines are established on the official Notice of Violation based on the severity of the health hazard.
-- **Extensions:** HHVC may offer an extension to the compliance deadline if the property owner contacts the inspector before the deadline.
 - **Bed Bug Treatment:** A property owner or manager must initiate professional treatment within 2 working days of confirmation.
-- If a property owner misses the deadline, HHVC may charge reinspection fees. These are $256/hour for inspectors and $234/hour for technicians. Invoices must be paid within 30 days. Unpaid bills get a $10 or $30 late penalty, and interest accrues at 1.5% per month.
-- Persistent violations can result in citations, civil liabilities, or a Director's Hearing to recover attorneys' fees and administrative abatement costs.
+- **Extensions:** HHVC may offer an extension to the compliance deadline if the property owner contacts the inspector before the deadline.
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+If a deadline is missed
+
+**Text:**
+
+If a property owner misses the deadline, HHVC may charge reinspection fees. These are $256/hour for inspectors and $234/hour for technicians.
+
+Invoices must be paid within 30 days. Unpaid bills get a $10 or $30 late penalty, and interest accrues at 1.5% per month.
+
+Persistent violations can result in citations, civil liabilities, or a Director's Hearing to recover attorneys' fees and administrative abatement costs.
 
 ### Information section — \`information_section\` [TYPE] — page not approved
 
@@ -647,13 +669,6 @@ What Article 11 requires
 
 San Francisco Health Code Article 11 requires property owners and managers to keep buildings free of public health nuisances. These include pests, garbage, mold, and rodent problems.
 
-- Pay your annual Healthy Housing fee if your building has 3 or more rental units
-- Investigate tenant pest reports within 72 hours, and write every report down in a log
-- Hire a licensed pest control operator (PCO) for treatment — never unlicensed staff
-- Keep records of complaints, inspections, and treatments for at least 2 years
-- Notify tenants in writing before pesticide application
-- Complete pest-management training if you have repeat violations
-
 ### Information section — \`information_section\` [TYPE] — page not approved
 
 **Title:**
@@ -678,7 +693,7 @@ If Environmental Health finds a violation, they issue a notice of violation (NOV
 
 **Title:**
 
-What you must do
+Respond to pest reports
 
 **Text:**
 
@@ -686,15 +701,28 @@ These requirements come from Article 11 and the San Francisco Department of Publ
 
 - Investigate tenant pest reports within 72 hours of receiving them.
 - Keep a written log of every report or sign of vermin: rodents, fleas, flies, bedbugs, spiders, cockroaches, wasps, and mosquitoes. Give the log to your pest control operator. You can use the City's [complaint forms and log template](https://www.sf.gov/resource/2024/healthy-housing-and-pest-information).
-- Keep records of complaints, inspections, and pest control services for at least 2 years. Make them available to the Department of Public Health on request.
 - Hire only licensed pest control operators (PCOs) to apply pesticides or trap rats. Never use unlicensed staff or over-the-counter treatments for significant infestations.
 - Give tenants written notice before pesticide application, including the product name, date, and safety information.
+
+**Links in this text — recreate each with the Link tool, do not paste them:**
+
+- "complaint forms and log template" → shape 5 — rich text Link tool → External link
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+Keep records and stay in compliance
+
+**Text:**
+
+- Keep records of complaints, inspections, and pest control services for at least 2 years. Make them available to the Department of Public Health on request.
+- Pay your annual Healthy Housing fee if your building has 3 or more rental units.
 - Complete pest-management training if the Director requires it after repeat violations.
 - [See the full owner-responsibility table](article11Guide)
 
 **Links in this text — recreate each with the Link tool, do not paste them:**
 
-- "complaint forms and log template" → shape 5 — rich text Link tool → External link
 - "See the full owner-responsibility table" → shape 5 — rich text Link tool → Internal link → "Health Code Article 11 in plain language"
 
 ### Information section — \`information_section\` [TYPE] — page not approved
@@ -1306,17 +1334,26 @@ Bed bugs hitch a ride on things people carry. They can also move between units t
 
 **Title:**
 
-Prevent bed bugs
+Keep bed bugs out of your home
 
 **Text:**
 
 - **Check used furniture before you bring it home.** Look closely at seams, cracks, and the underside.
 - **Do not take furniture left on the curb.** It may have been thrown out because of bed bugs.
+- **Use mattress and box spring encasements** and climb-up interceptor cups under the bed legs.
+- **When you move, pack clothes in clear plastic bags** so you can see if anything is hiding.
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+Prevent bed bugs when you travel
+
+**Text:**
+
 - **Check hotel beds when you travel.** Look behind the headboard and along the mattress seams.
 - **Wash and dry clothes on the hottest setting** as soon as you get home from a trip.
 - **Keep luggage out of the bedroom**, such as in a hall closet.
-- **Use mattress and box spring encasements** and climb-up interceptor cups under the bed legs.
-- **When you move, pack clothes in clear plastic bags** so you can see if anything is hiding.
 
 ### Information section — \`information_section\` [TYPE] — page not approved
 
@@ -1360,19 +1397,19 @@ If you rent, tell your landlord or building manager in writing right away. Bed b
 
 **Title:**
 
-What tenants need to do before treatment
+What tenants need to do for treatment
 
 **Text:**
 
 Treatment only works if the unit is ready. The pest control company will give you a checklist. If it is different from the list below, follow their checklist.
 
+[Prepare your unit for pest treatment](stepPrepUnit)
+
 - **Let them in.** You must allow the owner or pest control company into your unit after you get notice that they will inspect or treat.
 - **Make space.** Move furniture away from the walls and clear clutter so they can reach every area.
 - **Do not remove items before treatment.** Only take out bagged clothing for laundry, or items the pest control company tells you to remove.
 - **Wash and dry all clothing and bedding.** Use hot water and the hottest dryer setting for at least 45 minutes. Then store it in new, clean, sealed plastic bags.
-- **Wait until you are cleared.** Do not move back in until the pest control company says it is safe.
-- [Prepare your unit for pest treatment](stepPrepUnit)
-- **Leave bed bug monitors in place.** Monitoring continues for 4 weeks after the last treatment to make sure the bed bugs are gone.
+- **Wait until you are cleared.** Do not move back in until the pest control company says it is safe. Leave bed bug monitors in place: monitoring continues for 4 weeks after the last treatment to make sure the bed bugs are gone.
 
 **Callout (rich text, no title field):**
 
@@ -1515,7 +1552,7 @@ Many cockroaches no longer die from the chemicals in common store-bought sprays.
 
 **Title:**
 
-Take away food, water, and hiding places
+Take away food and water
 
 **Text:**
 
@@ -1526,6 +1563,15 @@ Cockroaches can live on tiny crumbs and drops of water. The less they find, the 
 - **Clean up crumbs, grease, and spills right away.** Do not leave dirty dishes out overnight.
 - **Use a trash can with a tight lid** and a liner, and take trash out every day.
 - **Fix leaks and wipe up water** around sinks, tubs, and the water heater.
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+Take away hiding places
+
+**Text:**
+
 - **Get rid of cardboard boxes, paper bags, and piles of paper.** Cockroaches hide and lay eggs in them.
 - **Vacuum cracks and corners.** Start high and work down. A vacuum with a HEPA filter keeps allergens out of the air. Seal the vacuum bag and throw it out.
 - **Clean small appliances.** Cockroaches hide in toasters, microwaves, and clocks. Unplug them, then vacuum and wipe them out.
@@ -1542,10 +1588,19 @@ Use baits and traps instead of sprays
 Baits work slowly, but they work. Cockroaches eat the bait and carry it back to where they hide. It can take a week or two to see full results.
 
 - **Use bait stations or gel bait** from a hardware store. Put them under the sink, behind the fridge and stove, and inside cabinets. Put gel in pea-sized dabs about every foot along cracks.
-- **Kill cockroaches you see with soapy water.** It works on contact without the risks of a spray.
 - **Do not spray near baits.** Spray keeps cockroaches away from the bait.
 - **Use sticky traps to see where they are.** Check them every few days and move baits to the busiest spots.
 - **Replace bait stations every 2 to 3 months** and sticky traps every 2 weeks. Switch to a different bait brand each year.
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+Use products safely
+
+**Text:**
+
+- **Kill cockroaches you see with soapy water.** It works on contact without the risks of a spray.
 - **Keep baits away from children and pets**, and read the label before you use any product.
 - **Choose products labeled "Caution."** Avoid products labeled "Warning" or "Danger."
 
@@ -1582,7 +1637,6 @@ The University of California Statewide Integrated Pest Management Program (UC IP
 
 - [UC IPM: Cockroaches](https://ipm.ucanr.edu/home-and-landscape/cockroaches/). How to identify the kind you have and control it.
 - [UC IPM: Understanding pesticides](https://ipm.ucanr.edu/home-and-landscape/understanding-pesticides/). How to read a label and lower your risk.
-- [UC IPM: What is integrated pest management?](https://ipm.ucanr.edu/what-is-ipm/)
 - [SF Environment: How can I control insect pests in my house?](https://www.sfenvironment.org/how-can-i-control-insect-pests-my-house)
 - [SF Environment: Pest management in your home (PDF)](https://www.sfenvironment.org/media/13819). A handout in English, Spanish, and Chinese.
 - [UC IPM: Recursos en español](https://ipm.ucanr.edu/IPMPROJECT/recursos-espanol.html). Guías sobre plagas en español.
@@ -1591,7 +1645,6 @@ The University of California Statewide Integrated Pest Management Program (UC IP
 
 - "UC IPM: Cockroaches" → shape 5 — rich text Link tool → External link
 - "UC IPM: Understanding pesticides" → shape 5 — rich text Link tool → External link
-- "UC IPM: What is integrated pest management?" → shape 5 — rich text Link tool → External link
 - "SF Environment: How can I control insect pests in my house?" → shape 5 — rich text Link tool → External link
 - "SF Environment: Pest management in your home (PDF)" → shape 5 — rich text Link tool → External link
 - "UC IPM: Recursos en español" → shape 5 — rich text Link tool → External link
@@ -4041,16 +4094,25 @@ SF-local operations manual for multi-unit buildings — turnover proofing, resid
 
 **Title:**
 
-Common building conditions that attract pests
+Conditions inside the building that attract pests
 
 **Text:**
 
 Most pest problems in buildings start with a few common conditions. Fixing them early prevents infestations.
 
 - Unsealed gaps, cracks, and utility openings that let pests enter
-- Overflowing, uncovered, or poorly serviced garbage areas
 - Standing water, leaks, and damp spaces
 - Clutter, cardboard storage, and unused materials that offer shelter
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+Conditions outside and in shared areas that attract pests
+
+**Text:**
+
+- Overflowing, uncovered, or poorly serviced garbage areas
 - Overgrown landscaping and debris close to walls and foundations
 - Pet waste in yards and shared areas. Pick up pet waste daily. It feeds rats. [Report animal waste on a property](animalWasteReport)
 
@@ -4113,8 +4175,8 @@ Put pest prevention expectations in building policies, written plans, staff proc
 
 Prevent pest problems by fixing the conditions that let pests enter, hide, feed, or breed. Maintenance, landscape management, and sanitation are core parts of IPM.
 
-- [UC IPM: Pest prevention](https://ipm.ucanr.edu/home-and-landscape/guide-for-property-managers/pest-prevention/)
-- [SF Environment: Pest Prevention by Design](https://sfenvironment.org/download/pest-prevention-by-design-guidelines)
+[UC IPM: Pest prevention](https://ipm.ucanr.edu/home-and-landscape/guide-for-property-managers/pest-prevention/) and [SF Environment: Pest Prevention by Design](https://sfenvironment.org/download/pest-prevention-by-design-guidelines)
+
 - Seal gaps larger than 1/4 inch around doors, windows, pipes, vents, and utility openings with rodent-proof materials. Examples include hardware cloth, copper mesh, sheet metal, concrete, mortar, or steel wool backed by sealant.
 - Keep tree and shrub branches at least 6 feet from walls or roofs. This stops rodents climbing onto structures (Pest Prevention by Design). Director's Rules require at least 3 feet for enforcement inspections.
 - Keep a 24-inch clear space along fences and exterior walls to reduce rodent movement and allow visibility.
@@ -4751,8 +4813,7 @@ Most treatments need more than one visit. Pests that were missed or hatched late
 - **Stay out until you are told it is safe** to come back.
 - **Do not clean away baits or dusts** the technician left in cracks and corners.
 - **For bed bugs, leave monitors in place.** Monitoring continues for 4 weeks after the last treatment.
-- **Do not use your own sprays or bug bombs.** They can stop the treatment from working.
-- **If you buy a product yourself, choose one labeled "Caution."** Avoid products labeled "Warning" or "Danger."
+- **Do not use your own sprays or bug bombs.** They can stop the treatment from working. If you buy a product yourself, choose a "Caution" label, not a "Warning" or "Danger" label.
 - **Keep notes and photos** of pests you still see, and share them with your landlord in writing.
 
 **Callout (rich text, no title field):**
@@ -5496,17 +5557,14 @@ A coordinated week does more than a year of single properties acting alone. Neig
 
 - Agree a week when everyone clears clutter and checks their bins.
 - Walk the block together afterwards and look for the gaps that remain.
-- Report what is left — especially anything on a property no one is maintaining.
+- Report what is left, especially anything on a property no one is maintaining: [rats or mice](rodentsReport), [animal waste](animalWasteReport), or [garbage, clutter, or overgrown plants](garbageReport).
 - Pick up pet waste daily. It feeds rats.
-- [Report rats or mice](rodentsReport)
-- [Report animal waste on a property](animalWasteReport)
-- [Report garbage, clutter, or overgrown plants](garbageReport)
 
 **Links in this text — recreate each with the Link tool, do not paste them:**
 
-- "Report rats or mice" → shape 5 — rich text Link tool → Internal link → "Report rats or mice"
-- "Report animal waste on a property" → shape 5 — rich text Link tool → Internal link → "Report animal waste on a property"
-- "Report garbage, clutter, or overgrown plants" → shape 5 — rich text Link tool → Internal link → "Report garbage, clutter, or overgrown plants"
+- "rats or mice" → shape 5 — rich text Link tool → Internal link → "Report rats or mice"
+- "animal waste" → shape 5 — rich text Link tool → Internal link → "Report animal waste on a property"
+- "garbage, clutter, or overgrown plants" → shape 5 — rich text Link tool → Internal link → "Report garbage, clutter, or overgrown plants"
 
 ### About — \`about_campaign\` [TYPE] — page not approved
 
@@ -5624,7 +5682,7 @@ If you see a leak, tell your landlord in writing right away. You are helping pro
 
 **Title:**
 
-Keep your home dry every day
+Let damp air out
 
 **Text:**
 
@@ -5634,6 +5692,15 @@ Fresh, moving air is your best tool against mold. These steps cost little or not
 - **Run the fan when you cook or shower.** Leave it on for 15 to 20 minutes after. To test a fan, see if it holds up a square of toilet paper. If a fan or vent is broken, tell your landlord.
 - **Put lids on pots** when you cook.
 - **Dry laundry in a dryer**, not on racks indoors.
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+Keep air moving along walls and in closets
+
+**Text:**
+
 - **Move furniture at least 6 inches away from outside walls** so air can flow behind it.
 - **Wipe water off windows and sills** when you see it.
 - **Do not overstuff closets**, and leave closet doors a little open.
@@ -5802,7 +5869,7 @@ Signs of rats and mice
 
 **Title:**
 
-Cut off their food and water
+Store food and garbage safely
 
 **Text:**
 
@@ -5810,9 +5877,18 @@ Rats and mice stay where they can find food. Taking away food is one of the most
 
 - **Store food in glass, metal, or hard plastic containers** with tight lids.
 - **Keep flour, rice, and nuts in the fridge** if you store them for a long time.
-- **Clean up crumbs and spills** right away, including under the stove and fridge.
 - **Do not leave pet food out overnight.** Feed pets only what they will eat at one time. Store large bags of pet food in a metal garbage can with a lid.
 - **Put garbage in bins with tight lids**, and take it out often.
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+Clean up food and water
+
+**Text:**
+
+- **Clean up crumbs and spills** right away, including under the stove and fridge.
 - **Do not feed birds, pigeons, or other wildlife.** The food also feeds rats.
 - **Fix dripping faucets**, or ask your landlord to.
 
@@ -5858,7 +5934,7 @@ You can report anonymously. We never share your name or contact information.
 
 **Title:**
 
-Trap and clean up safely
+Trap safely
 
 **Text:**
 
@@ -5867,12 +5943,20 @@ Trap and clean up safely
 - **Check traps every day.** Keep trapping until you catch nothing for a full week.
 - **Do not use glue traps.** They are inhumane.
 - **Do not use poison.** It can harm children, pets, and wildlife.
-- **Wear gloves and wet droppings down with disinfectant** before you wipe them up.
-- **Never dry-sweep or vacuum droppings.** That puts germs into the air you breathe.
 
 **Callout (rich text, no title field):**
 
 Traps help, but they do not fix the problem. Rats and mice will keep coming back until food, hiding places, and holes are taken care of.
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+Clean up droppings safely
+
+**Text:**
+
+Wear gloves and wet droppings down with disinfectant before you wipe them up. Never dry-sweep or vacuum droppings. That puts germs into the air you breathe.
 
 ### Information section — \`information_section\` [TYPE] — page not approved
 
@@ -6040,10 +6124,9 @@ While you wait: tips to help with the problem
 
 It may take us a few weekdays to get back to you. In the meantime, here are a few things you can do to help with the problem.
 
-- **Close off entry points:** Seal any gap bigger than 1/4 inch. Use rodent-proof materials like hardware cloth, copper mesh, or sheet metal.
+- **Close off entry points and hiding places:** Seal any gap bigger than 1/4 inch. Use rodent-proof materials like hardware cloth, copper mesh, or sheet metal. Clear clutter and trim overgrown plants where rats and mice hide or nest.
 - **Cut off food:** Store food and garbage in bins with tight-fitting lids. Do not leave pet food out overnight.
 - **Pick up pet waste daily:** It feeds rats. [Report animal waste on a property](animalWasteReport)
-- **Remove hiding places:** Clear clutter and trim overgrown plants where rats and mice hide or nest.
 - **Trap safely:** Use snap traps indoors. Do not use poisons — they can harm children, pets, and wildlife.
 - **Clean up safely:** Wet down droppings with a disinfectant and wear gloves. Never dry-sweep or vacuum droppings.
 
