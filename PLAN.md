@@ -68,17 +68,17 @@ accepted wording is an unsaved change until saved; "reject", never "dismiss". Th
 `'accepted'` therefore matches the glossary, so its planned rename is dropped.
 
 - [x] **15. Glossary.** `CONTEXT.md` **Accepted**, **Suggestion**, **Unsaved change**, **Expired** say the above.
-- [ ] **16. Save all keeps its page.** `saveAll` captures the page and live row once and passes them to every
+- [x] **16. Save all keeps its page.** `saveAll` captures the page and live row once and passes them to every
       `saveChange`; navigating mid-save neither saves another page's change nor skips one as a success. Tested.
-- [ ] **17. Undo keeps typing.** Undo / Undo all on an accepted card restores the field only while it still
+- [x] **17. Undo keeps typing.** Undo / Undo all on an accepted card restores the field only while it still
       holds the suggestion's text; after further typing the card just goes back to waiting. Tested.
-- [ ] **18. No Cancel during a save.** Cancel, Discard and Esc do nothing while that field's save is in
+- [x] **18. No Cancel during a save.** Cancel, Discard and Esc do nothing while that field's save is in
       flight. Tested.
-- [ ] **19. No false saved-elsewhere notice.** A change is stamped only once the review's edits have loaded.
+- [x] **19. No false saved-elsewhere notice.** A change is stamped only once the review's edits have loaded.
       Tested.
-- [ ] **20. Prune after dropping.** `select` / `clearSelection` / `selectSection` drop no-op changes before
+- [x] **20. Prune after dropping.** `select` / `clearSelection` / `selectSection` drop no-op changes before
       pruning, so an un-accepted card does not outlive its selection. Tested.
-- [ ] **21. Leaving asks first.** A `beforeunload` guard while `unsavedChangeCount() > 0`. Tested.
+- [x] **21. Leaving asks first.** A `beforeunload` guard while `unsavedChangeCount() > 0`. Tested.
 - [ ] **22. Stale wording.** Comments, tooltips, test names and the `-parked` id use the glossary's terms.
 - [ ] **23. Verify.** Unit, check, ratchets, e2e, browser check.
 

@@ -468,7 +468,7 @@ describe('FieldsPanel manual edits', () => {
 		expect(pageStore.getChange(PAGE_ID, 'title')).toBeUndefined();
 	});
 
-	it('an accepted suggestion typed back to the original goes back to waiting', async () => {
+	it('an accepted suggestion typed back to the original leaves with the selection, like any undecided card', async () => {
 		renderTitle();
 		pageStore.suggestions = {
 			title: {
@@ -484,7 +484,8 @@ describe('FieldsPanel manual edits', () => {
 		pageStore.select('summary');
 
 		expect(pageStore.getChange(PAGE_ID, 'title')).toBeUndefined();
-		expect(pageStore.suggestions.title?.status).toBe('pending');
+		// Un-accepted first, then pruned: it no longer outlives the selection.
+		expect(pageStore.suggestions.title).toBeUndefined();
 	});
 
 	it('says when someone else saved the field during the typing, and still saves', async () => {
@@ -496,6 +497,91 @@ describe('FieldsPanel manual edits', () => {
 		expect(await screen.findByText(/Someone else saved this field after you started/)).toBeTruthy();
 		await fireEvent.click(screen.getByRole('button', { name: 'Save the change to Title' }));
 		await vi.waitFor(() => expect(saveInlineEdit).toHaveBeenCalledWith('live-1', 'title', 'Mine'));
+	});
+
+	it('Save all keeps saving the page it started on when the reviewer navigates mid-save', async () => {
+		const page = livePage();
+		const OTHER = 'manual-edit--other';
+		if (!pageStore.pages.some((p) => p.id === OTHER)) {
+			pageStore.addPage({ ...fixture(), id: OTHER } as never);
+		}
+		pageStore.setChange(PAGE_ID, 'title', 'Here title');
+		pageStore.setChange(PAGE_ID, 'summary', 'Here summary');
+		pageStore.setChange(OTHER, 'title', 'Other title');
+
+		let release!: (ok: boolean) => void;
+		saveInlineEdit.mockImplementationOnce(() => new Promise<boolean>((r) => (release = r)));
+		const { rerender } = render(FieldsPanel, { props: { pageData: page, livePageId: 'live-1' } });
+		await fireEvent.click(screen.getByRole('button', { name: 'Save 2 changes' }));
+
+		// Navigate while the first insert is out: the panel is not remounted.
+		const other = pageStore.pages.find((p) => p.id === OTHER)!;
+		await rerender({ pageData: other, livePageId: 'live-2' });
+		release(true);
+
+		await vi.waitFor(() => expect(saveInlineEdit).toHaveBeenCalledTimes(2));
+		expect(saveInlineEdit.mock.calls).toEqual([
+			['live-1', 'title', 'Here title'],
+			['live-1', 'summary', 'Here summary']
+		]);
+		expect(pageStore.getChange(OTHER, 'title')?.value).toBe('Other title');
+		pageStore.cancelChange(OTHER, 'title');
+	});
+
+	it('Undo on an accepted card keeps typing done on top of it', async () => {
+		const { page } = renderTitle();
+		pageStore.suggestions = {
+			title: {
+				pageId: PAGE_ID,
+				original: 'About vector control',
+				suggested: 'About pests',
+				status: 'pending'
+			}
+		};
+		await fireEvent.click(await screen.findByRole('button', { name: 'Accept' }));
+		pageStore.setChange(PAGE_ID, 'title', 'About pests and rats');
+
+		await fireEvent.click(screen.getByRole('button', { name: 'Undo accepting this rewrite' }));
+
+		expect(page.title).toBe('About pests and rats');
+		expect(pageStore.suggestions.title?.status).toBe('pending');
+		expect(pageStore.hasUnsavedChange(PAGE_ID, 'title')).toBe(true);
+	});
+
+	it('Undo on an accepted card still restores the copy when nothing was typed on top', async () => {
+		const { page } = renderTitle();
+		pageStore.suggestions = {
+			title: {
+				pageId: PAGE_ID,
+				original: 'About vector control',
+				suggested: 'About pests',
+				status: 'pending'
+			}
+		};
+		await fireEvent.click(await screen.findByRole('button', { name: 'Accept' }));
+		await fireEvent.click(screen.getByRole('button', { name: 'Undo accepting this rewrite' }));
+
+		expect(page.title).toBe('About vector control');
+		expect(pageStore.getChange(PAGE_ID, 'title')).toBeUndefined();
+	});
+
+	it('Cancel and Esc do nothing while that field is saving', async () => {
+		const { page, input } = renderTitle();
+		await fireEvent.input(input, { target: { value: 'Saving this' } });
+		let release!: (ok: boolean) => void;
+		saveInlineEdit.mockImplementationOnce(() => new Promise<boolean>((r) => (release = r)));
+		await fireEvent.click(screen.getByRole('button', { name: 'Save the change to Title' }));
+
+		expect(screen.getByRole('button', { name: 'Cancel the change to Title' })).toHaveProperty(
+			'disabled',
+			true
+		);
+		await fireEvent.keyDown(input, { key: 'Escape' });
+		expect(page.title).toBe('Saving this');
+
+		release(true);
+		await vi.waitFor(() => expect(pageStore.getChange(PAGE_ID, 'title')).toBeUndefined());
+		expect(page.title).toBe('Saving this');
 	});
 
 	it('turns pasted line breaks into spaces', async () => {

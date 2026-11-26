@@ -316,16 +316,16 @@ class PageStore {
 		this.selectedSectionKey = undefined;
 		if (!additive) {
 			this.selectedFieldIds = [fieldId];
-			this.suggestions = this.pruneSuggestions([fieldId]);
 			this.dropNoOpChanges([fieldId]);
+			this.suggestions = this.pruneSuggestions([fieldId]);
 			return;
 		}
 
 		if (this.isSelected(fieldId)) {
 			const next = this.selectedFieldIds.filter((id) => id !== fieldId);
 			this.selectedFieldIds = next;
-			this.suggestions = this.pruneSuggestions(next);
 			this.dropNoOpChanges(next);
+			this.suggestions = this.pruneSuggestions(next);
 		} else {
 			this.selectedFieldIds = [...this.selectedFieldIds, fieldId];
 		}
@@ -333,15 +333,15 @@ class PageStore {
 
 	clearSelection() {
 		this.selectedFieldIds = [];
-		this.suggestions = this.pruneSuggestions([]);
 		this.dropNoOpChanges([]);
+		this.suggestions = this.pruneSuggestions([]);
 		this.rewriteInstruction = '';
 	}
 
 	selectSection(sectionKey: string) {
 		this.selectedFieldIds = [];
-		this.suggestions = this.pruneSuggestions([]);
 		this.dropNoOpChanges([]);
+		this.suggestions = this.pruneSuggestions([]);
 
 		// Only reset the rethink when the selection actually MOVES. Re-clicking
 		// the section already selected used to drop it back to `idle`, which

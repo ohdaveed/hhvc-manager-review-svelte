@@ -99,6 +99,12 @@ export function nextUndecidedPath(pages: ReviewPage[], current: string): string 
 
 export const pagesStore = writable<ReviewPage[]>([]);
 export const editsStore = writable<Edit[]>([]);
+/**
+ * True once `loadReview` has fetched the saved edits. Until then `editsStore`
+ * is empty for want of a fetch, not for want of edits, and an unsaved change
+ * stamped against it would mistake every older save for a new one.
+ */
+export const editsLoaded = writable(false);
 
 /**
  * Loads all pages for the most recent review and initializes realtime.
@@ -180,6 +186,7 @@ export async function loadReview(): Promise<() => void> {
 			console.error('Failed to load edits:', editsError);
 		} else {
 			editsStore.set((edits as Edit[]) ?? []);
+			editsLoaded.set(true);
 		}
 	}
 

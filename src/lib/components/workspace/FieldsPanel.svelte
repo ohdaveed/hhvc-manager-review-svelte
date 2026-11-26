@@ -114,8 +114,12 @@
 		}
 	}
 
+	/**
+	 * Refused while that field's save is in flight: the insert would land after
+	 * the cancel, and hydration would put the cancelled text back, recorded.
+	 */
 	function cancelChange(fieldId: string) {
-		if (!pageId) return;
+		if (!pageId || isSavingChange(fieldId)) return;
 		setChangeError(changeKey(pageId, fieldId), '');
 		pageStore.cancelChange(pageId, fieldId);
 	}
@@ -143,8 +147,11 @@
 	 * `original` is the copy the reviewer has just replaced, and accepting it
 	 * later would quietly overwrite the edit that was saved.
 	 */
-	async function saveChange(fieldId: string): Promise<boolean> {
-		const changePageId = pageId;
+	async function saveChange(
+		fieldId: string,
+		changePageId: string | undefined = pageId,
+		liveId: string | undefined = livePageId
+	): Promise<boolean> {
 		const change = pageStore.getChange(changePageId, fieldId);
 		if (!changePageId || !change) return true;
 		const key = changeKey(changePageId, fieldId);
@@ -153,7 +160,7 @@
 			pageStore.forgetChange(changePageId, fieldId);
 			return true;
 		}
-		if (!livePageId) {
+		if (!liveId) {
 			setChangeError(
 				key,
 				'This page is not part of a loaded review, so the change can only be shown, not saved.'
@@ -163,7 +170,7 @@
 		const value = change.value;
 		savingChanges = { ...savingChanges, [key]: true };
 		setChangeError(key, '');
-		const persisted = await saveInlineEdit(livePageId, fieldId, value);
+		const persisted = await saveInlineEdit(liveId, fieldId, value);
 		savingChanges = { ...savingChanges, [key]: false };
 		if (!persisted) {
 			setChangeError(key, 'The change could not be saved. It is still here to retry.');
@@ -333,8 +340,16 @@
 			return;
 		}
 		if (current.status === 'accepted') {
-			pageStore.cancelChange(current.pageId, fieldId);
-			if (status === 'pending') return;
+			// Undo takes back the acceptance, not typing done on top of it: the
+			// field is restored only while it still says what was accepted.
+			// Otherwise the card goes back to waiting and the typing stays, an
+			// unsaved change of the reviewer's own.
+			const change = pageStore.getChange(current.pageId, fieldId);
+			if (change?.value === current.suggested) {
+				if (isSavingChange(fieldId)) return;
+				pageStore.cancelChange(current.pageId, fieldId);
+				if (status === 'pending') return;
+			}
 		}
 		pageStore.suggestions = {
 			...pageStore.suggestions,
@@ -363,19 +378,23 @@
 	 * time through the same path as each field's own Save -- so a failure stays
 	 * on its field, still unsaved and retryable, and the rest still land.
 	 *
-	 * The page is captured by `saveChange` per field, and the list is taken
-	 * before the loop, so navigating mid-save cannot redirect a change to
-	 * another page's field of the same name.
+	 * The page, its live row and the list are captured before the first await
+	 * and handed to every `saveChange`. The panel is not remounted on
+	 * navigation, so reading `pageId` inside the loop would, after a navigation
+	 * mid-save, save another page's change of the same field id -- or find
+	 * none there and count this page's as saved.
 	 */
 	async function saveAll() {
 		if (saving) return;
 		saving = true;
 		saveError = '';
 
-		const fieldIds = pageStore.unsavedChangesOn(pageId).map((c) => c.fieldId);
+		const savePageId = pageId;
+		const saveLiveId = livePageId;
+		const fieldIds = pageStore.unsavedChangesOn(savePageId).map((c) => c.fieldId);
 		let failed = 0;
 		for (const fieldId of fieldIds) {
-			if (!(await saveChange(fieldId))) failed++;
+			if (!(await saveChange(fieldId, savePageId, saveLiveId))) failed++;
 		}
 
 		if (failed > 0) {
@@ -432,6 +451,7 @@
 									size="sm"
 									class="h-7 px-2 text-[12px]"
 									aria-label="Discard the change to {name}"
+									disabled={isSavingChange(change.fieldId)}
 									onclick={() => cancelChange(change.fieldId)}>Discard</Button
 								>
 								<Button
@@ -531,6 +551,7 @@
 									size="sm"
 									class="h-7 px-2 text-[12px]"
 									aria-label="Cancel the change to {field.name}"
+									disabled={isSavingChange(fieldId)}
 									onclick={() => cancelChange(fieldId)}>Cancel</Button
 								>
 								<Button

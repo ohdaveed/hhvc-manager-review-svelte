@@ -89,3 +89,47 @@ export function applySavedEdits(
 	}
 	return changed;
 }
+
+/** The parts of `pageStore` hydration touches -- an interface so tests can fake it. */
+export type UnsavedChangesLike = {
+	getChange(pageId: string, fieldId: string): unknown;
+	stampChangeBases(newestEditId: (pageId: string, fieldId: string) => string | null): void;
+	markSavedElsewhere(pageId: string, fieldId: string, editId: string): void;
+};
+
+/**
+ * One hydration pass, as the review layout runs it on every edits, pages or
+ * unsaved-change update: stamp new unsaved changes, put saved edits on the
+ * mockup, and flag a change whose field another reviewer saved meanwhile.
+ *
+ * Stamping waits for `editsLoaded`. Against a store that is empty only because
+ * the fetch has not returned, every older save would look new and raise the
+ * notice; a change typed before then is stamped on the pass the load causes.
+ *
+ * `userId` is the signed-in reviewer. Their own saves are never "elsewhere",
+ * and nor is a row with no author (a deleted account), which cannot be new.
+ */
+export function hydrateMockup(args: {
+	pages: readonly PageLike[];
+	livePages: readonly LivePageLike[];
+	edits: readonly EditLike[];
+	editsLoaded: boolean;
+	userId: string | null;
+	changes: UnsavedChangesLike;
+}): number {
+	const { pages, livePages, edits, editsLoaded, userId, changes } = args;
+	if (editsLoaded) {
+		const newest = latestEdits(livePages, edits);
+		changes.stampChangeBases((path, fieldId) => newest.get(editKey(path, fieldId))?.id ?? null);
+	}
+	return applySavedEdits(
+		pages,
+		livePages,
+		edits,
+		(path, fieldId) => changes.getChange(path, fieldId) !== undefined,
+		(path, fieldId, edit) => {
+			if (!edit.id || !edit.user_id || edit.user_id === userId) return;
+			changes.markSavedElsewhere(path, fieldId, edit.id);
+		}
+	);
+}

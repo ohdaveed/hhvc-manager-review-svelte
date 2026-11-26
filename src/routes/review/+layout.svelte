@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount, tick, untrack } from 'svelte';
-	import { applySavedEdits, editKey, latestEdits } from '$lib/stores/applySavedEdits';
+	import { hydrateMockup } from '$lib/stores/applySavedEdits';
+	import { warnBeforeLeaving } from '$lib/stores/leaveGuard';
 	import { page } from '$app/stores';
 	import { resolve } from '$app/paths';
 	import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
@@ -12,7 +13,13 @@
 	import { pageTitleFor } from '$lib/corpus/pageTitle';
 	import { isDraftPath, reviewHrefFor, routePathFor } from '$lib/corpus/draftPath';
 	import { pageStore } from '$lib/stores/pageData.svelte';
-	import { editsStore, loadReview, pagesStore, queueOrder } from '$lib/stores/reviewState';
+	import {
+		editsLoaded,
+		editsStore,
+		loadReview,
+		pagesStore,
+		queueOrder
+	} from '$lib/stores/reviewState';
 	import { STATUS_LABELS } from '$lib/review/statusLabels';
 	import { sessionStore } from '$lib/stores/session.svelte';
 	import { supabase } from '$lib/supabase';
@@ -164,26 +171,20 @@
 	// keys -- not the copy itself, which this effect writes.
 	$effect(() => {
 		const edits = $editsStore;
+		const loaded = $editsLoaded;
 		const live = $pagesStore;
 		const pages = [...pageStore.pages];
 		void Object.keys(pageStore.unsavedChanges);
-		untrack(() => {
-			// A new change is stamped with its field's newest edit first, so a save
-			// that lands later -- and only one from another reviewer -- is what
-			// the field's "saved by someone else" notice reports.
-			const newest = latestEdits(live, edits);
-			pageStore.stampChangeBases((path, fieldId) => newest.get(editKey(path, fieldId))?.id ?? null);
-			applySavedEdits(
+		untrack(() =>
+			hydrateMockup({
 				pages,
-				live,
+				livePages: live,
 				edits,
-				(path, fieldId) => pageStore.getChange(path, fieldId) !== undefined,
-				(path, fieldId, edit) => {
-					if (!edit.id || !edit.user_id || edit.user_id === sessionStore.userId) return;
-					pageStore.markSavedElsewhere(path, fieldId, edit.id);
-				}
-			);
-		});
+				editsLoaded: loaded,
+				userId: sessionStore.userId,
+				changes: pageStore
+			})
+		);
 	});
 
 	// Unsaved changes on EVERY page, typed or accepted -- work does not follow the
@@ -332,7 +333,10 @@
      80px for the diff cards; the queue needs it for the sub-lines. Collapsed
      rails are 52px (design 2a) — the buttons live here, the rail contents are
      the 2a pass. -->
-<svelte:window onkeydown={onWindowKeydown} />
+<svelte:window
+	onkeydown={onWindowKeydown}
+	onbeforeunload={(e) => warnBeforeLeaving(e, pageStore.unsavedChangeCount())}
+/>
 
 <!-- The decision as a dot: the bar colour for a decided status, a ring for
      "Needs review" (an empty slot, as the queue's progress bar shows it).

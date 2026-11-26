@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { applySavedEdits, editKey, latestEdits } from '../src/lib/stores/applySavedEdits';
+import {
+	applySavedEdits,
+	editKey,
+	hydrateMockup,
+	latestEdits
+} from '../src/lib/stores/applySavedEdits';
 
 const page = () => ({
 	id: 'topic-x--about',
@@ -160,5 +165,64 @@ describe('latestEdits', () => {
 		]);
 		expect(newest.get(editKey('topic-x--about', 'title'))?.id).toBe('row-2');
 		expect(newest.get(editKey('topic-x--about', 'summary'))).toBeUndefined();
+	});
+});
+
+describe('hydrateMockup', () => {
+	/** A fake of the three `pageStore` methods hydration uses, recording calls. */
+	const fakeChanges = (open: string[]) => {
+		const stamped: (string | null)[] = [];
+		const marked: string[] = [];
+		return {
+			stamped,
+			marked,
+			getChange: (_p: string, f: string) => (open.includes(f) ? {} : undefined),
+			stampChangeBases: (newest: (p: string, f: string) => string | null) => {
+				for (const f of open) stamped.push(newest('topic-x--about', f));
+			},
+			markSavedElsewhere: (_p: string, f: string, id: string) => marked.push(`${f}:${id}`)
+		};
+	};
+	const theirs = {
+		...edit('title', 'Theirs', '2026-11-26T00:00:00Z'),
+		id: 'row-t',
+		user_id: 'other'
+	};
+	const mine = { ...edit('title', 'Mine', '2026-11-26T00:00:00Z'), id: 'row-m', user_id: 'me' };
+
+	it('does not stamp before the saved edits have loaded', () => {
+		const changes = fakeChanges(['title']);
+		hydrateMockup({
+			pages: [page()],
+			livePages: live,
+			edits: [],
+			editsLoaded: false,
+			userId: 'me',
+			changes
+		});
+		expect(changes.stamped).toEqual([]);
+	});
+
+	it('stamps with the newest edit once loaded, or null for a field with none', () => {
+		const changes = fakeChanges(['title', 'summary']);
+		hydrateMockup({
+			pages: [page()],
+			livePages: live,
+			edits: [theirs],
+			editsLoaded: true,
+			userId: 'me',
+			changes
+		});
+		expect(changes.stamped).toEqual(['row-t', null]);
+	});
+
+	it("flags a held-back save by another reviewer, never the reviewer's own or an authorless one", () => {
+		const changes = fakeChanges(['title']);
+		const args = { pages: [page()], livePages: live, editsLoaded: true, userId: 'me', changes };
+		hydrateMockup({ ...args, edits: [mine] });
+		hydrateMockup({ ...args, edits: [{ ...theirs, user_id: null }] });
+		expect(changes.marked).toEqual([]);
+		hydrateMockup({ ...args, edits: [theirs] });
+		expect(changes.marked).toEqual(['title:row-t']);
 	});
 });
