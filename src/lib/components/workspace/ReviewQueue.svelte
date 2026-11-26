@@ -11,6 +11,28 @@
 	import { STATUS_LABELS, type ReviewStatus } from '$lib/review/statusLabels';
 	import StatusBar from '$lib/components/review/StatusBar.svelte';
 	import PageRow from '$lib/components/review/PageRow.svelte';
+	import { Button } from '$lib/components/ui/button/index.js';
+
+	let {
+		loadState = 'ready',
+		onRetry
+	}: {
+		/**
+		 * Where the layout's `loadReview` stands. Only consulted while the queue is
+		 * empty: an empty store is a load in flight, a load that failed, or a
+		 * review with no pages, and each needs different words.
+		 */
+		loadState?: 'loading' | 'ready' | 'failed';
+		/** Re-runs the load after a failure. */
+		onRetry?: () => void;
+	} = $props();
+	let retrying = $state(false);
+	async function retry() {
+		if (retrying) return;
+		retrying = true;
+		await onRetry?.();
+		retrying = false;
+	}
 
 	// The pages table has no title column, so a hydrated row carries only `path`.
 	// Titles come from the static corpus (whose derived id is that same path) or,
@@ -28,7 +50,7 @@
 	// name the queue's first page cannot disagree about which row that is.
 	const groups = QUEUE_STATUS_ORDER.map((status) => ({
 		status,
-		heading: STATUS_LABELS[status].queueHeading
+		heading: STATUS_LABELS[status].label
 	}));
 
 	// Decided = anything a reviewer has ruled on. `needs-review` is the initial
@@ -147,6 +169,20 @@
 					>Sign in</a
 				> to load the review queue.
 			</p>
+		{:else if loadState === 'failed'}
+			<!-- Announced: it replaces a loading line the reviewer was waiting on.
+			     Never disabled while retrying, as on the landing page's card. -->
+			<div role="alert" class="space-y-2">
+				<p class="text-sm font-semibold text-sfds-red">The queue didn't load</p>
+				<p class="text-sm text-sfds-black">
+					The review data couldn't be reached. Your decisions are safe.
+				</p>
+				<Button variant="outline" size="sm" aria-busy={retrying} onclick={retry}>
+					{retrying ? 'Trying…' : 'Try again'}
+				</Button>
+			</div>
+		{:else if loadState === 'loading' || sessionStore.signedIn === undefined}
+			<p role="status" class="text-sm text-sfds-slate-l3">Loading the queue…</p>
 		{:else}
 			<p class="text-sm text-sfds-slate-l3">This review has no pages yet.</p>
 		{/if}

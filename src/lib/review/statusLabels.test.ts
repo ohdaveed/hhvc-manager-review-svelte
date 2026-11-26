@@ -10,7 +10,7 @@ const { STATUS_LABELS } = await import('./statusLabels');
 describe('STATUS_LABELS', () => {
 	it.each(QUEUE_STATUS_ORDER)('gives %s every word and class it is rendered with', (status) => {
 		const entry = STATUS_LABELS[status];
-		for (const field of ['label', 'queueHeading', 'decisionLabel', 'badge', 'bar'] as const) {
+		for (const field of ['label', 'badge', 'bar'] as const) {
 			expect(entry[field], `${status}.${field}`).toMatch(/\S/);
 		}
 	});

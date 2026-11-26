@@ -122,9 +122,19 @@
 	const countFor = (s: StatusFilter) =>
 		s === 'all' ? allPaths.length : allPaths.filter((p) => statusOf(p) === s).length;
 
+	/**
+	 * A status with no pages gets no chip: clicking it would show an empty list,
+	 * the dead end the status card's shortcuts already avoid by the same rule.
+	 * The ACTIVE filter is kept even at zero, so a reviewer who filtered to
+	 * Approved and then un-approved its last page can still see, and leave,
+	 * the filter that is running.
+	 */
 	const FILTERS = $derived([
 		{ value: 'all' as StatusFilter, label: 'All' },
-		...QUEUE_STATUS_ORDER.map((s) => ({ value: s as StatusFilter, label: STATUS_LABELS[s].label }))
+		...QUEUE_STATUS_ORDER.filter((s) => s === status || countFor(s) > 0).map((s) => ({
+			value: s as StatusFilter,
+			label: STATUS_LABELS[s].label
+		}))
 	]);
 
 	// `metaFor` deliberately omits the status: the badge already states it, and
