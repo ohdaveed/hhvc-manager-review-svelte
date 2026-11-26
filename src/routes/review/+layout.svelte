@@ -453,6 +453,19 @@
 	onbeforeunload={(e) => warnBeforeLeaving(e, pageStore.unsavedChangeCount())}
 />
 
+<!-- Without JS nothing measures the pane, so the frame would stay unpainted
+     (see `.mockup-frame[data-measured='false']`). The mockups are static and
+     readable signed out, so they stay readable with scripts off too. -->
+<svelte:head>
+	<noscript>
+		<style>
+			.mockup-frame[data-measured='false'] {
+				visibility: visible !important;
+			}
+		</style>
+	</noscript>
+</svelte:head>
+
 <!-- The decision as a dot: the bar colour for a decided status, a ring for
      "Undecided" (an empty slot, as the queue's progress bar shows it).
      Decorative wherever it appears beside the words; the collapsed panel
@@ -733,15 +746,19 @@
 						     only with the queue collapsed, the slug otherwise), the slug in
 						     its tooltip. `w-0 grow` truncates instead of letting a long
 						     title decide where the bar wraps. Hidden on a phone, where the
-						     mockup's own heading is the first thing under the bar. -->
+						     mockup's own heading is the first thing under the bar.
+						     `min-w-40` is the floor: below it the bar wraps its right-hand
+						     group onto a second row rather than squeezing the title, which
+						     measured 12px wide at 768px and 24px at 1280px -- "A." -- with
+						     270px of title to show. -->
 						<span
-							class="w-0 grow truncate text-sm font-semibold text-sfds-black max-sm:hidden"
+							class="w-0 min-w-40 grow truncate text-sm font-semibold text-sfds-black max-sm:hidden"
 							title={pageData?.slug ?? ''}
 							data-testid="toolbar-title">{pageData?.title ?? titleOf(currentPath ?? '')}</span
 						>
 						{#if status}
 							<span
-								class="inline-flex flex-none items-center rounded-full border px-2 py-0.5 text-xs font-medium max-sm:hidden {STATUS_LABELS[
+								class="wide-only inline-flex flex-none items-center rounded-full border px-2 py-0.5 text-xs font-medium {STATUS_LABELS[
 									status
 								].badge}"
 								data-testid="toolbar-status">{statusLabel}</span
@@ -771,8 +788,13 @@
 								).toLowerCase()} layout"
 							>
 								<!-- The layout and the zoom are what a reviewer reads off this;
-								     the pixel width is a detail, so it moved to the tooltip. -->
-								{previewBand(frameWidth)}{scale < 1 ? ` · ${Math.round(scale * 100)}%` : ''}
+								     the pixel width is a detail, so it moved to the tooltip.
+								     Blank until the frame is measured: `frameWidth` starts at 0,
+								     which `previewBand` calls Phone, so every load said "Phone"
+								     before settling on "Desktop · 70%". -->
+								{#if frameWidth > 0}
+									{previewBand(frameWidth)}{scale < 1 ? ` · ${Math.round(scale * 100)}%` : ''}
+								{/if}
 							</span>
 							<ToggleGroup.Root
 								type="single"
@@ -801,9 +823,10 @@
 						     rails; exiting puts them back as they were. The accessible name
 						     stays "Open Karl walkthrough" (it contains the visible label,
 						     WCAG 2.5.3). The visible label drops to "Karl" when the BAR is
-						     narrow, not the window -- the rails decide its width -- which
-						     keeps it to one row at 1080px with both rails open, as before
-						     this button existed, and to two on a phone. -->
+						     narrow, not the window -- the rails decide its width. At 52rem
+						     rather than 32rem since the title got a floor: with both rails
+						     open at 1440px the full label left the title 184px, and at
+						     1280px pushed the bar to the title floor. -->
 						<Button
 							size="sm"
 							class="h-7 flex-none gap-1.5 text-xs font-semibold"
@@ -815,7 +838,7 @@
 							     `&nbsp;` because Svelte trims a span's leading whitespace. -->
 							<span
 								><span class="sr-only">Open&nbsp;</span>Karl<span
-									class="@max-[32rem]/toolbar:sr-only">&nbsp;walkthrough</span
+									class="@max-[52rem]/toolbar:sr-only">&nbsp;walkthrough</span
 								></span
 							>
 						</Button>
@@ -936,6 +959,7 @@
 					<figure
 						bind:clientWidth={frameWidth}
 						style={frameStyle}
+						data-measured={paneBox ? 'true' : 'false'}
 						class="mockup-frame mx-auto w-full self-start overflow-hidden rounded-[4px] border border-gray-200 bg-site-surface shadow-[0_2px_4px_rgba(12,20,100,.06),0_4px_12px_rgba(12,20,100,.1)]"
 					>
 						<SiteHeader />
@@ -1049,6 +1073,16 @@
 	.mockup-frame {
 		container: mockup / inline-size;
 		max-width: 1440px;
+	}
+
+	/* Unpainted until the pane is measured. Before then `fit` has no width to
+	   work from, so the frame took the pane's width unzoomed -- sf.gov's tablet
+	   layout -- and then jumped to the zoomed desktop one. Measured on a
+	   production build at 1440px: 716px wide with a 32px title, then a 1024px
+	   frame at 70% with a 46px title. Measurement lands on the first frame
+	   after hydration; `noscript` in <svelte:head> shows it without JS. */
+	.mockup-frame[data-measured='false'] {
+		visibility: hidden;
 	}
 
 	/* sf.gov's gutters step rather than scale: 20px on a phone, 28px from a
@@ -1166,6 +1200,13 @@
 		   rule. */
 		:global(.narrow-only) {
 			display: inline-flex;
+		}
+
+		/* The toolbar's status badge. Down here the Review sheet trigger
+		   carries the status as a dot and in its name, so the badge only
+		   repeated it, in width the page title needed. */
+		:global(.wide-only) {
+			display: none;
 		}
 	}
 
