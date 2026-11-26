@@ -14,7 +14,8 @@ export const ownerHub = {
 			karl: 'Maps to the top-level "Introductory text" field (Title + rich-text Text) — a repeatable field separate from the Body stream. Heading → Title, paragraphs → Text.',
 			kind: 'body',
 			paragraphs: [
-				"Property owners and managers must keep buildings free of pests, vectors, garbage, and other housing health nuisances. Article 11 covers these. The Director's Rules and the Article 11 Interpretation Guide set what owners and managers must do. Respond quickly to pest reports, document actions, and use qualified professionals when needed. Keep garbage areas clean and prevent conditions that support pests.",
+				"Property owners and managers must keep buildings free of pests, vectors, garbage, and other housing health nuisances. Article 11 covers these. The Director's Rules and the Article 11 Interpretation Guide set what owners and managers must do.",
+				'Respond quickly to pest reports, document actions, and use qualified professionals when needed. Keep garbage areas clean and prevent conditions that support pests.',
 				'Use these pages to meet program requirements, respond to enforcement, and prevent problems before they spread.'
 			]
 		},

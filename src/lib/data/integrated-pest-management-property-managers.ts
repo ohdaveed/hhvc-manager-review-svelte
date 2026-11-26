@@ -19,11 +19,18 @@ export const ownerGuidance = {
 		{
 			heading: 'Protect residents’ health',
 			fieldKey: 'why-it-matters',
-			karl: 'Maps to an "Information section" → Title and text block: Title = this heading, Text = the two paragraphs below (cross-vector health-harm framing for owners/managers, placed first to motivate prevention). Verify disease-risk specifics with SFDPH vector program before publication.',
+			karl: 'Maps to an "Information section" → Title and text block: Title = this heading, Text = the three paragraphs plus the bulleted list below (cross-vector health-harm framing for owners/managers, placed first to motivate prevention). Verify disease-risk specifics with SFDPH vector program before publication. Split 2026-11-26: the two 4- and 5-sentence paragraphs passed SF.gov\'s 3-sentence limit, and the four health risks are now a list.',
 			kind: 'body',
 			paragraphs: [
-				"Unmanaged pests do not just damage a building — they put residents' health at risk. Rodents can spread Hantavirus and Leptospirosis. Cockroach allergens can trigger asthma. Bed bug and mite bites cause skin irritation and stress. Bird droppings can carry fungal spores that affect breathing.",
-				"These risks compound the longer they go unaddressed. A small rodent problem can turn into a mite outbreak. Untreated moisture or clutter can support several pests at once. Prevention protects both residents' health and the owner's ability to meet Article 11 requirements."
+				"Unmanaged pests do not just damage a building. They put residents' health at risk, and the risks compound the longer they go unaddressed.",
+				'A small rodent problem can turn into a mite outbreak. Untreated moisture or clutter can support several pests at once.',
+				"Prevention protects both residents' health and the owner's ability to meet Article 11 requirements. Common pests cause these health problems:"
+			],
+			bullets: [
+				'Rodents can spread Hantavirus and Leptospirosis',
+				'Cockroach allergens can trigger asthma',
+				'Bed bug and mite bites cause skin irritation and stress',
+				'Bird droppings can carry fungal spores that affect breathing'
 			],
 			callout: {
 				karl: "Maps to its own Callout stream item (a sibling of the Title and text item above, not nested inside it — Information section's three block types are top-level stream siblings). Single rich text field only, no separate title field, which this mockup callout already lacks, so no mismatch here.",
