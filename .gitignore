@@ -87,4 +87,7 @@ design/
 # `.impeccable/hook.cache.json` was excluded only by `.git/info/exclude`, which
 # is machine-local, so nobody else had that exclusion.
 .superpowers/
-.impeccable/
+# Impeccable's runtime state stays ignored; the design-system sidecar is shared
+# context for every session and teammate, so it is the one file let through.
+.impeccable/*
+!.impeccable/design.json
