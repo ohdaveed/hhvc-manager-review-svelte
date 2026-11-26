@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { reviewPagesStore } from '$lib/review/reviewable';
 	import { onMount, tick, untrack } from 'svelte';
 	import { hydrateMockup } from '$lib/stores/applySavedEdits';
 	import { classifyLatestEdits } from '$lib/stores/editStatus';
@@ -240,7 +241,7 @@
 	// (They replace a single "First page" link, which jumped to the queue's top
 	// and was the toolbar's only navigation.)
 	const order = $derived.by(() => {
-		const queued = queueOrder($pagesStore);
+		const queued = queueOrder($reviewPagesStore);
 		return queued.length > 0 ? queued : pageStore.pages.map((p) => p.id);
 	});
 	const at = $derived(currentPath ? order.indexOf(currentPath) : -1);

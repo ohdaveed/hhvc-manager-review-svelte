@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { reviewPagesStore } from '$lib/review/reviewable';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Badge } from '$lib/components/ui/badge/index.js';
@@ -43,7 +44,9 @@
 
 	// Where "Next undecided" goes. Only meaningful once a review has loaded:
 	// with no live rows (signed out) there is nothing to move on to.
-	const nextPath = $derived(pageData?.id ? nextUndecidedPath($pagesStore, pageData.id) : undefined);
+	const nextPath = $derived(
+		pageData?.id ? nextUndecidedPath($reviewPagesStore, pageData.id) : undefined
+	);
 	const nextTitle = $derived(
 		nextPath ? pageTitleFor(nextPath, pageStore.pages, $draftsStore, 'empty') : ''
 	);

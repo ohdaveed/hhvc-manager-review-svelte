@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { reviewPagesStore } from '$lib/review/reviewable';
 	import { onMount, tick } from 'svelte';
 	import AllPagesList from '$lib/components/landing/AllPagesList.svelte';
 	import HowItWorks from '$lib/components/landing/HowItWorks.svelte';
@@ -12,16 +13,16 @@
 	import { reviewProgress } from '$lib/landing/progress';
 	import { draftsStore } from '$lib/stores/draftPages';
 	import { pageStore } from '$lib/stores/pageData.svelte';
-	import { loadReview, pagesStore, queueOrder } from '$lib/stores/reviewState';
+	import { loadReview, queueOrder } from '$lib/stores/reviewState';
 	import { sessionStore } from '$lib/stores/session.svelte';
 
-	const progress = $derived(reviewProgress($pagesStore));
+	const progress = $derived(reviewProgress($reviewPagesStore));
 
 	// Per-status counts for the bar and its shortcuts. Computed here rather than
 	// added to `reviewProgress`, whose contract is "how far through, and where
 	// next" and is tested as such.
 	const counts = $derived(
-		$pagesStore.reduce<Partial<Record<(typeof $pagesStore)[number]['status'], number>>>(
+		$reviewPagesStore.reduce<Partial<Record<(typeof $reviewPagesStore)[number]['status'], number>>>(
 			(acc, p) => ({ ...acc, [p.status]: (acc[p.status] ?? 0) + 1 }),
 			{}
 		)
@@ -42,7 +43,7 @@
 	// The Karl section's links, in queue order. Titles resolve the same way the
 	// next-up card's does, so a draft is named by its draft title.
 	const approvedPages = $derived(
-		queueOrder($pagesStore.filter((p) => p.status === 'approved')).map((path) => ({
+		queueOrder($reviewPagesStore.filter((p) => p.status === 'approved')).map((path) => ({
 			path,
 			title: pageTitleFor(path, pageStore.pages, $draftsStore)
 		}))

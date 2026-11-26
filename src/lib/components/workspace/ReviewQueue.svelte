@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { reviewPagesStore } from '$lib/review/reviewable';
 	import { page as routePage } from '$app/stores';
 	import { resolve } from '$app/paths';
 	import { pagesStore, editsStore, QUEUE_STATUS_ORDER } from '$lib/stores/reviewState';
@@ -56,8 +57,8 @@
 	// Decided = anything a reviewer has ruled on. `needs-review` is the initial
 	// status every seeded row carries, so it is the only one that is not a
 	// decision -- counting it would show the review as complete on load.
-	const decided = $derived($pagesStore.filter((p) => p.status !== 'needs-review').length);
-	const total = $derived($pagesStore.length);
+	const decided = $derived($reviewPagesStore.filter((p) => p.status !== 'needs-review').length);
+	const total = $derived($reviewPagesStore.length);
 	const pct = $derived(total === 0 ? 0 : Math.round((decided / total) * 100));
 
 	// One edit row per (page, field) -- `saveInlineEdit` replaces rather than
@@ -70,8 +71,8 @@
 	const needle = $derived(query.trim().toLowerCase());
 	const shown = $derived(
 		needle === ''
-			? $pagesStore
-			: $pagesStore.filter(
+			? $reviewPagesStore
+			: $reviewPagesStore.filter(
 					(p) =>
 						titleFor(p.path).toLowerCase().includes(needle) || p.path.toLowerCase().includes(needle)
 				)
@@ -93,7 +94,7 @@
 	// inside a status group it only repeated the group's colour and said nothing
 	// about the row. Notes and edits are the per-row facts worth a glance, and
 	// as words they need no colour key (WCAG 1.4.1).
-	const metaFor = (p: (typeof $pagesStore)[number]) => {
+	const metaFor = (p: (typeof $reviewPagesStore)[number]) => {
 		const edits = editCount(p.id);
 		return [
 			corpusFor(p.path)?.type,
@@ -106,7 +107,7 @@
 
 	const counts = $derived.by(() => {
 		const tally: Partial<Record<ReviewStatus, number>> = {};
-		for (const p of $pagesStore) tally[p.status] = (tally[p.status] ?? 0) + 1;
+		for (const p of $reviewPagesStore) tally[p.status] = (tally[p.status] ?? 0) + 1;
 		return tally;
 	});
 

@@ -71,8 +71,22 @@ describe('ReviewQueue', () => {
 		// the derived routable id -- not from the pages table, which has neither.
 		pageStore.pages = [
 			{ id: 'topic-x--about', title: 'About vector control', type: 'About us', sections: [] },
-			{ id: 'topic-x--report', title: 'Report a problem', type: 'Transaction', sections: [] }
+			{ id: 'topic-x--report', title: 'Report a problem', type: 'Transaction', sections: [] },
+			// Rows the queue counts must name a page it can open (`isReviewable`),
+			// so every path a test seeds needs a page here.
+			{ id: 'topic-x--third', title: 'Third page', type: 'Information', sections: [] },
+			{ id: 'topic-x--fourth', title: 'Fourth page', type: 'Information', sections: [] }
 		];
+	});
+
+	it('does not count a row whose page was retired', () => {
+		pagesStore.set([
+			row('topic-x--about', 'approved'),
+			row('topic-x--report', 'needs-review'),
+			row('step-by-step-prepare-your-unit-for-pest-treatment', 'needs-review')
+		]);
+		render(ReviewQueue);
+		expect(screen.getByText('1 of 2 decided')).toBeTruthy();
 	});
 
 	/**
