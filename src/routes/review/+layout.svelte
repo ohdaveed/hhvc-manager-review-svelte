@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { onMount, tick } from 'svelte';
+	import { onMount, tick, untrack } from 'svelte';
+	import { applySavedEdits } from '$lib/stores/applySavedEdits';
 	import { page } from '$app/stores';
 	import { resolve } from '$app/paths';
 	import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
@@ -155,6 +156,25 @@
 	// page before its edit targets render and read `isSelected`.
 	$effect.pre(() => {
 		pageStore.enterPage(pageData?.id);
+	});
+
+	// Saved edits onto the mockup: after `loadReview`, on every realtime insert,
+	// and when a draft closes (a save that arrived during the typing was held
+	// back for it). Tracks the stores, the page list shallowly and the draft
+	// keys -- not the copy itself, which this effect writes.
+	$effect(() => {
+		const edits = $editsStore;
+		const live = $pagesStore;
+		const pages = [...pageStore.pages];
+		void Object.keys(pageStore.manualDrafts);
+		untrack(() =>
+			applySavedEdits(
+				pages,
+				live,
+				edits,
+				(path, fieldId) => pageStore.manualDrafts[fieldId]?.pageId === path
+			)
+		);
 	});
 
 	// Unsaved = accepted suggestions not yet committed, FOR THIS PAGE. Deliberately

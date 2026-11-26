@@ -19,9 +19,9 @@ selected field; no schema change, no new dependency; the reload-hydration gap is
 - [x] **3. Save.** Save calls `saveInlineEdit`, skips no-op saves, keeps the draft and shows an error on
       failure, and drops a pending AI suggestion for that field once saved. Accept is disabled on a field
       with an unsaved draft.
-- [ ] **4. Hydrate saved edits.** After `loadReview` and on each realtime insert into `edits`, the latest edit per
+- [x] **4. Hydrate saved edits.** After `loadReview` and on each realtime insert into `edits`, the latest edit per
       field is applied to the mockup through `resolveField().set`, last-write-wins, never over an open draft.
-- [ ] **5. Tests.** `tests/fieldsPanel.test.ts` covers type → mockup changes, Cancel reverts, Save calls
+- [x] **5. Tests.** `tests/fieldsPanel.test.ts` covers type → mockup changes, Cancel reverts, Save calls
       `saveInlineEdit` once with the right `field_id`, failed save keeps the draft; hydration has its own test.
 - [ ] **6. Verify.** `bun run verify` PASS, lint/check/format ratchets at baseline, a Playwright check of the
       real page (select, type, see mockup change) with a clean console. PR open.

@@ -1,0 +1,85 @@
+import { describe, it, expect } from 'vitest';
+import { applySavedEdits } from '../src/lib/stores/applySavedEdits';
+
+const page = () => ({
+	id: 'topic-x--about',
+	title: 'Original title',
+	summary: 'Original summary.',
+	sections: [{ fieldKey: 'how', heading: 'How', paragraphs: ['First.'] }]
+});
+const live = [{ id: 'row-1', path: 'topic-x--about' }];
+const edit = (field_id: string, new_content: string, created_at: string, page_id = 'row-1') => ({
+	page_id,
+	field_id,
+	new_content,
+	created_at
+});
+const never = () => false;
+
+describe('applySavedEdits', () => {
+	it('writes the saved copy onto the page', () => {
+		const p = page();
+		const n = applySavedEdits([p], live, [edit('title', 'Saved', '2026-11-26T00:00:00Z')], never);
+		expect(n).toBe(1);
+		expect(p.title).toBe('Saved');
+	});
+
+	it('reaches section fields by field key', () => {
+		const p = page();
+		applySavedEdits(
+			[p],
+			live,
+			[edit('sections.how.paragraphs.0', 'Edited.', '2026-11-26T00:00:00Z')],
+			never
+		);
+		expect(p.sections[0].paragraphs[0]).toBe('Edited.');
+	});
+
+	it('last write wins by created_at, whatever the array order', () => {
+		const p = page();
+		applySavedEdits(
+			[p],
+			live,
+			[
+				edit('title', 'Newer', '2026-11-26T02:00:00Z'),
+				edit('title', 'Older', '2026-11-26T01:00:00Z')
+			],
+			never
+		);
+		expect(p.title).toBe('Newer');
+	});
+
+	it('leaves a field alone while it is being typed into', () => {
+		const p = page();
+		const n = applySavedEdits(
+			[p],
+			live,
+			[edit('title', 'Saved', '2026-11-26T00:00:00Z')],
+			(path, fieldId) => path === 'topic-x--about' && fieldId === 'title'
+		);
+		expect(n).toBe(0);
+		expect(p.title).toBe('Original title');
+	});
+
+	it('ignores edits for rows not in the review and fields that do not resolve', () => {
+		const p = page();
+		const n = applySavedEdits(
+			[p],
+			live,
+			[
+				edit('title', 'Elsewhere', '2026-11-26T00:00:00Z', 'row-unknown'),
+				edit('sections.gone.paragraphs.0', 'x', '2026-11-26T00:00:00Z')
+			],
+			never
+		);
+		expect(n).toBe(0);
+		expect(p.title).toBe('Original title');
+	});
+
+	it('is a no-op when the page already says it', () => {
+		const p = page();
+		const edits = [edit('title', 'Saved', '2026-11-26T00:00:00Z')];
+		applySavedEdits([p], live, edits, never);
+		expect(applySavedEdits([p], live, edits, never)).toBe(0);
+	});
+});
