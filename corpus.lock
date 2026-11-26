@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "corpusHash": "6ee9772c8384be0ba186b3eaa3a2e21efa22f84259d02691442ec32295e38e13",
+  "corpusHash": "36a862aecc9ab61053889097d5873631209ba15ef5b201f9ae37594b694dc157",
   "pages": {
     "departments--healthy-housing-and-vector-control": {
       "contentHash": "0dbd9dd7bbad4361a566c5cd2c714223d97028f482b3ba8c958c082887615fc9",
@@ -491,7 +491,7 @@
       }
     },
     "information-tenant-rights-and-reporting-housing-conditions": {
-      "contentHash": "553ae0dad94a05a008fe872fe364bd0295f1499637c41c17fc9bb1f248a8d9bd",
+      "contentHash": "8196a80acc6baca5e98d607a77a98656eadf62c874518a4cb7af0f305afdaba5",
       "fieldHashes": {
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",
         "sections.tenant-responsibilities.bullets.0": "786d4e6a0591fa52d5b48e6be046284df4d7cd66b107ae2f645422292354c76d",
@@ -519,14 +519,9 @@
         "sections.where-to-get-tenant-help.heading": "28aae593a9221802d1ee9c029d47439aa1fae0c605c4a977a7c52fcefb1ee4c3",
         "audience.0": "44f32531ea430898aad4f047ba18afd3c01b783986d35275239b2b4a916e431e",
         "sections.who-this-information-is-for.heading": "46c502c4c2c97e0ef59078280882f103e27790dbf304ac81dfa6c5a41ae5d2b9",
-        "sections.you-can-ask-the-city-for-help.bullets.0": "762878946e9be91ed99868e8f8996e77a2d6e9c80c877ef5cd4d46cc85edae43",
-        "sections.you-can-ask-the-city-for-help.bullets.1": "7f0a599546197aa4b18ee25838b8cd57065b8c6c3795cd1cd7babda9a75c32d8",
-        "sections.you-can-ask-the-city-for-help.bullets.2": "c607978c314a5e583528801d7764cf301937fa2675f3ed3fabf0dc4d72f1a747",
-        "sections.you-can-ask-the-city-for-help.bullets.3": "fec9a3d4eafb3057698d780e13a9462690030f58393cf446fc8abd4d769bb8a9",
         "sections.you-can-ask-the-city-for-help.callout.text": "7328285f7eadb271756730e97cf485173a716c48e0f1e82124e29e46b91232ca",
         "sections.you-can-ask-the-city-for-help.heading": "7ada1941cb1a7d9fd8322ccd998dda6e17a3b82519e2145504d0ae101ed254dc",
         "sections.you-can-ask-the-city-for-help.paragraphs.0": "d3c182b8db2f7a37177c143d536a927761ffcd48d25acedf98f09edfd9df56b9",
-        "sections.you-can-ask-the-city-for-help.paragraphs.1": "9623fbc4903739a1c31d59d1d0831c40ded02b5db71fad87345bacef5d59f5c6",
         "summary": "8d5ff6a0d933a8ee49c97782915886316106d69a7ba0136cb31426621ec2a1ca",
         "title": "57a43417e514f27605ce12d89cec8ccb752017497486c615b5aa4c199622738d"
       }
