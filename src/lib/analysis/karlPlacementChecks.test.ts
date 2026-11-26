@@ -25,16 +25,13 @@ describe('recordFromEdits', () => {
 describe('the Analysis panel reads the same placements as the Karl outline', () => {
 	it('lists what will not carry over on the rats report', () => {
 		// Nothing does since the 2026-11-26 audit; the gap fixture puts the
-		// pre-audit audience list and section button back.
+		// pre-audit section button back.
 		expect(byId('rodentsReport', 'karl-unplaced').status).toBe('pass');
 		const f = karlPlacementFindings(gapPages.rodentsReport as never, []).find(
 			(x) => x.id === 'karl-unplaced'
 		)!;
 		expect(f.status).toBe('issue');
-		expect(f.items.map((i) => i.text)).toEqual([
-			'The “Who this is for” list',
-			'“What the Health Code requires” — its button'
-		]);
+		expect(f.items.map((i) => i.text)).toEqual(['“What the Health Code requires” — its button']);
 	});
 
 	it('finds nothing on the rats report that needs a fix, until an edit breaks a limit', () => {

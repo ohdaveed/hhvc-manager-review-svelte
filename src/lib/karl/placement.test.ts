@@ -58,20 +58,26 @@ describe('rats report (Transaction pilot)', () => {
 		expect(statusOf(p, 'sections.what-the-health-code-requires.bullets.1')).toBe('unconfirmed');
 	});
 
-	it('reports a section-level button and an audience list as unplaced', () => {
+	it('reports a section-level button as unplaced', () => {
 		const g = gap('rodentsReport');
 		expect(statusOf(g, 'sections.what-the-health-code-requires.button')).toBe('unplaced');
-		for (let i = 0; i < 4; i++) expect(statusOf(g, `audience.${i}`)).toBe('unplaced');
-	});
-
-	it('gives the audience list one finding, not one per line', () => {
-		const g = gap('rodentsReport');
-		const withReason = [0, 1, 2, 3].filter((i) => g.fields.get(`audience.${i}`)!.reasons.length);
-		expect(withReason).toEqual([0]);
 		expect(g.unplaced.map((u) => u.subject)).toEqual([
-			'The “Who this is for” list',
 			'“What the Health Code requires” — its button'
 		]);
+	});
+
+	it('gives an unmapped page field one finding, not one per line', () => {
+		// Information has no Contact us panel, so a contact block is unmapped as
+		// a whole: three lines, one finding, one chip.
+		const page = {
+			...pagesByKey.afterReport,
+			contact: { phone: ['311', '415-252-3800'], email: ['healthyhousing@sf.gov'] }
+		};
+		const g = placementsFor(page as never, null, pagesByKey);
+		const ids = ['contact.phone.0', 'contact.phone.1', 'contact.email.0'];
+		for (const id of ids) expect(statusOf(g, id), id).toBe('unplaced');
+		expect(ids.filter((id) => g.fields.get(id)!.reasons.length)).toEqual(['contact.phone.0']);
+		expect(g.unplaced.map((u) => u.subject)).toEqual(['Contact us']);
 	});
 
 	it('calls the inferred Custom Section mapping unconfirmed, not settled', () => {
@@ -125,11 +131,11 @@ describe('what happens after you report (Information pilot)', () => {
 		expect(tray?.fieldIds[0]).toBe('sections.how-a-report-moves-through-the-city.heading');
 	});
 
-	// The transcript makes the audience list the FIRST Information section
-	// block, so every authored section sits one slot lower in Karl than its
-	// position among the mockup's sections. The outline has to count the same way.
-	it('places the audience list as Information section 1 and numbers the rest after it', () => {
-		expect(p.fields.get('audience.0')).toMatchObject({
+	// "Who this information is for" is an ordinary first section since the
+	// audience field was retired, so Information blocks number as the mockup's
+	// sections do.
+	it('places “Who this information is for” as Information section 1 and numbers the rest after it', () => {
+		expect(p.fields.get('sections.who-this-information-is-for.bullets.0')).toMatchObject({
 			rawName: 'information_section',
 			label: 'Information section 1 · Text',
 			status: 'placed'
@@ -140,7 +146,7 @@ describe('what happens after you report (Information pilot)', () => {
 			'Information section 4 · Title'
 		);
 		expect(p.sections.get('what-this-page-does-not-promise')?.label).toBe('Information section 7');
-		expect(p.unplaced.map((u) => u.subject)).not.toContain('The “Who this is for” list');
+		expect(p.unplaced).toEqual([]);
 	});
 
 	it('places Related, which Information has', () => {
@@ -253,11 +259,11 @@ describe('the page object the app renders', () => {
 describe('outline summary', () => {
 	it('counts sections and things that will not carry over, not strings', () => {
 		expect(outlineSummary(gap('rodentsReport'))).toBe(
-			'4 sections: 3 go into Karl, 1 unconfirmed. 2 things won’t carry over to Karl.'
+			'4 sections: 3 go into Karl, 1 unconfirmed. 1 thing won’t carry over to Karl.'
 		);
 		expect(outlineSummary(of('rodentsReport'))).toBe('4 sections: 3 go into Karl, 1 unconfirmed.');
 		expect(outlineSummary(gap('afterReport'))).toBe(
-			'6 sections: 6 go into Karl. 1 thing won’t carry over to Karl.'
+			'7 sections: 7 go into Karl. 1 thing won’t carry over to Karl.'
 		);
 		expect(outlineSummary(of('ownerHub'))).toBe('4 sections: 3 go into Karl, 1 needs a fix.');
 	});
@@ -278,8 +284,7 @@ describe('what a chip shows', () => {
 		expect(p.fields.get('title')).toMatchObject({ chip: true, label: 'Page title' });
 		expect(p.fields.get('summary')).toMatchObject({ chip: true, label: 'Description' });
 		expect(p.fields.get('primaryAgency')).toMatchObject({ chip: true, label: 'Primary agency' });
-		expect(p.fields.get('audience.0')?.chip).toBe(true);
-		expect(p.fields.get('audience.1')?.chip).toBe(false);
+		expect(p.fields.get('sections.what-the-health-code-requires.button')?.chip).toBe(true);
 		expect(p.fields.get('sections.what-to-do.steps.0.title')?.chip).toBe(false);
 	});
 
@@ -467,7 +472,6 @@ describe('Campaign', () => {
 		expect(p.sections.get('start-with-your-own-block')?.status).toBe('unplaced');
 		expect(p.unplaced.map((u) => u.subject)).toEqual([
 			'The summary under the title',
-			'The “Who this is for” list',
 			'“Start with your own block”'
 		]);
 	});
@@ -482,13 +486,13 @@ describe('Campaign', () => {
 
 	it('counts findings inside placed sections in the summary', () => {
 		expect(outlineSummary(gap('mosquitoWorkshop'))).toBe(
-			'7 sections: 7 go into Karl. 2 details need a fix. 2 things won’t carry over to Karl.'
+			'7 sections: 7 go into Karl. 2 details need a fix. 1 thing won’t carry over to Karl.'
 		);
 		expect(outlineSummary(gap('ipmEducation'))).toBe(
-			'7 sections: 7 go into Karl. 2 details need a fix, 1 detail is unconfirmed. 2 things won’t carry over to Karl.'
+			'7 sections: 7 go into Karl. 2 details need a fix, 1 detail is unconfirmed. 1 thing won’t carry over to Karl.'
 		);
 		expect(outlineSummary(gap('ratFreeBlocks'))).toBe(
-			'5 sections: 5 go into Karl. 2 details need a fix. 3 things won’t carry over to Karl.'
+			'5 sections: 5 go into Karl. 2 details need a fix. 2 things won’t carry over to Karl.'
 		);
 	});
 });
@@ -536,7 +540,7 @@ describe('Report', () => {
 		);
 		expect(annual.sections.get('related-pages')?.status).toBe('needs-fix');
 		expect(outlineSummary(gap('inspectionsAnnual'))).toBe(
-			'6 sections: 5 go into Karl, 1 needs a fix. 18 details need a fix. 2 things won’t carry over to Karl.'
+			'6 sections: 5 go into Karl, 1 needs a fix. 18 details need a fix. 1 thing won’t carry over to Karl.'
 		);
 	});
 
@@ -571,7 +575,6 @@ describe('Agency', () => {
 		expect(f?.reasons[0]).toMatch(/Title and a links list/);
 		expect(g.sections.get('if-you-rent')?.status).toBe('placed');
 		expect(g.unplaced.map((u) => u.subject)).toEqual([
-			'The “Who this is for” list',
 			'“Get help with pests, mold, or trash”',
 			'“If you rent”',
 			'“If you own or manage a building”',
@@ -675,9 +678,7 @@ describe('About us', () => {
 		const g = gap('aboutHhvcTeam');
 		expect(g.unplaced.map((u) => u.subject)).toContain('The summary under the title');
 		expect(p.url?.status).toBe('unconfirmed');
-		expect(outlineSummary(g)).toBe(
-			'4 sections: 4 go into Karl. 2 things won’t carry over to Karl.'
-		);
+		expect(outlineSummary(g)).toBe('4 sections: 4 go into Karl. 1 thing won’t carry over to Karl.');
 	});
 });
 

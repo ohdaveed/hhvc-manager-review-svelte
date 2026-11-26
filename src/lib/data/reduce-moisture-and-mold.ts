@@ -4,15 +4,20 @@ export const reduceMoisture = {
 	title: 'Reduce moisture and mold in your home',
 	summary:
 		'Learn what causes mold, who is responsible for fixing it, and simple daily steps that keep your home dry.',
-	audience: [
-		'This page is for tenants, and the owners and managers of their buildings, who want to prevent or clean up mold.'
-	],
 	reading: 'Grade 4–6',
 	editorStatus: 'needs-review',
 	editorNote:
 		'New community-education Information page, planned in the source register as `reduceMoisture` (Phase 2 Information; docs/source/hhvc-policy/2026-07-02-mold-moisture-guidance.md and 2026-07-02-mold-tenants-landlords-guidance.md). The two SFDPH sources disagree slightly on the humidity target (below 55%, ideally 40-50%, versus below about 40-50%) and on furniture spacing (6 inches); this page uses "below 50%" and 6 inches — confirm with HHVC. UC ANR publishes no indoor-mold guidance (searched 2026-11-26), so the UC IPM links here cover pests that thrive in damp homes, and the general mold link is EPA. All external links verified 200 on 2026-11-26.',
 	topicTag: 'Agency: Healthy Housing and Vector Control',
 	sections: [
+		{
+			heading: 'Who this information is for',
+			karl: 'Maps to the first "Information section" → Title and text block: Title = this heading, Text = the bulleted list. The heading is the one sf.gov/manage-covid-19-schools-childcare-and-youth-programs gives an audience list (an H3 over bullets). This was the page-level `audience` field until 2026-11-26, when that field was retired; the transcript used to supply this block itself, so what goes into Karl is unchanged.',
+			kind: 'body',
+			bullets: [
+				'This page is for tenants, and the owners and managers of their buildings, who want to prevent or clean up mold.'
+			]
+		},
 		{
 			heading: 'Mold is a moisture problem',
 			karl: 'Maps to an "Information section" → Title and text block: Title = this heading, Text = the two paragraphs below.',

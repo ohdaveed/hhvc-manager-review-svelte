@@ -284,7 +284,7 @@ body {
 	top: -30px;
 	left: -8px;
 }
-/* Doubled class: `#mockPage .page-summary p` and `.page-audience p` (1,1,1)
+/* Doubled class: `#mockPage .page-summary p` (1,1,1)
    zero the margin otherwise, and the badge lands on the line above. */
 #mockPage .edit-target-host.edit-target-host {
 	margin-top: 2rem;
@@ -722,16 +722,6 @@ body {
 		font-weight: 700;
 	}
 
-	& .page-audience {
-		margin-bottom: 1.75rem;
-		padding-left: 1rem;
-		border-left: 3px solid var(--color-site-border);
-		color: var(--color-site-ink-secondary);
-	}
-	& .page-audience p {
-		margin-block: 0 0.35rem;
-	}
-
 	& .page-section {
 		margin-bottom: 2.5rem;
 	}
@@ -766,7 +756,7 @@ body {
    the full width. `min(100cqi, 1076px)` is the grid: the container, capped
    where the page wrapper caps it. */
 @container mockup (min-width: 800px) {
-	#mockPage :is(.what-to-know, .page-audience, .page-content) {
+	#mockPage :is(.what-to-know, .page-content) {
 		max-width: calc((min(100cqi, 1076px) + 28px) * 7 / 12 - 28px);
 	}
 	#mockPage h1 {

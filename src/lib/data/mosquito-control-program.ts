@@ -4,13 +4,18 @@ export const mosquitoControl = {
 	title: 'Mosquito Control Program',
 	summary:
 		'Learn about mosquito surveillance, catch-basin treatment, and where to report standing water.',
-	audience: [
-		'This page is for residents and property owners or managers dealing with standing water or mosquitoes.'
-	],
 	reading: 'Grade 7',
 	editorNote:
 		'SF.gov landing page for Vector Control / Mosquito Control Program resources. Primary CTA opens SFMosquito.org. Verify phone numbers and external URLs before publication. 2026-11-25 (report regroup, Decided Nov 24, 2026): the "Report mosquitoes or standing water" task section is removed, and the page links to the new Report mosquitoes or standing water Transaction instead. That section carried the unverified 415-252-3806 program number, which goes with it; confirm the program line with HHVC if the number is wanted back.',
 	sections: [
+		{
+			heading: 'Who this information is for',
+			karl: 'Maps to the first "Information section" → Title and text block: Title = this heading, Text = the bulleted list. The heading is the one sf.gov/manage-covid-19-schools-childcare-and-youth-programs gives an audience list (an H3 over bullets). This was the page-level `audience` field until 2026-11-26, when that field was retired; the transcript used to supply this block itself, so what goes into Karl is unchanged.',
+			kind: 'body',
+			bullets: [
+				'This page is for residents and property owners or managers dealing with standing water or mosquitoes.'
+			]
+		},
 		{
 			heading: 'What the program does',
 			karl: 'Maps to an "Information section" → Title and text block: Title = this heading, Text = the two paragraphs below.',

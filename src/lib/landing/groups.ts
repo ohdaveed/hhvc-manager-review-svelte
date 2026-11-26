@@ -10,10 +10,9 @@
  * `information-learn-what-hhvc-can-inspect`.
  *
  * The mapping is hand-authored because nothing in the corpus can derive it. A
- * page's `audience` is an array of prose strings, not a controlled vocabulary,
- * and its `type` is the Karl CMS template (Information, Step-by-step, Report,
+ * page's `type` is the Karl CMS template (Information, Step-by-step, Report,
  * ...), which describes how a page is built rather than what it is about. So
- * neither field can produce themes.
+ * it cannot produce themes.
  *
  * Hand-authored means it can fall behind the corpus. `groups.spec.ts` is what
  * stops a new corpus module silently vanishing from the landing page: it fails,

@@ -4,15 +4,20 @@ export const cockroachesPrevention = {
 	title: 'Get rid of cockroaches without heavy pesticides',
 	summary:
 		'Learn why sprays do not work, how to take away what cockroaches need, and how to use baits safely.',
-	audience: [
-		'This page is for tenants and residents dealing with cockroaches, especially in apartment buildings.'
-	],
 	reading: 'Grade 4–6',
 	editorStatus: 'needs-review',
 	editorNote:
 		'New community-education Information page. Sources: UC IPM Pest Notes: Cockroaches (rev. December 2019) — asthma risk in multi-unit housing, sprays repel and disperse cockroaches, sanitation, sticky-trap monitoring, bait placement; and the SF Environment / Pestec IPM Guidelines for Multifamily Housing (prohibit over-the-counter sprays, foggers, and bug bombs; seal cockroach gaps of 1/8 inch). Gives the ipmEducation Campaign page something to point residents to. UC IPM links verified 200 on 2026-11-26.',
 	topicTag: 'Agency: Healthy Housing and Vector Control',
 	sections: [
+		{
+			heading: 'Who this information is for',
+			karl: 'Maps to the first "Information section" → Title and text block: Title = this heading, Text = the bulleted list. The heading is the one sf.gov/manage-covid-19-schools-childcare-and-youth-programs gives an audience list (an H3 over bullets). This was the page-level `audience` field until 2026-11-26, when that field was retired; the transcript used to supply this block itself, so what goes into Karl is unchanged.',
+			kind: 'body',
+			bullets: [
+				'This page is for tenants and residents dealing with cockroaches, especially in apartment buildings.'
+			]
+		},
 		{
 			heading: 'Why cockroaches matter',
 			karl: 'Maps to an "Information section" → Title and text block: Title = this heading, Text = the two paragraphs below.',

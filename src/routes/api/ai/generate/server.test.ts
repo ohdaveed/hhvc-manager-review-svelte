@@ -267,11 +267,7 @@ describe('POST /api/ai/generate', () => {
 	});
 
 	it('generates page content and validates it against the corpus', async () => {
-		const [, page] = Object.entries(pagesByKey)[0];
-		// The vendored content schema (server/ai/vendor/schemas.js) still requires
-		// `audience`, which the corpus dropped on 2026-11-26 because Karl has no
-		// home for it on most types. A model reply has to carry one regardless.
-		const existing = { ...page, audience: ['A tenant affected by the problem'] };
+		const [, existing] = Object.entries(pagesByKey)[0];
 		fetchMock.mockResolvedValueOnce(geminiReply(existing));
 
 		const res = await call({ task: 'content', prompt: 'Tighten this page.' });

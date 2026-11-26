@@ -3,9 +3,11 @@
  * unmapped-content audit, for tests of how gaps are reported.
  *
  * That audit gave every piece of mockup copy a Karl destination or removed it,
- * so the real corpus no longer exercises the "unplaced" path: no audience list,
- * no section-level button on a Transaction, no steps on an Information page, no
- * Related section on a Step by step or Topic page. The path still matters,
+ * so the real corpus no longer exercises the "unplaced" path: no section-level
+ * button on a Transaction, no steps on an Information page, no Related section
+ * on a Step by step or Topic page, no summary on a type with no Description. The
+ * page-level audience list is not among them: that field was retired outright,
+ * so a page carrying one is just an unknown field. The path still matters,
  * since a drafted page or a new module can bring any of those back, so the tests
  * that pinned it run against these overlays instead.
  *
@@ -37,17 +39,9 @@ const withSection = (page: Page, heading: string, edit: (s: Section) => Section)
 const VIEW_ARTICLE_11 =
 	'https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890';
 
-/** U1 (section button outside a step) and the audience list. */
+/** U1: a section button outside a step. */
 const rodentsReport: Page = withSection(
-	{
-		...base('rodentsReport'),
-		audience: [
-			'A tenant affected by rats or mice',
-			'A friend, family member, advocate, or helper reporting for a tenant',
-			'A person reporting a problem in a shared area',
-			'An employee reporting a rodent problem at work'
-		]
-	},
+	base('rodentsReport'),
 	'What the Health Code requires',
 	(s) => ({
 		...s,
@@ -105,9 +99,6 @@ const stepPages = Object.fromEntries(
 /** U5: Topic has no Related panel. */
 const healthyHousingTopic: Page = {
 	...base('healthyHousingTopic'),
-	audience: [
-		'This page is for tenants, property owners and managers, and anyone researching healthy-housing services in San Francisco.'
-	],
 	sections: [
 		...base('healthyHousingTopic').sections,
 		{
@@ -137,70 +128,38 @@ const SUBSECTION_INTROS: Record<string, string> = {
 const pestsTopic: Page = Object.entries(SUBSECTION_INTROS).reduce(
 	(page, [heading, text]) => withSection(page, heading, (s) => ({ ...s, paragraphs: [text] })),
 	{
-		...base('pestsTopic'),
-		audience: [
-			'This page is for tenants, property owners and managers, and anyone reporting a pest or housing health problem.'
-		]
+		...base('pestsTopic')
 	} as Page
 );
 
 /** U21: About us, Campaign and Report have no Description panel. */
 const aboutHhvcTeam: Page = {
 	...base('aboutHhvcTeam'),
-	summary: 'Meet the Environmental Health team that inspects homes and responds to pest reports.',
-	audience: [
-		'Anyone who wants to know more about the Healthy Housing and Vector Control program and the people who run it.'
-	]
+	summary: 'Meet the Environmental Health team that inspects homes and responds to pest reports.'
 };
 const mosquitoWorkshop: Page = {
 	...base('mosquitoWorkshop'),
-	summary: 'Request a no-cost science session for schools, camps, museums, and science fairs.',
-	audience: [
-		'This page is for teachers, youth program leaders, and families who want to host a free mosquito science workshop.'
-	]
+	summary: 'Request a no-cost science session for schools, camps, museums, and science fairs.'
 };
 const ipmEducation: Page = {
 	...base('ipmEducation'),
 	summary:
-		'Request a no-cost integrated pest management session for tenant groups and community organizations.',
-	audience: [
-		'This page is for tenants, resident groups, and community organizations that want to host a free pest-prevention workshop.'
-	]
+		'Request a no-cost integrated pest management session for tenant groups and community organizations.'
 };
 const inspectionsAnnual: Page = {
 	...base('inspectionsAnnual'),
-	summary: 'Inspection counts, violation types, and re-inspection outcomes for the past year.',
-	audience: [
-		'A journalist or researcher looking for program figures',
-		'A neighborhood or tenant organization tracking conditions',
-		'City staff answering a question about volume'
-	]
+	summary: 'Inspection counts, violation types, and re-inspection outcomes for the past year.'
 };
 
 /** A Campaign body section with no component reaches no Campaign panel. */
 const ratFreeBlocks: Page = withSection(
 	{
 		...base('ratFreeBlocks'),
-		summary: 'A neighborhood push to cut rat sightings through coordinated cleanup and prevention.',
-		audience: [
-			'A resident who wants their block to act together',
-			'A neighborhood or merchant association organizing a cleanup',
-			'A property owner or manager on a block with a rodent problem'
-		]
+		summary: 'A neighborhood push to cut rat sightings through coordinated cleanup and prevention.'
 	},
 	'Start with your own block',
 	(s) => without(s, 'component', 'open')
 );
-
-/** Transaction pages: the audience list with a full Things to know budget. */
-const garbageReport: Page = {
-	...base('garbageReport'),
-	audience: [
-		'A tenant or resident affected by garbage, clutter, or overgrown plants',
-		'A neighbor reporting conditions on a nearby property',
-		'A friend, family member, advocate, or helper reporting for someone else'
-	]
-};
 
 export const gapPages = {
 	rodentsReport,
@@ -212,8 +171,7 @@ export const gapPages = {
 	mosquitoWorkshop,
 	ipmEducation,
 	inspectionsAnnual,
-	ratFreeBlocks,
-	garbageReport
+	ratFreeBlocks
 };
 
 /** The corpus with the gap pages swapped in, for anything that resolves links by key. */

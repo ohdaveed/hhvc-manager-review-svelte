@@ -4,11 +4,16 @@ export const tenantRights = {
 	title: 'Tenant rights when reporting housing conditions',
 	summary:
 		'Learn about tenant protections and where to get help if you are worried about retaliation.',
-	audience: [
-		'This page is for tenants, and anyone helping a tenant, worried about retaliation for reporting a housing problem.'
-	],
 	reading: 'Grade 7',
 	sections: [
+		{
+			heading: 'Who this information is for',
+			karl: 'Maps to the first "Information section" → Title and text block: Title = this heading, Text = the bulleted list. The heading is the one sf.gov/manage-covid-19-schools-childcare-and-youth-programs gives an audience list (an H3 over bullets). This was the page-level `audience` field until 2026-11-26, when that field was retired; the transcript used to supply this block itself, so what goes into Karl is unchanged.',
+			kind: 'body',
+			bullets: [
+				'This page is for tenants, and anyone helping a tenant, worried about retaliation for reporting a housing problem.'
+			]
+		},
 		{
 			heading: 'You can ask the City for help',
 			karl: 'Maps to an "Information section" → Title and text block: Title = this heading, Text = the two paragraphs below.',

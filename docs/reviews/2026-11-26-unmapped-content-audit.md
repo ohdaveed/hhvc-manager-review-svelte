@@ -62,3 +62,15 @@ The corpus no longer exercises the unplaced path. The tests that pinned it now
 run against `src/lib/karl/gapFixtures.ts`: current pages with the pre-audit gap
 put back. `walkthrough.test.ts` asserts the corpus has zero unmapped items. The
 e2e outline and Blueprint tables now expect empty trays.
+
+## Follow-up: the `audience` field retired (same day)
+
+The special handling for the page-level `audience` field is gone. That was the
+renderer, the transcript's bespoke reasons and its Information placement, the
+placement numbering around it, the `audience.N` field ids, and the AI page
+schema and plain-language items (marked `DIVERGES FROM UPSTREAM`). The 13
+Information pages that still carried a list now open with an ordinary "Who this
+information is for" section. The Karl output for those pages is unchanged: the
+only snapshot difference is the dropped "this tool supplies the title" note. A
+page that brings `audience` back is reported as an unknown unmapped field
+(`src/lib/karl/audienceRetired.test.ts`).

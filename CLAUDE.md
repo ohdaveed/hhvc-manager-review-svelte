@@ -100,7 +100,7 @@ That `path` is the reserved form `draft:<uuid>`, not a derived slug, so a draft 
 
 ### Content pipeline
 
-Page content lives as plain TypeScript modules in `src/lib/data/`, one per mockup page, aggregated by `src/lib/data/index.ts` into `allPages`. Each exports `{ slug, type, title, summary, audience, sections[] }`, where sections carry `paragraphs`/`bullets` plus a `karl` field describing how that block maps to SF.gov's Karl/Wagtail CMS fields, and `editorStatus`/`editorNote` describing the mockup's provenance. Those notes are review material — treat them as content, not comments.
+Page content lives as plain TypeScript modules in `src/lib/data/`, one per mockup page, aggregated by `src/lib/data/index.ts` into `allPages`. Each exports `{ slug, type, title, summary, sections[] }` (there is no page-level `audience` field: it was retired on 2026-11-26, and a "Who this information is for" list is an ordinary section), where sections carry `paragraphs`/`bullets` plus a `karl` field describing how that block maps to SF.gov's Karl/Wagtail CMS fields, and `editorStatus`/`editorNote` describing the mockup's provenance. Those notes are review material — treat them as content, not comments.
 
 `src/lib/stores/pageData.svelte.ts` derives the routable id at construction time: `sf.gov/topic-x--about` becomes `topic-x--about` (strip `sf.gov/`, slashes to dashes). So `/review/[slug]` matches that derived id, **not** the `slug` field in the data module. Adding a page means adding the module and exporting it from `index.ts`; nothing else registers it.
 

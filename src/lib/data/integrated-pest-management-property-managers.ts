@@ -3,14 +3,19 @@ export const ownerGuidance = {
 	type: 'Information',
 	title: 'Integrated pest management for property owners and managers',
 	summary: 'Use prevention, monitoring, and resident outreach tools for your building.',
-	audience: [
-		'This page is for property owners, managers, and maintenance staff looking for pest prevention best practices.'
-	],
 	reading: 'Grade 7',
 	editorNote:
 		'Information page for property owners and managers. UC ANR IPM guide is the primary external source — verify link stability and whether HHVC wants additional SFDPH Director’s Rules citations before publication.',
 	topicTag: 'Agency: Healthy Housing and Vector Control',
 	sections: [
+		{
+			heading: 'Who this information is for',
+			karl: 'Maps to the first "Information section" → Title and text block: Title = this heading, Text = the bulleted list. The heading is the one sf.gov/manage-covid-19-schools-childcare-and-youth-programs gives an audience list (an H3 over bullets). This was the page-level `audience` field until 2026-11-26, when that field was retired; the transcript used to supply this block itself, so what goes into Karl is unchanged.',
+			kind: 'body',
+			bullets: [
+				'This page is for property owners, managers, and maintenance staff looking for pest prevention best practices.'
+			]
+		},
 		{
 			heading: 'Protect residents’ health',
 			fieldKey: 'why-it-matters',

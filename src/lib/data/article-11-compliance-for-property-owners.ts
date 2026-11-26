@@ -4,15 +4,20 @@ export const article11Compliance = {
 	title: 'Article 11 compliance for property owners',
 	summary:
 		'See what landlords and managers must do under the Health Code, plus the yearly fee and who to call.',
-	audience: [
-		'This page is for property owners and managers responsible for Article 11 compliance.'
-	],
 	reading: 'Grade 7',
 	editorNote:
 		'Information page modeled on the SF.gov minimum wage ordinance pattern (sf.gov/information--minimum-wage-ordinance): a short compliance-first front door, not a replacement for the deep-dive `article11Guide` Report page it links out to. Every fact here (fee tiers, 72-hour window, 2-year records, PCO licensing, pesticide notice, training) is pulled from `article11Guide` and `payFee`, not re-derived — see each section\'s karl note for which source page to cross-check. The one exception is the vermin-log requirement, which no other mockup page carries: it comes straight from the Director\'s Rules excerpt at `docs/source/hhvc-policy/2026-07-08-residential-building-owner-operator-guidelines-vector-control.md` (item 2), the same sentence the 72-hour window is quoted from. Worth adding to `article11Guide`\'s owner-responsibility table as well, so this page keeps summarizing rather than becoming the sole source for it. One open question carried from the design spec, not blocking: whether Karl\'s Information content type has a distinct checklist/callout-with-list block, or whether the bulleted list used below (see "What Article 11 requires" section) is the closest real-schema fit. (A second question, the `cost` panel radio-option gap, no longer applies here: U23 moved the fee out of `whatToKnow` into the "Fees and full requirements" section, since Information has no `cost` panel. It stays open on `payFee`.)',
 	editorStatus: 'needs-review',
 	topicTag: 'Agency: Healthy Housing and Vector Control',
 	sections: [
+		{
+			heading: 'Who this information is for',
+			karl: 'Maps to the first "Information section" → Title and text block: Title = this heading, Text = the bulleted list. The heading is the one sf.gov/manage-covid-19-schools-childcare-and-youth-programs gives an audience list (an H3 over bullets). This was the page-level `audience` field until 2026-11-26, when that field was retired; the transcript used to supply this block itself, so what goes into Karl is unchanged.',
+			kind: 'body',
+			bullets: [
+				'This page is for property owners and managers responsible for Article 11 compliance.'
+			]
+		},
 		{
 			heading: 'What Article 11 requires',
 			karl: 'Maps to an "Information section" → Title and text block: Title = this heading, Text = the opening paragraph plus the six-item bulleted list below (bullets render inside the same rich text field). The list is the page\'s front-loaded "Quick compliance checklist," mirroring the wage-ordinance page\'s prominent dollar figure — it is rendered as a bulleted list rather than a separate Callout because Callout is a single rich-text field with no verified list support (see the page-level editorNote\'s open question #1). Flag for Digital Services if a distinct checklist block exists in the real schema.',

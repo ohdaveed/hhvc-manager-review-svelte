@@ -116,8 +116,8 @@ function stringField(
 }
 
 /**
- * A plain-string entry at `list[i]` (a table cell, a `thingsToKnow` item, an
- * `audience` line). Distinct from `readEntry`/`writeEntry`: these lists never
+ * A plain-string entry at `list[i]` (a table cell, a `thingsToKnow` item, a
+ * contact line). Distinct from `readEntry`/`writeEntry`: these lists never
  * hold the `{ text, unverified }` wrapper in the corpus, per `extractCopy`,
  * which reads every one of them with `str()` rather than `entryText()`.
  */
@@ -179,13 +179,6 @@ export function resolveField(
 	}
 
 	const parts = fieldId.split('.');
-
-	if (parts[0] === 'audience' && parts.length === 2) {
-		const i = Number(parts[1]);
-		const list = page.audience;
-		if (!Array.isArray(list) || !Number.isInteger(i) || typeof list[i] !== 'string') return null;
-		return { name: `Audience [${i + 1}]`, value: list[i], set: (v) => (list[i] = v) };
-	}
 
 	if (parts[0] === 'contact' && parts.length === 3) {
 		const sub = parts[1];

@@ -4,13 +4,18 @@ export const scopeInfo = {
 	title: 'Learn what Healthy Housing and Vector Control can inspect',
 	summary:
 		'See which conditions Environmental Health checks in apartments, residential hotels, and shelters.',
-	audience: [
-		'This page is for anyone deciding whether to report a pest or housing health problem to HHVC.'
-	],
 	reading: 'Grade 7',
 	seoTitle: 'Learn what HHVC can inspect',
 	metaDescription: 'Check whether HHVC may review a pest, vector, or housing health condition.',
 	sections: [
+		{
+			heading: 'Who this information is for',
+			karl: 'Maps to the first "Information section" → Title and text block: Title = this heading, Text = the bulleted list. The heading is the one sf.gov/manage-covid-19-schools-childcare-and-youth-programs gives an audience list (an H3 over bullets). This was the page-level `audience` field until 2026-11-26, when that field was retired; the transcript used to supply this block itself, so what goes into Karl is unchanged.',
+			kind: 'body',
+			bullets: [
+				'This page is for anyone deciding whether to report a pest or housing health problem to HHVC.'
+			]
+		},
 		{
 			heading: 'Check if HHVC can help before you report',
 			fieldKey: 'use-this-page-before-you-report',

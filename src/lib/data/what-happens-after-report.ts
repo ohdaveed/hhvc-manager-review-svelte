@@ -3,11 +3,16 @@ export const afterReport = {
 	type: 'Information',
 	title: 'What happens after you report a housing or pest problem',
 	summary: 'Learn how a 311 report is reviewed and when an inspector may contact you.',
-	audience: [
-		'Anyone who filed a 311 report or is waiting to hear back about a pest or housing problem.'
-	],
 	reading: 'Grade 7',
 	sections: [
+		{
+			heading: 'Who this information is for',
+			karl: 'Maps to the first "Information section" → Title and text block: Title = this heading, Text = the bulleted list. The heading is the one sf.gov/manage-covid-19-schools-childcare-and-youth-programs gives an audience list (an H3 over bullets). This was the page-level `audience` field until 2026-11-26, when that field was retired; the transcript used to supply this block itself, so what goes into Karl is unchanged.',
+			kind: 'body',
+			bullets: [
+				'Anyone who filed a 311 report or is waiting to hear back about a pest or housing problem.'
+			]
+		},
 		{
 			heading: 'Who can report',
 			karl: 'Maps to an "Information section" → Title and text block: Title = this heading, Text = the paragraph plus the bulleted list. Added 2026-11-25 under the Decided shared-content rule: text every report page used to repeat (reporting anonymously, reporting for someone else, language help, the landlord notice) lives here and on Tenant rights, and the report pages keep only what is specific to their condition.',

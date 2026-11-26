@@ -33,7 +33,6 @@ function withKeys(page: CorpusShape): CorpusShape {
 function expectedIds(page: CorpusShape): string[] {
 	const ids: string[] = ['title'];
 	if (page.summary) ids.push('summary');
-	(page.audience ?? []).forEach((_: unknown, i: number) => ids.push(`audience.${i}`));
 	for (const s of page.sections ?? []) {
 		const k = s.fieldKey;
 		if (s.heading) ids.push(`sections.${k}.heading`);

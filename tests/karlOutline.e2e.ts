@@ -27,8 +27,8 @@ const PILOTS = [
 	{
 		slug: 'information-what-happens-after-you-report-housing-pest-problem',
 		// 6 sections since "Who can report" took the shared report text (2026-11-25).
-		summary: '7 sections: 7 go into Karl.',
-		sections: { placed: 7, unplaced: 0 }
+		summary: '8 sections: 8 go into Karl.',
+		sections: { placed: 8, unplaced: 0 }
 	},
 	{
 		slug: 'property-owner-responsibilities-hhvc',
@@ -159,7 +159,7 @@ test.describe('Karl outline', () => {
 		// This used to be the rats report's "View Article 11" button, which had no
 		// Karl home (U1). Since the 2026-11-26 audit nothing in the corpus is
 		// unplaced, so the field with a reason of its own is a needs-fix one; the
-		// one-chip-per-audience-list rule is covered by placement.test.ts.
+		// one-chip-per-unmapped-field rule is covered by placement.test.ts.
 		await gotoSignedIn(page, '/review/rat-free-blocks');
 		await switchOnByKeyboard(page);
 		const target = page.locator(

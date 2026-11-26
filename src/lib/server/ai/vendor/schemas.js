@@ -176,11 +176,9 @@ const PAGE_OUTPUT_SCHEMA = {
 		type: { type: 'string', enum: PAGE_TYPES },
 		title: { type: 'string', description: 'Sentence case, front-loaded, 80 characters or fewer.' },
 		summary: { type: 'string', description: '180 characters or fewer. One sentence.' },
-		audience: {
-			type: 'array',
-			items: { type: 'string' },
-			description: 'Who this page is for. At least one entry, phrased as "A tenant who...".'
-		},
+		// DIVERGES FROM UPSTREAM: no `audience`. This repo retired the page-level
+		// audience list on 2026-11-26 (Karl has a home for it on almost no page
+		// type), so a draft that carried one would render nothing for it.
 		reading: { type: 'string', description: 'For example "Grade 6".' },
 		seoTitle: { type: 'string', description: '60 characters or fewer, ending "| SF.gov".' },
 		metaDescription: {
@@ -191,7 +189,7 @@ const PAGE_OUTPUT_SCHEMA = {
 		editorNote: { type: 'string', description: 'A note to the human editor reviewing this draft.' },
 		sections: { type: 'array', items: sectionSchema }
 	},
-	required: ['slug', 'type', 'title', 'summary', 'audience', 'reading', 'sections']
+	required: ['slug', 'type', 'title', 'summary', 'reading', 'sections']
 };
 
 /**
