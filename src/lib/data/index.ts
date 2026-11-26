@@ -37,7 +37,6 @@ import { stepPestReport } from './step-report-a-pest-problem';
 import { stepCorrectViolation } from './step-correct-a-violation';
 import { stepPrepUnit } from './step-prepare-unit-for-treatment';
 import { ehOffice } from './location-environmental-health-office';
-import { whoToCall } from './who-to-call-housing-problem';
 import { appealNotice } from './appeal-notice-of-violation';
 import { payCitation } from './pay-healthy-housing-citation';
 import { languageGuides } from './guides-in-other-languages';
@@ -99,7 +98,6 @@ export const pagesByKey = {
 	stepCorrectViolation,
 	stepPrepUnit,
 	ehOffice,
-	whoToCall,
 	appealNotice,
 	payCitation,
 	languageGuides,
