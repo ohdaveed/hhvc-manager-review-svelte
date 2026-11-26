@@ -81,7 +81,17 @@ test.describe('the mockup scales with the space it has', () => {
 		await page.getByRole('radio', { name: 'Tablet width, 768px' }).click();
 
 		// The window is 834px either way; what decides the layout is the frame.
-		await expect.poll(() => footerColumnCount(page)).toBe(2);
+		// The header is what changes at tablet: live sf.gov draws a 52px seal
+		// between its 42px phone and 112px desktop ones, while the footer keeps
+		// all four columns from 768px up (both measured 2026-11-26).
+		await expect
+			.poll(() =>
+				page
+					.locator('.mockup-frame .sfgov-seal')
+					.evaluate((el) => Math.round(el.getBoundingClientRect().width))
+			)
+			.toBe(52);
+		expect(await footerColumnCount(page)).toBe(4);
 		expect(await overflows(page)).toBe(false);
 	});
 

@@ -19,7 +19,7 @@
 	};
 </script>
 
-<div class="page-body">
+<div class="page-body" data-page-type={page.type}>
 	{#if page.type}
 		<div class="page-type-eyebrow">{typeLabels[page.type] ?? page.type}</div>
 	{/if}

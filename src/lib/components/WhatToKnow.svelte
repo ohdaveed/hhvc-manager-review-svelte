@@ -164,6 +164,17 @@
 		line-height: 1.75rem;
 	}
 
+	/* On a phone live sf.gov runs this box edge to edge -- out through the
+	   page's 20px gutter -- keeping its 28px padding, so its copy gets the
+	   full width less 56px (measured 2026-11-26 on `dph-leaves-absence` and
+	   `report-health-nuisance-or-hazards` at 390px). The query reads
+	   #mockPage's content box, 348px at the Phone preset and 710px at Tablet. */
+	@container mockup (max-width: 699px) {
+		.what-to-know {
+			margin-inline: -20px;
+		}
+	}
+
 	@container mockup (min-width: 800px) {
 		.what-to-know-icon {
 			width: 40px;
