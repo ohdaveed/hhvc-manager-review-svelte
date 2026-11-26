@@ -342,7 +342,7 @@
 	}
 
 	.drawer-tab {
-		font-size: 11px;
+		font-size: 0.6875rem;
 		font-weight: 700;
 		letter-spacing: 0.1em;
 		text-transform: uppercase;
@@ -351,7 +351,7 @@
 
 	.drawer-position {
 		margin-left: auto;
-		font-size: 12px;
+		font-size: 0.75rem;
 		color: var(--text-secondary, #5a7a92);
 	}
 
@@ -373,8 +373,8 @@
 	.drawer-title {
 		margin: 12px 0 2px;
 		font-family: var(--font-display);
-		font-size: 15px;
-		line-height: 20px;
+		font-size: 0.9375rem;
+		line-height: 1.25rem;
 		font-weight: 700;
 	}
 
@@ -385,7 +385,7 @@
 
 	.drawer-sub {
 		margin: 0;
-		font-size: 12px;
+		font-size: 0.75rem;
 		color: var(--text-secondary, #5a7a92);
 	}
 
@@ -408,7 +408,7 @@
 		flex: none;
 		border-radius: 999px;
 		border: 1px solid #c2c2c2;
-		font-size: 12px;
+		font-size: 0.75rem;
 		font-weight: 700;
 		color: var(--text-secondary, #5a7a92);
 	}
@@ -451,7 +451,7 @@
 
 	.step-row-name {
 		min-width: 0;
-		font-size: 14px;
+		font-size: 0.875rem;
 	}
 
 	.step-row-name-done {
@@ -470,12 +470,12 @@
 	.mapping-note code,
 	.gap-body code {
 		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-		font-size: 11px;
+		font-size: 0.6875rem;
 		color: var(--text-secondary, #5a7a92);
 	}
 
 	.step-row-copied {
-		font-size: 11px;
+		font-size: 0.6875rem;
 		font-weight: 700;
 		color: #16651f;
 	}
@@ -510,7 +510,7 @@
 	}
 
 	.step-card-name {
-		font-size: 15px;
+		font-size: 0.9375rem;
 		font-weight: 700;
 	}
 
@@ -524,15 +524,15 @@
 	.mapping-path {
 		margin: 0 0 4px;
 		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-		font-size: 12px;
-		line-height: 18px;
+		font-size: 0.75rem;
+		line-height: 1.125rem;
 		color: var(--sfds-color-blue-dark, #0c1464);
 	}
 
 	.mapping-note {
 		margin: 0;
-		font-size: 12px;
-		line-height: 17px;
+		font-size: 0.75rem;
+		line-height: 1.0625rem;
 		color: var(--sfds-color-slate-l3, #1d4d70);
 	}
 
@@ -558,7 +558,7 @@
 
 	.gap-title {
 		margin: 0 0 4px;
-		font-size: 13px;
+		font-size: 0.8125rem;
 		font-weight: 700;
 		color: #8f1d15;
 	}
@@ -569,8 +569,8 @@
 
 	.gap-body {
 		margin: 0 0 4px;
-		font-size: 13px;
-		line-height: 19px;
+		font-size: 0.8125rem;
+		line-height: 1.1875rem;
 		color: #8f1d15;
 	}
 
@@ -587,7 +587,7 @@
 
 	.choices-label {
 		margin: 0 0 8px;
-		font-size: 11px;
+		font-size: 0.6875rem;
 		font-weight: 700;
 		letter-spacing: 0.06em;
 		text-transform: uppercase;
@@ -615,14 +615,14 @@
 		padding: 4px 12px;
 		border-radius: 13px;
 		border: 1px solid #c2c2c2;
-		font-size: 12px;
-		line-height: 17px;
+		font-size: 0.75rem;
+		line-height: 1.0625rem;
 	}
 
 	.choice-key {
 		flex: none;
 		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-		font-size: 11px;
+		font-size: 0.6875rem;
 		color: var(--text-secondary, #5a7a92);
 	}
 
@@ -637,7 +637,7 @@
 
 	.links-label {
 		margin: 0 0 8px;
-		font-size: 11px;
+		font-size: 0.6875rem;
 		font-weight: 700;
 		letter-spacing: 0.06em;
 		text-transform: uppercase;
@@ -657,8 +657,8 @@
 		display: flex;
 		flex-direction: column;
 		gap: 2px;
-		font-size: 12px;
-		line-height: 17px;
+		font-size: 0.75rem;
+		line-height: 1.0625rem;
 	}
 
 	.link-text {
@@ -667,13 +667,13 @@
 
 	.link-target {
 		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-		font-size: 11px;
+		font-size: 0.6875rem;
 		color: var(--text-secondary, #5a7a92);
 	}
 
 	.links-note {
 		margin: 8px 0 0;
-		font-size: 11px;
+		font-size: 0.6875rem;
 		color: var(--text-secondary, #5a7a92);
 	}
 
@@ -714,7 +714,7 @@
 	}
 
 	.value-label {
-		font-size: 11px;
+		font-size: 0.6875rem;
 		font-weight: 700;
 		letter-spacing: 0.06em;
 		text-transform: uppercase;
@@ -730,7 +730,7 @@
 		border-radius: 6px;
 		background: #ffffff;
 		color: var(--color-sfds-action, #495ed4);
-		font-size: 12px;
+		font-size: 0.75rem;
 		font-weight: 600;
 		cursor: pointer;
 	}
@@ -738,8 +738,8 @@
 	.value-text {
 		margin: 0;
 		padding: 10px;
-		font-size: 13px;
-		line-height: 19px;
+		font-size: 0.8125rem;
+		line-height: 1.1875rem;
 	}
 
 	.why {
@@ -747,7 +747,7 @@
 	}
 
 	.why summary {
-		font-size: 13px;
+		font-size: 0.8125rem;
 		font-weight: 600;
 		color: var(--color-sfds-action, #495ed4);
 		cursor: pointer;
@@ -755,8 +755,8 @@
 
 	.why-body {
 		margin: 6px 0 0;
-		font-size: 12px;
-		line-height: 18px;
+		font-size: 0.75rem;
+		line-height: 1.125rem;
 		color: var(--text-secondary, #5a7a92);
 	}
 
@@ -772,7 +772,7 @@
 		border-radius: 6px;
 		background: var(--color-sfds-action, #495ed4);
 		color: #ffffff;
-		font-size: 13px;
+		font-size: 0.8125rem;
 		font-weight: 600;
 		cursor: pointer;
 	}
@@ -784,7 +784,7 @@
 		border: 1px solid #c2c2c2;
 		border-radius: 6px;
 		background: #ffffff;
-		font-size: 13px;
+		font-size: 0.8125rem;
 		cursor: pointer;
 	}
 </style>

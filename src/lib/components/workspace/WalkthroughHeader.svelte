@@ -107,13 +107,13 @@
 		align-items: baseline;
 		gap: 12px;
 		min-width: 0;
-		font-size: 13px;
+		font-size: 0.8125rem;
 	}
 
 	.wt-title {
 		flex: none;
 		font-family: var(--font-display);
-		font-size: 15px;
+		font-size: 0.9375rem;
 		font-weight: 700;
 	}
 
@@ -129,7 +129,7 @@
 		align-items: center;
 		gap: 16px;
 		flex: none;
-		font-size: 13px;
+		font-size: 0.8125rem;
 	}
 
 	.wt-count {
@@ -156,7 +156,7 @@
 		border-radius: 6px;
 		background: rgba(255, 255, 255, 0.12);
 		color: #ffffff;
-		font-size: 12px;
+		font-size: 0.75rem;
 		font-weight: 600;
 		white-space: nowrap;
 		cursor: pointer;
@@ -174,7 +174,7 @@
 		border-radius: 6px;
 		background: transparent;
 		color: #ffffff;
-		font-size: 12px;
+		font-size: 0.75rem;
 		font-weight: 600;
 		white-space: nowrap;
 		cursor: pointer;
