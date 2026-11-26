@@ -284,6 +284,23 @@ class PageStore {
 	}
 
 	/**
+	 * `pageId`'s stale edits in the shape `reviewRecordFor` takes: each expired
+	 * field with its base copy now, and the orphaned field ids.
+	 */
+	staleEditsOn(pageId: string): { expired: Record<string, string>; orphaned: string[] } {
+		const expired: Record<string, string> = {};
+		const orphaned: string[] = [];
+		const prefix = changeKey(pageId, '');
+		for (const [key, status] of Object.entries(this.editStatus)) {
+			if (!key.startsWith(prefix)) continue;
+			const fieldId = key.slice(prefix.length);
+			if (status === 'expired') expired[fieldId] = this.baseCopyOf(pageId, fieldId) ?? '';
+			else orphaned.push(fieldId);
+		}
+		return { expired, orphaned };
+	}
+
+	/**
 	 * Resolving an expired edit by re-confirming its wording: an unsaved change
 	 * carrying the same text, marked so that Save records it -- a new edit,
 	 * anchored to the base copy now.

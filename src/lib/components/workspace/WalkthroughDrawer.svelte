@@ -287,6 +287,24 @@
 				{/each}
 			</div>
 		{/if}
+
+		<!-- Saved edits that no longer answer their base copy (ADR 0001): settle
+		     these before typing anything into Karl. -->
+		{#if walkthrough.stale.length > 0}
+			<div class="gap gap-advisory page-gap">
+				<p class="gap-title">Saved edits that need a decision</p>
+				{#each walkthrough.stale as edit (edit.fieldId)}
+					<p class="gap-body">
+						<code>{edit.fieldId}</code> —
+						{#if edit.kind === 'expired'}
+							expired: the base copy changed after “{edit.accepted}” was saved. Base copy now: “{edit.base}”.
+						{:else}
+							orphaned: the field is no longer on the page. Saved wording: “{edit.accepted}”.
+						{/if}
+					</p>
+				{/each}
+			</div>
+		{/if}
 	</div>
 </div>
 

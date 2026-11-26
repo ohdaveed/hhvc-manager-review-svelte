@@ -17,7 +17,10 @@ Branch `feat/expired-edits`, cut from `origin/main`. Design:
       or orphaned against the base copy now. Unit-tested, including copy that changes back.
 - [x] **5. Mockup marking.** Expired edits show their text marked expired, with the base copy one step away;
       re-confirm / rewrite / keep base each create an unsaved change. Orphaned edits do not render.
-- [ ] **6. Transcript.** Expired and orphaned edits appear flagged. Snapshot test updated deliberately.
+- [x] **6. Transcript.** Expired and orphaned edits appear flagged. Done as a section above the first panel
+      (`staleEditsMarkdown`) and a walkthrough-drawer block, fed by `reviewRecordFor`'s new `stale` argument;
+      `karl-transcript.js` is untouched. Snapshots needed no update: the section renders only when an edit is
+      stale, and the snapshot pages have none.
 - [ ] **7. Verify.** Unit, check, ratchets, e2e, browser check; re-confirm production still has 0 edits
       immediately before merge.
 

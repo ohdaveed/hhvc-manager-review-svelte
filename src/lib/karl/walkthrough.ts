@@ -63,6 +63,58 @@ const transcriptFor = (page: AnyEntry, pages: Corpus, record: ReviewRecord | nul
 const markdownFor = (transcript: AnyEntry): string =>
 	(renderTranscriptMarkdown as unknown as (t: unknown) => string)(transcript);
 
+/** One saved edit that no longer answers its base copy (ADR 0001). */
+export type StaleEdit =
+	| { kind: 'expired'; fieldId: string; accepted: string; base: string }
+	| { kind: 'orphaned'; fieldId: string; accepted: string };
+
+/** The record's expired and orphaned edits, expired first, each by field id. */
+export function staleEditsOf(record: ReviewRecord | null): StaleEdit[] {
+	if (!record) return [];
+	const byId = (a: [string, unknown], b: [string, unknown]) => a[0].localeCompare(b[0]);
+	return [
+		...Object.entries(record.expired ?? {})
+			.sort(byId)
+			.map(([fieldId, e]): StaleEdit => ({ kind: 'expired', fieldId, ...e })),
+		...Object.entries(record.orphaned ?? {})
+			.sort(byId)
+			.map(([fieldId, accepted]): StaleEdit => ({ kind: 'orphaned', fieldId, accepted }))
+	];
+}
+
+/** Puts the stale-edits section above the first panel of a rendered transcript. */
+function withStale(markdown: string, stale: StaleEdit[]): string {
+	const section = staleEditsMarkdown(stale);
+	if (!section) return markdown;
+	const at = markdown.indexOf('\n### ');
+	return at === -1
+		? markdown + '\n' + section
+		: markdown.slice(0, at + 1) + section + markdown.slice(at + 1);
+}
+
+/**
+ * The transcript section for stale edits, or '' when there are none -- so a
+ * page with none renders exactly as before, and the pinned snapshots hold.
+ * Above the panels, because an editor should settle these before typing
+ * anything into Karl.
+ */
+export function staleEditsMarkdown(stale: StaleEdit[]): string {
+	if (stale.length === 0) return '';
+	const lines = ['## Saved edits that need a decision', ''];
+	for (const e of stale) {
+		if (e.kind === 'expired') {
+			lines.push(`- **Expired** \`${e.fieldId}\` — the base copy changed after this was saved.`);
+			lines.push(`  - Saved wording: ${e.accepted}`);
+			lines.push(`  - Base copy now: ${e.base}`);
+		} else {
+			lines.push(`- **Orphaned** \`${e.fieldId}\` — this field is no longer on the page.`);
+			lines.push(`  - Saved wording: ${e.accepted}`);
+		}
+	}
+	lines.push('', '');
+	return lines.join('\n');
+}
+
 /** One copyable value inside a step: a sub-field of the Karl panel. */
 export type StepValue = {
 	/** Sub-field name, e.g. `Title`, `Cost description`. */
@@ -207,6 +259,8 @@ export type Walkthrough = {
 	gaps: { path: string; reason: string; kind: 'flag' | 'unmapped' }[];
 	/** How many steps offer something to copy; the header counts against this. */
 	copyableCount: number;
+	/** Saved edits that no longer answer their base copy, for the editor to settle first. */
+	stale: StaleEdit[];
 	/**
 	 * The same transcript as markdown, for the header's Copy and Download.
 	 *
@@ -332,6 +386,7 @@ export function buildWalkthrough(
 	record: ReviewRecord | null = null
 ): Walkthrough {
 	const transcript = transcriptFor(page, pages, record);
+	const stale = staleEditsOf(record);
 	const type = String(transcript.type ?? '');
 	const entries: AnyEntry[] = Array.isArray(transcript.entries) ? transcript.entries : [];
 
@@ -373,6 +428,7 @@ export function buildWalkthrough(
 			...finding(transcript.unmapped, 'unmapped')
 		],
 		copyableCount: steps.filter((s) => s.values.length > 0).length,
-		markdown: markdownFor(transcript)
+		stale,
+		markdown: withStale(markdownFor(transcript), stale)
 	};
 }

@@ -38,6 +38,22 @@ export type ReviewRecord = {
 	edited_title?: string;
 	edited_summary?: string;
 	url_slug?: string;
+	/**
+	 * Saved edits that no longer answer their base copy (ADR 0001), by field id.
+	 * `expired`: the accepted wording and the base copy now. `orphaned`: the
+	 * accepted wording of an edit whose field is gone. Not read by
+	 * `karl-transcript.js`; `walkthrough.ts` renders them beside its output.
+	 */
+	expired?: Record<string, { accepted: string; base: string }>;
+	orphaned?: Record<string, string>;
+};
+
+/** Which of a page's saved edits are stale, as the layout knows it. */
+export type StaleEdits = {
+	/** Field id -> the base copy now, for each expired edit. */
+	expired: Record<string, string>;
+	/** Field ids of orphaned edits. */
+	orphaned: string[];
 };
 
 /**
@@ -66,7 +82,8 @@ const STATUS_LABELS: Record<ReviewPage['status'], string> = {
 export function reviewRecordFor(
 	pageId: string | undefined,
 	pages: ReviewPage[],
-	edits: Edit[]
+	edits: Edit[],
+	stale?: StaleEdits
 ): ReviewRecord | null {
 	if (!pageId) return null;
 
@@ -88,6 +105,17 @@ export function reviewRecordFor(
 		else if (edit.field_id === 'summary') record.edited_summary = edit.new_content;
 		else if (edit.field_id === 'slug') record.url_slug = edit.new_content;
 		else record.section_edits[edit.field_id] = edit.new_content;
+	}
+
+	// The newest wording per field, which is what a stale flag is about.
+	const accepted = new Map(mine.map((e) => [e.field_id, e.new_content]));
+	for (const [fieldId, base] of Object.entries(stale?.expired ?? {})) {
+		const text = accepted.get(fieldId);
+		if (text !== undefined) (record.expired ??= {})[fieldId] = { accepted: text, base };
+	}
+	for (const fieldId of stale?.orphaned ?? []) {
+		const text = accepted.get(fieldId);
+		if (text !== undefined) (record.orphaned ??= {})[fieldId] = text;
 	}
 
 	return record;

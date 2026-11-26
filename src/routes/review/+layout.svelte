@@ -94,7 +94,12 @@
 			? buildWalkthrough(
 					pageData,
 					pagesByKey,
-					reviewRecordFor(pageData.id, $pagesStore, $editsStore)
+					reviewRecordFor(
+						pageData.id,
+						$pagesStore,
+						$editsStore,
+						pageStore.staleEditsOn(pageData.id)
+					)
 				)
 			: null
 	);
@@ -109,7 +114,12 @@
 		(pageStore.karlOutline || pageStore.mode === 'blueprint') && pageData && !onDraft
 			? placementsFor(
 					pageData as unknown as Parameters<typeof placementsFor>[0],
-					reviewRecordFor(pageData.id, $pagesStore, $editsStore),
+					reviewRecordFor(
+						pageData.id,
+						$pagesStore,
+						$editsStore,
+						pageStore.staleEditsOn(pageData.id)
+					),
 					pagesByKey,
 					// Judge the wording on screen, unsaved changes included.
 					{ copy: 'as-shown' }
