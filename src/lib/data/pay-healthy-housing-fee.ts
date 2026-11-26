@@ -5,10 +5,6 @@ export const payFee = {
 	summary:
 		'Pay your annual Healthy Housing fee if you own an apartment building with 3 or more rental units.',
 	primaryAgency: 'Healthy Housing and Vector Control',
-	audience: [
-		'A property owner responsible for an apartment building',
-		'A property manager or billing contact paying or reviewing an invoice'
-	],
 	reading: 'Grade 7',
 	editorNote:
 		'Transaction redesign based on the live FY 2026-27 payment page and fee schedule. It puts the payment action first, then separates eligibility, annual fee tiers, invoice corrections, and late-payment consequences. The annual apartment-building fee and a reinspection fee are distinct charges; do not present reinspection rates as part of the annual bill.',

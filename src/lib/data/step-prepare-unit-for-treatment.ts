@@ -3,11 +3,6 @@ export const stepPrepUnit = {
 	type: 'Step by step',
 	title: 'Prepare your unit for pest treatment',
 	summary: 'What to move, wash, and bag before an exterminator treats for bed bugs or cockroaches.',
-	audience: [
-		'A tenant whose unit is scheduled for pest treatment',
-		'A property owner or manager telling tenants how to prepare',
-		'A helper preparing a unit for someone who cannot'
-	],
 	reading: 'Grade 6',
 	editorNote:
 		'PROPOSED PAGE — not in the current 29. `design/HHVC Page Ideas.dc.html` lists it among the three Step by step proposals; it is the one tenants are told to do with no page to send them to. THE PREPARATION LIST HERE IS GENERIC AND MUST BE REPLACED. A pest control operator issues unit-specific instructions and those govern — this page says so in the first step rather than competing with them. Nothing here names a treatment interval, a number of visits, or a re-entry time: those vary by product and are set by the operator, not by HHVC, and the corpus confirms none of them. The page is written at Grade 6 because it is read under time pressure, often the night before a visit.',
@@ -39,7 +34,8 @@ export const stepPrepUnit = {
 					],
 					bullets: [
 						'Ask your owner or manager for the instructions if you did not get them.',
-						'Ask what the product is if anyone in the home is pregnant, has asthma, or is under two.'
+						'Ask what the product is if anyone in the home is pregnant, has asthma, or is under two.',
+						'[Integrated pest management for property owners and managers](ownerGuidance)'
 					],
 					karl: 'Step 1. Placed first on purpose: it establishes that this page is a general checklist and the operator’s notice is the authority, which is what keeps the page from contradicting a real treatment plan.'
 				},
@@ -95,22 +91,11 @@ export const stepPrepUnit = {
 					bullets: [
 						'Keep washed items sealed until you are told otherwise.',
 						'Report what you still see. A second visit is normal for some pests.',
-						'[Report cockroaches or other insects](insectsReport)'
+						'[Report cockroaches or other insects](insectsReport)',
+						'[Correct a violation and close your case](stepCorrectViolation)',
+						'[Tenant rights when reporting housing conditions](tenantRights)'
 					],
 					karl: 'Step 6. Transaction link: insectsReport. "A second visit is normal for some pests" is stated without a count, since the number varies by pest and product.'
-				}
-			]
-		},
-		{
-			heading: 'Related pages',
-			karl: 'Maps to Related. Cards publish the destination page’s own title.',
-			kind: 'body',
-			cards: [
-				{ title: 'Correct a violation and close your case', target: 'stepCorrectViolation' },
-				{ title: 'Tenant rights when reporting housing conditions', target: 'tenantRights' },
-				{
-					title: 'Integrated pest management for property owners and managers',
-					target: 'ownerGuidance'
 				}
 			]
 		}

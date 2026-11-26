@@ -12,11 +12,6 @@ export const article11Compliance = {
 		'Information page modeled on the SF.gov minimum wage ordinance pattern (sf.gov/information--minimum-wage-ordinance): a short compliance-first front door, not a replacement for the deep-dive `article11Guide` Report page it links out to. Every fact here (fee tiers, 72-hour window, 2-year records, PCO licensing, pesticide notice, training) is pulled from `article11Guide` and `payFee`, not re-derived — see each section\'s karl note for which source page to cross-check. The one exception is the vermin-log requirement, which no other mockup page carries: it comes straight from the Director\'s Rules excerpt at `docs/source/hhvc-policy/2026-07-08-residential-building-owner-operator-guidelines-vector-control.md` (item 2), the same sentence the 72-hour window is quoted from. Worth adding to `article11Guide`\'s owner-responsibility table as well, so this page keeps summarizing rather than becoming the sole source for it. One open question carried from the design spec, not blocking: whether Karl\'s Information content type has a distinct checklist/callout-with-list block, or whether the bulleted list used below (see "What Article 11 requires" section) is the closest real-schema fit. (A second question, the `cost` panel radio-option gap, no longer applies here: U23 moved the fee out of `whatToKnow` into the "Fees and full requirements" section, since Information has no `cost` panel. It stays open on `payFee`.)',
 	editorStatus: 'needs-review',
 	topicTag: 'Agency: Healthy Housing and Vector Control',
-	contact: {
-		phone: ['311 (call or text)', '415-252-3800'],
-		email: ['healthyhousing@sf.gov'],
-		other: ['Environmental Health — Healthy Housing and Vector Control']
-	},
 	sections: [
 		{
 			heading: 'What Article 11 requires',
@@ -92,6 +87,15 @@ export const article11Compliance = {
 				'**Sec. 600:** Authorizes criminal, civil, and administrative penalties of up to $1,000 per violation per day.',
 				'[View Health Code Article 11 on municode](https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890)',
 				'[See the full section-by-section mapping](article11Guide)'
+			]
+		},
+		{
+			heading: 'Contact Healthy Housing and Vector Control',
+			karl: 'Maps to an "Information section" → Title and text block: Title = this heading, Text = the two lines below. Information has no Contact us panel (Transaction has get_help, Campaign and Agency have contact; Information has neither), so the phone and email the mockup used to show in a contact box move into the body (2026-11-26). The box\'s third line, the team name, is this heading.',
+			kind: 'body',
+			paragraphs: [
+				'Call or text 311.',
+				'Call Healthy Housing and Vector Control at 415-252-3800, or email healthyhousing@sf.gov.'
 			]
 		},
 		{

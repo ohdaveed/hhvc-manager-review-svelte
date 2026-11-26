@@ -5,11 +5,6 @@ export const sewageReport = {
 	summary:
 		'Raw waste from a drain, toilet, cleanout, or pipe, inside a building or in a yard or shared area.',
 	primaryAgency: 'Healthy Housing and Vector Control',
-	audience: [
-		'A tenant or resident with sewage coming into their home',
-		'A person reporting sewage in a yard or shared area',
-		'A friend, family member, advocate, or helper reporting for someone else'
-	],
 	reading: 'Grade 6',
 	editorNote:
 		"Report regroup (Decided, Nov 24, 2026), built 2026-11-25. New page, one of the 9 condition pages. Content is the Decided \"Sewage page\" record: sewage from a drain, toilet, cleanout or pipe, inside or outside a building, including yards and shared areas; HHVC responds within 48 hours of the complaint, so the page says to report right away; the owner hires a plumber and HHVC confirms the sewage is removed and the area sanitized; a leaking pipe with no sewage goes to DBI. The 48-to-72-hour correction window on What happens after you report is the owner's deadline, not HHVC's response time. STILL OPEN, and not on this page: sewage at the property line (the building's sewer line vs. the public sewer, likely SFPUC). No Article 11 line: the plain-language guide in this mockup cites no sewage section, so none is quoted rather than guessing one.",
@@ -35,7 +30,7 @@ export const sewageReport = {
 				{
 					title: 'Report it right away',
 					text: [
-						'Use 311 to report sewage as soon as you see it. Stay away from it, and keep children and pets away.',
+						'Use 311 to report sewage as soon as you see it. Stay away from it, and keep children and pets away. You can report sewage in your home, a yard, or a shared area, or report for someone else.',
 						'Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.'
 					],
 					button: 'Report through 311',

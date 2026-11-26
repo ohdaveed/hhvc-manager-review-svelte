@@ -22,57 +22,26 @@ export const afterReport = {
 		},
 		{
 			heading: 'How a report moves through the City',
-			karl: 'This section\'s steps[] don\'t match a single "Title and text/Image/Callout" block directly — but since the "Information section" stream field is repeatable, each step below maps to its own separate Title and text block (Title = step title, Text = step paragraph(s)), not one combined block. Note: the mockup\'s numbered "you report / HHVC reviews / inspector contacts / inspection happens" sequence and step-by-step visual styling has no confirmed equivalent in the Information page template — Karl\'s Title and text blocks are plain sequential stream items with no built-in step-numbering, so if that visual sequencing matters, flag it as a separate presentation gap for Digital Services.',
+			karl: 'Maps to one "Information section" → Title and text block: Title = this heading, Text = the bulleted sequence below, entered as a numbered list in the rich text. Information has no numbered-step component, so the steps[] this section used to carry reached no Karl panel (2026-11-26). A numbered list keeps the order, which the earlier plan of one Title and text block per step lost: Karl stream blocks carry no step numbering. Each bold lead-in is the old step title. FLAG: the Housing Code (2025) citation in the DBI bullet is unverified — see the Unverified pill and source-of-truth audit finding #1.',
 			kind: 'body',
-			steps: [
+			bullets: [
+				'**You report through 311.** 311 receives the report and sends it to the right City department when possible.',
+				'**Environmental Health reviews the report.** HHVC may review the complaint if it may involve a housing or pest-related public health concern. 311 routes the complaint to Environmental Health, and HHVC assigns it to an inspector. This can take a few days. Complaints are processed on weekdays.',
+				'**Another agency may take it.** HHVC focuses strictly on condensation, humidity, and ventilation-related moisture issues.',
 				{
-					title: 'You report through 311',
-					text: [
-						'311 receives the report and sends it to the right City department when possible.'
-					],
-					karl: 'Maps to an "Information section" → Title and text block: Title = this step title, Text = the paragraph below (first of four sequential Title and text blocks for this section — see section-level karl note).'
+					text: 'If your complaint involves structural water intrusion, HHVC routes it to the Department of Building Inspection (DBI). That includes leaking roof frames, structural plumbing leaks, and broken water heaters. DBI handles these under the San Francisco Housing Code (2025).',
+					unverified: true,
+					unverifiedReason:
+						'The "San Francisco Housing Code (2025)" citation has zero tier-1 support (source-of-truth audit 2026-07-06, cross-cutting finding #1) — the DBI routing split looks intentional, but the statutory citation and "(2025)" edition tag trace only to tier-3 NotebookLM material. Source a real Housing Code citation or soften to "may be routed to DBI" before publication.'
 				},
-				{
-					title: 'Environmental Health reviews the report',
-					text: [
-						'HHVC may review the complaint if it may involve a housing or pest-related public health concern.',
-						'311 routes the complaint to Environmental Health, and HHVC assigns it to an inspector. This can take a few days. Complaints are processed on weekdays.'
-					],
-					karl: 'Maps to a second Title and text block: Title = this step title, Text = the two paragraphs below (weekday processing expectation).'
-				},
-				{
-					title: 'Agency Hand-off (If applicable)',
-					text: [
-						{
-							text: 'If your complaint involves structural water intrusion, HHVC routes it to the Department of Building Inspection (DBI). That includes leaking roof frames, structural plumbing leaks, and broken water heaters. DBI handles these under the San Francisco Housing Code (2025).',
-							unverified: true,
-							unverifiedReason:
-								'The "San Francisco Housing Code (2025)" citation has zero tier-1 support (source-of-truth audit 2026-07-06, cross-cutting finding #1) — the DBI routing split looks intentional, but the statutory citation and "(2025)" edition tag trace only to tier-3 NotebookLM material. Source a real Housing Code citation or soften to "may be routed to DBI" before publication.'
-						},
-						'HHVC focuses strictly on condensation, humidity, and ventilation-related moisture issues.'
-					],
-					karl: 'Maps to a Title and text block: Explains routing for structural issues to DBI. FLAG: the Housing Code (2025) citation in the first paragraph is unverified — see the Unverified pill and source-of-truth audit finding #1.'
-				},
-				{
-					title: 'An inspector may contact you',
-					text: [
-						'If you gave contact information, an inspector may contact you to ask questions or schedule a visit.'
-					],
-					karl: 'Maps to a third Title and text block: Title = this step title, Text = the paragraph below.'
-				},
-				{
-					title: 'An inspection may happen',
-					text: [
-						'If you did not give contact information, an inspection may still happen without notice when areas can be accessed. This is more likely if the report describes an urgent health or safety risk.'
-					],
-					bullets: ['[Report a pest problem, start to finish](stepPestReport)'],
-					karl: 'Maps to a fourth Title and text block: Title = this step title, Text = the paragraph below, plus a rich-text link (added 2026-08-11) to the new inspection-prep checklist this step previously had nowhere to point to.'
-				}
+				'**An inspector may contact you.** If you gave contact information, an inspector may contact you to ask questions or schedule a visit.',
+				'**An inspection may happen.** If you did not give contact information, an inspection may still happen without notice when areas can be accessed. This is more likely if the report describes an urgent health or safety risk.',
+				'[Report a pest problem, start to finish](stepPestReport)'
 			]
 		},
 		{
 			heading: 'How to follow up on your report',
-			karl: 'Maps to a fifth Title and text block: Title = this heading, Text = the paragraph plus the bulleted list below. Generic, safe steps only.',
+			karl: 'Maps to a Title and text block: Title = this heading, Text = the paragraph plus the bulleted list below. Generic, safe steps only.',
 			kind: 'body',
 			paragraphs: [
 				'You can check on a report you already made. It helps to keep a few details handy.'

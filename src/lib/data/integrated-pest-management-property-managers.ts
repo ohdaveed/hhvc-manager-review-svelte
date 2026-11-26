@@ -10,11 +10,6 @@ export const ownerGuidance = {
 	editorNote:
 		'Information page for property owners and managers. UC ANR IPM guide is the primary external source — verify link stability and whether HHVC wants additional SFDPH Director’s Rules citations before publication.',
 	topicTag: 'Agency: Healthy Housing and Vector Control',
-	contact: {
-		phone: ['311 (call or text)', '415-252-3800'],
-		email: ['healthyhousing@sf.gov'],
-		other: ['Environmental Health — Healthy Housing and Vector Control']
-	},
 	sections: [
 		{
 			heading: 'Protect residents’ health',
@@ -181,6 +176,15 @@ export const ownerGuidance = {
 				'Give proper written notice before pesticide treatments, following state laws.',
 				'Help tenants who cannot safely prepare their unit for treatment because of a disability or medical need. Contact support services for them.',
 				'Use translated materials to share simple food storage, garbage, and clutter prevention steps.'
+			]
+		},
+		{
+			heading: 'Contact Healthy Housing and Vector Control',
+			karl: 'Maps to an "Information section" → Title and text block: Title = this heading, Text = the two lines below. Information has no Contact us panel (Transaction has get_help, Campaign and Agency have contact; Information has neither), so the phone and email the mockup used to show in a contact box move into the body (2026-11-26). The box\'s third line, the team name, is this heading.',
+			kind: 'body',
+			paragraphs: [
+				'Call or text 311.',
+				'Call Healthy Housing and Vector Control at 415-252-3800, or email healthyhousing@sf.gov.'
 			]
 		},
 		{

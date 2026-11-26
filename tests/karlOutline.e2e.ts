@@ -21,26 +21,26 @@ const PILOTS = [
 	{
 		slug: 'report-rats-or-mice',
 		// 4 sections since the report regroup moved the shared report text out (2026-11-25).
-		summary: '4 sections: 3 go into Karl, 1 unconfirmed. 2 things won’t carry over to Karl.',
-		sections: { placed: 4, unconfirmed: 1 }
+		summary: '4 sections: 3 go into Karl, 1 unconfirmed.',
+		sections: { placed: 4, unconfirmed: 1, unplaced: 0 }
 	},
 	{
 		slug: 'information-what-happens-after-you-report-housing-pest-problem',
 		// 6 sections since "Who can report" took the shared report text (2026-11-25).
-		summary: '6 sections: 6 go into Karl. 1 thing won’t carry over to Karl.',
-		sections: { placed: 6, unplaced: 1 }
+		summary: '7 sections: 7 go into Karl.',
+		sections: { placed: 7, unplaced: 0 }
 	},
 	{
 		slug: 'property-owner-responsibilities-hhvc',
-		summary: '4 sections: 3 go into Karl, 1 needs a fix. 1 thing won’t carry over to Karl.',
+		summary: '4 sections: 3 go into Karl, 1 needs a fix.',
 		sections: { placed: 3, 'needs-fix': 1 }
 	},
 	{
 		// Rollout step 1: Step by step. Intro is an inferred mapping, and Step by
 		// step has no Related panel.
 		slug: 'step-by-step-report-a-pest-problem',
-		summary: '2 sections: 1 goes into Karl, 1 unconfirmed. 2 things won’t carry over to Karl.',
-		sections: { placed: 1, unconfirmed: 1, unplaced: 1 }
+		summary: '2 sections: 1 goes into Karl, 1 unconfirmed.',
+		sections: { placed: 1, unconfirmed: 1, unplaced: 0 }
 	},
 	{
 		// Rollout step 2: Topic. Related (U5) has no panel; only Digital
@@ -48,53 +48,49 @@ const PILOTS = [
 		slug: 'topics--healthy-housing-conditions',
 		// 8 sections since the Topic merge folded both hubs in (2026-11-25), plus
 		// the prevention Resources block for the ported education pages.
-		summary:
-			'9 sections: 9 go into Karl. 1 detail is unconfirmed. 2 things won’t carry over to Karl.',
+		summary: '9 sections: 9 go into Karl. 1 detail is unconfirmed.',
 		caveat: 'Only SF.gov Digital Services can create a new Topic page.',
-		sections: { placed: 9, unplaced: 1 }
+		sections: { placed: 9, unplaced: 0 }
 	},
 	{
 		// Rollout step 3: Campaign. A 26-character spotlight button and About
 		// PLACEHOLDER text need a fix; "Start with your own block" has no panel.
 		slug: 'rat-free-blocks',
-		summary: '5 sections: 5 go into Karl. 2 details need a fix. 3 things won’t carry over to Karl.',
-		sections: { placed: 5, unplaced: 1 }
+		summary: '6 sections: 6 go into Karl. 2 details need a fix.',
+		sections: { placed: 6, unplaced: 0 }
 	},
 	{
 		// Two callouts Karl has no Campaign component for; Contact us unconfirmed.
 		slug: 'integrated-pest-management-education',
-		summary:
-			'7 sections: 7 go into Karl. 2 details need a fix, 1 detail is unconfirmed. 2 things won’t carry over to Karl.',
+		summary: '7 sections: 7 go into Karl. 2 details need a fix, 1 detail is unconfirmed.',
 		sections: { placed: 7 }
 	},
 	{
 		// Rollout step 4: Report. The Related list lands in Content (no Related
 		// panel); 18 PLACEHOLDER table cells.
 		slug: 'report-healthy-housing-inspections-annual-summary',
-		summary:
-			'6 sections: 5 go into Karl, 1 needs a fix. 18 details need a fix. 2 things won’t carry over to Karl.',
+		summary: '6 sections: 5 go into Karl, 1 needs a fix. 18 details need a fix.',
 		sections: { placed: 5, 'needs-fix': 1 }
 	},
 	{
 		// Rollout step 5: Agency. Four Subsection intro paragraphs have no field
 		// (U20); the sections themselves place.
 		slug: 'departments--healthy-housing-and-vector-control',
-		summary: '6 sections: 6 go into Karl. 5 things won’t carry over to Karl.',
+		summary: '6 sections: 6 go into Karl.',
 		sections: { placed: 6 }
 	},
 	{
 		// Rollout step 6: Location. Every mapping is inferred (U26); the address
 		// and hours are placeholders, and belong in the Address snippet.
 		slug: 'location-environmental-health-office',
-		summary:
-			'5 sections: 1 needs a fix, 4 unconfirmed. 5 details need a fix. 1 thing won’t carry over to Karl.',
+		summary: '5 sections: 1 needs a fix, 4 unconfirmed. 5 details need a fix.',
 		caveat: 'A Location’s address and opening hours come from its Address snippet',
 		sections: { 'needs-fix': 1, unconfirmed: 4 }
 	},
 	{
 		// Rollout step 7: About us, the last type the corpus uses.
 		slug: 'departments--healthy-housing-and-vector-control--about',
-		summary: '4 sections: 4 go into Karl. 2 things won’t carry over to Karl.',
+		summary: '4 sections: 4 go into Karl.',
 		caveat: 'Karl adds a button to this department’s Agency page that links here automatically',
 		sections: { placed: 4 }
 	}
@@ -160,15 +156,16 @@ test.describe('Karl outline', () => {
 	}
 
 	test('a field with a reason of its own describes it to a screen reader', async ({ page }) => {
-		await gotoSignedIn(page, '/review/report-rats-or-mice');
+		// This used to be the rats report's "View Article 11" button, which had no
+		// Karl home (U1). Since the 2026-11-26 audit nothing in the corpus is
+		// unplaced, so the field with a reason of its own is a needs-fix one; the
+		// one-chip-per-audience-list rule is covered by placement.test.ts.
+		await gotoSignedIn(page, '/review/rat-free-blocks');
 		await switchOnByKeyboard(page);
-		// The "View Article 11" button has no Karl home (U1).
 		const target = page.locator(
-			'button[data-rewrite-field="sections.what-the-health-code-requires.button"]'
+			'button[data-rewrite-field="sections.for-owners-and-managers.button"]'
 		);
-		await expect(target).toHaveAccessibleDescription(/Won’t carry over to Karl/);
-		// The audience list is one finding, so one chip, not four.
-		await expect(page.locator('.page-audience [data-karl-chip="unplaced"]')).toHaveCount(1);
+		await expect(target).toHaveAccessibleDescription(/Button text is 26 characters/);
 	});
 
 	test('stays on across pages and a reload', async ({ page }) => {

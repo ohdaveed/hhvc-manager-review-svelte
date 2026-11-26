@@ -4,12 +4,6 @@ export const inspectorLookup = {
 	title: 'Find your Healthy Housing inspector by neighborhood',
 	summary: 'Look up the Environmental Health inspector assigned to your part of San Francisco.',
 	primaryAgency: 'Healthy Housing and Vector Control',
-	audience: [
-		'A tenant checking who their assigned inspector is',
-		'A property owner or manager coordinating with an assigned inspector',
-		'A tenant representative or advocate following up on a case',
-		'A resident of a single room occupancy (SRO) hotel, residential hotel, or shelter'
-	],
 	reading: 'Grade 7',
 	editorStatus: 'placeholder',
 	editorNote:

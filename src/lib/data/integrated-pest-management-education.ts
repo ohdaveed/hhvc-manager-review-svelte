@@ -2,11 +2,6 @@ export const ipmEducation = {
 	slug: 'sf.gov/integrated-pest-management-education',
 	type: 'Campaign',
 	title: 'Free IPM education workshop',
-	summary:
-		'Request a no-cost integrated pest management session for tenant groups and community organizations.',
-	audience: [
-		'This page is for tenants, resident groups, and community organizations that want to host a free pest-prevention workshop.'
-	],
 	reading: 'Grade 6',
 	editorNote:
 		'Campaign page mock, modeled directly on mosquito-education-workshop.js\'s structure and karl-annotation style (see docs/wagtail-content-mapping.md, "Verified against the real Karl Campaign add-page form"). Deliberately distinct from the existing Information-type ownerGuidance page ("Integrated pest management for property owners and managers"): that page is compliance guidance for owners/managers/staff citing Director\'s Rules obligations; this page is a free educational program for tenants, resident groups, and community organizations, with no compliance-obligation framing. Spotlight, Additional-content Accordion sections, and Top facts now render as their own real-Karl-matching components (verified live against sf.gov/shop-dine-sf and sf.gov/1865-til-infinity) — remaining Campaign page-level fields with no mockup equivalent: Primary agency, Logo, Background header image, Color theme (no source image assets exist for this illustrative program). Unlike mosquitoWorkshop, this program has no dedicated request form in forms/ — the CTA below routes through 311 (https://www.sf311.org/) as an illustrative placeholder; confirm the actual intake channel (311, a direct program line, email, or a future dedicated form) with HHVC before publication. Session capacity and lead-time figures are illustrative example content for mockup review; confirm actual values with HHVC before publication.',

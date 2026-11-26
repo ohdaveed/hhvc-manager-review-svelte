@@ -2,12 +2,6 @@ export const inspectionsAnnual = {
 	slug: 'sf.gov/report/healthy-housing-inspections-annual-summary',
 	type: 'Report',
 	title: 'Healthy Housing inspections: annual summary',
-	summary: 'Inspection counts, violation types, and re-inspection outcomes for the past year.',
-	audience: [
-		'A journalist or researcher looking for program figures',
-		'A neighborhood or tenant organization tracking conditions',
-		'City staff answering a question about volume'
-	],
 	reading: 'Grade 8',
 	editorNote:
 		'PROPOSED PAGE — not in the current 29. Report is the only Karl type that supports tables and the only one carrying a publication date, which is what makes it right for a figures page and wrong for the plain-language guide it is currently also used for (see `article11Guide`, where the type IS correct because that page is built from tables too). EVERY NUMBER IN THE TABLES BELOW IS A PLACEHOLDER. None is estimated, rounded, or carried over from another document — the cells read "PLACEHOLDER" rather than holding a figure, because a page of invented statistics is the single most damaging thing this corpus could publish, and a plausible number is harder to catch than an obvious gap. The table STRUCTURE is the reviewable part: what gets counted, and cut which way. Karl generates the table of contents from Heading 2s, which is why the section headings below are the navigation. Tables work best at three columns or fewer, so none here exceeds three.',

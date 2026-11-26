@@ -107,12 +107,13 @@ describe('the corpus', () => {
 			'mosquito-education-workshop': ['callout', 'callout'],
 			'integrated-pest-management-education': ['callout', 'callout', 'related'],
 			'report-health-code-article-11-plain-language': ['callout'],
+			// No 'contact' since 2026-11-26: Information has no Contact us panel, so
+			// both pages' contact boxes became a Title and text section in the body.
 			'information-integrated-pest-management-for-property-owners-and-managers': [
 				'resources',
-				'related',
-				'contact'
+				'related'
 			],
-			'information--article-11-compliance-for-property-owners': ['related', 'contact']
+			'information--article-11-compliance-for-property-owners': ['related']
 		});
 	}, 20_000);
 });

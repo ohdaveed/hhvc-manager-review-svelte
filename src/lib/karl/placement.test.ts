@@ -3,6 +3,7 @@ import { pagesByKey } from '$lib/data/index';
 import { outlineSummary, placementsFor, plainReason, worstOf } from './placement';
 import type { ReviewRecord } from './reviewRecord';
 import { toStorePage } from '$lib/stores/pageData.svelte';
+import { gapPages, pagesByKeyWithGaps } from './gapFixtures';
 
 const page = (key: string) =>
 	(pagesByKey as Record<string, Parameters<typeof placementsFor>[0]>)[key];
@@ -14,6 +15,9 @@ const record = (over: Partial<ReviewRecord>): ReviewRecord => ({
 	...over
 });
 const statusOf = (p: ReturnType<typeof of>, id: string) => p.fields.get(id)?.status;
+// A page with the gap it carried before the 2026-11-26 audit put back -- see gapFixtures.ts.
+const gap = (key: keyof typeof gapPages) =>
+	placementsFor(gapPages[key] as never, null, pagesByKeyWithGaps);
 
 describe('status precedence', () => {
 	it('shows the worst: Unplaced > Needs a fix > Unconfirmed > Placed', () => {
@@ -49,15 +53,22 @@ describe('rats report (Transaction pilot)', () => {
 		});
 	});
 
-	it('reports the section-level button and the audience list as unplaced', () => {
-		expect(statusOf(p, 'sections.what-the-health-code-requires.button')).toBe('unplaced');
-		for (let i = 0; i < 4; i++) expect(statusOf(p, `audience.${i}`)).toBe('unplaced');
+	it('has nothing left that will not carry over', () => {
+		expect(p.unplaced).toEqual([]);
+		expect(statusOf(p, 'sections.what-the-health-code-requires.bullets.1')).toBe('unconfirmed');
+	});
+
+	it('reports a section-level button and an audience list as unplaced', () => {
+		const g = gap('rodentsReport');
+		expect(statusOf(g, 'sections.what-the-health-code-requires.button')).toBe('unplaced');
+		for (let i = 0; i < 4; i++) expect(statusOf(g, `audience.${i}`)).toBe('unplaced');
 	});
 
 	it('gives the audience list one finding, not one per line', () => {
-		const withReason = [0, 1, 2, 3].filter((i) => p.fields.get(`audience.${i}`)!.reasons.length);
+		const g = gap('rodentsReport');
+		const withReason = [0, 1, 2, 3].filter((i) => g.fields.get(`audience.${i}`)!.reasons.length);
 		expect(withReason).toEqual([0]);
-		expect(p.unplaced.map((u) => u.subject)).toEqual([
+		expect(g.unplaced.map((u) => u.subject)).toEqual([
 			'The “Who this is for” list',
 			'“What the Health Code requires” — its button'
 		]);
@@ -96,12 +107,21 @@ describe('rats report (Transaction pilot)', () => {
 describe('what happens after you report (Information pilot)', () => {
 	const p = of('afterReport');
 
-	it('reports the steps section as unplaced (U3), heading included', () => {
-		const s = p.sections.get('how-a-report-moves-through-the-city');
+	it('places the report sequence as one Information section block', () => {
+		expect(p.sections.get('how-a-report-moves-through-the-city')).toMatchObject({
+			rawName: 'information_section',
+			status: 'placed'
+		});
+		expect(p.unplaced).toEqual([]);
+	});
+
+	it('reports a steps section as unplaced (U3), heading included', () => {
+		const g = gap('afterReport');
+		const s = g.sections.get('how-a-report-moves-through-the-city');
 		expect(s?.status).toBe('unplaced');
 		expect(s?.reasons[0]).toBe('Steps on an Information page.');
-		expect(statusOf(p, 'sections.how-a-report-moves-through-the-city.heading')).toBe('unplaced');
-		const tray = p.unplaced.find((u) => u.subject.includes('How a report moves'));
+		expect(statusOf(g, 'sections.how-a-report-moves-through-the-city.heading')).toBe('unplaced');
+		const tray = g.unplaced.find((u) => u.subject.includes('How a report moves'));
 		expect(tray?.fieldIds[0]).toBe('sections.how-a-report-moves-through-the-city.heading');
 	});
 
@@ -114,10 +134,12 @@ describe('what happens after you report (Information pilot)', () => {
 			label: 'Information section 1 · Text',
 			status: 'placed'
 		});
+		// The report sequence is one block since the 2026-11-26 audit, so the
+		// follow-up section sits one slot later than when the steps had no panel.
 		expect(p.fields.get('sections.how-to-follow-up-on-your-report.heading')?.label).toBe(
-			'Information section 3 · Title'
+			'Information section 4 · Title'
 		);
-		expect(p.sections.get('what-this-page-does-not-promise')?.label).toBe('Information section 6');
+		expect(p.sections.get('what-this-page-does-not-promise')?.label).toBe('Information section 7');
 		expect(p.unplaced.map((u) => u.subject)).not.toContain('The “Who this is for” list');
 	});
 
@@ -230,15 +252,14 @@ describe('the page object the app renders', () => {
 
 describe('outline summary', () => {
 	it('counts sections and things that will not carry over, not strings', () => {
-		expect(outlineSummary(of('rodentsReport'))).toBe(
+		expect(outlineSummary(gap('rodentsReport'))).toBe(
 			'4 sections: 3 go into Karl, 1 unconfirmed. 2 things won’t carry over to Karl.'
 		);
-		expect(outlineSummary(of('afterReport'))).toBe(
+		expect(outlineSummary(of('rodentsReport'))).toBe('4 sections: 3 go into Karl, 1 unconfirmed.');
+		expect(outlineSummary(gap('afterReport'))).toBe(
 			'6 sections: 6 go into Karl. 1 thing won’t carry over to Karl.'
 		);
-		expect(outlineSummary(of('ownerHub'))).toBe(
-			'4 sections: 3 go into Karl, 1 needs a fix. 1 thing won’t carry over to Karl.'
-		);
+		expect(outlineSummary(of('ownerHub'))).toBe('4 sections: 3 go into Karl, 1 needs a fix.');
 	});
 });
 
@@ -253,7 +274,7 @@ describe('what a chip shows', () => {
 	});
 
 	it('chips page-level blocks and own reasons, not every string', () => {
-		const p = of('rodentsReport');
+		const p = gap('rodentsReport');
 		expect(p.fields.get('title')).toMatchObject({ chip: true, label: 'Page title' });
 		expect(p.fields.get('summary')).toMatchObject({ chip: true, label: 'Description' });
 		expect(p.fields.get('primaryAgency')).toMatchObject({ chip: true, label: 'Primary agency' });
@@ -308,8 +329,10 @@ describe('Step by step', () => {
 	});
 
 	it('reports Related pages as unplaced: Step by step has no Related panel', () => {
-		for (const key of ['stepPestReport', 'stepCorrectViolation', 'stepPrepUnit'])
-			expect(of(key).sections.get('related-pages')?.status, key).toBe('unplaced');
+		for (const key of ['stepPestReport', 'stepCorrectViolation', 'stepPrepUnit'] as const) {
+			expect(of(key).sections.get('related-pages'), key).toBeUndefined();
+			expect(gap(key).sections.get('related-pages')?.status, key).toBe('unplaced');
+		}
 	});
 
 	it('shows the Topics caveat on the Blueprint slot, and an unconfirmed URL', () => {
@@ -320,8 +343,9 @@ describe('Step by step', () => {
 	});
 
 	it('summarises the page', () => {
-		expect(outlineSummary(p)).toBe(
-			'2 sections: 1 goes into Karl, 1 unconfirmed. 2 things won’t carry over to Karl.'
+		expect(outlineSummary(p)).toBe('2 sections: 1 goes into Karl, 1 unconfirmed.');
+		expect(outlineSummary(gap('stepPestReport'))).toBe(
+			'2 sections: 1 goes into Karl, 1 unconfirmed. 1 thing won’t carry over to Karl.'
 		);
 	});
 });
@@ -341,8 +365,7 @@ describe('Topic', () => {
 			'Child topics · Services block 5',
 			'Child topics · Resources block 1',
 			'Child topics · Resources block 2',
-			'Child topics · Resources block 3',
-			''
+			'Child topics · Resources block 3'
 		]);
 	});
 
@@ -370,8 +393,9 @@ describe('Topic', () => {
 		);
 	});
 
-	it('keeps Related unplaced (U5) and the URL unconfirmed', () => {
-		expect(p.sections.get('related')?.status).toBe('unplaced');
+	it('keeps a Related section unplaced (U5) and the URL unconfirmed', () => {
+		expect(p.sections.get('related')).toBeUndefined();
+		expect(gap('healthyHousingTopic').sections.get('related')?.status).toBe('unplaced');
 		expect(p.url?.status).toBe('unconfirmed');
 	});
 
@@ -423,13 +447,23 @@ describe('Campaign', () => {
 			status: 'placed'
 		});
 		expect(p.fields.get('partnerAgencies.0.title')?.rawName).toBe('partner_agencies');
-		expect(p.fields.get('sections.about-this-campaign.paragraphs.0')?.reasons).toEqual([
+		expect(p.fields.get('sections.about-this-campaign.paragraphs.0')?.reasons).toEqual([]);
+		expect(p.fields.get('sections.about-this-campaign.paragraphs.1')?.reasons).toEqual([
 			'Still holds PLACEHOLDER text.'
 		]);
 	});
 
-	it('keeps “Start with your own block” unplaced, listed once', () => {
+	it('places “Start with your own block” as an Additional content accordion', () => {
 		const p = of('ratFreeBlocks');
+		expect(p.sections.get('start-with-your-own-block')).toMatchObject({
+			rawName: 'additional_content',
+			status: 'placed'
+		});
+		expect(p.unplaced).toEqual([]);
+	});
+
+	it('keeps a body section with no component unplaced, listed once', () => {
+		const p = gap('ratFreeBlocks');
 		expect(p.sections.get('start-with-your-own-block')?.status).toBe('unplaced');
 		expect(p.unplaced.map((u) => u.subject)).toEqual([
 			'The summary under the title',
@@ -447,13 +481,13 @@ describe('Campaign', () => {
 	});
 
 	it('counts findings inside placed sections in the summary', () => {
-		expect(outlineSummary(of('mosquitoWorkshop'))).toBe(
+		expect(outlineSummary(gap('mosquitoWorkshop'))).toBe(
 			'7 sections: 7 go into Karl. 2 details need a fix. 2 things won’t carry over to Karl.'
 		);
-		expect(outlineSummary(of('ipmEducation'))).toBe(
+		expect(outlineSummary(gap('ipmEducation'))).toBe(
 			'7 sections: 7 go into Karl. 2 details need a fix, 1 detail is unconfirmed. 2 things won’t carry over to Karl.'
 		);
-		expect(outlineSummary(of('ratFreeBlocks'))).toBe(
+		expect(outlineSummary(gap('ratFreeBlocks'))).toBe(
 			'5 sections: 5 go into Karl. 2 details need a fix. 3 things won’t carry over to Karl.'
 		);
 	});
@@ -501,7 +535,7 @@ describe('Report', () => {
 			/^Karl has no callout on a Report page/
 		);
 		expect(annual.sections.get('related-pages')?.status).toBe('needs-fix');
-		expect(outlineSummary(annual)).toBe(
+		expect(outlineSummary(gap('inspectionsAnnual'))).toBe(
 			'6 sections: 5 go into Karl, 1 needs a fix. 18 details need a fix. 2 things won’t carry over to Karl.'
 		);
 	});
@@ -529,12 +563,14 @@ describe('Agency', () => {
 		]);
 	});
 
-	it('reports the Subsection intro paragraphs as unplaced (U20), not placed', () => {
-		const f = p.fields.get('sections.if-you-rent.paragraphs.0');
+	it('reports Subsection intro paragraphs as unplaced (U20), not placed', () => {
+		expect(p.unplaced).toEqual([]);
+		const g = gap('pestsTopic');
+		const f = g.fields.get('sections.if-you-rent.paragraphs.0');
 		expect(f?.status).toBe('unplaced');
 		expect(f?.reasons[0]).toMatch(/Title and a links list/);
-		expect(p.sections.get('if-you-rent')?.status).toBe('placed');
-		expect(p.unplaced.map((u) => u.subject)).toEqual([
+		expect(g.sections.get('if-you-rent')?.status).toBe('placed');
+		expect(g.unplaced.map((u) => u.subject)).toEqual([
 			'The “Who this is for” list',
 			'“Get help with pests, mold, or trash”',
 			'“If you rent”',
@@ -634,10 +670,12 @@ describe('About us', () => {
 		expect(info?.caveats).toEqual([]);
 	});
 
-	it('keeps the summary unplaced (no Description, U21) and the URL unconfirmed', () => {
-		expect(p.unplaced.map((u) => u.subject)).toContain('The summary under the title');
+	it('keeps a summary unplaced (no Description, U21) and the URL unconfirmed', () => {
+		expect(outlineSummary(p)).toBe('4 sections: 4 go into Karl.');
+		const g = gap('aboutHhvcTeam');
+		expect(g.unplaced.map((u) => u.subject)).toContain('The summary under the title');
 		expect(p.url?.status).toBe('unconfirmed');
-		expect(outlineSummary(p)).toBe(
+		expect(outlineSummary(g)).toBe(
 			'4 sections: 4 go into Karl. 2 things won’t carry over to Karl.'
 		);
 	});

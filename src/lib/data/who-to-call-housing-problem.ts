@@ -86,7 +86,7 @@ export const whoToCall = {
 		},
 		{
 			heading: 'Related pages',
-			karl: 'Maps to Related. Each card publishes the destination page’s own title.',
+			karl: 'Maps to the Related panel. Each card publishes the destination page’s own title.',
 			kind: 'body',
 			cards: [
 				{ title: 'Report a pest problem, start to finish', target: 'stepPestReport' },

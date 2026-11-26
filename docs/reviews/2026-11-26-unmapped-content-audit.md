@@ -1,0 +1,64 @@
+# Unmapped mockup content: audit and decisions (2026-11-26)
+
+The Karl transcript reported **71 unmapped items across 35 of 43 pages**: copy the
+mockups render that no Karl panel on that page type accepts. Measured with
+`buildTranscript(page, null, pagesByKey).unmapped`. Each item was given a Karl
+destination or removed. **After: 0.** FLAG entries are unchanged apart from the
+primary-agency note wording (see "Classifier fixes").
+
+Test: is the copy meaningful to a reader, and does the page already say it
+somewhere Karl keeps?
+
+## Decisions
+
+| Item                                                                            | Pages                                                                                                                                       | Decision                                                                                                                                                                                                                                                           |
+| ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `audience` that duplicates an on-page "Who this information is for" block       | stepPestReport, stepCorrectViolation, stepPrepUnit, ehOffice (Intro); appealNotice, payCitation (Things to know)                            | **Removed.** The block already carries it.                                                                                                                                                                                                                         |
+| `audience` on report Transactions (Things to know already spends its 2 entries) | garbage, rodents, mosquito, mold, bed bugs, pigeon, sewage, animal waste, insects                                                           | **Folded** into the 311 step's first paragraph. The one actionable fact the list carried is "you can report for someone else, or a problem in a shared area / nearby / at work". The rest restated the page title.                                                 |
+| `audience` on lookup and fee Transactions                                       | inspectorLookup, publicRecords, findHotelRecords, findRecords, payFee                                                                       | **Removed.** The lookups are open to anyone and each page's body says what it covers. payFee's "Who must pay" entry already says it.                                                                                                                               |
+| "This page is for …" one-line `audience`                                        | article11Guide, aboutHhvcTeam, ownerHub, pestsTopic, healthyHousingTopic, mosquitoWorkshop, ipmEducation, languageGuides, inspectionsAnnual | **Removed.** Restates the title. Both workshops already have a "Who can request" section.                                                                                                                                                                          |
+| `audience` on ratFreeBlocks                                                     | ratFreeBlocks                                                                                                                               | **Folded.** "Neighborhood or merchant associations" goes into "Start with your own block"; owners already have their own Spotlight.                                                                                                                                |
+| `summary` on types with no Description panel                                    | article11Guide, inspectionsAnnual (Report); aboutHhvcTeam (About us); mosquitoWorkshop, ipmEducation (Campaign)                             | **Removed.** Each first block already says it. The About note records that the live About page shows no summary.                                                                                                                                                   |
+| `summary` on ratFreeBlocks                                                      | ratFreeBlocks                                                                                                                               | **Moved** to the first paragraph of About this campaign. It was the only statement of what the campaign is.                                                                                                                                                        |
+| "View Article 11" section button (U1)                                           | 8 report Transactions                                                                                                                       | **Moved** to an inline link, the last bullet of "What the Health Code requires". custom_section has no Button link block; the citation (Ch. 8.7.2) stays.                                                                                                          |
+| Steps on an Information page (U3)                                               | afterReport "How a report moves through the City"                                                                                           | **Restructured** into one Title and text block: a numbered list with bold step lead-ins. The DBI sentence keeps its Unverified flag. "Agency Hand-off (If applicable)" became "Another agency may take it."                                                        |
+| Related cards on Step by step (no Related panel)                                | stepPestReport, stepCorrectViolation, stepPrepUnit                                                                                          | **Moved** each link to the step it belongs with, then removed the section.                                                                                                                                                                                         |
+| Related on a Topic (U5)                                                         | healthyHousingTopic                                                                                                                         | **Moved** the two workshop cards into the "Learn more" Resources block, beside the Rat-free blocks campaign.                                                                                                                                                       |
+| Agency subsection intro paragraphs (U20)                                        | pestsTopic (4)                                                                                                                              | Three **removed** (the subsection title and links say it). "Lead safety, water service, noise, asbestos, and structural construction concerns may be handled by another City program." **moved** to the About field: it is a scope statement.                      |
+| `contact` on Information (no Contact us panel)                                  | article11Compliance, ownerGuidance                                                                                                          | **Moved** to a "Contact Healthy Housing and Vector Control" Title and text section.                                                                                                                                                                                |
+| Placeholder document bullets on a Resource Collection                           | languageGuides                                                                                                                              | **Reshaped** as Body → Documents cards (title plus "Languages not confirmed."). Still PLACEHOLDER.                                                                                                                                                                 |
+| Campaign body section with no component                                         | ratFreeBlocks "Start with your own block"                                                                                                   | **Mapped** to Additional content → Accordion section, with the mockup-only `open` flag. Its note named a "Title and text block", which Additional content does not offer: its five block types are Image with text, Video, Accordion section, Embed and Resources. |
+
+## Classifier fixes (content was fine; the inventory missed it)
+
+- **Information `primary_agency`** now reads `primaryAgency`, as Transaction's does
+  (`src/lib/legacy-core/karl-blocks.js`). tenantNoticeSteps names its agency and
+  the field exists. Pages without the field still get the empty-panel entry.
+- **"Maps to Related."** in the notes on whoToCall, appealNotice and payCitation
+  now reads "Maps to the Related panel." The card-inheritance classifier keys on
+  that phrase, so those sections were unclassified and reported as unmapped.
+
+## Surfaced, not resolved: needs a content decision
+
+Classifying those three Related sections let the Related-target check reach
+them. Karl's Related cannot hold a Report or a Step by step page:
+
+- whoToCall → "Health Code Article 11 in plain language" (Report)
+- whoToCall → "Report a pest problem, start to finish" (Step by step)
+- appealNotice → "Health Code Article 11 in plain language" (Report)
+
+They are pinned in `karlComponentChecks.test.ts` beside the existing ones.
+
+## Known conflict
+
+`src/lib/server/ai/vendor/schemas.js` requires `audience` and `summary` on a
+whole-page draft. A Rethink or AI-drafted page will therefore still come back
+with an audience list. The vendor layer is kept diffable against upstream, so
+this was not changed here.
+
+## Test coverage
+
+The corpus no longer exercises the unplaced path. The tests that pinned it now
+run against `src/lib/karl/gapFixtures.ts`: current pages with the pre-audit gap
+put back. `walkthrough.test.ts` asserts the corpus has zero unmapped items. The
+e2e outline and Blueprint tables now expect empty trays.

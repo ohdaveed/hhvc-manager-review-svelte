@@ -4,11 +4,6 @@ export const pigeonReport = {
 	title: 'Report pigeon droppings, nesting, or feeding',
 	summary: 'Roosting birds, feathers, or bird waste on a building, and people who feed them.',
 	primaryAgency: 'Healthy Housing and Vector Control',
-	audience: [
-		'A tenant or resident affected by pigeons on their building',
-		'A neighbor reporting pigeons roosting or being fed nearby',
-		'A friend, family member, advocate, or helper reporting for someone else'
-	],
 	reading: 'Grade 6',
 	editorNote:
 		'Report regroup (Decided, Nov 24, 2026), built 2026-11-25. New page, one of the 9 condition pages. Decided: HHVC cites roosting, nesting, feces, feathers, and people who feed pigeons; the description names roosting and feathers so those searches land here; pigeon droppings move off the animal waste page, which links here; mites are named here too, since they often come with pigeons. The feeding case means the person reported may be a neighbor, not the owner, and the Decided rule is to say what HHVC does then. That answer is STILL OPEN, so the step holds PLACEHOLDER text until HHVC answers. The Article 11 §596 line (a manager, or whoever created the condition) comes from the Questions and answers table. The old page linked a UC IPM pigeon Pest Note; UC IPM no longer publishes one (404 on 2026-11-25), so it is not carried.',
@@ -34,7 +29,7 @@ export const pigeonReport = {
 				{
 					title: 'Start your report',
 					text: [
-						'Use 311 to report pigeon droppings, nesting, roosting, or feeding to the City.',
+						'Use 311 to report pigeon droppings, nesting, roosting, or feeding to the City. You can report pigeons on your building or nearby, or report for someone else.',
 						'Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.'
 					],
 					button: 'Report through 311',
@@ -83,14 +78,12 @@ export const pigeonReport = {
 		},
 		{
 			heading: 'What the Health Code requires',
-			karl: 'custom_section -> title_and_text. Title = this heading, Text = the Article 11 line, from Sec. 581(b)(7) as Health Code Article 11 in plain language explains it (HHVC content standards Ch. 8.7.1). Secondary Button link block ("View Article 11") citing the municipal code per Ch. 8.7.2.',
+			karl: 'custom_section -> title_and_text. Title = this heading, Text = the Article 11 line, from Sec. 581(b)(7) as Health Code Article 11 in plain language explains it (HHVC content standards Ch. 8.7.1). The municipal code is cited per Ch. 8.7.2 as an inline link, the last bullet: custom_section has no Button link block (U1), so the "View Article 11" button it used to carry had no Karl destination.',
 			kind: 'body',
 			bullets: [
-				'San Francisco Health Code Article 11 does not allow animals, including pigeons, to nest, roost, or live on a property in ways that create a health hazard.'
-			],
-			button: 'View Article 11',
-			buttonUrl: 'https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890',
-			buttonStyle: 'secondary'
+				'San Francisco Health Code Article 11 does not allow animals, including pigeons, to nest, roost, or live on a property in ways that create a health hazard.',
+				'[View Health Code Article 11](https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890)'
+			]
 		},
 		{
 			heading: 'Related pages',

@@ -22,6 +22,13 @@
  * entries and 15 of the 16 pages carrying it already spend both, so placing an
  * audience means deciding which existing entry it replaces.
  *
+ * Since the 2026-11-26 unmapped-content audit no page in the corpus carries an
+ * audience list outside Information: each was placed in a Things to know entry
+ * or an Intro, folded into the body, or removed. The gap tests below therefore
+ * run against `pagesByKeyWithGaps` (see gapFixtures.ts), which puts the
+ * pre-audit lists back on a few pages; the Information tests still read the
+ * real corpus.
+ *
  * Information is the exception, and the one type where the transcript PLACES
  * the line rather than reporting it. Information has neither `things_to_know`
  * nor an `intro`, but its body is `information_section`, a repeatable stream of
@@ -32,6 +39,7 @@
 import { describe, it, expect } from 'vitest';
 import { buildTranscript } from '$lib/legacy-core/karl-transcript.js';
 import { pagesByKey } from '$lib/data/index';
+import { pagesByKeyWithGaps } from './gapFixtures';
 
 type Unmapped = { path: string; shape: string; reason: string };
 
@@ -46,21 +54,22 @@ const audienceGap = (page: object) =>
 
 describe('audience is reported, not suppressed', () => {
 	it('reports the gap on every non-Information page that carries an audience', () => {
-		const pages = Object.values(pagesByKey) as { audience?: unknown[]; type?: string }[];
+		const pages = Object.values(pagesByKeyWithGaps) as { audience?: unknown[]; type?: string }[];
 		const carrying = pages.filter(
 			(p) => p.type !== 'Information' && Array.isArray(p.audience) && p.audience.length > 0
 		);
 
-		expect(carrying.length, 'the corpus should still have audience lines to place').toBeGreaterThan(
-			0
-		);
+		expect(
+			carrying.length,
+			'the fixtures should still have audience lines to place'
+		).toBeGreaterThan(0);
 		for (const page of carrying) {
 			expect(audienceGap(page), `${(page as { title?: string }).title}`).toHaveLength(1);
 		}
 	});
 
 	it('names the Things to know destination rather than claiming none exists', () => {
-		const [gap] = audienceGap(pagesByKey.garbageReport);
+		const [gap] = audienceGap(pagesByKeyWithGaps.garbageReport);
 
 		// The specific wording is free to change; what must not come back is the
 		// generic sweep reason, which asserts the opposite of what is true.
@@ -70,12 +79,12 @@ describe('audience is reported, not suppressed', () => {
 	});
 
 	it('cites the published page the destination was read off', () => {
-		const [gap] = audienceGap(pagesByKey.garbageReport);
+		const [gap] = audienceGap(pagesByKeyWithGaps.garbageReport);
 		expect(gap.reason).toContain('sf.gov/manage-covid-19-schools-childcare-and-youth-programs');
 	});
 
 	it('explains that the blocker is the 2-entry budget, not a missing field', () => {
-		const [gap] = audienceGap(pagesByKey.garbageReport);
+		const [gap] = audienceGap(pagesByKeyWithGaps.garbageReport);
 		expect(gap.reason).toMatch(/caps Things to know at 2/);
 	});
 
@@ -86,7 +95,7 @@ describe('audience is reported, not suppressed', () => {
 	 * silence this whole change replaced, because it looks actionable.
 	 */
 	it('does not promise a Things to know entry on types that have no such panel', () => {
-		const nonTransaction = (Object.values(pagesByKey) as { type?: string }[]).filter(
+		const nonTransaction = (Object.values(pagesByKeyWithGaps) as { type?: string }[]).filter(
 			(p) => p.type && p.type !== 'Transaction'
 		);
 		expect(
@@ -123,15 +132,17 @@ describe('audience is reported, not suppressed', () => {
 	});
 
 	it('still cites the live pattern on both branches', () => {
-		const transaction = audienceGap(pagesByKey.garbageReport)[0];
-		const otherType = (Object.values(pagesByKey) as { type?: string; audience?: unknown[] }[]).find(
+		const transaction = audienceGap(pagesByKeyWithGaps.garbageReport)[0];
+		const otherType = (
+			Object.values(pagesByKeyWithGaps) as { type?: string; audience?: unknown[] }[]
+		).find(
 			(p) =>
 				p.type !== 'Transaction' &&
 				p.type !== 'Information' &&
 				Array.isArray(p.audience) &&
 				p.audience.length > 0
 		);
-		expect(otherType, 'the corpus should still have a non-Transaction audience').toBeDefined();
+		expect(otherType, 'the fixtures should still have a non-Transaction audience').toBeDefined();
 		const other = audienceGap(otherType!)[0];
 		for (const gap of [transaction, other]) {
 			expect(gap.reason).toContain('Who this information is for');

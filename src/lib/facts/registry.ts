@@ -124,7 +124,7 @@ export const OPEN_QUESTIONS: OpenQuestion[] = [
 			'What is the correct legal citation, if any, for routing structural water intrusion to DBI?',
 		note: '"San Francisco Housing Code (2025)" has no tier-1 source. If there is no citation, the copy should say it "may be routed to DBI".',
 		fields: [
-			{ slug: HAPPENS, path: 'sections.1.steps.2.text.0' },
+			{ slug: HAPPENS, path: 'sections.1.bullets.3' },
 			{ slug: 'sf.gov/information/learn-what-hhvc-can-inspect', path: 'sections.4.bullets.0' }
 		]
 	},

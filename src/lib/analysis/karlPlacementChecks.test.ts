@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { pagesByKey } from '$lib/data/index';
+import { gapPages } from '$lib/karl/gapFixtures';
 import { karlPlacementFindings, recordFromEdits } from './karlPlacementChecks';
 import { analyzePage } from './index';
 
@@ -23,7 +24,12 @@ describe('recordFromEdits', () => {
 
 describe('the Analysis panel reads the same placements as the Karl outline', () => {
 	it('lists what will not carry over on the rats report', () => {
-		const f = byId('rodentsReport', 'karl-unplaced');
+		// Nothing does since the 2026-11-26 audit; the gap fixture puts the
+		// pre-audit audience list and section button back.
+		expect(byId('rodentsReport', 'karl-unplaced').status).toBe('pass');
+		const f = karlPlacementFindings(gapPages.rodentsReport as never, []).find(
+			(x) => x.id === 'karl-unplaced'
+		)!;
 		expect(f.status).toBe('issue');
 		expect(f.items.map((i) => i.text)).toEqual([
 			'The “Who this is for” list',

@@ -3,11 +3,6 @@ export const appealNotice = {
 	type: 'Transaction',
 	title: 'Question a Notice of Violation',
 	summary: 'Talk to the investigator named on your notice if you disagree with what it says.',
-	audience: [
-		'A property owner or manager who disagrees with a notice',
-		'A tenant named on a notice who disputes what it says',
-		'Someone who believes a notice names the wrong party'
-	],
 	primaryAgency: 'Healthy Housing and Vector Control',
 	// C10 (decided Nov 24, 2026): contacting the investigator is this page's main
 	// action, so it carries Karl's Contact us block. The investigator's own
@@ -75,7 +70,7 @@ export const appealNotice = {
 		},
 		{
 			heading: 'Related pages',
-			karl: 'Maps to Related. Cards publish the destination page’s own title.',
+			karl: 'Maps to the Related panel. Cards publish the destination page’s own title.',
 			kind: 'body',
 			cards: [
 				{ title: 'Pay a Healthy Housing citation', target: 'payCitation' },

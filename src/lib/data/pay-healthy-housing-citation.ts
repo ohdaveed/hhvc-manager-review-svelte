@@ -4,11 +4,6 @@ export const payCitation = {
 	title: 'Pay a Healthy Housing citation',
 	summary:
 		'Pay a penalty issued after an uncorrected Notice of Violation or a missed re-inspection.',
-	audience: [
-		'A property owner or manager who received a citation',
-		'A billing or accounts contact paying on an owner’s behalf',
-		'Someone who received a citation and believes it is wrong'
-	],
 	primaryAgency: 'Healthy Housing and Vector Control',
 	reading: 'Grade 7',
 	editorNote:
@@ -80,7 +75,7 @@ export const payCitation = {
 		},
 		{
 			heading: 'Related pages',
-			karl: 'Maps to Related. Cards publish the destination page’s own title. payFee is included specifically so a reader who has landed here about their annual fee can leave for the right page.',
+			karl: 'Maps to the Related panel. Cards publish the destination page’s own title. payFee is included specifically so a reader who has landed here about their annual fee can leave for the right page.',
 			kind: 'body',
 			cards: [
 				{

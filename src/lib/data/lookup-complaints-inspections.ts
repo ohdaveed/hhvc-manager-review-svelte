@@ -5,11 +5,6 @@ export const findRecords = {
 	summary:
 		'Search investigated complaints, inspections, and health code violations for a San Francisco address.',
 	primaryAgency: 'Healthy Housing and Vector Control',
-	audience: [
-		'A tenant checking whether a building has prior complaints or inspections',
-		'A property owner or manager reviewing violation history',
-		'A neighbor or advocate researching a building address'
-	],
 	reading: 'Grade 7',
 	editorNote:
 		'SF.gov landing page for an external lookup tool. Primary CTA opens xnet.sfdph.org (Residential Health Code Violations). Verify the external URL before publication. MERGED 2026-11-25 (C1, decided Nov 24, 2026): Look up residential health code violations was a second landing page for the same xnet tool, and is removed. Its audience (tenants, owners and advocates checking violation history) is already covered here, and the description now names violations so those searches still land on this page.',

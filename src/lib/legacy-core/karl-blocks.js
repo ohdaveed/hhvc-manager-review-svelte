@@ -702,12 +702,18 @@ const KARL_PANELS = {
 			requiredDoc: 'yes',
 			repeatableDoc: 'single',
 			blockTypesDoc: 'page chooser → Agency only',
-			sourceDoc: '— (U6)',
+			// Read from `primaryAgency` as Transaction's is. With `kind: 'none'` an
+			// Information page that names its agency (tenantNoticeSteps does) had that
+			// line reported as unmapped, although this panel is where it goes. A page
+			// without the field still gets the empty-panel entry, as before.
+			sourceDoc:
+				'`primaryAgency` where present — a label, not an Agency page reference (U6, narrowed)',
 			source: {
-				kind: 'none'
+				kind: 'path',
+				path: 'primaryAgency'
 			},
 			docLine: 358,
-			note: 'U6 — supply the parent Agency page by hand; the mockup has no field for it.'
+			note: 'U6 — supply the parent Agency page by hand. Where the mockup names the agency it is text, not a page reference, and Karl requires a page: for HHVC pages that is sf.gov/departments--healthy-housing-and-vector-control.'
 		},
 		{
 			uiLabel: 'Part of',

@@ -3,14 +3,9 @@ export const languageGuides = {
 	type: 'Resource Collection',
 	title: 'Guides in other languages',
 	summary: 'Get pest, mold, and tenant rights guides in a language besides English.',
-	audience: [
-		'A resident who reads a language other than English',
-		'A community organization handing out material',
-		'Staff looking for a translated guide to send'
-	],
 	reading: 'Grade 6',
 	editorNote:
-		'PROPOSED PAGE — not in the current 29. `design/HHVC Page Ideas.dc.html` observes that the three existing Resource Collections are organised by AUDIENCE, and proposes three organised by ARTIFACT — the downloads a person is sent to find after a phone call, which is the other way people arrive. THE LANGUAGE LIST IS ONE OF THE FOUR FLAGGED PLACEHOLDERS. The source plan names Spanish, Chinese, Filipino, Russian and Vietnamese; that list is carried below as a PROPOSAL and is not confirmed, so the summary deliberately says "languages other than English" rather than naming five. Which guides exist in which languages has to be checked before this page saves — publishing a language that has no document is worse than omitting it, because a reader travels to a dead end. Resource Collection has no things_to_know and no intro panel, so the audience line stays in `audience` and the transcript reports it as a gap.',
+		'PROPOSED PAGE — not in the current 29. `design/HHVC Page Ideas.dc.html` observes that the three existing Resource Collections are organised by AUDIENCE, and proposes three organised by ARTIFACT — the downloads a person is sent to find after a phone call, which is the other way people arrive. THE LANGUAGE LIST IS ONE OF THE FOUR FLAGGED PLACEHOLDERS. The source plan names Spanish, Chinese, Filipino, Russian and Vietnamese; that list is carried below as a PROPOSAL and is not confirmed, so the summary deliberately says "languages other than English" rather than naming five. Which guides exist in which languages has to be checked before this page saves — publishing a language that has no document is worse than omitting it, because a reader travels to a dead end. The audience list was removed (2026-11-26): the introductory text already speaks to the reader, and Resource Collection has no things_to_know or intro panel to hold it.',
 	editorStatus: 'needs-review',
 	sections: [
 		{
@@ -24,21 +19,36 @@ export const languageGuides = {
 		},
 		{
 			heading: 'Pest and mold guides',
-			karl: 'Maps to the Body panel → Documents block. Each entry becomes an uploaded document carrying its own description and publish date; Karl renders those as a styled list. PLACEHOLDER ENTRIES — no document is attached and no language is confirmed.',
+			karl: 'Maps to the Body panel → Documents block. Each card becomes an uploaded document carrying its own title and text (the document title, description and publish date), so the card copy is authored here, not inherited; Karl renders those as a styled list. PLACEHOLDER ENTRIES — no document is attached and no language is confirmed.',
 			kind: 'body',
-			bullets: [
-				'PLACEHOLDER: preventing rats and mice in the home — languages not confirmed',
-				'PLACEHOLDER: bed bug preparation instructions — languages not confirmed',
-				'PLACEHOLDER: mold and moisture in rental housing — languages not confirmed'
+			cards: [
+				{
+					title: 'PLACEHOLDER: preventing rats and mice in the home',
+					text: 'Languages not confirmed.'
+				},
+				{
+					title: 'PLACEHOLDER: bed bug preparation instructions',
+					text: 'Languages not confirmed.'
+				},
+				{
+					title: 'PLACEHOLDER: mold and moisture in rental housing',
+					text: 'Languages not confirmed.'
+				}
 			]
 		},
 		{
 			heading: 'Tenant rights guides',
-			karl: 'Maps to the Body panel → Documents block, grouped under its own subheader. Documents and links can be grouped under subheaders, which is what keeps the two families apart on one page.',
+			karl: 'Maps to the Body panel → Documents block, grouped under its own subheader. As above, each card is a document with its own title and text. Documents and links can be grouped under subheaders, which is what keeps the two families apart on one page.',
 			kind: 'body',
-			bullets: [
-				'PLACEHOLDER: what to do when you report a housing condition — languages not confirmed',
-				'PLACEHOLDER: what a Notice of Violation means for a tenant — languages not confirmed'
+			cards: [
+				{
+					title: 'PLACEHOLDER: what to do when you report a housing condition',
+					text: 'Languages not confirmed.'
+				},
+				{
+					title: 'PLACEHOLDER: what a Notice of Violation means for a tenant',
+					text: 'Languages not confirmed.'
+				}
 			]
 		},
 		{

@@ -85,13 +85,6 @@ About Healthy Housing and Vector Control | SF.gov
 **Meta description (\`search_description\`):**
 
 Learn who the Healthy Housing and Vector Control team is, what they do, and how the program is organized.
-
-## Unmapped — no documented Karl destination
-
-Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
-
-- \`summary\` — The page carries \`summary\`, and no About us panel documented in the field map accepts it.
-- \`audience\` — The page carries \`audience\`, and the panel SF.gov puts it in is not on this type. About us has no \`things_to_know\` panel — it is Transaction-only — and no free-text intro either, so the audience has to move into the body copy or be dropped deliberately. Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list.
 "
 `;
 
@@ -120,7 +113,7 @@ Learn how a 311 report is reviewed and when an inspector may contact you.
 
 ### Primary agency — \`primary_agency\` [FLAG] — page not approved
 
-_U6 — supply the parent Agency page by hand; the mockup has no field for it._
+_U6 — supply the parent Agency page by hand. Where the mockup names the agency it is text, not a page reference, and Karl requires a page: for HHVC pages that is sf.gov/departments--healthy-housing-and-vector-control._
 
 ### Information section — \`information_section\` [TYPE] — page not approved
 
@@ -152,6 +145,26 @@ Anyone can report a housing or pest problem to 311.
 **Links in this text — recreate each with the Link tool, do not paste them:**
 
 - "Tenant rights when reporting housing conditions" → shape 5 — rich text Link tool → Internal link → "Tenant rights when reporting housing conditions"
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+How a report moves through the City
+
+**Text:**
+
+- **You report through 311.** 311 receives the report and sends it to the right City department when possible.
+- **Environmental Health reviews the report.** HHVC may review the complaint if it may involve a housing or pest-related public health concern. 311 routes the complaint to Environmental Health, and HHVC assigns it to an inspector. This can take a few days. Complaints are processed on weekdays.
+- **Another agency may take it.** HHVC focuses strictly on condensation, humidity, and ventilation-related moisture issues.
+- If your complaint involves structural water intrusion, HHVC routes it to the Department of Building Inspection (DBI). That includes leaking roof frames, structural plumbing leaks, and broken water heaters. DBI handles these under the San Francisco Housing Code (2025).
+- **An inspector may contact you.** If you gave contact information, an inspector may contact you to ask questions or schedule a visit.
+- **An inspection may happen.** If you did not give contact information, an inspection may still happen without notice when areas can be accessed. This is more likely if the report describes an urgent health or safety risk.
+- [Report a pest problem, start to finish](stepPestReport)
+
+**Links in this text — recreate each with the Link tool, do not paste them:**
+
+- "Report a pest problem, start to finish" → shape 5 — rich text Link tool → Internal link → "Report a pest problem, start to finish"
 
 ### Information section — \`information_section\` [TYPE] — page not approved
 
@@ -244,12 +257,6 @@ What happens after you report | SF.gov
 **Meta description (\`search_description\`):**
 
 Learn what may happen after a 311 report about a housing or pest problem is sent to Environmental Health.
-
-## Unmapped — no documented Karl destination
-
-Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
-
-- \`sections.1.steps\` — U3 — steps on an Information page. Information has no what_to_do-style container. Karl’s Step by step type fits the steps but has no cost and no things_to_know, so retyping the page would drop its whatToKnow entirely.
 "
 `;
 
@@ -320,7 +327,7 @@ Start your report
 
 **Section 1 — Section specifics → Text:**
 
-Use 311 to report animal waste on private property.
+Use 311 to report animal waste on private property. You can report animal waste where you live or on a nearby property, or report for someone else.
 
 For dog waste on a sidewalk or street, ask 311 for street cleaning instead.
 
@@ -384,6 +391,11 @@ What the Health Code requires
 **Text:**
 
 - San Francisco Health Code Article 11 covers this. Property owners must not let animal waste build up. Build-up that shelters pests or creates a health hazard is a violation.
+- [View Health Code Article 11](https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890)
+
+**Links in this text — recreate each with the Link tool, do not paste them:**
+
+- "View Health Code Article 11" → shape 5 — rich text Link tool → External link
 
 ### Related — \`related\` [CHOOSE] — page not approved
 
@@ -428,14 +440,6 @@ Report dog poop, cat waste, or raccoon droppings in a San Francisco yard, buildi
 ## Flags — resolve before saving — page not approved
 
 - \`sections.1.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to supporting_information (Accordions). This accordion uses the mockup-only open flag so the tips are visible without a click — flag for Digital Services t". Resolve it before typing anything from them.
-
-## Unmapped — no documented Karl destination
-
-Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
-
-- \`audience\` — The page carries \`audience\`, and Karl does have a home for it: a **Things to know** entry titled "Who this information is for". Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list. What blocks it is the budget, not the field: the Help Center caps Things to know at 2 entries, and most Transaction pages here already spend both, so placing the audience means deciding which existing entry it replaces. That is a content call, not a missing panel.
-- \`sections.2.button\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
-- \`sections.2.buttonUrl\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
 "
 `;
 
@@ -537,6 +541,14 @@ A notice can cite several conditions. Questioning one does not put the others on
 
 - "Correct a violation and close your case" → shape 5 — rich text Link tool → Internal link → "Correct a violation and close your case"
 
+### Related — \`related\` [CHOOSE] — page not approved
+
+_This block publishes the destination page’s title and a link, and NOTHING else. Choose the page and type no description._
+
+1. Choose page: "Pay a Healthy Housing citation" (\`payCitation\` → /sf.gov/pay-healthy-housing-citation)
+2. Choose page: "Health Code Article 11 in plain language" (\`article11Guide\` → /sf.gov/report/health-code-article-11-plain-language)
+3. Choose page: "Tenant rights when reporting housing conditions" (\`tenantRights\` → /sf.gov/information/tenant-rights-and-reporting-housing-conditions)
+
 ### Contact us — \`get_help\` [TYPE] — page not approved
 
 _Address is a snippet chooser referencing a stored Address record, not inline fields, and Phone number’s first field is labelled "Owner" rather than "Name"._
@@ -586,13 +598,6 @@ Question a Notice of Violation | SF.gov
 **Meta description (\`search_description\`):**
 
 Talk to the investigator named on your notice if you disagree with a Healthy Housing and Vector Control violation.
-
-## Unmapped — no documented Karl destination
-
-Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
-
-- \`audience\` — The page carries \`audience\`, and Karl does have a home for it: a **Things to know** entry titled "Who this information is for". Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list. What blocks it is the budget, not the field: the Help Center caps Things to know at 2 entries, and most Transaction pages here already spend both, so placing the audience means deciding which existing entry it replaces. That is a content call, not a missing panel.
-- \`sections.1.cards\` — \`cards\` on this section reached no panel in the Transaction inventory.
 "
 `;
 
@@ -621,7 +626,7 @@ See what landlords and managers must do under the Health Code, plus the yearly f
 
 ### Primary agency — \`primary_agency\` [FLAG] — page not approved
 
-_U6 — supply the parent Agency page by hand; the mockup has no field for it._
+_U6 — supply the parent Agency page by hand. Where the mockup names the agency it is text, not a page reference, and Karl requires a page: for HHVC pages that is sf.gov/departments--healthy-housing-and-vector-control._
 
 ### Information section — \`information_section\` [TYPE] — page not approved
 
@@ -734,6 +739,18 @@ Article 11 defines these requirements and how HHVC enforces them.
 - "View Health Code Article 11 on municode" → shape 5 — rich text Link tool → External link
 - "See the full section-by-section mapping" → shape 5 — rich text Link tool → Internal link → "Health Code Article 11 in plain language"
 
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+Contact Healthy Housing and Vector Control
+
+**Text:**
+
+Call or text 311.
+
+Call Healthy Housing and Vector Control at 415-252-3800, or email healthyhousing@sf.gov.
+
 ### Topics — \`topics\` [TYPE] — page not approved
 
 _topicTag is unmapped metadata — the stored values are Agency labels, not Topic chooser references. Do not paste one into this chooser._
@@ -762,12 +779,6 @@ Article 11 compliance for property owners | SF.gov
 **Meta description (\`search_description\`):**
 
 What property owners and managers must do to comply with Health Code Article 11 — fees, response times, and required actions.
-
-## Unmapped — no documented Karl destination
-
-Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
-
-- \`contact\` — The page carries \`contact\`, and no Information panel documented in the field map accepts it.
 "
 `;
 
@@ -1030,13 +1041,6 @@ Plain-language explanations of San Francisco Health Code Article 11 rules for ga
 ## Flags — resolve before saving — page not approved
 
 - \`sections.0.callout.text\` — U18 — Report’s content chooser offers Body and Table only, so this callout has no block of its own. Fold it into the Body rich text as a bolded lead-in; the component matrix claiming Callout: Yes for Report is wrong (O11).
-
-## Unmapped — no documented Karl destination
-
-Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
-
-- \`summary\` — The page carries \`summary\`, and no Report panel documented in the field map accepts it.
-- \`audience\` — The page carries \`audience\`, and the panel SF.gov puts it in is not on this type. Report has no \`things_to_know\` panel — it is Transaction-only — and no free-text intro either, so the audience has to move into the body copy or be dropped deliberately. Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list.
 "
 `;
 
@@ -1121,7 +1125,7 @@ Start your report
 
 **Section 2 — Section specifics → Text:**
 
-Use 311 to report bed bugs to the City, especially if the owner does not respond or start treatment.
+Use 311 to report bed bugs to the City, especially if the owner does not respond or start treatment. You can report bed bugs in your unit or a neighbor’s unit, or report for someone else.
 
 Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.
 
@@ -1177,6 +1181,11 @@ What the Health Code requires
 **Text:**
 
 - San Francisco Health Code Article 11 requires property owners to keep buildings free of insect infestations, including bed bugs.
+- [View Health Code Article 11](https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890)
+
+**Links in this text — recreate each with the Link tool, do not paste them:**
+
+- "View Health Code Article 11" → shape 5 — rich text Link tool → External link
 
 ### Related — \`related\` [CHOOSE] — page not approved
 
@@ -1221,14 +1230,6 @@ Report bed bugs in a San Francisco apartment or building, and learn what the pro
 ## Flags — resolve before saving — page not approved
 
 - \`sections.1.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to supporting_information (Accordions). This accordion uses the mockup-only open flag so the tips are visible without a click — flag for Digital Services t". Resolve it before typing anything from them.
-
-## Unmapped — no documented Karl destination
-
-Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
-
-- \`audience\` — The page carries \`audience\`, and Karl does have a home for it: a **Things to know** entry titled "Who this information is for". Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list. What blocks it is the budget, not the field: the Help Center caps Things to know at 2 entries, and most Transaction pages here already spend both, so placing the audience means deciding which existing entry it replaces. That is a content call, not a missing panel.
-- \`sections.2.button\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
-- \`sections.2.buttonUrl\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
 "
 `;
 
@@ -1257,7 +1258,7 @@ Learn how bed bugs spread, how to check for them, and what tenants and owners ea
 
 ### Primary agency — \`primary_agency\` [FLAG] — page not approved
 
-_U6 — supply the parent Agency page by hand; the mockup has no field for it._
+_U6 — supply the parent Agency page by hand. Where the mockup names the agency it is text, not a page reference, and Karl requires a page: for HHVC pages that is sf.gov/departments--healthy-housing-and-vector-control._
 
 ### Information section — \`information_section\` [TYPE] — page not approved
 
@@ -1470,7 +1471,7 @@ Learn why sprays do not work, how to take away what cockroaches need, and how to
 
 ### Primary agency — \`primary_agency\` [FLAG] — page not approved
 
-_U6 — supply the parent Agency page by hand; the mockup has no field for it._
+_U6 — supply the parent Agency page by hand. Where the mockup names the agency it is text, not a page reference, and Karl requires a page: for HHVC pages that is sf.gov/departments--healthy-housing-and-vector-control._
 
 ### Information section — \`information_section\` [TYPE] — page not approved
 
@@ -1783,12 +1784,6 @@ Visit, mail, or call the Healthy Housing and Vector Control team.
 ## Flags — resolve before saving — page not approved
 
 - \`sections.3.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to the Services panel. Location has its own services field, like Agency — the field map calls that out specifically, which is why this is a Services sectio". Resolve it before typing anything from them.
-
-## Unmapped — no documented Karl destination
-
-Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
-
-- \`audience\` — The page carries \`audience\`, and the panel SF.gov puts it in is not on this type. Location has no \`things_to_know\` panel — it is Transaction-only — but it does have **Intro**, a free-text slot before the body, which is where the line belongs on this type. Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list.
 "
 `;
 
@@ -1925,12 +1920,6 @@ Find residential hotel and shelter records | SF.gov
 **Meta description (\`search_description\`):**
 
 Look up Environmental Health records for San Francisco residential hotels, SROs, and shelters.
-
-## Unmapped — no documented Karl destination
-
-Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
-
-- \`audience\` — The page carries \`audience\`, and Karl does have a home for it: a **Things to know** entry titled "Who this information is for". Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list. What blocks it is the budget, not the field: the Help Center caps Things to know at 2 entries, and most Transaction pages here already spend both, so placing the audience means deciding which existing entry it replaces. That is a content call, not a missing panel.
 "
 `;
 
@@ -2076,12 +2065,6 @@ Find complaints and inspection records | SF.gov
 **Meta description (\`search_description\`):**
 
 Search investigated complaints, inspections, and health code violations for a San Francisco address.
-
-## Unmapped — no documented Karl destination
-
-Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
-
-- \`audience\` — The page carries \`audience\`, and Karl does have a home for it: a **Things to know** entry titled "Who this information is for". Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list. What blocks it is the budget, not the field: the Help Center caps Things to know at 2 entries, and most Transaction pages here already spend both, so placing the audience means deciding which existing entry it replaces. That is a content call, not a missing panel.
 "
 `;
 
@@ -2157,7 +2140,7 @@ Start your report
 
 **Section 1 — Section specifics → Text:**
 
-Use 311 to report garbage, clutter, or overgrown plants to the City. If the problem is urgent, report now.
+Use 311 to report garbage, clutter, or overgrown plants to the City. If the problem is urgent, report now. You can report a problem where you live or on a nearby property, or report for someone else.
 
 Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.
 
@@ -2215,6 +2198,11 @@ What the Health Code requires
 **Text:**
 
 - San Francisco Health Code Article 11 covers this. Property owners must not let trash, filth, or overgrown plants build up. Build-up that shelters pests or creates a health hazard is a violation.
+- [View Health Code Article 11](https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890)
+
+**Links in this text — recreate each with the Link tool, do not paste them:**
+
+- "View Health Code Article 11" → shape 5 — rich text Link tool → External link
 
 ### Related — \`related\` [CHOOSE] — page not approved
 
@@ -2259,14 +2247,6 @@ Report garbage, clutter, stored materials, or overgrown plants that draw pests t
 ## Flags — resolve before saving — page not approved
 
 - \`sections.1.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to supporting_information (Accordions). This accordion uses the mockup-only open flag so the tips are visible without a click — flag for Digital Services t". Resolve it before typing anything from them.
-
-## Unmapped — no documented Karl destination
-
-Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
-
-- \`audience\` — The page carries \`audience\`, and Karl does have a home for it: a **Things to know** entry titled "Who this information is for". Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list. What blocks it is the budget, not the field: the Help Center caps Things to know at 2 entries, and most Transaction pages here already spend both, so placing the audience means deciding which existing entry it replaces. That is a content call, not a missing panel.
-- \`sections.2.button\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
-- \`sections.2.buttonUrl\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
 "
 `;
 
@@ -2400,13 +2380,6 @@ Report housing health issues, find services and resources, and learn how San Fra
 - \`sections.6.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to a Resources block. Topic tab, suggested structure item 5, plus the pages the retired Healthy housing and pest resources collection linked that the list ". Resolve it before typing anything from them.
 - \`sections.7.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to a Resources block (Title = this heading, Links = the cards). The five community-education Information pages ported from HHVC_manager_review_current_tool". Resolve it before typing anything from them.
 - \`sections.8.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to a Resources block of External links. Carries every outside document and site the retired Healthy housing and pest resources collection linked, so the fo". Resolve it before typing anything from them.
-
-## Unmapped — no documented Karl destination
-
-Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
-
-- \`audience\` — The page carries \`audience\`, and the panel SF.gov puts it in is not on this type. Topic has no \`things_to_know\` panel — it is Transaction-only — and no free-text intro either, so the audience has to move into the body copy or be dropped deliberately. Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list.
-- \`sections.9.cards\` — U5 — Topic has no \`related\` field, confirmed at E1. Either this panel moves into content_fields as a Resources block, or the page drops it.
 "
 `;
 
@@ -2484,7 +2457,7 @@ Start your report
 
 **Section 1 — Section specifics → Text:**
 
-Use 311 to report cockroaches, fleas, flies, wasps, or mites to the City. If the problem is urgent, report now.
+Use 311 to report cockroaches, fleas, flies, wasps, or mites to the City. If the problem is urgent, report now. You can report a problem in your home, a shared area, or at work, or report for someone else.
 
 Bed bugs and mosquitoes have their own pages: [Report bed bugs](bedBugReport) and [Report mosquitoes or standing water](mosquitoReport).
 
@@ -2561,6 +2534,11 @@ What the Health Code requires
 **Text:**
 
 - San Francisco Health Code Article 11 requires property owners to keep buildings free of insect infestations, including cockroaches, fleas, flies, and wasps.
+- [View Health Code Article 11](https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890)
+
+**Links in this text — recreate each with the Link tool, do not paste them:**
+
+- "View Health Code Article 11" → shape 5 — rich text Link tool → External link
 
 ### Related — \`related\` [CHOOSE] — page not approved
 
@@ -2605,14 +2583,6 @@ Report cockroaches, fleas, flies, wasps, or mites in a San Francisco home, build
 ## Flags — resolve before saving — page not approved
 
 - \`sections.1.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to supporting_information (Accordions). This accordion uses the mockup-only open flag so the tips are visible without a click — flag for Digital Services t". Resolve it before typing anything from them.
-
-## Unmapped — no documented Karl destination
-
-Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
-
-- \`audience\` — The page carries \`audience\`, and Karl does have a home for it: a **Things to know** entry titled "Who this information is for". Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list. What blocks it is the budget, not the field: the Help Center caps Things to know at 2 entries, and most Transaction pages here already spend both, so placing the audience means deciding which existing entry it replaces. That is a content call, not a missing panel.
-- \`sections.2.button\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
-- \`sections.2.buttonUrl\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
 "
 `;
 
@@ -2759,13 +2729,6 @@ Healthy Housing inspections: annual summary | SF.gov
 **Meta description (\`search_description\`):**
 
 Inspection counts, violation types, and re-inspection outcomes for the past year.
-
-## Unmapped — no documented Karl destination
-
-Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
-
-- \`summary\` — The page carries \`summary\`, and no Report panel documented in the field map accepts it.
-- \`audience\` — The page carries \`audience\`, and the panel SF.gov puts it in is not on this type. Report has no \`things_to_know\` panel — it is Transaction-only — and no free-text intro either, so the audience has to move into the body copy or be dropped deliberately. Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list.
 "
 `;
 
@@ -2887,12 +2850,6 @@ Find your Healthy Housing inspector by neighborhood | SF.gov
 **Meta description (\`search_description\`):**
 
 Look up which Healthy Housing and Vector Control inspector covers your San Francisco neighborhood.
-
-## Unmapped — no documented Karl destination
-
-Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
-
-- \`audience\` — The page carries \`audience\`, and Karl does have a home for it: a **Things to know** entry titled "Who this information is for". Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list. What blocks it is the budget, not the field: the Help Center caps Things to know at 2 entries, and most Transaction pages here already spend both, so placing the audience means deciding which existing entry it replaces. That is a content call, not a missing panel.
 "
 `;
 
@@ -3101,13 +3058,6 @@ Free IPM education workshop | SF.gov
 **Meta description (\`search_description\`):**
 
 Request a free integrated pest management (IPM) education session for tenant groups and community organizations in San Francisco.
-
-## Unmapped — no documented Karl destination
-
-Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
-
-- \`summary\` — The page carries \`summary\`, and no Campaign panel documented in the field map accepts it.
-- \`audience\` — The page carries \`audience\`, and the panel SF.gov puts it in is not on this type. Campaign has no \`things_to_know\` panel — it is Transaction-only — and no free-text intro either, so the audience has to move into the body copy or be dropped deliberately. Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list.
 "
 `;
 
@@ -3166,6 +3116,50 @@ You do not need a written guide to get help. Interpretation is available when yo
 
 - "Tenant rights when reporting housing conditions" → shape 5 — rich text Link tool → Internal link → "Tenant rights when reporting housing conditions"
 
+### Body — \`body\` [TYPE] — page not approved
+
+**Entry 1 — Title:**
+
+PLACEHOLDER: preventing rats and mice in the home
+
+**Entry 1 — Text:**
+
+Languages not confirmed.
+
+**Entry 2 — Title:**
+
+PLACEHOLDER: bed bug preparation instructions
+
+**Entry 2 — Text:**
+
+Languages not confirmed.
+
+**Entry 3 — Title:**
+
+PLACEHOLDER: mold and moisture in rental housing
+
+**Entry 3 — Text:**
+
+Languages not confirmed.
+
+### Body — \`body\` [TYPE] — page not approved
+
+**Entry 1 — Title:**
+
+PLACEHOLDER: what to do when you report a housing condition
+
+**Entry 1 — Text:**
+
+Languages not confirmed.
+
+**Entry 2 — Title:**
+
+PLACEHOLDER: what a Notice of Violation means for a tenant
+
+**Entry 2 — Text:**
+
+Languages not confirmed.
+
 ### Topics — \`topics\` [TYPE] — page not approved
 
 _topicTag is unmapped metadata — the stored values are Agency labels, not Topic chooser references._
@@ -3196,14 +3190,6 @@ Get pest, mold, and tenant rights guides in a language besides English.
 ## Flags — resolve before saving — page not approved
 
 - \`sections.4.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to the Custom section or to Related, depending on how Digital Services renders a card group here. Cards publish the destination page’s own title.". Resolve it before typing anything from them.
-
-## Unmapped — no documented Karl destination
-
-Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
-
-- \`audience\` — The page carries \`audience\`, and the panel SF.gov puts it in is not on this type. Resource Collection has no \`things_to_know\` panel — it is Transaction-only — and no free-text intro either, so the audience has to move into the body copy or be dropped deliberately. Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list.
-- \`sections.1.bullets\` — \`bullets\` on this section reached no panel in the Resource Collection inventory.
-- \`sections.2.bullets\` — \`bullets\` on this section reached no panel in the Resource Collection inventory.
 "
 `;
 
@@ -3302,7 +3288,7 @@ Start your report
 
 **Section 3 — Section specifics → Text:**
 
-Use 311 to report mold caused by humidity or condensation.
+Use 311 to report mold caused by humidity or condensation. You can report mold in your home or in a shared area, or report for someone else.
 
 Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.
 
@@ -3359,6 +3345,11 @@ What the Health Code requires
 **Text:**
 
 - San Francisco Health Code Article 11 lists visible mold or mildew inside a building as a public health nuisance. Fixing it means fixing the moisture source too.
+- [View Health Code Article 11](https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890)
+
+**Links in this text — recreate each with the Link tool, do not paste them:**
+
+- "View Health Code Article 11" → shape 5 — rich text Link tool → External link
 
 ### Related — \`related\` [CHOOSE] — page not approved
 
@@ -3403,14 +3394,6 @@ Report mold from humidity or condensation in a San Francisco home or building, a
 ## Flags — resolve before saving — page not approved
 
 - \`sections.1.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to supporting_information (Accordions). This accordion uses the mockup-only open flag so the tips are visible without a click — flag for Digital Services t". Resolve it before typing anything from them.
-
-## Unmapped — no documented Karl destination
-
-Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
-
-- \`audience\` — The page carries \`audience\`, and Karl does have a home for it: a **Things to know** entry titled "Who this information is for". Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list. What blocks it is the budget, not the field: the Help Center caps Things to know at 2 entries, and most Transaction pages here already spend both, so placing the audience means deciding which existing entry it replaces. That is a content call, not a missing panel.
-- \`sections.2.button\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
-- \`sections.2.buttonUrl\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
 "
 `;
 
@@ -3439,7 +3422,7 @@ Learn about mosquito surveillance, catch-basin treatment, and where to report st
 
 ### Primary agency — \`primary_agency\` [FLAG] — page not approved
 
-_U6 — supply the parent Agency page by hand; the mockup has no field for it._
+_U6 — supply the parent Agency page by hand. Where the mockup names the agency it is text, not a page reference, and Karl requires a page: for HHVC pages that is sf.gov/departments--healthy-housing-and-vector-control._
 
 ### Information section — \`information_section\` [TYPE] — page not approved
 
@@ -3591,7 +3574,7 @@ Start your report
 
 **Section 1 — Section specifics → Text:**
 
-Use 311 to report mosquitoes or standing water to the City. If the problem is urgent, report now.
+Use 311 to report mosquitoes or standing water to the City. If the problem is urgent, report now. You can report mosquitoes where you live or standing water you see nearby, or report for someone else.
 
 Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.
 
@@ -3664,6 +3647,11 @@ What the Health Code requires
 **Text:**
 
 - San Francisco Health Code Article 11 requires property owners to remove places where mosquitoes breed.
+- [View Health Code Article 11](https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890)
+
+**Links in this text — recreate each with the Link tool, do not paste them:**
+
+- "View Health Code Article 11" → shape 5 — rich text Link tool → External link
 
 ### Related — \`related\` [CHOOSE] — page not approved
 
@@ -3708,14 +3696,6 @@ Report biting mosquitoes or standing water where they breed in San Francisco, an
 ## Flags — resolve before saving — page not approved
 
 - \`sections.1.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to supporting_information (Accordions). This accordion uses the mockup-only open flag so the tips are visible without a click — flag for Digital Services t". Resolve it before typing anything from them.
-
-## Unmapped — no documented Karl destination
-
-Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
-
-- \`audience\` — The page carries \`audience\`, and Karl does have a home for it: a **Things to know** entry titled "Who this information is for". Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list. What blocks it is the budget, not the field: the Help Center caps Things to know at 2 entries, and most Transaction pages here already spend both, so placing the audience means deciding which existing entry it replaces. That is a content call, not a missing panel.
-- \`sections.2.button\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
-- \`sections.2.buttonUrl\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
 "
 `;
 
@@ -3920,13 +3900,6 @@ Free mosquito education workshop | SF.gov
 **Meta description (\`search_description\`):**
 
 Request a free HHVC mosquito science workshop with microscopes and live larvae for San Francisco schools.
-
-## Unmapped — no documented Karl destination
-
-Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
-
-- \`summary\` — The page carries \`summary\`, and no Campaign panel documented in the field map accepts it.
-- \`audience\` — The page carries \`audience\`, and the panel SF.gov puts it in is not on this type. Campaign has no \`things_to_know\` panel — it is Transaction-only — and no free-text intro either, so the audience has to move into the body copy or be dropped deliberately. Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list.
 "
 `;
 
@@ -3955,7 +3928,7 @@ Use prevention, monitoring, and resident outreach tools for your building.
 
 ### Primary agency — \`primary_agency\` [FLAG] — page not approved
 
-_U6 — supply the parent Agency page by hand; the mockup has no field for it._
+_U6 — supply the parent Agency page by hand. Where the mockup names the agency it is text, not a page reference, and Karl requires a page: for HHVC pages that is sf.gov/departments--healthy-housing-and-vector-control._
 
 ### Information section — \`information_section\` [TYPE] — page not approved
 
@@ -4175,6 +4148,18 @@ Tenant cooperation is important, but pest prevention cannot depend on tenants al
 
 - "UC IPM: Outreach to residents" → shape 5 — rich text Link tool → External link
 
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+Contact Healthy Housing and Vector Control
+
+**Text:**
+
+Call or text 311.
+
+Call Healthy Housing and Vector Control at 415-252-3800, or email healthyhousing@sf.gov.
+
 ### Topics — \`topics\` [TYPE] — page not approved
 
 _topicTag is unmapped metadata — the stored values are Agency labels, not Topic chooser references. Do not paste one into this chooser._
@@ -4202,12 +4187,6 @@ IPM for property owners and managers | SF.gov
 **Meta description (\`search_description\`):**
 
 IPM for SF property owners and managers. UC ANR templates for prevention, monitoring, and resident outreach.
-
-## Unmapped — no documented Karl destination
-
-Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
-
-- \`contact\` — The page carries \`contact\`, and no Information panel documented in the field map accepts it.
 "
 `;
 
@@ -4298,12 +4277,6 @@ Owner and manager duties for pests, vectors, and housing health under San Franci
 ## Flags — resolve before saving — page not approved
 
 - \`sections.2.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to Body → Documents → one "Document section" item (Title = "Fee schedule"), the block type distinct from the "Resources" (SF.gov page link) sections above ". Resolve it before typing anything from them.
-
-## Unmapped — no documented Karl destination
-
-Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
-
-- \`audience\` — The page carries \`audience\`, and the panel SF.gov puts it in is not on this type. Resource Collection has no \`things_to_know\` panel — it is Transaction-only — and no free-text intro either, so the audience has to move into the body copy or be dropped deliberately. Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list.
 "
 `;
 
@@ -4420,6 +4393,14 @@ Contact the investigator named on your notice if you disagree. Do not simply wit
 - "Correct a violation and close your case" → shape 5 — rich text Link tool → Internal link → "Correct a violation and close your case"
 - "Question a Notice of Violation" → shape 5 — rich text Link tool → Internal link → "Question a Notice of Violation"
 
+### Related — \`related\` [CHOOSE] — page not approved
+
+_This block publishes the destination page’s title and a link, and NOTHING else. Choose the page and type no description._
+
+1. Choose page: "Pay your annual Healthy Housing fee for apartment buildings" (\`payFee\` → /sf.gov/pay-your-annual-healthy-housing-fee-apartment-buildings)
+2. Choose page: "Question a Notice of Violation" (\`appealNotice\` → /sf.gov/question-notice-of-violation)
+3. Choose page: "Article 11 compliance for property owners" (\`article11Compliance\` → /sf.gov/information--article-11-compliance-for-property-owners)
+
 ### Partner agencies — \`partner_agencies\` [CHOOSE] — page not approved
 
 _A page chooser restricted to Agency pages. These entries name real sf.gov department pages outside this mockup, so search Karl for each by title._
@@ -4449,13 +4430,6 @@ Pay a Healthy Housing citation | SF.gov
 **Meta description (\`search_description\`):**
 
 Pay a penalty issued after an uncorrected Notice of Violation or a missed re-inspection.
-
-## Unmapped — no documented Karl destination
-
-Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
-
-- \`audience\` — The page carries \`audience\`, and Karl does have a home for it: a **Things to know** entry titled "Who this information is for". Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list. What blocks it is the budget, not the field: the Help Center caps Things to know at 2 entries, and most Transaction pages here already spend both, so placing the audience means deciding which existing entry it replaces. That is a content call, not a missing panel.
-- \`sections.1.cards\` — \`cards\` on this section reached no panel in the Transaction inventory.
 "
 `;
 
@@ -4642,12 +4616,6 @@ Pay your Healthy Housing fee | SF.gov
 **Meta description (\`search_description\`):**
 
 Pay your annual Healthy Housing fee for a San Francisco apartment building with 3 or more rental units.
-
-## Unmapped — no documented Karl destination
-
-Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
-
-- \`audience\` — The page carries \`audience\`, and Karl does have a home for it: a **Things to know** entry titled "Who this information is for". Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list. What blocks it is the budget, not the field: the Help Center caps Things to know at 2 entries, and most Transaction pages here already spend both, so placing the audience means deciding which existing entry it replaces. That is a content call, not a missing panel.
 "
 `;
 
@@ -4676,7 +4644,7 @@ Learn what tenants and owners each need to do before, during, and after a pest c
 
 ### Primary agency — \`primary_agency\` [FLAG] — page not approved
 
-_U6 — supply the parent Agency page by hand; the mockup has no field for it._
+_U6 — supply the parent Agency page by hand. Where the mockup names the agency it is text, not a page reference, and Karl requires a page: for HHVC pages that is sf.gov/departments--healthy-housing-and-vector-control._
 
 ### Information section — \`information_section\` [TYPE] — page not approved
 
@@ -5025,7 +4993,7 @@ About Healthy Housing and Vector Control
 
 **Text:**
 
-Healthy Housing and Vector Control is part of Environmental Health at the San Francisco Department of Public Health. We address pests, vectors, garbage, filth, animal waste, overgrown vegetation, and mold from humidity or condensation. Health Code Article 11 covers this.
+Healthy Housing and Vector Control is part of Environmental Health at the San Francisco Department of Public Health. We address pests, vectors, garbage, filth, animal waste, overgrown vegetation, and mold from humidity or condensation. Health Code Article 11 covers this. Lead safety, water service, noise, asbestos, and structural construction concerns may be handled by another City program.
 
 - [About Healthy Housing and Vector Control](aboutHhvcTeam)
 
@@ -5060,16 +5028,6 @@ Healthy Housing and Vector Control | SF.gov
 **Meta description (\`search_description\`):**
 
 Report pest, vector, and housing health problems, get tenant help, and find owner resources from Healthy Housing and Vector Control.
-
-## Unmapped — no documented Karl destination
-
-Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
-
-- \`audience\` — The page carries \`audience\`, and the panel SF.gov puts it in is not on this type. Agency has no \`things_to_know\` panel — it is Transaction-only — and no free-text intro either, so the audience has to move into the body copy or be dropped deliberately. Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list.
-- \`sections.0.paragraphs\` — U20 — an Agency Services/Resources Subsection carries a single optional Title and a links list. There is no description field, so this prose has nowhere to go.
-- \`sections.1.paragraphs\` — U20 — an Agency Services/Resources Subsection carries a single optional Title and a links list. There is no description field, so this prose has nowhere to go.
-- \`sections.2.paragraphs\` — U20 — an Agency Services/Resources Subsection carries a single optional Title and a links list. There is no description field, so this prose has nowhere to go.
-- \`sections.4.paragraphs\` — U20 — an Agency Services/Resources Subsection carries a single optional Title and a links list. There is no description field, so this prose has nowhere to go.
 "
 `;
 
@@ -5140,7 +5098,7 @@ Start your report
 
 **Section 1 — Section specifics → Text:**
 
-Use 311 to report pigeon droppings, nesting, roosting, or feeding to the City.
+Use 311 to report pigeon droppings, nesting, roosting, or feeding to the City. You can report pigeons on your building or nearby, or report for someone else.
 
 Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.
 
@@ -5206,6 +5164,11 @@ What the Health Code requires
 **Text:**
 
 - San Francisco Health Code Article 11 does not allow animals, including pigeons, to nest, roost, or live on a property in ways that create a health hazard.
+- [View Health Code Article 11](https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890)
+
+**Links in this text — recreate each with the Link tool, do not paste them:**
+
+- "View Health Code Article 11" → shape 5 — rich text Link tool → External link
 
 ### Related — \`related\` [CHOOSE] — page not approved
 
@@ -5246,14 +5209,6 @@ Report pigeon droppings, nesting, or feeding | SF.gov
 **Meta description (\`search_description\`):**
 
 Report pigeons roosting or nesting, droppings or feathers, or people feeding pigeons at a San Francisco property.
-
-## Unmapped — no documented Karl destination
-
-Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
-
-- \`audience\` — The page carries \`audience\`, and Karl does have a home for it: a **Things to know** entry titled "Who this information is for". Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list. What blocks it is the budget, not the field: the Help Center caps Things to know at 2 entries, and most Transaction pages here already spend both, so placing the audience means deciding which existing entry it replaces. That is a content call, not a missing panel.
-- \`sections.2.button\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
-- \`sections.2.buttonUrl\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
 "
 `;
 
@@ -5390,12 +5345,6 @@ Make a public records request | SF.gov
 **Meta description (\`search_description\`):**
 
 Request Environmental Health public records through the citywide San Francisco public records portal.
-
-## Unmapped — no documented Karl destination
-
-Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
-
-- \`audience\` — The page carries \`audience\`, and Karl does have a home for it: a **Things to know** entry titled "Who this information is for". Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list. What blocks it is the budget, not the field: the Help Center caps Things to know at 2 entries, and most Transaction pages here already spend both, so placing the audience means deciding which existing entry it replaces. That is a content call, not a missing panel.
 "
 `;
 
@@ -5508,6 +5457,30 @@ Entry
 
 Seal gaps around pipes, vents, and doors. A rat fits through a gap the size of a quarter.
 
+### Additional content — \`additional_content\` [TYPE] — page not approved
+
+**Title:**
+
+Start with your own block
+
+**Text:**
+
+A coordinated week does more than a year of single properties acting alone. Neighbors, and neighborhood or merchant associations, do not need permission from the City to organize one.
+
+- Agree a week when everyone clears clutter and checks their bins.
+- Walk the block together afterwards and look for the gaps that remain.
+- Report what is left — especially anything on a property no one is maintaining.
+- Pick up pet waste daily. It feeds rats.
+- [Report rats or mice](rodentsReport)
+- [Report animal waste on a property](animalWasteReport)
+- [Report garbage, clutter, or overgrown plants](garbageReport)
+
+**Links in this text — recreate each with the Link tool, do not paste them:**
+
+- "Report rats or mice" → shape 5 — rich text Link tool → Internal link → "Report rats or mice"
+- "Report animal waste on a property" → shape 5 — rich text Link tool → Internal link → "Report animal waste on a property"
+- "Report garbage, clutter, or overgrown plants" → shape 5 — rich text Link tool → Internal link → "Report garbage, clutter, or overgrown plants"
+
 ### About — \`about_campaign\` [TYPE] — page not approved
 
 **Title:**
@@ -5515,6 +5488,8 @@ Seal gaps around pipes, vents, and doors. A rat fits through a gap the size of a
 About this campaign
 
 **Text:**
+
+Rat-free blocks is a neighborhood push to cut rat sightings through coordinated cleanup and prevention.
 
 PLACEHOLDER: which neighborhoods, over what period, and with which partners. None is confirmed.
 
@@ -5548,15 +5523,6 @@ Rat-free blocks | SF.gov
 **Meta description (\`search_description\`):**
 
 A neighborhood push to cut rat sightings through coordinated cleanup and prevention.
-
-## Unmapped — no documented Karl destination
-
-Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
-
-- \`summary\` — The page carries \`summary\`, and no Campaign panel documented in the field map accepts it.
-- \`audience\` — The page carries \`audience\`, and the panel SF.gov puts it in is not on this type. Campaign has no \`things_to_know\` panel — it is Transaction-only — and no free-text intro either, so the audience has to move into the body copy or be dropped deliberately. Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list.
-- \`sections.2.paragraphs\` — \`paragraphs\` on this section reached no panel in the Campaign inventory.
-- \`sections.2.bullets\` — \`bullets\` on this section reached no panel in the Campaign inventory.
 "
 `;
 
@@ -5585,7 +5551,7 @@ Learn what causes mold, who is responsible for fixing it, and simple daily steps
 
 ### Primary agency — \`primary_agency\` [FLAG] — page not approved
 
-_U6 — supply the parent Agency page by hand; the mockup has no field for it._
+_U6 — supply the parent Agency page by hand. Where the mockup names the agency it is text, not a page reference, and Karl requires a page: for HHVC pages that is sf.gov/departments--healthy-housing-and-vector-control._
 
 ### Information section — \`information_section\` [TYPE] — page not approved
 
@@ -5769,7 +5735,7 @@ Learn the signs of rats and mice, how to cut off their food and hiding places, a
 
 ### Primary agency — \`primary_agency\` [FLAG] — page not approved
 
-_U6 — supply the parent Agency page by hand; the mockup has no field for it._
+_U6 — supply the parent Agency page by hand. Where the mockup names the agency it is text, not a page reference, and Karl requires a page: for HHVC pages that is sf.gov/departments--healthy-housing-and-vector-control._
 
 ### Information section — \`information_section\` [TYPE] — page not approved
 
@@ -6011,7 +5977,7 @@ Start your report
 
 **Section 1 — Section specifics → Text:**
 
-Use 311 to report rats or mice to the City. If the problem is urgent, report now.
+Use 311 to report rats or mice to the City. If the problem is urgent, report now. You can report a problem in your home, a shared area, or at work, or report for someone else.
 
 Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.
 
@@ -6075,6 +6041,11 @@ What the Health Code requires
 **Text:**
 
 - San Francisco Health Code Article 11 requires property owners to keep buildings clean, watertight, and completely free of rodent infestations.
+- [View Health Code Article 11](https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890)
+
+**Links in this text — recreate each with the Link tool, do not paste them:**
+
+- "View Health Code Article 11" → shape 5 — rich text Link tool → External link
 
 ### Related — \`related\` [CHOOSE] — page not approved
 
@@ -6120,14 +6091,6 @@ Report rats, mice, droppings, burrows, or rodent mites in a San Francisco home, 
 ## Flags — resolve before saving — page not approved
 
 - \`sections.1.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to supporting_information (Accordions). This accordion uses the mockup-only open flag so the tips are visible without a click — flag for Digital Services t". Resolve it before typing anything from them.
-
-## Unmapped — no documented Karl destination
-
-Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
-
-- \`audience\` — The page carries \`audience\`, and Karl does have a home for it: a **Things to know** entry titled "Who this information is for". Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list. What blocks it is the budget, not the field: the Help Center caps Things to know at 2 entries, and most Transaction pages here already spend both, so placing the audience means deciding which existing entry it replaces. That is a content call, not a missing panel.
-- \`sections.2.button\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
-- \`sections.2.buttonUrl\` — U1 — a section-level button outside any step. Transaction's only Button link slot sits inside a what_to_do Section, and Report's only inside the Spotlight, so this has no documented Karl destination.
 "
 `;
 
@@ -6156,7 +6119,7 @@ See which conditions Environmental Health checks in apartments, residential hote
 
 ### Primary agency — \`primary_agency\` [FLAG] — page not approved
 
-_U6 — supply the parent Agency page by hand; the mockup has no field for it._
+_U6 — supply the parent Agency page by hand. Where the mockup names the agency it is text, not a page reference, and Karl requires a page: for HHVC pages that is sf.gov/departments--healthy-housing-and-vector-control._
 
 ### Information section — \`information_section\` [TYPE] — page not approved
 
@@ -6377,7 +6340,7 @@ Report it right away
 
 **Section 1 — Section specifics → Text:**
 
-Use 311 to report sewage as soon as you see it. Stay away from it, and keep children and pets away.
+Use 311 to report sewage as soon as you see it. Stay away from it, and keep children and pets away. You can report sewage in your home, a yard, or a shared area, or report for someone else.
 
 Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.
 
@@ -6464,12 +6427,6 @@ Report a sewage leak or backup | SF.gov
 **Meta description (\`search_description\`):**
 
 Report sewage from a drain, toilet, cleanout, or pipe at a San Francisco home or building. We respond within 48 hours.
-
-## Unmapped — no documented Karl destination
-
-Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
-
-- \`audience\` — The page carries \`audience\`, and Karl does have a home for it: a **Things to know** entry titled "Who this information is for". Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list. What blocks it is the budget, not the field: the Help Center caps Things to know at 2 entries, and most Transaction pages here already spend both, so placing the audience means deciding which existing entry it replaces. That is a content call, not a missing panel.
 "
 `;
 
@@ -6538,6 +6495,7 @@ The notice lists the conditions to correct and the date they are due. That date 
 
 - Check which actions are assigned to the owner, to the manager, and to a tenant.
 - A notice can list actions for the building, shared areas, or a specific unit.
+- [Health Code Article 11 in plain language](article11Guide)
 
 **Step 2 — Title:**
 
@@ -6551,6 +6509,7 @@ Work in shared areas, structural repairs, professional pest treatment, and garba
 - Do not wait on a tenant’s task before starting work you control.
 - [Property owner responsibilities](ownerHub)
 - [Integrated pest management for property owners and managers](ownerGuidance)
+- [Article 11 compliance for property owners](article11Compliance)
 
 **Step 3 — Title:**
 
@@ -6565,6 +6524,7 @@ Unit preparation and access are the tenant’s part. Treatment that cannot reach
 - A Notice of Violation does not change a tenant’s right to safe and habitable housing.
 - [Prepare your unit for pest treatment](stepPrepUnit)
 - [What tenants need to do after a Notice of Violation](tenantNoticeSteps)
+- [Tenant rights when reporting housing conditions](tenantRights)
 
 **Step 4 — Title:**
 
@@ -6617,10 +6577,13 @@ Follow the instructions and deadlines in any later notice you receive.
 
 **Links in this text — recreate each with the Link tool, do not paste them:**
 
+- "Health Code Article 11 in plain language" → shape 5 — rich text Link tool → Internal link → "Health Code Article 11 in plain language"
 - "Property owner responsibilities" → shape 5 — rich text Link tool → Internal link → "Property owner responsibilities"
 - "Integrated pest management for property owners and managers" → shape 5 — rich text Link tool → Internal link → "Integrated pest management for property owners and managers"
+- "Article 11 compliance for property owners" → shape 5 — rich text Link tool → Internal link → "Article 11 compliance for property owners"
 - "Prepare your unit for pest treatment" → shape 5 — rich text Link tool → Internal link → "Prepare your unit for pest treatment"
 - "What tenants need to do after a Notice of Violation" → shape 5 — rich text Link tool → Internal link → "What tenants need to do after a Notice of Violation"
+- "Tenant rights when reporting housing conditions" → shape 5 — rich text Link tool → Internal link → "Tenant rights when reporting housing conditions"
 - "Question a Notice of Violation" → shape 5 — rich text Link tool → Internal link → "Question a Notice of Violation"
 - "Pay a Healthy Housing citation" → shape 5 — rich text Link tool → Internal link → "Pay a Healthy Housing citation"
 - "What happens after you report a housing or pest problem" → shape 5 — rich text Link tool → Internal link → "What happens after you report a housing or pest problem"
@@ -6650,13 +6613,6 @@ Correct a violation and close your case | SF.gov
 **Meta description (\`search_description\`):**
 
 The steps from a Notice of Violation to a passed re-inspection, and who is responsible at each one.
-
-## Unmapped — no documented Karl destination
-
-Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
-
-- \`audience\` — The page carries \`audience\`, and the panel SF.gov puts it in is not on this type. Step by step has no \`things_to_know\` panel — it is Transaction-only — but it does have **Intro**, a free-text slot before the body, which is where the line belongs on this type. Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list.
-- \`sections.2.cards\` — \`cards\` on this section reached no panel in the Step by step inventory.
 "
 `;
 
@@ -6760,6 +6716,7 @@ An inspector will look at the conditions you reported. Being ready shortens the 
 - Keep any messages with a property owner or manager about the problem.
 - An inspector may look at the condition you reported and nearby areas that could be related.
 - If you did not give contact information, an inspection may still happen without notice.
+- [Find your Healthy Housing inspector by neighborhood](inspectorLookup)
 
 **Step 4 — Title:**
 
@@ -6771,6 +6728,7 @@ After the visit you find out whether a violation was written. You also learn wha
 
 - [What happens after you report a housing or pest problem](afterReport)
 - A notice can name an owner, a manager, a tenant, or more than one party.
+- [Health Code Article 11 in plain language](article11Guide)
 
 **Step 5 — Title:**
 
@@ -6806,7 +6764,9 @@ A case closes when the cited conditions are corrected and that has been confirme
 - "Report garbage, clutter, or overgrown plants" → shape 5 — rich text Link tool → Internal link → "Report garbage, clutter, or overgrown plants"
 - "Tenant rights when reporting housing conditions" → shape 5 — rich text Link tool → Internal link → "Tenant rights when reporting housing conditions"
 - "Learn what Healthy Housing and Vector Control can inspect" → shape 5 — rich text Link tool → Internal link → "Learn what Healthy Housing and Vector Control can inspect"
+- "Find your Healthy Housing inspector by neighborhood" → shape 5 — rich text Link tool → Internal link → "Find your Healthy Housing inspector by neighborhood"
 - "What happens after you report a housing or pest problem" → shape 5 — rich text Link tool → Internal link → "What happens after you report a housing or pest problem"
+- "Health Code Article 11 in plain language" → shape 5 — rich text Link tool → Internal link → "Health Code Article 11 in plain language"
 - "Correct a violation and close your case" → shape 5 — rich text Link tool → Internal link → "Correct a violation and close your case"
 - "What tenants need to do after a Notice of Violation" → shape 5 — rich text Link tool → Internal link → "What tenants need to do after a Notice of Violation"
 - "Correct a violation and close your case" → shape 5 — rich text Link tool → Internal link → "Correct a violation and close your case"
@@ -6837,13 +6797,6 @@ Report a pest problem, start to finish | SF.gov
 **Meta description (\`search_description\`):**
 
 Follow a 311 pest report through inspection, notice, and re-inspection, with the page for each stage.
-
-## Unmapped — no documented Karl destination
-
-Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
-
-- \`audience\` — The page carries \`audience\`, and the panel SF.gov puts it in is not on this type. Step by step has no \`things_to_know\` panel — it is Transaction-only — but it does have **Intro**, a free-text slot before the body, which is where the line belongs on this type. Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list.
-- \`sections.2.cards\` — \`cards\` on this section reached no panel in the Step by step inventory.
 "
 `;
 
@@ -6912,6 +6865,7 @@ Your pest control operator sends instructions for your unit and the product bein
 
 - Ask your owner or manager for the instructions if you did not get them.
 - Ask what the product is if anyone in the home is pregnant, has asthma, or is under two.
+- [Integrated pest management for property owners and managers](ownerGuidance)
 
 **Step 2 — Title:**
 
@@ -6972,10 +6926,15 @@ Do not clean the treated surfaces until your operator says it is safe — cleani
 - Keep washed items sealed until you are told otherwise.
 - Report what you still see. A second visit is normal for some pests.
 - [Report cockroaches or other insects](insectsReport)
+- [Correct a violation and close your case](stepCorrectViolation)
+- [Tenant rights when reporting housing conditions](tenantRights)
 
 **Links in this text — recreate each with the Link tool, do not paste them:**
 
+- "Integrated pest management for property owners and managers" → shape 5 — rich text Link tool → Internal link → "Integrated pest management for property owners and managers"
 - "Report cockroaches or other insects" → shape 5 — rich text Link tool → Internal link → "Report cockroaches or other insects"
+- "Correct a violation and close your case" → shape 5 — rich text Link tool → Internal link → "Correct a violation and close your case"
+- "Tenant rights when reporting housing conditions" → shape 5 — rich text Link tool → Internal link → "Tenant rights when reporting housing conditions"
 
 ### Topics — \`topics\` [TYPE] — page not approved
 
@@ -7002,13 +6961,6 @@ Prepare your unit for pest treatment | SF.gov
 **Meta description (\`search_description\`):**
 
 What to move, wash, and bag before an exterminator treats a unit for bed bugs or cockroaches.
-
-## Unmapped — no documented Karl destination
-
-Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
-
-- \`audience\` — The page carries \`audience\`, and the panel SF.gov puts it in is not on this type. Step by step has no \`things_to_know\` panel — it is Transaction-only — but it does have **Intro**, a free-text slot before the body, which is where the line belongs on this type. Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list.
-- \`sections.2.cards\` — \`cards\` on this section reached no panel in the Step by step inventory.
 "
 `;
 
@@ -7035,9 +6987,11 @@ What tenants need to do after a Notice of Violation
 
 Learn your part when corrective actions are listed for your unit or building.
 
-### Primary agency — \`primary_agency\` [FLAG] — page not approved
+### Primary agency — \`primary_agency\` [CHOOSE] — page not approved
 
-_U6 — supply the parent Agency page by hand; the mockup has no field for it._
+_U6 — supply the parent Agency page by hand. Where the mockup names the agency it is text, not a page reference, and Karl requires a page: for HHVC pages that is sf.gov/departments--healthy-housing-and-vector-control._
+
+1. Choose page: "Healthy Housing and Vector Control"
 
 ### Information section — \`information_section\` [TYPE] — page not approved
 
@@ -7127,12 +7081,6 @@ What tenants need to do after a Notice of Violation | SF.gov
 **Meta description (\`search_description\`):**
 
 Learn what to do as a tenant after a Healthy Housing and Vector Control Notice of Violation.
-
-## Unmapped — no documented Karl destination
-
-Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
-
-- \`primaryAgency\` — The page carries \`primaryAgency\`, and no Information panel documented in the field map accepts it.
 "
 `;
 
@@ -7161,7 +7109,7 @@ Learn about tenant protections and where to get help if you are worried about re
 
 ### Primary agency — \`primary_agency\` [FLAG] — page not approved
 
-_U6 — supply the parent Agency page by hand; the mockup has no field for it._
+_U6 — supply the parent Agency page by hand. Where the mockup names the agency it is text, not a page reference, and Karl requires a page: for HHVC pages that is sf.gov/departments--healthy-housing-and-vector-control._
 
 ### Information section — \`information_section\` [TYPE] — page not approved
 
@@ -7319,7 +7267,7 @@ Healthy Housing, Building Inspection, the Rent Board, or 311 — find the right 
 
 ### Primary agency — \`primary_agency\` [FLAG] — page not approved
 
-_U6 — supply the parent Agency page by hand; the mockup has no field for it._
+_U6 — supply the parent Agency page by hand. Where the mockup names the agency it is text, not a page reference, and Karl requires a page: for HHVC pages that is sf.gov/departments--healthy-housing-and-vector-control._
 
 ### Information section — \`information_section\` [TYPE] — page not approved
 
@@ -7444,6 +7392,14 @@ _A page chooser restricted to Agency pages. These entries name real sf.gov depar
 
 _topicTag is unmapped metadata — the stored values are Agency labels, not Topic chooser references. Do not paste one into this chooser._
 
+### Related — \`related\` [CHOOSE] — page not approved
+
+_This block publishes the destination page’s title and a link, and NOTHING else. Choose the page and type no description._
+
+1. Choose page: "Report a pest problem, start to finish" (\`stepPestReport\` → /sf.gov/step-by-step/report-a-pest-problem)
+2. Choose page: "Health Code Article 11 in plain language" (\`article11Guide\` → /sf.gov/report/health-code-article-11-plain-language)
+3. Choose page: "Healthy housing conditions" (\`healthyHousingTopic\` → /sf.gov/topics--healthy-housing-conditions)
+
 ### Promote → For search engines — \`promote\` [TYPE] — page not approved
 
 _The slug is REQUIRED and lives on the Promote tab, so a page cannot be saved from the Content tab alone._
@@ -7459,11 +7415,5 @@ Who to call about a housing problem | SF.gov
 **Meta description (\`search_description\`):**
 
 Healthy Housing, Building Inspection, the Rent Board, or 311 — find the right office first.
-
-## Unmapped — no documented Karl destination
-
-Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
-
-- \`sections.5.cards\` — \`cards\` on this section reached no panel in the Information inventory.
 "
 `;

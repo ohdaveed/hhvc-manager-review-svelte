@@ -4,9 +4,6 @@ export const ownerHub = {
 	title: 'Property owner responsibilities',
 	summary:
 		'What owners and managers must do under Health Code Article 11 for pests and housing health.',
-	audience: [
-		'This page is for property owners, managers, and building operators responsible for pest prevention and Article 11 compliance.'
-	],
 	reading: 'Grade 7',
 	editorNote:
 		'Resource collection hub for property owners. Reuses existing Transaction and Information pages instead of duplicating content.',
