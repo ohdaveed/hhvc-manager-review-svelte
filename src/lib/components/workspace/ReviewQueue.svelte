@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { page as routePage } from '$app/stores';
 	import { resolve } from '$app/paths';
-	import { pagesStore, editsStore, QUEUE_STATUS_ORDER } from '$lib/stores/reviewState';
+	import { pagesStore, editsStore } from '$lib/stores/reviewState';
+	import { groupPaths } from '$lib/landing/groups';
 	import { review } from '$lib/review/review.svelte';
 	import { pageStore } from '$lib/stores/pageData.svelte';
 	import { routePathFor } from '$lib/corpus/draftPath';
@@ -43,17 +44,6 @@
 	const titleFor = (path: string) => pageTitleFor(path, pageStore.pages, $draftsStore);
 	const currentPath = $derived(routePathFor($routePage.params));
 
-	// The store automatically updates via Supabase realtime subscriptions.
-	//
-	// Presentation only, and not held here: the words and tones come from
-	// `STATUS_LABELS`, shared with the decision panel and the landing page. The
-	// ORDER comes from `QUEUE_STATUS_ORDER`, so this and anything that needs to
-	// name the queue's first page cannot disagree about which row that is.
-	const groups = QUEUE_STATUS_ORDER.map((status) => ({
-		status,
-		heading: STATUS_LABELS[status].label
-	}));
-
 	// The review squared with the corpus (`review`, from `$lib/review/review.svelte`):
 	// retired pages' rows are left out, corpus pages with no row are listed and
 	// counted, and the landing page reads the same numbers. `loaded` is about the
@@ -90,13 +80,14 @@
 				)
 	);
 
-	// The row's second line, as text. There used to be a coloured dot here, but
-	// inside a status group it only repeated the group's colour and said nothing
-	// about the row. Notes and edits are the per-row facts worth a glance, and
-	// as words they need no colour key (WCAG 1.4.1).
+	// The row's second line, as text. The queue is grouped by theme, the same
+	// headings as the landing page, so the decision is the first thing said here
+	// -- as a word, which needs no colour key (WCAG 1.4.1). Then the per-row
+	// facts worth a glance: type, edits, notes.
 	const metaFor = (p: (typeof $pagesStore)[number]) => {
 		const edits = editCount(p.id);
 		return [
+			STATUS_LABELS[p.status]?.label,
 			corpusFor(p.path)?.type,
 			edits > 0 && `${edits} edited ${edits === 1 ? 'field' : 'fields'}`,
 			p.manager_notes?.trim() && 'has notes'
@@ -106,6 +97,24 @@
 	};
 
 	const counts = $derived(review.counts);
+
+	// Under the landing page's headings and in its order (`groupPaths`), so the
+	// two lists of the same pages read the same way. Signed out there are no
+	// rows, so the corpus is grouped instead, with the page type as the meta.
+	type Row = { path: string; title: string; meta: string | undefined };
+	const rowsByPath = $derived(new Map(shown.map((p) => [p.path, p])));
+	const themed = $derived.by(() => {
+		const rowOf = (path: string): Row => {
+			const r = rowsByPath.get(path);
+			return r
+				? { path, title: titleFor(path), meta: metaFor(r) }
+				: { path, title: titleFor(path), meta: corpusFor(path)?.type };
+		};
+		const paths = browsing ? corpusShown.map((p) => p.id) : shown.map((p) => p.path);
+		return groupPaths(paths)
+			.filter((section) => section.paths.length > 0)
+			.map((section) => ({ ...section, rows: section.paths.map(rowOf) }));
+	});
 
 	// Keep the current row on screen. Without this, landing on a page near the
 	// bottom of the queue left the sidebar showing 30 other rows and not the one
@@ -233,36 +242,27 @@
 		{/if}
 	{/if}
 
-	{#if browsing}
-		<ul class="space-y-0.5">
-			{#each corpusShown as p (p.id)}
-				<li>{@render queueLink(p.id, p.title, p.type)}</li>
-			{/each}
-		</ul>
-	{/if}
-
-	{#each groups as group (group.status)}
-		{@const pages = shown.filter((p) => p.status === group.status)}
-		{#if pages.length > 0}
-			<section>
-				<h3 class="mb-2 flex items-center justify-between">
-					<span class="text-[0.6875rem] font-bold tracking-[0.08em] text-sfds-slate-l3 uppercase">
-						{group.heading}
-					</span>
-					<span
-						class="inline-flex h-[1.125rem] min-w-[1.125rem] items-center justify-center rounded-full bg-sfds-grey-l2/70 px-1.5 text-[0.6875rem] font-bold text-sfds-black tabular-nums"
-					>
-						{pages.length}
-					</span>
-				</h3>
-				<ul class="space-y-0.5">
-					{#each pages as p (p.path)}
-						{@const meta = metaFor(p)}
-						<li>{@render queueLink(p.path, titleFor(p.path), meta)}</li>
-					{/each}
-				</ul>
-			</section>
-		{/if}
+	{#each themed as section (section.id)}
+		<section aria-labelledby={`queue-group-${section.id}`}>
+			<h3 class="mb-2 flex items-center justify-between">
+				<span
+					id={`queue-group-${section.id}`}
+					class="text-[0.6875rem] font-bold tracking-[0.08em] text-sfds-slate-l3 uppercase"
+				>
+					{section.heading}
+				</span>
+				<span
+					class="inline-flex h-[1.125rem] min-w-[1.125rem] items-center justify-center rounded-full bg-sfds-grey-l2/70 px-1.5 text-[0.6875rem] font-bold text-sfds-black tabular-nums"
+				>
+					{section.rows.length}
+				</span>
+			</h3>
+			<ul class="space-y-0.5">
+				{#each section.rows as row (row.path)}
+					<li>{@render queueLink(row.path, row.title, row.meta)}</li>
+				{/each}
+			</ul>
+		</section>
 	{/each}
 
 	<!-- Corpus pages with no review row. They open like any other page, but the
