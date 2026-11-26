@@ -46,8 +46,11 @@ import { spawnSync } from 'node:child_process';
  *
  * Lowered 46 -> 43 when completed plans and specs under `docs/` were deleted;
  * three of them were unformatted.
+ *
+ * Lowered 43 -> 42 when `skills update` rewrote skills-lock.json and the
+ * pre-commit formatter left it formatted.
  */
-const BASELINE = 43;
+const BASELINE = 42;
 
 const tracked = spawnSync('git', ['ls-files'], {
 	encoding: 'utf-8',

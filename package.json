@@ -82,5 +82,8 @@
 		"pg": "^8.23.0",
 		"zod": "3.24.1"
 	},
+	"trustedDependencies": [
+		"esbuild"
+	],
 	"type": "module"
 }
