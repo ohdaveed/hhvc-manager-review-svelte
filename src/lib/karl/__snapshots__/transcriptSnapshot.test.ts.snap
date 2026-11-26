@@ -187,9 +187,9 @@ Tenant rights and retaliation
 
 **Text:**
 
-Tenants have rights when they ask for repairs or report housing conditions to the City. We never share your name or contact information.
+You can report a condition in a building you rent. We never share your name or contact information.
 
-A property owner or manager cannot retaliate because a tenant reports a housing condition to 311 or a health department.
+If you are worried your landlord will retaliate, the tenant rights page explains what retaliation can look like and where to get help.
 
 - [Tenant rights and reporting](tenantRights)
 
@@ -4322,10 +4322,11 @@ _This block publishes the destination page’s title and a link, and NOTHING els
 
 Owner obligations
 
-1. Choose page: "Pay your annual Healthy Housing fee for apartment buildings" (\`payFee\` → /sf.gov/pay-your-annual-healthy-housing-fee-apartment-buildings)
-2. Choose page: "Correct a violation and close your case" (\`stepCorrectViolation\` → /sf.gov/step-by-step/correct-a-violation-and-close-your-case)
-3. Choose page: "Integrated pest management for property owners and managers" (\`ownerGuidance\` → /sf.gov/information/integrated-pest-management-for-property-owners-and-managers)
-4. Choose page: "Find complaints and inspection records" (\`findRecords\` → /sf.gov/find-complaints-and-inspection-records)
+1. Choose page: "Article 11 compliance for property owners" (\`article11Compliance\` → /sf.gov/information--article-11-compliance-for-property-owners)
+2. Choose page: "Pay your annual Healthy Housing fee for apartment buildings" (\`payFee\` → /sf.gov/pay-your-annual-healthy-housing-fee-apartment-buildings)
+3. Choose page: "Correct a violation and close your case" (\`stepCorrectViolation\` → /sf.gov/step-by-step/correct-a-violation-and-close-your-case)
+4. Choose page: "Integrated pest management for property owners and managers" (\`ownerGuidance\` → /sf.gov/information/integrated-pest-management-for-property-owners-and-managers)
+5. Choose page: "Find complaints and inspection records" (\`findRecords\` → /sf.gov/find-complaints-and-inspection-records)
 
 ### Body — \`body\` [CHOOSE] — page not approved
 
@@ -4336,8 +4337,7 @@ _This block publishes the destination page’s title and a link, and NOTHING els
 Related pages
 
 1. Choose page: "Healthy Housing and Vector Control" (\`pestsTopic\` → /sf.gov/departments--healthy-housing-and-vector-control)
-2. Choose page: "Find complaints and inspection records" (\`findRecords\` → /sf.gov/find-complaints-and-inspection-records)
-3. Choose page: "What happens after you report a housing or pest problem" (\`afterReport\` → /sf.gov/information/what-happens-after-you-report-housing-pest-problem)
+2. Choose page: "What happens after you report a housing or pest problem" (\`afterReport\` → /sf.gov/information/what-happens-after-you-report-housing-pest-problem)
 
 ### Topics — \`topics\` [TYPE] — page not approved
 
@@ -7322,6 +7322,8 @@ You can ask the City for help
 **Text:**
 
 Tenants have rights when they ask for repairs or report housing conditions to the City.
+
+A property owner or manager cannot retaliate because you report a housing condition to 311 or a health department.
 
 **Callout (rich text, no title field):**
 
