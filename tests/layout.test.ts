@@ -6,10 +6,10 @@ import { render } from '@testing-library/svelte';
 import Layout from '../src/routes/+layout.svelte';
 
 describe('Root Layout', () => {
-    it('should render a main container for the application', () => {
-        const { container } = render(Layout);
-        const main = container.querySelector('main');
-        expect(main).toBeTruthy();
-        expect(main?.classList.contains('min-h-screen')).toBe(true);
-    });
+	it('wraps the app without claiming the main landmark', () => {
+		const { container } = render(Layout);
+		// Each route owns its <main>; one here nested a second inside every page.
+		expect(container.querySelector('main')).toBeNull();
+		expect(container.querySelector('.min-h-screen')).toBeTruthy();
+	});
 });

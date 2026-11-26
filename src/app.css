@@ -234,6 +234,19 @@ body {
 	box-shadow: inset 0 0 0 2px var(--color-sfds-black);
 }
 
+/* Forced colors (Windows High Contrast) drops box-shadow entirely. Every
+   other control keeps a real outline from the `:focus-visible` rule above,
+   which forced colors repaints rather than removes -- but that rule excludes
+   `.edit-target`, whose only indicator is the inset shadow. So in that mode,
+   and only that mode, the edit targets get an outline too. Inset (negative
+   offset) for the same reason the shadow is: no overlap with a neighbour. */
+@media (forced-colors: active) {
+	.edit-target:focus-visible {
+		outline: 2px solid Highlight;
+		outline-offset: -2px;
+	}
+}
+
 /* ---------------------------------------------------------------------------
    On the mockup, every edit-target indicator is drawn OUTSIDE the text.
 

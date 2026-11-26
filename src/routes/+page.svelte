@@ -138,7 +138,7 @@
 	});
 </script>
 
-<div class="mx-auto max-w-6xl space-y-8 px-4 py-8">
+<main class="mx-auto max-w-6xl space-y-8 px-4 py-8">
 	<header class="space-y-4">
 		<h1 class="text-2xl font-bold text-slate-900">HHVC mockup review</h1>
 		{#if card === 'progress'}
@@ -184,4 +184,4 @@
 	</div>
 
 	<AllPagesList bind:query bind:status />
-</div>
+</main>

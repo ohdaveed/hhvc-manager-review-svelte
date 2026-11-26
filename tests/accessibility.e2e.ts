@@ -1,4 +1,5 @@
 import AxeBuilder from '@axe-core/playwright';
+import type { Page } from '@playwright/test';
 import { expect, test } from './fixtures';
 
 /**
@@ -15,6 +16,18 @@ import { expect, test } from './fixtures';
  * is editing.
  */
 const RULES = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];
+
+/**
+ * Axe cannot see a nested `<main>`. The root layout wrapped every page in one,
+ * so each route's own `<main>` sat inside it, and even with axe's landmark
+ * rules switched on (`landmark-no-duplicate-main`, `-main-is-top-level`) axe
+ * evaluated only the outer element and passed -- measured 2026-11-26. HTML
+ * allows one visible `<main>` per document, so this counts them directly.
+ */
+async function scan(page: Page) {
+	await expect(page.locator('main:visible'), 'exactly one visible <main>').toHaveCount(1);
+	return new AxeBuilder({ page }).withTags(RULES).analyze();
+}
 
 // Signed out, which is what an unauthenticated Playwright run sees. The mockup
 // content is static, so the page renders fully either way.
@@ -40,7 +53,7 @@ for (const path of PAGES) {
 		await page.goto(path);
 		await page.waitForLoadState('networkidle');
 
-		const { violations } = await new AxeBuilder({ page }).withTags(RULES).analyze();
+		const { violations } = await scan(page);
 
 		// Name the rules in the failure: "3 violations" sends the next reader to
 		// the HTML report, whereas the rule ids usually identify the fix.
@@ -72,7 +85,7 @@ for (const view of [
 		await page.getByRole('button', { name: view.open }).click();
 		await page.waitForSelector(view.ready);
 
-		const { violations } = await new AxeBuilder({ page }).withTags(RULES).analyze();
+		const { violations } = await scan(page);
 
 		expect(
 			violations,
