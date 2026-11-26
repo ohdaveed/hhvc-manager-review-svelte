@@ -54,8 +54,13 @@
 			"site-title-lg": { "displayName": "Site section title", "purpose": "Mockup section headings (mobile step; desktop step is a scoped media block)." },
 			"site-body": { "displayName": "Site body", "purpose": "Mockup paragraphs and bullets." },
 			"chrome-title": { "displayName": "Chrome title", "purpose": "Panel and landing headings via font-display." },
-			"chrome-body": { "displayName": "Chrome body", "purpose": "Panel copy, queue rows, form text." },
+			"chrome-body": { "displayName": "Chrome body", "purpose": "Panel copy and form text." },
 			"chrome-label": { "displayName": "Chrome label", "purpose": "Field labels, status pills, toolbar labels." },
+			"chrome-row-lg": { "displayName": "Chrome row lg", "purpose": "Landing list page titles (PageRow comfortable), landing filter input, walkthrough / site map / blueprint titles." },
+			"chrome-row": { "displayName": "Chrome row", "purpose": "Queue row titles (PageRow compact), queue filter input, progress line, comfortable row second line." },
+			"chrome-caption": { "displayName": "Chrome caption", "purpose": "Queue status group headings and counts (700, uppercase, 0.08em), compact row second line." },
+			"chrome-micro": { "displayName": "Chrome micro", "purpose": "Count badges and analysis field keys." },
+			"chrome-code": { "displayName": "Chrome code", "purpose": "Karl field names, paths, page keys, link targets and slugs. Code and data only, never decorative." },
 			"karl-chip": { "displayName": "Karl chip", "purpose": "Placement annotations in the page margin." }
 		},
 		"shadows": [
@@ -123,9 +128,9 @@
 		{
 			"name": "Queue Row",
 			"kind": "nav",
-			"description": "Review queue entry: page title, slate secondary line, status dot; periwinkle when current.",
-			"html": "<a class=\"ds-row\" href=\"#\"><span class=\"ds-row-title\">Report a rodent problem</span><span class=\"ds-row-meta\">sf.gov/report-rodents</span></a><a class=\"ds-row ds-current\" href=\"#\" aria-current=\"page\"><span class=\"ds-row-title\">Lead paint inspections</span><span class=\"ds-row-meta\">sf.gov/lead-inspections</span></a>",
-			"css": ".ds-row { display: grid; gap: 2px; padding: 8px 12px; border-left: 2px solid transparent; border-bottom: 1px solid #e2e2e2; background: #fff; text-decoration: none; transition: background-color 150ms; } .ds-row:hover { background: rgb(237 244 247 / 0.6); } .ds-row:focus-visible { outline: none; box-shadow: inset 0 0 0 2px #0c1464; } .ds-row-title { font: 600 14px/20px 'Roboto Flex Variable', sans-serif; color: #212123; } .ds-row-meta { font: 400 12px/16px 'Roboto Flex Variable', sans-serif; color: #1d4d70; } .ds-current { border-left-color: #495ed4; background: #edf4f7; }"
+			"description": "Review queue entry, listed under its status group's heading: page title, then a slate second line naming type, edits and notes in words (no status dot; the group heading carries the status); periwinkle and semibold when current.",
+			"html": "<a class=\"ds-row\" href=\"#\"><span class=\"ds-row-title\">Report a rodent problem</span><span class=\"ds-row-meta\">Transaction · 2 edited fields · has notes</span></a><a class=\"ds-row ds-current\" href=\"#\" aria-current=\"page\"><span class=\"ds-row-title\">Lead paint inspections</span><span class=\"ds-row-meta\">Information</span></a>",
+			"css": ".ds-row { display: grid; gap: 2px; padding: 8px 12px; border-left: 2px solid transparent; border-bottom: 1px solid #e2e2e2; background: #fff; text-decoration: none; transition: background-color 150ms; } .ds-row:hover { background: rgb(237 244 247 / 0.6); } .ds-row:focus-visible { outline: none; box-shadow: inset 0 0 0 2px #0c1464; } .ds-row-title { font: 400 0.8125rem/1.125rem 'Roboto Flex Variable', sans-serif; color: #212123; } .ds-row-meta { font: 400 0.6875rem/0.875rem 'Roboto Flex Variable', sans-serif; color: #1d4d70; } .ds-current { border-left-color: #495ed4; background: #edf4f7; } .ds-current .ds-row-title { font-weight: 600; }"
 		}
 	],
 	"narrative": {
