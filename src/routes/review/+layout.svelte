@@ -17,6 +17,7 @@
 	import {
 		editsLoaded,
 		editsStore,
+		isOwnEdit,
 		loadReview,
 		pagesStore,
 		queueOrder
@@ -185,7 +186,7 @@
 				livePages: live,
 				edits,
 				editsLoaded: loaded,
-				userId: sessionStore.userId,
+				isOwnEdit,
 				changes: pageStore
 			})
 		);
