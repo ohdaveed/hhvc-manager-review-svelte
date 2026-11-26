@@ -127,7 +127,10 @@
 			Rebuild {walkthrough.title} in Karl
 		</h2>
 		<p class="drawer-sub">
-			{copiedCount} of {walkthrough.copyableCount} fields copied
+			<!-- One unit with "Step N of M" above it: every step can be marked
+			     copied, so counting them over the steps with values could read
+			     "13 of 8". Those steps are named as their own clause instead. -->
+			{copiedCount} of {steps.length} steps copied · {walkthrough.copyableCount} have values to paste
 		</p>
 	</div>
 

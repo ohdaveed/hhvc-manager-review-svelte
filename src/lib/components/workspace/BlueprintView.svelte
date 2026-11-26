@@ -34,6 +34,7 @@
 	} = $props();
 
 	const slots = $derived(placements.panels.filter((p) => !p.inert));
+	const filledCount = $derived(slots.filter((s) => s.filled).length);
 	const MAX_VALUES = 3;
 	const statusWord: Record<string, string> = {
 		placed: 'placed',
@@ -47,13 +48,19 @@
 	<nav class="bp-header" aria-label="Blueprint">
 		<div class="bp-head-left">
 			<h2 class="bp-title">Blueprint</h2>
-			<p class="bp-meta">{title} · {placements.type} form, in Karl’s order</p>
+			<!-- The cards are Karl panels; the summary below counts the mockup's
+			     sections. Naming both units keeps "4 sections" over 14 cards from
+			     reading as a miscount. -->
+			<p class="bp-meta">
+				{title} · {placements.type} form, {slots.length}
+				{slots.length === 1 ? 'panel' : 'panels'} in Karl’s order, {filledCount} with copy
+			</p>
 		</div>
 		<button type="button" class="bp-exit" onclick={onExit}>Back to review</button>
 	</nav>
 
 	<div class="bp-body">
-		<p class="bp-summary">{outlineSummary(placements)}</p>
+		<p class="bp-summary"><strong>On the mockup:</strong> {outlineSummary(placements)}</p>
 
 		{#if placements.url}
 			<p class="bp-url">

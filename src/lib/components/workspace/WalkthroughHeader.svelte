@@ -75,7 +75,10 @@
 		<span class="wt-page">{walkthrough.title} · {walkthrough.type}</span>
 	</div>
 	<div class="wt-right">
-		<span class="wt-count">{copied} of {walkthrough.copyableCount} fields copied</span>
+		<!-- Steps, not fields: `copied` counts every step marked copied, and a
+		     chooser or flagged step can be marked too, so over `copyableCount`
+		     it could read "13 of 8". The drawer's "Step N of M" is the same unit. -->
+		<span class="wt-count">{copied} of {walkthrough.steps.length} steps copied</span>
 		<!-- api.sf.gov is the real Karl admin, not a route in this app. -->
 		<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
 		<a class="wt-form" href={walkthrough.formUrl} target="_blank" rel="noreferrer">
