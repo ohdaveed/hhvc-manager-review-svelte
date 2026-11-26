@@ -2,6 +2,7 @@
 	import EditTarget from '../EditTarget.svelte';
 	import KarlOrphanNotice from '../KarlOrphanNotice.svelte';
 	import { pageStore } from '$lib/stores/pageData.svelte';
+	import { pagesByKey } from '$lib/data';
 
 	/**
 	 * `section.cards`: a grid of link-style items. 54 sections carry this key
@@ -22,6 +23,17 @@
 	// card sets this renders are not checked. The section is found by the same
 	// key `Section.svelte` derives, since it does not pass `component` in.
 	const activePage = $derived(pageStore.pages.find((p) => p.id === pageStore.activePageId));
+	// Topic pages draw cards as live sf.gov's link rows -- blue title, a
+	// description, an arrow, a hairline rule -- rather than tiles (measured on
+	// `topics--housing`, 2026-11-26). Live's description is the linked page's
+	// own summary, so a card with no `text` shows its target's summary,
+	// read-only: it belongs to that page, and is edited there.
+	const linkRows = $derived(activePage?.type === 'Topic');
+	/** @param {string | undefined} target */
+	const targetSummary = (target) =>
+		target
+			? /** @type {Record<string, { summary?: string }>} */ (pagesByKey)[target]?.summary
+			: undefined;
 	const isResources = $derived(
 		activePage?.sections?.find(
 			/** @param {{ fieldKey?: string }} s @param {number} i */
@@ -53,6 +65,17 @@
 					name={`${label} Card [${i + 1}] Text`}
 					value={card.text}
 				/>
+			{:else if linkRows && targetSummary(card.target)}
+				<p class="cards-block-desc">{targetSummary(card.target)}</p>
+			{/if}
+			{#if linkRows}
+				<span class="cards-block-arrow" aria-hidden="true">
+					<svg viewBox="0 0 24 24" fill="currentColor" width="20" height="24">
+						<path
+							d="M22.4142 12L13.7071 3.29285L12.2929 4.70706L18.5858 11L2 11V13L18.5858 13L12.2929 19.2928L13.7071 20.7071L22.4142 12Z"
+						/>
+					</svg>
+				</span>
 			{/if}
 			<!-- sf.gov never prints a card's URL. It is copy, so it appears while
 			     the card is being edited and stays out of the page otherwise. -->

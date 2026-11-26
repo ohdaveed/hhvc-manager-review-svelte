@@ -25,6 +25,11 @@ export const ownerHub = {
 			kind: 'body',
 			cards: [
 				{
+					title: 'Article 11 compliance for property owners',
+					target: 'article11Compliance',
+					karl: "SF.gov page link block, links to an existing Information page. Added 2026-11-26: the compliance page linked to this hub but the hub did not link back, though it is the one page that lists the obligations this section is named for. This block is just an unrestricted page reference — it has no custom title/text field, so this card's `text` description has no home in Karl; flag for Digital Services if the description must survive."
+				},
+				{
 					title: 'Pay your annual Healthy Housing fee for apartment buildings',
 					target: 'payFee',
 					karl: "SF.gov page link block, links to an existing Transaction page. This block is just an unrestricted page reference — it has no custom title/text field, so this card's `text` description has no home in Karl; flag for Digital Services if the description must survive."
@@ -61,17 +66,12 @@ export const ownerHub = {
 		},
 		{
 			heading: 'Related pages',
-			karl: 'Resource Collection has no dedicated Related field (confirmed live) — maps to a second Body → Resources → "Resource section" item (Title = "Related pages"), using the same SF.gov page link blocks as the section above rather than a separate right-panel field.',
+			karl: 'Resource Collection has no dedicated Related field (confirmed live) — maps to a second Body → Resources → "Resource section" item (Title = "Related pages"), using the same SF.gov page link blocks as the section above rather than a separate right-panel field. A Find complaints and inspection records card was dropped here on 2026-11-26: the same card is already under Owner obligations.',
 			kind: 'placement',
 			cards: [
 				{
 					title: 'Healthy Housing and Vector Control',
 					target: 'pestsTopic',
-					karl: 'SF.gov page link block within the "Related pages" Resource section (Body → Resources). No custom title/text field, so this card\'s `text` description has no home in Karl.'
-				},
-				{
-					title: 'Find complaints and inspection records',
-					target: 'findRecords',
 					karl: 'SF.gov page link block within the "Related pages" Resource section (Body → Resources). No custom title/text field, so this card\'s `text` description has no home in Karl.'
 				},
 				{

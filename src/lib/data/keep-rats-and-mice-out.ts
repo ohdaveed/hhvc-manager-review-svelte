@@ -52,8 +52,9 @@ export const rodentsPrevention = {
 			]
 		},
 		{
-			heading: 'Cut off their food and water',
-			karl: 'Maps to a third Title and text block: Title = this heading, Text = the paragraph plus the bulleted list below. The fridge-storage bullet is an HHVC decision 2026-11-26.',
+			heading: 'Store food and garbage safely',
+			fieldKey: 'cut-off-their-food-and-water',
+			karl: "Maps to a third Title and text block: Title = this heading, Text = the paragraph plus the bulleted list below. The fridge-storage bullet is an HHVC decision 2026-11-26. Split on 2026-11-26 from one 7-item list: SF.gov keeps a bulleted list to 3 to 5 items (A-to-Z, Bullets). Split into storing food (this section) and cleaning up food and water. The fieldKey keeps this section's original ids.",
 			kind: 'body',
 			paragraphs: [
 				'Rats and mice stay where they can find food. Taking away food is one of the most important things you can do.'
@@ -61,9 +62,16 @@ export const rodentsPrevention = {
 			bullets: [
 				'**Store food in glass, metal, or hard plastic containers** with tight lids.',
 				'**Keep flour, rice, and nuts in the fridge** if you store them for a long time.',
-				'**Clean up crumbs and spills** right away, including under the stove and fridge.',
 				'**Do not leave pet food out overnight.** Feed pets only what they will eat at one time. Store large bags of pet food in a metal garbage can with a lid.',
-				'**Put garbage in bins with tight lids**, and take it out often.',
+				'**Put garbage in bins with tight lids**, and take it out often.'
+			]
+		},
+		{
+			heading: 'Clean up food and water',
+			karl: 'Maps to a Title and text block: Title = this heading, Text = the bulleted list below. Split on 2026-11-26 from one 7-item list: SF.gov keeps a bulleted list to 3 to 5 items (A-to-Z, Bullets).',
+			kind: 'body',
+			bullets: [
+				'**Clean up crumbs and spills** right away, including under the stove and fridge.',
 				'**Do not feed birds, pigeons, or other wildlife.** The food also feeds rats.',
 				'**Fix dripping faucets**, or ask your landlord to.'
 			]
@@ -105,23 +113,30 @@ export const rodentsPrevention = {
 			}
 		},
 		{
-			heading: 'Trap and clean up safely',
-			karl: 'Maps to a sixth Title and text block: Title = this heading, Text = the bulleted list below. Wording matches rodentsReport\'s "While you wait" tips. Pre-baiting and the no-glue-trap rule are from SF Environment\'s "Managing pest problems without toxics"; the daily check and one-week stopping rule, rice-grain droppings, and metal pet-food storage are from the SF Environment / Pestec, Guidelines for IPM in San Francisco Multi-Family Housing Communities (2013; local copy docs/source/hhvc-policy/2026-07-07-pestec-ipm-multifamily-housing.pdf), Appendix F.',
+			heading: 'Trap safely',
+			fieldKey: 'trap-and-clean-up-safely',
+			karl: 'Maps to a sixth Title and text block: Title = this heading, Text = the bulleted list below. Wording matches rodentsReport\'s "While you wait" tips. Pre-baiting and the no-glue-trap rule are from SF Environment\'s "Managing pest problems without toxics"; the daily check and one-week stopping rule, rice-grain droppings, and metal pet-food storage are from the SF Environment / Pestec, Guidelines for IPM in San Francisco Multi-Family Housing Communities (2013; local copy docs/source/hhvc-policy/2026-07-07-pestec-ipm-multifamily-housing.pdf), Appendix F. Split on 2026-11-26 from one 7-item list (SF.gov keeps a bulleted list to 3 to 5 items): the five trapping bullets stay here and the two clean-up bullets are a paragraph in "Clean up droppings safely". The fieldKey keeps this section\'s original ids.',
 			kind: 'body',
 			bullets: [
 				'**Use snap traps indoors.** Put them along walls and in corners, out of reach of children and pets.',
 				'**Leave traps unset for the first day.** Bait them but do not set them, so rats and mice get used to them. Then set them.',
 				'**Check traps every day.** Keep trapping until you catch nothing for a full week.',
 				'**Do not use glue traps.** They are inhumane.',
-				'**Do not use poison.** It can harm children, pets, and wildlife.',
-				'**Wear gloves and wet droppings down with disinfectant** before you wipe them up.',
-				'**Never dry-sweep or vacuum droppings.** That puts germs into the air you breathe.'
+				'**Do not use poison.** It can harm children, pets, and wildlife.'
 			],
 			callout: {
 				karl: 'Maps to its own Callout stream item (a second Callout sibling). Single rich text field only, no separate title field — this callout has none, so no mismatch.',
 				variant: 'warning',
 				text: 'Traps help, but they do not fix the problem. Rats and mice will keep coming back until food, hiding places, and holes are taken care of.'
 			}
+		},
+		{
+			heading: 'Clean up droppings safely',
+			karl: 'Maps to a Title and text block: Title = this heading, Text = the paragraph below. The two clean-up bullets of "Trap safely" until 2026-11-26, word for word: a list of 2 is below SF.gov\'s 3.',
+			kind: 'body',
+			paragraphs: [
+				'Wear gloves and wet droppings down with disinfectant before you wipe them up. Never dry-sweep or vacuum droppings. That puts germs into the air you breathe.'
+			]
 		},
 		{
 			heading: 'Learn more about rats and mice',

@@ -59,23 +59,31 @@ export const afterReport = {
 		},
 		{
 			heading: 'Tenant rights and retaliation',
-			karl: 'Paragraphs map to a sixth Title and text block (Title = this heading, Text = the two paragraphs). Resolved schema gap: the verified Information form has no confirmed button/CTA block type (button converted to inline link) — folded into this block’s rich text (Internal link → tenantRights) — flag this gap for Digital Services rather than assuming a dedicated button block exists.',
+			karl: 'Paragraphs map to a sixth Title and text block (Title = this heading, Text = the two paragraphs). Resolved schema gap: the verified Information form has no confirmed button/CTA block type (button converted to inline link) — folded into this block’s rich text (Internal link → tenantRights) — flag this gap for Digital Services rather than assuming a dedicated button block exists. On 2026-11-26 the opening sentence it shared word for word with tenantRights, and the rule that an owner cannot retaliate, moved to tenantRights, which is where a worried tenant lands; this block keeps the confidentiality sentence, which is about the report, and points there.',
 			kind: 'body',
 			paragraphs: [
-				'Tenants have rights when they ask for repairs or report housing conditions to the City. We never share your name or contact information.',
-				'A property owner or manager cannot retaliate because a tenant reports a housing condition to 311 or a health department.'
+				'You can report a condition in a building you rent. We never share your name or contact information.',
+				'If you are worried your landlord will retaliate, the tenant rights page explains what retaliation can look like and where to get help.'
 			],
 			bullets: ['[Tenant rights and reporting](tenantRights)']
 		},
 		{
 			heading: 'If a problem is found',
-			karl: 'Maps to a seventh Title and text block: Title = this heading, Text = the paragraph plus the bulleted list below. Reinspection rate bullet ($256/hour inspector, $234/hour technician) verified against the SFDPH Environmental Health Branch Fee Schedule, "Rates effective 7/1/26-6/30/27" (docs/source/hhvc-policy/2026-07-06-dph-ehb-fee-schedule-fy26-27.md), the current fiscal year\'s certified schedule -- these are the correct current rates, not a fabricated NotebookLM figure (an earlier same-day FY25-26 export had mistakenly flagged them as unsourced before the FY26-27 schedule was obtained). Enforcement workflow updated from the Article 11 Interpretation Guide v1.0. FLAG: four bullets in this section carry Unverified pills per the 2026-07-06 source-of-truth audit — the sewage 48-72h window, the generic 30-day correction window, the "compounded monthly" interest wording, and the Director\'s Hearing / attorneys\'-fees enforcement chain all lack tier-1 support and need SME/legal confirmation before any of this section is entered into Karl.',
+			karl: 'Maps to a Title and text block: Title = this heading, Text = the two paragraphs below. The enforcement-chain line (Article 11 Interpretation Guide v1.0) was the first item of an 8-item list until 2026-11-26; it is a sentence, so it is a paragraph now, and the deadlines and consequences that followed it are the next two sections.',
 			kind: 'body',
 			paragraphs: [
-				'If an inspection identifies a violation, Environmental Health will issue a Notice of Violation (NOV) to the responsible parties. The NOV will outline required corrections and set a specific compliance deadline based on severity.'
+				'If an inspection identifies a violation, Environmental Health will issue a Notice of Violation (NOV) to the responsible parties. The NOV will outline required corrections and set a specific compliance deadline based on severity.',
+				"**Complaint → Inspection → Notice of Violation → Compliance period → Follow-up inspection → Reinspection fee → Citation or Director's Hearing if unresolved.**"
+			]
+		},
+		{
+			heading: 'Deadlines to fix a violation',
+			karl: 'Maps to a Title and text block: Title = this heading, Text = the paragraph plus the bulleted list below. Split on 2026-11-26 from one 8-item list: SF.gov keeps a bulleted list to 3 to 5 items (A-to-Z, Bullets). FLAG: the sewage 48-72h window, the generic 30-day correction window and the 2-working-day bed bug rule carry Unverified pills (source-of-truth audit 2026-07-06; Nov 24 decisions record) and need SME/legal confirmation before this is entered into Karl.',
+			kind: 'body',
+			paragraphs: [
+				'These timelines represent general enforcement standards. Actual correction deadlines are established on the official Notice of Violation based on the severity of the health hazard.'
 			],
 			bullets: [
-				"**Complaint → Inspection → Notice of Violation → Compliance period → Follow-up inspection → Reinspection fee → Citation or Director's Hearing if unresolved.**",
 				{
 					text: '**Sewage Backups (48 to 72 hours):** Raw sewage backups need immediate correction. The standard 30-day compliance window does not apply.',
 					unverified: true,
@@ -88,15 +96,22 @@ export const afterReport = {
 					unverifiedReason:
 						'No tier-1 doc establishes a generic 30-day correction window (source-of-truth audit 2026-07-06 — Medium-high); the only tier-1 "30 days" figures govern the fee late-payment deadline, a different thing. Traces to tier-3 material that itself cites SF Building Code, not Health Code Article 11. Confirm with HHVC/legal before publication.'
 				},
-				'These timelines represent general enforcement standards. Actual correction deadlines are established on the official Notice of Violation based on the severity of the health hazard.',
-				'**Extensions:** HHVC may offer an extension to the compliance deadline if the property owner contacts the inspector before the deadline.',
 				{
 					text: '**Bed Bug Treatment:** A property owner or manager must initiate professional treatment within 2 working days of confirmation.',
 					unverified: true,
 					unverifiedReason:
 						'Quoted from the draft pages (writing audit row 132) and listed under To confirm in the Nov 24 decisions record, as on Report bed bugs. Confirm the rule and its source with HHVC before publication.'
 				},
-				'If a property owner misses the deadline, HHVC may charge reinspection fees. These are $256/hour for inspectors and $234/hour for technicians. Invoices must be paid within 30 days. Unpaid bills get a $10 or $30 late penalty, and interest accrues at 1.5% per month.',
+				'**Extensions:** HHVC may offer an extension to the compliance deadline if the property owner contacts the inspector before the deadline.'
+			]
+		},
+		{
+			heading: 'If a deadline is missed',
+			karl: 'Maps to a Title and text block: Title = this heading, Text = the three paragraphs below. Split on 2026-11-26 from one 8-item list: SF.gov keeps a bulleted list to 3 to 5 items (A-to-Z, Bullets). Reinspection rates ($256/hour inspector, $234/hour technician) verified against the SFDPH Environmental Health Branch Fee Schedule, "Rates effective 7/1/26-6/30/27" (docs/source/hhvc-policy/2026-07-06-dph-ehb-fee-schedule-fy26-27.md). FLAG: the Director\'s Hearing / attorneys\' fees enforcement chain carries an Unverified pill (source-of-truth audit 2026-07-06) and needs legal confirmation.',
+			kind: 'body',
+			paragraphs: [
+				'If a property owner misses the deadline, HHVC may charge reinspection fees. These are $256/hour for inspectors and $234/hour for technicians.',
+				'Invoices must be paid within 30 days. Unpaid bills get a $10 or $30 late penalty, and interest accrues at 1.5% per month.',
 				{
 					text: "Persistent violations can result in citations, civil liabilities, or a Director's Hearing to recover attorneys' fees and administrative abatement costs.",
 					unverified: true,

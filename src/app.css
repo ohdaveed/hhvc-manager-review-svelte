@@ -1171,3 +1171,283 @@ body {
 		line-height: 32px;
 	}
 }
+
+/* Topic pages: cards as live sf.gov's link rows, and the Services band.
+   Measured 2026-11-26 on `topics--housing` at 390, 768 and 1074px.
+
+   - A row is a 2-column grid: the title (Roboto Flex 16/24 700, #1B519E,
+     underlined) and an 8px-lower description (16/24, ink) on the left, a
+     20x24 #1B519E arrow in a 26px box 12px to their right. A 1px #C9CACA
+     rule sits 24px below the copy and the next row 24px below the rule
+     (20px under the desktop step); the last row has neither.
+   - Rows run 730px wide on desktop -- wider than the 7/12 reading column --
+     and full width below.
+   - Services sections sit on a full-bleed #F7F8F8 band, padded 40/28/20px
+     top and bottom by step. Adjacent Services sections merge into one band,
+     as live's "Services" and "More services" share one. */
+#mockPage [data-page-type='Topic'] .cards-block {
+	display: block;
+	margin: 20px 0 0;
+	padding-left: 0;
+}
+#mockPage [data-page-type='Topic'] .cards-block-item {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) 26px;
+	column-gap: 12px;
+	margin: 0 0 20px;
+	padding: 0 0 20px;
+	border: 0;
+	border-bottom: 1px solid #c9caca;
+	border-radius: 0;
+}
+#mockPage [data-page-type='Topic'] .cards-block-item:last-child {
+	margin-bottom: 0;
+	padding-bottom: 0;
+	border-bottom: 0;
+}
+#mockPage [data-page-type='Topic'] .cards-block-item > * {
+	grid-column: 1;
+}
+#mockPage [data-page-type='Topic'] .cards-block-title {
+	margin: 0;
+	color: var(--color-site-action);
+	font-family: var(--site-font-body);
+	font-size: 16px;
+	font-weight: 700;
+	line-height: 24px;
+	text-decoration: underline;
+}
+#mockPage [data-page-type='Topic'] .cards-block-item p {
+	margin: 8px 0 0;
+}
+#mockPage [data-page-type='Topic'] .cards-block-arrow {
+	display: flex;
+	grid-row: 1;
+	grid-column: 2;
+	justify-content: flex-end;
+	color: var(--color-site-action);
+}
+#mockPage [data-page-type='Topic'] .page-section[data-component='services'] {
+	padding-block: 20px;
+	background: #f7f8f8;
+	box-shadow: 0 0 0 100vmax #f7f8f8;
+	clip-path: inset(0 -100vmax);
+}
+
+@container mockup (min-width: 600px) {
+	#mockPage [data-page-type='Topic'] .page-section[data-component='services'] {
+		padding-block: 28px;
+	}
+}
+
+@container mockup (min-width: 800px) {
+	#mockPage [data-page-type='Topic'] .cards-block {
+		width: min(730px, 100cqi);
+	}
+	#mockPage [data-page-type='Topic'] .cards-block-item {
+		margin-bottom: 24px;
+		padding-bottom: 24px;
+	}
+	#mockPage [data-page-type='Topic'] .cards-block-item:last-child {
+		margin-bottom: 0;
+		padding-bottom: 0;
+	}
+	#mockPage [data-page-type='Topic'] .page-section[data-component='services'] {
+		padding-block: 40px;
+	}
+}
+
+/* About us pages: live sf.gov's agency template, measured 2026-11-26 on
+   `departments--department-public-health--about` at 390, 768 and 1074px.
+
+   - Body copy spans the whole 1076px grid, not the 7/12 reading column.
+   - An orange (#B64A00 -- Figma's Accent/500) bar sits under the title
+     (46/54/58 x 4, 12/12/16px below it) and under every h2 (36/42/52 x 4,
+     8/8/12px below), with 28px from an h2's bar to its content.
+   - Sections are 40px apart on a phone and 60px from the tablet step.
+   - Link lists are bold blue links (Roboto Flex 20/28 700 on desktop,
+     16/24 below, #1B519E, underlined), 40px apart, with any description
+     12px under its link.
+   - "Back to main page" -- a 20px #386EBF arrow and #2A60AF link text --
+     sits 20/24px under the title's bar.
+
+   Live's hero photo and department logo are not drawn: both are assets the
+   department supplies, and the mockup has neither. */
+#mockPage [data-page-type='About us'] .page-content {
+	max-width: none;
+}
+#mockPage [data-page-type='About us'] .page-title::after,
+#mockPage [data-page-type='About us'] .page-section > h2::after {
+	content: '';
+	display: block;
+	height: 4px;
+	background: #b64a00;
+}
+#mockPage [data-page-type='About us'] .page-title::after {
+	width: 46px;
+	margin-top: 12px;
+}
+#mockPage [data-page-type='About us'] .page-section > h2 {
+	margin-bottom: 28px;
+}
+#mockPage [data-page-type='About us'] .page-section > h2::after {
+	width: 36px;
+	margin-top: 8px;
+}
+#mockPage [data-page-type='About us'] .page-section + .page-section {
+	margin-top: 40px;
+}
+#mockPage [data-page-type='About us'] .about-back {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	margin: 20px 0 40px;
+	color: var(--color-site-action-fill);
+}
+#mockPage [data-page-type='About us'] .about-back svg {
+	flex: none;
+	color: var(--color-site-focus);
+}
+#mockPage [data-page-type='About us'] .about-back span {
+	text-decoration: underline;
+	text-underline-offset: 3px;
+}
+#mockPage [data-page-type='About us'] .cards-block {
+	display: block;
+	margin: 0;
+	padding-left: 0;
+}
+#mockPage [data-page-type='About us'] .cards-block-item {
+	margin: 40px 0 0;
+	padding: 0;
+	border: 0;
+}
+#mockPage [data-page-type='About us'] .cards-block-item:first-child {
+	margin-top: 0;
+}
+#mockPage [data-page-type='About us'] .cards-block-title {
+	margin: 0;
+	color: var(--color-site-action);
+	font-family: var(--site-font-body);
+	font-size: 16px;
+	font-weight: 700;
+	line-height: 24px;
+	text-decoration: underline;
+}
+#mockPage [data-page-type='About us'] .cards-block-item p {
+	margin: 12px 0 0;
+}
+
+@container mockup (min-width: 600px) {
+	#mockPage [data-page-type='About us'] .page-title::after {
+		width: 54px;
+	}
+	#mockPage [data-page-type='About us'] .page-section > h2::after {
+		width: 42px;
+	}
+	#mockPage [data-page-type='About us'] .page-section + .page-section {
+		margin-top: 60px;
+	}
+}
+
+@container mockup (min-width: 800px) {
+	#mockPage [data-page-type='About us'] .page-title::after {
+		width: 58px;
+		margin-top: 16px;
+	}
+	#mockPage [data-page-type='About us'] .page-section > h2::after {
+		width: 52px;
+		margin-top: 12px;
+	}
+	#mockPage [data-page-type='About us'] .about-back {
+		margin-top: 24px;
+	}
+	#mockPage [data-page-type='About us'] .cards-block-title {
+		font-size: 20px;
+		line-height: 28px;
+	}
+}
+
+/* About us hero: labelled placeholders for the banner photo and department
+   logo, in live's geometry. Phone: a 100px full-bleed band, the white card
+   overlapping its last 12px, the 88x37 logo above the title. Tablet: 200px,
+   60px overlap, a 178x75 logo. Desktop: 400px, the card on the content grid
+   200px down it with 40px padding and the 180x75 logo at its right. */
+#mockPage [data-page-type='About us'] .about-hero {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100px;
+	margin-inline: -20px;
+	background: var(--color-site-border-subtle);
+	color: var(--color-site-ink-secondary);
+	font-size: 14px;
+	line-height: 20px;
+}
+#mockPage [data-page-type='About us'] .about-card {
+	position: relative;
+	margin: -12px -20px 0;
+	padding: 20px 20px 0;
+	background: var(--color-site-surface);
+}
+#mockPage [data-page-type='About us'] .about-logo {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 88px;
+	height: 37px;
+	margin-bottom: 20px;
+	border: 1px dashed var(--color-site-meta-icon);
+	color: var(--color-site-ink-secondary);
+	font-size: 10px;
+	line-height: 12px;
+	text-align: center;
+}
+#mockPage [data-page-type='About us'] .about-card .about-back {
+	margin-bottom: 0;
+}
+
+@container mockup (min-width: 600px) {
+	#mockPage [data-page-type='About us'] .about-hero {
+		height: 200px;
+		margin-inline: -28px;
+	}
+	#mockPage [data-page-type='About us'] .about-card {
+		margin: -60px -28px 0;
+		padding: 20px 28px 0;
+	}
+	#mockPage [data-page-type='About us'] .about-logo {
+		width: 178px;
+		height: 75px;
+		font-size: 12px;
+	}
+}
+
+@container mockup (min-width: 800px) {
+	/* The card covers the photo's lower 200px, so the label centres in the
+	   visible top half. */
+	#mockPage [data-page-type='About us'] .about-hero {
+		align-items: flex-start;
+		height: 400px;
+		margin-inline: calc(-96px - (100cqi - min(100cqi, 1076px)) / 2);
+		padding-top: 90px;
+	}
+	#mockPage [data-page-type='About us'] .about-card {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) 180px;
+		column-gap: 28px;
+		align-items: center;
+		margin: -200px 0 0;
+		padding: 40px;
+	}
+	#mockPage [data-page-type='About us'] .about-logo {
+		grid-row: 1;
+		grid-column: 2;
+		width: 180px;
+		margin-bottom: 0;
+	}
+	#mockPage [data-page-type='About us'] .about-card-text {
+		grid-row: 1;
+		grid-column: 1;
+	}
+}
