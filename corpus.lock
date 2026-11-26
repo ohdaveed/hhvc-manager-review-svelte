@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "corpusHash": "36a862aecc9ab61053889097d5873631209ba15ef5b201f9ae37594b694dc157",
+  "corpusHash": "82e7d7d8986de3aca3045d545eb33c5fc90ad2995811967196b7fb89d2066ff2",
   "pages": {
     "departments--healthy-housing-and-vector-control": {
       "contentHash": "0dbd9dd7bbad4361a566c5cd2c714223d97028f482b3ba8c958c082887615fc9",
@@ -491,7 +491,7 @@
       }
     },
     "information-tenant-rights-and-reporting-housing-conditions": {
-      "contentHash": "8196a80acc6baca5e98d607a77a98656eadf62c874518a4cb7af0f305afdaba5",
+      "contentHash": "5d35ed114d2aaa56f5a7dabeba1191c4e284e4d2d6d34c95624efe12497d8c0e",
       "fieldHashes": {
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",
         "sections.tenant-responsibilities.bullets.0": "786d4e6a0591fa52d5b48e6be046284df4d7cd66b107ae2f645422292354c76d",
@@ -522,6 +522,7 @@
         "sections.you-can-ask-the-city-for-help.callout.text": "7328285f7eadb271756730e97cf485173a716c48e0f1e82124e29e46b91232ca",
         "sections.you-can-ask-the-city-for-help.heading": "7ada1941cb1a7d9fd8322ccd998dda6e17a3b82519e2145504d0ae101ed254dc",
         "sections.you-can-ask-the-city-for-help.paragraphs.0": "d3c182b8db2f7a37177c143d536a927761ffcd48d25acedf98f09edfd9df56b9",
+        "sections.you-can-ask-the-city-for-help.paragraphs.1": "5e52ee5b909f2bd3bba2da1880d186b566afebb1e6fe2b21b19e400b8ffe14d2",
         "summary": "8d5ff6a0d933a8ee49c97782915886316106d69a7ba0136cb31426621ec2a1ca",
         "title": "57a43417e514f27605ce12d89cec8ccb752017497486c615b5aa4c199622738d"
       }
@@ -552,7 +553,7 @@
       }
     },
     "information-what-happens-after-you-report-housing-pest-problem": {
-      "contentHash": "2c95fe566a35d5e09f9048961fb536bb3bf1a4de834d908735d6bd6bc11a0005",
+      "contentHash": "32650202c4afc79ba5fd2a11ca7c5dd8978ef693bdb13003b8038e52e59738fe",
       "fieldHashes": {
         "sections.how-a-report-moves-through-the-city.bullets.0": "9d6e74b59346d39437ca8f7f4fb021bee9a96ab270f10366f0b6b4a0d5246ef3",
         "sections.how-a-report-moves-through-the-city.bullets.1": "f55f10bd725a1847bb9f05703a57ed1d622326822e4e92d4977edbe6e17373d4",
@@ -579,8 +580,8 @@
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",
         "sections.tenant-rights-and-retaliation.bullets.0": "4a1ef6981ec415b767a364383541ba244a782736af5fa8f5d8ea1b5642c34364",
         "sections.tenant-rights-and-retaliation.heading": "cf8cd5d9cb1ea992c332b1f8c67589f274774f39b5df5ee06d1957248dae9d56",
-        "sections.tenant-rights-and-retaliation.paragraphs.0": "45ed689c04e0d22c6e65225aaadbf0e4dbcf0001a705f94a2e052dff71a356a9",
-        "sections.tenant-rights-and-retaliation.paragraphs.1": "1e69e539f4c3920b793e257ba01345134d6c017ec7e0619eb963fc0560d8dd40",
+        "sections.tenant-rights-and-retaliation.paragraphs.0": "e3efa284e02e83ef133ca0208ec5e827c8f114797c149a5ebfc15a8f8f12f12c",
+        "sections.tenant-rights-and-retaliation.paragraphs.1": "c6c90bd6ca16a5e44aab9465e8e40e8ae67cfcb08e39636585cc4d857bcbb326",
         "sections.what-this-page-does-not-promise.bullets.0": "9f60ade73d09923ec6e42737be361fdd5e3a05655cfc65175225998ce679fe1e",
         "sections.what-this-page-does-not-promise.bullets.1": "b79b6d7d5509c5830c0257d64e56ce6b205a6324efda81ba71fa0214f34b308d",
         "sections.what-this-page-does-not-promise.bullets.2": "f974fede8e680d45b00ae3dd66bf8448653c2db1040ae79d1128b2523f01efc0",
