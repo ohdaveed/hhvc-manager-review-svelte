@@ -44,6 +44,17 @@ import { languageGuides } from './guides-in-other-languages';
 import { ratFreeBlocks } from './campaign-rat-free-blocks';
 import { inspectionsAnnual } from './report-inspections-annual-summary';
 
+// Five community-education pages ported from HHVC_manager_review_current_tool_package
+// (merged there as #251, 2026-11-26). Each carries `editorStatus: 'needs-review'`;
+// owner duties drawn from the Director's Rules are flagged `unverified`. Their links
+// were remapped to this repo's page keys: bed bug links go to bedBugReport, the mold
+// report link to moldReport, and the SRO-report card to stepPrepUnit.
+import { bedBugsInfo } from './bed-bugs-prevent-and-prepare';
+import { reduceMoisture } from './reduce-moisture-and-mold';
+import { rodentsPrevention } from './keep-rats-and-mice-out';
+import { cockroachesPrevention } from './control-cockroaches-without-sprays';
+import { pestTreatmentInfo } from './pest-treatment-in-your-building';
+
 /**
  * The corpus, keyed by the name `cards[].target` uses to point at a page.
  *
@@ -93,7 +104,12 @@ export const pagesByKey = {
 	payCitation,
 	languageGuides,
 	ratFreeBlocks,
-	inspectionsAnnual
+	inspectionsAnnual,
+	bedBugsInfo,
+	reduceMoisture,
+	rodentsPrevention,
+	cockroachesPrevention,
+	pestTreatmentInfo
 };
 
 export const allPages = Object.values(pagesByKey);

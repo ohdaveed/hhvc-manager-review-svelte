@@ -46,11 +46,12 @@ const PILOTS = [
 		// Rollout step 2: Topic. Related (U5) has no panel; only Digital
 		// Services can create a Topic page, which the summary says first.
 		slug: 'topics--healthy-housing-conditions',
-		// 8 sections since the Topic merge folded both hubs in (2026-11-25).
+		// 8 sections since the Topic merge folded both hubs in (2026-11-25), plus
+		// the prevention Resources block for the ported education pages.
 		summary:
-			'8 sections: 8 go into Karl. 1 detail is unconfirmed. 2 things won’t carry over to Karl.',
+			'9 sections: 9 go into Karl. 1 detail is unconfirmed. 2 things won’t carry over to Karl.',
 		caveat: 'Only SF.gov Digital Services can create a new Topic page.',
-		sections: { placed: 8, unplaced: 1 }
+		sections: { placed: 9, unplaced: 1 }
 	},
 	{
 		// Rollout step 3: Campaign. A 26-character spotlight button and About

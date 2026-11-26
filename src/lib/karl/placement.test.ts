@@ -331,7 +331,8 @@ describe('Topic', () => {
 
 	it('names the stream and the block, never the stream alone', () => {
 		expect([...p.sections.values()].map((s) => s.label)).toEqual([
-			// Five Services and two Resources blocks since the Topic merge (2026-11-25).
+			// Five Services and three Resources blocks: two since the Topic merge
+			// (2026-11-25), plus the prevention block for the ported education pages.
 			'Child topics · Spotlight block',
 			'Child topics · Services block 1',
 			'Child topics · Services block 2',
@@ -340,6 +341,7 @@ describe('Topic', () => {
 			'Child topics · Services block 5',
 			'Child topics · Resources block 1',
 			'Child topics · Resources block 2',
+			'Child topics · Resources block 3',
 			''
 		]);
 	});
