@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { fitFrame, pageStore } from '../src/lib/stores/pageData.svelte.js';
 
 describe('Page Data Store', () => {
@@ -201,5 +201,134 @@ describe('rail default', () => {
 		pageStore.railCollapsed = { queue: false, panel: false };
 		pageStore.loadRailState();
 		expect(pageStore.railCollapsed).toEqual({ queue: false, panel: false });
+	});
+});
+
+describe('unsaved changes', () => {
+	const A = () => pageStore.pages[0];
+	const B = () => pageStore.pages[1];
+	let titleA: string;
+	let titleB: string;
+
+	beforeEach(() => {
+		pageStore.enterPage(undefined);
+		pageStore.unsavedChanges = {};
+		titleA = A().title;
+		titleB = B().title;
+		pageStore.enterPage(A().id);
+		pageStore.select('title');
+	});
+
+	afterEach(() => {
+		pageStore.unsavedChanges = {};
+		A().title = titleA;
+		B().title = titleB;
+	});
+
+	it('shows the unsaved change on the page as it is typed and remembers the original', () => {
+		expect(pageStore.setChange(A().id, 'title', 'Typed')).toBe(true);
+		expect(A().title).toBe('Typed');
+		expect(pageStore.getChange(A().id, 'title')).toEqual({
+			pageId: A().id,
+			fieldId: 'title',
+			original: titleA,
+			value: 'Typed'
+		});
+		pageStore.setChange(A().id, 'title', 'Typed more');
+		expect(pageStore.getChange(A().id, 'title')?.original).toBe(titleA);
+		expect(pageStore.hasUnsavedChange(A().id, 'title')).toBe(true);
+	});
+
+	it('is not dirty when typed back to the original', () => {
+		pageStore.setChange(A().id, 'title', 'Typed');
+		pageStore.setChange(A().id, 'title', titleA);
+		expect(pageStore.hasUnsavedChange(A().id, 'title')).toBe(false);
+	});
+
+	it('cancel restores the original copy', () => {
+		pageStore.setChange(A().id, 'title', 'Typed');
+		pageStore.cancelChange(A().id, 'title');
+		expect(A().title).toBe(titleA);
+		expect(pageStore.getChange(A().id, 'title')).toBeUndefined();
+	});
+
+	it('forget keeps the typed copy on the page', () => {
+		pageStore.setChange(A().id, 'title', 'Saved copy');
+		pageStore.forgetChange(A().id, 'title');
+		expect(A().title).toBe('Saved copy');
+		expect(pageStore.getChange(A().id, 'title')).toBeUndefined();
+	});
+
+	it('writes nothing for a field that does not resolve', () => {
+		expect(pageStore.setChange(A().id, 'sections.nope.paragraphs.0', 'x')).toBe(false);
+		expect(pageStore.unsavedChanges).toEqual({});
+	});
+
+	it('keeps unsaved changes for the same field id on two pages apart', () => {
+		pageStore.setChange(A().id, 'title', 'Typed on A');
+		pageStore.enterPage(B().id);
+		pageStore.select('title');
+		pageStore.setChange(B().id, 'title', 'Typed on B');
+		expect(pageStore.getChange(A().id, 'title')?.original).toBe(titleA);
+		expect(pageStore.getChange(B().id, 'title')?.original).toBe(titleB);
+		pageStore.cancelChange(A().id, 'title');
+		expect(A().title).toBe(titleA);
+		expect(B().title).toBe('Typed on B');
+	});
+
+	it.each([
+		['clearing the selection', () => pageStore.clearSelection()],
+		['replacing the selection', () => pageStore.select('summary')],
+		['shift-clicking the field off', () => pageStore.select('title', true)],
+		['selecting a section', () => pageStore.selectSection('any')],
+		['changing page', () => pageStore.enterPage(B().id)]
+	])('keeps unsaved typing on %s', (_label, act) => {
+		pageStore.setChange(A().id, 'title', 'Unsaved');
+		act();
+		expect(A().title).toBe('Unsaved');
+		expect(pageStore.hasUnsavedChange(A().id, 'title')).toBe(true);
+	});
+
+	it('drops an unsaved change that changes nothing once the selection moves off it', () => {
+		pageStore.setChange(A().id, 'title', 'Typed');
+		pageStore.setChange(A().id, 'title', titleA);
+		pageStore.select('summary');
+		expect(pageStore.getChange(A().id, 'title')).toBeUndefined();
+		expect(A().title).toBe(titleA);
+	});
+
+	it('counts unsaved changes here and on other pages', () => {
+		pageStore.setChange(A().id, 'title', 'Unsaved');
+		expect(pageStore.unsavedChangesOn(A().id).map((d) => d.fieldId)).toEqual(['title']);
+		expect(pageStore.unsavedChangesElsewhere(A().id)).toBe(0);
+		expect(pageStore.unsavedChangesElsewhere(B().id)).toBe(1);
+	});
+
+	it("stamps each new change with its field's newest edit, once", () => {
+		pageStore.setChange(A().id, 'title', 'Typed');
+		pageStore.stampChangeBases(() => 'row-1');
+		pageStore.stampChangeBases(() => 'row-2');
+		expect(pageStore.getChange(A().id, 'title')?.baseEditId).toBe('row-1');
+		// Typing on keeps the stamp.
+		pageStore.setChange(A().id, 'title', 'Typed more');
+		expect(pageStore.getChange(A().id, 'title')?.baseEditId).toBe('row-1');
+	});
+
+	it('flags a change only for an edit other than the one it started from', () => {
+		pageStore.setChange(A().id, 'title', 'Typed');
+		// Unstamped: nothing to compare against, so nothing is claimed.
+		pageStore.markSavedElsewhere(A().id, 'title', 'row-9');
+		expect(pageStore.getChange(A().id, 'title')?.savedElsewhere).toBeUndefined();
+
+		pageStore.stampChangeBases(() => null);
+		pageStore.markSavedElsewhere(A().id, 'title', 'row-9');
+		expect(pageStore.getChange(A().id, 'title')?.savedElsewhere).toBe(true);
+	});
+
+	it('does not flag the edit the change started from', () => {
+		pageStore.setChange(A().id, 'title', 'Typed');
+		pageStore.stampChangeBases(() => 'row-1');
+		pageStore.markSavedElsewhere(A().id, 'title', 'row-1');
+		expect(pageStore.getChange(A().id, 'title')?.savedElsewhere).toBeUndefined();
 	});
 });
