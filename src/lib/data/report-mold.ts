@@ -5,11 +5,6 @@ export const moldReport = {
 	summary:
 		'Visible growth on a wall or ceiling from humidity, condensation, or a leak in a home or building.',
 	primaryAgency: 'Healthy Housing and Vector Control',
-	audience: [
-		'A tenant or resident with mold in their home',
-		'A friend, family member, advocate, or helper reporting for a tenant',
-		'A person reporting mold in a shared area'
-	],
 	reading: 'Grade 6',
 	editorNote:
 		'Report regroup (Decided, Nov 24, 2026), built 2026-11-25. New page, one of the 9 condition pages. Scope is the Decided one: visible mold, the 10 sq ft threshold, the moisture source, and a referral to DBI for leaks. C8 (decided Nov 24, 2026): the Department of Building Inspection handles mold caused by a leak, so the leak referral names DBI. Text is carried from the mold half of "Report garbage, mold, and overgrown vegetation", which was retired once all 9 condition pages existed (2026-11-25). That page stated the 10 sq ft rule three times; here it is stated once, in Things to know. The third-party test-kit line stays flagged unverified, as it was there.',
@@ -52,7 +47,7 @@ export const moldReport = {
 				{
 					title: 'Start your report',
 					text: [
-						'Use 311 to report mold caused by humidity or condensation.',
+						'Use 311 to report mold caused by humidity or condensation. You can report mold in your home or in a shared area, or report for someone else.',
 						'Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.'
 					],
 					button: 'Report through 311',
@@ -113,14 +108,12 @@ export const moldReport = {
 		},
 		{
 			heading: 'What the Health Code requires',
-			karl: 'custom_section -> title_and_text. Title = this heading, Text = the Article 11 line, from Sec. 581(b)(6) as Health Code Article 11 in plain language quotes it (HHVC content standards Ch. 8.7.1). Secondary Button link block ("View Article 11") citing the municipal code per Ch. 8.7.2.',
+			karl: 'custom_section -> title_and_text. Title = this heading, Text = the Article 11 line, from Sec. 581(b)(6) as Health Code Article 11 in plain language quotes it (HHVC content standards Ch. 8.7.1). The municipal code is cited per Ch. 8.7.2 as an inline link, the last bullet: custom_section has no Button link block (U1), so the "View Article 11" button it used to carry had no Karl destination.',
 			kind: 'body',
 			bullets: [
-				'San Francisco Health Code Article 11 lists visible mold or mildew inside a building as a public health nuisance. Fixing it means fixing the moisture source too.'
-			],
-			button: 'View Article 11',
-			buttonUrl: 'https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890',
-			buttonStyle: 'secondary'
+				'San Francisco Health Code Article 11 lists visible mold or mildew inside a building as a public health nuisance. Fixing it means fixing the moisture source too.',
+				'[View Health Code Article 11](https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890)'
+			]
 		},
 		{
 			heading: 'Related pages',

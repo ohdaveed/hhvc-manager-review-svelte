@@ -2,6 +2,7 @@
 import { allPages } from '$lib/data';
 import { deriveFieldKey } from '$lib/corpus/fieldKey.js';
 import { routableId } from '$lib/corpus/pageId';
+import { resolveField } from '$lib/corpus/fieldResolver';
 import type { DraftPage } from './draftPages';
 import type { Op } from '$lib/rethink/diff';
 import type { RethinkResult } from '$lib/rethink/request';
@@ -28,8 +29,8 @@ export type Suggestion = {
 	 * Field ids are page-relative -- `title` and `summary` name a live field on
 	 * every one of the 29 pages -- so an id alone cannot say which page a
 	 * suggestion belongs to. Accepted suggestions deliberately survive
-	 * navigation, being unsaved work, and without this they resolved against
-	 * whatever page was on screen when `Save` was pressed: an edit approved for
+	 * navigation, being unsaved changes, and without this they resolved against
+	 * whatever page was on screen when `Save` was pressed: wording accepted for
 	 * page A was written to page B and persisted under B's row.
 	 */
 	pageId: string;
@@ -39,6 +40,35 @@ export type Suggestion = {
 	/** Present only on `error`; shown on the card rather than in an alert. */
 	message?: string;
 };
+
+/**
+ * New wording for one field, on the mockup but not saved: typed in the Fields
+ * panel, or taken from a suggestion the reviewer accepted.
+ *
+ * The mockup already shows `value` -- every keystroke, and an acceptance, goes
+ * through the field's setter so the preview is live -- but nothing is
+ * persisted until Save. `original` is what the field said before the change: what Cancel puts
+ * back, and how a save that changes nothing is recognised and skipped.
+ */
+export type UnsavedChange = {
+	pageId: string;
+	fieldId: string;
+	original: string;
+	value: string;
+	/**
+	 * The id of the field's newest edit when this change started, `null` when it
+	 * had none, and absent until the layout has stamped it. A confirmed edit with
+	 * any other id, from another reviewer, was saved during the typing.
+	 */
+	baseEditId?: string | null;
+	/** Another reviewer saved this field after the change started. */
+	savedElsewhere?: boolean;
+};
+
+/** Field ids are page-relative, so an unsaved change is named by both. */
+export function changeKey(pageId: string, fieldId: string): string {
+	return `${pageId}\u0000${fieldId}`;
+}
 
 export type AgentRec = {
 	state: 'idle' | 'loading' | 'done' | 'error';
@@ -196,6 +226,14 @@ class PageStore {
 	suggestions = $state<Record<string, Suggestion>>({});
 
 	/**
+	 * Unsaved changes, keyed by `changeKey(pageId, fieldId)`. See `UnsavedChange`.
+	 *
+	 * Keyed by page as well as field because field ids are page-relative
+	 * (`title` names a field on every page), and an unsaved change outlives navigation.
+	 */
+	unsavedChanges = $state<Record<string, UnsavedChange>>({});
+
+	/**
 	 * The routable id of the page on screen, as `enterPage` last set it.
 	 *
 	 * The review layout stays mounted across slug navigation, so nothing was
@@ -279,6 +317,7 @@ class PageStore {
 		this.selectedSectionKey = undefined;
 		if (!additive) {
 			this.selectedFieldIds = [fieldId];
+			this.dropNoOpChanges([fieldId]);
 			this.suggestions = this.pruneSuggestions([fieldId]);
 			return;
 		}
@@ -286,6 +325,7 @@ class PageStore {
 		if (this.isSelected(fieldId)) {
 			const next = this.selectedFieldIds.filter((id) => id !== fieldId);
 			this.selectedFieldIds = next;
+			this.dropNoOpChanges(next);
 			this.suggestions = this.pruneSuggestions(next);
 		} else {
 			this.selectedFieldIds = [...this.selectedFieldIds, fieldId];
@@ -294,12 +334,14 @@ class PageStore {
 
 	clearSelection() {
 		this.selectedFieldIds = [];
+		this.dropNoOpChanges([]);
 		this.suggestions = this.pruneSuggestions([]);
 		this.rewriteInstruction = '';
 	}
 
 	selectSection(sectionKey: string) {
 		this.selectedFieldIds = [];
+		this.dropNoOpChanges([]);
 		this.suggestions = this.pruneSuggestions([]);
 
 		// Only reset the rethink when the selection actually MOVES. Re-clicking
@@ -365,6 +407,7 @@ class PageStore {
 	enterPage(pageId: string | undefined) {
 		if (pageId === this.activePageId) return;
 		this.activePageId = pageId;
+		this.dropNoOpChanges([]);
 		this.selectedFieldIds = [];
 		this.rewriteInstruction = '';
 		this.agentRec = { state: 'idle', text: '' };
@@ -378,22 +421,29 @@ class PageStore {
 		return Object.entries(this.suggestions).filter(([, s]) => s.pageId === pageId);
 	}
 
-	/** Accepted-but-unsaved edits for `pageId`. What `Save N edits` commits. */
-	acceptedFor(pageId: string | undefined): number {
-		return this.suggestionsFor(pageId).filter(([, s]) => s.status === 'accepted').length;
+	/**
+	 * Accepting a suggestion makes it an unsaved change: its wording goes onto
+	 * the mockup now, and Save records it like anything typed. Refused over
+	 * typing the reviewer has not saved, which it would otherwise replace unseen.
+	 */
+	acceptSuggestion(fieldId: string) {
+		const s = this.suggestions[fieldId];
+		if (!s || s.status !== 'pending') return;
+		if (this.hasUnsavedChange(s.pageId, fieldId)) return;
+		if (!this.setChange(s.pageId, fieldId, s.suggested)) return;
+		this.suggestions = { ...this.suggestions, [fieldId]: { ...s, status: 'accepted' } };
 	}
 
-	/**
-	 * Accepted-but-unsaved edits parked on OTHER pages.
-	 *
-	 * Surfaced rather than summed into the count above: they are real work, and
-	 * a reviewer who navigates away with edits approved should be told they are
-	 * still there rather than watching the number silently drop to zero.
-	 */
-	acceptedElsewhere(pageId: string | undefined): number {
-		return Object.values(this.suggestions).filter(
-			(s) => s.status === 'accepted' && s.pageId !== pageId
-		).length;
+	/** An accepted suggestion goes back to waiting when its change ends unsaved. */
+	private unaccept(pageId: string, fieldId: string) {
+		const s = this.suggestions[fieldId];
+		if (s?.pageId !== pageId || s.status !== 'accepted') return;
+		this.suggestions = { ...this.suggestions, [fieldId]: { ...s, status: 'pending' } };
+	}
+
+	/** Unsaved changes on every page: what the toolbar pill counts. */
+	unsavedChangeCount(): number {
+		return Object.values(this.unsavedChanges).filter((c) => c.value !== c.original).length;
 	}
 
 	/** Drops one suggestion, once its edit is known to have persisted. */
@@ -403,11 +453,131 @@ class PageStore {
 		this.suggestions = rest;
 	}
 
+	// ---- unsaved changes ---------------------------------------------------
+	// The mockup shows an unsaved change as it is typed. Typing is work, so an unsaved change is
+	// never thrown away by a selection change or navigation: only Cancel puts
+	// the original copy back, and only Save or Cancel ends an unsaved change. An unsaved change that
+	// changes nothing is dropped as soon as the selection moves off it.
+
+	/** The field as it is on the page now, resolved fresh -- never captured. */
+	private resolveOn(pageId: string, fieldId: string) {
+		return resolveField(
+			this.pages.find((p) => p.id === pageId),
+			fieldId
+		);
+	}
+
+	getChange(pageId: string | undefined, fieldId: string): UnsavedChange | undefined {
+		return pageId === undefined ? undefined : this.unsavedChanges[changeKey(pageId, fieldId)];
+	}
+
+	/**
+	 * Sets the unsaved change for one field and shows it on the mockup. The first call
+	 * records what the field said, which is what `cancelChange` restores.
+	 * Returns false when the field no longer resolves, and writes nothing.
+	 */
+	setChange(pageId: string, fieldId: string, value: string): boolean {
+		const field = this.resolveOn(pageId, fieldId);
+		if (!field) return false;
+		const existing = this.getChange(pageId, fieldId);
+		const original = existing?.original ?? field.value;
+		field.set(value);
+		this.unsavedChanges = {
+			...this.unsavedChanges,
+			[changeKey(pageId, fieldId)]: { ...existing, pageId, fieldId, original, value }
+		};
+		return true;
+	}
+
+	/**
+	 * Records, for each change not yet stamped, the id of its field's newest
+	 * edit -- `null` for a field with none. What `markSavedElsewhere` compares
+	 * against, so a save made during the typing is told from one made before.
+	 */
+	stampChangeBases(newestEditId: (pageId: string, fieldId: string) => string | null) {
+		const unstamped = Object.entries(this.unsavedChanges).filter(
+			([, c]) => c.baseEditId === undefined
+		);
+		if (unstamped.length === 0) return;
+		const next = { ...this.unsavedChanges };
+		for (const [key, c] of unstamped) {
+			next[key] = { ...c, baseEditId: newestEditId(c.pageId, c.fieldId) };
+		}
+		this.unsavedChanges = next;
+	}
+
+	/** Flags a change whose field another reviewer saved after it started. */
+	markSavedElsewhere(pageId: string, fieldId: string, editId: string) {
+		const change = this.getChange(pageId, fieldId);
+		if (!change || change.savedElsewhere || change.baseEditId === undefined) return;
+		if (change.baseEditId === editId) return;
+		this.unsavedChanges = {
+			...this.unsavedChanges,
+			[changeKey(pageId, fieldId)]: { ...change, savedElsewhere: true }
+		};
+	}
+
+	/** Whether the field has typing that has not been saved. */
+	hasUnsavedChange(pageId: string | undefined, fieldId: string): boolean {
+		const change = this.getChange(pageId, fieldId);
+		return Boolean(change && change.value !== change.original);
+	}
+
+	/** Unsaved changes on `pageId`, in the order they were started. */
+	unsavedChangesOn(pageId: string | undefined): UnsavedChange[] {
+		return Object.values(this.unsavedChanges).filter(
+			(d) => d.pageId === pageId && d.value !== d.original
+		);
+	}
+
+	/** Unsaved changes waiting on OTHER pages -- said, not hidden. */
+	unsavedChangesElsewhere(pageId: string | undefined): number {
+		return Object.values(this.unsavedChanges).filter(
+			(d) => d.pageId !== pageId && d.value !== d.original
+		).length;
+	}
+
+	/**
+	 * Puts the original copy back on the mockup and drops the unsaved change. A
+	 * suggestion it came from goes back to waiting, not dismissed: Cancel undoes
+	 * the last step, and dismissing is its own act.
+	 */
+	cancelChange(pageId: string, fieldId: string) {
+		const change = this.getChange(pageId, fieldId);
+		if (!change) return;
+		this.resolveOn(pageId, fieldId)?.set(change.original);
+		this.forgetChange(pageId, fieldId);
+		this.unaccept(pageId, fieldId);
+	}
+
+	/** Drops an unsaved change whose value is now the saved one. Leaves the mockup as is. */
+	forgetChange(pageId: string, fieldId: string) {
+		const key = changeKey(pageId, fieldId);
+		if (!(key in this.unsavedChanges)) return;
+		const rest = { ...this.unsavedChanges };
+		delete rest[key];
+		this.unsavedChanges = rest;
+	}
+
+	/**
+	 * Drops unsaved changes that change nothing, except those for `keep` on the page on
+	 * screen. Their value is already the original, so the mockup needs nothing.
+	 */
+	private dropNoOpChanges(keep: string[]) {
+		const next: Record<string, UnsavedChange> = {};
+		for (const [key, d] of Object.entries(this.unsavedChanges)) {
+			const kept = d.pageId === this.activePageId && keep.includes(d.fieldId);
+			if (d.value !== d.original || kept) next[key] = d;
+			else this.unaccept(d.pageId, d.fieldId);
+		}
+		this.unsavedChanges = next;
+	}
+
 	/**
 	 * Keeps the suggestions for `keep`, plus every `accepted` one anywhere.
 	 *
-	 * An accepted suggestion is an unsaved edit, not a piece of selection
-	 * chrome: it is what the toolbar pill counts and what `Save N edits`
+	 * An accepted suggestion is an unsaved change, not a piece of selection
+	 * chrome: it is what the toolbar pill counts and what `Save N changes`
 	 * commits. Dropping it on the next click would retract work the reviewer
 	 * had already approved, silently and with no undo. Pending, rejected and
 	 * errored cards carry no such commitment, so they go.

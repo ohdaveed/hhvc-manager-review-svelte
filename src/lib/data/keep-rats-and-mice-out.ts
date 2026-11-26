@@ -4,15 +4,20 @@ export const rodentsPrevention = {
 	title: 'Keep rats and mice out of your home',
 	summary:
 		'Learn the signs of rats and mice, how to cut off their food and hiding places, and what your landlord must fix.',
-	audience: [
-		'This page is for tenants and residents who want to prevent rats and mice, or are dealing with them now.'
-	],
 	reading: 'Grade 4–6',
 	editorStatus: 'needs-review',
 	editorNote:
 		'New community-education Information page: the renter-facing companion to ownerGuidance. Sources: UC IPM Pest Notes: Rats (rev. June 2024) and House Mouse (rev. July 2025); the Residential Building Owner/Operator Guidelines for Vector Control (owner 72-hour investigation, licensed PCO, rodent-proof garbage containers; tenant housekeeping duty); and the renter rodent playbook notes, using only the items those notes mark "safe to adopt" (written notice, 72-hour wait). The playbook\'s repair-and-deduct and retaliation-window items are deliberately left out per those notes. Cleanup and trapping wording matches rodentsReport\'s "While you wait" tips. UC IPM links verified 200 on 2026-11-26.',
 	topicTag: 'Agency: Healthy Housing and Vector Control',
 	sections: [
+		{
+			heading: 'Who this information is for',
+			karl: 'Maps to the first "Information section" → Title and text block: Title = this heading, Text = the bulleted list. The heading is the one sf.gov/manage-covid-19-schools-childcare-and-youth-programs gives an audience list (an H3 over bullets). This was the page-level `audience` field until 2026-11-26, when that field was retired; the transcript used to supply this block itself, so what goes into Karl is unchanged.',
+			kind: 'body',
+			bullets: [
+				'This page is for tenants and residents who want to prevent rats and mice, or are dealing with them now.'
+			]
+		},
 		{
 			heading: 'Why rats and mice are a health risk',
 			karl: 'Maps to an "Information section" → Title and text block: Title = this heading, Text = the two paragraphs below.',

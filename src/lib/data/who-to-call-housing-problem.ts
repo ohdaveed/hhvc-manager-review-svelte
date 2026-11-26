@@ -4,16 +4,21 @@ export const whoToCall = {
 	title: 'Who to call about a housing problem',
 	summary:
 		'Healthy Housing, Building Inspection, the Rent Board, or 311 — find the right office first.',
-	audience: [
-		'A tenant with a problem who does not know which office handles it',
-		'Someone who has already been routed to the wrong department',
-		'An advocate or helper directing someone to the right place'
-	],
 	reading: 'Grade 6',
 	editorNote:
-		'PROPOSED PAGE — not in the current 29, and the routing page `design/HHVC Page Ideas.dc.html` names alongside the three Step by step proposals as changing the most for a reader. The gap it fills is specific: a resident with a cold apartment and a rat does not know those are two different departments, and no page tells them. It is deliberately organised by the CONDITION the reader can see rather than by the department that owns it, because the reader knows the former and not the latter. Everything outside HHVC scope routes out rather than being answered here — `scopeInfo` already carries the same boundary and the two must be kept in step. Information has no things_to_know and no intro panel, so the audience line has nowhere to sit on this type; it is left in `audience` and the transcript reports it as a gap, which is the honest state rather than a silent drop.',
+		'PROPOSED PAGE — not in the current 29, and the routing page `design/HHVC Page Ideas.dc.html` names alongside the three Step by step proposals as changing the most for a reader. The gap it fills is specific: a resident with a cold apartment and a rat does not know those are two different departments, and no page tells them. It is deliberately organised by the CONDITION the reader can see rather than by the department that owns it, because the reader knows the former and not the latter. Everything outside HHVC scope routes out rather than being answered here — `scopeInfo` already carries the same boundary and the two must be kept in step. Information has no things_to_know and no intro panel, so the audience list is the first Information section block, "Who this information is for".',
 	editorStatus: 'needs-review',
 	sections: [
+		{
+			heading: 'Who this information is for',
+			karl: 'Maps to the first "Information section" → Title and text block: Title = this heading, Text = the bulleted list. The heading is the one sf.gov/manage-covid-19-schools-childcare-and-youth-programs gives an audience list (an H3 over bullets). This was the page-level `audience` field until 2026-11-26, when that field was retired; the transcript used to supply this block itself, so what goes into Karl is unchanged.',
+			kind: 'body',
+			bullets: [
+				'A tenant with a problem who does not know which office handles it',
+				'Someone who has already been routed to the wrong department',
+				'An advocate or helper directing someone to the right place'
+			]
+		},
 		{
 			heading: 'Start with what you can see',
 			karl: 'Maps to an Information section → Title and text block. The opening paragraph plus the routing bullets fold into one rich text field; the internal links ride in its Link tool.',
@@ -30,7 +35,7 @@ export const whoToCall = {
 		},
 		{
 			heading: 'What Healthy Housing handles',
-			karl: 'Maps to an Information section → Title and text block, whose Link tool carries the nine condition report Transactions as Internal links.',
+			karl: 'Maps to an Information section → Title and text block, whose Link tool carries the nine condition report Transactions, the inspection-scope page, the pest-report Step by step and the Article 11 guide as Internal links. The last two were Related cards until 2026-11-26: Karl’s Related takes only Transaction, Information, Campaign and Topic pages (Help Center › Components › Related), and these are a Step by step and a Report.',
 			kind: 'body',
 			paragraphs: [
 				'This team inspects conditions that affect health in and around housing, under Health Code Article 11.'
@@ -45,7 +50,9 @@ export const whoToCall = {
 				'[Report a sewage leak or backup](sewageReport)',
 				'[Report mold](moldReport)',
 				'[Report garbage, clutter, or overgrown plants](garbageReport)',
-				'[Learn what Healthy Housing and Vector Control can inspect](scopeInfo)'
+				'[Learn what Healthy Housing and Vector Control can inspect](scopeInfo)',
+				'[Report a pest problem, start to finish](stepPestReport)',
+				'[Health Code Article 11 in plain language](article11Guide)'
 			]
 		},
 		{
@@ -86,13 +93,9 @@ export const whoToCall = {
 		},
 		{
 			heading: 'Related pages',
-			karl: 'Maps to Related. Each card publishes the destination page’s own title.',
+			karl: 'Maps to the Related panel. Each card publishes the destination page’s own title.',
 			kind: 'body',
-			cards: [
-				{ title: 'Report a pest problem, start to finish', target: 'stepPestReport' },
-				{ title: 'Health Code Article 11 in plain language', target: 'article11Guide' },
-				{ title: 'Healthy housing conditions', target: 'healthyHousingTopic' }
-			]
+			cards: [{ title: 'Healthy housing conditions', target: 'healthyHousingTopic' }]
 		}
 	],
 	partnerAgencies: [

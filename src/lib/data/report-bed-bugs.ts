@@ -5,11 +5,6 @@ export const bedBugReport = {
 	summary:
 		'Bites, small brown insects, or dark spots on bedding in a unit or building, and what the owner must do.',
 	primaryAgency: 'Healthy Housing and Vector Control',
-	audience: [
-		'A tenant with bed bugs in their unit',
-		'A tenant whose neighbors have bed bugs',
-		'A friend, family member, advocate, or helper reporting for a tenant'
-	],
 	reading: 'Grade 6',
 	editorNote:
 		'Report regroup (Decided, Nov 24, 2026), built 2026-11-25. New page, one of the 9 condition pages. Scope is the Decided one: bed bugs in a unit or building, including owner duties, unit prep and adjacent units. Text is carried from the bed bug lines of "Report cockroaches, mosquitoes, and other insects". The 2-working-day treatment rule comes from the drafts (writing audit row 132) and is still on the To confirm list, so it is flagged unverified. Unit prep links the existing Step by step rather than repeating it; that page cannot go in Related, which takes only Transaction, Information, Campaign and Topic pages.',
@@ -50,7 +45,7 @@ export const bedBugReport = {
 				{
 					title: 'Start your report',
 					text: [
-						'Use 311 to report bed bugs to the City, especially if the owner does not respond or start treatment.',
+						'Use 311 to report bed bugs to the City, especially if the owner does not respond or start treatment. You can report bed bugs in your unit or a neighbor’s unit, or report for someone else.',
 						'Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.'
 					],
 					button: 'Report through 311',
@@ -105,14 +100,12 @@ export const bedBugReport = {
 		},
 		{
 			heading: 'What the Health Code requires',
-			karl: 'custom_section -> title_and_text. Title = this heading, Text = the Article 11 line, from Sec. 581(b)(8) (HHVC content standards Ch. 8.7.1). Secondary Button link block ("View Article 11") citing the municipal code per Ch. 8.7.2.',
+			karl: 'custom_section -> title_and_text. Title = this heading, Text = the Article 11 line, from Sec. 581(b)(8) (HHVC content standards Ch. 8.7.1). The municipal code is cited per Ch. 8.7.2 as an inline link, the last bullet: custom_section has no Button link block (U1), so the "View Article 11" button it used to carry had no Karl destination.',
 			kind: 'body',
 			bullets: [
-				'San Francisco Health Code Article 11 requires property owners to keep buildings free of insect infestations, including bed bugs.'
-			],
-			button: 'View Article 11',
-			buttonUrl: 'https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890',
-			buttonStyle: 'secondary'
+				'San Francisco Health Code Article 11 requires property owners to keep buildings free of insect infestations, including bed bugs.',
+				'[View Health Code Article 11](https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890)'
+			]
 		},
 		{
 			heading: 'Related pages',

@@ -4,12 +4,6 @@ export const insectsReport = {
 	title: 'Report cockroaches or other insects',
 	summary: 'Roaches, fleas, flies, wasps, or mites in a home, building, yard, or shared area.',
 	primaryAgency: 'Healthy Housing and Vector Control',
-	audience: [
-		'A tenant affected by cockroaches, fleas, flies, wasps, or mites',
-		'A friend, family member, advocate, or helper reporting for a tenant',
-		'A person reporting a problem in a shared area',
-		'An employee reporting an insect problem at work'
-	],
 	reading: 'Grade 6',
 	editorNote:
 		'Report regroup (Decided, Nov 24, 2026), built 2026-11-25. Replaces "Report cockroaches, mosquitoes, and other insects" in place, so its review status, notes and edits carry over: this page is one of the 9 condition pages. Bed bugs and mosquitoes moved to their own pages. Each insect is routed by how HHVC handles it (Decided): flies are cited but usually point to a garbage or animal waste problem, so they link there and get drain fly and fruit fly tips; mites usually come with rats or pigeons, so those pages name them too; for wasps HHVC confirms the nest and refers a nest on public property to Public Works, replacing the old "until it is treated" line. Fleas are added, since Article 11 §581(b)(8) names them. STILL OPEN: what HHVC does after confirming a nest on private property; the step holds PLACEHOLDER text until HHVC answers. Shared report text lives on What happens after you report and Tenant rights.',
@@ -35,7 +29,7 @@ export const insectsReport = {
 				{
 					title: 'Start your report',
 					text: [
-						'Use 311 to report cockroaches, fleas, flies, wasps, or mites to the City. If the problem is urgent, report now.',
+						'Use 311 to report cockroaches, fleas, flies, wasps, or mites to the City. If the problem is urgent, report now. You can report a problem in your home, a shared area, or at work, or report for someone else.',
 						'Bed bugs and mosquitoes have their own pages: [Report bed bugs](bedBugReport) and [Report mosquitoes or standing water](mosquitoReport).',
 						'Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.'
 					],
@@ -114,14 +108,12 @@ export const insectsReport = {
 		},
 		{
 			heading: 'What the Health Code requires',
-			karl: 'custom_section -> title_and_text. Title = this heading, Text = the Article 11 line, from Sec. 581(b)(8) (HHVC content standards Ch. 8.7.1). Secondary Button link block ("View Article 11") citing the municipal code per Ch. 8.7.2.',
+			karl: 'custom_section -> title_and_text. Title = this heading, Text = the Article 11 line, from Sec. 581(b)(8) (HHVC content standards Ch. 8.7.1). The municipal code is cited per Ch. 8.7.2 as an inline link, the last bullet: custom_section has no Button link block (U1), so the "View Article 11" button it used to carry had no Karl destination.',
 			kind: 'body',
 			bullets: [
-				'San Francisco Health Code Article 11 requires property owners to keep buildings free of insect infestations, including cockroaches, fleas, flies, and wasps.'
-			],
-			button: 'View Article 11',
-			buttonUrl: 'https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890',
-			buttonStyle: 'secondary'
+				'San Francisco Health Code Article 11 requires property owners to keep buildings free of insect infestations, including cockroaches, fleas, flies, and wasps.',
+				'[View Health Code Article 11](https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890)'
+			]
 		},
 		{
 			heading: 'Related pages',

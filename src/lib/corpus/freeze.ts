@@ -11,7 +11,7 @@ export type FrozenIds = Record<string, string>;
  * survive a corpus re-import or the rows filed against it orphan silently.
  * `extractFields` builds ids structurally, and 371 of the corpus's 595 ids
  * (62%) carry a positional segment -- `sections.<key>.paragraphs.0`,
- * `audience.0`. The section segment is already stable, because
+ * `whatToKnow.thingsToKnow.0.label`. The section segment is already stable, because
  * `deriveFieldKey` slugs the heading rather than using the array index, but
  * the leaf index is not: inserting a paragraph at the top of a section shifts
  * every later paragraph's id by one and reattaches each saved edit to its

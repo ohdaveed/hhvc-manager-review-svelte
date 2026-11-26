@@ -2,11 +2,6 @@ export const ipmEducation = {
 	slug: 'sf.gov/integrated-pest-management-education',
 	type: 'Campaign',
 	title: 'Free IPM education workshop',
-	summary:
-		'Request a no-cost integrated pest management session for tenant groups and community organizations.',
-	audience: [
-		'This page is for tenants, resident groups, and community organizations that want to host a free pest-prevention workshop.'
-	],
 	reading: 'Grade 6',
 	editorNote:
 		'Campaign page mock, modeled directly on mosquito-education-workshop.js\'s structure and karl-annotation style (see docs/wagtail-content-mapping.md, "Verified against the real Karl Campaign add-page form"). Deliberately distinct from the existing Information-type ownerGuidance page ("Integrated pest management for property owners and managers"): that page is compliance guidance for owners/managers/staff citing Director\'s Rules obligations; this page is a free educational program for tenants, resident groups, and community organizations, with no compliance-obligation framing. Spotlight, Additional-content Accordion sections, and Top facts now render as their own real-Karl-matching components (verified live against sf.gov/shop-dine-sf and sf.gov/1865-til-infinity) — remaining Campaign page-level fields with no mockup equivalent: Primary agency, Logo, Background header image, Color theme (no source image assets exist for this illustrative program). Unlike mosquitoWorkshop, this program has no dedicated request form in forms/ — the CTA below routes through 311 (https://www.sf311.org/) as an illustrative placeholder; confirm the actual intake channel (311, a direct program line, email, or a future dedicated form) with HHVC before publication. Session capacity and lead-time figures are illustrative example content for mockup review; confirm actual values with HHVC before publication.',
@@ -44,7 +39,7 @@ export const ipmEducation = {
 				'Building resident meetings organized by tenants, not by property management'
 			],
 			paragraphs: [
-				'Sessions are designed for adult residents and community members. HHVC can help you choose the right format for your group size and space.'
+				'Sessions are designed for adult residents and community members. [Healthy Housing and Vector Control](pestsTopic) can help you choose the right format for your group size and space.'
 			]
 		},
 		{
@@ -139,7 +134,7 @@ export const ipmEducation = {
 		},
 		{
 			heading: 'Related pages',
-			karl: "Maps to Campaign's Related field (raw name `related_links`, a repeatable StreamField — confirmed via live admin, 2026-07-06; each entry is a Page block: Link to radio SF.gov page/External URL/None, Page chooser, Link text). All 4 cards below map directly to separate related_links entries (Link to = SF.gov page, Page = target, Link text = title).",
+			karl: "Maps to Campaign's Related field (raw name `related_links`, a repeatable StreamField — confirmed via live admin, 2026-07-06; each entry is a Page block: Link to radio SF.gov page/External URL/None, Page chooser, Link text). All 3 cards below map directly to separate related_links entries (Link to = SF.gov page, Page = target, Link text = title). The Healthy Housing and Vector Control card that ended this list is now an Internal link in the “Who can request” accordion sidebar (2026-11-26): the Help Center's Related page lists only Transaction, Information, Campaign and Topic pages, and whether that rule binds a Campaign's `related_links` is unconfirmed, so the link moved rather than wait on it.",
 			kind: 'placement',
 			component: 'related',
 			cards: [
@@ -156,11 +151,6 @@ export const ipmEducation = {
 				{
 					title: 'Report rats or mice',
 					target: 'rodentsReport',
-					karl: 'Maps to a related_links entry (Link to = SF.gov page, Page = this target, Link text = this title).'
-				},
-				{
-					title: 'Healthy Housing and Vector Control',
-					target: 'pestsTopic',
 					karl: 'Maps to a related_links entry (Link to = SF.gov page, Page = this target, Link text = this title).'
 				}
 			]

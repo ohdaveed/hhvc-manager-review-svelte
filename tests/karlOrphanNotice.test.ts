@@ -105,14 +105,13 @@ describe('the corpus', () => {
 		}
 		expect(found).toEqual({
 			'mosquito-education-workshop': ['callout', 'callout'],
-			'integrated-pest-management-education': ['callout', 'callout', 'related'],
+			'integrated-pest-management-education': ['callout', 'callout'],
 			'report-health-code-article-11-plain-language': ['callout'],
-			'information-integrated-pest-management-for-property-owners-and-managers': [
-				'resources',
-				'related',
-				'contact'
-			],
-			'information--article-11-compliance-for-property-owners': ['related', 'contact']
+			// No 'contact' since 2026-11-26: Information has no Contact us panel, so
+			// both pages' contact boxes became a Title and text section in the body.
+			// No 'related' on either since the same day: their Related cards to a
+			// Resource Collection moved into the body.
+			'information-integrated-pest-management-for-property-owners-and-managers': ['resources']
 		});
 	}, 20_000);
 });

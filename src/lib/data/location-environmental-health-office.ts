@@ -3,11 +3,6 @@ export const ehOffice = {
 	type: 'Location',
 	title: 'Environmental Health office',
 	summary: 'Visit, mail, or call the Healthy Housing and Vector Control team.',
-	audience: [
-		'Someone sending a document that cannot be filed online',
-		'Someone who wants to speak to staff in person',
-		'A property owner or manager delivering proof of correction'
-	],
 	reading: 'Grade 6',
 	editorNote:
 		'PROPOSED PAGE — not in the current 29, and the ninth Karl type, which the corpus has never used. `design/HHVC Page Ideas.dc.html` argues a team that sends people mail and takes walk-ins needs one, and it is the most straightforwardly missing page in the set. THE ADDRESS AND HOURS BELOW ARE PLACEHOLDERS AND MUST BE CONFIRMED BEFORE THIS PAGE SAVES — the source plan flags the office address as one of its four unverified facts. The phone number and email are confirmed by HHVC (2026-08-31): 311, 415-252-3800 and healthyhousing@sf.gov. An earlier draft of this note called them confirmed on the grounds that `article11Compliance` already published them — that was circular, and both values it carried were wrong. Location was captured at panel level only, so its block internals are unknown; the karl notes below say which panel a section maps to and stop there rather than naming a block type the field map never recorded. Required markers were never measured on this type, so nothing here is marked required.',

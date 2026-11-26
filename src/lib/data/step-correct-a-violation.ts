@@ -4,11 +4,6 @@ export const stepCorrectViolation = {
 	title: 'Correct a violation and close your case',
 	summary:
 		'The steps from a Notice of Violation to a passed re-inspection, and who is responsible at each one.',
-	audience: [
-		'A property owner or manager who received a Notice of Violation',
-		'A tenant with corrective actions listed on a notice',
-		'A building operator coordinating repairs, treatment, or cleanup'
-	],
 	reading: 'Grade 7',
 	editorNote:
 		'PROPOSED PAGE — not in the current 29. This is the sequence `design/HHVC Page Ideas.dc.html` says is "scattered across four Transaction pages" today, with the reader left to assemble it. It is the page the four proposed post-inspection Transactions attach to: "Ask for more time" and "Tell us your violation is fixed" are steps here rather than sibling pages, which is how Karl documents Step by step working — an overview whose Step blocks carry a Transaction link to the detail. NO DEADLINE OR INTERVAL IS STATED. Every correction period comes from the individual notice, and the corpus has no confirmed default; steps say what governs the date instead of naming one. Party responsibility is split per step rather than pooled into one list, because this is the page an owner reads under deadline pressure and a mixed list is where someone reads past the line that was theirs. MERGED 2026-11-25 (C1, decided Nov 24, 2026): Fix your Healthy Housing and Vector Control violation merged into this page, and Get ready for a follow-up inspection folded into Steps 5 and 6. Both pages are removed. Their facts this page lacked are carried with their unverified flags; the rest it already said.',
@@ -40,7 +35,8 @@ export const stepCorrectViolation = {
 					],
 					bullets: [
 						'Check which actions are assigned to the owner, to the manager, and to a tenant.',
-						'A notice can list actions for the building, shared areas, or a specific unit.'
+						'A notice can list actions for the building, shared areas, or a specific unit.',
+						'[Health Code Article 11 in plain language](article11Guide)'
 					],
 					karl: 'Step 1. Transaction link: none. noticeOfViolation merged into this page (C1, decided Nov 24, 2026); its "check which actions apply to the building, shared areas, or a specific unit" line is the second bullet. Deliberately states that the deadline comes from the notice, so the page cannot go stale against a policy change.'
 				},
@@ -53,7 +49,8 @@ export const stepCorrectViolation = {
 						'Use a licensed pest control operator when professional treatment is required.',
 						'Do not wait on a tenant’s task before starting work you control.',
 						'[Property owner responsibilities](ownerHub)',
-						'[Integrated pest management for property owners and managers](ownerGuidance)'
+						'[Integrated pest management for property owners and managers](ownerGuidance)',
+						'[Article 11 compliance for property owners](article11Compliance)'
 					],
 					karl: 'Step 2. Party-specific by design — the responsibilities are split across Steps 2 and 3 rather than combined in one bulleted list, so neither party has to filter the other’s work out of theirs.'
 				},
@@ -67,7 +64,8 @@ export const stepCorrectViolation = {
 						'Allow properly noticed access for inspection or work.',
 						'A Notice of Violation does not change a tenant’s right to safe and habitable housing.',
 						'[Prepare your unit for pest treatment](stepPrepUnit)',
-						'[What tenants need to do after a Notice of Violation](tenantNoticeSteps)'
+						'[What tenants need to do after a Notice of Violation](tenantNoticeSteps)',
+						'[Tenant rights when reporting housing conditions](tenantRights)'
 					],
 					karl: 'Step 3. The companion half of Step 2. Links to the proposed unit-preparation Step by step, which holds the detail this step only summarises.'
 				},
@@ -128,16 +126,6 @@ export const stepCorrectViolation = {
 					],
 					karl: 'Step 7. Carried from noticeOfViolation’s own closing step, which took its wording from the Article 11 Interpretation Guide’s high-level workflow and intentionally omits unverified fee timing, hearing and abatement detail. The two links are proposed pages.'
 				}
-			]
-		},
-		{
-			heading: 'Related pages',
-			karl: 'Maps to Related. Cards publish the destination page’s own title.',
-			kind: 'body',
-			cards: [
-				{ title: 'Health Code Article 11 in plain language', target: 'article11Guide' },
-				{ title: 'Article 11 compliance for property owners', target: 'article11Compliance' },
-				{ title: 'Tenant rights when reporting housing conditions', target: 'tenantRights' }
 			]
 		}
 	],

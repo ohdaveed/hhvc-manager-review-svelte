@@ -350,9 +350,8 @@ const plainLanguage = (function initPlainLanguage() {
 		add('summary', 'summary', page.summary, { prose: true });
 		add('seoTitle', 'seo-title', page.seoTitle);
 		add('metaDescription', 'meta-description', page.metaDescription);
-		(page.audience || []).forEach((entry, index) => {
-			addItem(`audience[${index}]`, 'audience', entry, {});
-		});
+		// DIVERGES FROM UPSTREAM: the `audience` items are gone with the field
+		// (retired here on 2026-11-26).
 
 		if (page.whatToKnow) {
 			add('whatToKnow.cost', 'what-to-know', page.whatToKnow.cost, { prose: true });

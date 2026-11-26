@@ -12,12 +12,13 @@
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
 	import { requestGeneration } from '$lib/ai/generate';
 	import { resolveFields } from '$lib/corpus/fieldResolver';
-	import { pageStore, type Suggestion } from '$lib/stores/pageData.svelte';
+	import { changeKey, pageStore, type Suggestion } from '$lib/stores/pageData.svelte';
 	import { saveInlineEdit } from '$lib/stores/reviewState';
 	import { sessionStore } from '$lib/stores/session.svelte';
 	import { resolve } from '$app/paths';
 
 	let { pageData, livePageId }: { pageData: unknown; livePageId?: string } = $props();
+	const uid = $props.id();
 
 	/**
 	 * The BACKEND's caps, not the proxy's.
@@ -63,19 +64,133 @@
 	/** Only this page's cards. A card for another page has no badge to point at. */
 	const cards = $derived(pageStore.suggestionsFor(pageId));
 
-	const acceptedCount = $derived(pageStore.acceptedFor(pageId));
+	/** What `Save N changes` commits: typed or accepted, on this page. */
+	const unsavedHere = $derived(pageStore.unsavedChangesOn(pageId).length);
 	const pendingCount = $derived(cards.filter(([, s]) => s.status === 'pending').length);
 	/** Decided but not yet committed -- exactly the set `Undo all` can reverse. */
 	const decidedCount = $derived(
 		cards.filter(([, s]) => s.status === 'accepted' || s.status === 'rejected').length
 	);
 
-	/** Approved work sitting on pages the reviewer has navigated away from. */
-	const acceptedElsewhere = $derived(pageStore.acceptedElsewhere(pageId));
-
 	let rewriting = $state(false);
 	let saving = $state(false);
 	let saveError = $state('');
+
+	/**
+	 * Per-change state for the edit controls, keyed by `changeKey` -- a
+	 * field id alone names a field on every page, and unsaved changes outlive navigation.
+	 */
+	let changeErrors = $state<Record<string, string>>({});
+	let savingChanges = $state<Record<string, boolean>>({});
+
+	/** Unsaved changes on this page whose field is not selected: kept, so listed. */
+	const otherUnsavedChanges = $derived(
+		pageStore.unsavedChangesOn(pageId).filter((d) => !pageStore.isSelected(d.fieldId))
+	);
+	const changesElsewhere = $derived(pageStore.unsavedChangesElsewhere(pageId));
+
+	const errorFor = (fieldId: string) => (pageId ? changeErrors[changeKey(pageId, fieldId)] : '');
+	const isSavingChange = (fieldId: string) =>
+		pageId ? savingChanges[changeKey(pageId, fieldId)] === true : false;
+
+	function setChangeError(key: string, message: string) {
+		const next = { ...changeErrors };
+		if (message) next[key] = message;
+		else delete next[key];
+		changeErrors = next;
+	}
+
+	/**
+	 * No field in the corpus holds a line break -- measured over every string in
+	 * `pageStore.pages` -- so none is let in: Enter saves, and a paste that
+	 * carries line breaks has them turned into spaces.
+	 */
+	function typeChange(fieldId: string, value: string) {
+		if (!pageId) return;
+		const key = changeKey(pageId, fieldId);
+		setChangeError(key, '');
+		if (!pageStore.setChange(pageId, fieldId, value.replace(/\s*[\r\n]+\s*/g, ' '))) {
+			setChangeError(key, 'This field is no longer on the page, so the change was not applied.');
+		}
+	}
+
+	/**
+	 * Refused while that field's save is in flight: the insert would land after
+	 * the cancel, and hydration would put the cancelled text back, recorded.
+	 */
+	function cancelChange(fieldId: string) {
+		if (!pageId || isSavingChange(fieldId)) return;
+		setChangeError(changeKey(pageId, fieldId), '');
+		pageStore.cancelChange(pageId, fieldId);
+	}
+
+	function onChangeKeydown(e: KeyboardEvent, fieldId: string) {
+		if (e.isComposing) return;
+		if (e.key === 'Enter') {
+			e.preventDefault();
+			if (pageStore.hasUnsavedChange(pageId, fieldId)) saveChange(fieldId);
+		} else if (e.key === 'Escape' && pageStore.getChange(pageId, fieldId)) {
+			// Stopped here: Esc on a field with an unsaved change means "undo my typing",
+			// and nothing around the panel should also act on it.
+			e.preventDefault();
+			e.stopPropagation();
+			cancelChange(fieldId);
+		}
+	}
+
+	/**
+	 * Persists one unsaved change, typed or accepted. The mockup already shows
+	 * it, so success only has to drop the change; failure keeps it, so the text
+	 * is still there to retry. Resolves true once nothing is left unsaved.
+	 *
+	 * A suggestion for the same field is dropped once the save lands: its
+	 * `original` is the copy the reviewer has just replaced, and accepting it
+	 * later would quietly overwrite the edit that was saved.
+	 */
+	async function saveChange(
+		fieldId: string,
+		changePageId: string | undefined = pageId,
+		liveId: string | undefined = livePageId
+	): Promise<boolean> {
+		const change = pageStore.getChange(changePageId, fieldId);
+		if (!changePageId || !change) return true;
+		const key = changeKey(changePageId, fieldId);
+		if (savingChanges[key]) return false;
+		if (change.value === change.original) {
+			pageStore.forgetChange(changePageId, fieldId);
+			return true;
+		}
+		if (!liveId) {
+			setChangeError(
+				key,
+				'This page is not part of a loaded review, so the change can only be shown, not saved.'
+			);
+			return false;
+		}
+		const value = change.value;
+		savingChanges = { ...savingChanges, [key]: true };
+		setChangeError(key, '');
+		const persisted = await saveInlineEdit(liveId, fieldId, value);
+		savingChanges = { ...savingChanges, [key]: false };
+		if (!persisted) {
+			setChangeError(key, 'The change could not be saved. It is still here to retry.');
+			return false;
+		}
+		// Typing may have continued while the request was out; only an unsaved change that
+		// still says what was saved is finished. One that moved on keeps going,
+		// with the saved copy as what Cancel now returns to.
+		const now = pageStore.getChange(changePageId, fieldId);
+		if (now?.value === value) pageStore.forgetChange(changePageId, fieldId);
+		else if (now)
+			pageStore.unsavedChanges = {
+				...pageStore.unsavedChanges,
+				[key]: { ...now, original: value, savedElsewhere: false }
+			};
+		if (pageStore.suggestions[fieldId]?.pageId === changePageId)
+			pageStore.forgetSuggestion(fieldId);
+		return now === undefined || now.value === value;
+	}
+
 	/** Local, pre-flight: the instruction is over the backend's 2,000-char cap. */
 	let instructionError = $state('');
 
@@ -209,9 +324,9 @@
 	}
 
 	/**
-	 * `'pending'` is the undo. A decision stands only until `Save` commits it,
-	 * and `original` was captured when the rewrite was requested, so the card is
-	 * never missing the text to go back to.
+	 * `'pending'` is the undo. Accepting puts the rewrite on the mockup as an
+	 * unsaved change, so undoing an acceptance cancels that change, which puts
+	 * the original copy back and returns the card to waiting.
 	 *
 	 * `error` stays excluded: an errored card has no `suggested` text, and
 	 * letting it become pending would render an empty green paragraph above an
@@ -220,7 +335,26 @@
 	function decide(fieldId: string, status: 'accepted' | 'rejected' | 'pending') {
 		const current = pageStore.suggestions[fieldId];
 		if (!current || current.status === 'error') return;
-		pageStore.suggestions = { ...pageStore.suggestions, [fieldId]: { ...current, status } };
+		if (status === 'accepted') {
+			pageStore.acceptSuggestion(fieldId);
+			return;
+		}
+		if (current.status === 'accepted') {
+			// Undo takes back the acceptance, not typing done on top of it: the
+			// field is restored only while it still says what was accepted.
+			// Otherwise the card goes back to waiting and the typing stays, an
+			// unsaved change of the reviewer's own.
+			const change = pageStore.getChange(current.pageId, fieldId);
+			if (change?.value === current.suggested) {
+				if (isSavingChange(fieldId)) return;
+				pageStore.cancelChange(current.pageId, fieldId);
+				if (status === 'pending') return;
+			}
+		}
+		pageStore.suggestions = {
+			...pageStore.suggestions,
+			[fieldId]: { ...pageStore.suggestions[fieldId], status }
+		};
 	}
 
 	/**
@@ -229,80 +363,42 @@
 	 * decides every card at once.
 	 *
 	 * Scoped to this page's cards. `pageStore.suggestions` also holds accepted
-	 * work parked on other pages, and a bulk control in this panel has no
+	 * work waiting on other pages, and a bulk control in this panel has no
 	 * business reaching copy the reviewer cannot see.
 	 */
 	function decideAll(status: 'accepted' | 'rejected' | 'pending') {
 		const from = status === 'pending' ? ['accepted', 'rejected'] : ['pending'];
-		const next = { ...pageStore.suggestions };
 		for (const [id, s] of cards) {
-			if (from.includes(s.status)) next[id] = { ...s, status };
+			if (from.includes(s.status)) decide(id, status);
 		}
-		pageStore.suggestions = next;
 	}
 
 	/**
-	 * Writes this page's accepted suggestions into the corpus and persists them.
+	 * Saves every unsaved change on this page, typed or accepted, one field at a
+	 * time through the same path as each field's own Save -- so a failure stays
+	 * on its field, still unsaved and retryable, and the rest still land.
 	 *
-	 * The in-memory write always runs, so the mockup reflects the decision even
-	 * with no live review row; `saveInlineEdit` is what needs one.
-	 *
-	 * Two things this loop must not do, both of which it used to.
-	 *
-	 * It must not save a suggestion approved for another page. Field ids are
-	 * page-relative, so `title` resolves on all 29 of them: an edit accepted on
-	 * page A, left unsaved, then saved from page B overwrote B's title and was
-	 * persisted under B's row. `pageId` is the guard, and the page is captured
-	 * before the loop so navigating mid-save cannot move the target either.
-	 *
-	 * And it must not forget a suggestion whose edit did not persist.
-	 * `saveInlineEdit` rolls its optimistic entry back and, until it returned a
-	 * boolean, resolved exactly as it does on success -- so the card was dropped,
-	 * the corpus said the rewrite had landed, and the database held nothing. The
-	 * suggestion now survives a failure, still accepted, still retryable.
+	 * The page, its live row and the list are captured before the first await
+	 * and handed to every `saveChange`. The panel is not remounted on
+	 * navigation, so reading `pageId` inside the loop would, after a navigation
+	 * mid-save, save another page's change of the same field id -- or find
+	 * none there and count this page's as saved.
 	 */
-	async function saveAccepted() {
+	async function saveAll() {
 		if (saving) return;
 		saving = true;
 		saveError = '';
 
-		const savePageData = pageData;
-		const savePageId = livePageId;
-		const accepted = pageStore
-			.suggestionsFor(pageId)
-			.filter(([, suggestion]) => suggestion.status === 'accepted');
-
-		const missing: string[] = [];
-		const failed: string[] = [];
-
-		for (const [fieldId, suggestion] of accepted) {
-			const resolved = resolveFields(savePageData as never, [fieldId])[0];
-			if (!resolved) {
-				missing.push(fieldId);
-				continue;
-			}
-
-			// Persist first, mutate second. The corpus write is what the reviewer
-			// sees; doing it before the insert is known to have landed is how a
-			// failed save still looked like a successful one.
-			if (savePageId) {
-				const persisted = await saveInlineEdit(savePageId, fieldId, suggestion.suggested);
-				if (!persisted) {
-					failed.push(fieldId);
-					continue;
-				}
-			}
-
-			resolved.field.set(suggestion.suggested);
-			pageStore.forgetSuggestion(fieldId);
+		const savePageId = pageId;
+		const saveLiveId = livePageId;
+		const fieldIds = pageStore.unsavedChangesOn(savePageId).map((c) => c.fieldId);
+		let failed = 0;
+		for (const fieldId of fieldIds) {
+			if (!(await saveChange(fieldId, savePageId, saveLiveId))) failed++;
 		}
 
-		if (failed.length > 0) {
-			saveError = `${failed.length} ${failed.length === 1 ? 'edit' : 'edits'} could not be saved and ${failed.length === 1 ? 'is' : 'are'} still here to retry.`;
-		} else if (missing.length > 0) {
-			saveError = `${missing.length} ${missing.length === 1 ? 'edit' : 'edits'} could not be applied: the field is no longer on this page.`;
-		} else if (!savePageId) {
-			saveError = 'Applied to the mockup only — this page is not part of a loaded review.';
+		if (failed > 0) {
+			saveError = `${failed} ${failed === 1 ? 'change' : 'changes'} could not be saved and ${failed === 1 ? 'is' : 'are'} still here to retry.`;
 		}
 
 		saving = false;
@@ -311,6 +407,74 @@
 
 <div class="flex h-full min-h-0 flex-col">
 	<div class="min-h-0 flex-1 overflow-y-auto">
+		<!-- Typing is never thrown away by moving the selection. Edits whose field
+		     is no longer selected wait here, still on the mockup, until they are
+		     saved or discarded. -->
+		{#if otherUnsavedChanges.length > 0}
+			<section
+				class="mx-5 mt-4 rounded-[4px] border-l-2 border-sfds-amber bg-sfds-amber-l1 px-3 py-2"
+				aria-labelledby="{uid}-waiting"
+			>
+				<h3
+					id="{uid}-waiting"
+					class="text-[12px] font-bold tracking-[0.06em] text-sfds-black uppercase"
+				>
+					{otherUnsavedChanges.length} unsaved {otherUnsavedChanges.length === 1
+						? 'change'
+						: 'changes'}
+				</h3>
+				<ul class="mt-1.5 space-y-2">
+					{#each otherUnsavedChanges as change (change.fieldId)}
+						{@const name =
+							resolveFields(pageData as never, [change.fieldId])[0]?.field.name ?? change.fieldId}
+						<li class="text-[12px] leading-[17px] text-sfds-black">
+							<span class="font-semibold">{name}:</span>
+							<span class="line-clamp-2">{change.value}</span>
+							{#if change.savedElsewhere}
+								<p class="mt-1 text-sfds-amber" role="status">
+									Someone else saved this field after you started. Saving replaces their wording.
+								</p>
+							{/if}
+							{#if errorFor(change.fieldId)}
+								<p class="mt-1 text-sfds-red" role="alert">{errorFor(change.fieldId)}</p>
+							{/if}
+							<span class="mt-1 flex justify-end gap-1">
+								<Button
+									variant="ghost"
+									size="sm"
+									class="h-7 px-2 text-[12px]"
+									aria-label="Edit {name} again"
+									onclick={() => pageStore.select(change.fieldId, true)}>Edit</Button
+								>
+								<Button
+									variant="ghost"
+									size="sm"
+									class="h-7 px-2 text-[12px]"
+									aria-label="Discard the change to {name}"
+									disabled={isSavingChange(change.fieldId)}
+									onclick={() => cancelChange(change.fieldId)}>Discard</Button
+								>
+								<Button
+									size="sm"
+									class="h-7 px-2 text-[12px]"
+									aria-label="Save the change to {name}"
+									disabled={isSavingChange(change.fieldId)}
+									onclick={() => saveChange(change.fieldId)}
+								>
+									{isSavingChange(change.fieldId) ? 'Saving…' : 'Save'}
+								</Button>
+							</span>
+						</li>
+					{/each}
+				</ul>
+			</section>
+		{/if}
+		{#if changesElsewhere > 0}
+			<p class="mx-5 mt-3 text-[12px] leading-[17px] text-sfds-slate-l3" role="status">
+				{changesElsewhere} unsaved {changesElsewhere === 1 ? 'change is' : 'changes are'} waiting on other
+				pages. They are still there when you go back.
+			</p>
+		{/if}
 		{#if selected.length === 0}
 			<div class="px-5 py-6 text-sm text-sfds-slate-l3">
 				<p class="font-semibold text-sfds-black">No field selected</p>
@@ -336,15 +500,71 @@
 				</Button>
 			</div>
 
-			<ol class="space-y-1 px-5 py-3" aria-label="Selected fields">
+			<ol class="space-y-3 px-5 py-3" aria-label="Selected fields">
 				{#each selected as { fieldId, field }, i (fieldId)}
-					<li class="flex items-start gap-2 text-[13px]">
-						<span
-							class="mt-px inline-flex size-[18px] flex-none items-center justify-center rounded-[3px] bg-sfds-action text-[11px] font-bold text-white"
-						>
-							{i + 1}
-						</span>
-						<span class="min-w-0 truncate text-sfds-slate-l3">{field.name}</span>
+					{@const inputId = `${uid}-edit-${i}`}
+					{@const dirty = pageStore.hasUnsavedChange(pageId, fieldId)}
+					{@const error = errorFor(fieldId)}
+					<li class="text-[13px]">
+						<label for={inputId} class="flex items-start gap-2">
+							<span
+								class="mt-px inline-flex size-[18px] flex-none items-center justify-center rounded-[3px] bg-sfds-action text-[11px] font-bold text-white"
+							>
+								{i + 1}
+							</span>
+							<span class="min-w-0 truncate text-sfds-slate-l3">{field.name}</span>
+						</label>
+						<!-- One-way value: the field IS the unsaved change, because every keystroke
+						     is written to the mockup through its setter. Esc cancels. -->
+						<Textarea
+							id={inputId}
+							value={field.value}
+							rows={2}
+							class="mt-1.5 text-[13px]"
+							aria-describedby="{inputId}-hint{error ? ` ${inputId}-error` : ''}"
+							aria-invalid={error ? true : undefined}
+							oninput={(e) => typeChange(fieldId, e.currentTarget.value)}
+							onkeydown={(e) => onChangeKeydown(e, fieldId)}
+						/>
+						<p id="{inputId}-hint" class="sr-only">Enter saves. Escape cancels.</p>
+						{#if error}
+							<p
+								id="{inputId}-error"
+								class="mt-1.5 text-[12px] leading-[17px] text-sfds-red"
+								role="alert"
+							>
+								{error}
+							</p>
+						{/if}
+						{#if pageStore.getChange(pageId, fieldId)?.savedElsewhere}
+							<p class="mt-1.5 text-[12px] leading-[17px] text-sfds-amber" role="status">
+								Someone else saved this field after you started. Saving replaces their wording.
+							</p>
+						{/if}
+						{#if dirty}
+							<div class="mt-1.5 flex items-center justify-end gap-1">
+								<span class="mr-auto text-[11px] text-sfds-slate-l3" aria-hidden="true">
+									Enter to save · Esc to cancel
+								</span>
+								<Button
+									variant="ghost"
+									size="sm"
+									class="h-7 px-2 text-[12px]"
+									aria-label="Cancel the change to {field.name}"
+									disabled={isSavingChange(fieldId)}
+									onclick={() => cancelChange(fieldId)}>Cancel</Button
+								>
+								<Button
+									size="sm"
+									class="h-7 px-2 text-[12px]"
+									aria-label="Save the change to {field.name}"
+									disabled={isSavingChange(fieldId)}
+									onclick={() => saveChange(fieldId)}
+								>
+									{isSavingChange(fieldId) ? 'Saving…' : 'Save'}
+								</Button>
+							</div>
+						{/if}
 					</li>
 				{/each}
 			</ol>
@@ -542,11 +762,15 @@
 										<Button
 											size="sm"
 											class="h-7 px-2 text-[12px]"
+											disabled={pageStore.hasUnsavedChange(pageId, fieldId)}
+											title={pageStore.hasUnsavedChange(pageId, fieldId)
+												? 'Save or cancel your unsaved change to this field first'
+												: undefined}
 											onclick={() => decide(fieldId, 'accepted')}>Accept</Button
 										>
 									</div>
 								{:else if suggestion.status !== 'error'}
-									<!-- The decision stands until `Save` commits it, and `original`
+									<!-- Accepting is undoable until Save records it, and `original`
 									     was captured with the rewrite, so there is always something
 									     to go back to. Without this an accidental Accept could only
 									     be undone by `Clear`, which throws the whole batch away. -->
@@ -570,21 +794,11 @@
 		{/if}
 	</div>
 
-	<!-- Footer. `Save N edits` counts ACCEPTED suggestions, not selected fields:
-	     they look alike and are routinely different numbers. -->
+	<!-- Footer. `Save N changes` counts this page's UNSAVED CHANGES -- typed or
+	     accepted -- not selected fields: they look alike and are routinely
+	     different numbers. Changes on other pages are named at the top of the
+	     panel, not counted here: this button cannot save them. -->
 	<div class="flex-none border-t px-5 py-3">
-		<!-- Accepted work does not follow the reviewer, and the count above is
-		     scoped to this page, so without this line it simply vanishes when they
-		     navigate. Named here rather than added to the count: the button below
-		     cannot save it, and a number the button disagrees with is worse than
-		     no number. -->
-		{#if acceptedElsewhere > 0}
-			<p class="mb-2 text-[12px] leading-[17px] text-sfds-amber" role="status">
-				{acceptedElsewhere} accepted {acceptedElsewhere === 1 ? 'edit' : 'edits'} on other pages
-				{acceptedElsewhere === 1 ? 'is' : 'are'} still unsaved. Open that page to save
-				{acceptedElsewhere === 1 ? 'it' : 'them'}.
-			</p>
-		{/if}
 		{#if saveError}
 			<p class="mb-2 text-[12px] leading-[17px] text-sfds-amber" role="status">{saveError}</p>
 		{/if}
@@ -593,17 +807,17 @@
 				<a
 					href={resolve('/login')}
 					class="font-semibold text-sfds-action underline underline-offset-2">Sign in</a
-				> to save edits
+				> to save changes
 			</p>
 		{/if}
 		<!-- Disabled keeps its label legible: the default 50% opacity left
 		     white-on-blue text well under 4.5:1. -->
 		<Button
 			class="w-full disabled:bg-muted disabled:text-sfds-slate-l3 disabled:opacity-100"
-			disabled={acceptedCount === 0 || saving || sessionStore.knownSignedOut}
-			onclick={saveAccepted}
+			disabled={unsavedHere === 0 || saving || sessionStore.knownSignedOut}
+			onclick={saveAll}
 		>
-			{saving ? 'Saving…' : `Save ${acceptedCount} ${acceptedCount === 1 ? 'edit' : 'edits'}`}
+			{saving ? 'Saving…' : `Save ${unsavedHere} ${unsavedHere === 1 ? 'change' : 'changes'}`}
 		</Button>
 	</div>
 </div>

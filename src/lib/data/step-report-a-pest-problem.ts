@@ -3,11 +3,6 @@ export const stepPestReport = {
 	type: 'Step by step',
 	title: 'Report a pest problem, start to finish',
 	summary: 'Follow a 311 report from filing through inspection, notice, and re-inspection.',
-	audience: [
-		'A tenant who has reported a pest problem and does not know what happens next',
-		'A property owner or manager whose building has been reported',
-		'An advocate or helper following a case for someone else'
-	],
 	reading: 'Grade 7',
 	editorNote:
 		'PROPOSED PAGE — not in the current 29. Drafted from `design/HHVC Page Ideas.dc.html`, which argues this is one of the four that change the most for a reader. Step by step is the type Karl documents for "a process that unfolds over weeks with a deadline at each stage", and it is the only type whose Step block carries a Transaction link chooser — which is what lets this page stay an overview and send the detail to the existing Transaction pages rather than restating them. Nothing here states a timeline the corpus has not already established: the 72-hour landlord wait is linked to Tenant rights rather than restated, and no inspection, correction or re-inspection interval is given a number, because none is confirmed. Every step that names a duration says what governs it instead. Step by step has no page-level cost and no things_to_know, so the audience sits in Intro rather than in a What-to-know entry.',
@@ -94,7 +89,8 @@ export const stepPestReport = {
 							unverifiedReason:
 								'The scope of what an inspector checks beyond the reported condition has no tier-1 source. Confirm with HHVC before publication.'
 						},
-						'If you did not give contact information, an inspection may still happen without notice.'
+						'If you did not give contact information, an inspection may still happen without notice.',
+						'[Find your Healthy Housing inspector by neighborhood](inspectorLookup)'
 					],
 					karl: 'Step 3. Transaction link: none. Get ready for a housing inspection after you report folded into this step (C1, decided Nov 24, 2026) and is removed; its checklist is the bullets, each unverified line still flagged. Until 2026-11-25 this step also said "If you rent, give 72 hours notice when you can before anyone enters a unit." That misread the old garbage page\'s landlord rule (tell the owner first and allow 72 hours before reporting) as an entry-notice rule, so it is removed; the landlord pointer now sits in step 1, linking Tenant rights.'
 				},
@@ -105,7 +101,8 @@ export const stepPestReport = {
 					],
 					bullets: [
 						'[What happens after you report a housing or pest problem](afterReport)',
-						'A notice can name an owner, a manager, a tenant, or more than one party.'
+						'A notice can name an owner, a manager, a tenant, or more than one party.',
+						'[Health Code Article 11 in plain language](article11Guide)'
 					],
 					karl: 'Step 4. Transaction link: none; afterReport is an Information page.'
 				},
@@ -130,16 +127,6 @@ export const stepPestReport = {
 					],
 					karl: 'Step 6. Transaction link: none. Get ready for a follow-up inspection folded into Steps 5 and 6 of the Correct a violation Step by step (C1) and is removed. This step is where the proposed "Tell us your violation is fixed" Transaction would attach if it is built — the plan lists it separately and it belongs here as detail, not as a sibling page.'
 				}
-			]
-		},
-		{
-			heading: 'Related pages',
-			karl: 'Maps to Related. Each card publishes the destination page’s own title — nothing typed here appears.',
-			kind: 'body',
-			cards: [
-				{ title: 'Tenant rights when reporting housing conditions', target: 'tenantRights' },
-				{ title: 'Health Code Article 11 in plain language', target: 'article11Guide' },
-				{ title: 'Find your Healthy Housing inspector by neighborhood', target: 'inspectorLookup' }
 			]
 		}
 	],
