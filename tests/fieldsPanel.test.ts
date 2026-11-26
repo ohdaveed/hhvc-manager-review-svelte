@@ -240,7 +240,7 @@ describe('FieldsPanel', () => {
 		});
 	});
 
-	it('reverses a decision until save commits it', async () => {
+	it('reverses an acceptance until Save records it', async () => {
 		const page = storePage();
 		pageStore.selectedFieldIds = ['title', 'summary'];
 		requestGeneration.mockResolvedValue({ result: { rewrittenText: 'Rewritten.' } });
@@ -342,7 +342,7 @@ describe('FieldsPanel', () => {
  * in `pageStore`, which resolves against `pageStore.pages` -- so the fixture is
  * added there, and the panel is handed that same object, as the layout does.
  */
-describe('FieldsPanel manual edits', () => {
+describe('FieldsPanel unsaved changes', () => {
 	const PAGE_ID = 'manual-edit--fixture';
 	const livePage = () => {
 		let page = pageStore.pages.find((p) => p.id === PAGE_ID);
@@ -603,7 +603,7 @@ describe('FieldsPanel manual edits', () => {
 		expect(screen.queryByText('1 unsaved change')).toBeNull();
 	});
 
-	it('a parked edit can be saved from the list', async () => {
+	it('an unsaved change waiting on an unselected field can be saved from the list', async () => {
 		const { input } = renderTitle();
 		await fireEvent.input(input, { target: { value: 'Parked then saved' } });
 		pageStore.select('summary');

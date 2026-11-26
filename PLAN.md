@@ -79,7 +79,7 @@ accepted wording is an unsaved change until saved; "reject", never "dismiss". Th
 - [x] **20. Prune after dropping.** `select` / `clearSelection` / `selectSection` drop no-op changes before
       pruning, so an un-accepted card does not outlive its selection. Tested.
 - [x] **21. Leaving asks first.** A `beforeunload` guard while `unsavedChangeCount() > 0`. Tested.
-- [ ] **22. Stale wording.** Comments, tooltips, test names and the `-parked` id use the glossary's terms.
+- [x] **22. Stale wording.** Comments, tooltips, test names and the `-parked` id use the glossary's terms.
 - [ ] **23. Verify.** Unit, check, ratchets, e2e, browser check.
 
 Deferred, not this branch:

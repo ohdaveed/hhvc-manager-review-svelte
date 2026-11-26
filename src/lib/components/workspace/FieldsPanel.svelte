@@ -77,7 +77,7 @@
 	let saveError = $state('');
 
 	/**
-	 * Per-change state for the manual edit controls, keyed by `changeKey` -- a
+	 * Per-change state for the edit controls, keyed by `changeKey` -- a
 	 * field id alone names a field on every page, and unsaved changes outlive navigation.
 	 */
 	let changeErrors = $state<Record<string, string>>({});
@@ -363,7 +363,7 @@
 	 * decides every card at once.
 	 *
 	 * Scoped to this page's cards. `pageStore.suggestions` also holds accepted
-	 * work parked on other pages, and a bulk control in this panel has no
+	 * work waiting on other pages, and a bulk control in this panel has no
 	 * business reaching copy the reviewer cannot see.
 	 */
 	function decideAll(status: 'accepted' | 'rejected' | 'pending') {
@@ -413,10 +413,10 @@
 		{#if otherUnsavedChanges.length > 0}
 			<section
 				class="mx-5 mt-4 rounded-[4px] border-l-2 border-sfds-amber bg-sfds-amber-l1 px-3 py-2"
-				aria-labelledby="{uid}-parked"
+				aria-labelledby="{uid}-waiting"
 			>
 				<h3
-					id="{uid}-parked"
+					id="{uid}-waiting"
 					class="text-[12px] font-bold tracking-[0.06em] text-sfds-black uppercase"
 				>
 					{otherUnsavedChanges.length} unsaved {otherUnsavedChanges.length === 1
@@ -764,13 +764,13 @@
 											class="h-7 px-2 text-[12px]"
 											disabled={pageStore.hasUnsavedChange(pageId, fieldId)}
 											title={pageStore.hasUnsavedChange(pageId, fieldId)
-												? 'Save or cancel your own edit to this field first'
+												? 'Save or cancel your unsaved change to this field first'
 												: undefined}
 											onclick={() => decide(fieldId, 'accepted')}>Accept</Button
 										>
 									</div>
 								{:else if suggestion.status !== 'error'}
-									<!-- The decision stands until `Save` commits it, and `original`
+									<!-- Accepting is undoable until Save records it, and `original`
 									     was captured with the rewrite, so there is always something
 									     to go back to. Without this an accidental Accept could only
 									     be undone by `Clear`, which throws the whole batch away. -->

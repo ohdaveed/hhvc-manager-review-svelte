@@ -29,8 +29,8 @@ export type Suggestion = {
 	 * Field ids are page-relative -- `title` and `summary` name a live field on
 	 * every one of the 29 pages -- so an id alone cannot say which page a
 	 * suggestion belongs to. Accepted suggestions deliberately survive
-	 * navigation, being unsaved work, and without this they resolved against
-	 * whatever page was on screen when `Save` was pressed: an edit approved for
+	 * navigation, being unsaved changes, and without this they resolved against
+	 * whatever page was on screen when `Save` was pressed: wording accepted for
 	 * page A was written to page B and persisted under B's row.
 	 */
 	pageId: string;
@@ -42,11 +42,12 @@ export type Suggestion = {
 };
 
 /**
- * A field the reviewer is typing into directly, from the Fields panel.
+ * New wording for one field, on the mockup but not saved: typed in the Fields
+ * panel, or taken from a suggestion the reviewer accepted.
  *
- * The mockup already shows `value` -- every keystroke goes through the field's
- * setter so the preview is live -- but nothing is persisted until Save.
- * `original` is what the field said before typing started: what Cancel puts
+ * The mockup already shows `value` -- every keystroke, and an acceptance, goes
+ * through the field's setter so the preview is live -- but nothing is
+ * persisted until Save. `original` is what the field said before the change: what Cancel puts
  * back, and how a save that changes nothing is recognised and skipped.
  */
 export type UnsavedChange = {
@@ -225,7 +226,7 @@ class PageStore {
 	suggestions = $state<Record<string, Suggestion>>({});
 
 	/**
-	 * Unsaved manual edits, keyed by `changeKey(pageId, fieldId)`. See `UnsavedChange`.
+	 * Unsaved changes, keyed by `changeKey(pageId, fieldId)`. See `UnsavedChange`.
 	 *
 	 * Keyed by page as well as field because field ids are page-relative
 	 * (`title` names a field on every page), and an unsaved change outlives navigation.
@@ -522,14 +523,14 @@ class PageStore {
 		return Boolean(change && change.value !== change.original);
 	}
 
-	/** unsaved changes on `pageId`, in the order they were started. */
+	/** Unsaved changes on `pageId`, in the order they were started. */
 	unsavedChangesOn(pageId: string | undefined): UnsavedChange[] {
 		return Object.values(this.unsavedChanges).filter(
 			(d) => d.pageId === pageId && d.value !== d.original
 		);
 	}
 
-	/** unsaved changes parked on OTHER pages -- said, not hidden. */
+	/** Unsaved changes waiting on OTHER pages -- said, not hidden. */
 	unsavedChangesElsewhere(pageId: string | undefined): number {
 		return Object.values(this.unsavedChanges).filter(
 			(d) => d.pageId !== pageId && d.value !== d.original
