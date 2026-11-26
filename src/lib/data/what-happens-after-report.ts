@@ -59,11 +59,11 @@ export const afterReport = {
 		},
 		{
 			heading: 'Tenant rights and retaliation',
-			karl: 'Paragraphs map to a sixth Title and text block (Title = this heading, Text = the two paragraphs). Resolved schema gap: the verified Information form has no confirmed button/CTA block type (button converted to inline link) — folded into this block’s rich text (Internal link → tenantRights) — flag this gap for Digital Services rather than assuming a dedicated button block exists.',
+			karl: 'Paragraphs map to a sixth Title and text block (Title = this heading, Text = the two paragraphs). Resolved schema gap: the verified Information form has no confirmed button/CTA block type (button converted to inline link) — folded into this block’s rich text (Internal link → tenantRights) — flag this gap for Digital Services rather than assuming a dedicated button block exists. On 2026-11-26 the opening sentence it shared word for word with tenantRights, and the rule that an owner cannot retaliate, moved to tenantRights, which is where a worried tenant lands; this block keeps the confidentiality sentence, which is about the report, and points there.',
 			kind: 'body',
 			paragraphs: [
-				'Tenants have rights when they ask for repairs or report housing conditions to the City. We never share your name or contact information.',
-				'A property owner or manager cannot retaliate because a tenant reports a housing condition to 311 or a health department.'
+				'You can report a condition in a building you rent. We never share your name or contact information.',
+				'If you are worried your landlord will retaliate, the tenant rights page explains what retaliation can look like and where to get help.'
 			],
 			bullets: ['[Tenant rights and reporting](tenantRights)']
 		},
