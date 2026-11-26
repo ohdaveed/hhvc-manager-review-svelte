@@ -384,7 +384,17 @@ describe('extractFields/extractCopy coverage of the real corpus', () => {
 	// the last section-level button had no Karl destination). `extractFields`
 	// still ignores it; a page that brings it back fails the unknown-key test
 	// above, which is the prompt to put it back here.
-	const NON_COPY_SECTION = ['buttonTarget', 'component', 'fieldKey', 'karl', 'kind', 'open'];
+	// `ordered` is presentation: it numbers the bullets (mockup and transcript)
+	// without changing their text, so it stays out of `content_hash`.
+	const NON_COPY_SECTION = [
+		'buttonTarget',
+		'component',
+		'fieldKey',
+		'karl',
+		'kind',
+		'open',
+		'ordered'
+	];
 	const NON_COPY_CALLOUT = ['karl', 'variant'];
 
 	// Deeper levels `extractCopy` walks into that `extractFields` never
