@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount, tick } from 'svelte';
 	import { page } from '$app/stores';
+	import { afterNavigate, replaceState } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
 	import { Switch } from '$lib/components/ui/switch/index.js';
@@ -45,6 +46,7 @@
 	import SiteMapView from '$lib/components/workspace/SiteMapView.svelte';
 	import BlueprintView from '$lib/components/workspace/BlueprintView.svelte';
 	import { buildWalkthrough } from '$lib/karl/walkthrough';
+	import { wantsWalkthrough, withWalkthrough } from '$lib/karl/walkthroughLink';
 	import { reviewRecordFor } from '$lib/karl/reviewRecord';
 	import { outlineSummary, placementsFor } from '$lib/karl/placement';
 	import { setOutlineContext } from '$lib/karl/outlineContext';
@@ -298,6 +300,46 @@
 			disposed = true;
 			cleanup?.();
 		};
+	});
+
+	// ---- the walkthrough's deep link (`?view=walkthrough`) ----------------
+	//
+	// URL -> view: a navigation that arrives with the parameter opens the
+	// walkthrough. It is held as `pendingWalkthrough` until the page exists,
+	// because a draft route renders before its draft has loaded. Registered
+	// AFTER the onMount above, so on first load the rail state is read before
+	// `enterWalkthrough` captures it to restore on exit.
+	let pendingWalkthrough = $state(false);
+	// False until SvelteKit's first `afterNavigate`. The hydration effects run
+	// INSIDE the root component's constructor, before the client has assigned
+	// `root`, and `replaceState` calls `root.$set` -- measured: an uncaught
+	// "Cannot read properties of undefined (reading '$set')" on a deep-linked
+	// load. SvelteKit fires `afterNavigate` only once that assignment is done.
+	let routerReady = $state(false);
+	afterNavigate(({ to }) => {
+		routerReady = true;
+		pendingWalkthrough = Boolean(to && wantsWalkthrough(to.url));
+	});
+	$effect(() => {
+		if (!pendingWalkthrough || !pageData) return;
+		pendingWalkthrough = false;
+		if (pageStore.mode !== 'walkthrough') pageStore.enterWalkthrough();
+	});
+
+	// View -> URL: entering adds the parameter, so the address bar can be
+	// bookmarked or sent; leaving strips it, so a reload after Exit lands on
+	// the mockup. Read from `location`, not `$page.url`: this effect should run
+	// on a change of view or page, not on its own `replaceState`.
+	$effect(() => {
+		if (!routerReady) return;
+		const on = pageStore.mode === 'walkthrough';
+		void currentPath;
+		const here = new URL(location.href);
+		if (wantsWalkthrough(here) === on) return;
+		// The current location with one query parameter changed: it is already a
+		// resolved URL (base path included), so there is nothing to resolve().
+		// eslint-disable-next-line svelte/no-navigation-without-resolve
+		replaceState(withWalkthrough(here, on), $page.state);
 	});
 </script>
 

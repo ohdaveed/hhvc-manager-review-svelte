@@ -12,7 +12,7 @@
 	import { reviewProgress } from '$lib/landing/progress';
 	import { draftsStore } from '$lib/stores/draftPages';
 	import { pageStore } from '$lib/stores/pageData.svelte';
-	import { loadReview, pagesStore } from '$lib/stores/reviewState';
+	import { loadReview, pagesStore, queueOrder } from '$lib/stores/reviewState';
 	import { sessionStore } from '$lib/stores/session.svelte';
 
 	const progress = $derived(reviewProgress($pagesStore));
@@ -37,6 +37,15 @@
 			: isDraftPath(progress.nextPath)
 				? 'Proposed page'
 				: pageStore.pages.find((p) => p.id === progress.nextPath)?.type
+	);
+
+	// The Karl section's links, in queue order. Titles resolve the same way the
+	// next-up card's does, so a draft is named by its draft title.
+	const approvedPages = $derived(
+		queueOrder($pagesStore.filter((p) => p.status === 'approved')).map((path) => ({
+			path,
+			title: pageTitleFor(path, pageStore.pages, $draftsStore)
+		}))
 	);
 
 	// The list's search and status filter live here, not in the list, so the
@@ -158,10 +167,13 @@
 	     grid would otherwise stretch a collapsed How it works into a bordered box
 	     of empty space as tall as the propose form. -->
 	<div class="grid items-start gap-8 md:grid-cols-2">
-		<div class="space-y-8">
+		<!-- `min-w-0`: a grid item defaults to `min-width: auto`, so a long
+		     approved-page title in the Karl section widened this column past a
+		     375px phone (measured: 420px) despite truncating. -->
+		<div class="min-w-0 space-y-8">
 			<HowItWorks startOpen={howItWorksOpen} />
 			<KarlWalkthroughGuide
-				approved={card === 'progress' ? (counts.approved ?? 0) : undefined}
+				approved={card === 'progress' ? approvedPages : undefined}
 				onShowApproved={() => showStatus('approved')}
 			/>
 		</div>
