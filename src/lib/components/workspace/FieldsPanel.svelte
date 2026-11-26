@@ -12,7 +12,8 @@
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
 	import { requestGeneration } from '$lib/ai/generate';
 	import { resolveFields } from '$lib/corpus/fieldResolver';
-	import { changeKey, pageStore, type Suggestion } from '$lib/stores/pageData.svelte';
+	import { hashTextBrowser } from '$lib/corpus/hashBrowser';
+	import { changeKey, isChanged, pageStore, type Suggestion } from '$lib/stores/pageData.svelte';
 	import { saveInlineEdit } from '$lib/stores/reviewState';
 	import { sessionStore } from '$lib/stores/session.svelte';
 	import { resolve } from '$app/paths';
@@ -156,7 +157,7 @@
 		if (!changePageId || !change) return true;
 		const key = changeKey(changePageId, fieldId);
 		if (savingChanges[key]) return false;
-		if (change.value === change.original) {
+		if (!isChanged(change)) {
 			pageStore.forgetChange(changePageId, fieldId);
 			return true;
 		}
@@ -167,10 +168,20 @@
 			);
 			return false;
 		}
+		// Every edit is anchored to the base copy it answers (ADR 0001). A field
+		// with no base copy on record cannot be anchored, so it is not saved.
+		const base = pageStore.baseCopyOf(changePageId, fieldId);
+		if (base === undefined) {
+			setChangeError(
+				key,
+				'This field has no base copy on record, so the change cannot be saved against it.'
+			);
+			return false;
+		}
 		const value = change.value;
 		savingChanges = { ...savingChanges, [key]: true };
 		setChangeError(key, '');
-		const persisted = await saveInlineEdit(liveId, fieldId, value);
+		const persisted = await saveInlineEdit(liveId, fieldId, value, await hashTextBrowser(base));
 		savingChanges = { ...savingChanges, [key]: false };
 		if (!persisted) {
 			setChangeError(key, 'The change could not be saved. It is still here to retry.');
@@ -184,7 +195,7 @@
 		else if (now)
 			pageStore.unsavedChanges = {
 				...pageStore.unsavedChanges,
-				[key]: { ...now, original: value, savedElsewhere: false }
+				[key]: { ...now, original: value, savedElsewhere: false, reconfirm: false }
 			};
 		if (pageStore.suggestions[fieldId]?.pageId === changePageId)
 			pageStore.forgetSuggestion(fieldId);
@@ -560,6 +571,41 @@
 							<p class="mt-1.5 text-[12px] leading-[17px] text-sfds-amber" role="status">
 								Someone else saved this field after you started. Saving replaces their wording.
 							</p>
+						{/if}
+						<!-- An expired edit (ADR 0001): its wording stays on the mockup, marked,
+						     and the base copy now is one step away. Each action starts an unsaved
+						     change; Save records it as a new edit anchored to the base now. -->
+						{#if !dirty && pageId && pageStore.editStatusOf(pageId, fieldId) === 'expired'}
+							<div
+								class="mt-1.5 rounded-[4px] border border-sfds-amber bg-sfds-amber-l1 px-2 py-1.5 text-[12px] leading-[17px] text-sfds-black"
+								role="group"
+								aria-label="Expired wording for {field.name}"
+							>
+								<p>
+									<span class="font-semibold">Expired.</span> The base copy changed after this wording
+									was saved.
+								</p>
+								<p class="mt-1">
+									<span class="font-semibold">Base copy now:</span>
+									{pageStore.baseCopyOf(pageId, fieldId)}
+								</p>
+								<div class="mt-1.5 flex flex-wrap items-center justify-end gap-1">
+									<span class="mr-auto text-sfds-slate-l3">Or edit it above.</span>
+									<Button
+										variant="ghost"
+										size="sm"
+										class="h-7 px-2 text-[12px]"
+										onclick={() => pageId && pageStore.keepBaseCopy(pageId, fieldId)}
+										>Use the base copy</Button
+									>
+									<Button
+										size="sm"
+										class="h-7 px-2 text-[12px]"
+										onclick={() => pageId && pageStore.reconfirmChange(pageId, fieldId)}
+										>Re-confirm wording</Button
+									>
+								</div>
+							</div>
 						{/if}
 						{#if dirty}
 							<div class="mt-1.5 flex items-center justify-end gap-1">

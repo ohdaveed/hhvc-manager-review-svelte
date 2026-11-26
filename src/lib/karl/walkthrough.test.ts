@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { allPages, pagesByKey } from '$lib/data';
-import { buildWalkthrough, karlFormUrl } from './walkthrough';
+import { buildWalkthrough, karlFormUrl, staleEditsMarkdown } from './walkthrough';
 import { gapPages, pagesByKeyWithGaps } from './gapFixtures';
 
 /**
@@ -200,5 +200,32 @@ describe('buildWalkthrough', () => {
 			expect(w.markdown).not.toContain('NOT APPROVED');
 			expect(buildWalkthrough(page, pagesByKey).markdown).toContain('NOT APPROVED');
 		});
+	});
+});
+
+describe('stale edits in the transcript', () => {
+	const page = allPages[0];
+	const record = {
+		section_edits: {},
+		decision: 'Needs review',
+		expired: { title: { accepted: 'Saved title', base: 'Base title now' } },
+		orphaned: { 'sections.gone.heading': 'Was a heading' }
+	};
+
+	it('lists expired and orphaned edits above the first panel', () => {
+		const w = buildWalkthrough(page, pagesByKey, record);
+		expect(w.stale.map((e) => e.kind)).toEqual(['expired', 'orphaned']);
+		const section = w.markdown.indexOf('## Saved edits that need a decision');
+		expect(section).toBeGreaterThan(0);
+		expect(section).toBeLessThan(w.markdown.indexOf('\n### '));
+		expect(w.markdown).toContain('Base copy now: Base title now');
+		expect(w.markdown).toContain('**Orphaned** `sections.gone.heading`');
+	});
+
+	it('renders nothing extra when no edit is stale', () => {
+		expect(staleEditsMarkdown([])).toBe('');
+		const plain = buildWalkthrough(page, pagesByKey, null);
+		expect(plain.stale).toEqual([]);
+		expect(plain.markdown).not.toContain('Saved edits that need a decision');
 	});
 });

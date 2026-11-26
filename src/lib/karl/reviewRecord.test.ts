@@ -100,3 +100,36 @@ describe('reviewRecordFor', () => {
 		expect(reviewRecordFor('about-hhvc', [page({ status: 'approved' })], [])).not.toBeNull();
 	});
 });
+
+describe('reviewRecordFor stale edits', () => {
+	it('carries the newest wording of expired and orphaned fields, with the base copy for expired', () => {
+		const record = reviewRecordFor(
+			'about-hhvc',
+			[page()],
+			[
+				edit('sections.how.paragraphs.0', 'Older', '2026-11-26T00:00:00Z'),
+				edit('sections.how.paragraphs.0', 'Newest', '2026-11-26T01:00:00Z'),
+				edit('sections.gone.heading', 'Was a heading', '2026-11-26T00:00:00Z')
+			],
+			{ expired: { 'sections.how.paragraphs.0': 'Base now' }, orphaned: ['sections.gone.heading'] }
+		);
+		expect(record?.expired).toEqual({
+			'sections.how.paragraphs.0': { accepted: 'Newest', base: 'Base now' }
+		});
+		expect(record?.orphaned).toEqual({ 'sections.gone.heading': 'Was a heading' });
+	});
+
+	it('adds neither key when nothing is stale', () => {
+		const record = reviewRecordFor(
+			'about-hhvc',
+			[page()],
+			[edit('title', 'T', '2026-11-26T00:00:00Z')],
+			{
+				expired: {},
+				orphaned: []
+			}
+		);
+		expect(record).not.toHaveProperty('expired');
+		expect(record).not.toHaveProperty('orphaned');
+	});
+});

@@ -84,6 +84,9 @@
 
 	const selected = $derived(pageStore.isSelected(fieldId));
 	const badge = $derived(pageStore.badgeNumber(fieldId));
+	// A saved edit whose base copy has moved since (ADR 0001): still shown, never
+	// passed off as current. Resolved from the Fields panel.
+	const expired = $derived(pageStore.editStatusOf(pageStore.activePageId, fieldId) === 'expired');
 
 	function select(event: MouseEvent | KeyboardEvent) {
 		event.stopPropagation();
@@ -108,7 +111,7 @@
 			class="edit-target {selected ? 'edit-target-selected' : ''}"
 			data-rewrite-field={fieldId}
 			aria-pressed={selected}
-			aria-label={selected ? `${name}, selected, field ${badge}` : name}
+			aria-label={`${selected ? `${name}, selected, field ${badge}` : name}${expired ? ', saved wording expired' : ''}`}
 			aria-describedby={chip ? chipId : undefined}
 			onclick={select}
 		>
@@ -129,6 +132,14 @@
 			     `dd`, where a sibling would be invalid markup. Hidden, because the
 			     button's `aria-describedby` already reads it out. -->
 			<KarlChip id={chipId} status={chip.status} label={chip.label} reasons={chip.reasons} hidden />
+		{/if}
+		{#if expired}
+			<!-- Read out through the button's label; this is the sighted half. -->
+			<span
+				class="mt-1 inline-block rounded-[3px] border border-sfds-amber bg-sfds-amber-l1 px-1.5 py-px align-middle font-sans text-[11px] leading-[16px] font-bold tracking-[0.06em] text-sfds-black uppercase"
+				aria-hidden="true"
+				data-edit-expired>Expired</span
+			>
 		{/if}
 	</svelte:element>
 {:else}

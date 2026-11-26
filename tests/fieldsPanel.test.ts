@@ -14,9 +14,14 @@
  * `$lib/supabase` -- a `createClient` at module scope -- out of the run.
  */
 import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { tick } from 'svelte';
 import { render, fireEvent, screen } from '@testing-library/svelte';
 import FieldsPanel from '../src/lib/components/workspace/FieldsPanel.svelte';
 import { pageStore, changeKey } from '../src/lib/stores/pageData.svelte.js';
+import { hashTextBrowser } from '../src/lib/corpus/hashBrowser';
+
+/** Any edit anchor: sha256 hex of the field's base copy (ADR 0001). */
+const ANCHOR = expect.stringMatching(/^[0-9a-f]{64}$/);
 
 const requestGeneration = vi.fn();
 const saveInlineEdit = vi.fn();
@@ -175,7 +180,7 @@ describe('FieldsPanel', () => {
 		await fireEvent.click(screen.getByRole('button', { name: 'Save 1 change' }));
 
 		await vi.waitFor(() =>
-			expect(saveInlineEdit).toHaveBeenCalledWith('live-1', fieldId, 'Rewritten paragraph.')
+			expect(saveInlineEdit).toHaveBeenCalledWith('live-1', fieldId, 'Rewritten paragraph.', ANCHOR)
 		);
 		// Saved work leaves the panel: the footer count is unsaved work.
 		await vi.waitFor(() => expect(pageStore.suggestions[fieldId]).toBeUndefined());
@@ -405,7 +410,7 @@ describe('FieldsPanel unsaved changes', () => {
 		await fireEvent.click(screen.getByRole('button', { name: 'Save the change to Title' }));
 		await vi.waitFor(() => expect(pageStore.getChange(PAGE_ID, 'title')).toBeUndefined());
 		expect(saveInlineEdit).toHaveBeenCalledTimes(1);
-		expect(saveInlineEdit).toHaveBeenCalledWith('live-1', 'title', 'Saved title');
+		expect(saveInlineEdit).toHaveBeenCalledWith('live-1', 'title', 'Saved title', ANCHOR);
 		expect(page.title).toBe('Saved title');
 	});
 
@@ -439,12 +444,25 @@ describe('FieldsPanel unsaved changes', () => {
 		expect(accept.hasAttribute('disabled')).toBe(true);
 	});
 
+	it('anchors the edit to the hash of the base copy, not of what was on screen', async () => {
+		const { page } = renderTitle();
+		// A saved edit hydrated onto the page: the screen no longer shows the base.
+		page.title = 'Saved earlier';
+		await tick();
+		await fireEvent.input(screen.getByRole('textbox', { name: /Title$/ }), {
+			target: { value: 'Anchored' }
+		});
+		await fireEvent.click(await screen.findByRole('button', { name: 'Save the change to Title' }));
+		await vi.waitFor(() => expect(saveInlineEdit).toHaveBeenCalledTimes(1));
+		expect(saveInlineEdit.mock.calls[0][3]).toBe(await hashTextBrowser('About vector control'));
+	});
+
 	it('Enter saves rather than adding a line break', async () => {
 		const { page, input } = renderTitle();
 		await fireEvent.input(input, { target: { value: 'Saved with Enter' } });
 		await fireEvent.keyDown(input, { key: 'Enter' });
 		await vi.waitFor(() => expect(pageStore.getChange(PAGE_ID, 'title')).toBeUndefined());
-		expect(saveInlineEdit).toHaveBeenCalledWith('live-1', 'title', 'Saved with Enter');
+		expect(saveInlineEdit).toHaveBeenCalledWith('live-1', 'title', 'Saved with Enter', ANCHOR);
 		expect(page.title).toBe('Saved with Enter');
 	});
 
@@ -496,7 +514,9 @@ describe('FieldsPanel unsaved changes', () => {
 
 		expect(await screen.findByText(/Someone else saved this field after you started/)).toBeTruthy();
 		await fireEvent.click(screen.getByRole('button', { name: 'Save the change to Title' }));
-		await vi.waitFor(() => expect(saveInlineEdit).toHaveBeenCalledWith('live-1', 'title', 'Mine'));
+		await vi.waitFor(() =>
+			expect(saveInlineEdit).toHaveBeenCalledWith('live-1', 'title', 'Mine', ANCHOR)
+		);
 	});
 
 	it('Save all keeps saving the page it started on when the reviewer navigates mid-save', async () => {
@@ -513,6 +533,7 @@ describe('FieldsPanel unsaved changes', () => {
 		saveInlineEdit.mockImplementationOnce(() => new Promise<boolean>((r) => (release = r)));
 		const { rerender } = render(FieldsPanel, { props: { pageData: page, livePageId: 'live-1' } });
 		await fireEvent.click(screen.getByRole('button', { name: 'Save 2 changes' }));
+		await vi.waitFor(() => expect(saveInlineEdit).toHaveBeenCalledTimes(1));
 
 		// Navigate while the first insert is out: the panel is not remounted.
 		const other = pageStore.pages.find((p) => p.id === OTHER)!;
@@ -521,8 +542,8 @@ describe('FieldsPanel unsaved changes', () => {
 
 		await vi.waitFor(() => expect(saveInlineEdit).toHaveBeenCalledTimes(2));
 		expect(saveInlineEdit.mock.calls).toEqual([
-			['live-1', 'title', 'Here title'],
-			['live-1', 'summary', 'Here summary']
+			['live-1', 'title', 'Here title', ANCHOR],
+			['live-1', 'summary', 'Here summary', ANCHOR]
 		]);
 		expect(pageStore.getChange(OTHER, 'title')?.value).toBe('Other title');
 		pageStore.cancelChange(OTHER, 'title');
@@ -571,6 +592,7 @@ describe('FieldsPanel unsaved changes', () => {
 		let release!: (ok: boolean) => void;
 		saveInlineEdit.mockImplementationOnce(() => new Promise<boolean>((r) => (release = r)));
 		await fireEvent.click(screen.getByRole('button', { name: 'Save the change to Title' }));
+		await vi.waitFor(() => expect(saveInlineEdit).toHaveBeenCalledTimes(1));
 
 		expect(screen.getByRole('button', { name: 'Cancel the change to Title' })).toHaveProperty(
 			'disabled',
@@ -607,6 +629,47 @@ describe('FieldsPanel unsaved changes', () => {
 		expect(page.title).toBe('About vector control');
 	});
 
+	it('an expired edit shows the base copy, and Re-confirm saves the same wording again', async () => {
+		const { page } = renderTitle();
+		// A saved edit on screen whose base copy has since moved.
+		page.title = 'Wording saved last week';
+		pageStore.editStatus = { [changeKey(PAGE_ID, 'title')]: 'expired' };
+
+		const group = await screen.findByRole('group', { name: 'Expired wording for Title' });
+		expect(group.textContent).toContain('About vector control');
+
+		await fireEvent.click(screen.getByRole('button', { name: 'Re-confirm wording' }));
+		await fireEvent.click(await screen.findByRole('button', { name: 'Save the change to Title' }));
+		await vi.waitFor(() => expect(saveInlineEdit).toHaveBeenCalledTimes(1));
+		expect(saveInlineEdit.mock.calls[0].slice(0, 3)).toEqual([
+			'live-1',
+			'title',
+			'Wording saved last week'
+		]);
+		expect(saveInlineEdit.mock.calls[0][3]).toBe(await hashTextBrowser('About vector control'));
+		pageStore.editStatus = {};
+	});
+
+	it('Use the base copy puts the base text on the mockup as an unsaved change', async () => {
+		const { page } = renderTitle();
+		page.title = 'Wording saved last week';
+		pageStore.editStatus = { [changeKey(PAGE_ID, 'title')]: 'expired' };
+
+		await fireEvent.click(await screen.findByRole('button', { name: 'Use the base copy' }));
+
+		expect(page.title).toBe('About vector control');
+		expect(pageStore.hasUnsavedChange(PAGE_ID, 'title')).toBe(true);
+		expect(saveInlineEdit).not.toHaveBeenCalled();
+		pageStore.cancelChange(PAGE_ID, 'title');
+		pageStore.editStatus = {};
+	});
+
+	it('shows no expired notice for a current edit', () => {
+		renderTitle();
+		pageStore.editStatus = {};
+		expect(screen.queryByRole('group', { name: /Expired wording/ })).toBeNull();
+	});
+
 	it('turns pasted line breaks into spaces', async () => {
 		const { page, input } = renderTitle();
 		await fireEvent.input(input, { target: { value: 'Two\n\nlines' } });
@@ -635,7 +698,7 @@ describe('FieldsPanel unsaved changes', () => {
 		await screen.findByText('1 unsaved change');
 		await fireEvent.click(screen.getByRole('button', { name: 'Save the change to Title' }));
 		await vi.waitFor(() => expect(pageStore.getChange(PAGE_ID, 'title')).toBeUndefined());
-		expect(saveInlineEdit).toHaveBeenCalledWith('live-1', 'title', 'Parked then saved');
+		expect(saveInlineEdit).toHaveBeenCalledWith('live-1', 'title', 'Parked then saved', ANCHOR);
 	});
 
 	it('a saved edit drops the suggestion it replaced', async () => {

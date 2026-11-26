@@ -27,6 +27,8 @@ export type EditLike = {
 	created_at?: string;
 	/** Who saved it. Lets a held-back save be told apart from the reviewer's own. */
 	user_id?: string | null;
+	/** sha256 of the field's base copy when saved -- see `editStatus.ts`. */
+	base_hash?: string | null;
 };
 /** The id `saveInlineEdit` gives its optimistic row until the insert returns. */
 const OPTIMISTIC_PREFIX = 'temp-';

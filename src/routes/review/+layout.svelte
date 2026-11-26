@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount, tick, untrack } from 'svelte';
 	import { hydrateMockup } from '$lib/stores/applySavedEdits';
+	import { classifyLatestEdits } from '$lib/stores/editStatus';
 	import { warnBeforeLeaving } from '$lib/stores/leaveGuard';
 	import { page } from '$app/stores';
 	import { afterNavigate, replaceState } from '$app/navigation';
@@ -93,7 +94,12 @@
 			? buildWalkthrough(
 					pageData,
 					pagesByKey,
-					reviewRecordFor(pageData.id, $pagesStore, $editsStore)
+					reviewRecordFor(
+						pageData.id,
+						$pagesStore,
+						$editsStore,
+						pageStore.staleEditsOn(pageData.id)
+					)
 				)
 			: null
 	);
@@ -108,7 +114,12 @@
 		(pageStore.karlOutline || pageStore.mode === 'blueprint') && pageData && !onDraft
 			? placementsFor(
 					pageData as unknown as Parameters<typeof placementsFor>[0],
-					reviewRecordFor(pageData.id, $pagesStore, $editsStore),
+					reviewRecordFor(
+						pageData.id,
+						$pagesStore,
+						$editsStore,
+						pageStore.staleEditsOn(pageData.id)
+					),
 					pagesByKey,
 					// Judge the wording on screen, unsaved changes included.
 					{ copy: 'as-shown' }
@@ -170,6 +181,24 @@
 	// page before its edit targets render and read `isSelected`.
 	$effect.pre(() => {
 		pageStore.enterPage(pageData?.id);
+	});
+
+	// Which saved edits no longer answer their base copy (ADR 0001). Hashing is
+	// async (WebCrypto), so a slow pass is dropped if a newer one has started --
+	// otherwise an old result could land last and mark a field that has since
+	// been re-saved. Tracks the page list shallowly, since a re-merged draft
+	// page is a new base.
+	let statusPass = 0;
+	$effect(() => {
+		const edits = $editsStore;
+		const live = $pagesStore;
+		void [...pageStore.pages];
+		const pass = ++statusPass;
+		classifyLatestEdits(live, edits, (path, fieldId) => pageStore.baseCopyOf(path, fieldId)).then(
+			(status) => {
+				if (pass === statusPass) pageStore.editStatus = status;
+			}
+		);
 	});
 
 	// Saved edits onto the mockup: after `loadReview`, on every realtime insert,
