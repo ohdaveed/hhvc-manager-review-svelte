@@ -894,7 +894,13 @@
 			disabled={unsavedHere === 0 || saving || sessionStore.knownSignedOut}
 			onclick={saveAll}
 		>
-			{saving ? 'Saving…' : `Save ${unsavedHere} ${unsavedHere === 1 ? 'change' : 'changes'}`}
+			<!-- "Save 0 changes" named an action that cannot happen; at zero the
+			     disabled button says why it is disabled instead. -->
+			{saving
+				? 'Saving…'
+				: unsavedHere === 0
+					? 'No changes to save'
+					: `Save ${unsavedHere} ${unsavedHere === 1 ? 'change' : 'changes'}`}
 		</Button>
 	</div>
 </div>

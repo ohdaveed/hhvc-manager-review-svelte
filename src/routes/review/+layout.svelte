@@ -621,7 +621,7 @@
 				     button, since it switches a mode rather than loading a URL. -->
 				<button
 					type="button"
-					class="text-[0.8125rem] font-semibold text-sfds-action underline-offset-2 hover:underline"
+					class="shrink-0 text-[0.8125rem] font-semibold whitespace-nowrap text-sfds-action underline-offset-2 hover:underline"
 					onclick={() => pageStore.showSitemap()}>Site map</button
 				>
 				<!-- Client-side export of live review statuses, checks, notes, and

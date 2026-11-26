@@ -131,9 +131,9 @@ describe('FieldsPanel', () => {
 		render(FieldsPanel, { props: { pageData: page } });
 
 		// Two fields selected, two suggestions, none decided.
-		expect(screen.getByRole('button', { name: 'Save 0 changes' }).hasAttribute('disabled')).toBe(
-			true
-		);
+		expect(
+			screen.getByRole('button', { name: 'No changes to save' }).hasAttribute('disabled')
+		).toBe(true);
 
 		await fireEvent.click(screen.getAllByRole('button', { name: 'Accept' })[0]);
 
@@ -262,7 +262,7 @@ describe('FieldsPanel', () => {
 		// reach a state there used to be no way out of: with nothing pending, the
 		// per-card buttons were gone and `decideAll` only ever touched pending.
 		await fireEvent.click(screen.getByRole('button', { name: 'Undo all' }));
-		expect(await screen.findByRole('button', { name: 'Save 0 changes' })).toHaveProperty(
+		expect(await screen.findByRole('button', { name: 'No changes to save' })).toHaveProperty(
 			'disabled',
 			true
 		);
@@ -275,7 +275,7 @@ describe('FieldsPanel', () => {
 		await fireEvent.click(screen.getAllByRole('button', { name: 'Accept' })[0]);
 		await screen.findByRole('button', { name: 'Save 1 change' });
 		await fireEvent.click(screen.getByRole('button', { name: 'Undo accepting this rewrite' }));
-		expect(await screen.findByRole('button', { name: 'Save 0 changes' })).toHaveProperty(
+		expect(await screen.findByRole('button', { name: 'No changes to save' })).toHaveProperty(
 			'disabled',
 			true
 		);
@@ -335,7 +335,10 @@ describe('FieldsPanel', () => {
 		};
 		render(FieldsPanel, { props: { pageData: page, livePageId: 'live-1' } });
 
-		expect(screen.getByRole('button', { name: 'Save 0 changes' })).toHaveProperty('disabled', true);
+		expect(screen.getByRole('button', { name: 'No changes to save' })).toHaveProperty(
+			'disabled',
+			true
+		);
 		await screen.findByText(/waiting on other pages/);
 		expect(saveInlineEdit).not.toHaveBeenCalled();
 		expect(page.title).toBe('About vector control');
