@@ -85,10 +85,15 @@
 
 	// `tone` keeps the traffic-light reading the hand-rolled pills had, as a
 	// FILLED selected state: a faint ring was the only cue before, and in a
-	// ~380px panel it was easy to miss. Each fill carries white text at >=4.5:1
-	// (sfds-action 5.5, emerald-700 5.4, amber-700 5.0, destructive 4.8), and
-	// the hover override keeps the outline variant's `hover:bg-muted` from
-	// washing out the selected item.
+	// ~380px panel it was easy to miss. The fills are the SFDS status triplets
+	// the pills, the progress bar and DESIGN.md use, so a status is one colour
+	// everywhere (they were Tailwind emerald/amber-700 here, a second green and
+	// amber). Undecided fills neutral slate, not `sfds-action`: the action blue
+	// made the one non-decision the loudest thing in the panel. Unselected, all
+	// four read alike; a red "Blocked" at rest looked like an error. White text
+	// on each fill, measured 2026-11-26: slate-l3 8.9, green 5.4, amber 5.7,
+	// red 6.4. The hover override keeps the outline variant's `hover:bg-muted`
+	// from washing out the selected item.
 	//
 	// FOUR options, not three. `needs-review` is a real state -- it is what
 	// every seeded row starts as -- and leaving it off the control made a
@@ -113,19 +118,19 @@
 		[
 			{
 				value: 'needs-review',
-				tone: 'data-[state=on]:border-sfds-action data-[state=on]:bg-sfds-action data-[state=on]:hover:bg-sfds-action'
+				tone: 'data-[state=on]:border-sfds-slate-l3 data-[state=on]:bg-sfds-slate-l3 data-[state=on]:hover:bg-sfds-slate-l3'
 			},
 			{
 				value: 'approved',
-				tone: 'data-[state=on]:border-emerald-700 data-[state=on]:bg-emerald-700 data-[state=on]:hover:bg-emerald-700'
+				tone: 'data-[state=on]:border-sfds-green data-[state=on]:bg-sfds-green data-[state=on]:hover:bg-sfds-green'
 			},
 			{
 				value: 'revise',
-				tone: 'data-[state=on]:border-amber-700 data-[state=on]:bg-amber-700 data-[state=on]:hover:bg-amber-700'
+				tone: 'data-[state=on]:border-sfds-amber data-[state=on]:bg-sfds-amber data-[state=on]:hover:bg-sfds-amber'
 			},
 			{
 				value: 'blocked',
-				tone: 'text-destructive data-[state=on]:border-destructive data-[state=on]:bg-destructive data-[state=on]:hover:bg-destructive'
+				tone: 'data-[state=on]:border-sfds-red data-[state=on]:bg-sfds-red data-[state=on]:hover:bg-sfds-red'
 			}
 		] satisfies { value: Decision; tone: string }[]
 	).map((d) => ({ ...d, label: STATUS_LABELS[d.value].label }));
