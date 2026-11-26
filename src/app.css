@@ -1256,3 +1256,114 @@ body {
 		padding-block: 40px;
 	}
 }
+
+/* About us pages: live sf.gov's agency template, measured 2026-11-26 on
+   `departments--department-public-health--about` at 390, 768 and 1074px.
+
+   - Body copy spans the whole 1076px grid, not the 7/12 reading column.
+   - An orange (#B64A00 -- Figma's Accent/500) bar sits under the title
+     (46/54/58 x 4, 12/12/16px below it) and under every h2 (36/42/52 x 4,
+     8/8/12px below), with 28px from an h2's bar to its content.
+   - Sections are 40px apart on a phone and 60px from the tablet step.
+   - Link lists are bold blue links (Roboto Flex 20/28 700 on desktop,
+     16/24 below, #1B519E, underlined), 40px apart, with any description
+     12px under its link.
+   - "Back to main page" -- a 20px #386EBF arrow and #2A60AF link text --
+     sits 20/24px under the title's bar.
+
+   Live's hero photo and department logo are not drawn: both are assets the
+   department supplies, and the mockup has neither. */
+#mockPage [data-page-type='About us'] .page-content {
+	max-width: none;
+}
+#mockPage [data-page-type='About us'] .page-title::after,
+#mockPage [data-page-type='About us'] .page-section > h2::after {
+	content: '';
+	display: block;
+	height: 4px;
+	background: #b64a00;
+}
+#mockPage [data-page-type='About us'] .page-title::after {
+	width: 46px;
+	margin-top: 12px;
+}
+#mockPage [data-page-type='About us'] .page-section > h2 {
+	margin-bottom: 28px;
+}
+#mockPage [data-page-type='About us'] .page-section > h2::after {
+	width: 36px;
+	margin-top: 8px;
+}
+#mockPage [data-page-type='About us'] .page-section + .page-section {
+	margin-top: 40px;
+}
+#mockPage [data-page-type='About us'] .about-back {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	margin: 20px 0 40px;
+	color: var(--color-site-action-fill);
+}
+#mockPage [data-page-type='About us'] .about-back svg {
+	flex: none;
+	color: var(--color-site-focus);
+}
+#mockPage [data-page-type='About us'] .about-back span {
+	text-decoration: underline;
+	text-underline-offset: 3px;
+}
+#mockPage [data-page-type='About us'] .cards-block {
+	display: block;
+	margin: 0;
+	padding-left: 0;
+}
+#mockPage [data-page-type='About us'] .cards-block-item {
+	margin: 40px 0 0;
+	padding: 0;
+	border: 0;
+}
+#mockPage [data-page-type='About us'] .cards-block-item:first-child {
+	margin-top: 0;
+}
+#mockPage [data-page-type='About us'] .cards-block-title {
+	margin: 0;
+	color: var(--color-site-action);
+	font-family: var(--site-font-body);
+	font-size: 16px;
+	font-weight: 700;
+	line-height: 24px;
+	text-decoration: underline;
+}
+#mockPage [data-page-type='About us'] .cards-block-item p {
+	margin: 12px 0 0;
+}
+
+@container mockup (min-width: 600px) {
+	#mockPage [data-page-type='About us'] .page-title::after {
+		width: 54px;
+	}
+	#mockPage [data-page-type='About us'] .page-section > h2::after {
+		width: 42px;
+	}
+	#mockPage [data-page-type='About us'] .page-section + .page-section {
+		margin-top: 60px;
+	}
+}
+
+@container mockup (min-width: 800px) {
+	#mockPage [data-page-type='About us'] .page-title::after {
+		width: 58px;
+		margin-top: 16px;
+	}
+	#mockPage [data-page-type='About us'] .page-section > h2::after {
+		width: 52px;
+		margin-top: 12px;
+	}
+	#mockPage [data-page-type='About us'] .about-back {
+		margin-top: 24px;
+	}
+	#mockPage [data-page-type='About us'] .cards-block-title {
+		font-size: 20px;
+		line-height: 28px;
+	}
+}

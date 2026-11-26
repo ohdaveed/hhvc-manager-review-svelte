@@ -57,6 +57,21 @@
 		</div>
 	{/if}
 
+	<!-- About us pages carry a link back to the department's main page under
+	     the title, as on live sf.gov (`departments--department-public-health--
+	     about`, 2026-11-26). Inert like the rest of the mockup chrome: a span,
+	     because a link that goes nowhere is an axe failure. -->
+	{#if page.type === 'About us'}
+		<p class="about-back">
+			<svg viewBox="0 0 24 24" fill="currentColor" width="20" height="24" aria-hidden="true">
+				<path
+					d="M1.58578 12L10.2929 20.7071L11.7071 19.2929L5.4142 13L22 13V11L5.41423 11L11.7071 4.70712L10.2929 3.29291L1.58578 12Z"
+				/>
+			</svg>
+			<span>Back to main page</span>
+		</p>
+	{/if}
+
 	<WhatToKnow whatToKnow={page.whatToKnow} type={page.type} />
 
 	<div class="page-content">
