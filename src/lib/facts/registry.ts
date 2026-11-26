@@ -267,5 +267,58 @@ export const OPEN_QUESTIONS: OpenQuestion[] = [
 		question: 'How far ahead must an IPM education session be requested?',
 		note: 'Mockup placeholder: 2 weeks.',
 		fields: [{ slug: IPM_ED, path: 'sections.5.facts.3' }]
+	},
+	// --- Community-education pages ported from HHVC_manager_review_current_tool_package
+	{
+		id: 'bed-bug-inspection-deadline',
+		question:
+			'Must an owner have a licensed pest control company inspect the unit and the units next to it within a set time after a bed bug report, and if so, how long?',
+		note: "The bed bug education page says 2 working days, from Director's Rules Owner 2.4-2.6. Distinct from bed-bug-treatment-deadline, which is about starting treatment. Confirm against the v4 Director's Rules draft.",
+		fields: [
+			{
+				slug: 'sf.gov/information/bed-bugs-prevent-find-and-prepare-for-treatment',
+				path: 'sections.4.bullets.0'
+			}
+		]
+	},
+	{
+		id: 'bed-bug-disability-accommodation',
+		question:
+			'What reasonable-accommodation duty does an owner have toward tenants with a documented disability during bed bug treatment?',
+		note: 'The bed bug education page says owners must arrange accommodations such as help preparing the room or a different treatment method, citing Director\'s Rules Owner 3.5 ("to the extent required by applicable ... law"). Confirm scope with HHVC and the City Attorney.',
+		fields: [
+			{
+				slug: 'sf.gov/information/bed-bugs-prevent-find-and-prepare-for-treatment',
+				path: 'sections.6.bullets.2'
+			}
+		]
+	},
+	{
+		id: 'mold-action-threshold',
+		question:
+			'Should a minimum mold area at which the City can act be published, and if so, what is it?',
+		note: 'The moisture and mold page says 10 square feet of walls or ceilings, from internal SFDPH program guidance rather than a cited Health Code section.',
+		fields: [
+			{
+				slug: 'sf.gov/information/reduce-moisture-and-mold-in-your-home',
+				path: 'sections.5.bullets.0'
+			}
+		]
+	},
+	{
+		id: 'owner-pest-investigation-window',
+		question:
+			'Within what time must an owner look into a tenant pest report, and must a licensed pest control company be used?',
+		note: "The rodent and pest-treatment education pages say 72 hours, from the Owner/Operator Guidelines for Vector Control (Director's Rules excerpt, items 2-3). Confirm against the v4 Director's Rules draft.",
+		fields: [
+			{
+				slug: 'sf.gov/information/keep-rats-and-mice-out-of-your-home',
+				path: 'sections.4.bullets.3'
+			},
+			{
+				slug: 'sf.gov/information/what-to-expect-when-your-building-is-treated-for-pests',
+				path: 'sections.1.bullets.0'
+			}
+		]
 	}
 ];

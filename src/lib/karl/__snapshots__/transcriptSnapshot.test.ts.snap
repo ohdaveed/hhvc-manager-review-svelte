@@ -1232,6 +1232,397 @@ Nothing below has a field to be typed into. It is listed rather than dropped, be
 "
 `;
 
+exports[`transcript Markdown, every corpus page > bedBugsInfo 1`] = `
+"# Bed bugs: prevent them, find them, and get ready for treatment — Karl transcript
+
+**Karl path:** New: Information → Content
+**Decision:** no review recorded
+**Page key:** \`bedBugsInfo\` · **Slug:** \`sf.gov/information/bed-bugs-prevent-find-and-prepare-for-treatment\` · **Type:** Information
+
+**NOT APPROVED — do not publish from this transcript.** Approval in this tool is per page, not per field, so nothing below is signed off.
+
+> Every keystroke below is yours to make. This file is an export, not an approval, and nothing here has been written to Karl.
+
+### Page title — \`title\` [TYPE] — page not approved
+
+**Page title:**
+
+Bed bugs: prevent them, find them, and get ready for treatment
+
+### Description — \`description\` [TYPE] — page not approved
+
+**Description:**
+
+Learn how bed bugs spread, how to check for them, and what tenants and owners each need to do before treatment.
+
+### Primary agency — \`primary_agency\` [FLAG] — page not approved
+
+_U6 — supply the parent Agency page by hand; the mockup has no field for it._
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+_The Title "Who this information is for" is not in the mockup — this tool supplies it, matching sf.gov/manage-covid-19-schools-childcare-and-youth-programs, which renders the audience as an H3 with that title over a bulleted list. Add this block first, so every authored section below is one Information section block later than its place among the mockup sections._
+
+**Title:**
+
+Who this information is for
+
+**Text:**
+
+- This page is for tenants, residents of SROs and shelters, and property owners and managers dealing with bed bugs.
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+What bed bugs are
+
+**Text:**
+
+Bed bugs are small, flat insects that feed on blood, usually at night while people sleep. Adults are about the size of an apple seed.
+
+Bed bugs are not a sign of a dirty home. Anyone can get them. They have not been shown to spread disease, but their bites can itch, and scratching can cause skin infections.
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+How bed bugs get into your home
+
+**Text:**
+
+Bed bugs hitch a ride on things people carry. They can also move between units through walls and shared spaces.
+
+- **Luggage and clothes** after staying in a hotel or someone else's home
+- **Used furniture**, especially beds, mattresses, and couches
+- **Bags, boxes, and backpacks** that sat in an infested place
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+Prevent bed bugs
+
+**Text:**
+
+- **Check used furniture before you bring it home.** Look closely at seams, cracks, and the underside.
+- **Do not take furniture left on the curb.** It may have been thrown out because of bed bugs.
+- **Check hotel beds when you travel.** Look behind the headboard and along the mattress seams.
+- **Wash and dry clothes on the hottest setting** as soon as you get home from a trip.
+- **Keep luggage out of the bedroom**, such as in a hall closet.
+- **Use mattress and box spring encasements** and climb-up interceptor cups under the bed legs.
+- **When you move, pack clothes in clear plastic bags** so you can see if anything is hiding.
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+Check for bed bugs
+
+**Text:**
+
+Bites alone cannot tell you it is bed bugs. Bites from fleas, mosquitoes, and bed bugs look alike. The only way to know is to find the bugs or their signs.
+
+Most bed bugs hide in or near the bed, so check there first. Use a flashlight on the mattress seams and bed frame, then check nearby furniture and cracks along the walls.
+
+- **Small dark spots** on sheets or the mattress. These are bed bug droppings.
+- **Small blood spots** on sheets
+- **Tiny pale shells** that bed bugs shed as they grow
+- **Live bugs**, which are reddish brown and flat
+- **Hiding spots farther away**, like couch cushions, behind outlet covers, and electronics such as clocks, radios, and TVs. Bed bugs can be 10 to 20 feet from where people sleep or sit.
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+If you think you have bed bugs
+
+**Text:**
+
+If you rent, tell your landlord or building manager in writing right away. Bed bugs spread quickly, so do not wait.
+
+- **Owners must act fast.** Within 2 working days of your report, your landlord must hire a licensed pest control company to inspect your unit and the units next to it.
+- **Do not throw furniture away yet.** Moving infested items can spread bed bugs to other units. Wait until the pest control company tells you what to do.
+- **Label anything you throw out.** Seal it in plastic and mark it "infested with bed bugs" so no one takes it home.
+- **Do not use bug bombs or foggers.** They do not kill bed bugs hiding in cracks, and they can push bugs into other rooms.
+- **Report it to the City** if your landlord does not start fixing the problem within 72 hours. [Report bed bugs](bedBugReport)
+
+**Links in this text — recreate each with the Link tool, do not paste them:**
+
+- "Report bed bugs" → shape 5 — rich text Link tool → Internal link → "Report bed bugs"
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+What tenants need to do before treatment
+
+**Text:**
+
+Treatment only works if the unit is ready. The pest control company will give you a checklist. If it is different from the list below, follow their checklist.
+
+- **Let them in.** You must allow the owner or pest control company into your unit after you get notice that they will inspect or treat.
+- **Make space.** Move furniture away from the walls and clear clutter so they can reach every area.
+- **Do not remove items before treatment.** Only take out bagged clothing for laundry, or items the pest control company tells you to remove.
+- **Wash and dry all clothing and bedding.** Use hot water and the hottest dryer setting for at least 45 minutes. Then store it in new, clean, sealed plastic bags.
+- **Wait until you are cleared.** Do not move back in until the pest control company says it is safe.
+- [Prepare your unit for pest treatment](stepPrepUnit)
+- **Leave bed bug monitors in place.** Monitoring continues for 4 weeks after the last treatment to make sure the bed bugs are gone.
+
+**Callout (rich text, no title field):**
+
+If you cannot do these steps because of a disability or a medical need, tell your landlord as soon as you can. You can ask for help preparing your unit or doing laundry.
+
+**Links in this text — recreate each with the Link tool, do not paste them:**
+
+- "Prepare your unit for pest treatment" → shape 5 — rich text Link tool → Internal link → "Prepare your unit for pest treatment"
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+What owners and managers need to do
+
+**Text:**
+
+- **Give tenants sealable plastic bags** for clothing before and after it is washed.
+- **Share a list of free and low-cost help** for unit preparation and laundry.
+- **Arrange reasonable accommodations** for tenants with a documented disability, such as help preparing the room or a different treatment method.
+- **Give advance notice of any pesticide treatment.** Tell tenants the name of the product and the phone number for Poison Control.
+- **Keep monitoring for 4 weeks after the last treatment.** Use bed bug monitors, such as interceptor cups under the bed legs, to check that the bed bugs are gone.
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+Learn more about bed bugs
+
+**Text:**
+
+The University of California Statewide Integrated Pest Management Program (UC IPM) publishes detailed, science-based guides.
+
+- [UC IPM: Bed bugs](https://ipm.ucanr.edu/home-and-landscape/bed-bugs/). How to identify, find, and control bed bugs.
+- [CDC: About bed bugs](https://www.cdc.gov/bed-bugs/about/index.html). Bites, health risks, and prevention.
+- [UC IPM: Hiring a pest control company](https://ipm.ucanr.edu/home-and-landscape/hiring-a-pest-control-company/). Questions to ask before you hire.
+- [SF Environment: Pest management in your home (PDF)](https://www.sfenvironment.org/media/13819). A handout in English, Spanish, and Chinese.
+- [UC IPM: Recursos en español](https://ipm.ucanr.edu/IPMPROJECT/recursos-espanol.html). Guías sobre plagas en español.
+
+**Links in this text — recreate each with the Link tool, do not paste them:**
+
+- "UC IPM: Bed bugs" → shape 5 — rich text Link tool → External link
+- "CDC: About bed bugs" → shape 5 — rich text Link tool → External link
+- "UC IPM: Hiring a pest control company" → shape 5 — rich text Link tool → External link
+- "SF Environment: Pest management in your home (PDF)" → shape 5 — rich text Link tool → External link
+- "UC IPM: Recursos en español" → shape 5 — rich text Link tool → External link
+
+### Topics — \`topics\` [TYPE] — page not approved
+
+_topicTag is unmapped metadata — the stored values are Agency labels, not Topic chooser references. Do not paste one into this chooser._
+
+### Related — \`related\` [CHOOSE] — page not approved
+
+_This block publishes the destination page’s title and a link, and NOTHING else. Choose the page and type no description._
+
+1. Choose page: "Report bed bugs" (\`bedBugReport\` → /sf.gov/report-bed-bugs)
+2. Choose page: "What to expect when your building is treated for pests" (\`pestTreatmentInfo\` → /sf.gov/information/what-to-expect-when-your-building-is-treated-for-pests)
+3. Choose page: "Tenant rights when reporting housing conditions" (\`tenantRights\` → /sf.gov/information/tenant-rights-and-reporting-housing-conditions)
+
+### Promote → For search engines — \`promote\` [TYPE] — page not approved
+
+_The slug is REQUIRED and lives on the Promote tab, so a page cannot be saved from the Content tab alone._
+
+**Slug (\`slug\`):**
+
+sf.gov/information/bed-bugs-prevent-find-and-prepare-for-treatment
+
+**Title tag (\`seo_title\`):**
+
+Bed bugs: prevent, find, and prepare | SF.gov
+
+**Meta description (\`search_description\`):**
+
+How to prevent and check for bed bugs in San Francisco, and what tenants and owners must do before treatment.
+"
+`;
+
+exports[`transcript Markdown, every corpus page > cockroachesPrevention 1`] = `
+"# Get rid of cockroaches without heavy pesticides — Karl transcript
+
+**Karl path:** New: Information → Content
+**Decision:** no review recorded
+**Page key:** \`cockroachesPrevention\` · **Slug:** \`sf.gov/information/get-rid-of-cockroaches-without-heavy-pesticides\` · **Type:** Information
+
+**NOT APPROVED — do not publish from this transcript.** Approval in this tool is per page, not per field, so nothing below is signed off.
+
+> Every keystroke below is yours to make. This file is an export, not an approval, and nothing here has been written to Karl.
+
+### Page title — \`title\` [TYPE] — page not approved
+
+**Page title:**
+
+Get rid of cockroaches without heavy pesticides
+
+### Description — \`description\` [TYPE] — page not approved
+
+**Description:**
+
+Learn why sprays do not work, how to take away what cockroaches need, and how to use baits safely.
+
+### Primary agency — \`primary_agency\` [FLAG] — page not approved
+
+_U6 — supply the parent Agency page by hand; the mockup has no field for it._
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+_The Title "Who this information is for" is not in the mockup — this tool supplies it, matching sf.gov/manage-covid-19-schools-childcare-and-youth-programs, which renders the audience as an H3 with that title over a bulleted list. Add this block first, so every authored section below is one Information section block later than its place among the mockup sections._
+
+**Title:**
+
+Who this information is for
+
+**Text:**
+
+- This page is for tenants and residents dealing with cockroaches, especially in apartment buildings.
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+Why cockroaches matter
+
+**Text:**
+
+Cockroach droppings and shed skins get into the air and can trigger asthma, especially in children who live in apartment buildings.
+
+The German cockroach is the most common kind in San Francisco homes. It lives indoors, near food and water, and spreads quickly.
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+Why sprays and bug bombs make it worse
+
+**Text:**
+
+Sprays and bug bombs only kill the cockroaches they touch. They also drive the rest deeper into walls and into your neighbors' units, and the cockroaches come back later.
+
+Many cockroaches no longer die from the chemicals in common store-bought sprays.
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+Take away food, water, and hiding places
+
+**Text:**
+
+Cockroaches can live on tiny crumbs and drops of water. The less they find, the faster other steps will work.
+
+- **Store food in sealed containers**, like glass jars or plastic containers that snap shut.
+- **Keep flour, rice, and nuts in the fridge** if you store them for a long time.
+- **Clean up crumbs, grease, and spills right away.** Do not leave dirty dishes out overnight.
+- **Use a trash can with a tight lid** and a liner, and take trash out every day.
+- **Fix leaks and wipe up water** around sinks, tubs, and the water heater.
+- **Get rid of cardboard boxes, paper bags, and piles of paper.** Cockroaches hide and lay eggs in them.
+- **Vacuum cracks and corners.** Start high and work down. A vacuum with a HEPA filter keeps allergens out of the air. Seal the vacuum bag and throw it out.
+- **Clean small appliances.** Cockroaches hide in toasters, microwaves, and clocks. Unplug them, then vacuum and wipe them out.
+- **Check used appliances and furniture** before you bring them home.
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+Use baits and traps instead of sprays
+
+**Text:**
+
+Baits work slowly, but they work. Cockroaches eat the bait and carry it back to where they hide. It can take a week or two to see full results.
+
+- **Use bait stations or gel bait** from a hardware store. Put them under the sink, behind the fridge and stove, and inside cabinets. Put gel in pea-sized dabs about every foot along cracks.
+- **Kill cockroaches you see with soapy water.** It works on contact without the risks of a spray.
+- **Do not spray near baits.** Spray keeps cockroaches away from the bait.
+- **Use sticky traps to see where they are.** Check them every few days and move baits to the busiest spots.
+- **Replace bait stations every 2 to 3 months** and sticky traps every 2 weeks. Switch to a different bait brand each year.
+- **Keep baits away from children and pets**, and read the label before you use any product.
+- **Choose products labeled "Caution."** Avoid products labeled "Warning" or "Danger."
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+Your landlord's part
+
+**Text:**
+
+Cockroaches move between units through gaps around pipes, under sinks, and along walls. In an apartment building, the whole building may need treatment.
+
+Owners must keep buildings free of pests and seal the gaps cockroaches use. Cockroaches can squeeze through cracks as small as 1/8 inch.
+
+- **Tell your landlord in writing** where you see cockroaches.
+- **You can seal small cracks yourself** with caulk, such as gaps around pipes under the sink. Do not use spray foam.
+- **Ask for a licensed pest control company** that uses baits and sealing, not just sprays.
+- **If nothing starts within 72 hours, report it.** [Report cockroaches or other insects](insectsReport)
+
+**Links in this text — recreate each with the Link tool, do not paste them:**
+
+- "Report cockroaches or other insects" → shape 5 — rich text Link tool → Internal link → "Report cockroaches or other insects"
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+Learn more about cockroaches
+
+**Text:**
+
+The University of California Statewide Integrated Pest Management Program (UC IPM) publishes detailed, science-based guides.
+
+- [UC IPM: Cockroaches](https://ipm.ucanr.edu/home-and-landscape/cockroaches/). How to identify the kind you have and control it.
+- [UC IPM: Understanding pesticides](https://ipm.ucanr.edu/home-and-landscape/understanding-pesticides/). How to read a label and lower your risk.
+- [UC IPM: What is integrated pest management?](https://ipm.ucanr.edu/what-is-ipm/)
+- [SF Environment: How can I control insect pests in my house?](https://www.sfenvironment.org/how-can-i-control-insect-pests-my-house)
+- [SF Environment: Pest management in your home (PDF)](https://www.sfenvironment.org/media/13819). A handout in English, Spanish, and Chinese.
+- [UC IPM: Recursos en español](https://ipm.ucanr.edu/IPMPROJECT/recursos-espanol.html). Guías sobre plagas en español.
+
+**Links in this text — recreate each with the Link tool, do not paste them:**
+
+- "UC IPM: Cockroaches" → shape 5 — rich text Link tool → External link
+- "UC IPM: Understanding pesticides" → shape 5 — rich text Link tool → External link
+- "UC IPM: What is integrated pest management?" → shape 5 — rich text Link tool → External link
+- "SF Environment: How can I control insect pests in my house?" → shape 5 — rich text Link tool → External link
+- "SF Environment: Pest management in your home (PDF)" → shape 5 — rich text Link tool → External link
+- "UC IPM: Recursos en español" → shape 5 — rich text Link tool → External link
+
+### Topics — \`topics\` [TYPE] — page not approved
+
+_topicTag is unmapped metadata — the stored values are Agency labels, not Topic chooser references. Do not paste one into this chooser._
+
+### Related — \`related\` [CHOOSE] — page not approved
+
+_This block publishes the destination page’s title and a link, and NOTHING else. Choose the page and type no description._
+
+1. Choose page: "Report cockroaches or other insects" (\`insectsReport\` → /sf.gov/report-cockroaches-or-other-insects)
+2. Choose page: "Free IPM education workshop" (\`ipmEducation\` → /sf.gov/integrated-pest-management-education)
+3. Choose page: "What to expect when your building is treated for pests" (\`pestTreatmentInfo\` → /sf.gov/information/what-to-expect-when-your-building-is-treated-for-pests)
+
+### Promote → For search engines — \`promote\` [TYPE] — page not approved
+
+_The slug is REQUIRED and lives on the Promote tab, so a page cannot be saved from the Content tab alone._
+
+**Slug (\`slug\`):**
+
+sf.gov/information/get-rid-of-cockroaches-without-heavy-pesticides
+
+**Title tag (\`seo_title\`):**
+
+Get rid of cockroaches without sprays | SF.gov
+
+**Meta description (\`search_description\`):**
+
+Why sprays fail, how to take away food and water, and how San Francisco tenants can use cockroach baits safely.
+"
+`;
+
 exports[`transcript Markdown, every corpus page > ehOffice 1`] = `
 "# Environmental Health office — Karl transcript
 
@@ -1968,6 +2359,12 @@ Learn more
 
 **Title:**
 
+Prevent pests and mold at home
+
+### Child topics (outer StreamField; internally "Page content") — \`content_fields\` [TYPE] — page not approved
+
+**Title:**
+
 Guides and forms
 
 ### Partner agencies — \`partner_agencies\` [CHOOSE] — page not approved
@@ -2001,14 +2398,15 @@ Report housing health issues, find services and resources, and learn how San Fra
 - \`sections.4.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to a Services block. Topic tab, suggested structure item 3. The owner-duty pages are listed separately until their merge is decided.". Resolve it before typing anything from them.
 - \`sections.5.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to a Services block. Holds what the retired Look up building records Resource Collection listed: the three lookup Transactions and the public records reque". Resolve it before typing anything from them.
 - \`sections.6.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to a Resources block. Topic tab, suggested structure item 5, plus the pages the retired Healthy housing and pest resources collection linked that the list ". Resolve it before typing anything from them.
-- \`sections.7.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to a Resources block of External links. Carries every outside document and site the retired Healthy housing and pest resources collection linked, so the fo". Resolve it before typing anything from them.
+- \`sections.7.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to a Resources block (Title = this heading, Links = the cards). The five community-education Information pages ported from HHVC_manager_review_current_tool". Resolve it before typing anything from them.
+- \`sections.8.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to a Resources block of External links. Carries every outside document and site the retired Healthy housing and pest resources collection linked, so the fo". Resolve it before typing anything from them.
 
 ## Unmapped — no documented Karl destination
 
 Nothing below has a field to be typed into. It is listed rather than dropped, because an absence reads as "there was nothing there".
 
 - \`audience\` — The page carries \`audience\`, and the panel SF.gov puts it in is not on this type. Topic has no \`things_to_know\` panel — it is Transaction-only — and no free-text intro either, so the audience has to move into the body copy or be dropped deliberately. Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list.
-- \`sections.8.cards\` — U5 — Topic has no \`related\` field, confirmed at E1. Either this panel moves into content_fields as a Resources block, or the page drops it.
+- \`sections.9.cards\` — U5 — Topic has no \`related\` field, confirmed at E1. Either this panel moves into content_fields as a Resources block, or the page drops it.
 "
 `;
 
@@ -4253,6 +4651,196 @@ Nothing below has a field to be typed into. It is listed rather than dropped, be
 "
 `;
 
+exports[`transcript Markdown, every corpus page > pestTreatmentInfo 1`] = `
+"# What to expect when your building is treated for pests — Karl transcript
+
+**Karl path:** New: Information → Content
+**Decision:** no review recorded
+**Page key:** \`pestTreatmentInfo\` · **Slug:** \`sf.gov/information/what-to-expect-when-your-building-is-treated-for-pests\` · **Type:** Information
+
+**NOT APPROVED — do not publish from this transcript.** Approval in this tool is per page, not per field, so nothing below is signed off.
+
+> Every keystroke below is yours to make. This file is an export, not an approval, and nothing here has been written to Karl.
+
+### Page title — \`title\` [TYPE] — page not approved
+
+**Page title:**
+
+What to expect when your building is treated for pests
+
+### Description — \`description\` [TYPE] — page not approved
+
+**Description:**
+
+Learn what tenants and owners each need to do before, during, and after a pest control visit so treatment works.
+
+### Primary agency — \`primary_agency\` [FLAG] — page not approved
+
+_U6 — supply the parent Agency page by hand; the mockup has no field for it._
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+_The Title "Who this information is for" is not in the mockup — this tool supplies it, matching sf.gov/manage-covid-19-schools-childcare-and-youth-programs, which renders the audience as an H3 with that title over a bulleted list. Add this block first, so every authored section below is one Information section block later than its place among the mockup sections._
+
+**Title:**
+
+Who this information is for
+
+**Text:**
+
+- This page is for tenants and residents whose building is being treated for pests, and the owners and managers who arrange treatment.
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+Treatment works best when everyone helps
+
+**Text:**
+
+Pests move between units. If one unit is skipped or not ready, pests can come back to the whole building.
+
+Good pest control starts with finding where pests live and closing the ways they get in. Pesticides should be the last step, not the first.
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+What owners and managers must do
+
+**Text:**
+
+- **Look into pest reports within 72 hours**, and write each one in a log the pest control company can see.
+- **Hire a licensed pest control company.** The company must also be licensed to do business in San Francisco.
+- **Give tenants notice before any pesticide is used.** The notice must name the product and give the phone number for Poison Control.
+- **Help tenants who cannot prepare their unit** because of a disability or medical need.
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+What tenants need to do
+
+**Text:**
+
+- **Let the pest control company in** after you get notice of the visit.
+- **Follow the checklist they give you.** Each pest and treatment can need different steps.
+- **Tell them what you have seen**, like where and when you see pests.
+- **Keep your home reasonably clean**, with food, garbage, and pet food stored away.
+- **Ask your landlord for help** if there is a step you cannot do.
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+Before the visit
+
+**Text:**
+
+Your checklist comes first. These steps are common for most treatments.
+
+- **Clear the floor along walls** and under sinks so the technician can reach cracks and corners.
+- **Put food and dishes away** in sealed containers or the fridge.
+- **Plan for children and pets.** Ask if anyone needs to leave, and for how long.
+- **Ask what product will be used** if the notice does not say.
+- **Ask for the treatment plan.** The pest control company should give you a plan that lists its methods and products, and what the landlord and tenants need to do.
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+During and after the visit
+
+**Text:**
+
+Most treatments need more than one visit. Pests that were missed or hatched later may still show up for a few weeks.
+
+- **Stay out until you are told it is safe** to come back.
+- **Do not clean away baits or dusts** the technician left in cracks and corners.
+- **For bed bugs, leave monitors in place.** Monitoring continues for 4 weeks after the last treatment.
+- **Do not use your own sprays or bug bombs.** They can stop the treatment from working.
+- **If you buy a product yourself, choose one labeled "Caution."** Avoid products labeled "Warning" or "Danger."
+- **Keep notes and photos** of pests you still see, and share them with your landlord in writing.
+
+**Callout (rich text, no title field):**
+
+If you think someone was exposed to a pesticide, call Poison Control at 1-800-222-1222. Call 911 for an emergency.
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+If treatment is not working
+
+**Text:**
+
+Tell your landlord in writing that pests are still there. If the problem continues and is not being fixed, you can report it to the City.
+
+- [Report rats or mice](rodentsReport)
+- [Report cockroaches or other insects](insectsReport)
+- [Learn what happens after you report](afterReport)
+
+**Links in this text — recreate each with the Link tool, do not paste them:**
+
+- "Report rats or mice" → shape 5 — rich text Link tool → Internal link → "Report rats or mice"
+- "Report cockroaches or other insects" → shape 5 — rich text Link tool → Internal link → "Report cockroaches or other insects"
+- "Learn what happens after you report" → shape 5 — rich text Link tool → Internal link → "What happens after you report a housing or pest problem"
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+Learn more about pest control
+
+**Text:**
+
+The University of California Statewide Integrated Pest Management Program (UC IPM) publishes detailed, science-based guides.
+
+- [UC IPM: Hiring a pest control company](https://ipm.ucanr.edu/home-and-landscape/hiring-a-pest-control-company/). What to ask and what to expect.
+- [UC IPM: Understanding pesticides](https://ipm.ucanr.edu/home-and-landscape/understanding-pesticides/). How to read a label and lower your risk.
+- [UC IPM: Resources for multi-unit housing managers](https://ipm.ucanr.edu/home-and-landscape/resources-for-multi-unit-housing-managers/). For owners and building staff.
+- [California Structural Pest Control Board](https://www.pestboard.ca.gov/). Check that a pest control company is licensed.
+- [SF Environment: Choosing a pest control company](https://www.sfenvironment.org/choosing-pest-control-company). How to check a license and find a company certified in integrated pest management.
+
+**Links in this text — recreate each with the Link tool, do not paste them:**
+
+- "UC IPM: Hiring a pest control company" → shape 5 — rich text Link tool → External link
+- "UC IPM: Understanding pesticides" → shape 5 — rich text Link tool → External link
+- "UC IPM: Resources for multi-unit housing managers" → shape 5 — rich text Link tool → External link
+- "California Structural Pest Control Board" → shape 5 — rich text Link tool → External link
+- "SF Environment: Choosing a pest control company" → shape 5 — rich text Link tool → External link
+
+### Topics — \`topics\` [TYPE] — page not approved
+
+_topicTag is unmapped metadata — the stored values are Agency labels, not Topic chooser references. Do not paste one into this chooser._
+
+### Related — \`related\` [CHOOSE] — page not approved
+
+_This block publishes the destination page’s title and a link, and NOTHING else. Choose the page and type no description._
+
+1. Choose page: "Bed bugs: prevent them, find them, and get ready for treatment" (\`bedBugsInfo\` → /sf.gov/information/bed-bugs-prevent-find-and-prepare-for-treatment)
+2. Choose page: "Get rid of cockroaches without heavy pesticides" (\`cockroachesPrevention\` → /sf.gov/information/get-rid-of-cockroaches-without-heavy-pesticides)
+3. Choose page: "Keep rats and mice out of your home" (\`rodentsPrevention\` → /sf.gov/information/keep-rats-and-mice-out-of-your-home)
+4. Choose page: "Integrated pest management for property owners and managers" (\`ownerGuidance\` → /sf.gov/information/integrated-pest-management-for-property-owners-and-managers)
+
+### Promote → For search engines — \`promote\` [TYPE] — page not approved
+
+_The slug is REQUIRED and lives on the Promote tab, so a page cannot be saved from the Content tab alone._
+
+**Slug (\`slug\`):**
+
+sf.gov/information/what-to-expect-when-your-building-is-treated-for-pests
+
+**Title tag (\`seo_title\`):**
+
+When your building is treated for pests | SF.gov
+
+**Meta description (\`search_description\`):**
+
+What San Francisco tenants and owners each need to do before, during, and after a pest control treatment.
+"
+`;
+
 exports[`transcript Markdown, every corpus page > pestsTopic 1`] = `
 "# Healthy Housing and Vector Control — Karl transcript
 
@@ -4969,6 +5557,386 @@ Nothing below has a field to be typed into. It is listed rather than dropped, be
 - \`audience\` — The page carries \`audience\`, and the panel SF.gov puts it in is not on this type. Campaign has no \`things_to_know\` panel — it is Transaction-only — and no free-text intro either, so the audience has to move into the body copy or be dropped deliberately. Confirmed on a published page — sf.gov/manage-covid-19-schools-childcare-and-youth-programs renders "Who this information is for" as an H3 inside its grey "What to know" box, with the audiences as a bulleted list.
 - \`sections.2.paragraphs\` — \`paragraphs\` on this section reached no panel in the Campaign inventory.
 - \`sections.2.bullets\` — \`bullets\` on this section reached no panel in the Campaign inventory.
+"
+`;
+
+exports[`transcript Markdown, every corpus page > reduceMoisture 1`] = `
+"# Reduce moisture and mold in your home — Karl transcript
+
+**Karl path:** New: Information → Content
+**Decision:** no review recorded
+**Page key:** \`reduceMoisture\` · **Slug:** \`sf.gov/information/reduce-moisture-and-mold-in-your-home\` · **Type:** Information
+
+**NOT APPROVED — do not publish from this transcript.** Approval in this tool is per page, not per field, so nothing below is signed off.
+
+> Every keystroke below is yours to make. This file is an export, not an approval, and nothing here has been written to Karl.
+
+### Page title — \`title\` [TYPE] — page not approved
+
+**Page title:**
+
+Reduce moisture and mold in your home
+
+### Description — \`description\` [TYPE] — page not approved
+
+**Description:**
+
+Learn what causes mold, who is responsible for fixing it, and simple daily steps that keep your home dry.
+
+### Primary agency — \`primary_agency\` [FLAG] — page not approved
+
+_U6 — supply the parent Agency page by hand; the mockup has no field for it._
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+_The Title "Who this information is for" is not in the mockup — this tool supplies it, matching sf.gov/manage-covid-19-schools-childcare-and-youth-programs, which renders the audience as an H3 with that title over a bulleted list. Add this block first, so every authored section below is one Information section block later than its place among the mockup sections._
+
+**Title:**
+
+Who this information is for
+
+**Text:**
+
+- This page is for tenants, and the owners and managers of their buildings, who want to prevent or clean up mold.
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+Mold is a moisture problem
+
+**Text:**
+
+Tiny mold spores are in every home. They only grow into visible mold when a surface stays wet. Stop the water, and you stop the mold.
+
+Mold can trigger asthma and allergies, especially in children and people with breathing problems. Mold can start to grow in just a couple of days, so act quickly.
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+Where the water comes from
+
+**Text:**
+
+Who fixes mold usually depends on where the water comes from.
+
+- **Leaks from outside**, like a leaky roof or window frame. The owner must fix these.
+- **Plumbing leaks inside**, like a dripping pipe or water heater. The owner must fix these.
+- **Condensation**, which is water from cooking, showers, and breathing that collects on cold walls and windows. Tenants usually manage this by keeping the air dry and moving.
+
+**Callout (rich text, no title field):**
+
+If you see a leak, tell your landlord in writing right away. You are helping protect the building and your health.
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+Keep your home dry every day
+
+**Text:**
+
+Fresh, moving air is your best tool against mold. These steps cost little or nothing.
+
+- **Open windows for 5 to 15 minutes a day.** This lets damp air out and drier air in, even on a foggy day.
+- **Run the fan when you cook or shower.** Leave it on for 15 to 20 minutes after. To test a fan, see if it holds up a square of toilet paper. If a fan or vent is broken, tell your landlord.
+- **Put lids on pots** when you cook.
+- **Dry laundry in a dryer**, not on racks indoors.
+- **Move furniture at least 6 inches away from outside walls** so air can flow behind it.
+- **Wipe water off windows and sills** when you see it.
+- **Do not overstuff closets**, and leave closet doors a little open.
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+Check your humidity
+
+**Text:**
+
+A small gauge called a hygrometer measures how damp the air is. You can buy one for about $15 to $25.
+
+Try to keep humidity below 50%. If it stays higher, open windows more often or use a dehumidifier.
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+Clean small areas of mold
+
+**Text:**
+
+You can clean small spots of mold yourself.
+
+- **Use soap and water.** We do not recommend bleach.
+- **Wash moldy clothes and fabrics** in warm water and dry them completely.
+- **Fix the cause**, or the mold will come back.
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+When to report mold to the City
+
+**Text:**
+
+Tell your landlord first, in writing. If your landlord does not fix a leak or a mold problem, you can report it.
+
+- **The City can act** when mold covers at least 10 square feet of walls or ceilings. The owner must then clean it and paint with mold-resistant paint.
+- **The City cannot help** with mold on personal items like furniture or clothing.
+- [Report mold](moldReport)
+- [Health Code Article 11 in plain language](article11Guide)
+
+**Links in this text — recreate each with the Link tool, do not paste them:**
+
+- "Report mold" → shape 5 — rich text Link tool → Internal link → "Report mold"
+- "Health Code Article 11 in plain language" → shape 5 — rich text Link tool → Internal link → "Health Code Article 11 in plain language"
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+Learn more
+
+**Text:**
+
+Damp homes also attract pests that need water to survive. These guides explain how to spot and prevent them.
+
+- [CDC: Mold](https://www.cdc.gov/mold-health/about/index.html). How mold affects health.
+- [EPA: A brief guide to mold, moisture, and your home](https://www.epa.gov/mold/brief-guide-mold-moisture-and-your-home)
+- [UC IPM: Cockroaches](https://ipm.ucanr.edu/home-and-landscape/cockroaches/). Leaks and damp areas give cockroaches water.
+- [UC IPM: Moth or drain flies](https://ipm.ucanr.edu/home-and-landscape/moth-or-drain-flies/). Small flies that breed in wet, slimy drains.
+
+**Links in this text — recreate each with the Link tool, do not paste them:**
+
+- "CDC: Mold" → shape 5 — rich text Link tool → External link
+- "EPA: A brief guide to mold, moisture, and your home" → shape 5 — rich text Link tool → External link
+- "UC IPM: Cockroaches" → shape 5 — rich text Link tool → External link
+- "UC IPM: Moth or drain flies" → shape 5 — rich text Link tool → External link
+
+### Topics — \`topics\` [TYPE] — page not approved
+
+_topicTag is unmapped metadata — the stored values are Agency labels, not Topic chooser references. Do not paste one into this chooser._
+
+### Related — \`related\` [CHOOSE] — page not approved
+
+_This block publishes the destination page’s title and a link, and NOTHING else. Choose the page and type no description._
+
+1. Choose page: "Report mold" (\`moldReport\` → /sf.gov/report-mold)
+2. Choose page: "Tenant rights when reporting housing conditions" (\`tenantRights\` → /sf.gov/information/tenant-rights-and-reporting-housing-conditions)
+
+### Promote → For search engines — \`promote\` [TYPE] — page not approved
+
+_The slug is REQUIRED and lives on the Promote tab, so a page cannot be saved from the Content tab alone._
+
+**Slug (\`slug\`):**
+
+sf.gov/information/reduce-moisture-and-mold-in-your-home
+
+**Title tag (\`seo_title\`):**
+
+Reduce moisture and mold at home | SF.gov
+
+**Meta description (\`search_description\`):**
+
+What causes mold, who fixes it, and daily steps San Francisco tenants can take to keep their home dry.
+"
+`;
+
+exports[`transcript Markdown, every corpus page > rodentsPrevention 1`] = `
+"# Keep rats and mice out of your home — Karl transcript
+
+**Karl path:** New: Information → Content
+**Decision:** no review recorded
+**Page key:** \`rodentsPrevention\` · **Slug:** \`sf.gov/information/keep-rats-and-mice-out-of-your-home\` · **Type:** Information
+
+**NOT APPROVED — do not publish from this transcript.** Approval in this tool is per page, not per field, so nothing below is signed off.
+
+> Every keystroke below is yours to make. This file is an export, not an approval, and nothing here has been written to Karl.
+
+### Page title — \`title\` [TYPE] — page not approved
+
+**Page title:**
+
+Keep rats and mice out of your home
+
+### Description — \`description\` [TYPE] — page not approved
+
+**Description:**
+
+Learn the signs of rats and mice, how to cut off their food and hiding places, and what your landlord must fix.
+
+### Primary agency — \`primary_agency\` [FLAG] — page not approved
+
+_U6 — supply the parent Agency page by hand; the mockup has no field for it._
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+_The Title "Who this information is for" is not in the mockup — this tool supplies it, matching sf.gov/manage-covid-19-schools-childcare-and-youth-programs, which renders the audience as an H3 with that title over a bulleted list. Add this block first, so every authored section below is one Information section block later than its place among the mockup sections._
+
+**Title:**
+
+Who this information is for
+
+**Text:**
+
+- This page is for tenants and residents who want to prevent rats and mice, or are dealing with them now.
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+Why rats and mice are a health risk
+
+**Text:**
+
+Rats and mice can spread germs through their droppings, urine, and nests. Mouse urine is also a common cause of allergies and can trigger asthma in children.
+
+They chew through food containers and electrical wires. A small problem grows fast, so act at the first sign.
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+Signs of rats and mice
+
+**Text:**
+
+- **Droppings** about the size and shape of a grain of rice, often near food, under sinks, or along walls
+- **Chewed food packages** or gnaw marks on wood and plastic
+- **Greasy rub marks** along walls where they travel
+- **Scratching sounds** in walls or ceilings, mostly at night
+- **Nests** made of shredded paper or fabric
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+Cut off their food and water
+
+**Text:**
+
+Rats and mice stay where they can find food. Taking away food is one of the most important things you can do.
+
+- **Store food in glass, metal, or hard plastic containers** with tight lids.
+- **Keep flour, rice, and nuts in the fridge** if you store them for a long time.
+- **Clean up crumbs and spills** right away, including under the stove and fridge.
+- **Do not leave pet food out overnight.** Feed pets only what they will eat at one time. Store large bags of pet food in a metal garbage can with a lid.
+- **Put garbage in bins with tight lids**, and take it out often.
+- **Do not feed birds, pigeons, or other wildlife.** The food also feeds rats.
+- **Fix dripping faucets**, or ask your landlord to.
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+Take away hiding places
+
+**Text:**
+
+- **Clear clutter**, like piles of paper, boxes, and bags, where mice can nest.
+- **Keep storage off the floor** and away from walls when you can.
+- **Keep yards and shared spaces clear** of junk, fallen fruit, and thick ivy.
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+Seal holes and gaps
+
+**Text:**
+
+A mouse can squeeze through a hole about the size of a pencil (about 1/4 inch). Rats and mice get in around pipes, vents, and gaps under doors.
+
+In a rental, sealing the building is the owner's responsibility. Holes should be closed with metal, concrete, or steel wool covered with caulk, because rats and mice chew through foam, rubber, plastic, and wood.
+
+- **Tell your landlord in writing** about the signs you see and any holes you find.
+- **You can fill small gaps inside your home yourself.** Stuff the gap tightly with steel wool or copper mesh, then seal it with caulk.
+- **Do not use spray foam.** HHVC does not recommend it, because no one can see whether steel wool was packed in first.
+- **Your landlord must look into it within 72 hours** and use a licensed pest control company.
+- **If nothing starts within 72 hours, report it.** If there is a serious health or safety danger, report it right away. [Report rats or mice](rodentsReport)
+
+**Callout (rich text, no title field):**
+
+You can report anonymously. We never share your name or contact information.
+
+**Links in this text — recreate each with the Link tool, do not paste them:**
+
+- "Report rats or mice" → shape 5 — rich text Link tool → Internal link → "Report rats or mice"
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+Trap and clean up safely
+
+**Text:**
+
+- **Use snap traps indoors.** Put them along walls and in corners, out of reach of children and pets.
+- **Leave traps unset for the first day.** Bait them but do not set them, so rats and mice get used to them. Then set them.
+- **Check traps every day.** Keep trapping until you catch nothing for a full week.
+- **Do not use glue traps.** They are inhumane.
+- **Do not use poison.** It can harm children, pets, and wildlife.
+- **Wear gloves and wet droppings down with disinfectant** before you wipe them up.
+- **Never dry-sweep or vacuum droppings.** That puts germs into the air you breathe.
+
+**Callout (rich text, no title field):**
+
+Traps help, but they do not fix the problem. Rats and mice will keep coming back until food, hiding places, and holes are taken care of.
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+Learn more about rats and mice
+
+**Text:**
+
+The University of California Statewide Integrated Pest Management Program (UC IPM) publishes detailed, science-based guides.
+
+- [UC IPM: Rats](https://ipm.ucanr.edu/home-and-landscape/rats/). Signs, prevention, and trapping.
+- [UC IPM: House mouse](https://ipm.ucanr.edu/home-and-landscape/house-mouse/). How to keep mice out of buildings.
+- [CDC: How to clean up after rodents](https://www.cdc.gov/healthy-pets/rodent-control/clean-up.html). Step-by-step cleanup that keeps germs out of the air.
+- [SF Environment: Managing pest problems without toxics](https://www.sfenvironment.org/managing-pest-problems-without-toxics). Simple do and do not tips for rodents and other pests.
+- [UC IPM: Recursos en español](https://ipm.ucanr.edu/IPMPROJECT/recursos-espanol.html). Guías sobre plagas en español.
+
+**Links in this text — recreate each with the Link tool, do not paste them:**
+
+- "UC IPM: Rats" → shape 5 — rich text Link tool → External link
+- "UC IPM: House mouse" → shape 5 — rich text Link tool → External link
+- "CDC: How to clean up after rodents" → shape 5 — rich text Link tool → External link
+- "SF Environment: Managing pest problems without toxics" → shape 5 — rich text Link tool → External link
+- "UC IPM: Recursos en español" → shape 5 — rich text Link tool → External link
+
+### Topics — \`topics\` [TYPE] — page not approved
+
+_topicTag is unmapped metadata — the stored values are Agency labels, not Topic chooser references. Do not paste one into this chooser._
+
+### Related — \`related\` [CHOOSE] — page not approved
+
+_This block publishes the destination page’s title and a link, and NOTHING else. Choose the page and type no description._
+
+1. Choose page: "Report rats or mice" (\`rodentsReport\` → /sf.gov/report-rats-or-mice)
+2. Choose page: "Free IPM education workshop" (\`ipmEducation\` → /sf.gov/integrated-pest-management-education)
+3. Choose page: "Tenant rights when reporting housing conditions" (\`tenantRights\` → /sf.gov/information/tenant-rights-and-reporting-housing-conditions)
+4. Choose page: "Integrated pest management for property owners and managers" (\`ownerGuidance\` → /sf.gov/information/integrated-pest-management-for-property-owners-and-managers)
+
+### Promote → For search engines — \`promote\` [TYPE] — page not approved
+
+_The slug is REQUIRED and lives on the Promote tab, so a page cannot be saved from the Content tab alone._
+
+**Slug (\`slug\`):**
+
+sf.gov/information/keep-rats-and-mice-out-of-your-home
+
+**Title tag (\`seo_title\`):**
+
+Keep rats and mice out of your home | SF.gov
+
+**Meta description (\`search_description\`):**
+
+Signs of rats and mice, how to cut off food and hiding places, and what San Francisco landlords must fix.
 "
 `;
 

@@ -122,6 +122,28 @@ export const healthyHousingTopic = {
 			]
 		},
 		{
+			heading: 'Prevent pests and mold at home',
+			karl: 'Maps to a Resources block (Title = this heading, Links = the cards). The five community-education Information pages ported from HHVC_manager_review_current_tool_package, where they sit in the Healthy housing and pest resources collection this repo retired into the Topic. Placed after Learn more so prevention guidance follows the reporting and help routes.',
+			kind: 'body',
+			component: 'resources',
+			cards: [
+				{
+					title: 'Bed bugs: prevent them, find them, and get ready for treatment',
+					target: 'bedBugsInfo'
+				},
+				{ title: 'Keep rats and mice out of your home', target: 'rodentsPrevention' },
+				{
+					title: 'Get rid of cockroaches without heavy pesticides',
+					target: 'cockroachesPrevention'
+				},
+				{ title: 'Reduce moisture and mold in your home', target: 'reduceMoisture' },
+				{
+					title: 'What to expect when your building is treated for pests',
+					target: 'pestTreatmentInfo'
+				}
+			]
+		},
+		{
 			heading: 'Guides and forms',
 			karl: 'Maps to a Resources block of External links. Carries every outside document and site the retired Healthy housing and pest resources collection linked, so the fold loses none of them. The api.sf.gov documents are Document Picker uploads in Karl; confirm the current file before publishing.',
 			kind: 'body',
