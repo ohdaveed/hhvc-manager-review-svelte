@@ -57,16 +57,16 @@ projects:
         SVELTE_PUBLIC_SUPABASE_URL: ''
         SVELTE_PUBLIC_SUPABASE_ANON_KEY: ''
         SUPABASE_SERVICE_ROLE_KEY: ''
-      # stg targets the hosted staging project hhvc-manager-review-staging
-      # (ref aplbsgacqnxhzjuquvft). Netlify's deploy-preview and branch-deploy
-      # contexts build against it, which is what stops a reviewer clicking
-      # through a PR preview from editing the real review database. Staging
-      # carries its own auth.users, so a production invite does not sign anyone
-      # in on a preview.
+      # stg is EMPTY and targets nothing. It used to name the hosted staging
+      # project hhvc-manager-review-staging (ref aplbsgacqnxhzjuquvft), which no
+      # longer exists (measured 2026-11-26). Netlify's deploy-preview and
+      # branch-deploy contexts now build against production, which is accepted
+      # while production holds only mockup review data -- see CLAUDE.md,
+      # "One hosted Supabase project". The block stays so a new staging project
+      # has somewhere to go if previews are ever split off again.
       #
       # GEMINI_API_KEY is deliberately absent here: it is SHARED across every
       # deploy context, so a preview's AI rewrites spend the production key.
-      # Listing it under stg would assert a split that does not exist.
       stg:
         SVELTE_PUBLIC_SUPABASE_URL: ''
         SVELTE_PUBLIC_SUPABASE_ANON_KEY: ''

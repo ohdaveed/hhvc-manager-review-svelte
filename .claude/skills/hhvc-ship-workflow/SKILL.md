@@ -31,7 +31,7 @@ Use this skill when:
 - Merging to `main` and verifying the live deployment
 - Coordinating design decisions with review bot feedback
 - Your merge is blocked or another session has edited your branch
-- Synchronizing staging databases and environment variables after merge
+- Confirming production's schema and syncing environment variables after merge
 
 ## The Ship Sequence
 
@@ -83,63 +83,33 @@ gh pr merge <n> --squash
 
 This squash-merges the branch into `main` (one commit) and triggers the Netlify deploy automatically.
 
-### 5. Post-Merge: Synchronize Environments
+### 5. Post-Merge: Confirm Production's Schema and Environments
 
-The merge auto-applies Supabase migrations to **production only**. Staging must be synced manually or deploy previews fall out of sync with the live schema. Environment variables with multiple contexts also require separate updates.
+The merge auto-applies Supabase migrations to **production** (`kiynekyzqxneepjipqhg`), which is the only hosted project. There is no staging to sync: the old staging project (`aplbsgacqnxhzjuquvft`) no longer exists (measured 2026-11-26), and every Netlify deploy context, previews included, reads production. Never link or push to that ref.
 
-#### 5a. Sync Staging Database (if migrations were included)
+#### 5a. Confirm Production Caught Up (if migrations were included)
 
 `supabase link` writes `supabase/.temp/project-ref`, which is **checkout-wide and
-persists** — whichever project you linked last is what the next `db push`
-targets, from any session sharing that checkout. Restore it rather than
-remembering to:
+persists**. Whichever project you linked last is what the next `db push`
+targets, from any session sharing that checkout. Work in a **separate worktree**
+when peers are active: `supabase/.temp/` is per-worktree, so linking there cannot
+disturb the shared checkout.
 
 ```sh
-(
-  project_ref="aplbsgacqnxhzjuquvft"   # staging
-  ref_file="supabase/.temp/project-ref"
-  if [ -f "$ref_file" ]; then
-    had_ref=true; prior_ref=$(cat "$ref_file")
-  else
-    had_ref=false
-  fi
-  restore_ref() {
-    if [ "$had_ref" = true ]; then
-      mkdir -p "$(dirname "$ref_file")"; printf '%s\n' "$prior_ref" > "$ref_file"
-    else
-      rm -f "$ref_file"
-    fi
-  }
-  trap restore_ref EXIT
-
-  bunx supabase link --project-ref "$project_ref"
-  test "$(cat "$ref_file")" = "$project_ref" || { echo "Not linked to staging; refusing to push" >&2; exit 1; }
-  bunx supabase db push
-  bunx supabase migration list
-)
+bunx supabase link --project-ref kiynekyzqxneepjipqhg
+test "$(cat supabase/.temp/project-ref)" = kiynekyzqxneepjipqhg || echo "not linked to production" >&2
+bunx supabase migration list     # every repo version should show as applied remotely
 ```
 
-The `test` is not ceremony: a `db push` against the wrong ref is a production
-schema change nobody ran a command for.
+Do **not** run `db push` here. The merge already applied the migrations, and a hand push is a production schema change.
 
-Working in a **separate worktree avoids the whole problem** — `supabase/.temp/`
-is per-worktree, so linking there cannot disturb the shared checkout. Prefer it
-when peers are active.
+**Why:** Deploy previews read production, so a PR's preview runs against a schema that does not yet have that PR's migrations. Once merged, the preview and production agree again. A migration the GitHub App failed to apply leaves both broken.
 
-**Why:** The Supabase GitHub App integration applies migrations to production (`kiynekyzqxneepjipqhg`) on merge. Staging (`aplbsgacqnxhzjuquvft`) is not covered, so deploy previews render against stale schema. This breaks when pages are renamed, views are added, or table columns change.
-
-Verify with **both** checks — they catch different failures:
-
-```sh
-supabase db remote diff     # schema drift: staging's shape vs the migrations
-supabase migration list     # history alignment: which versions each side records
-```
-
-`migration list` is the one that catches a hand-applied migration. Measured
-2026-09-03: staging carried the re-key change under an auto-generated version
-`20260831000316` while the repo names it `20260830120000`. The schema was
-correct and `remote diff` was clean, but `db push` refused with
-`LegacyDbPushMissingLocalError` and staging could receive **no** further
+`migration list` also catches a hand-applied migration recorded under the wrong
+version. Measured 2026-09-03, on the old staging project: the re-key change sat
+under an auto-generated version `20260831000316` while the repo names it
+`20260830120000`. The schema was correct, but `db push` refused with
+`LegacyDbPushMissingLocalError` and that project could receive **no** further
 migration. Repair records the repo's version as applied and drops the
 duplicate, without re-running any SQL:
 
@@ -187,7 +157,7 @@ Also check:
 - **Deployed commit**: Verify `/_app/version.json` contains the merged commit SHA
 - **Console**: No new errors (pre-existing ones don't count as regression)
 - **Smoke test**: Run through at least one critical user flow
-- **Staging**: If this merge included a schema change, confirm staging sync actually applied before relying on deploy previews
+- **Schema**: If this merge included a migration, confirm production applied it (step 5a). Deploy previews read production too
 
 ### 7. Local/Remote Sync
 
@@ -248,16 +218,9 @@ If another session edited your branch:
 
 Example from this project: two concurrent sessions edited `fix/karl-button-cap`, one committed the button cap fix, the other deleted tooling files — both landed in the same PR and needed unified verification before merge.
 
-### Staging Falls Behind After Merge
+### Deploy Previews Break on a PR With a Migration
 
-If deploy previews are broken or missing after a merge, check if staging is in sync:
-
-```sh
-supabase link --project-ref aplbsgacqnxhzjuquvft
-supabase db remote diff
-```
-
-If output shows pending migrations, run step 5a before re-deploying previews.
+Previews read production, so a PR that adds a table, column or view has a preview that fails to read until the merge applies the migration. That is expected, not a broken deploy. If previews are still broken **after** the merge, run step 5a: a migration the GitHub App did not apply shows as pending.
 
 ### Verifying Real Artifact State
 
@@ -280,7 +243,7 @@ git show origin/<branch>:src/file.ts | grep "expected_string"
 - **Review feedback doesn't require acceptance** — explain non-obvious decisions with evidence so the owner can review the reasoning.
 - **Commit messages may be mislabeled by concurrent sessions** — verify author and message intent before merge.
 - **Workflow approval gates are GitHub security, not a build failure** — bot-pushed branches require manual approval even if CI would pass.
-- **Supabase migrations apply to production only** — staging needs manual sync or deploy previews break silently.
+- **Supabase migrations apply to production on merge, and previews read production** — a PR's preview runs without that PR's migrations until it merges. There is no staging project.
 - **Netlify env var contexts don't sync automatically** — multi-context variables (like `GEMINI_API_KEY`) require separate updates per context, and old values persist invisibly.
 - **Secret value updates cannot be verified by reading the env var** — test by calling the backend service, not by checking Netlify's API.
 
@@ -292,8 +255,8 @@ If a PR requires multiple fix cycles and includes database migrations:
 2. Workflow approval if needed: click "Approve and run workflows"
 3. Verify deploy preview renders correctly
 4. Merge when all feedback is fixed or declined with reasoning
-5. Sync staging: `supabase link --project-ref aplbsgacqnxhzjuquvft && supabase db push`
-6. Confirm staging: `supabase db remote diff` AND `supabase migration list` both clean
+5. Confirm production applied the migrations: `supabase migration list` against `kiynekyzqxneepjipqhg` (step 5a)
+6. Re-check the deploy preview, which reads production and now has the new schema
 7. Verify live deployment: curl the endpoint, check console, run a user flow
 8. If env vars changed, update all Netlify contexts and verify by calling the backend
 

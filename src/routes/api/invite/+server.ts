@@ -124,8 +124,8 @@ export async function POST({ request, url }) {
 				throw error(409, 'That address already has an account.');
 			}
 
-			// A key that is PRESENT but wrong -- rotated, revoked, or production's
-			// key on a preview built against staging. GoTrue answers 401/403, and
+			// A key that is PRESENT but wrong -- rotated, revoked, or another
+			// project's key in this deploy context. GoTrue answers 401/403, and
 			// forwarding that verbatim tells the reviewer THEIR session is bad,
 			// which is the same misdiagnosis the missing-key guard above exists to
 			// prevent -- and the likelier of the two once the variable is set.
