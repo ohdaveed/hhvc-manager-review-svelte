@@ -4,7 +4,7 @@ Branch `fix/review-follow-ups`, cut from `origin/main` at `ff59b13`.
 The previous plan (manual field editing + vocabulary alignment, all boxes ticked) is in git history at
 `ff59b13:PLAN.md`. Terms are `CONTEXT.md`'s: unsaved change, suggestion, accepted, draft page.
 
-- [ ] **1. Draft pages keep unsaved changes.** `mergeDraftPages` re-applies each unsaved change's value to
+- [x] **1. Draft pages keep unsaved changes.** `mergeDraftPages` re-applies each unsaved change's value to
       the replaced page object, so returning to a draft page shows what the count says. Unit-tested.
 - [ ] **2. Saved-elsewhere is per tab.** The notice compares against the edit ids THIS tab inserted, not the
       user id: the reviewer's own save from another tab raises it, this tab's own saves never do, and an
