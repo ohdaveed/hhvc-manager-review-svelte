@@ -13,7 +13,7 @@
 	import { draftsStore } from '$lib/stores/draftPages';
 	import { pageTitleFor } from '$lib/corpus/pageTitle';
 	import { ArrowRight, ClipboardList } from '@lucide/svelte';
-	import { pageStore, isChanged } from '$lib/stores/pageData.svelte';
+	import { pageStore } from '$lib/stores/pageData.svelte';
 	import { sessionStore } from '$lib/stores/session.svelte';
 	import { STATUS_LABELS } from '$lib/review/statusLabels';
 	import {
@@ -29,13 +29,7 @@
 	// the Karl builder never has to go back to the manager, so Approve should
 	// not be pressed blind to the page's Karl outline or to edits still in
 	// flight. Shown, not enforced -- the decision stays the reviewer's.
-	const unsavedHere = $derived(
-		pageData?.id
-			? Object.values(pageStore.unsavedChanges).filter(
-					(c) => c.pageId === pageData.id && isChanged(c)
-				).length
-			: 0
-	);
+	const unsavedHere = $derived(pageData?.id ? pageStore.unsavedChangesOn(pageData.id).length : 0);
 	const expiredHere = $derived(
 		pageData?.id ? Object.keys(pageStore.staleEditsOn(pageData.id).expired).length : 0
 	);
@@ -428,7 +422,7 @@
 				<span class="text-xs font-semibold text-sfds-green">Ready to move</span>
 			{/if}
 		</div>
-		<p class="text-sm text-slate-800">
+		<p class="text-sm text-sfds-black">
 			The Karl walkthrough takes you through this page one Karl field at a time, with the copy ready
 			to paste and anything that won’t carry over flagged.
 		</p>

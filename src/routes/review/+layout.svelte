@@ -628,7 +628,7 @@
 					>
 				</div>
 				{#if signOutError}
-					<p class="px-5 pt-1 text-xs text-red-700" role="alert">{signOutError}</p>
+					<p class="px-5 pt-1 text-xs text-sfds-red" role="alert">{signOutError}</p>
 				{/if}
 			{/if}
 			<div class="flex items-center justify-between gap-2 px-5 py-3">
@@ -1002,7 +1002,7 @@
 						bind:clientWidth={frameWidth}
 						style={frameStyle}
 						data-measured={paneBox ? 'true' : 'false'}
-						class="mockup-frame mx-auto w-full self-start overflow-hidden rounded-[4px] border border-gray-200 bg-site-surface shadow-[0_2px_4px_rgba(12,20,100,.06),0_4px_12px_rgba(12,20,100,.1)]"
+						class="mockup-frame mx-auto w-full self-start overflow-hidden rounded-[4px] border border-sfds-grey-l2 bg-site-surface shadow-[0_2px_4px_rgba(12,20,100,.06),0_4px_12px_rgba(12,20,100,.1)]"
 					>
 						<SiteHeader />
 
