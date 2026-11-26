@@ -103,7 +103,7 @@ export const bedBugsInfo = {
 				'**Do not remove items before treatment.** Only take out bagged clothing for laundry, or items the pest control company tells you to remove.',
 				'**Wash and dry all clothing and bedding.** Use hot water and the hottest dryer setting for at least 45 minutes. Then store it in new, clean, sealed plastic bags.',
 				'**Wait until you are cleared.** Do not move back in until the pest control company says it is safe.',
-				'[Prepare your unit for pest treatment](stepPrepUnit)',
+				'[What to expect when your building is treated for pests](pestTreatmentInfo)',
 				'**Leave bed bug monitors in place.** Monitoring continues for 4 weeks after the last treatment to make sure the bed bugs are gone.'
 			],
 			callout: {

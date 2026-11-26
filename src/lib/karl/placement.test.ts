@@ -362,7 +362,7 @@ describe('Step by step', () => {
 	});
 
 	it('reports Related pages as unplaced: Step by step has no Related panel', () => {
-		for (const key of ['stepPestReport', 'stepCorrectViolation', 'stepPrepUnit'] as const) {
+		for (const key of ['stepPestReport', 'stepCorrectViolation'] as const) {
 			expect(of(key).sections.get('related-pages'), key).toBeUndefined();
 			expect(gap(key).sections.get('related-pages')?.status, key).toBe('unplaced');
 		}
