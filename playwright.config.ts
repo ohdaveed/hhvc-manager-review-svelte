@@ -1,7 +1,15 @@
 import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
-	webServer: { command: 'npm run build && npm run preview', port: 4173 },
+	// Locally, reuse a preview already on :4173 instead of rebuilding for every
+	// run -- start one with `bun run build && bun run preview` and re-run specs
+	// against it. Rebuild after changing code, or the run tests the old build.
+	// CI always builds fresh.
+	webServer: {
+		command: 'npm run build && npm run preview',
+		port: 4173,
+		reuseExistingServer: !process.env.CI
+	},
 	testMatch: '**/*.e2e.{ts,js}',
 
 	// A stray `test.only` cuts the run to one test and still reports green.
