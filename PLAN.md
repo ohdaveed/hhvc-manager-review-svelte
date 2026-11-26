@@ -50,7 +50,7 @@ suggestion. Saving is the acceptance; there is no accepted-but-unsaved state.
       this page, typed or accepted; the toolbar pill counts unsaved changes on every page. Unit-tested.
 - [x] **12. Cancel un-accepts.** Cancel on a field holding an accepted suggestion restores the field and
       returns the suggestion to pending, not dismissed. Unit-tested.
-- [ ] **13. Someone else saved this field.** While a field has an unsaved change, a newer confirmed edit
+- [x] **13. Someone else saved this field.** While a field has an unsaved change, a newer confirmed edit
       to it from elsewhere shows a one-line notice on that field; Save still proceeds (last write wins).
       Unit-tested.
 - [ ] **14. Verify.** `bun run verify` PASS, ratchets at baseline, e2e green, Playwright check by eye.

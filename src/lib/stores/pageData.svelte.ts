@@ -54,6 +54,14 @@ export type UnsavedChange = {
 	fieldId: string;
 	original: string;
 	value: string;
+	/**
+	 * The id of the field's newest edit when this change started, `null` when it
+	 * had none, and absent until the layout has stamped it. A confirmed edit with
+	 * any other id, from another reviewer, was saved during the typing.
+	 */
+	baseEditId?: string | null;
+	/** Another reviewer saved this field after the change started. */
+	savedElsewhere?: boolean;
 };
 
 /** Field ids are page-relative, so an unsaved change is named by both. */
@@ -470,13 +478,42 @@ class PageStore {
 	setChange(pageId: string, fieldId: string, value: string): boolean {
 		const field = this.resolveOn(pageId, fieldId);
 		if (!field) return false;
-		const original = this.getChange(pageId, fieldId)?.original ?? field.value;
+		const existing = this.getChange(pageId, fieldId);
+		const original = existing?.original ?? field.value;
 		field.set(value);
 		this.unsavedChanges = {
 			...this.unsavedChanges,
-			[changeKey(pageId, fieldId)]: { pageId, fieldId, original, value }
+			[changeKey(pageId, fieldId)]: { ...existing, pageId, fieldId, original, value }
 		};
 		return true;
+	}
+
+	/**
+	 * Records, for each change not yet stamped, the id of its field's newest
+	 * edit -- `null` for a field with none. What `markSavedElsewhere` compares
+	 * against, so a save made during the typing is told from one made before.
+	 */
+	stampChangeBases(newestEditId: (pageId: string, fieldId: string) => string | null) {
+		const unstamped = Object.entries(this.unsavedChanges).filter(
+			([, c]) => c.baseEditId === undefined
+		);
+		if (unstamped.length === 0) return;
+		const next = { ...this.unsavedChanges };
+		for (const [key, c] of unstamped) {
+			next[key] = { ...c, baseEditId: newestEditId(c.pageId, c.fieldId) };
+		}
+		this.unsavedChanges = next;
+	}
+
+	/** Flags a change whose field another reviewer saved after it started. */
+	markSavedElsewhere(pageId: string, fieldId: string, editId: string) {
+		const change = this.getChange(pageId, fieldId);
+		if (!change || change.savedElsewhere || change.baseEditId === undefined) return;
+		if (change.baseEditId === editId) return;
+		this.unsavedChanges = {
+			...this.unsavedChanges,
+			[changeKey(pageId, fieldId)]: { ...change, savedElsewhere: true }
+		};
 	}
 
 	/** Whether the field has typing that has not been saved. */

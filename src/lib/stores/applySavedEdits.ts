@@ -19,12 +19,14 @@
  */
 import { resolveField } from '$lib/corpus/fieldResolver';
 
-type EditLike = {
+export type EditLike = {
 	id?: string;
 	page_id: string;
 	field_id: string;
 	new_content: string;
 	created_at?: string;
+	/** Who saved it. Lets a held-back save be told apart from the reviewer's own. */
+	user_id?: string | null;
 };
 /** The id `saveInlineEdit` gives its optimistic row until the insert returns. */
 const OPTIMISTIC_PREFIX = 'temp-';
@@ -32,28 +34,51 @@ const OPTIMISTIC_PREFIX = 'temp-';
 type LivePageLike = { id: string; path: string };
 type PageLike = { id: string };
 
-/** Returns how many fields were changed, which is mostly useful to tests. */
-export function applySavedEdits(
-	pages: readonly PageLike[],
+/** The key `latestEdits` files a field under: page path, then field id. */
+export const editKey = (path: string, fieldId: string) => `${path}\u0000${fieldId}`;
+
+/**
+ * The newest edit per field, keyed by `editKey`. Last write wins, ordered
+ * explicitly by `created_at`. Rows for a page with no live row are dropped.
+ */
+export function latestEdits(
 	livePages: readonly LivePageLike[],
-	edits: readonly EditLike[],
-	hasUnsavedChange: (pageId: string, fieldId: string) => boolean
-): number {
+	edits: readonly EditLike[]
+): Map<string, EditLike & { path: string }> {
 	const pathOf = new Map(livePages.map((p) => [p.id, p.path]));
 	const latest = new Map<string, EditLike & { path: string }>();
 	const ordered = [...edits].sort((a, b) => (a.created_at ?? '').localeCompare(b.created_at ?? ''));
 	for (const edit of ordered) {
 		const path = pathOf.get(edit.page_id);
 		if (path === undefined || typeof edit.new_content !== 'string') continue;
-		latest.set(`${path}\u0000${edit.field_id}`, { ...edit, path });
+		latest.set(editKey(path, edit.field_id), { ...edit, path });
 	}
+	return latest;
+}
 
+/**
+ * Returns how many fields were changed, which is mostly useful to tests.
+ *
+ * `onHeldBack` hears about each confirmed edit left off the mockup because the
+ * reviewer has an unsaved change on that field -- the way a save made
+ * elsewhere during the typing is noticed rather than silently overwritten.
+ */
+export function applySavedEdits(
+	pages: readonly PageLike[],
+	livePages: readonly LivePageLike[],
+	edits: readonly EditLike[],
+	hasUnsavedChange: (pageId: string, fieldId: string) => boolean,
+	onHeldBack?: (pageId: string, fieldId: string, edit: EditLike) => void
+): number {
 	let changed = 0;
-	for (const edit of latest.values()) {
+	for (const edit of latestEdits(livePages, edits).values()) {
 		// The newest row is still in flight: skip the field rather than fall back
 		// to an older confirmed row, which would put stale copy back.
 		if (edit.id?.startsWith(OPTIMISTIC_PREFIX)) continue;
-		if (hasUnsavedChange(edit.path, edit.field_id)) continue;
+		if (hasUnsavedChange(edit.path, edit.field_id)) {
+			onHeldBack?.(edit.path, edit.field_id, edit);
+			continue;
+		}
 		const field = resolveField(
 			pages.find((p) => p.id === edit.path),
 			edit.field_id

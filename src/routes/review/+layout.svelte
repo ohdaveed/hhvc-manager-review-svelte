@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount, tick, untrack } from 'svelte';
-	import { applySavedEdits } from '$lib/stores/applySavedEdits';
+	import { applySavedEdits, editKey, latestEdits } from '$lib/stores/applySavedEdits';
 	import { page } from '$app/stores';
 	import { resolve } from '$app/paths';
 	import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
@@ -167,14 +167,23 @@
 		const live = $pagesStore;
 		const pages = [...pageStore.pages];
 		void Object.keys(pageStore.unsavedChanges);
-		untrack(() =>
+		untrack(() => {
+			// A new change is stamped with its field's newest edit first, so a save
+			// that lands later -- and only one from another reviewer -- is what
+			// the field's "saved by someone else" notice reports.
+			const newest = latestEdits(live, edits);
+			pageStore.stampChangeBases((path, fieldId) => newest.get(editKey(path, fieldId))?.id ?? null);
 			applySavedEdits(
 				pages,
 				live,
 				edits,
-				(path, fieldId) => pageStore.getChange(path, fieldId) !== undefined
-			)
-		);
+				(path, fieldId) => pageStore.getChange(path, fieldId) !== undefined,
+				(path, fieldId, edit) => {
+					if (!edit.id || !edit.user_id || edit.user_id === sessionStore.userId) return;
+					pageStore.markSavedElsewhere(path, fieldId, edit.id);
+				}
+			);
+		});
 	});
 
 	// Unsaved changes on EVERY page, typed or accepted -- work does not follow the

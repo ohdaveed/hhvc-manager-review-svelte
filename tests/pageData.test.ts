@@ -303,4 +303,32 @@ describe('unsaved changes', () => {
 		expect(pageStore.unsavedChangesElsewhere(A().id)).toBe(0);
 		expect(pageStore.unsavedChangesElsewhere(B().id)).toBe(1);
 	});
+
+	it("stamps each new change with its field's newest edit, once", () => {
+		pageStore.setChange(A().id, 'title', 'Typed');
+		pageStore.stampChangeBases(() => 'row-1');
+		pageStore.stampChangeBases(() => 'row-2');
+		expect(pageStore.getChange(A().id, 'title')?.baseEditId).toBe('row-1');
+		// Typing on keeps the stamp.
+		pageStore.setChange(A().id, 'title', 'Typed more');
+		expect(pageStore.getChange(A().id, 'title')?.baseEditId).toBe('row-1');
+	});
+
+	it('flags a change only for an edit other than the one it started from', () => {
+		pageStore.setChange(A().id, 'title', 'Typed');
+		// Unstamped: nothing to compare against, so nothing is claimed.
+		pageStore.markSavedElsewhere(A().id, 'title', 'row-9');
+		expect(pageStore.getChange(A().id, 'title')?.savedElsewhere).toBeUndefined();
+
+		pageStore.stampChangeBases(() => null);
+		pageStore.markSavedElsewhere(A().id, 'title', 'row-9');
+		expect(pageStore.getChange(A().id, 'title')?.savedElsewhere).toBe(true);
+	});
+
+	it('does not flag the edit the change started from', () => {
+		pageStore.setChange(A().id, 'title', 'Typed');
+		pageStore.stampChangeBases(() => 'row-1');
+		pageStore.markSavedElsewhere(A().id, 'title', 'row-1');
+		expect(pageStore.getChange(A().id, 'title')?.savedElsewhere).toBeUndefined();
+	});
 });

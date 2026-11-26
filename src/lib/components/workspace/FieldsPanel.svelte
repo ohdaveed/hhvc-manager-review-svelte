@@ -177,7 +177,7 @@
 		else if (now)
 			pageStore.unsavedChanges = {
 				...pageStore.unsavedChanges,
-				[key]: { ...now, original: value }
+				[key]: { ...now, original: value, savedElsewhere: false }
 			};
 		if (pageStore.suggestions[fieldId]?.pageId === changePageId)
 			pageStore.forgetSuggestion(fieldId);
@@ -411,6 +411,11 @@
 						<li class="text-[12px] leading-[17px] text-sfds-black">
 							<span class="font-semibold">{name}:</span>
 							<span class="line-clamp-2">{change.value}</span>
+							{#if change.savedElsewhere}
+								<p class="mt-1 text-sfds-amber" role="status">
+									Someone else saved this field after you started. Saving replaces their wording.
+								</p>
+							{/if}
 							{#if errorFor(change.fieldId)}
 								<p class="mt-1 text-sfds-red" role="alert">{errorFor(change.fieldId)}</p>
 							{/if}
@@ -509,6 +514,11 @@
 								role="alert"
 							>
 								{error}
+							</p>
+						{/if}
+						{#if pageStore.getChange(pageId, fieldId)?.savedElsewhere}
+							<p class="mt-1.5 text-[12px] leading-[17px] text-sfds-amber" role="status">
+								Someone else saved this field after you started. Saving replaces their wording.
 							</p>
 						{/if}
 						{#if dirty}

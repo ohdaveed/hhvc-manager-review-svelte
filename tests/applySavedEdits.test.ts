@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { applySavedEdits } from '../src/lib/stores/applySavedEdits';
+import { applySavedEdits, editKey, latestEdits } from '../src/lib/stores/applySavedEdits';
 
 const page = () => ({
 	id: 'topic-x--about',
@@ -121,5 +121,44 @@ describe('applySavedEdits and optimistic rows', () => {
 			never
 		);
 		expect(p.title).toBe('Saved');
+	});
+});
+
+describe('applySavedEdits held-back saves', () => {
+	it('reports a confirmed edit it leaves off a field with an unsaved change', () => {
+		const p = page();
+		const heard: [string, string, string | undefined][] = [];
+		applySavedEdits(
+			[p],
+			live,
+			[{ ...edit('title', 'Theirs', '2026-11-26T00:00:00Z'), id: 'row-c', user_id: 'other' }],
+			() => true,
+			(path, fieldId, e) => heard.push([path, fieldId, e.id])
+		);
+		expect(p.title).toBe('Original title');
+		expect(heard).toEqual([['topic-x--about', 'title', 'row-c']]);
+	});
+
+	it('does not report an optimistic row, which is the reviewer saving', () => {
+		const heard: string[] = [];
+		applySavedEdits(
+			[page()],
+			live,
+			[{ ...edit('title', 'Mine', '2026-11-26T00:00:00Z'), id: 'temp-2' }],
+			() => true,
+			(_p, fieldId) => heard.push(fieldId)
+		);
+		expect(heard).toEqual([]);
+	});
+});
+
+describe('latestEdits', () => {
+	it('keys the newest edit per field by page path', () => {
+		const newest = latestEdits(live, [
+			{ ...edit('title', 'Old', '2026-11-26T00:00:00Z'), id: 'row-1' },
+			{ ...edit('title', 'New', '2026-11-26T01:00:00Z'), id: 'row-2' }
+		]);
+		expect(newest.get(editKey('topic-x--about', 'title'))?.id).toBe('row-2');
+		expect(newest.get(editKey('topic-x--about', 'summary'))).toBeUndefined();
 	});
 });

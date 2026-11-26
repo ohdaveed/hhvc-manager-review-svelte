@@ -26,6 +26,8 @@ export type Edit = {
 	// `edits` is append-only, so a field can have several rows. Consumers order
 	// by this to pick the newest rather than trusting row order.
 	created_at?: string;
+	/** The author. Null once their account is deleted; absent on optimistic rows. */
+	user_id?: string | null;
 };
 
 // Our central stores

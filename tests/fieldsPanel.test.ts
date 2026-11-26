@@ -487,6 +487,17 @@ describe('FieldsPanel manual edits', () => {
 		expect(pageStore.suggestions.title?.status).toBe('pending');
 	});
 
+	it('says when someone else saved the field during the typing, and still saves', async () => {
+		const { input } = renderTitle();
+		await fireEvent.input(input, { target: { value: 'Mine' } });
+		pageStore.stampChangeBases(() => 'row-1');
+		pageStore.markSavedElsewhere(PAGE_ID, 'title', 'row-2');
+
+		expect(await screen.findByText(/Someone else saved this field after you started/)).toBeTruthy();
+		await fireEvent.click(screen.getByRole('button', { name: 'Save the change to Title' }));
+		await vi.waitFor(() => expect(saveInlineEdit).toHaveBeenCalledWith('live-1', 'title', 'Mine'));
+	});
+
 	it('turns pasted line breaks into spaces', async () => {
 		const { page, input } = renderTitle();
 		await fireEvent.input(input, { target: { value: 'Two\n\nlines' } });
