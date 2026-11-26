@@ -220,6 +220,34 @@ describe('rules judge the copy on screen (decision 7)', () => {
 	});
 });
 
+describe('as-shown copy (the outline over the mockup)', () => {
+	const id = 'sections.what-to-do.steps.0.button';
+	const shown = (button: string) => {
+		const page = toStorePage(pagesByKey.rodentsReport as never) as never as Record<string, unknown>;
+		const p = structuredClone(page) as { sections: { steps?: { button?: string }[] }[] };
+		const at = p.sections.findIndex((s) => Array.isArray(s.steps) && s.steps[0]?.button);
+		p.sections[at].steps![0].button = button;
+		return p;
+	};
+
+	it('judges the wording on the page, not a saved edit beneath an unsaved change', () => {
+		// Saved: too long. On screen: an unsaved change back under the limit.
+		const saved = record({ section_edits: { [id]: 'Report this problem through 311 now' } });
+		const page = shown('Report now');
+		expect(statusOf(placementsFor(page as never, saved, pagesByKey), id)).toBe('needs-fix');
+		expect(
+			statusOf(placementsFor(page as never, saved, pagesByKey, { copy: 'as-shown' }), id)
+		).toBe('placed');
+	});
+
+	it('judges an unsaved change that breaks a rule', () => {
+		const page = shown('Report this problem through 311 now');
+		expect(statusOf(placementsFor(page as never, null, pagesByKey, { copy: 'as-shown' }), id)).toBe(
+			'needs-fix'
+		);
+	});
+});
+
 describe('section keys', () => {
 	it('joins a section with a pinned fieldKey by its key, not its heading', () => {
 		const p = of('article11Compliance');

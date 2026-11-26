@@ -91,6 +91,19 @@ describe('mergeDraftPages', () => {
 		]);
 		expect(pageStore.pages.some((p) => p.id.startsWith('draft:'))).toBe(false);
 	});
+
+	it('keeps an unsaved change on the mockup when the draft page is merged again', () => {
+		pageStore.mergeDraftPages([readyDraft()]);
+		pageStore.setChange('draft:abc', 'title', 'Typed on the draft');
+
+		// Navigating to `/` and back reloads the review, which re-merges drafts.
+		pageStore.mergeDraftPages([readyDraft()]);
+
+		const page = pageStore.pages.find((p) => p.id === 'draft:abc')!;
+		expect(page.title).toBe('Typed on the draft');
+		expect(pageStore.hasUnsavedChange('draft:abc', 'title')).toBe(true);
+		pageStore.unsavedChanges = {};
+	});
 });
 
 describe('createDraft', () => {

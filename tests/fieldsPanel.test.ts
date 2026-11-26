@@ -584,6 +584,29 @@ describe('FieldsPanel unsaved changes', () => {
 		expect(page.title).toBe('Saving this');
 	});
 
+	it('a rewrite leaves out a field whose accepted rewrite is not saved, even from another page', async () => {
+		const { page } = renderTitle();
+		pageStore.suggestions = {
+			title: {
+				pageId: 'another-page',
+				original: 'Elsewhere',
+				suggested: 'Accepted elsewhere',
+				status: 'accepted'
+			}
+		};
+		const before = requestGeneration.mock.calls.length;
+
+		await fireEvent.click(screen.getByRole('button', { name: 'Plain language' }));
+
+		expect(requestGeneration.mock.calls.length).toBe(before);
+		expect(await screen.findByText(/1 field was not rewritten/)).toBeTruthy();
+		expect(pageStore.suggestions.title).toMatchObject({
+			pageId: 'another-page',
+			status: 'accepted'
+		});
+		expect(page.title).toBe('About vector control');
+	});
+
 	it('turns pasted line breaks into spaces', async () => {
 		const { page, input } = renderTitle();
 		await fireEvent.input(input, { target: { value: 'Two\n\nlines' } });

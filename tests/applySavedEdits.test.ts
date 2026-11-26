@@ -197,7 +197,7 @@ describe('hydrateMockup', () => {
 			livePages: live,
 			edits: [],
 			editsLoaded: false,
-			userId: 'me',
+			isOwnEdit: () => false,
 			changes
 		});
 		expect(changes.stamped).toEqual([]);
@@ -210,19 +210,28 @@ describe('hydrateMockup', () => {
 			livePages: live,
 			edits: [theirs],
 			editsLoaded: true,
-			userId: 'me',
+			isOwnEdit: () => false,
 			changes
 		});
 		expect(changes.stamped).toEqual(['row-t', null]);
 	});
 
-	it("flags a held-back save by another reviewer, never the reviewer's own or an authorless one", () => {
+	it('flags a held-back save from anywhere but this tab, never an authorless one', () => {
 		const changes = fakeChanges(['title']);
-		const args = { pages: [page()], livePages: live, editsLoaded: true, userId: 'me', changes };
+		const ownTab = new Set(['row-m']);
+		const args = {
+			pages: [page()],
+			livePages: live,
+			editsLoaded: true,
+			isOwnEdit: (id: string) => ownTab.has(id),
+			changes
+		};
 		hydrateMockup({ ...args, edits: [mine] });
 		hydrateMockup({ ...args, edits: [{ ...theirs, user_id: null }] });
 		expect(changes.marked).toEqual([]);
+		// Same user, another tab: not this tab's row, so it is flagged.
+		hydrateMockup({ ...args, edits: [{ ...mine, id: 'row-other-tab' }] });
 		hydrateMockup({ ...args, edits: [theirs] });
-		expect(changes.marked).toEqual(['title:row-t']);
+		expect(changes.marked).toEqual(['title:row-other-tab', 'title:row-t']);
 	});
 });

@@ -273,11 +273,18 @@ export function plainReason(reason: string): string {
  *
  * @param pages the corpus KEYED BY PAGE KEY (`pagesByKey`), which the
  *   transcript needs to resolve link targets -- not the `allPages` array.
+ * @param options.copy which wording is judged. `'recorded'` (the default)
+ *   overlays the record's saved edits on `page`, for a pristine corpus page.
+ *   `'as-shown'` judges `page` exactly as it is: the review layout's page
+ *   object already carries saved edits and, on top of them, the reviewer's
+ *   unsaved changes, and the outline sits over that text -- so its badges
+ *   must describe the wording under them, not a saved edit hidden beneath.
  */
 export function placementsFor(
 	page: Page,
 	record: ReviewRecord | null,
-	pages: object
+	pages: object,
+	options: { copy?: 'recorded' | 'as-shown' } = {}
 ): PagePlacements {
 	// The app renders `pageStore` pages, which `toStorePage` gives a routable
 	// `id`. It is not copy, but the transcript's sweep reports any page key it
@@ -293,11 +300,13 @@ export function placementsFor(
 	const idOf = (path: string) =>
 		path.replace(/^sections\.(\d+)/, (_, i: string) => `sections.${keyOf(Number(i))}`);
 
-	// Copy as rendered: base corpus plus accepted edits.
+	// The copy judged: the page as shown, or the base corpus plus saved edits.
 	const copy: Record<string, string> = { ...extractCopy(page) };
-	for (const [id, value] of Object.entries(record?.section_edits ?? {})) copy[id] = value;
-	if (record?.edited_title) copy.title = record.edited_title;
-	if (record?.edited_summary) copy.summary = record.edited_summary;
+	if (options.copy !== 'as-shown') {
+		for (const [id, value] of Object.entries(record?.section_edits ?? {})) copy[id] = value;
+		if (record?.edited_title) copy.title = record.edited_title;
+		if (record?.edited_summary) copy.summary = record.edited_summary;
+	}
 
 	const claims = Object.entries(transcript.claims ?? {}).map(([path, raw]) => [idOf(path), raw]);
 	const unmapped = (transcript.unmapped ?? []).map((u) => ({ ...u, id: idOf(u.path) }));

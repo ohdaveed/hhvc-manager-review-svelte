@@ -107,6 +107,16 @@ export const editsStore = writable<Edit[]>([]);
 export const editsLoaded = writable(false);
 
 /**
+ * Ids of the edits THIS TAB inserted. `saveInlineEdit` picks the id itself and
+ * records it before the insert, so its own row is recognised even when the
+ * realtime echo arrives before the insert call returns. What tells a save
+ * from this tab apart from one made elsewhere -- another reviewer, or the same
+ * reviewer in another tab, which overwrites typing just the same.
+ */
+const ownEditIds = new Set<string>();
+export const isOwnEdit = (id: string) => ownEditIds.has(id);
+
+/**
  * Loads all pages for the most recent review and initializes realtime.
  * Call this once from the review layout's onMount.
  * Returns the unsubscribe cleanup function.
@@ -357,9 +367,17 @@ export async function saveInlineEdit(
 		return false;
 	}
 
+	const editId = crypto.randomUUID();
+	ownEditIds.add(editId);
 	const { data, error } = await supabase
 		.from('edits')
-		.insert({ page_id: pageId, field_id: fieldId, new_content: newContent, user_id: user.id })
+		.insert({
+			id: editId,
+			page_id: pageId,
+			field_id: fieldId,
+			new_content: newContent,
+			user_id: user.id
+		})
 		.select()
 		.single();
 

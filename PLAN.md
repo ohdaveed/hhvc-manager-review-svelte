@@ -18,3 +18,15 @@ Branch `feat/expired-edits`, cut from `origin/main`. Design:
 - [ ] **6. Transcript.** Expired and orphaned edits appear flagged. Snapshot test updated deliberately.
 - [ ] **7. Verify.** Unit, check, ratchets, e2e, browser check; re-confirm production still has 0 edits
       immediately before merge.
+
+## Carried over from earlier plans -- audited 2026-11-26
+
+Checked against `main` at `2e69c2f`; every item but the last has shipped:
+
+- Sewage routing fix ("Fix first" in `docs/reviews/2026-11-24-karl-review-all-tabs.md`): done in #212.
+  `hhvc-inspection-scope.ts` no longer sends sewage to the Citywide service and links the sewage report.
+- 9-page report regroup: done in #217 and #219. SRO page removed in #219. Mosquito and pigeon report pages
+  built in #217 / #219. Topic fold (the two hub pages): done in #216.
+- **Still open, and not ours to build yet:** on the report pages, the landlord step first and the 311 button
+  last. The review files it under _Revise_, not _Decided_ ("Build only what's under Decided"), and it hangs
+  on the 72-hour landlord wait, still open. Needs a manager decision first.
