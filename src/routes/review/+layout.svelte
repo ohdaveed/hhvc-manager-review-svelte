@@ -177,11 +177,11 @@
 		);
 	});
 
-	// Unsaved = accepted suggestions not yet committed, FOR THIS PAGE. Deliberately
-	// NOT the selected-field count: the footer's "Save N edits" counts the same
-	// thing, and two numbers that look alike but differ is worse than one. Work
-	// parked on other pages is the panel's line to make, not a number here.
-	const unsavedCount = $derived(pageStore.acceptedFor(pageData?.id));
+	// Unsaved changes on EVERY page, typed or accepted -- work does not follow the
+	// reviewer, and a pill that dropped to zero on navigating would say it was
+	// gone. Deliberately NOT the selected-field count; the footer's "Save N
+	// changes" is this page's share of the same number.
+	const unsavedCount = $derived(pageStore.unsavedChangeCount());
 
 	// The toolbar's previous / next buttons step through the queue in the order
 	// the sidebar renders it, so they land on the row above or below the current

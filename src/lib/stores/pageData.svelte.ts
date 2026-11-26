@@ -412,22 +412,29 @@ class PageStore {
 		return Object.entries(this.suggestions).filter(([, s]) => s.pageId === pageId);
 	}
 
-	/** Accepted-but-unsaved edits for `pageId`. What `Save N edits` commits. */
-	acceptedFor(pageId: string | undefined): number {
-		return this.suggestionsFor(pageId).filter(([, s]) => s.status === 'accepted').length;
+	/**
+	 * Accepting a suggestion makes it an unsaved change: its wording goes onto
+	 * the mockup now, and Save records it like anything typed. Refused over
+	 * typing the reviewer has not saved, which it would otherwise replace unseen.
+	 */
+	acceptSuggestion(fieldId: string) {
+		const s = this.suggestions[fieldId];
+		if (!s || s.status !== 'pending') return;
+		if (this.hasUnsavedChange(s.pageId, fieldId)) return;
+		if (!this.setChange(s.pageId, fieldId, s.suggested)) return;
+		this.suggestions = { ...this.suggestions, [fieldId]: { ...s, status: 'accepted' } };
 	}
 
-	/**
-	 * Accepted-but-unsaved edits parked on OTHER pages.
-	 *
-	 * Surfaced rather than summed into the count above: they are real work, and
-	 * a reviewer who navigates away with edits approved should be told they are
-	 * still there rather than watching the number silently drop to zero.
-	 */
-	acceptedElsewhere(pageId: string | undefined): number {
-		return Object.values(this.suggestions).filter(
-			(s) => s.status === 'accepted' && s.pageId !== pageId
-		).length;
+	/** An accepted suggestion goes back to waiting when its change ends unsaved. */
+	private unaccept(pageId: string, fieldId: string) {
+		const s = this.suggestions[fieldId];
+		if (s?.pageId !== pageId || s.status !== 'accepted') return;
+		this.suggestions = { ...this.suggestions, [fieldId]: { ...s, status: 'pending' } };
+	}
+
+	/** Unsaved changes on every page: what the toolbar pill counts. */
+	unsavedChangeCount(): number {
+		return Object.values(this.unsavedChanges).filter((c) => c.value !== c.original).length;
 	}
 
 	/** Drops one suggestion, once its edit is known to have persisted. */
@@ -492,12 +499,17 @@ class PageStore {
 		).length;
 	}
 
-	/** Puts the original copy back on the mockup and drops the unsaved change. */
+	/**
+	 * Puts the original copy back on the mockup and drops the unsaved change. A
+	 * suggestion it came from goes back to waiting, not dismissed: Cancel undoes
+	 * the last step, and dismissing is its own act.
+	 */
 	cancelChange(pageId: string, fieldId: string) {
 		const change = this.getChange(pageId, fieldId);
 		if (!change) return;
 		this.resolveOn(pageId, fieldId)?.set(change.original);
 		this.forgetChange(pageId, fieldId);
+		this.unaccept(pageId, fieldId);
 	}
 
 	/** Drops an unsaved change whose value is now the saved one. Leaves the mockup as is. */
@@ -518,6 +530,7 @@ class PageStore {
 		for (const [key, d] of Object.entries(this.unsavedChanges)) {
 			const kept = d.pageId === this.activePageId && keep.includes(d.fieldId);
 			if (d.value !== d.original || kept) next[key] = d;
+			else this.unaccept(d.pageId, d.fieldId);
 		}
 		this.unsavedChanges = next;
 	}
@@ -525,8 +538,8 @@ class PageStore {
 	/**
 	 * Keeps the suggestions for `keep`, plus every `accepted` one anywhere.
 	 *
-	 * An accepted suggestion is an unsaved edit, not a piece of selection
-	 * chrome: it is what the toolbar pill counts and what `Save N edits`
+	 * An accepted suggestion is an unsaved change, not a piece of selection
+	 * chrome: it is what the toolbar pill counts and what `Save N changes`
 	 * commits. Dropping it on the next click would retract work the reviewer
 	 * had already approved, silently and with no undo. Pending, rejected and
 	 * errored cards carry no such commitment, so they go.
