@@ -23,16 +23,10 @@ function corpusIssues(): string[] {
 describe('Related targets on the current corpus', () => {
 	// Pinned, so a content edit that fixes or introduces one shows up here.
 	it('finds exactly these issues', () => {
-		expect(corpusIssues()).toEqual(
-			[
-				// Campaign's Related is `related_links`, which the live admin shows as a
-				// Page block taking an SF.gov page or an External URL, so whether the
-				// Help Center's four-type rule for the Related component applies to it
-				// is unconfirmed. Left in place, and pinned, until that is settled.
-				'sf.gov/integrated-pest-management-education / karl-related / Healthy Housing and Vector Control',
-				'sf.gov/mosquito-education-workshop / karl-related / Healthy Housing and Vector Control'
-			].sort()
-		);
+		// None since 2026-11-26: every Related card to a page type outside
+		// Transaction, Information, Campaign and Topic moved into the page body.
+		// The issue path is covered by the fixtures below.
+		expect(corpusIssues()).toEqual([].sort());
 	});
 });
 
@@ -101,7 +95,25 @@ describe('karlComponentFindings', () => {
 	});
 
 	it('is wired into analyzePage', () => {
-		const page = pages.find((p) => p.slug === 'sf.gov/integrated-pest-management-education')!;
+		// The IPM workshop with the Agency-page Related card it carried until
+		// 2026-11-26, when that link moved into the page body.
+		const ipm = pages.find((p) => p.slug === 'sf.gov/integrated-pest-management-education')! as {
+			sections: { component?: string; cards?: unknown[] }[];
+		};
+		const page = {
+			...ipm,
+			sections: ipm.sections.map((s) =>
+				s.component === 'related'
+					? {
+							...s,
+							cards: [
+								...(s.cards ?? []),
+								{ title: 'Healthy Housing and Vector Control', target: 'pestsTopic' }
+							]
+						}
+					: s
+			)
+		};
 		const analysis = analyzePage({ page: page as never });
 		expect(analysis.componentFindings.map((f) => f.id)).toEqual(['karl-related']);
 	});

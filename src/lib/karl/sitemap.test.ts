@@ -196,15 +196,14 @@ describe('findOrphans', () => {
 describe('the real corpus', () => {
 	const entries = buildSitemap(allPages.map((p) => ({ ...p, id: routableId(p) })));
 
-	// Was three until 2026-11-26, when the Resource Collection cards moved into
-	// the page body. The one left is a Campaign's `related_links`, whose rule is
-	// unconfirmed (see karlComponentChecks.test.ts).
-	it('has one Related card outside the four permitted types', () => {
+	// Was three until 2026-11-26, when the last cards to an Agency page or a
+	// Resource Collection moved into the page body.
+	it('has no Related card outside the four permitted types', () => {
 		const targets = findRelatedTypeViolations(entries).map(
 			(v) => `${v.link.target}:${v.link.type}`
 		);
 
-		expect(targets).toEqual(['pestsTopic:Agency']);
+		expect(targets).toEqual([]);
 	});
 
 	// Pinned so a corpus change cannot quietly move the figure the UI quotes.

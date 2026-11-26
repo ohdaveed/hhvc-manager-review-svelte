@@ -39,7 +39,7 @@ export const ipmEducation = {
 				'Building resident meetings organized by tenants, not by property management'
 			],
 			paragraphs: [
-				'Sessions are designed for adult residents and community members. HHVC can help you choose the right format for your group size and space.'
+				'Sessions are designed for adult residents and community members. [Healthy Housing and Vector Control](pestsTopic) can help you choose the right format for your group size and space.'
 			]
 		},
 		{
@@ -134,7 +134,7 @@ export const ipmEducation = {
 		},
 		{
 			heading: 'Related pages',
-			karl: "Maps to Campaign's Related field (raw name `related_links`, a repeatable StreamField — confirmed via live admin, 2026-07-06; each entry is a Page block: Link to radio SF.gov page/External URL/None, Page chooser, Link text). All 4 cards below map directly to separate related_links entries (Link to = SF.gov page, Page = target, Link text = title).",
+			karl: "Maps to Campaign's Related field (raw name `related_links`, a repeatable StreamField — confirmed via live admin, 2026-07-06; each entry is a Page block: Link to radio SF.gov page/External URL/None, Page chooser, Link text). All 3 cards below map directly to separate related_links entries (Link to = SF.gov page, Page = target, Link text = title). The Healthy Housing and Vector Control card that ended this list is now an Internal link in the “Who can request” accordion sidebar (2026-11-26): the Help Center's Related page lists only Transaction, Information, Campaign and Topic pages, and whether that rule binds a Campaign's `related_links` is unconfirmed, so the link moved rather than wait on it.",
 			kind: 'placement',
 			component: 'related',
 			cards: [
@@ -151,11 +151,6 @@ export const ipmEducation = {
 				{
 					title: 'Report rats or mice',
 					target: 'rodentsReport',
-					karl: 'Maps to a related_links entry (Link to = SF.gov page, Page = this target, Link text = this title).'
-				},
-				{
-					title: 'Healthy Housing and Vector Control',
-					target: 'pestsTopic',
 					karl: 'Maps to a related_links entry (Link to = SF.gov page, Page = this target, Link text = this title).'
 				}
 			]

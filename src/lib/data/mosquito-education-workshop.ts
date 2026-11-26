@@ -33,7 +33,7 @@ export const mosquitoWorkshop = {
 				'Science fairs and youth STEM events'
 			],
 			paragraphs: [
-				'Workshops are designed for elementary and middle school audiences. HHVC can help you choose the right station setup for your group size and space.'
+				'Workshops are designed for elementary and middle school audiences. [Healthy Housing and Vector Control](pestsTopic) can help you choose the right station setup for your group size and space.'
 			]
 		},
 		{
@@ -127,7 +127,7 @@ export const mosquitoWorkshop = {
 		},
 		{
 			heading: 'Related pages',
-			karl: "Maps to Campaign's Related field (raw name `related_links`, a repeatable StreamField — confirmed via live admin, 2026-07-06; each entry is a Page block: Link to radio SF.gov page/External URL/None, Page chooser, Link text). Corrected from an earlier assumption that this field was single-item — it isn't. All 4 cards below can map directly to separate related_links entries (Link to = SF.gov page, Page = target, Link text = title).",
+			karl: "Maps to Campaign's Related field (raw name `related_links`, a repeatable StreamField — confirmed via live admin, 2026-07-06; each entry is a Page block: Link to radio SF.gov page/External URL/None, Page chooser, Link text). Corrected from an earlier assumption that this field was single-item — it isn't. All 3 cards below can map directly to separate related_links entries (Link to = SF.gov page, Page = target, Link text = title). The Healthy Housing and Vector Control card that ended this list is now an Internal link in the “Who can request” accordion sidebar (2026-11-26): the Help Center's Related page lists only Transaction, Information, Campaign and Topic pages, and whether that rule binds a Campaign's `related_links` is unconfirmed, so the link moved rather than wait on it.",
 			kind: 'placement',
 			cards: [
 				{
@@ -144,11 +144,6 @@ export const mosquitoWorkshop = {
 					title: 'Report a dead bird to the State',
 					url: 'https://westnile.ca.gov/report',
 					karl: 'Maps to a related_links entry (Link to = External URL, Link text = this title). Replaces the retired City dead-bird transaction page — the State runs this reporting line.'
-				},
-				{
-					title: 'Healthy Housing and Vector Control',
-					target: 'pestsTopic',
-					karl: 'Maps to a related_links entry (Link to = SF.gov page, Page = this target, Link text = this title).'
 				}
 			]
 		}

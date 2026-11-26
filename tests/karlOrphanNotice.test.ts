@@ -105,7 +105,7 @@ describe('the corpus', () => {
 		}
 		expect(found).toEqual({
 			'mosquito-education-workshop': ['callout', 'callout'],
-			'integrated-pest-management-education': ['callout', 'callout', 'related'],
+			'integrated-pest-management-education': ['callout', 'callout'],
 			'report-health-code-article-11-plain-language': ['callout'],
 			// No 'contact' since 2026-11-26: Information has no Contact us panel, so
 			// both pages' contact boxes became a Title and text section in the body.

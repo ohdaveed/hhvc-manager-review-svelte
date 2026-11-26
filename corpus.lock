@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "corpusHash": "9298ff508dd397ebc55ebeeac67b7c33c21494ec66e00deb17b38b706dbd6647",
+  "corpusHash": "db37452ac448690c164cafa0574fc500f80d210bf121214bff9565637cca28f7",
   "pages": {
     "departments--healthy-housing-and-vector-control": {
       "contentHash": "c94fd18bc0a62eac3f3e89ca0b2f3844f233a95c62d55c3851d41bf94e217361",
@@ -688,7 +688,7 @@
       }
     },
     "integrated-pest-management-education": {
-      "contentHash": "8f4a6f4b44a0f17ddb6d9e985bf34ae7166d577590057ecce8c7a1f04600904e",
+      "contentHash": "d930b809082b516500a2affa58788b9d23e7817805a263528cd4a9369c4dee4b",
       "fieldHashes": {
         "sections.grounded-in-san-francisco-health-code-and-uc-ipm-guidance.bullets.0": "62917ac28bf9593c2157e7377604ea83f2ac6ce563a8042f1da991eb7da123b7",
         "sections.grounded-in-san-francisco-health-code-and-uc-ipm-guidance.bullets.1": "b29d224889421ca854a05404d420a792f111786c3c5b95abbd283e987a3eb12b",
@@ -719,7 +719,7 @@
         "sections.who-can-request-a-session.bullets.2": "30643a25bdfd8811a1d077b9e0c913062d02ed2c123caf33e9b11ee730bc1657",
         "sections.who-can-request-a-session.bullets.3": "f3cb9daa23c25af87e64cdc17e45c233e44cce7ae05d30631b37fa1e81dec987",
         "sections.who-can-request-a-session.heading": "c53f7c333ae2991ce22770760141ae43ff8ce276a918f0ae037b29f3b50f7fa5",
-        "sections.who-can-request-a-session.paragraphs.0": "4f244695574d26430b504b9d610fb867614abe000381d71fd60a5b1887040789",
+        "sections.who-can-request-a-session.paragraphs.0": "e349f3716ee594f4ee3635b631f9f1c57ff432166fad3f52ea050f67b6368c21",
         "title": "a3a7ee60e5c4dd754f51231699fa44a583e02f73fc23d7f3847d2145db702c4a"
       }
     },
@@ -780,7 +780,7 @@
       }
     },
     "mosquito-education-workshop": {
-      "contentHash": "3d698cfbe4f8f86f70adf187437db8f214625519a97ae1a22a7fafe9e7b236e6",
+      "contentHash": "4a02f02918185e4434800e500485ee5088c19288d7bd90e4d6d2e9ec879e20c1",
       "fieldHashes": {
         "sections.aligned-with-california-education-standards.bullets.0": "96c484416a37bb9ffe2c03febc6a78685d1e3b3124626728bfdf3f897cf82a97",
         "sections.aligned-with-california-education-standards.bullets.1": "11ffb777af0f6dba7b9242ae1d9b0967d79ac1d01530346fad90d49e943c2e75",
@@ -812,7 +812,7 @@
         "sections.who-can-request-a-workshop.bullets.2": "716347ddc10704d6eb897b3f904a7ebd9a83d67041d76d582eb83173f22cfa38",
         "sections.who-can-request-a-workshop.bullets.3": "f17d18f3524b5aa7adb7f20f60c759ff4d050e1b582d0b4c6119f76aacf7185d",
         "sections.who-can-request-a-workshop.heading": "97c20ec8f632891bd58c90f5bd95a31c0aa37e00e40ab1e541a47f88c90bedf4",
-        "sections.who-can-request-a-workshop.paragraphs.0": "3f196d4d3e1659b9a0c956258993a627b4645285820fc15eb4e508c9b1baebec",
+        "sections.who-can-request-a-workshop.paragraphs.0": "d54d1d6a66586c00526edf405eb7d0520eb1474718c410d1aff2b38a6eb72b48",
         "title": "d78f8f0d7cc5899f72f6a025e430d3a7877f06269e82c2ed07bb626b2462e6d6"
       }
     },

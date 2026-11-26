@@ -66,12 +66,13 @@ into the body:
 | payFee              | Property owner responsibilities    | first What to do section                                         |
 | ownerGuidance       | Property owner responsibilities    | dropped from Related; "1. Follow …" already links it in the body |
 
-Two were left in place: the two workshop Campaigns' cards to the Agency page.
-Campaign's Related is `related_links`, which the live admin shows as a Page
-block taking an SF.gov page or an External URL; the mosquito workshop already
-holds external links there. Whether the Related component's four-type rule
-applies to it is **unconfirmed**, so they stay pinned in
-`karlComponentChecks.test.ts` rather than being moved on a guess.
+The two workshop Campaigns' cards to the Agency page followed later the same day.
+Campaign's Related is `related_links`, which the live admin shows as a Page block
+taking an SF.gov page or an External URL, so whether the four-type rule applies
+to it is **unconfirmed**. The links moved anyway, which is safe under either
+reading: each "Who can request" accordion sidebar (rich text) said "HHVC can
+help you choose…", and "HHVC" became a linked "Healthy Housing and Vector
+Control". No Related card in the corpus now points outside the four types.
 
 The Help Center contradicts itself on Resource Collections: its September 2022
 release notes say they "can now be added in the related resource section on
