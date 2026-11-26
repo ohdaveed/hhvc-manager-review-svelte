@@ -80,7 +80,10 @@ accepted wording is an unsaved change until saved; "reject", never "dismiss". Th
       pruning, so an un-accepted card does not outlive its selection. Tested.
 - [x] **21. Leaving asks first.** A `beforeunload` guard while `unsavedChangeCount() > 0`. Tested.
 - [x] **22. Stale wording.** Comments, tooltips, test names and the `-parked` id use the glossary's terms.
-- [ ] **23. Verify.** Unit, check, ratchets, e2e, browser check.
+- [x] **23. Verify.** Unit, check, ratchets, e2e, browser check.
+      Verified 2026-11-26 at 884173a: unit 1213, svelte-check 0/0, eslint 3, prettier 42, e2e 106/106. Each of
+      16-19 had its fix reverted once and its test failed. In the browser, the leave guard prevented unload
+      with "1 unsaved change" and let go after Cancel.
 
 Deferred, not this branch:
 - Marking expired edits on the mockup (edits carry no corpus version yet).
