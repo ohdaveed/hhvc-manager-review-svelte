@@ -1,0 +1,163 @@
+{
+	"schemaVersion": 2,
+	"generatedAt": "2026-11-26T00:00:00Z",
+	"title": "Design System: HHVC Manager Review",
+	"extensions": {
+		"colorMeta": {
+			"site-action": {
+				"role": "primary",
+				"displayName": "Civic Action Blue",
+				"canonical": "#1b519e",
+				"tonalRamp": ["oklch(15% 0.05 262)", "oklch(26% 0.09 262)", "oklch(38% 0.12 262)", "oklch(48% 0.13 262)", "oklch(60% 0.11 262)", "oklch(72% 0.08 262)", "oklch(85% 0.04 262)", "oklch(95% 0.015 262)"]
+			},
+			"sfds-action": {
+				"role": "primary",
+				"displayName": "SFDS Periwinkle",
+				"canonical": "#495ed4",
+				"tonalRamp": ["oklch(15% 0.06 272)", "oklch(27% 0.11 272)", "oklch(40% 0.15 272)", "oklch(52% 0.18 272)", "oklch(63% 0.14 272)", "oklch(74% 0.09 272)", "oklch(86% 0.045 272)", "oklch(95% 0.015 272)"]
+			},
+			"sfds-slate-l3": {
+				"role": "secondary",
+				"displayName": "Ink Slate",
+				"canonical": "#1d4d70",
+				"tonalRamp": ["oklch(15% 0.03 245)", "oklch(26% 0.05 245)", "oklch(40% 0.07 245)", "oklch(52% 0.06 245)", "oklch(63% 0.05 245)", "oklch(74% 0.035 245)", "oklch(86% 0.02 245)", "oklch(95% 0.008 245)"]
+			},
+			"sfds-blue-dark": { "role": "secondary", "displayName": "Deep Indigo", "canonical": "#0c1464" },
+			"sfds-green": {
+				"role": "tertiary",
+				"displayName": "Approved Green",
+				"canonical": "#0b7a3e",
+				"tonalRamp": ["oklch(15% 0.04 152)", "oklch(28% 0.08 152)", "oklch(40% 0.11 152)", "oklch(51% 0.13 152)", "oklch(63% 0.11 152)", "oklch(75% 0.08 152)", "oklch(87% 0.04 152)", "oklch(96% 0.015 152)"]
+			},
+			"sfds-amber": {
+				"role": "tertiary",
+				"displayName": "Caution Amber",
+				"canonical": "#a84b00",
+				"tonalRamp": ["oklch(16% 0.04 50)", "oklch(29% 0.08 50)", "oklch(42% 0.12 50)", "oklch(54% 0.14 50)", "oklch(65% 0.12 55)", "oklch(77% 0.08 60)", "oklch(88% 0.04 65)", "oklch(96% 0.015 65)"]
+			},
+			"sfds-red": {
+				"role": "tertiary",
+				"displayName": "Rejected Red",
+				"canonical": "#b7202e",
+				"tonalRamp": ["oklch(15% 0.05 22)", "oklch(27% 0.1 22)", "oklch(40% 0.15 22)", "oklch(52% 0.19 22)", "oklch(63% 0.15 22)", "oklch(75% 0.09 22)", "oklch(87% 0.04 22)", "oklch(96% 0.015 22)"]
+			},
+			"chrome-canvas": { "role": "neutral", "displayName": "Proof Grey", "canonical": "#f3f4f6" },
+			"chrome-surface": { "role": "neutral", "displayName": "Paper White", "canonical": "#ffffff" },
+			"chrome-primary": { "role": "neutral", "displayName": "Graphite", "canonical": "oklch(0.205 0 0)" },
+			"chrome-border": { "role": "neutral", "displayName": "Hairline", "canonical": "oklch(0.922 0 0)" },
+			"site-ink": { "role": "neutral", "displayName": "Site Ink", "canonical": "#0b0c0c" },
+			"site-surface": { "role": "neutral", "displayName": "Site Surface", "canonical": "#fcfcfc" }
+		},
+		"typographyMeta": {
+			"page-title": { "displayName": "Page title", "purpose": "Mockup page heading only." },
+			"lede": { "displayName": "Lede", "purpose": "Mockup opening summary." },
+			"site-title-lg": { "displayName": "Site section title", "purpose": "Mockup section headings (mobile step; desktop step is a scoped media block)." },
+			"site-body": { "displayName": "Site body", "purpose": "Mockup paragraphs and bullets." },
+			"chrome-title": { "displayName": "Chrome title", "purpose": "Panel and landing headings via font-display." },
+			"chrome-body": { "displayName": "Chrome body", "purpose": "Panel copy, queue rows, form text." },
+			"chrome-label": { "displayName": "Chrome label", "purpose": "Field labels, status pills, toolbar labels." },
+			"karl-chip": { "displayName": "Karl chip", "purpose": "Placement annotations in the page margin." }
+		},
+		"shadows": [
+			{ "name": "site-menu", "value": "0 6px 16px rgba(11, 12, 12, 0.16)", "purpose": "SF.gov dropdown menus; the only shadow in the system." },
+			{ "name": "site-focus-ring", "value": "0 0 0 4px #fcfcfc, 0 0 0 7px #386ebf", "purpose": "Mockup focus: surface gap then 3px focus blue." },
+			{ "name": "site-focus-ring-dark", "value": "0 0 0 4px #ffffff, 0 0 0 7px #386ebf", "purpose": "Mockup focus on white fields." }
+		],
+		"motion": [
+			{ "name": "focus", "value": "none", "purpose": "Focus rings appear instantly; never transition-all on a focusable element." },
+			{ "name": "hover-tint", "value": "transition-colors (Tailwind default 150ms)", "purpose": "Edit-target and button hover tints may ease." }
+		],
+		"breakpoints": [
+			{ "name": "site-mobile", "value": "640px", "purpose": "Mockup fields grow to 56px below this." }
+		]
+	},
+	"components": [
+		{
+			"name": "Site Button (primary)",
+			"kind": "button",
+			"refersTo": "site-button-primary",
+			"description": "SF.gov's public-site button, used inside the mockup and on /login.",
+			"html": "<button class=\"ds-site-btn\">Sign in</button>",
+			"css": ".ds-site-btn { height: 40px; padding: 0 16px; border: 0; border-radius: 4px; background: #1b519e; color: #fff; font: 500 14px/20px 'Roboto Flex Variable', system-ui, sans-serif; cursor: pointer; transition: background-color 150ms; } .ds-site-btn:hover { background: #001d4e; } .ds-site-btn:focus-visible { outline: none; box-shadow: 0 0 0 4px #fcfcfc, 0 0 0 7px #386ebf; }"
+		},
+		{
+			"name": "Site Button (secondary)",
+			"kind": "button",
+			"refersTo": "site-button-secondary",
+			"description": "Soft-blue secondary SF.gov button.",
+			"html": "<button class=\"ds-site-btn-2\">Cancel</button>",
+			"css": ".ds-site-btn-2 { height: 40px; padding: 0 16px; border: 0; border-radius: 4px; background: #dfebfd; color: #1b519e; font: 500 14px/20px 'Roboto Flex Variable', system-ui, sans-serif; cursor: pointer; transition: background-color 150ms; } .ds-site-btn-2:hover { background: #afccf7; } .ds-site-btn-2:focus-visible { outline: none; box-shadow: 0 0 0 4px #fcfcfc, 0 0 0 7px #386ebf; }"
+		},
+		{
+			"name": "Site Text Field",
+			"kind": "input",
+			"refersTo": "site-text-field",
+			"description": "48px SF.gov field, a step above the page surface.",
+			"html": "<label class=\"ds-site-label\">Email<input class=\"ds-site-input\" type=\"email\" placeholder=\"name@sfgov.org\"></label>",
+			"css": ".ds-site-label { display: grid; gap: 8px; font: 500 16px/24px 'Roboto Flex Variable', system-ui, sans-serif; color: #0b0c0c; } .ds-site-input { height: 48px; padding: 0 12px; border: 1px solid #5b5f63; border-radius: 4px; background: #fff; color: #0b0c0c; font: 400 16px/24px 'Roboto Flex Variable', system-ui, sans-serif; } .ds-site-input:hover { border-color: #0b0c0c; } .ds-site-input:focus-visible { outline: none; box-shadow: 0 0 0 4px #ffffff, 0 0 0 7px #386ebf; }"
+		},
+		{
+			"name": "Chrome Button",
+			"kind": "button",
+			"refersTo": "chrome-button",
+			"description": "shadcn default button in the review tool's chrome.",
+			"html": "<button class=\"ds-chrome-btn\">Save</button> <button class=\"ds-chrome-btn ds-outline\">Cancel</button>",
+			"css": ".ds-chrome-btn { height: 32px; padding: 0 10px; border: 1px solid transparent; border-radius: 0.625rem; background: oklch(0.205 0 0); color: oklch(0.985 0 0); font: 500 14px/20px 'Roboto Flex Variable', sans-serif; cursor: pointer; transition: background-color 150ms; } .ds-chrome-btn:hover { background: oklch(0.205 0 0 / 0.8); } .ds-chrome-btn:active { transform: translateY(1px); } .ds-chrome-btn:focus-visible { outline: none; border-color: #0c1464; box-shadow: 0 0 0 3px rgb(12 20 100 / 0.5); } .ds-outline { background: #fff; color: #212123; border-color: oklch(0.922 0 0); } .ds-outline:hover { background: oklch(0.97 0 0); }"
+		},
+		{
+			"name": "Karl Chip",
+			"kind": "chip",
+			"refersTo": "karl-chip-placed",
+			"description": "Placement annotation beside a mockup section; four states.",
+			"html": "<span class=\"ds-karl ds-placed\"><b>Placed</b> · What to do</span> <span class=\"ds-karl ds-fix\"><b>Needs a fix</b> · over 140 chars</span> <span class=\"ds-karl ds-unconf\"><b>Unconfirmed</b></span> <span class=\"ds-karl ds-unplaced\"><b>Unplaced</b> · no panel accepts this</span>",
+			"css": ".ds-karl { display: inline-block; margin: 4px 4px 8px 0; padding: 4px 8px; border-radius: 4px; font: 400 12px/16px 'Roboto Flex Variable', system-ui, sans-serif; } .ds-karl b { font-weight: 600; } .ds-placed { color: #1b5e20; background: #e8f5e9; } .ds-fix { color: #6f4a00; background: #fff7e6; } .ds-unconf { color: #3d4551; background: #eef0f3; } .ds-unplaced { color: #8c1d18; background: #fdecea; }"
+		},
+		{
+			"name": "Review Status Pill",
+			"kind": "chip",
+			"refersTo": "status-approved",
+			"description": "Queue status: dot plus tint plus label, never colour alone.",
+			"html": "<span class=\"ds-status ds-ok\"><i></i>Approved</span> <span class=\"ds-status ds-chg\"><i></i>Needs changes</span> <span class=\"ds-status ds-rej\"><i></i>Rejected</span>",
+			"css": ".ds-status { display: inline-flex; align-items: center; gap: 6px; padding: 2px 8px; border-radius: 9999px; font: 600 12px/16px 'Roboto Flex Variable', sans-serif; } .ds-status i { width: 6px; height: 6px; border-radius: 9999px; background: currentColor; } .ds-ok { color: #0b7a3e; background: #e7f4ec; } .ds-chg { color: #a84b00; background: #fdf1e7; } .ds-rej { color: #b7202e; background: #fcecee; }"
+		},
+		{
+			"name": "Queue Row",
+			"kind": "nav",
+			"description": "Review queue entry: page title, slate secondary line, status dot; periwinkle when current.",
+			"html": "<a class=\"ds-row\" href=\"#\"><span class=\"ds-row-title\">Report a rodent problem</span><span class=\"ds-row-meta\">sf.gov/report-rodents</span></a><a class=\"ds-row ds-current\" href=\"#\" aria-current=\"page\"><span class=\"ds-row-title\">Lead paint inspections</span><span class=\"ds-row-meta\">sf.gov/lead-inspections</span></a>",
+			"css": ".ds-row { display: grid; gap: 2px; padding: 8px 12px; border-left: 2px solid transparent; border-bottom: 1px solid #e2e2e2; background: #fff; text-decoration: none; transition: background-color 150ms; } .ds-row:hover { background: rgb(237 244 247 / 0.6); } .ds-row:focus-visible { outline: none; box-shadow: inset 0 0 0 2px #0c1464; } .ds-row-title { font: 600 14px/20px 'Roboto Flex Variable', sans-serif; color: #212123; } .ds-row-meta { font: 400 12px/16px 'Roboto Flex Variable', sans-serif; color: #1d4d70; } .ds-current { border-left-color: #495ed4; background: #edf4f7; }"
+		}
+	],
+	"narrative": {
+		"northStar": "The Proof Sheet",
+		"overview": "Think of a printer's proof. The SF.gov mockup is the page exactly as it will ship, and the review tool is the reviewer's pencil marks around it. Two layers share every screen, and keeping them apart is the system's main job. The mockup layer reproduces SF.gov faithfully, from the Figma file \"Public — User Interface Components\" (wv6CXpGGH0W8mAmkXKpiex). The chrome layer (queue, panels, toolbars, landing page) is a neutral utility built on shadcn-svelte, tinted with the older SFDS blues and slates. It is plainly a tool and can't be mistaken for an SF.gov page.\n\nThe chrome is dense and small (mostly 12–14px), with light surfaces and few accents. The one thing allowed to speak loudly is a review mark: Karl placement chips, review-status pills, and the expired, unverified and drafted-by-AI banners. Marks annotate the page; they never restyle it. A reviewer judges copy in the setting it will publish in, so anything that makes the mockup look less like SF.gov is a defect, however good it looks.",
+		"keyCharacteristics": [
+			"Two palettes, split by layer: site-* inside the mockup, sfds-* plus shadcn neutrals in the chrome.",
+			"Neutral, compact, low-ornament chrome. The mockup is the visual centerpiece.",
+			"Review marks carry the strongest color in the chrome, always as color plus a label.",
+			"Roboto Slab headings and Roboto Flex body text in both layers. Size and density tell them apart.",
+			"Accessibility fixes live in tokens (the focus ring, slate choice), not in vendored components."
+		],
+		"rules": [
+			{ "name": "The Layer Boundary Rule", "body": "A site-* color appears only inside the mockup frame, and an sfds-* color only outside it. Where the two disagree (site-action #1B519E against sfds-action #495ED4), both are correct, each in its own layer.", "section": "colors" },
+			{ "name": "The Figma Decides Rule", "body": "When a site-* value disagrees with Figma, Figma wins and the CSS is fixed. This overrides the design-system export's older \"theme.css wins\" rule.", "section": "colors" },
+			{ "name": "The Color-Plus-Label Rule", "body": "A review mark never relies on color alone. Every status has a text label or glyph, so contrast holds and color-blind reviewers read it the same way.", "section": "colors" },
+			{ "name": "The Small-But-Strong Rule", "body": "Below 14px, chrome text gets its legibility from weight and the darker slate (sfds-slate-l3), never from a lighter grey.", "section": "typography" },
+			{ "name": "The Instant Focus Rule", "body": "Focus indicators never animate in. Use transition-colors, not transition-all, so the ring is visible on the first frame.", "section": "elevation" }
+		],
+		"dos": [
+			"Do take every mockup value from the Figma file and use site-* tokens inside the mockup frame.",
+			"Do use sfds-slate-l3 for secondary chrome text, and keep sfds-slate-l2 for SiteHeader fidelity only.",
+			"Do pair every status color with a label or glyph.",
+			"Do fix accessibility in tokens (--ring), not in generated components/ui/** files, which the shadcn CLI overwrites.",
+			"Do keep controls to the two mockup heights, 40px buttons and 48px fields."
+		],
+		"donts": [
+			"Don't use an sfds-* or shadcn color inside the mockup, or a site-* color in the chrome.",
+			"Don't load SFDS's Tailwind scale (spacing, radius, border width, breakpoints) into the default namespaces.",
+			"Don't make mockup furniture interactive when it is inert on purpose (header nav, search).",
+			"Don't remove tabindex=\"0\" from the mockup scroll container to quiet Svelte's a11y warning; axe needs it.",
+			"Don't animate focus rings in, or pull an edit target outside the mockup column with negative margins."
+		]
+	}
+}
