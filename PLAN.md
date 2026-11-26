@@ -21,8 +21,13 @@ Branch `feat/expired-edits`, cut from `origin/main`. Design:
       (`staleEditsMarkdown`) and a walkthrough-drawer block, fed by `reviewRecordFor`'s new `stale` argument;
       `karl-transcript.js` is untouched. Snapshots needed no update: the section renders only when an edit is
       stale, and the snapshot pages have none.
-- [ ] **7. Verify.** Unit, check, ratchets, e2e, browser check; re-confirm production still has 0 edits
+- [x] **7. Verify.** Unit, check, ratchets, e2e, browser check; re-confirm production still has 0 edits
       immediately before merge.
+      Verified 2026-11-26: unit 1249, svelte-check 0/0, eslint 3, prettier 42, e2e 110/110. Local stack, real
+      browser: a save wrote a row whose base_hash = sha256 of the corpus title (and whose browser-chosen id
+      the database accepted); with that row pointed at an older base the title showed "Expired", the panel
+      showed the base copy, and Re-confirm + Save recorded a second row anchored to the base now and cleared
+      the mark. Console clean. Test rows deleted. Production re-check is still due right before merge.
 
 ## Carried over from earlier plans -- audited 2026-11-26
 

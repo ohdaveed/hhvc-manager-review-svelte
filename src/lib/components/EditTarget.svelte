@@ -136,7 +136,7 @@
 		{#if expired}
 			<!-- Read out through the button's label; this is the sighted half. -->
 			<span
-				class="mt-1 inline-flex rounded-[3px] border border-sfds-amber bg-sfds-amber-l1 px-1.5 text-[11px] font-bold tracking-[0.06em] text-sfds-black uppercase"
+				class="mt-1 inline-block rounded-[3px] border border-sfds-amber bg-sfds-amber-l1 px-1.5 py-px align-middle font-sans text-[11px] leading-[16px] font-bold tracking-[0.06em] text-sfds-black uppercase"
 				aria-hidden="true"
 				data-edit-expired>Expired</span
 			>
