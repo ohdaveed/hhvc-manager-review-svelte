@@ -31,6 +31,20 @@ const RULES = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];
 const PAGE = '/review/report-garbage-clutter-or-overgrown-plants';
 
 const noViolations = async (page: Page) => {
+	// Let running CSS transitions finish first. The toggle primitive is
+	// `transition-all`, so a scan straight after selecting a filter chip caught
+	// it mid-way from white to `sfds-action` -- #e9eaec on #576ad7, 3.92:1 --
+	// and failed 2 of 12 repeats on main. The settled colours pass.
+	// Transitions only: the landing page also runs an infinite animation, whose
+	// `finished` never settles and timed the scan out.
+	await page.evaluate(() =>
+		Promise.all(
+			document
+				.getAnimations()
+				.filter((a) => a instanceof CSSTransition)
+				.map((a) => a.finished.catch(() => undefined))
+		)
+	);
 	const { violations } = await new AxeBuilder({ page }).withTags(RULES).analyze();
 	expect(
 		violations,
@@ -90,7 +104,6 @@ test('no WCAG 2.1 AA violations in the Analysis panel', async ({ page }) => {
 
 test('no WCAG 2.1 AA violations in the signed-in Karl walkthrough', async ({ page }) => {
 	await gotoSignedIn(page, PAGE);
-	await page.getByRole('button', { name: 'Karl views' }).click();
 	await page.getByRole('button', { name: 'Open Karl walkthrough' }).click();
 	await page.waitForSelector('.drawer');
 
