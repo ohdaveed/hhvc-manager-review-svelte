@@ -12,7 +12,7 @@ The previous plan (manual field editing + vocabulary alignment, all boxes ticked
 - [x] **3. A rewrite never overwrites an accepted suggestion.** A rewrite result for a field whose
       suggestion is accepted (here or on another page) is dropped rather than replacing it, and the
       reviewer is told why. Unit-tested.
-- [ ] **4. Rethink grounding comment.** `RethinkPanel.svelte` ~107 says what grounding now contains: saved
+- [x] **4. Rethink grounding comment.** `RethinkPanel.svelte` ~107 says what grounding now contains: saved
       edits (hydrated) and unsaved changes. No behaviour change.
 - [ ] **5. Karl outline wording.** Pending a decision: which copy the outline judges (see below).
 - [ ] **6. Verify.** Unit, check, ratchets, e2e, browser check.
