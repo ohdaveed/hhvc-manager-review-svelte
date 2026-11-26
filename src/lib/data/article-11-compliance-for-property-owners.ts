@@ -20,18 +20,10 @@ export const article11Compliance = {
 		},
 		{
 			heading: 'What Article 11 requires',
-			karl: 'Maps to an "Information section" → Title and text block: Title = this heading, Text = the opening paragraph plus the six-item bulleted list below (bullets render inside the same rich text field). The list is the page\'s front-loaded "Quick compliance checklist," mirroring the wage-ordinance page\'s prominent dollar figure — it is rendered as a bulleted list rather than a separate Callout because Callout is a single rich-text field with no verified list support (see the page-level editorNote\'s open question #1). Flag for Digital Services if a distinct checklist block exists in the real schema.',
+			karl: 'Maps to an "Information section" → Title and text block: Title = this heading, Text = the paragraph below. Until 2026-11-26 it also carried a six-item "Quick compliance checklist"; five of the six items repeated "What you must do" further down this page, so the list was removed and its one unique item, the annual fee, moved into "Keep records and stay in compliance".',
 			kind: 'body',
 			paragraphs: [
 				'San Francisco Health Code Article 11 requires property owners and managers to keep buildings free of public health nuisances. These include pests, garbage, mold, and rodent problems.'
-			],
-			bullets: [
-				'Pay your annual Healthy Housing fee if your building has 3 or more rental units',
-				'Investigate tenant pest reports within 72 hours, and write every report down in a log',
-				'Hire a licensed pest control operator (PCO) for treatment — never unlicensed staff',
-				'Keep records of complaints, inspections, and treatments for at least 2 years',
-				'Notify tenants in writing before pesticide application',
-				'Complete pest-management training if you have repeat violations'
 			]
 		},
 		{
@@ -48,13 +40,12 @@ export const article11Compliance = {
 			]
 		},
 		{
-			heading: 'What you must do',
-			// Pinned: this heading was reworded by the plain-language audit, and the
-			// derived key is a slug of the heading -- so leaving it derived would have
-			// re-keyed every `sections.<key>.*` id below and orphaned any edit or
-			// comment saved against them. The key is the ORIGINAL slug on purpose.
+			heading: 'Respond to pest reports',
+			// Pinned: the key is the ORIGINAL slug, from before two rewordings
+			// ("What you're required to do", then "What you must do", then this
+			// split), so edits and comments saved against it keep resolving.
 			fieldKey: 'what-you-re-required-to-do',
-			karl: "Maps to a third Title and text block: Title = this heading, Text = the intro paragraph plus the bulleted list below. Condensed from the owner-responsibility and PCO-requirement content in `article11Guide` (Director's Rules §V.2 and related citations) — not a full restatement; links out to the complete table. The vermin-log bullet and the 72-hour bullet above it are the two halves of ONE Director's Rules sentence (Residential Building Owner/Operator Guidelines for Vector Control, item 2) — the pest list is quoted from it verbatim, so do not trim it to a shorter set. It is deliberately separate from the 2-year records bullet that follows: that one is retention of complaints/inspections/treatments for DPH, this one is a running log handed to the PCO. Flag for Digital Services: the log-template link points at the live SF.gov resource page rather than a mockup page key, because no equivalent page exists in this set.",
+			karl: "Maps to a third Title and text block: Title = this heading, Text = the intro paragraph plus the bulleted list below. Condensed from the owner-responsibility and PCO-requirement content in `article11Guide` (Director's Rules §V.2 and related citations) — not a full restatement; links out to the complete table. The vermin-log bullet and the 72-hour bullet above it are the two halves of ONE Director's Rules sentence (Residential Building Owner/Operator Guidelines for Vector Control, item 2) — the pest list is quoted from it verbatim, so do not trim it to a shorter set. It is deliberately separate from the 2-year records bullet that follows: that one is retention of complaints/inspections/treatments for DPH, this one is a running log handed to the PCO. Flag for Digital Services: the log-template link points at the live SF.gov resource page rather than a mockup page key, because no equivalent page exists in this set. Split on 2026-11-26 into this section (reports, treatment, notice) and \"Keep records and stay in compliance\", from one 7-item list: SF.gov keeps a bulleted list to 3 to 5 items. The fieldKey keeps this section's original ids.",
 			kind: 'body',
 			paragraphs: [
 				"These requirements come from Article 11 and the San Francisco Department of Public Health (SFDPH) Director's Rules and Regulations."
@@ -62,9 +53,17 @@ export const article11Compliance = {
 			bullets: [
 				'Investigate tenant pest reports within 72 hours of receiving them.',
 				"Keep a written log of every report or sign of vermin: rodents, fleas, flies, bedbugs, spiders, cockroaches, wasps, and mosquitoes. Give the log to your pest control operator. You can use the City's [complaint forms and log template](https://www.sf.gov/resource/2024/healthy-housing-and-pest-information).",
-				'Keep records of complaints, inspections, and pest control services for at least 2 years. Make them available to the Department of Public Health on request.',
 				'Hire only licensed pest control operators (PCOs) to apply pesticides or trap rats. Never use unlicensed staff or over-the-counter treatments for significant infestations.',
-				'Give tenants written notice before pesticide application, including the product name, date, and safety information.',
+				'Give tenants written notice before pesticide application, including the product name, date, and safety information.'
+			]
+		},
+		{
+			heading: 'Keep records and stay in compliance',
+			karl: 'Maps to a Title and text block: Title = this heading, Text = the bulleted list below. Split from "Respond to pest reports" on 2026-11-26 (SF.gov keeps a bulleted list to 3 to 5 items). The fee bullet came from the checklist removed from "What Article 11 requires" the same day.',
+			kind: 'body',
+			bullets: [
+				'Keep records of complaints, inspections, and pest control services for at least 2 years. Make them available to the Department of Public Health on request.',
+				'Pay your annual Healthy Housing fee if your building has 3 or more rental units.',
 				'Complete pest-management training if the Director requires it after repeat violations.',
 				'[See the full owner-responsibility table](article11Guide)'
 			]
