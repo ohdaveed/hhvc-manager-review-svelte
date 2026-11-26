@@ -77,21 +77,21 @@ export const afterReport = {
 			bullets: [
 				"**Complaint → Inspection → Notice of Violation → Compliance period → Follow-up inspection → Reinspection fee → Citation or Director's Hearing if unresolved.**",
 				{
-					text: 'Sewage Backups (48 to 72 hours): Raw sewage backups need immediate correction. The standard 30-day compliance window does not apply.',
+					text: '**Sewage Backups (48 to 72 hours):** Raw sewage backups need immediate correction. The standard 30-day compliance window does not apply.',
 					unverified: true,
 					unverifiedReason:
 						'No tier-1 doc mentions sewage backups or a 48-to-72-hour window (source-of-truth audit 2026-07-06 — High). Traces only to tier-3 chapter drafts and NotebookLM material. Confirm with HHVC/legal before publication.'
 				},
 				{
-					text: 'All Other Violations (30 days): Most cited conditions must be corrected within 30 days. These include overgrown vegetation, trash piles, rodent harborages, general sanitation problems, minor gaps or cracks, and mold remediation.',
+					text: '**All Other Violations (30 days):** Most cited conditions must be corrected within 30 days. These include overgrown vegetation, trash piles, rodent harborages, general sanitation problems, minor gaps or cracks, and mold remediation.',
 					unverified: true,
 					unverifiedReason:
 						'No tier-1 doc establishes a generic 30-day correction window (source-of-truth audit 2026-07-06 — Medium-high); the only tier-1 "30 days" figures govern the fee late-payment deadline, a different thing. Traces to tier-3 material that itself cites SF Building Code, not Health Code Article 11. Confirm with HHVC/legal before publication.'
 				},
 				'These timelines represent general enforcement standards. Actual correction deadlines are established on the official Notice of Violation based on the severity of the health hazard.',
-				'Extensions: HHVC may offer an extension to the compliance deadline if the property owner contacts the inspector before the deadline.',
+				'**Extensions:** HHVC may offer an extension to the compliance deadline if the property owner contacts the inspector before the deadline.',
 				{
-					text: 'Bed Bug Treatment: A property owner or manager must initiate professional treatment within 2 working days of confirmation.',
+					text: '**Bed Bug Treatment:** A property owner or manager must initiate professional treatment within 2 working days of confirmation.',
 					unverified: true,
 					unverifiedReason:
 						'Quoted from the draft pages (writing audit row 132) and listed under To confirm in the Nov 24 decisions record, as on Report bed bugs. Confirm the rule and its source with HHVC before publication.'

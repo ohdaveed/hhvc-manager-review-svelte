@@ -9,10 +9,11 @@ export const aboutHhvcTeam = {
 	sections: [
 		{
 			heading: 'Who we are',
-			karl: 'Maps to one entry in the repeatable Information stream (Title = this heading, rich text = the paragraph). Confirmed live as the first Information block on sf.gov/departments--controllers-office--about ("Who we are").',
+			karl: 'Maps to one entry in the repeatable Information stream (Title = this heading, rich text = the two paragraphs; one 4-sentence paragraph until 2026-11-26, split for SF.gov\'s 3-sentence limit). Confirmed live as the first Information block on sf.gov/departments--controllers-office--about ("Who we are").',
 			kind: 'body',
 			paragraphs: [
-				'Healthy Housing and Vector Control is an Environmental Health team in San Francisco. We inspect housing conditions and respond to pest and vector reports. Our staff include Environmental Health Inspectors and Environmental Health Technicians. They investigate complaints, conduct inspections, and work with tenants and property owners to fix Health Code Article 11 violations.'
+				'Healthy Housing and Vector Control is an Environmental Health team in San Francisco. We inspect housing conditions and respond to pest and vector reports.',
+				'Our staff include Environmental Health Inspectors and Environmental Health Technicians. They investigate complaints, conduct inspections, and work with tenants and property owners to fix Health Code Article 11 violations.'
 			]
 		},
 		{

@@ -79,8 +79,8 @@ export const payFee = {
 						'Pay online with your invoice information, or use the payment instructions on your invoice.'
 					],
 					bullets: [
-						'In person: pay by check, cash, or money order at City Hall, Room 140, 1 Dr. Carlton B. Goodlett Place.',
-						'By mail: make a check or money order payable to "Department of Public Health." Write your invoice number on it and mail it to P.O. Box 7429, San Francisco, CA 94120.'
+						'**In person:** pay by check, cash, or money order at City Hall, Room 140, 1 Dr. Carlton B. Goodlett Place.',
+						'**By mail:** make a check or money order payable to "Department of Public Health." Write your invoice number on it and mail it to P.O. Box 7429, San Francisco, CA 94120.'
 					],
 					button: 'Pay your fee online',
 					buttonUrl: 'https://services.paysf.co/service/healthy-housing-fee',

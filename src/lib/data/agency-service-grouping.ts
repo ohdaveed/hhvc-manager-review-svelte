@@ -200,11 +200,12 @@ export const pestsTopic = {
 		{
 			heading: 'About Healthy Housing and Vector Control',
 			component: 'body',
-			karl: 'Agency -> About field. Its last sentence is the scope line that used to introduce "Other City housing services": an Agency Resources subsection is links only, with no text of its own, so the line moved here (2026-11-26). Keep this short: the landing page should route tasks, not repeat a program overview. The closing link hands the overview to the About us page, which is otherwise reachable only from the office Location page.',
+			karl: 'Agency -> About field. Its last sentence is the scope line that used to introduce "Other City housing services": an Agency Resources subsection is links only, with no text of its own, so the line moved here (2026-11-26), as its own paragraph: on the end of the first one it made a 4-sentence paragraph, past SF.gov\'s 3. The two inline lists stay inline: this field is meant to stay short, and its one list is the About us link. Keep this short: the landing page should route tasks, not repeat a program overview. The closing link hands the overview to the About us page, which is otherwise reachable only from the office Location page.',
 			kind: 'body',
 			bullets: ['[About Healthy Housing and Vector Control](aboutHhvcTeam)'],
 			paragraphs: [
-				'Healthy Housing and Vector Control is part of Environmental Health at the San Francisco Department of Public Health. We address pests, vectors, garbage, filth, animal waste, overgrown vegetation, and mold from humidity or condensation. Health Code Article 11 covers this. Lead safety, water service, noise, asbestos, and structural construction concerns may be handled by another City program.'
+				'Healthy Housing and Vector Control is part of Environmental Health at the San Francisco Department of Public Health. We address pests, vectors, garbage, filth, animal waste, overgrown vegetation, and mold from humidity or condensation. Health Code Article 11 covers this.',
+				'Lead safety, water service, noise, asbestos, and structural construction concerns may be handled by another City program.'
 			]
 		}
 	]

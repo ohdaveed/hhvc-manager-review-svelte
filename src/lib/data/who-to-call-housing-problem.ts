@@ -34,22 +34,37 @@ export const whoToCall = {
 			]
 		},
 		{
-			heading: 'What Healthy Housing handles',
-			karl: 'Maps to an Information section → Title and text block, whose Link tool carries the nine condition report Transactions, the inspection-scope page, the pest-report Step by step and the Article 11 guide as Internal links. The last two were Related cards until 2026-11-26: Karl’s Related takes only Transaction, Information, Campaign and Topic pages (Help Center › Components › Related), and these are a Step by step and a Report.',
+			heading: 'Pest problems Healthy Housing handles',
+			fieldKey: 'what-healthy-housing-handles',
+			karl: 'Maps to an Information section → Title and text block, whose Link tool carries the five pest report Transactions as Internal links. One of three groups split on 2026-11-26 from a single 12-item list: SF.gov keeps a bulleted list to 3 to 5 items (A-to-Z, Bullets), and a subheading per group is what makes a long list scannable. The fieldKey keeps the ids of the section this was before the split, "What Healthy Housing handles".',
 			kind: 'body',
 			paragraphs: [
 				'This team inspects conditions that affect health in and around housing, under Health Code Article 11.'
 			],
 			bullets: [
 				'[Report rats or mice](rodentsReport)',
-				'[Report animal waste on a property](animalWasteReport)',
 				'[Report bed bugs](bedBugReport)',
 				'[Report cockroaches or other insects](insectsReport)',
 				'[Report mosquitoes or standing water](mosquitoReport)',
-				'[Report pigeon droppings, nesting, or feeding](pigeonReport)',
+				'[Report pigeon droppings, nesting, or feeding](pigeonReport)'
+			]
+		},
+		{
+			heading: 'Sanitation and moisture problems Healthy Housing handles',
+			karl: 'Maps to an Information section → Title and text block, whose Link tool carries the four sanitation and moisture report Transactions as Internal links. One of three groups split on 2026-11-26 from a single 12-item list: SF.gov keeps a bulleted list to 3 to 5 items (A-to-Z, Bullets), and a subheading per group is what makes a long list scannable.',
+			kind: 'body',
+			bullets: [
+				'[Report animal waste on a property](animalWasteReport)',
 				'[Report a sewage leak or backup](sewageReport)',
 				'[Report mold](moldReport)',
-				'[Report garbage, clutter, or overgrown plants](garbageReport)',
+				'[Report garbage, clutter, or overgrown plants](garbageReport)'
+			]
+		},
+		{
+			heading: 'Learn more about what Healthy Housing handles',
+			karl: 'Maps to an Information section → Title and text block, whose Link tool carries the inspection-scope page, the pest-report Step by step and the Article 11 guide as Internal links. The last two were Related cards until 2026-11-26: Karl’s Related takes only Transaction, Information, Campaign and Topic pages (Help Center › Components › Related), and these are a Step by step and a Report. One of three groups split on 2026-11-26 from a single 12-item list: SF.gov keeps a bulleted list to 3 to 5 items (A-to-Z, Bullets), and a subheading per group is what makes a long list scannable.',
+			kind: 'body',
+			bullets: [
 				'[Learn what Healthy Housing and Vector Control can inspect](scopeInfo)',
 				'[Report a pest problem, start to finish](stepPestReport)',
 				'[Health Code Article 11 in plain language](article11Guide)'
@@ -63,10 +78,10 @@ export const whoToCall = {
 				'These are real housing problems, and they are not this team’s to inspect. Going straight to the right office is faster than being routed.'
 			],
 			bullets: [
-				'Heat, hot water, plumbing, electrical, and structural repairs: the Department of Building Inspection.',
-				'Rent increases, evictions, and lease disputes: the Rent Board.',
-				'Lead paint, asbestos, water service, and noise: Citywide services, not this team.',
-				'A fire hazard or a blocked exit: the Fire Department.'
+				'**Heat, hot water, plumbing, electrical, and structural repairs:** the Department of Building Inspection.',
+				'**Rent increases, evictions, and lease disputes:** the Rent Board.',
+				'**Lead paint, asbestos, water service, and noise:** Citywide services, not this team.',
+				'**A fire hazard or a blocked exit:** the Fire Department.'
 			]
 		},
 		{

@@ -19,11 +19,18 @@ export const ownerGuidance = {
 		{
 			heading: 'Protect residents’ health',
 			fieldKey: 'why-it-matters',
-			karl: 'Maps to an "Information section" → Title and text block: Title = this heading, Text = the two paragraphs below (cross-vector health-harm framing for owners/managers, placed first to motivate prevention). Verify disease-risk specifics with SFDPH vector program before publication.',
+			karl: 'Maps to an "Information section" → Title and text block: Title = this heading, Text = the three paragraphs plus the bulleted list below (cross-vector health-harm framing for owners/managers, placed first to motivate prevention). Verify disease-risk specifics with SFDPH vector program before publication. Split 2026-11-26: the two 4- and 5-sentence paragraphs passed SF.gov\'s 3-sentence limit, and the four health risks are now a list.',
 			kind: 'body',
 			paragraphs: [
-				"Unmanaged pests do not just damage a building — they put residents' health at risk. Rodents can spread Hantavirus and Leptospirosis. Cockroach allergens can trigger asthma. Bed bug and mite bites cause skin irritation and stress. Bird droppings can carry fungal spores that affect breathing.",
-				"These risks compound the longer they go unaddressed. A small rodent problem can turn into a mite outbreak. Untreated moisture or clutter can support several pests at once. Prevention protects both residents' health and the owner's ability to meet Article 11 requirements."
+				"Unmanaged pests do not just damage a building. They put residents' health at risk, and the risks compound the longer they go unaddressed.",
+				'A small rodent problem can turn into a mite outbreak. Untreated moisture or clutter can support several pests at once.',
+				"Prevention protects both residents' health and the owner's ability to meet Article 11 requirements. Common pests cause these health problems:"
+			],
+			bullets: [
+				'Rodents can spread Hantavirus and Leptospirosis',
+				'Cockroach allergens can trigger asthma',
+				'Bed bug and mite bites cause skin irritation and stress',
+				'Bird droppings can carry fungal spores that affect breathing'
 			],
 			callout: {
 				karl: "Maps to its own Callout stream item (a sibling of the Title and text item above, not nested inside it — Information section's three block types are top-level stream siblings). Single rich text field only, no separate title field, which this mockup callout already lacks, so no mismatch here.",
@@ -105,11 +112,11 @@ export const ownerGuidance = {
 				"San Francisco Department of Public Health (SFDPH) Director's Rules and Regulations set legal requirements for owners and managers. These apply to rental property and cover preventing and controlling rodents and other vectors."
 			],
 			bullets: [
-				"Investigate reports: Investigate any tenant reports of pest activity within 72 hours (Director's Rules §V.2).",
-				'Recordkeeping: Keep accurate records of pest complaints, inspections, and pest control services for at least 2 years. Make these records available to DPH on request.',
-				'Hire licensed professionals: Hire only licensed Pest Control Operators (PCOs) to apply pesticides or conduct rat trapping.',
-				'Garbage management: Provide enough rigid plastic or metal containers with tight-fitting lids. Ensure the garbage area is clean and serviced regularly to prevent overflow.',
-				'Staff training: Train building staff on pest recognition, sanitation, exclusion, and safe disposal of infested items.'
+				"**Investigate reports:** Investigate any tenant reports of pest activity within 72 hours (Director's Rules §V.2).",
+				'**Recordkeeping:** Keep accurate records of pest complaints, inspections, and pest control services for at least 2 years. Make these records available to DPH on request.',
+				'**Hire licensed professionals:** Hire only licensed Pest Control Operators (PCOs) to apply pesticides or conduct rat trapping.',
+				'**Garbage management:** Provide enough rigid plastic or metal containers with tight-fitting lids. Ensure the garbage area is clean and serviced regularly to prevent overflow.',
+				'**Staff training:** Train building staff on pest recognition, sanitation, exclusion, and safe disposal of infested items.'
 			],
 			cards: [
 				{
