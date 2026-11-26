@@ -330,7 +330,7 @@ test('focus indicators clear 3:1 (SC 1.4.11)', async ({ page }) => {
  * survived.
  */
 test('focus indicators clear 3:1 on the signed-in edit targets (SC 1.4.11)', async ({ page }) => {
-	await gotoSignedIn(page, '/review/report-garbage-filth-vegetation');
+	await gotoSignedIn(page, '/review/report-garbage-clutter-or-overgrown-plants');
 
 	// A genuine Tab press, so Chrome's focus-visible heuristic is armed
 	// before anything is measured.

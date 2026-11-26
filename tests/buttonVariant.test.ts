@@ -19,7 +19,7 @@ describe('section buttonStyle', () => {
 	};
 
 	it('draws the secondary button secondary and the rest primary', () => {
-		const found = variants('report-cockroaches-mosquitoes-insects');
+		const found = variants('report-cockroaches-or-other-insects');
 		expect(found).toContain('secondary: View Article 11');
 		expect(found.filter((v) => v.startsWith('secondary'))).toEqual(['secondary: View Article 11']);
 		expect(found.some((v) => v.startsWith('primary'))).toBe(true);

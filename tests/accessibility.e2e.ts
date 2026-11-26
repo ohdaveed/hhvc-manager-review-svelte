@@ -30,7 +30,7 @@ const PAGES = [
 	// 7 tables, page-level spotlight, cards
 	'/review/report-health-code-article-11-plain-language',
 	// whatToKnow (Cost + Things to know), cards, steps, section button
-	'/review/report-garbage-filth-vegetation',
+	'/review/report-garbage-clutter-or-overgrown-plants',
 	// Top facts (<dl>), including an entry flagged unverified
 	'/review/mosquito-education-workshop'
 ];
@@ -65,7 +65,7 @@ for (const view of [
 	{ name: 'site map', via: null, open: 'Site map', ready: '.sitemap' }
 ]) {
 	test(`no WCAG 2.1 AA violations in the ${view.name}`, async ({ page }) => {
-		await page.goto('/review/report-garbage-filth-vegetation');
+		await page.goto('/review/report-garbage-clutter-or-overgrown-plants');
 		await page.waitForLoadState('networkidle');
 
 		if (view.via) await page.getByRole('button', { name: view.via }).click();

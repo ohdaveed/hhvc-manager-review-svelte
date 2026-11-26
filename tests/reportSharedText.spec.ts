@@ -12,7 +12,20 @@ const pages = pagesByKey as unknown as Record<
 	string,
 	CorpusPage & { sections: { cards?: { target: string }[] }[] }
 >;
-const REPORT_PAGES = ['filthReport', 'rodentsReport', 'insectsReport'];
+// The nine condition pages (report regroup, Decided, completed 2026-11-25).
+const CONDITION_PAGES = [
+	'rodentsReport',
+	'bedBugReport',
+	'insectsReport',
+	'mosquitoReport',
+	'pigeonReport',
+	'sewageReport',
+	'animalWasteReport',
+	'moldReport',
+	'garbageReport'
+];
+const REPORT_PAGES = CONDITION_PAGES;
+const CONFIDENTIALITY = 'We never share your name or contact information.';
 const SHARED = [
 	/\*\*Review time:\*\*/,
 	/\*\*If you gave contact information:\*\*/,
@@ -33,10 +46,16 @@ describe('shared report text', () => {
 		expect(targets).toContain('afterReport');
 	});
 
-	it.each(REPORT_PAGES)('%s says in its karl note that the section was cut', (key) => {
-		const section = (pages[key].sections as { heading?: string; karl?: string }[]).find(
-			(s) => s.heading === 'What the Health Code requires'
-		);
-		expect(section?.karl).toMatch(/2026-11-24: renamed from "How your report is processed"/);
+	// Decided: one confidentiality sentence, the same on every page, said once.
+	it.each(CONDITION_PAGES)('%s states the confidentiality sentence exactly once', (key) => {
+		const copy = Object.values(extractCopy(pages[key])).join('\n');
+		expect(copy.split(CONFIDENTIALITY).length - 1).toBe(1);
+		expect(copy).not.toMatch(/City Attorney/);
+	});
+
+	// Decided: no separate SRO page; each report page carries a one-line note.
+	it.each(CONDITION_PAGES)('%s carries the SRO note', (key) => {
+		const copy = Object.values(extractCopy(pages[key])).join('\n');
+		expect(copy).toMatch(/Live in an SRO or residential hotel\?/);
 	});
 });

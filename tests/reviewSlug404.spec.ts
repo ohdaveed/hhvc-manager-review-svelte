@@ -29,7 +29,7 @@ describe('/review/[slug] rejects unknown slugs', () => {
 		for (const slug of [
 			'this-slug-does-not-exist',
 			'',
-			'report-garbage-filth-vegetation-typo',
+			'report-garbage-clutter-or-overgrown-plants-typo',
 			'../etc/passwd'
 		]) {
 			expect(ids.has(slug), `"${slug}" must not resolve`).toBe(false);

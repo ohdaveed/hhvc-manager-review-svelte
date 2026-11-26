@@ -1,16 +1,21 @@
-import { filthReport } from './report-garbage-filth-vegetation';
 import { inspectorLookup } from './find-inspector-by-neighborhood';
 import { article11Guide } from './health-code-article-11';
-import { sroHotelReport } from './report-sro-hotel-problem';
 import { aboutHhvcTeam } from './about-hhvc-team';
 import { afterReport } from './what-happens-after-report';
 import { ownerHub } from './property-owner-responsibilities';
 import { publicRecords } from './public-records-request';
 import { findHotelRecords } from './lookup-residential-hotel-records';
 import { pestsTopic } from './agency-service-grouping';
-import { rodentsReport } from './report-rats-mice-four-legged-problems';
+import { rodentsReport } from './report-rats-or-mice';
+import { mosquitoReport } from './report-mosquitoes-standing-water';
+import { moldReport } from './report-mold';
+import { garbageReport } from './report-garbage-clutter-overgrown-plants';
+import { bedBugReport } from './report-bed-bugs';
+import { pigeonReport } from './report-pigeon-droppings-nesting-feeding';
+import { sewageReport } from './report-sewage-leak-or-backup';
+import { animalWasteReport } from './report-animal-waste-on-property';
 import { tenantNoticeSteps } from './tenant-steps-after-notice-of-violation';
-import { insectsReport } from './report-cockroaches-mosquitoes-insects';
+import { insectsReport } from './report-cockroaches-or-other-insects';
 import { tenantRights } from './tenant-rights-reporting';
 import { findRecords } from './lookup-complaints-inspections';
 import { mosquitoWorkshop } from './mosquito-education-workshop';
@@ -49,10 +54,11 @@ import { inspectionsAnnual } from './report-inspections-annual-summary';
  * would drift the first time a page is added to one and not the other.
  */
 export const pagesByKey = {
-	filthReport,
+	// First, where the combined garbage page it replaced sat: signed out, the
+	// queue follows this order, and tests/toolbarNav.e2e.ts starts from it.
+	garbageReport,
 	inspectorLookup,
 	article11Guide,
-	sroHotelReport,
 	aboutHhvcTeam,
 	afterReport,
 	ownerHub,
@@ -60,6 +66,12 @@ export const pagesByKey = {
 	findHotelRecords,
 	pestsTopic,
 	rodentsReport,
+	mosquitoReport,
+	moldReport,
+	bedBugReport,
+	pigeonReport,
+	sewageReport,
+	animalWasteReport,
 	tenantNoticeSteps,
 	insectsReport,
 	tenantRights,

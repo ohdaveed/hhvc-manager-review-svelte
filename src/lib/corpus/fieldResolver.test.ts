@@ -257,7 +257,7 @@ describe('resolveField — extractCopy parity (Group D)', () => {
 		expect(resolveField(page, buttonId)!.value).toBe('Request now');
 
 		// Structural presentation flag, sibling of a real button/buttonUrl pair.
-		const rodents = findPage('sf.gov/report-rats-mice-four-legged-problems');
+		const rodents = findPage('sf.gov/report-rats-or-mice');
 		expect(resolveField(rodents, 'sections.what-the-health-code-requires.buttonStyle')).toBeNull();
 	});
 

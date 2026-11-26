@@ -30,16 +30,21 @@ export const whoToCall = {
 		},
 		{
 			heading: 'What Healthy Housing handles',
-			karl: 'Maps to an Information section → Title and text block, whose Link tool carries the four reporting Transactions as Internal links.',
+			karl: 'Maps to an Information section → Title and text block, whose Link tool carries the nine condition report Transactions as Internal links.',
 			kind: 'body',
 			paragraphs: [
 				'This team inspects conditions that affect health in and around housing, under Health Code Article 11.'
 			],
 			bullets: [
-				'[Report rats, mice, and other four-legged problems](rodentsReport)',
-				'[Report cockroaches, mosquitoes, and other insects](insectsReport)',
-				'[Report garbage, mold, and overgrown vegetation](filthReport)',
-				'[Report a problem in an SRO or hotel](sroHotelReport)',
+				'[Report rats or mice](rodentsReport)',
+				'[Report animal waste on a property](animalWasteReport)',
+				'[Report bed bugs](bedBugReport)',
+				'[Report cockroaches or other insects](insectsReport)',
+				'[Report mosquitoes or standing water](mosquitoReport)',
+				'[Report pigeon droppings, nesting, or feeding](pigeonReport)',
+				'[Report a sewage leak or backup](sewageReport)',
+				'[Report mold](moldReport)',
+				'[Report garbage, clutter, or overgrown plants](garbageReport)',
 				'[Learn what Healthy Housing and Vector Control can inspect](scopeInfo)'
 			]
 		},

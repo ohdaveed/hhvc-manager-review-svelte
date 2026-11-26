@@ -24,10 +24,13 @@ test.describe('signed in', () => {
 		// The first `needs-review` row, NOT the first row: `decidedFirst` puts
 		// decided pages ahead of it, so only a status-aware Continue lands here.
 		const next = page.getByRole('link', { name: /^Continue to / });
-		await expect(next).toHaveAttribute('href', '/review/report-garbage-filth-vegetation');
+		await expect(next).toHaveAttribute(
+			'href',
+			'/review/report-garbage-clutter-or-overgrown-plants'
+		);
 		await next.click();
 
-		await expect(page).toHaveURL(/\/review\/report-garbage-filth-vegetation$/);
+		await expect(page).toHaveURL(/\/review\/report-garbage-clutter-or-overgrown-plants$/);
 		await expect(page.locator('nav[aria-label="Review queue"] a').first()).toBeVisible();
 	});
 

@@ -50,7 +50,7 @@ describe('Karl content-type checks on the current corpus', () => {
 	});
 
 	it('passes a Transaction whose steps are placed in What to do under that heading', () => {
-		const rats = pages.find((p) => p.slug === 'sf.gov/report-rats-mice-four-legged-problems')!;
+		const rats = pages.find((p) => p.slug === 'sf.gov/report-rats-or-mice')!;
 		expect(byId(rats, 'karl-transaction-what-to-do')?.status).toBe('pass');
 	});
 });
@@ -178,7 +178,7 @@ describe('a Transaction gives the reader a way to act', () => {
 	});
 
 	it('passes a Transaction with a button', () => {
-		expect(actionOf((pagesByKey as Record<string, object>).filthReport)?.status).toBe('pass');
+		expect(actionOf((pagesByKey as Record<string, object>).garbageReport)?.status).toBe('pass');
 	});
 
 	it('passes a Transaction whose only action is Contact us', () => {

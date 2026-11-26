@@ -93,7 +93,8 @@ export const ownerGuidance = {
 				'Overflowing, uncovered, or poorly serviced garbage areas',
 				'Standing water, leaks, and damp spaces',
 				'Clutter, cardboard storage, and unused materials that offer shelter',
-				'Overgrown landscaping and debris close to walls and foundations'
+				'Overgrown landscaping and debris close to walls and foundations',
+				'Pet waste in yards and shared areas. Pick up pet waste daily. It feeds rats. [Report animal waste on a property](animalWasteReport)'
 			]
 		},
 		{
@@ -194,7 +195,7 @@ export const ownerGuidance = {
 				},
 
 				{
-					title: 'Report rats, mice, and other four-legged problems',
+					title: 'Report rats or mice',
 					target: 'rodentsReport'
 				},
 				{

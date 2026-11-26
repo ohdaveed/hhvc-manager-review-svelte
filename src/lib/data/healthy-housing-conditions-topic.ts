@@ -31,24 +31,29 @@ export const healthyHousingTopic = {
 		{
 			heading: 'Report pests',
 			fieldKey: 'general-housing-issues',
-			karl: 'Maps to a Services block (Title = this heading, Links = the cards). The Pests half of the report group (Decided). The 9 condition pages replace the two report Transactions when the report regroup lands; the Step by step follows them as the overview.',
+			karl: 'Maps to a Services block (Title = this heading, Links = the cards). The Pests half of the report group (Decided): the 5 pest condition pages (report regroup, completed 2026-11-25), then the Step by step as the overview. Decided: move the mosquito page up during mosquito season.',
 			kind: 'body',
 			component: 'services',
 			cards: [
-				{ title: 'Report rats, mice, and other four-legged problems', target: 'rodentsReport' },
-				{
-					title: 'Report cockroaches, mosquitoes, and other insects',
-					target: 'insectsReport'
-				},
+				{ title: 'Report rats or mice', target: 'rodentsReport' },
+				{ title: 'Report bed bugs', target: 'bedBugReport' },
+				{ title: 'Report cockroaches or other insects', target: 'insectsReport' },
+				{ title: 'Report mosquitoes or standing water', target: 'mosquitoReport' },
+				{ title: 'Report pigeon droppings, nesting, or feeding', target: 'pigeonReport' },
 				{ title: 'Report a pest problem, start to finish', target: 'stepPestReport' }
 			]
 		},
 		{
 			heading: 'Report sanitation problems',
-			karl: 'Maps to a Services block. The Sanitation half of the report group (Decided). Garbage, mold and vegetation share one Transaction until the report regroup splits them into the sewage, animal waste, mold and garbage pages.',
+			karl: "Maps to a Services block. The Sanitation half of the report group (Decided): the 4 sanitation condition pages (report regroup, completed 2026-11-25). Animal waste is first because it is one of HHVC's largest complaint areas (Decided).",
 			kind: 'body',
 			component: 'services',
-			cards: [{ title: 'Report garbage, mold, and overgrown vegetation', target: 'filthReport' }]
+			cards: [
+				{ title: 'Report animal waste on a property', target: 'animalWasteReport' },
+				{ title: 'Report a sewage leak or backup', target: 'sewageReport' },
+				{ title: 'Report mold', target: 'moldReport' },
+				{ title: 'Report garbage, clutter, or overgrown plants', target: 'garbageReport' }
+			]
 		},
 		{
 			heading: 'If you got a notice',

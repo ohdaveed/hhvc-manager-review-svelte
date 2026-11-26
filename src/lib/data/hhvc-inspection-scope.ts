@@ -67,10 +67,15 @@ export const scopeInfo = {
 			karl: 'Maps to a fourth Title and text block. Resolved schema gap: unstructured tabular content converted to bulleted list.',
 			kind: 'body',
 			bullets: [
-				'**Rats, mice, raccoons, or other four-legged pests:** [Report rats, mice, and other four-legged problems](rodentsReport)',
-				'**Cockroaches, bed bugs, mosquitoes, flies, wasps, or mites:** [Report cockroaches, mosquitoes, and other insects](insectsReport)',
-				'**Garbage, clutter, animal waste, pigeon droppings or roosting, overgrown plants, or mold from humidity:** [Report garbage, mold, and overgrown vegetation](filthReport)',
-				'**A problem in an SRO or residential hotel:** [Report a problem in an SRO or hotel](sroHotelReport)',
+				'**Rats or mice:** [Report rats or mice](rodentsReport)',
+				'**Dog or cat waste, or raccoon droppings, on private property:** [Report animal waste on a property](animalWasteReport)',
+				'**Bed bugs:** [Report bed bugs](bedBugReport)',
+				'**Cockroaches, fleas, flies, wasps, or mites:** [Report cockroaches or other insects](insectsReport)',
+				'**Mosquitoes or standing water:** [Report mosquitoes or standing water](mosquitoReport)',
+				'**Pigeon droppings, nesting, roosting, or feeding:** [Report pigeon droppings, nesting, or feeding](pigeonReport)',
+				'**Sewage from a drain, toilet, cleanout, or pipe:** [Report a sewage leak or backup](sewageReport)',
+				'**Mold from humidity or condensation:** [Report mold](moldReport)',
+				'**Garbage, clutter, or overgrown plants:** [Report garbage, clutter, or overgrown plants](garbageReport)',
 				'**Dead birds:** [Report a dead bird to the State West Nile virus program](https://westnile.ca.gov/report)',
 				'**Health Code Article 11:** [Read Article 11 in plain language](article11Guide)'
 			]

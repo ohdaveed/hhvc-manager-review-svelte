@@ -38,7 +38,7 @@ describe('rats report (Transaction pilot)', () => {
 			'Things to Know · Block 2 · Title'
 		);
 		expect(p.fields.get('sections.what-the-health-code-requires.heading')?.label).toBe(
-			'Custom Section 2 · Title'
+			'Custom Section · Title'
 		);
 	});
 
@@ -64,8 +64,9 @@ describe('rats report (Transaction pilot)', () => {
 	});
 
 	it('calls the inferred Custom Section mapping unconfirmed, not settled', () => {
-		expect(p.sections.get('get-help-making-your-report')?.status).toBe('unconfirmed');
-		expect(statusOf(p, 'sections.get-help-making-your-report.paragraphs.0')).toBe('unconfirmed');
+		// "What the Health Code requires" is mapped to custom_section by inference.
+		expect(p.sections.get('what-the-health-code-requires')?.status).toBe('unconfirmed');
+		expect(statusOf(p, 'sections.what-the-health-code-requires.bullets.0')).toBe('unconfirmed');
 	});
 
 	it('places the rest', () => {
@@ -74,7 +75,7 @@ describe('rats report (Transaction pilot)', () => {
 			'summary',
 			'whatToKnow.cost',
 			'sections.what-to-do.heading',
-			'sections.what-to-do.steps.2.callout.text',
+			'sections.what-to-do.steps.1.callout.text',
 			'sections.while-you-wait-tips-to-help-with-the-problem.heading',
 			'sections.related-pages.cards.0.title'
 		])
@@ -114,9 +115,9 @@ describe('what happens after you report (Information pilot)', () => {
 			status: 'placed'
 		});
 		expect(p.fields.get('sections.how-to-follow-up-on-your-report.heading')?.label).toBe(
-			'Information section 2 · Title'
+			'Information section 3 · Title'
 		);
-		expect(p.sections.get('what-this-page-does-not-promise')?.label).toBe('Information section 5');
+		expect(p.sections.get('what-this-page-does-not-promise')?.label).toBe('Information section 6');
 		expect(p.unplaced.map((u) => u.subject)).not.toContain('The “Who this is for” list');
 	});
 
@@ -230,10 +231,10 @@ describe('the page object the app renders', () => {
 describe('outline summary', () => {
 	it('counts sections and things that will not carry over, not strings', () => {
 		expect(outlineSummary(of('rodentsReport'))).toBe(
-			'5 sections: 3 go into Karl, 2 unconfirmed. 2 things won’t carry over to Karl.'
+			'4 sections: 3 go into Karl, 1 unconfirmed. 2 things won’t carry over to Karl.'
 		);
 		expect(outlineSummary(of('afterReport'))).toBe(
-			'5 sections: 5 go into Karl. 1 thing won’t carry over to Karl.'
+			'6 sections: 6 go into Karl. 1 thing won’t carry over to Karl.'
 		);
 		expect(outlineSummary(of('ownerHub'))).toBe(
 			'4 sections: 3 go into Karl, 1 needs a fix. 1 thing won’t carry over to Karl.'
@@ -396,7 +397,7 @@ describe('Campaign', () => {
 	});
 
 	it('keeps callouts placed where Karl offers them', () => {
-		expect(of('rodentsReport').fields.get('sections.what-to-do.steps.2.callout.text')?.status).toBe(
+		expect(of('rodentsReport').fields.get('sections.what-to-do.steps.1.callout.text')?.status).toBe(
 			'placed'
 		);
 	});

@@ -10,7 +10,7 @@ export const stepPestReport = {
 	],
 	reading: 'Grade 7',
 	editorNote:
-		'PROPOSED PAGE — not in the current 29. Drafted from `design/HHVC Page Ideas.dc.html`, which argues this is one of the four that change the most for a reader. Step by step is the type Karl documents for "a process that unfolds over weeks with a deadline at each stage", and it is the only type whose Step block carries a Transaction link chooser — which is what lets this page stay an overview and send the detail to the existing Transaction pages rather than restating them. Nothing here states a timeline the corpus has not already established: the 72-hour entry notice is carried from `filthReport`, and no inspection, correction or re-inspection interval is given a number, because none is confirmed. Every step that names a duration says what governs it instead. Step by step has no page-level cost and no things_to_know, so the audience sits in Intro rather than in a What-to-know entry.',
+		'PROPOSED PAGE — not in the current 29. Drafted from `design/HHVC Page Ideas.dc.html`, which argues this is one of the four that change the most for a reader. Step by step is the type Karl documents for "a process that unfolds over weeks with a deadline at each stage", and it is the only type whose Step block carries a Transaction link chooser — which is what lets this page stay an overview and send the detail to the existing Transaction pages rather than restating them. Nothing here states a timeline the corpus has not already established: the 72-hour landlord wait is linked to Tenant rights rather than restated, and no inspection, correction or re-inspection interval is given a number, because none is confirmed. Every step that names a duration says what governs it instead. Step by step has no page-level cost and no things_to_know, so the audience sits in Intro rather than in a What-to-know entry.',
 	editorStatus: 'needs-review',
 	sections: [
 		{
@@ -38,13 +38,19 @@ export const stepPestReport = {
 						'Start with 311. Pick the report that matches what you have seen — the condition decides which team responds, not the building.'
 					],
 					bullets: [
-						'[Report rats, mice, and other four-legged problems](rodentsReport)',
-						'[Report cockroaches, mosquitoes, and other insects](insectsReport)',
-						'[Report garbage, mold, and overgrown vegetation](filthReport)',
-						'[Report a problem in an SRO or hotel](sroHotelReport)',
-						'You can report a building you do not live in, and you can report on behalf of someone else.'
+						'[Report rats or mice](rodentsReport)',
+						'[Report animal waste on a property](animalWasteReport)',
+						'[Report bed bugs](bedBugReport)',
+						'[Report cockroaches or other insects](insectsReport)',
+						'[Report mosquitoes or standing water](mosquitoReport)',
+						'[Report pigeon droppings, nesting, or feeding](pigeonReport)',
+						'[Report a sewage leak or backup](sewageReport)',
+						'[Report mold](moldReport)',
+						'[Report garbage, clutter, or overgrown plants](garbageReport)',
+						'You can report a building you do not live in, and you can report on behalf of someone else.',
+						'If you rent, tell your landlord first, unless the problem is urgent. [Tenant rights when reporting housing conditions](tenantRights) explains how long to wait.'
 					],
-					karl: 'Step 1. Step description: one Text block holding the paragraph and the bullets, whose rich-text Link tool carries the four reporting pages as Internal links. Transaction link: the reporting page closest to the reader — set per case, or left blank because four apply here.'
+					karl: 'Step 1. Step description: one Text block holding the paragraph and the bullets, whose rich-text Link tool carries the nine condition report pages as Internal links (report regroup, 2026-11-25). Transaction link: the reporting page closest to the reader — set per case, or left blank because nine apply here.'
 				},
 				{
 					title: 'Check what Healthy Housing can inspect',
@@ -60,8 +66,7 @@ export const stepPestReport = {
 				{
 					title: 'Get ready for the inspection',
 					text: [
-						'An inspector will look at the conditions you reported. Being ready shortens the visit and avoids a second one.',
-						'If you rent, give 72 hours notice when you can before anyone enters a unit.'
+						'An inspector will look at the conditions you reported. Being ready shortens the visit and avoids a second one.'
 					],
 					bullets: [
 						{
@@ -91,7 +96,7 @@ export const stepPestReport = {
 						},
 						'If you did not give contact information, an inspection may still happen without notice.'
 					],
-					karl: 'Step 3. Transaction link: none. Get ready for a housing inspection after you report folded into this step (C1, decided Nov 24, 2026) and is removed; its checklist is the bullets, each unverified line still flagged. The 72-hour line is carried verbatim from filthReport rather than restated, so the two pages cannot drift.'
+					karl: 'Step 3. Transaction link: none. Get ready for a housing inspection after you report folded into this step (C1, decided Nov 24, 2026) and is removed; its checklist is the bullets, each unverified line still flagged. Until 2026-11-25 this step also said "If you rent, give 72 hours notice when you can before anyone enters a unit." That misread the old garbage page\'s landlord rule (tell the owner first and allow 72 hours before reporting) as an entry-notice rule, so it is removed; the landlord pointer now sits in step 1, linking Tenant rights.'
 				},
 				{
 					title: 'Read what the inspection found',
