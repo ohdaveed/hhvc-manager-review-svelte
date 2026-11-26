@@ -23,7 +23,6 @@ type Section = {
 export type CorpusPage = {
 	title?: unknown;
 	summary?: unknown;
-	audience?: unknown;
 	sections?: unknown;
 	contact?: { phone?: unknown; email?: unknown; other?: unknown };
 	metaDescription?: unknown;
@@ -74,11 +73,6 @@ export function extractFields(page: CorpusPage): FieldMap {
 
 	const primaryAgency = str(page.primaryAgency);
 	if (primaryAgency !== null) fields['primaryAgency'] = primaryAgency;
-
-	list(page.audience).forEach((entry, i) => {
-		const text = str(entry);
-		if (text !== null) fields[`audience.${i}`] = text;
-	});
 
 	list(page.sections).forEach((raw, index) => {
 		const section = (raw ?? {}) as Section;

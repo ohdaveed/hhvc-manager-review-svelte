@@ -5,11 +5,6 @@ export const findRecords = {
 	summary:
 		'Search investigated complaints, inspections, and health code violations for a San Francisco address.',
 	primaryAgency: 'Healthy Housing and Vector Control',
-	audience: [
-		'A tenant checking whether a building has prior complaints or inspections',
-		'A property owner or manager reviewing violation history',
-		'A neighbor or advocate researching a building address'
-	],
 	reading: 'Grade 7',
 	editorNote:
 		'SF.gov landing page for an external lookup tool. Primary CTA opens xnet.sfdph.org (Residential Health Code Violations). Verify the external URL before publication. MERGED 2026-11-25 (C1, decided Nov 24, 2026): Look up residential health code violations was a second landing page for the same xnet tool, and is removed. Its audience (tenants, owners and advocates checking violation history) is already covered here, and the description now names violations so those searches still land on this page.',
@@ -59,6 +54,9 @@ export const findRecords = {
 					text: [
 						'The search tool opens on the Department of Public Health external records site. You will leave SF.gov.'
 					],
+					bullets: [
+						'To report a new problem instead, start from [Healthy Housing and Vector Control](pestsTopic).'
+					],
 					button: 'Open lookup tool',
 					buttonUrl: 'https://xnet.sfdph.org:8443/ords/eeop/f?p=119:1'
 				}
@@ -66,14 +64,9 @@ export const findRecords = {
 		},
 		{
 			heading: 'If you need to report a new problem',
-			karl: 'Maps to the same repeatable `related` field as the "Related pages" section below — Transaction\'s related panel has no observed max and no sub-heading/grouping support, so in real Karl these 3 cards and the 2 below would become one flat list without this section break. Digital Services should decide ordering if the two-heading grouping matters editorially.',
+			karl: 'The Healthy Housing and Vector Control card that opened this list is now an Internal link in the "Open the lookup tool" step (2026-11-26): Karl’s Related takes only Transaction, Information, Campaign and Topic pages (Help Center › Components › Related), and this is an Agency page. Maps to the same repeatable `related` field as the "Related pages" section below — Transaction\'s related panel has no observed max and no sub-heading/grouping support, so in real Karl these 2 cards and the 2 below would become one flat list without this section break. Digital Services should decide ordering if the two-heading grouping matters editorially.',
 			kind: 'placement',
 			cards: [
-				{
-					title: 'Healthy Housing and Vector Control',
-					target: 'pestsTopic',
-					karl: 'related panel entry — page chooser only; this description text is not supported in the real schema (see section-level karl note above).'
-				},
 				{
 					title: 'Report rats or mice',
 					target: 'rodentsReport',

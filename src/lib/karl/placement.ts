@@ -167,7 +167,6 @@ const LOCATION_LABELS: Record<string, string> = {
  */
 /** Page-level fields, named as a reader sees them rather than by field id. */
 const PAGE_FIELD_NAMES: Record<string, string> = {
-	audience: 'The “Who this is for” list',
 	primaryAgency: 'Primary agency',
 	summary: 'The summary under the title',
 	partnerAgencies: 'Partner agencies',
@@ -332,14 +331,6 @@ export function placementsFor(
 		const seen = instances.get(raw) ?? [];
 		if (!seen.includes(key)) seen.push(key);
 		instances.set(raw, seen);
-	}
-	// On Information the transcript makes the audience list the first
-	// Information section block, so it takes instance 1 and pushes every
-	// authored section down one.
-	const AUDIENCE_KEY = 'audience';
-	const audienceRaw = claims.find(([id]) => id === AUDIENCE_KEY)?.[1];
-	if (audienceRaw === 'information_section') {
-		instances.set(audienceRaw, [AUDIENCE_KEY, ...(instances.get(audienceRaw) ?? [])]);
 	}
 	const componentOf = new Map(
 		sections.map((section, index) => [
@@ -529,8 +520,9 @@ export function placementsFor(
 	});
 
 	const fields = new Map<string, Placement>();
-	// One finding, one chip: four audience lines share a single `audience` gap,
-	// so only the first carries its reason (decision 8).
+	// One finding, one chip: every line of an unmapped page field (each entry
+	// of a contact block, say) shares one gap, so only the first carries its
+	// reason (decision 8).
 	const reportedGaps = new Set<string>();
 	const reportedCaveats = new Set<string>();
 	for (const id of Object.keys(copy)) {
@@ -572,8 +564,6 @@ export function placementsFor(
 			const rest = id.slice(`sections.${sectionKey}.`.length);
 			const sub = raw === 'what_to_do' && rest === 'heading' ? 'Heading' : subLabel(rest, type);
 			label = [instanceLabel(raw, sectionKey), sub].filter(Boolean).join(' · ');
-		} else if (raw === 'information_section' && id.startsWith(`${AUDIENCE_KEY}.`)) {
-			label = `${instanceLabel(raw, AUDIENCE_KEY)} · Text`;
 		} else {
 			const ttk = id.match(/^whatToKnow\.thingsToKnow\.(\d+)\.(label|text)$/);
 			if (ttk)
@@ -612,7 +602,7 @@ export function placementsFor(
 					fail(lengthReason(rule, text, 'Button text'));
 		}
 		// A whole panel Karl's own pages disagree on (Campaign's Contact us): one
-		// chip, on the first of its fields, as with the audience list.
+		// chip, on the first of its fields, as with an unmapped page field.
 		for (const rule of rulesOf(raw)) {
 			if (rule.kind !== 'caveat' || rule.status !== 'unconfirmed' || rule.sub || sectionKey)
 				continue;
@@ -673,7 +663,7 @@ export function placementsFor(
 	}
 
 	// The tray: one item per transcript finding, which already groups a whole
-	// unplaced section (or the whole audience list) into one.
+	// unplaced section (or a whole unmapped page field) into one.
 	const findings: UnplacedItem[] = unmapped.map((u) => {
 		const key = u.id.match(/^sections\.([^.]+)/)?.[1];
 		const heading = key ? sectionPlacements.get(key)?.heading : undefined;

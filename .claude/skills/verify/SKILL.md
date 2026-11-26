@@ -69,7 +69,7 @@ the "recommendation" call, which reuses `task: 'rewrite-field'` with a
 
 - `/review/departments--healthy-housing-and-vector-control--about` — richest page.
 - Edit targets are `button[data-rewrite-field="<fieldId>"]`. Ids:
-  `title`, `summary`, `audience.{i}`, `sections.{fieldKey}.heading|paragraphs.{i}|bullets.{i}|callout.title|callout.text`.
+  `title`, `summary`, `sections.{fieldKey}.heading|paragraphs.{i}|bullets.{i}|callout.title|callout.text`.
   Click = replace selection; shift/meta/ctrl-click = toggle. `aria-pressed`
   and the accessible name (`"…, selected, field N"`) carry selection state.
 - Panel tabs are `div[data-value="fields"|"overview"|"checks"|"help"]`.

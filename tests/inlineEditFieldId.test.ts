@@ -28,7 +28,6 @@ const fixture = {
 	id: 'topic-x--about',
 	title: 'About vector control',
 	summary: 'What the program does.',
-	audience: ['Residents', 'Property owners'],
 	sections: [
 		{
 			heading: 'How to report',

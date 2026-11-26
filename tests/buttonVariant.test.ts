@@ -1,16 +1,19 @@
 import { describe, it, expect } from 'vitest';
 import { render } from '@testing-library/svelte';
 import Page from '../src/lib/components/Page.svelte';
-import { pageStore } from '../src/lib/stores/pageData.svelte';
+import { toStorePage } from '../src/lib/stores/pageData.svelte';
+import { gapPages } from '../src/lib/karl/gapFixtures';
 
 /**
- * The corpus marks three "View Article 11" buttons `buttonStyle: 'secondary'`.
- * ButtonBlock ignored it, so every button drew as primary.
+ * The corpus used to mark its "View Article 11" buttons `buttonStyle: 'secondary'`,
+ * and ButtonBlock ignored it, so every button drew as primary. Those buttons are
+ * now inline links (a Transaction custom_section has no Button link block), so
+ * the corpus no longer carries the style; the rats-report gap fixture puts one
+ * back so the renderer stays covered.
  */
 describe('section buttonStyle', () => {
-	const variants = (id: string) => {
-		const page = pageStore.pages.find((p) => p.id === id)!;
-		const { container, unmount } = render(Page, { page });
+	const variants = (page: object) => {
+		const { container, unmount } = render(Page, { page: toStorePage(page) });
 		const found = [...container.querySelectorAll<HTMLElement>('.button-block')].map(
 			(el) => `${el.dataset.variant}: ${el.querySelector('.button-block-cta')?.textContent?.trim()}`
 		);
@@ -19,7 +22,7 @@ describe('section buttonStyle', () => {
 	};
 
 	it('draws the secondary button secondary and the rest primary', () => {
-		const found = variants('report-cockroaches-or-other-insects');
+		const found = variants(gapPages.rodentsReport);
 		expect(found).toContain('secondary: View Article 11');
 		expect(found.filter((v) => v.startsWith('secondary'))).toEqual(['secondary: View Article 11']);
 		expect(found.some((v) => v.startsWith('primary'))).toBe(true);

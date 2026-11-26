@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { allPages, pagesByKey } from '$lib/data';
 import { buildWalkthrough, karlFormUrl } from './walkthrough';
+import { gapPages, pagesByKeyWithGaps } from './gapFixtures';
 
 /**
  * The walkthrough is GENERATED from the Karl panel inventory, so these tests
@@ -161,18 +162,24 @@ describe('buildWalkthrough', () => {
 		});
 
 		it('reports unmapped content as its own register, not as a flag', () => {
-			const gaps = allPages.flatMap((page) => buildWalkthrough(page, pagesByKey).gaps);
+			// The corpus has no unmapped content since the 2026-11-26 audit, so
+			// the register is exercised through the gap fixtures.
+			const corpusGaps = allPages.flatMap((page) => buildWalkthrough(page, pagesByKey).gaps);
+			expect(corpusGaps.filter((g) => g.kind === 'unmapped')).toEqual([]);
+			const gaps = Object.values(gapPages).flatMap(
+				(page) => buildWalkthrough(page as never, pagesByKeyWithGaps).gaps
+			);
 			const unmapped = gaps.filter((g) => g.kind === 'unmapped');
 			expect(unmapped.length).toBeGreaterThan(0);
 			expect(unmapped.every((g) => g.path !== '' && g.reason !== '')).toBe(true);
 			// Flags come first: actionable before merely recorded. Per page, since
 			// the order is a property of one page's list and not of the corpus.
-			for (const page of allPages) {
-				const kinds = buildWalkthrough(page, pagesByKey).gaps.map((g) => g.kind);
+			for (const page of Object.values(gapPages)) {
+				const kinds = buildWalkthrough(page as never, pagesByKeyWithGaps).gaps.map((g) => g.kind);
 				const firstUnmapped = kinds.indexOf('unmapped');
 				const lastFlag = kinds.lastIndexOf('flag');
 				if (firstUnmapped !== -1 && lastFlag !== -1) {
-					expect(lastFlag, `${page.slug} interleaves flags and unmapped`).toBeLessThan(
+					expect(lastFlag, `${String(page.slug)} interleaves flags and unmapped`).toBeLessThan(
 						firstUnmapped
 					);
 				}

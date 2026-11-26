@@ -5,12 +5,6 @@ export const rodentsReport = {
 	summary:
 		'Droppings, burrows, gnaw marks, or rodent mites in a home, building, yard, or shared area.',
 	primaryAgency: 'Healthy Housing and Vector Control',
-	audience: [
-		'A tenant affected by rats or mice',
-		'A friend, family member, advocate, or helper reporting for a tenant',
-		'A person reporting a problem in a shared area',
-		'An employee reporting a rodent problem at work'
-	],
 	reading: 'Grade 6',
 	editorNote:
 		'Report regroup (Decided, Nov 24, 2026), built 2026-11-25. Replaces "Report rats, mice, and other four-legged problems" in place, so its review status, notes and edits carry over: this page is one of the 9 condition pages. Scope is the Decided one: rats and mice, their droppings and burrows, and the mites that come with them. Live raccoons are named only to say the owner hires a private wildlife company. Raccoon droppings belong to the animal waste page, which is not built yet. Bats are left out on purpose (owner, Nov 25, 2026): the old page covered them, but bat reports are rare. Shared report text (reporting anonymously, the landlord notice, reporting for someone else, language help) now lives on What happens after you report and Tenant rights, per the Decided shared-content rule. The "While you wait" section is the Supporting information block requested by the manager.',
@@ -36,7 +30,7 @@ export const rodentsReport = {
 				{
 					title: 'Start your report',
 					text: [
-						'Use 311 to report rats or mice to the City. If the problem is urgent, report now.',
+						'Use 311 to report rats or mice to the City. If the problem is urgent, report now. You can report a problem in your home, a shared area, or at work, or report for someone else.',
 						'Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.'
 					],
 					button: 'Report through 311',
@@ -107,14 +101,12 @@ export const rodentsReport = {
 		},
 		{
 			heading: 'What the Health Code requires',
-			karl: 'custom_section -> title_and_text. Title = this heading, Text = the Article 11 line (HHVC content standards Ch. 8.7.1). Secondary Button link block ("View Article 11") citing the municipal code per Ch. 8.7.2.',
+			karl: 'custom_section -> title_and_text. Title = this heading, Text = the Article 11 line (HHVC content standards Ch. 8.7.1). The municipal code is cited per Ch. 8.7.2 as an inline link, the last bullet: custom_section has no Button link block (U1), so the "View Article 11" button it used to carry had no Karl destination.',
 			kind: 'body',
 			bullets: [
-				'San Francisco Health Code Article 11 requires property owners to keep buildings clean, watertight, and completely free of rodent infestations.'
-			],
-			button: 'View Article 11',
-			buttonUrl: 'https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890',
-			buttonStyle: 'secondary'
+				'San Francisco Health Code Article 11 requires property owners to keep buildings clean, watertight, and completely free of rodent infestations.',
+				'[View Health Code Article 11](https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890)'
+			]
 		},
 		{
 			heading: 'Related pages',

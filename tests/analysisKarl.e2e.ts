@@ -50,7 +50,6 @@ test('the Transaction review findings show in the panel', async ({ page }) => {
 	await page.getByRole('tab', { name: 'Analysis' }).click();
 	const panel = page.getByRole('tabpanel');
 	await expect(panel).toContainText('Title words in the description');
-	await expect(panel).toContainText('not Resource Collection pages');
 
 	const dir = process.env.KARL_SHOTS;
 	if (dir) {

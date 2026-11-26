@@ -5,11 +5,6 @@ export const publicRecords = {
 	summary:
 		'Ask Environmental Health for inspection, complaint, or enforcement records not in the online lookups.',
 	primaryAgency: 'Healthy Housing and Vector Control',
-	audience: [
-		'A tenant or advocate requesting formal copies of inspection records',
-		'A property owner requesting records for a building they manage',
-		'A journalist or researcher requesting public records'
-	],
 	reading: 'Grade 7',
 	editorNote:
 		'SF.gov landing page for the citywide public records service (NextRequest). Primary CTA is external. Verify whether HHVC needs a program-specific intro or routes entirely to the citywide portal.',

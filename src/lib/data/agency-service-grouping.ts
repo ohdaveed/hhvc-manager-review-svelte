@@ -4,9 +4,6 @@ export const pestsTopic = {
 	title: 'Healthy Housing and Vector Control',
 	summary:
 		'Report a housing health issue, get help with pests, or find the right next step for your building.',
-	audience: [
-		'This page is for tenants, property owners and managers, and anyone reporting a pest or housing health problem.'
-	],
 	reading: 'Grade 6',
 	seoTitle: 'Healthy Housing and Vector Control | SF.gov',
 	metaDescription:
@@ -19,9 +16,6 @@ export const pestsTopic = {
 			component: 'services',
 			karl: 'Agency -> Services. Use one Services subsection titled "Get help with pests, mold, or trash"; each card becomes an SF.gov page link or the Citywide 311 link. This supplies the otherwise empty live topic preview as the Agency page’s first service section, preserving its intended direct 311 route while letting visitors who know the condition choose a focused reporting path.',
 			kind: 'body',
-			paragraphs: [
-				'Report a pest, mold, trash, or housing health issue through 311. If you know the type of condition, choose a focused reporting path below.'
-			],
 			cards: [
 				{
 					title: 'Get help with pests, mold, or trash through 311',
@@ -96,9 +90,6 @@ export const pestsTopic = {
 			component: 'resources',
 			karl: 'Agency -> Resources. Use one Resources subsection titled "If you rent"; each card becomes an SF.gov page link. It puts tenant protections and reporting expectations where a renter can find them without scanning owner-only services.',
 			kind: 'body',
-			paragraphs: [
-				'You can ask the City for help with housing health problems. Learn how to report, what may happen next, and where to get tenant support.'
-			],
 			cards: [
 				{
 					title: 'Tenant rights when reporting housing conditions',
@@ -122,9 +113,6 @@ export const pestsTopic = {
 			component: 'resources',
 			karl: 'Agency -> Resources. Use a second Resources subsection titled "If you own or manage a building"; each card becomes an SF.gov page link. This makes owner compliance a distinct path instead of mixing it with a tenant’s urgent reporting choices.',
 			kind: 'body',
-			paragraphs: [
-				'Use these resources to prevent pest problems, meet Article 11 responsibilities, and respond to a notice or fee.'
-			],
 			cards: [
 				{
 					title: 'Property owner responsibilities',
@@ -188,9 +176,6 @@ export const pestsTopic = {
 			component: 'resources',
 			karl: 'Agency -> Resources. Use a final Resources subsection for out-of-scope referrals. These are a few external links rather than a parallel directory, so the HHVC page remains limited to Article 11 while still giving a visitor a clear next destination. Keep it that way: each addition here is a scope claim in reverse, and a section that grows past a handful stops reading as "not us, try here" and starts reading as a second, worse copy of the Citywide topic.',
 			kind: 'body',
-			paragraphs: [
-				'Lead safety, water service, noise, asbestos, and structural construction concerns may be handled by another City program.'
-			],
 			cards: [
 				{
 					title: 'Healthy housing conditions',
@@ -215,11 +200,11 @@ export const pestsTopic = {
 		{
 			heading: 'About Healthy Housing and Vector Control',
 			component: 'body',
-			karl: 'Agency -> About field. Keep this short: the landing page should route tasks, not repeat a program overview. The closing link hands the overview to the About us page, which is otherwise reachable only from the office Location page.',
+			karl: 'Agency -> About field. Its last sentence is the scope line that used to introduce "Other City housing services": an Agency Resources subsection is links only, with no text of its own, so the line moved here (2026-11-26). Keep this short: the landing page should route tasks, not repeat a program overview. The closing link hands the overview to the About us page, which is otherwise reachable only from the office Location page.',
 			kind: 'body',
 			bullets: ['[About Healthy Housing and Vector Control](aboutHhvcTeam)'],
 			paragraphs: [
-				'Healthy Housing and Vector Control is part of Environmental Health at the San Francisco Department of Public Health. We address pests, vectors, garbage, filth, animal waste, overgrown vegetation, and mold from humidity or condensation. Health Code Article 11 covers this.'
+				'Healthy Housing and Vector Control is part of Environmental Health at the San Francisco Department of Public Health. We address pests, vectors, garbage, filth, animal waste, overgrown vegetation, and mold from humidity or condensation. Health Code Article 11 covers this. Lead safety, water service, noise, asbestos, and structural construction concerns may be handled by another City program.'
 			]
 		}
 	]
