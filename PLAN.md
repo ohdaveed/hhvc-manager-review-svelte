@@ -15,7 +15,7 @@ Branch `feat/expired-edits`, cut from `origin/main`. Design:
       pages both. Unit-tested.
 - [x] **4. Expiry and orphan resolution.** A pure function classifies each latest edit as current, expired
       or orphaned against the base copy now. Unit-tested, including copy that changes back.
-- [ ] **5. Mockup marking.** Expired edits show their text marked expired, with the base copy one step away;
+- [x] **5. Mockup marking.** Expired edits show their text marked expired, with the base copy one step away;
       re-confirm / rewrite / keep base each create an unsaved change. Orphaned edits do not render.
 - [ ] **6. Transcript.** Expired and orphaned edits appear flagged. Snapshot test updated deliberately.
 - [ ] **7. Verify.** Unit, check, ratchets, e2e, browser check; re-confirm production still has 0 edits

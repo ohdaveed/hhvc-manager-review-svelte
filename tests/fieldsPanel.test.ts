@@ -629,6 +629,47 @@ describe('FieldsPanel unsaved changes', () => {
 		expect(page.title).toBe('About vector control');
 	});
 
+	it('an expired edit shows the base copy, and Re-confirm saves the same wording again', async () => {
+		const { page } = renderTitle();
+		// A saved edit on screen whose base copy has since moved.
+		page.title = 'Wording saved last week';
+		pageStore.editStatus = { [changeKey(PAGE_ID, 'title')]: 'expired' };
+
+		const group = await screen.findByRole('group', { name: 'Expired wording for Title' });
+		expect(group.textContent).toContain('About vector control');
+
+		await fireEvent.click(screen.getByRole('button', { name: 'Re-confirm wording' }));
+		await fireEvent.click(await screen.findByRole('button', { name: 'Save the change to Title' }));
+		await vi.waitFor(() => expect(saveInlineEdit).toHaveBeenCalledTimes(1));
+		expect(saveInlineEdit.mock.calls[0].slice(0, 3)).toEqual([
+			'live-1',
+			'title',
+			'Wording saved last week'
+		]);
+		expect(saveInlineEdit.mock.calls[0][3]).toBe(await hashTextBrowser('About vector control'));
+		pageStore.editStatus = {};
+	});
+
+	it('Use the base copy puts the base text on the mockup as an unsaved change', async () => {
+		const { page } = renderTitle();
+		page.title = 'Wording saved last week';
+		pageStore.editStatus = { [changeKey(PAGE_ID, 'title')]: 'expired' };
+
+		await fireEvent.click(await screen.findByRole('button', { name: 'Use the base copy' }));
+
+		expect(page.title).toBe('About vector control');
+		expect(pageStore.hasUnsavedChange(PAGE_ID, 'title')).toBe(true);
+		expect(saveInlineEdit).not.toHaveBeenCalled();
+		pageStore.cancelChange(PAGE_ID, 'title');
+		pageStore.editStatus = {};
+	});
+
+	it('shows no expired notice for a current edit', () => {
+		renderTitle();
+		pageStore.editStatus = {};
+		expect(screen.queryByRole('group', { name: /Expired wording/ })).toBeNull();
+	});
+
 	it('turns pasted line breaks into spaces', async () => {
 		const { page, input } = renderTitle();
 		await fireEvent.input(input, { target: { value: 'Two\n\nlines' } });

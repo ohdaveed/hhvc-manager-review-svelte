@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { fitFrame, pageStore } from '../src/lib/stores/pageData.svelte.js';
+import { fitFrame, isChanged, pageStore } from '../src/lib/stores/pageData.svelte.js';
 
 describe('Page Data Store', () => {
 	it('should initialize with all ported pages', () => {
@@ -344,5 +344,32 @@ describe('base copy', () => {
 
 	it('is undefined for a field the page does not have', () => {
 		expect(pageStore.baseCopyOf(pageStore.pages[0].id, 'sections.nope.heading')).toBeUndefined();
+	});
+});
+
+describe('resolving an expired edit', () => {
+	const id = () => pageStore.pages[0].id;
+	afterEach(() => {
+		pageStore.unsavedChanges = {};
+	});
+
+	it('re-confirming is an unsaved change worth saving although the text is unchanged', () => {
+		const page = pageStore.pages[0];
+		expect(pageStore.reconfirmChange(id(), 'title')).toBe(true);
+		const change = pageStore.getChange(id(), 'title')!;
+		expect(change.value).toBe(page.title);
+		expect(isChanged(change)).toBe(true);
+		expect(pageStore.unsavedChangeCount()).toBe(1);
+	});
+
+	it('keeping the base copy puts the base text on the page as an unsaved change', () => {
+		const page = pageStore.pages[0];
+		const base = page.title;
+		page.title = 'A saved edit, hydrated';
+		expect(pageStore.keepBaseCopy(id(), 'title')).toBe(true);
+		expect(page.title).toBe(base);
+		expect(pageStore.hasUnsavedChange(id(), 'title')).toBe(true);
+		pageStore.cancelChange(id(), 'title');
+		page.title = base;
 	});
 });

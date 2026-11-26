@@ -64,7 +64,18 @@ export type UnsavedChange = {
 	baseEditId?: string | null;
 	/** Another reviewer saved this field after the change started. */
 	savedElsewhere?: boolean;
+	/**
+	 * Saving the same wording again, deliberately: re-confirming an expired edit
+	 * against the base copy now. Makes the change worth saving although its
+	 * value equals what the field already shows.
+	 */
+	reconfirm?: boolean;
 };
+
+/** Whether an unsaved change would record anything if saved. */
+export function isChanged(c: UnsavedChange): boolean {
+	return c.value !== c.original || c.reconfirm === true;
+}
 
 /** Field ids are page-relative, so an unsaved change is named by both. */
 export function changeKey(pageId: string, fieldId: string): string {
@@ -260,6 +271,39 @@ class PageStore {
 	 * Plain, not `$state`: it changes only when a page is (re)built.
 	 */
 	private baseCopy: Record<string, CopyMap> = {};
+
+	/**
+	 * Saved edits that no longer answer their field's base copy, keyed like
+	 * `changeKey(path, fieldId)`: `expired` or `orphaned`. A key's absence means
+	 * current. Filled by the review layout from `classifyLatestEdits`.
+	 */
+	editStatus = $state<Record<string, 'expired' | 'orphaned'>>({});
+
+	editStatusOf(pageId: string | undefined, fieldId: string): 'expired' | 'orphaned' | undefined {
+		return pageId === undefined ? undefined : this.editStatus[changeKey(pageId, fieldId)];
+	}
+
+	/**
+	 * Resolving an expired edit by re-confirming its wording: an unsaved change
+	 * carrying the same text, marked so that Save records it -- a new edit,
+	 * anchored to the base copy now.
+	 */
+	reconfirmChange(pageId: string, fieldId: string): boolean {
+		const field = this.resolveOn(pageId, fieldId);
+		if (!field || !this.setChange(pageId, fieldId, field.value)) return false;
+		const key = changeKey(pageId, fieldId);
+		this.unsavedChanges = {
+			...this.unsavedChanges,
+			[key]: { ...this.unsavedChanges[key], reconfirm: true }
+		};
+		return true;
+	}
+
+	/** Resolving an expired edit by keeping the base copy: an unsaved change to it. */
+	keepBaseCopy(pageId: string, fieldId: string): boolean {
+		const base = this.baseCopyOf(pageId, fieldId);
+		return base === undefined ? false : this.setChange(pageId, fieldId, base);
+	}
 
 	/** The base copy of one field, or undefined when the page has no such field. */
 	baseCopyOf(pageId: string, fieldId: string): string | undefined {
@@ -480,7 +524,7 @@ class PageStore {
 
 	/** Unsaved changes on every page: what the toolbar pill counts. */
 	unsavedChangeCount(): number {
-		return Object.values(this.unsavedChanges).filter((c) => c.value !== c.original).length;
+		return Object.values(this.unsavedChanges).filter(isChanged).length;
 	}
 
 	/** Drops one suggestion, once its edit is known to have persisted. */
@@ -557,21 +601,18 @@ class PageStore {
 	/** Whether the field has typing that has not been saved. */
 	hasUnsavedChange(pageId: string | undefined, fieldId: string): boolean {
 		const change = this.getChange(pageId, fieldId);
-		return Boolean(change && change.value !== change.original);
+		return Boolean(change && isChanged(change));
 	}
 
 	/** Unsaved changes on `pageId`, in the order they were started. */
 	unsavedChangesOn(pageId: string | undefined): UnsavedChange[] {
-		return Object.values(this.unsavedChanges).filter(
-			(d) => d.pageId === pageId && d.value !== d.original
-		);
+		return Object.values(this.unsavedChanges).filter((d) => d.pageId === pageId && isChanged(d));
 	}
 
 	/** Unsaved changes waiting on OTHER pages -- said, not hidden. */
 	unsavedChangesElsewhere(pageId: string | undefined): number {
-		return Object.values(this.unsavedChanges).filter(
-			(d) => d.pageId !== pageId && d.value !== d.original
-		).length;
+		return Object.values(this.unsavedChanges).filter((d) => d.pageId !== pageId && isChanged(d))
+			.length;
 	}
 
 	/**
@@ -604,7 +645,7 @@ class PageStore {
 		const next: Record<string, UnsavedChange> = {};
 		for (const [key, d] of Object.entries(this.unsavedChanges)) {
 			const kept = d.pageId === this.activePageId && keep.includes(d.fieldId);
-			if (d.value !== d.original || kept) next[key] = d;
+			if (isChanged(d) || kept) next[key] = d;
 			else this.unaccept(d.pageId, d.fieldId);
 		}
 		this.unsavedChanges = next;
