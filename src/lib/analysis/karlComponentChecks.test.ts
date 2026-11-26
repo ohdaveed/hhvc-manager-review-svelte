@@ -32,14 +32,7 @@ describe('Related targets on the current corpus', () => {
 				'sf.gov/information/learn-what-hhvc-can-inspect / karl-related / Healthy Housing and Vector Control',
 				'sf.gov/integrated-pest-management-education / karl-related / Healthy Housing and Vector Control',
 				'sf.gov/mosquito-education-workshop / karl-related / Healthy Housing and Vector Control',
-				'sf.gov/pay-your-annual-healthy-housing-fee-apartment-buildings / karl-related / Property owner responsibilities',
-				// Surfaced 2026-11-26, not introduced: these Related sections were
-				// unclassified until their karl notes named the Related panel, so the
-				// check never reached them. Karl's Related cannot hold a Report or a
-				// Step by step page; each needs a content decision.
-				'sf.gov/information/who-to-call-about-a-housing-problem / karl-related / Health Code Article 11 in plain language',
-				'sf.gov/information/who-to-call-about-a-housing-problem / karl-related / Report a pest problem, start to finish',
-				'sf.gov/question-notice-of-violation / karl-related / Health Code Article 11 in plain language'
+				'sf.gov/pay-your-annual-healthy-housing-fee-apartment-buildings / karl-related / Property owner responsibilities'
 			].sort()
 		);
 	});

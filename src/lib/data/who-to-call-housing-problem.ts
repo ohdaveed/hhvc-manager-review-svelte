@@ -35,7 +35,7 @@ export const whoToCall = {
 		},
 		{
 			heading: 'What Healthy Housing handles',
-			karl: 'Maps to an Information section → Title and text block, whose Link tool carries the nine condition report Transactions as Internal links.',
+			karl: 'Maps to an Information section → Title and text block, whose Link tool carries the nine condition report Transactions, the inspection-scope page, the pest-report Step by step and the Article 11 guide as Internal links. The last two were Related cards until 2026-11-26: Karl’s Related takes only Transaction, Information, Campaign and Topic pages (Help Center › Components › Related), and these are a Step by step and a Report.',
 			kind: 'body',
 			paragraphs: [
 				'This team inspects conditions that affect health in and around housing, under Health Code Article 11.'
@@ -50,7 +50,9 @@ export const whoToCall = {
 				'[Report a sewage leak or backup](sewageReport)',
 				'[Report mold](moldReport)',
 				'[Report garbage, clutter, or overgrown plants](garbageReport)',
-				'[Learn what Healthy Housing and Vector Control can inspect](scopeInfo)'
+				'[Learn what Healthy Housing and Vector Control can inspect](scopeInfo)',
+				'[Report a pest problem, start to finish](stepPestReport)',
+				'[Health Code Article 11 in plain language](article11Guide)'
 			]
 		},
 		{
@@ -93,11 +95,7 @@ export const whoToCall = {
 			heading: 'Related pages',
 			karl: 'Maps to the Related panel. Each card publishes the destination page’s own title.',
 			kind: 'body',
-			cards: [
-				{ title: 'Report a pest problem, start to finish', target: 'stepPestReport' },
-				{ title: 'Health Code Article 11 in plain language', target: 'article11Guide' },
-				{ title: 'Healthy housing conditions', target: 'healthyHousingTopic' }
-			]
+			cards: [{ title: 'Healthy housing conditions', target: 'healthyHousingTopic' }]
 		}
 	],
 	partnerAgencies: [

@@ -54,9 +54,10 @@ export const appealNotice = {
 					bullets: [
 						'Ask what condition was cited and what evidence it rests on.',
 						'Say so straight away if you believe the notice names the wrong party.',
-						'Bring dated photos, receipts, and treatment reports if you have them.'
+						'Bring dated photos, receipts, and treatment reports if you have them.',
+						'[Health Code Article 11 in plain language](article11Guide)'
 					],
-					karl: 'Section 2. This is the whole page. HHVC confirmed on 2026-08-31 that there is no appeal or hearing route to describe after this step.'
+					karl: 'Section 2. This is the whole page. HHVC confirmed on 2026-08-31 that there is no appeal or hearing route to describe after this step. The Article 11 guide link rides in the Text block; it was a Related card until 2026-11-26, but Karl’s Related cannot take a Report page (Help Center › Components › Related).'
 				},
 				{
 					title: 'Keep correcting what you do not dispute',
@@ -74,7 +75,6 @@ export const appealNotice = {
 			kind: 'body',
 			cards: [
 				{ title: 'Pay a Healthy Housing citation', target: 'payCitation' },
-				{ title: 'Health Code Article 11 in plain language', target: 'article11Guide' },
 				{ title: 'Tenant rights when reporting housing conditions', target: 'tenantRights' }
 			]
 		}

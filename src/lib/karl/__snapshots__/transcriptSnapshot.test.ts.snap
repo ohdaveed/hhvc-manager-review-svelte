@@ -524,6 +524,7 @@ Most disagreements are about what a notice covers or who it names, and the inves
 - Ask what condition was cited and what evidence it rests on.
 - Say so straight away if you believe the notice names the wrong party.
 - Bring dated photos, receipts, and treatment reports if you have them.
+- [Health Code Article 11 in plain language](article11Guide)
 
 **Section 3 — Section title:**
 
@@ -537,6 +538,7 @@ A notice can cite several conditions. Questioning one does not put the others on
 
 **Links in this text — recreate each with the Link tool, do not paste them:**
 
+- "Health Code Article 11 in plain language" → shape 5 — rich text Link tool → Internal link → "Health Code Article 11 in plain language"
 - "Correct a violation and close your case" → shape 5 — rich text Link tool → Internal link → "Correct a violation and close your case"
 
 ### Related — \`related\` [CHOOSE] — page not approved
@@ -544,8 +546,7 @@ A notice can cite several conditions. Questioning one does not put the others on
 _This block publishes the destination page’s title and a link, and NOTHING else. Choose the page and type no description._
 
 1. Choose page: "Pay a Healthy Housing citation" (\`payCitation\` → /sf.gov/pay-healthy-housing-citation)
-2. Choose page: "Health Code Article 11 in plain language" (\`article11Guide\` → /sf.gov/report/health-code-article-11-plain-language)
-3. Choose page: "Tenant rights when reporting housing conditions" (\`tenantRights\` → /sf.gov/information/tenant-rights-and-reporting-housing-conditions)
+2. Choose page: "Tenant rights when reporting housing conditions" (\`tenantRights\` → /sf.gov/information/tenant-rights-and-reporting-housing-conditions)
 
 ### Contact us — \`get_help\` [TYPE] — page not approved
 
@@ -7292,6 +7293,8 @@ This team inspects conditions that affect health in and around housing, under He
 - [Report mold](moldReport)
 - [Report garbage, clutter, or overgrown plants](garbageReport)
 - [Learn what Healthy Housing and Vector Control can inspect](scopeInfo)
+- [Report a pest problem, start to finish](stepPestReport)
+- [Health Code Article 11 in plain language](article11Guide)
 
 **Links in this text — recreate each with the Link tool, do not paste them:**
 
@@ -7305,6 +7308,8 @@ This team inspects conditions that affect health in and around housing, under He
 - "Report mold" → shape 5 — rich text Link tool → Internal link → "Report mold"
 - "Report garbage, clutter, or overgrown plants" → shape 5 — rich text Link tool → Internal link → "Report garbage, clutter, or overgrown plants"
 - "Learn what Healthy Housing and Vector Control can inspect" → shape 5 — rich text Link tool → Internal link → "Learn what Healthy Housing and Vector Control can inspect"
+- "Report a pest problem, start to finish" → shape 5 — rich text Link tool → Internal link → "Report a pest problem, start to finish"
+- "Health Code Article 11 in plain language" → shape 5 — rich text Link tool → Internal link → "Health Code Article 11 in plain language"
 
 ### Information section — \`information_section\` [TYPE] — page not approved
 
@@ -7370,9 +7375,7 @@ _topicTag is unmapped metadata — the stored values are Agency labels, not Topi
 
 _This block publishes the destination page’s title and a link, and NOTHING else. Choose the page and type no description._
 
-1. Choose page: "Report a pest problem, start to finish" (\`stepPestReport\` → /sf.gov/step-by-step/report-a-pest-problem)
-2. Choose page: "Health Code Article 11 in plain language" (\`article11Guide\` → /sf.gov/report/health-code-article-11-plain-language)
-3. Choose page: "Healthy housing conditions" (\`healthyHousingTopic\` → /sf.gov/topics--healthy-housing-conditions)
+1. Choose page: "Healthy housing conditions" (\`healthyHousingTopic\` → /sf.gov/topics--healthy-housing-conditions)
 
 ### Promote → For search engines — \`promote\` [TYPE] — page not approved
 

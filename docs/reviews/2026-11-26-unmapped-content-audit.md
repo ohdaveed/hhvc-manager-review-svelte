@@ -38,23 +38,24 @@ somewhere Karl keeps?
   now reads "Maps to the Related panel." The card-inheritance classifier keys on
   that phrase, so those sections were unclassified and reported as unmapped.
 
-## Surfaced, not resolved: needs a content decision
+## Surfaced, then resolved: Related links Karl cannot hold
 
 Classifying those three Related sections let the Related-target check reach
-them. Karl's Related cannot hold a Report or a Step by step page:
+them. The Karl Help Center (Components › Related) says only Transaction,
+Information, Campaign and Topic pages can be tagged as Related, so these three
+broke the rule. Each moved into the body as a rich-text Internal link:
 
-- whoToCall → "Health Code Article 11 in plain language" (Report)
-- whoToCall → "Report a pest problem, start to finish" (Step by step)
-- appealNotice → "Health Code Article 11 in plain language" (Report)
+- whoToCall → "Health Code Article 11 in plain language" (Report) and "Report a
+  pest problem, start to finish" (Step by step): into "What Healthy Housing
+  handles", beside the report links.
+- appealNotice → "Health Code Article 11 in plain language" (Report): into the
+  "Tell them what you disagree with" step.
 
-They are pinned in `karlComponentChecks.test.ts` beside the existing ones.
+## AI schema conflict (resolved by the follow-up below)
 
-## Known conflict
-
-`src/lib/server/ai/vendor/schemas.js` requires `audience` and `summary` on a
-whole-page draft. A Rethink or AI-drafted page will therefore still come back
-with an audience list. The vendor layer is kept diffable against upstream, so
-this was not changed here.
+`src/lib/server/ai/vendor/schemas.js` required `audience` on a whole-page
+draft, so Rethink would have brought the list back. The follow-up retiring the
+field removed that requirement and marked it `DIVERGES FROM UPSTREAM`.
 
 ## Test coverage
 
