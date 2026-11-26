@@ -539,14 +539,27 @@ body {
 	& p {
 		margin-block: 0 1rem;
 	}
+	/* 40px indent and 12px between items: live sf.gov's rich-text lists,
+	   measured 2026-11-26 on `dph-leaves-absence` and
+	   `report-health-nuisance-or-hazards` at 390 and 1074px. */
 	& ul,
 	& ol {
 		margin-top: 0.35rem;
 		margin-bottom: 1rem;
-		padding-left: 1.45rem;
+		padding-left: 40px;
 	}
 	& li {
+		margin-bottom: 12px;
+	}
+	/* The rule above is for rich-text lists. These two block lists space their
+	   items with a grid/flex gap, and keep the geometry they rendered with
+	   before it changed; neither has been measured against live. Note
+	   `.cards-block` declares `padding: 0`, which `#mockPage ul` outranks. */
+	& :is(.steps-block, .cards-block) > li {
 		margin-bottom: 0.35rem;
+	}
+	& .cards-block {
+		padding-left: 1.45rem;
 	}
 
 	/* 1076px is live sf.gov's content grid. The reading measure is narrower
