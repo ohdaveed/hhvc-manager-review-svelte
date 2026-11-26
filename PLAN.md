@@ -9,7 +9,7 @@ Branch `feat/expired-edits`, cut from `origin/main`. Design:
       pinned by a test over real corpus fields.
 - Production checked read-only 2026-11-26 (Supabase connector, project kiynekyzqxneepjipqhg): 0 edits,
   20 migrations applied (latest 20261125150000, matching the repo), 2 corpus versions.
-- [ ] **2. Migration.** `edits.base_hash text NOT NULL`; fails if any existing edit would be un-anchored;
+- [x] **2. Migration.** `edits.base_hash text NOT NULL`; fails if any existing edit would be un-anchored;
       `latest_edits` exposes it. Applied and tested on the local stack only.
 - [ ] **3. Save path records the anchor.** `saveInlineEdit` sends the base copy's hash; corpus and draft
       pages both. Unit-tested.
