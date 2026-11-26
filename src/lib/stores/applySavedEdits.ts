@@ -14,7 +14,7 @@
  * moment Save is pressed, and nothing would take it off again on failure:
  * this function only ever applies, it never un-applies.
  *
- * A field the reviewer is typing into is left alone. Its draft is on screen,
+ * A field the reviewer is typing into is left alone. Its change is on screen,
  * and replacing it with another reviewer's save would throw the typing away.
  */
 import { resolveField } from '$lib/corpus/fieldResolver';
@@ -37,7 +37,7 @@ export function applySavedEdits(
 	pages: readonly PageLike[],
 	livePages: readonly LivePageLike[],
 	edits: readonly EditLike[],
-	isDrafting: (pageId: string, fieldId: string) => boolean
+	hasUnsavedChange: (pageId: string, fieldId: string) => boolean
 ): number {
 	const pathOf = new Map(livePages.map((p) => [p.id, p.path]));
 	const latest = new Map<string, EditLike & { path: string }>();
@@ -53,7 +53,7 @@ export function applySavedEdits(
 		// The newest row is still in flight: skip the field rather than fall back
 		// to an older confirmed row, which would put stale copy back.
 		if (edit.id?.startsWith(OPTIMISTIC_PREFIX)) continue;
-		if (isDrafting(edit.path, edit.field_id)) continue;
+		if (hasUnsavedChange(edit.path, edit.field_id)) continue;
 		const field = resolveField(
 			pages.find((p) => p.id === edit.path),
 			edit.field_id

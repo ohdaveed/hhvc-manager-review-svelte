@@ -12,7 +12,7 @@
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
 	import { requestGeneration } from '$lib/ai/generate';
 	import { resolveFields } from '$lib/corpus/fieldResolver';
-	import { draftKey, pageStore, type Suggestion } from '$lib/stores/pageData.svelte';
+	import { changeKey, pageStore, type Suggestion } from '$lib/stores/pageData.svelte';
 	import { saveInlineEdit } from '$lib/stores/reviewState';
 	import { sessionStore } from '$lib/stores/session.svelte';
 	import { resolve } from '$app/paths';
@@ -79,27 +79,27 @@
 	let saveError = $state('');
 
 	/**
-	 * Per-draft state for the manual edit controls, keyed by `draftKey` -- a
-	 * field id alone names a field on every page, and drafts outlive navigation.
+	 * Per-change state for the manual edit controls, keyed by `changeKey` -- a
+	 * field id alone names a field on every page, and unsaved changes outlive navigation.
 	 */
-	let draftErrors = $state<Record<string, string>>({});
-	let savingDrafts = $state<Record<string, boolean>>({});
+	let changeErrors = $state<Record<string, string>>({});
+	let savingChanges = $state<Record<string, boolean>>({});
 
-	/** Drafts on this page whose field is not selected: kept, so listed. */
-	const parkedDrafts = $derived(
-		pageStore.dirtyDraftsOn(pageId).filter((d) => !pageStore.isSelected(d.fieldId))
+	/** Unsaved changes on this page whose field is not selected: kept, so listed. */
+	const otherUnsavedChanges = $derived(
+		pageStore.unsavedChangesOn(pageId).filter((d) => !pageStore.isSelected(d.fieldId))
 	);
-	const draftsElsewhere = $derived(pageStore.dirtyDraftsElsewhere(pageId));
+	const changesElsewhere = $derived(pageStore.unsavedChangesElsewhere(pageId));
 
-	const errorFor = (fieldId: string) => (pageId ? draftErrors[draftKey(pageId, fieldId)] : '');
-	const isSavingDraft = (fieldId: string) =>
-		pageId ? savingDrafts[draftKey(pageId, fieldId)] === true : false;
+	const errorFor = (fieldId: string) => (pageId ? changeErrors[changeKey(pageId, fieldId)] : '');
+	const isSavingChange = (fieldId: string) =>
+		pageId ? savingChanges[changeKey(pageId, fieldId)] === true : false;
 
-	function setDraftError(key: string, message: string) {
-		const next = { ...draftErrors };
+	function setChangeError(key: string, message: string) {
+		const next = { ...changeErrors };
 		if (message) next[key] = message;
 		else delete next[key];
-		draftErrors = next;
+		changeErrors = next;
 	}
 
 	/**
@@ -107,76 +107,79 @@
 	 * `pageStore.pages` -- so none is let in: Enter saves, and a paste that
 	 * carries line breaks has them turned into spaces.
 	 */
-	function typeDraft(fieldId: string, value: string) {
+	function typeChange(fieldId: string, value: string) {
 		if (!pageId) return;
-		const key = draftKey(pageId, fieldId);
-		setDraftError(key, '');
-		if (!pageStore.updateDraft(pageId, fieldId, value.replace(/\s*[\r\n]+\s*/g, ' '))) {
-			setDraftError(key, 'This field is no longer on the page, so the edit was not applied.');
+		const key = changeKey(pageId, fieldId);
+		setChangeError(key, '');
+		if (!pageStore.setChange(pageId, fieldId, value.replace(/\s*[\r\n]+\s*/g, ' '))) {
+			setChangeError(key, 'This field is no longer on the page, so the change was not applied.');
 		}
 	}
 
-	function cancelDraft(fieldId: string) {
+	function cancelChange(fieldId: string) {
 		if (!pageId) return;
-		setDraftError(draftKey(pageId, fieldId), '');
-		pageStore.cancelDraft(pageId, fieldId);
+		setChangeError(changeKey(pageId, fieldId), '');
+		pageStore.cancelChange(pageId, fieldId);
 	}
 
-	function onDraftKeydown(e: KeyboardEvent, fieldId: string) {
+	function onChangeKeydown(e: KeyboardEvent, fieldId: string) {
 		if (e.isComposing) return;
 		if (e.key === 'Enter') {
 			e.preventDefault();
-			if (pageStore.isDirty(pageId, fieldId)) saveDraft(fieldId);
-		} else if (e.key === 'Escape' && pageStore.getDraft(pageId, fieldId)) {
-			// Stopped here: Esc on a field with a draft means "undo my typing",
+			if (pageStore.hasUnsavedChange(pageId, fieldId)) saveChange(fieldId);
+		} else if (e.key === 'Escape' && pageStore.getChange(pageId, fieldId)) {
+			// Stopped here: Esc on a field with an unsaved change means "undo my typing",
 			// and nothing around the panel should also act on it.
 			e.preventDefault();
 			e.stopPropagation();
-			cancelDraft(fieldId);
+			cancelChange(fieldId);
 		}
 	}
 
 	/**
 	 * Persists one typed edit. The mockup already shows it, so success only has
-	 * to drop the draft; failure keeps it, so the text is still there to retry.
+	 * to drop the unsaved change; failure keeps it, so the text is still there to retry.
 	 *
 	 * A suggestion for the same field is dropped once the save lands: its
 	 * `original` is the copy the reviewer has just replaced, and accepting it
 	 * later would quietly overwrite the edit that was saved.
 	 */
-	async function saveDraft(fieldId: string) {
+	async function saveChange(fieldId: string) {
 		const draftPageId = pageId;
-		const draft = pageStore.getDraft(draftPageId, fieldId);
-		if (!draftPageId || !draft) return;
-		const key = draftKey(draftPageId, fieldId);
-		if (savingDrafts[key]) return;
-		if (draft.value === draft.original) {
-			pageStore.forgetDraft(draftPageId, fieldId);
+		const change = pageStore.getChange(draftPageId, fieldId);
+		if (!draftPageId || !change) return;
+		const key = changeKey(draftPageId, fieldId);
+		if (savingChanges[key]) return;
+		if (change.value === change.original) {
+			pageStore.forgetChange(draftPageId, fieldId);
 			return;
 		}
 		if (!livePageId) {
-			setDraftError(
+			setChangeError(
 				key,
-				'This page is not part of a loaded review, so the edit can only be shown, not saved.'
+				'This page is not part of a loaded review, so the change can only be shown, not saved.'
 			);
 			return;
 		}
-		const value = draft.value;
-		savingDrafts = { ...savingDrafts, [key]: true };
-		setDraftError(key, '');
+		const value = change.value;
+		savingChanges = { ...savingChanges, [key]: true };
+		setChangeError(key, '');
 		const persisted = await saveInlineEdit(livePageId, fieldId, value);
-		savingDrafts = { ...savingDrafts, [key]: false };
+		savingChanges = { ...savingChanges, [key]: false };
 		if (!persisted) {
-			setDraftError(key, 'The edit could not be saved. It is still here to retry.');
+			setChangeError(key, 'The change could not be saved. It is still here to retry.');
 			return;
 		}
-		// Typing may have continued while the request was out; only a draft that
+		// Typing may have continued while the request was out; only an unsaved change that
 		// still says what was saved is finished. One that moved on keeps going,
 		// with the saved copy as what Cancel now returns to.
-		const now = pageStore.getDraft(draftPageId, fieldId);
-		if (now?.value === value) pageStore.forgetDraft(draftPageId, fieldId);
+		const now = pageStore.getChange(draftPageId, fieldId);
+		if (now?.value === value) pageStore.forgetChange(draftPageId, fieldId);
 		else if (now)
-			pageStore.manualDrafts = { ...pageStore.manualDrafts, [key]: { ...now, original: value } };
+			pageStore.unsavedChanges = {
+				...pageStore.unsavedChanges,
+				[key]: { ...now, original: value }
+			};
 		if (pageStore.suggestions[fieldId]?.pageId === draftPageId) pageStore.forgetSuggestion(fieldId);
 	}
 
@@ -325,7 +328,7 @@
 		const current = pageStore.suggestions[fieldId];
 		if (!current || current.status === 'error') return;
 		// Accepting over unsaved typing would let Save overwrite it unseen.
-		if (status === 'accepted' && pageStore.isDirty(pageId, fieldId)) return;
+		if (status === 'accepted' && pageStore.hasUnsavedChange(pageId, fieldId)) return;
 		pageStore.suggestions = { ...pageStore.suggestions, [fieldId]: { ...current, status } };
 	}
 
@@ -342,7 +345,7 @@
 		const from = status === 'pending' ? ['accepted', 'rejected'] : ['pending'];
 		const next = { ...pageStore.suggestions };
 		for (const [id, s] of cards) {
-			if (status === 'accepted' && pageStore.isDirty(pageId, id)) continue;
+			if (status === 'accepted' && pageStore.hasUnsavedChange(pageId, id)) continue;
 			if (from.includes(s.status)) next[id] = { ...s, status };
 		}
 		pageStore.suggestions = next;
@@ -402,9 +405,9 @@
 
 			resolved.field.set(suggestion.suggested);
 			pageStore.forgetSuggestion(fieldId);
-			// The saved rewrite replaces any typing; a draft left behind would
+			// The saved rewrite replaces any typing; an unsaved change left behind would
 			// put its stale `original` back on Cancel.
-			pageStore.forgetDraft(suggestion.pageId, fieldId);
+			pageStore.forgetChange(suggestion.pageId, fieldId);
 		}
 
 		if (failed.length > 0) {
@@ -424,7 +427,7 @@
 		<!-- Typing is never thrown away by moving the selection. Edits whose field
 		     is no longer selected wait here, still on the mockup, until they are
 		     saved or discarded. -->
-		{#if parkedDrafts.length > 0}
+		{#if otherUnsavedChanges.length > 0}
 			<section
 				class="mx-5 mt-4 rounded-[4px] border-l-2 border-sfds-amber bg-sfds-amber-l1 px-3 py-2"
 				aria-labelledby="{uid}-parked"
@@ -433,17 +436,19 @@
 					id="{uid}-parked"
 					class="text-[12px] font-bold tracking-[0.06em] text-sfds-black uppercase"
 				>
-					{parkedDrafts.length} unsaved {parkedDrafts.length === 1 ? 'edit' : 'edits'}
+					{otherUnsavedChanges.length} unsaved {otherUnsavedChanges.length === 1
+						? 'change'
+						: 'changes'}
 				</h3>
 				<ul class="mt-1.5 space-y-2">
-					{#each parkedDrafts as draft (draft.fieldId)}
+					{#each otherUnsavedChanges as change (change.fieldId)}
 						{@const name =
-							resolveFields(pageData as never, [draft.fieldId])[0]?.field.name ?? draft.fieldId}
+							resolveFields(pageData as never, [change.fieldId])[0]?.field.name ?? change.fieldId}
 						<li class="text-[12px] leading-[17px] text-sfds-black">
 							<span class="font-semibold">{name}:</span>
-							<span class="line-clamp-2">{draft.value}</span>
-							{#if errorFor(draft.fieldId)}
-								<p class="mt-1 text-sfds-red" role="alert">{errorFor(draft.fieldId)}</p>
+							<span class="line-clamp-2">{change.value}</span>
+							{#if errorFor(change.fieldId)}
+								<p class="mt-1 text-sfds-red" role="alert">{errorFor(change.fieldId)}</p>
 							{/if}
 							<span class="mt-1 flex justify-end gap-1">
 								<Button
@@ -451,23 +456,23 @@
 									size="sm"
 									class="h-7 px-2 text-[12px]"
 									aria-label="Edit {name} again"
-									onclick={() => pageStore.select(draft.fieldId, true)}>Edit</Button
+									onclick={() => pageStore.select(change.fieldId, true)}>Edit</Button
 								>
 								<Button
 									variant="ghost"
 									size="sm"
 									class="h-7 px-2 text-[12px]"
-									aria-label="Discard the edit to {name}"
-									onclick={() => cancelDraft(draft.fieldId)}>Discard</Button
+									aria-label="Discard the change to {name}"
+									onclick={() => cancelChange(change.fieldId)}>Discard</Button
 								>
 								<Button
 									size="sm"
 									class="h-7 px-2 text-[12px]"
-									aria-label="Save the edit to {name}"
-									disabled={isSavingDraft(draft.fieldId)}
-									onclick={() => saveDraft(draft.fieldId)}
+									aria-label="Save the change to {name}"
+									disabled={isSavingChange(change.fieldId)}
+									onclick={() => saveChange(change.fieldId)}
 								>
-									{isSavingDraft(draft.fieldId) ? 'Saving…' : 'Save'}
+									{isSavingChange(change.fieldId) ? 'Saving…' : 'Save'}
 								</Button>
 							</span>
 						</li>
@@ -475,10 +480,10 @@
 				</ul>
 			</section>
 		{/if}
-		{#if draftsElsewhere > 0}
+		{#if changesElsewhere > 0}
 			<p class="mx-5 mt-3 text-[12px] leading-[17px] text-sfds-slate-l3" role="status">
-				{draftsElsewhere} unsaved {draftsElsewhere === 1 ? 'edit is' : 'edits are'} waiting on other pages.
-				They are still there when you go back.
+				{changesElsewhere} unsaved {changesElsewhere === 1 ? 'change is' : 'changes are'} waiting on other
+				pages. They are still there when you go back.
 			</p>
 		{/if}
 		{#if selected.length === 0}
@@ -509,7 +514,7 @@
 			<ol class="space-y-3 px-5 py-3" aria-label="Selected fields">
 				{#each selected as { fieldId, field }, i (fieldId)}
 					{@const inputId = `${uid}-edit-${i}`}
-					{@const dirty = pageStore.isDirty(pageId, fieldId)}
+					{@const dirty = pageStore.hasUnsavedChange(pageId, fieldId)}
 					{@const error = errorFor(fieldId)}
 					<li class="text-[13px]">
 						<label for={inputId} class="flex items-start gap-2">
@@ -520,7 +525,7 @@
 							</span>
 							<span class="min-w-0 truncate text-sfds-slate-l3">{field.name}</span>
 						</label>
-						<!-- One-way value: the field IS the draft, because every keystroke
+						<!-- One-way value: the field IS the unsaved change, because every keystroke
 						     is written to the mockup through its setter. Esc cancels. -->
 						<Textarea
 							id={inputId}
@@ -529,8 +534,8 @@
 							class="mt-1.5 text-[13px]"
 							aria-describedby="{inputId}-hint{error ? ` ${inputId}-error` : ''}"
 							aria-invalid={error ? true : undefined}
-							oninput={(e) => typeDraft(fieldId, e.currentTarget.value)}
-							onkeydown={(e) => onDraftKeydown(e, fieldId)}
+							oninput={(e) => typeChange(fieldId, e.currentTarget.value)}
+							onkeydown={(e) => onChangeKeydown(e, fieldId)}
 						/>
 						<p id="{inputId}-hint" class="sr-only">Enter saves. Escape cancels.</p>
 						{#if error}
@@ -551,17 +556,17 @@
 									variant="ghost"
 									size="sm"
 									class="h-7 px-2 text-[12px]"
-									aria-label="Cancel the edit to {field.name}"
-									onclick={() => cancelDraft(fieldId)}>Cancel</Button
+									aria-label="Cancel the change to {field.name}"
+									onclick={() => cancelChange(fieldId)}>Cancel</Button
 								>
 								<Button
 									size="sm"
 									class="h-7 px-2 text-[12px]"
-									aria-label="Save the edit to {field.name}"
-									disabled={isSavingDraft(fieldId)}
-									onclick={() => saveDraft(fieldId)}
+									aria-label="Save the change to {field.name}"
+									disabled={isSavingChange(fieldId)}
+									onclick={() => saveChange(fieldId)}
 								>
-									{isSavingDraft(fieldId) ? 'Saving…' : 'Save'}
+									{isSavingChange(fieldId) ? 'Saving…' : 'Save'}
 								</Button>
 							</div>
 						{/if}
@@ -762,8 +767,8 @@
 										<Button
 											size="sm"
 											class="h-7 px-2 text-[12px]"
-											disabled={pageStore.isDirty(pageId, fieldId)}
-											title={pageStore.isDirty(pageId, fieldId)
+											disabled={pageStore.hasUnsavedChange(pageId, fieldId)}
+											title={pageStore.hasUnsavedChange(pageId, fieldId)
 												? 'Save or cancel your own edit to this field first'
 												: undefined}
 											onclick={() => decide(fieldId, 'accepted')}>Accept</Button

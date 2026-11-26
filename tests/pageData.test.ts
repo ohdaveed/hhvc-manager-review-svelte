@@ -204,7 +204,7 @@ describe('rail default', () => {
 	});
 });
 
-describe('manual drafts', () => {
+describe('unsaved changes', () => {
 	const A = () => pageStore.pages[0];
 	const B = () => pageStore.pages[1];
 	let titleA: string;
@@ -212,7 +212,7 @@ describe('manual drafts', () => {
 
 	beforeEach(() => {
 		pageStore.enterPage(undefined);
-		pageStore.manualDrafts = {};
+		pageStore.unsavedChanges = {};
 		titleA = A().title;
 		titleB = B().title;
 		pageStore.enterPage(A().id);
@@ -220,58 +220,58 @@ describe('manual drafts', () => {
 	});
 
 	afterEach(() => {
-		pageStore.manualDrafts = {};
+		pageStore.unsavedChanges = {};
 		A().title = titleA;
 		B().title = titleB;
 	});
 
-	it('shows the draft on the page as it is typed and remembers the original', () => {
-		expect(pageStore.updateDraft(A().id, 'title', 'Typed')).toBe(true);
+	it('shows the unsaved change on the page as it is typed and remembers the original', () => {
+		expect(pageStore.setChange(A().id, 'title', 'Typed')).toBe(true);
 		expect(A().title).toBe('Typed');
-		expect(pageStore.getDraft(A().id, 'title')).toEqual({
+		expect(pageStore.getChange(A().id, 'title')).toEqual({
 			pageId: A().id,
 			fieldId: 'title',
 			original: titleA,
 			value: 'Typed'
 		});
-		pageStore.updateDraft(A().id, 'title', 'Typed more');
-		expect(pageStore.getDraft(A().id, 'title')?.original).toBe(titleA);
-		expect(pageStore.isDirty(A().id, 'title')).toBe(true);
+		pageStore.setChange(A().id, 'title', 'Typed more');
+		expect(pageStore.getChange(A().id, 'title')?.original).toBe(titleA);
+		expect(pageStore.hasUnsavedChange(A().id, 'title')).toBe(true);
 	});
 
 	it('is not dirty when typed back to the original', () => {
-		pageStore.updateDraft(A().id, 'title', 'Typed');
-		pageStore.updateDraft(A().id, 'title', titleA);
-		expect(pageStore.isDirty(A().id, 'title')).toBe(false);
+		pageStore.setChange(A().id, 'title', 'Typed');
+		pageStore.setChange(A().id, 'title', titleA);
+		expect(pageStore.hasUnsavedChange(A().id, 'title')).toBe(false);
 	});
 
 	it('cancel restores the original copy', () => {
-		pageStore.updateDraft(A().id, 'title', 'Typed');
-		pageStore.cancelDraft(A().id, 'title');
+		pageStore.setChange(A().id, 'title', 'Typed');
+		pageStore.cancelChange(A().id, 'title');
 		expect(A().title).toBe(titleA);
-		expect(pageStore.getDraft(A().id, 'title')).toBeUndefined();
+		expect(pageStore.getChange(A().id, 'title')).toBeUndefined();
 	});
 
 	it('forget keeps the typed copy on the page', () => {
-		pageStore.updateDraft(A().id, 'title', 'Saved copy');
-		pageStore.forgetDraft(A().id, 'title');
+		pageStore.setChange(A().id, 'title', 'Saved copy');
+		pageStore.forgetChange(A().id, 'title');
 		expect(A().title).toBe('Saved copy');
-		expect(pageStore.getDraft(A().id, 'title')).toBeUndefined();
+		expect(pageStore.getChange(A().id, 'title')).toBeUndefined();
 	});
 
 	it('writes nothing for a field that does not resolve', () => {
-		expect(pageStore.updateDraft(A().id, 'sections.nope.paragraphs.0', 'x')).toBe(false);
-		expect(pageStore.manualDrafts).toEqual({});
+		expect(pageStore.setChange(A().id, 'sections.nope.paragraphs.0', 'x')).toBe(false);
+		expect(pageStore.unsavedChanges).toEqual({});
 	});
 
-	it('keeps drafts for the same field id on two pages apart', () => {
-		pageStore.updateDraft(A().id, 'title', 'Typed on A');
+	it('keeps unsaved changes for the same field id on two pages apart', () => {
+		pageStore.setChange(A().id, 'title', 'Typed on A');
 		pageStore.enterPage(B().id);
 		pageStore.select('title');
-		pageStore.updateDraft(B().id, 'title', 'Typed on B');
-		expect(pageStore.getDraft(A().id, 'title')?.original).toBe(titleA);
-		expect(pageStore.getDraft(B().id, 'title')?.original).toBe(titleB);
-		pageStore.cancelDraft(A().id, 'title');
+		pageStore.setChange(B().id, 'title', 'Typed on B');
+		expect(pageStore.getChange(A().id, 'title')?.original).toBe(titleA);
+		expect(pageStore.getChange(B().id, 'title')?.original).toBe(titleB);
+		pageStore.cancelChange(A().id, 'title');
 		expect(A().title).toBe(titleA);
 		expect(B().title).toBe('Typed on B');
 	});
@@ -283,24 +283,24 @@ describe('manual drafts', () => {
 		['selecting a section', () => pageStore.selectSection('any')],
 		['changing page', () => pageStore.enterPage(B().id)]
 	])('keeps unsaved typing on %s', (_label, act) => {
-		pageStore.updateDraft(A().id, 'title', 'Unsaved');
+		pageStore.setChange(A().id, 'title', 'Unsaved');
 		act();
 		expect(A().title).toBe('Unsaved');
-		expect(pageStore.isDirty(A().id, 'title')).toBe(true);
+		expect(pageStore.hasUnsavedChange(A().id, 'title')).toBe(true);
 	});
 
-	it('drops a draft that changes nothing once the selection moves off it', () => {
-		pageStore.updateDraft(A().id, 'title', 'Typed');
-		pageStore.updateDraft(A().id, 'title', titleA);
+	it('drops an unsaved change that changes nothing once the selection moves off it', () => {
+		pageStore.setChange(A().id, 'title', 'Typed');
+		pageStore.setChange(A().id, 'title', titleA);
 		pageStore.select('summary');
-		expect(pageStore.getDraft(A().id, 'title')).toBeUndefined();
+		expect(pageStore.getChange(A().id, 'title')).toBeUndefined();
 		expect(A().title).toBe(titleA);
 	});
 
-	it('counts unsaved drafts here and on other pages', () => {
-		pageStore.updateDraft(A().id, 'title', 'Unsaved');
-		expect(pageStore.dirtyDraftsOn(A().id).map((d) => d.fieldId)).toEqual(['title']);
-		expect(pageStore.dirtyDraftsElsewhere(A().id)).toBe(0);
-		expect(pageStore.dirtyDraftsElsewhere(B().id)).toBe(1);
+	it('counts unsaved changes here and on other pages', () => {
+		pageStore.setChange(A().id, 'title', 'Unsaved');
+		expect(pageStore.unsavedChangesOn(A().id).map((d) => d.fieldId)).toEqual(['title']);
+		expect(pageStore.unsavedChangesElsewhere(A().id)).toBe(0);
+		expect(pageStore.unsavedChangesElsewhere(B().id)).toBe(1);
 	});
 });

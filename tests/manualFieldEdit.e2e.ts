@@ -65,8 +65,8 @@ test('typing in the Fields panel edits the mockup, and Save persists it', async 
 	await input.fill('Report trash and overgrown plants');
 	await expect(mockupTitle(page)).toContainText('Report trash and overgrown plants');
 
-	await page.getByRole('button', { name: 'Save the edit to Title' }).click();
-	await expect(page.getByRole('button', { name: 'Save the edit to Title' })).toHaveCount(0);
+	await page.getByRole('button', { name: 'Save the change to Title' }).click();
+	await expect(page.getByRole('button', { name: 'Save the change to Title' })).toHaveCount(0);
 	expect(inserts).toEqual([
 		expect.objectContaining({
 			page_id: ROW.id,
@@ -99,7 +99,7 @@ test('clicking other copy keeps unsaved typing, listed to save or discard', asyn
 		.getByRole('region', { name: 'Mockup preview' })
 		.locator('[data-rewrite-field="summary"]')
 		.click();
-	await expect(page.getByRole('heading', { name: '1 unsaved edit' })).toBeVisible();
+	await expect(page.getByRole('heading', { name: '1 unsaved change' })).toBeVisible();
 	await expect(mockupTitle(page)).toContainText('Kept while I look elsewhere');
 
 	// The list only exists in this state, so the signed-in axe pass never sees it.
@@ -108,9 +108,9 @@ test('clicking other copy keeps unsaved typing, listed to save or discard', asyn
 		.analyze();
 	expect(violations.map((v) => `${v.id}: ${v.help}`)).toEqual([]);
 
-	await page.getByRole('button', { name: 'Discard the edit to Title' }).click();
+	await page.getByRole('button', { name: 'Discard the change to Title' }).click();
 	await expect(mockupTitle(page)).toHaveText(before);
-	await expect(page.getByRole('heading', { name: '1 unsaved edit' })).toHaveCount(0);
+	await expect(page.getByRole('heading', { name: '1 unsaved change' })).toHaveCount(0);
 });
 
 test('Enter saves instead of breaking the line', async ({ page }) => {
@@ -132,7 +132,7 @@ test('Enter saves instead of breaking the line', async ({ page }) => {
 	const input = page.getByRole('textbox', { name: /Title$/ });
 	await input.fill('One line only');
 	await input.press('Enter');
-	await expect(page.getByRole('button', { name: 'Save the edit to Title' })).toHaveCount(0);
+	await expect(page.getByRole('button', { name: 'Save the change to Title' })).toHaveCount(0);
 	expect(inserts.map((r) => r.new_content)).toEqual(['One line only']);
 	await expect(input).toHaveValue('One line only');
 });

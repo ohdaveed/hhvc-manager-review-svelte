@@ -49,15 +49,15 @@ export type Suggestion = {
  * `original` is what the field said before typing started: what Cancel puts
  * back, and how a save that changes nothing is recognised and skipped.
  */
-export type ManualDraft = {
+export type UnsavedChange = {
 	pageId: string;
 	fieldId: string;
 	original: string;
 	value: string;
 };
 
-/** Field ids are page-relative, so a draft is named by both. */
-export function draftKey(pageId: string, fieldId: string): string {
+/** Field ids are page-relative, so an unsaved change is named by both. */
+export function changeKey(pageId: string, fieldId: string): string {
 	return `${pageId}\u0000${fieldId}`;
 }
 
@@ -217,12 +217,12 @@ class PageStore {
 	suggestions = $state<Record<string, Suggestion>>({});
 
 	/**
-	 * Unsaved manual edits, keyed by `draftKey(pageId, fieldId)`. See `ManualDraft`.
+	 * Unsaved manual edits, keyed by `changeKey(pageId, fieldId)`. See `UnsavedChange`.
 	 *
 	 * Keyed by page as well as field because field ids are page-relative
-	 * (`title` names a field on every page), and a draft outlives navigation.
+	 * (`title` names a field on every page), and an unsaved change outlives navigation.
 	 */
-	manualDrafts = $state<Record<string, ManualDraft>>({});
+	unsavedChanges = $state<Record<string, UnsavedChange>>({});
 
 	/**
 	 * The routable id of the page on screen, as `enterPage` last set it.
@@ -309,7 +309,7 @@ class PageStore {
 		if (!additive) {
 			this.selectedFieldIds = [fieldId];
 			this.suggestions = this.pruneSuggestions([fieldId]);
-			this.dropCleanDrafts([fieldId]);
+			this.dropNoOpChanges([fieldId]);
 			return;
 		}
 
@@ -317,7 +317,7 @@ class PageStore {
 			const next = this.selectedFieldIds.filter((id) => id !== fieldId);
 			this.selectedFieldIds = next;
 			this.suggestions = this.pruneSuggestions(next);
-			this.dropCleanDrafts(next);
+			this.dropNoOpChanges(next);
 		} else {
 			this.selectedFieldIds = [...this.selectedFieldIds, fieldId];
 		}
@@ -326,14 +326,14 @@ class PageStore {
 	clearSelection() {
 		this.selectedFieldIds = [];
 		this.suggestions = this.pruneSuggestions([]);
-		this.dropCleanDrafts([]);
+		this.dropNoOpChanges([]);
 		this.rewriteInstruction = '';
 	}
 
 	selectSection(sectionKey: string) {
 		this.selectedFieldIds = [];
 		this.suggestions = this.pruneSuggestions([]);
-		this.dropCleanDrafts([]);
+		this.dropNoOpChanges([]);
 
 		// Only reset the rethink when the selection actually MOVES. Re-clicking
 		// the section already selected used to drop it back to `idle`, which
@@ -398,7 +398,7 @@ class PageStore {
 	enterPage(pageId: string | undefined) {
 		if (pageId === this.activePageId) return;
 		this.activePageId = pageId;
-		this.dropCleanDrafts([]);
+		this.dropNoOpChanges([]);
 		this.selectedFieldIds = [];
 		this.rewriteInstruction = '';
 		this.agentRec = { state: 'idle', text: '' };
@@ -437,10 +437,10 @@ class PageStore {
 		this.suggestions = rest;
 	}
 
-	// ---- manual drafts ---------------------------------------------------
-	// The mockup shows a draft as it is typed. Typing is work, so a draft is
+	// ---- unsaved changes ---------------------------------------------------
+	// The mockup shows an unsaved change as it is typed. Typing is work, so an unsaved change is
 	// never thrown away by a selection change or navigation: only Cancel puts
-	// the original copy back, and only Save or Cancel ends a draft. A draft that
+	// the original copy back, and only Save or Cancel ends an unsaved change. An unsaved change that
 	// changes nothing is dropped as soon as the selection moves off it.
 
 	/** The field as it is on the page now, resolved fresh -- never captured. */
@@ -451,75 +451,75 @@ class PageStore {
 		);
 	}
 
-	getDraft(pageId: string | undefined, fieldId: string): ManualDraft | undefined {
-		return pageId === undefined ? undefined : this.manualDrafts[draftKey(pageId, fieldId)];
+	getChange(pageId: string | undefined, fieldId: string): UnsavedChange | undefined {
+		return pageId === undefined ? undefined : this.unsavedChanges[changeKey(pageId, fieldId)];
 	}
 
 	/**
-	 * Sets the draft for one field and shows it on the mockup. The first call
-	 * records what the field said, which is what `cancelDraft` restores.
+	 * Sets the unsaved change for one field and shows it on the mockup. The first call
+	 * records what the field said, which is what `cancelChange` restores.
 	 * Returns false when the field no longer resolves, and writes nothing.
 	 */
-	updateDraft(pageId: string, fieldId: string, value: string): boolean {
+	setChange(pageId: string, fieldId: string, value: string): boolean {
 		const field = this.resolveOn(pageId, fieldId);
 		if (!field) return false;
-		const original = this.getDraft(pageId, fieldId)?.original ?? field.value;
+		const original = this.getChange(pageId, fieldId)?.original ?? field.value;
 		field.set(value);
-		this.manualDrafts = {
-			...this.manualDrafts,
-			[draftKey(pageId, fieldId)]: { pageId, fieldId, original, value }
+		this.unsavedChanges = {
+			...this.unsavedChanges,
+			[changeKey(pageId, fieldId)]: { pageId, fieldId, original, value }
 		};
 		return true;
 	}
 
 	/** Whether the field has typing that has not been saved. */
-	isDirty(pageId: string | undefined, fieldId: string): boolean {
-		const draft = this.getDraft(pageId, fieldId);
-		return Boolean(draft && draft.value !== draft.original);
+	hasUnsavedChange(pageId: string | undefined, fieldId: string): boolean {
+		const change = this.getChange(pageId, fieldId);
+		return Boolean(change && change.value !== change.original);
 	}
 
-	/** Unsaved drafts on `pageId`, in the order they were started. */
-	dirtyDraftsOn(pageId: string | undefined): ManualDraft[] {
-		return Object.values(this.manualDrafts).filter(
+	/** unsaved changes on `pageId`, in the order they were started. */
+	unsavedChangesOn(pageId: string | undefined): UnsavedChange[] {
+		return Object.values(this.unsavedChanges).filter(
 			(d) => d.pageId === pageId && d.value !== d.original
 		);
 	}
 
-	/** Unsaved drafts parked on OTHER pages -- said, not hidden. */
-	dirtyDraftsElsewhere(pageId: string | undefined): number {
-		return Object.values(this.manualDrafts).filter(
+	/** unsaved changes parked on OTHER pages -- said, not hidden. */
+	unsavedChangesElsewhere(pageId: string | undefined): number {
+		return Object.values(this.unsavedChanges).filter(
 			(d) => d.pageId !== pageId && d.value !== d.original
 		).length;
 	}
 
-	/** Puts the original copy back on the mockup and drops the draft. */
-	cancelDraft(pageId: string, fieldId: string) {
-		const draft = this.getDraft(pageId, fieldId);
-		if (!draft) return;
-		this.resolveOn(pageId, fieldId)?.set(draft.original);
-		this.forgetDraft(pageId, fieldId);
+	/** Puts the original copy back on the mockup and drops the unsaved change. */
+	cancelChange(pageId: string, fieldId: string) {
+		const change = this.getChange(pageId, fieldId);
+		if (!change) return;
+		this.resolveOn(pageId, fieldId)?.set(change.original);
+		this.forgetChange(pageId, fieldId);
 	}
 
-	/** Drops a draft whose value is now the saved one. Leaves the mockup as is. */
-	forgetDraft(pageId: string, fieldId: string) {
-		const key = draftKey(pageId, fieldId);
-		if (!(key in this.manualDrafts)) return;
-		const rest = { ...this.manualDrafts };
+	/** Drops an unsaved change whose value is now the saved one. Leaves the mockup as is. */
+	forgetChange(pageId: string, fieldId: string) {
+		const key = changeKey(pageId, fieldId);
+		if (!(key in this.unsavedChanges)) return;
+		const rest = { ...this.unsavedChanges };
 		delete rest[key];
-		this.manualDrafts = rest;
+		this.unsavedChanges = rest;
 	}
 
 	/**
-	 * Drops drafts that change nothing, except those for `keep` on the page on
+	 * Drops unsaved changes that change nothing, except those for `keep` on the page on
 	 * screen. Their value is already the original, so the mockup needs nothing.
 	 */
-	private dropCleanDrafts(keep: string[]) {
-		const next: Record<string, ManualDraft> = {};
-		for (const [key, d] of Object.entries(this.manualDrafts)) {
+	private dropNoOpChanges(keep: string[]) {
+		const next: Record<string, UnsavedChange> = {};
+		for (const [key, d] of Object.entries(this.unsavedChanges)) {
 			const kept = d.pageId === this.activePageId && keep.includes(d.fieldId);
 			if (d.value !== d.original || kept) next[key] = d;
 		}
-		this.manualDrafts = next;
+		this.unsavedChanges = next;
 	}
 
 	/**

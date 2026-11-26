@@ -159,20 +159,20 @@
 	});
 
 	// Saved edits onto the mockup: after `loadReview`, on every realtime insert,
-	// and when a draft closes (a save that arrived during the typing was held
-	// back for it). Tracks the stores, the page list shallowly and the draft
+	// and when an unsaved change closes (a save that arrived during the typing was held
+	// back for it). Tracks the stores, the page list shallowly and the unsaved change
 	// keys -- not the copy itself, which this effect writes.
 	$effect(() => {
 		const edits = $editsStore;
 		const live = $pagesStore;
 		const pages = [...pageStore.pages];
-		void Object.keys(pageStore.manualDrafts);
+		void Object.keys(pageStore.unsavedChanges);
 		untrack(() =>
 			applySavedEdits(
 				pages,
 				live,
 				edits,
-				(path, fieldId) => pageStore.getDraft(path, fieldId) !== undefined
+				(path, fieldId) => pageStore.getChange(path, fieldId) !== undefined
 			)
 		);
 	});
@@ -627,7 +627,7 @@
 								class="inline-flex items-center rounded-full border border-violet-200 bg-violet-50 px-2.5 py-[3px] text-xs font-semibold text-violet-900"
 								role="status"
 							>
-								{unsavedCount} unsaved {unsavedCount === 1 ? 'edit' : 'edits'}
+								{unsavedCount} unsaved {unsavedCount === 1 ? 'change' : 'changes'}
 							</span>
 						{/if}
 						<!-- Which rendering is on screen, and how to change it.
@@ -879,7 +879,7 @@
 					<span
 						class="inline-flex size-6 items-center justify-center rounded-full bg-sfds-action text-[11px] font-bold text-white"
 						role="status"
-						aria-label="{unsavedCount} unsaved edits"
+						aria-label="{unsavedCount} unsaved {unsavedCount === 1 ? 'change' : 'changes'}"
 					>
 						{unsavedCount}
 					</span>

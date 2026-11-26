@@ -43,7 +43,7 @@ selected field; no schema change, no new dependency; the reload-hydration gap is
 An **unsaved change** is new wording on the mockup not yet saved -- typed, or from an accepted
 suggestion. Saving is the acceptance; there is no accepted-but-unsaved state.
 
-- [ ] **10. Rename to "unsaved change".** UI copy says "unsaved change(s)", never "unsaved edit(s)";
+- [x] **10. Rename to "unsaved change".** UI copy says "unsaved change(s)", never "unsaved edit(s)";
       `ManualDraft` / `manualDrafts` / `parkedDrafts` / `draftsElsewhere` and their methods use
       unsaved-change names. No "draft" left meaning field-level typing in this branch's code.
 - [ ] **11. One count, one Save.** The footer reads `Save N changes` and saves every unsaved change on
