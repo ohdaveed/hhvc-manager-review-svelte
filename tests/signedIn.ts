@@ -344,7 +344,12 @@ export async function gotoSignedIn(
 		await expect(page.getByText(new RegExp(`^\\d+ of ${total} decided$`))).toBeVisible();
 		return;
 	}
-	await expect(page.locator('nav[aria-label="Review queue"] a')).toHaveCount(total);
+	// Rows only: the stub holds six review rows over a 40-odd page corpus, so
+	// the queue also lists the rest under "Not in the review yet", which is
+	// corpus, not review data, and would pass this guard with no rows at all.
+	await expect(
+		page.locator('nav[aria-label="Review queue"] section:not([data-testid="queue-unreviewed"]) a')
+	).toHaveCount(total);
 	await expect(page.getByText('Viewing signed out.')).toHaveCount(0);
 }
 

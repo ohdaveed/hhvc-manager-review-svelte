@@ -1,7 +1,12 @@
 <script lang="ts">
 	import { page as routePage } from '$app/stores';
 	import { resolve } from '$app/paths';
-	import { pagesStore, editsStore, QUEUE_STATUS_ORDER } from '$lib/stores/reviewState';
+	import {
+		pagesStore,
+		editsStore,
+		QUEUE_STATUS_ORDER,
+		reconcileReview
+	} from '$lib/stores/reviewState';
 	import { pageStore } from '$lib/stores/pageData.svelte';
 	import { routePathFor } from '$lib/corpus/draftPath';
 	import { pageTitleFor } from '$lib/corpus/pageTitle';
@@ -53,11 +58,25 @@
 		heading: STATUS_LABELS[status].label
 	}));
 
+	// The table squared with the corpus (see `reconcileReview`): rows for pages
+	// that no longer exist are left out, and corpus pages with no row are listed
+	// and counted. `loaded` still reads the table, because the empty, loading and
+	// failed states below are about the load, not about the corpus.
+	const review = $derived(
+		reconcileReview(
+			$pagesStore,
+			pageStore.pages.map((p) => p.id)
+		)
+	);
+	const loaded = $derived($pagesStore.length > 0);
+
 	// Decided = anything a reviewer has ruled on. `needs-review` is the initial
 	// status every seeded row carries, so it is the only one that is not a
 	// decision -- counting it would show the review as complete on load.
-	const decided = $derived($pagesStore.filter((p) => p.status !== 'needs-review').length);
-	const total = $derived($pagesStore.length);
+	const decided = $derived(review.rows.filter((p) => p.status !== 'needs-review').length);
+	// Every page a reviewer can open, not every row: "0 of 38" over a 43-page
+	// corpus left five pages out of the count with nothing on screen saying so.
+	const total = $derived(review.total);
 	const pct = $derived(total === 0 ? 0 : Math.round((decided / total) * 100));
 
 	// One edit row per (page, field) -- `saveInlineEdit` replaces rather than
@@ -68,19 +87,17 @@
 	// "N of M decided" describes the review, not the current search.
 	let query = $state('');
 	const needle = $derived(query.trim().toLowerCase());
-	const shown = $derived(
-		needle === ''
-			? $pagesStore
-			: $pagesStore.filter(
-					(p) =>
-						titleFor(p.path).toLowerCase().includes(needle) || p.path.toLowerCase().includes(needle)
-				)
-	);
+	const matches = (path: string) =>
+		needle === '' ||
+		titleFor(path).toLowerCase().includes(needle) ||
+		path.toLowerCase().includes(needle);
+	const shown = $derived(review.rows.filter((p) => matches(p.path)));
+	const unreviewedShown = $derived(review.unreviewed.filter(matches));
 
 	// Signed out, the review data is unreadable but the corpus is not, so the
 	// queue lists the mockups in corpus order. No status, notes or progress:
 	// those are review data.
-	const browsing = $derived(total === 0 && sessionStore.knownSignedOut);
+	const browsing = $derived(!loaded && sessionStore.knownSignedOut);
 	const corpusShown = $derived(
 		needle === ''
 			? pageStore.pages
@@ -106,7 +123,7 @@
 
 	const counts = $derived.by(() => {
 		const tally: Partial<Record<ReviewStatus, number>> = {};
-		for (const p of $pagesStore) tally[p.status] = (tally[p.status] ?? 0) + 1;
+		for (const p of review.rows) tally[p.status] = (tally[p.status] ?? 0) + 1;
 		return tally;
 	});
 
@@ -162,7 +179,7 @@
 	     render from the static corpus, which is exactly when a reviewer is
 	     most likely to think the tool is broken. That case gets the action
 	     that fixes it. -->
-	{#if total === 0}
+	{#if !loaded}
 		{#if sessionStore.knownSignedOut}
 			<p class="text-sm text-sfds-slate-l3">
 				<a href={resolve('/login')} class="font-semibold text-sfds-action hover:underline"
@@ -201,7 +218,7 @@
 		</section>
 	{/if}
 
-	{#if total > 0 || browsing}
+	{#if loaded || browsing}
 		<div>
 			<label for="queue-filter" class="sr-only">Filter pages</label>
 			<input
@@ -213,7 +230,7 @@
 				class="w-full rounded-[3px] border border-sfds-grey-l2 bg-white px-2.5 py-1.5 text-[13px] text-sfds-black placeholder:text-sfds-slate-l3 focus:border-sfds-action focus:ring-1 focus:ring-sfds-action focus:outline-none"
 			/>
 		</div>
-		{#if (browsing ? corpusShown : shown).length === 0}
+		{#if (browsing ? corpusShown.length : shown.length + unreviewedShown.length) === 0}
 			<p role="status" class="text-sm text-sfds-slate-l3">No pages match “{query.trim()}”.</p>
 		{/if}
 	{/if}
@@ -249,4 +266,43 @@
 			</section>
 		{/if}
 	{/each}
+
+	<!-- Corpus pages with no review row. They open like any other page, but the
+	     decision control has no row to write to and the app cannot create one
+	     (the table has no INSERT policy), so they are listed apart rather than
+	     mixed into Undecided, where they would look decidable. -->
+	{#if loaded && unreviewedShown.length > 0}
+		<section data-testid="queue-unreviewed">
+			<h3 class="mb-1 flex items-center justify-between">
+				<span class="text-[11px] font-bold tracking-[0.08em] text-sfds-slate-l3 uppercase">
+					Not in the review yet
+				</span>
+				<span
+					class="inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-sfds-grey-l2/70 px-1.5 text-[11px] font-bold text-sfds-black tabular-nums"
+				>
+					{unreviewedShown.length}
+				</span>
+			</h3>
+			<p class="mb-2 text-xs text-sfds-slate-l3">
+				These pages have no review record, so they can't be decided until one is added.
+			</p>
+			<ul class="space-y-0.5">
+				{#each unreviewedShown as id (id)}
+					<li>{@render queueLink(id, titleFor(id), corpusFor(id)?.type)}</li>
+				{/each}
+			</ul>
+		</section>
+	{/if}
+
+	<!-- Rows for pages retired from the corpus. Not links: `/review/[slug]`
+	     404s on a slug the corpus no longer has. Named, so the gap between the
+	     table and the count is explained rather than silent. -->
+	{#if review.retired.length > 0}
+		<p class="text-xs text-sfds-slate-l3" data-testid="queue-retired">
+			{review.retired.length}
+			{review.retired.length === 1 ? 'review record belongs' : 'review records belong'} to pages no longer
+			in the mockups, and {review.retired.length === 1 ? 'is' : 'are'} left out of the count:
+			{review.retired.map((p) => p.path).join(', ')}.
+		</p>
+	{/if}
 </nav>
