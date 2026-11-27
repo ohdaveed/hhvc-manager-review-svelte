@@ -3,7 +3,7 @@
  * corpus pages.
  *
  * The reserved prefix is the distinction, rather than a `kind` column:
- * `firstQueuePath` and `nextUndecidedPath` already return a `path` and every
+ * `queueOrder` and `nextUndecidedPath` already return a `path` and every
  * caller links from it, so the path is the only value that has to carry it.
  *
  * `reviewHrefFor` is the one place a `pages.path` becomes a link. Drafts render

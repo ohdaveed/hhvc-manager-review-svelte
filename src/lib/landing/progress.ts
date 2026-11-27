@@ -1,5 +1,5 @@
 import { reviewHrefFor } from '$lib/corpus/draftPath';
-import type { ReviewPage } from '$lib/stores/reviewState';
+import { queueOrder, type ReviewPage } from '$lib/stores/reviewState';
 
 /**
  * How far through the review a reviewer is, and where to go next.
@@ -18,16 +18,15 @@ export function reviewProgress(pages: ReviewPage[]): {
 	nextPath: string | undefined;
 	nextHref: `/review/${string}` | undefined;
 } {
-	// Deliberately NOT `firstQueuePath`. That loops QUEUE_STATUS_ORDER, whose
-	// first entry is `needs-review`, so while any undecided page exists the two
-	// are identical. They differ only when everything is decided: there
-	// `firstQueuePath` falls through to an APPROVED page, and Continue would
-	// point at a page with nothing left to resume. `undefined` is right.
-	const next = pages.find((p) => p.status === 'needs-review');
+	// The first undecided row in the queue's order, so Continue lands on the
+	// row the sidebar shows first among those still to do. `undefined` once
+	// everything is decided: there is nothing left to resume.
+	const undecided = new Set(pages.filter((p) => p.status === 'needs-review').map((p) => p.path));
+	const next = queueOrder(pages).find((path) => undecided.has(path));
 	return {
-		decided: pages.filter((p) => p.status !== 'needs-review').length,
+		decided: pages.length - undecided.size,
 		total: pages.length,
-		nextPath: next?.path,
-		nextHref: next ? reviewHrefFor(next.path) : undefined
+		nextPath: next,
+		nextHref: next ? reviewHrefFor(next) : undefined
 	};
 }
