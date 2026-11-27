@@ -65,7 +65,6 @@ describe('corpus field keys', () => {
 			'sf.gov/information/integrated-pest-management-for-property-owners-and-managers',
 			'primary-source-uc-ipm-guide-for-property-managers'
 		],
-		['sf.gov/information/learn-what-hhvc-can-inspect', 'use-this-page-before-you-report'],
 		['sf.gov/information/learn-what-hhvc-can-inspect', 'how-to-choose-the-right-page'],
 		['sf.gov/resource/guides-in-other-languages', 'about-these-guides'],
 		['sf.gov/report/healthy-housing-inspections-annual-summary', 'about-these-figures'],

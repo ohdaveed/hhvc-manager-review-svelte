@@ -17,16 +17,16 @@ export const rodentsReport = {
 	},
 	reading: 'Grade 6',
 	editorNote:
-		'Report regroup (Decided, Nov 24, 2026), built 2026-11-25. Replaces "Report rats, mice, and other four-legged problems" in place, so its review status, notes and edits carry over: this page is one of the 9 condition pages. Scope is the Decided one: rats and mice, their droppings and burrows, and the mites that come with them. Live raccoons are named only to say the owner hires a private wildlife company. Raccoon droppings belong to the animal waste page, which is not built yet. Bats are left out on purpose (owner, Nov 25, 2026): the old page covered them, but bat reports are rare. Shared report text (reporting anonymously, the landlord notice, reporting for someone else, language help) now lives on What happens after you report and Tenant rights, per the Decided shared-content rule. The "While you wait" section is the Supporting information block requested by the manager.',
+		'Report regroup (Decided, Nov 24, 2026), built 2026-11-25. Replaces "Report rats, mice, and other four-legged problems" in place, so its review status, notes and edits carry over: this page is one of the 9 condition pages. Scope is the Decided one: rats and mice, their droppings and burrows, and the mites that come with them. Live raccoons are named only in a one-line scope note in What to know (we inspect for rats and mice, not live wildlife). Raccoon droppings belong to the animal waste page, which is not built yet. Bats are left out on purpose (owner, Nov 25, 2026): the old page covered them, but bat reports are rare. Shared report text (reporting anonymously, the landlord notice, reporting for someone else, language help) now lives on What happens after you report and Tenant rights, per the Decided shared-content rule. The "While you wait" section is the Supporting information block requested by the manager. Restructured 2026-11-26 from a reading-flow review: What to know now leads with If you rent and holds who can report and when to report now (Karl allows 2 Things to know items), the standalone Health Code section folded into that item, and While you wait is collapsed and cut to immediate tips.',
 	whatToKnow: {
 		thingsToKnow: [
 			{
-				label: 'Raccoons and other wildlife',
-				text: 'We do not remove live animals. The property owner hires a private wildlife company to remove live raccoons.'
+				label: 'If you rent',
+				text: 'The [Health Code](https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890) requires property owners to keep buildings free of rats and mice. Tell your landlord first, unless the problem is urgent. [Tenant rights when reporting housing conditions](tenantRights) explains how long to wait.'
 			},
 			{
-				label: 'If you rent',
-				text: 'Tell your landlord first, unless the problem is urgent. [Tenant rights when reporting housing conditions](tenantRights) explains how long to wait.'
+				label: 'What you can report',
+				text: 'You can report a problem in your home, a shared area, or at work, or report for someone else. We inspect for rats and mice, not live wildlife like raccoons.'
 			}
 		]
 	},
@@ -42,7 +42,7 @@ export const rodentsReport = {
 						'Have these details ready before you start. Only share what applies to your situation:'
 					],
 					bullets: [
-						'**What you saw:** Rats or mice, droppings, burrows, gnaw marks, or bites from tiny mites. Mites often come with rats and mice.',
+						'**What you saw:** Rats, mice, droppings, burrows, gnaw marks, or mite bites.',
 						'**Where it is:** The address, and whether you saw it inside, outside, or in a shared area.',
 						'**When it started:** How long this has been happening.',
 						'**Other issues:** Any garbage, clutter, pet waste, holes, or overgrown plants nearby.',
@@ -57,65 +57,34 @@ export const rodentsReport = {
 				},
 				{
 					title: 'Start your report',
-					text: [
-						'Use 311 to report rats or mice to the City. If the problem is urgent, report now. You can report a problem in your home, a shared area, or at work, or report for someone else.',
-						'Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.'
-					],
+					text: ['Use 311 to report rats or mice to the City.'],
 					button: 'Report through 311',
-					karl: 'what_to_do -> Section. Section title: "Start your report". Section specifics: Text block (these 2 paragraphs, the second being the one-line SRO note every report page carries, Decided) + Button link block ("Report through 311").'
+					after: [
+						'**Other ways to report**',
+						'**Call 311 to make a report**',
+						'415-701-2311 if you are outside of San Francisco',
+						'TDD/TTY 711 if you are deaf, hard of hearing, or have a speech disability',
+						'**Use our Mobile App**',
+						'Download our mobile app to report a problem and track your request. Available on Android or iOS.',
+						'[Learn more about the SF311 mobile app](https://www.sf.gov/sf311-mobile-app)'
+					],
+					karl: 'what_to_do -> Section. Section title: "Start your report". Section specifics: Text block (this paragraph) + Button link block ("Report through 311") + Text block ("Other ways to report", the `after` lines). The one-line SRO note every report page carried was removed on 2026-11-26 (owner). Who can report and when to report now moved to What to know on 2026-11-26 (page review), so eligibility and timing are read before the details are gathered.'
 				}
 			]
 		},
 		{
 			heading: 'While you wait: tips to help with the problem',
-			karl: 'Maps to supporting_information (Accordions). This accordion uses the mockup-only open flag so the tips are visible without a click — flag for Digital Services that the real accordion renders collapsed. Contents: one Text block (lead paragraph + IPM bullets) + a Resources-style external links list (UC IPM, CDC, NEHA). The pet waste tip is the Decided cross-link line ("Pick up pet waste daily. It feeds rats."), linked to the animal waste page. The list went from 6 bullets to 5 on 2026-11-26 (SF.gov keeps a bulleted list to 3 to 5 items): "Remove hiding places" joined "Close off entry points", whose label now names both. Joining the pet waste tip to "Cut off food" instead would have made a 5-sentence bullet, past SF.gov\'s 3.',
+			karl: 'Maps to supporting_information (Accordions), collapsed by default as the real accordion renders. Contents: one Text block (lead paragraph + bullets). Cut on 2026-11-26 (page review) to the tips a resident can act on right away, so the accordion does not turn a report page into a prevention guide: "Close off entry points and hiding places" and the four external links (UC IPM Rats, UC IPM House mouse, CDC, NEHA) were removed, because Keep rats and mice out of your home, linked from Related pages, already covers sealing and hiding places and carries its own UC IPM and CDC links. The pet waste tip is the Decided cross-link line ("Pick up pet waste daily. It feeds rats."), linked to the animal waste page.',
 			kind: 'body',
 			component: 'supporting',
-			open: true,
 			paragraphs: [
 				'It may take us a few weekdays to get back to you. In the meantime, here are a few things you can do to help with the problem.'
 			],
 			bullets: [
-				'**Close off entry points and hiding places:** Seal any gap bigger than 1/4 inch. Use rodent-proof materials like hardware cloth, copper mesh, or sheet metal. Clear clutter and trim overgrown plants where rats and mice hide or nest.',
 				'**Cut off food:** Store food and garbage in bins with tight-fitting lids. Do not leave pet food out overnight.',
 				'**Pick up pet waste daily:** It feeds rats. [Report animal waste on a property](animalWasteReport)',
 				'**Trap safely:** Use snap traps indoors. Do not use poisons — they can harm children, pets, and wildlife.',
 				'**Clean up safely:** Wet down droppings with a disinfectant and wear gloves. Never dry-sweep or vacuum droppings.'
-			],
-			cards: [
-				{
-					title: 'UC IPM Pest Notes: Rats',
-					text: 'University of California guidance on identifying and managing rats.',
-					url: 'https://ipm.ucanr.edu/home-and-landscape/rats/pest-notes/',
-					karl: 'External link inside the supporting_information accordion. Third-party UC IPM reference in place of a City-maintained prevention page (manager directive: do not reinvent the wheel).'
-				},
-				{
-					title: 'UC IPM Pest Notes: House mouse',
-					text: 'University of California guidance on managing house mice.',
-					url: 'https://ipm.ucanr.edu/home-and-landscape/house-mouse/',
-					karl: 'External link inside the supporting_information accordion. Third-party UC IPM reference.'
-				},
-				{
-					title: 'CDC: Preventing rodent infestations',
-					text: 'Federal guidance on keeping rodents out of your home.',
-					url: 'https://www.cdc.gov/rodents/prevention/index.html',
-					karl: 'External link inside the supporting_information accordion. Third-party CDC reference.'
-				},
-				{
-					title: 'NEHA: Vector control resources',
-					text: 'National Environmental Health Association vector control resources.',
-					url: 'https://www.neha.org/vector-control',
-					karl: 'External link inside the supporting_information accordion. Third-party NEHA reference.'
-				}
-			]
-		},
-		{
-			heading: 'What the Health Code requires',
-			karl: 'custom_section -> title_and_text. Title = this heading, Text = the Article 11 line (HHVC content standards Ch. 8.7.1). The municipal code is cited per Ch. 8.7.2 as an inline link, the last bullet: custom_section has no Button link block (U1), so the "View Article 11" button it used to carry had no Karl destination.',
-			kind: 'body',
-			bullets: [
-				'San Francisco Health Code Article 11 requires property owners to keep buildings clean, watertight, and completely free of rodent infestations.',
-				'[View Health Code Article 11](https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890)'
 			]
 		},
 		{

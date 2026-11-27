@@ -111,6 +111,7 @@ type Step = {
 	buttonUrl?: unknown;
 	callout?: Callout;
 	bullets?: unknown;
+	after?: unknown;
 };
 type PartnerAgency = { title?: unknown; url?: unknown };
 
@@ -194,6 +195,9 @@ export function extractCopy(page: CorpusPage): CopyMap {
 			});
 			set(`sections.${key}.steps.${i}.button`, step.button);
 			set(`sections.${key}.steps.${i}.buttonUrl`, step.buttonUrl);
+			list(step.after).forEach((entry, j) => {
+				setEntryText(`sections.${key}.steps.${i}.after.${j}`, entry);
+			});
 			if (step.callout) {
 				set(`sections.${key}.steps.${i}.callout.title`, step.callout.title);
 				set(`sections.${key}.steps.${i}.callout.text`, step.callout.text);

@@ -39,18 +39,31 @@ const withSection = (page: Page, heading: string, edit: (s: Section) => Section)
 const VIEW_ARTICLE_11 =
 	'https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890';
 
-/** U1: a section button outside a step. */
-const rodentsReport: Page = withSection(
-	base('rodentsReport'),
-	'What the Health Code requires',
-	(s) => ({
-		...s,
-		bullets: (s.bullets as unknown[]).slice(0, 1),
+/**
+ * U1: a section button outside a step. The page no longer has this section at
+ * all (folded into What to know on 2026-11-26), so the overlay adds the whole
+ * section back, before Related pages where it used to sit.
+ */
+const rodentsReport: Page = (() => {
+	const page = base('rodentsReport');
+	const at = page.sections.findIndex((s) => s.heading === 'Related pages');
+	if (at < 0) throw new Error('gapFixtures: no Related pages section on rodentsReport');
+	const healthCode: Section = {
+		heading: 'What the Health Code requires',
+		karl: 'custom_section -> title_and_text. Title = this heading, Text = the Article 11 line.',
+		kind: 'body',
+		bullets: [
+			'San Francisco Health Code Article 11 requires property owners to keep buildings clean, watertight, and completely free of rodent infestations.'
+		],
 		button: 'View Article 11',
 		buttonUrl: VIEW_ARTICLE_11,
 		buttonStyle: 'secondary'
-	})
-);
+	};
+	return {
+		...page,
+		sections: [...page.sections.slice(0, at), healthCode, ...page.sections.slice(at)]
+	};
+})();
 
 /** U3: steps on an Information page. */
 const afterReport: Page = withSection(

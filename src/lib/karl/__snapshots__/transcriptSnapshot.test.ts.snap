@@ -222,21 +222,6 @@ These timelines represent general enforcement standards. Actual correction deadl
 - **Sewage Backups (48 to 72 hours):** Raw sewage backups need immediate correction. The standard 30-day compliance window does not apply.
 - **All Other Violations (30 days):** Most cited conditions must be corrected within 30 days. These include overgrown vegetation, trash piles, rodent harborages, general sanitation problems, minor gaps or cracks, and mold remediation.
 - **Bed Bug Treatment:** A property owner or manager must initiate professional treatment within 2 working days of confirmation.
-- **Extensions:** HHVC may offer an extension to the compliance deadline if the property owner contacts the inspector before the deadline.
-
-### Information section — \`information_section\` [TYPE] — page not approved
-
-**Title:**
-
-If a deadline is missed
-
-**Text:**
-
-If a property owner misses the deadline, HHVC may charge reinspection fees. These are $256/hour for inspectors and $234/hour for technicians.
-
-Invoices must be paid within 30 days. Unpaid bills get a $10 or $30 late penalty, and interest accrues at 1.5% per month.
-
-Persistent violations can result in citations, civil liabilities, or a Director's Hearing to recover attorneys' fees and administrative abatement costs.
 
 ### Information section — \`information_section\` [TYPE] — page not approved
 
@@ -249,7 +234,6 @@ What to expect on timing and results
 - HHVC cannot promise an exact time or date when an inspector will call you or arrive at your building.
 - We cannot promise a specific inspection finding or guarantee that a Notice of Violation will be issued.
 - It does not replace a notice, citation, or legal document.
-- Complaints are not assigned instantly. 311 routing and HHVC inspector assignment can take a few days and are processed on weekdays.
 
 ### Topics — \`topics\` [TYPE] — page not approved
 
@@ -367,8 +351,6 @@ For dog waste on a sidewalk or street, ask 311 for street cleaning instead.
 
 Pigeon droppings have their own page: [Report pigeon droppings, nesting, or feeding](pigeonReport).
 
-Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.
-
 **Section 2 — Section specifics → Button link → Link text:**
 
 Report through 311
@@ -377,9 +359,26 @@ Report through 311
 
 None
 
+**Section 2 — Section specifics → Text (after the Button link):**
+
+**Other ways to report**
+
+**Call 311 to make a report**
+
+415-701-2311 if you are outside of San Francisco
+
+TDD/TTY 711 if you are deaf, hard of hearing, or have a speech disability
+
+**Use our Mobile App**
+
+Download our mobile app to report a problem and track your request. Available on Android or iOS.
+
+[Learn more about the SF311 mobile app](https://www.sf.gov/sf311-mobile-app)
+
 **Links in this text — recreate each with the Link tool, do not paste them:**
 
 - "Report pigeon droppings, nesting, or feeding" → shape 5 — rich text Link tool → Internal link → "Report pigeon droppings, nesting, or feeding"
+- "Learn more about the SF311 mobile app" → shape 5 — rich text Link tool → External link
 
 ### Accordion title and text — \`supporting_information\` [TYPE] — page not approved
 
@@ -705,6 +704,22 @@ If Environmental Health finds a violation, they issue a notice of violation (NOV
 
 **Title:**
 
+If you need more time or miss a deadline
+
+**Text:**
+
+Contact the inspector named on your notice before the deadline if you need more time. HHVC may give you an extension.
+
+If you miss the deadline, HHVC may charge reinspection fees. These are $256/hour for inspectors and $234/hour for technicians.
+
+Invoices must be paid within 30 days. Unpaid bills get a $10 or $30 late penalty, and interest accrues at 1.5% per month.
+
+Persistent violations can result in citations, civil liabilities, or a Director's Hearing to recover attorneys' fees and administrative abatement costs.
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
 Respond to pest reports
 
 **Text:**
@@ -729,7 +744,6 @@ Keep records and stay in compliance
 **Text:**
 
 - Keep records of complaints, inspections, and pest control services for at least 2 years. Make them available to the Department of Public Health on request.
-- Pay your annual Healthy Housing fee if your building has 3 or more rental units.
 - Complete pest-management training if the Director requires it after repeat violations.
 - [See the full owner-responsibility table](article11Guide)
 
@@ -1171,8 +1185,6 @@ Start your report
 
 Use 311 to report bed bugs to the City, especially if the owner does not respond or start treatment. You can report bed bugs in your unit or a neighbor’s unit, or report for someone else.
 
-Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.
-
 **Section 3 — Section specifics → Button link → Link text:**
 
 Report through 311
@@ -1180,6 +1192,26 @@ Report through 311
 **Section 3 — Button link → destination:**
 
 None
+
+**Section 3 — Section specifics → Text (after the Button link):**
+
+**Other ways to report**
+
+**Call 311 to make a report**
+
+415-701-2311 if you are outside of San Francisco
+
+TDD/TTY 711 if you are deaf, hard of hearing, or have a speech disability
+
+**Use our Mobile App**
+
+Download our mobile app to report a problem and track your request. Available on Android or iOS.
+
+[Learn more about the SF311 mobile app](https://www.sf.gov/sf311-mobile-app)
+
+**Links in this text — recreate each with the Link tool, do not paste them:**
+
+- "Learn more about the SF311 mobile app" → shape 5 — rich text Link tool → External link
 
 ### Accordion title and text — \`supporting_information\` [TYPE] — page not approved
 
@@ -1429,8 +1461,6 @@ Treatment only works if the unit is ready. The pest control company will give yo
 
 [What to expect when your building is treated for pests](pestTreatmentInfo)
 
-- **Let them in.** You must allow the owner or pest control company into your unit after you get notice that they will inspect or treat.
-- **Make space.** Move furniture away from the walls and clear clutter so they can reach every area.
 - **Do not remove items before treatment.** Only take out bagged clothing for laundry, or items the pest control company tells you to remove.
 - **Wash and dry all clothing and bedding.** Use hot water and the hottest dryer setting for at least 45 minutes. Then store it in new, clean, sealed plastic bags.
 - **Wait until you are cleared.** Do not move back in until the pest control company says it is safe. Leave bed bug monitors in place: monitoring continues for 4 weeks after the last treatment to make sure the bed bugs are gone.
@@ -1451,11 +1481,16 @@ What owners and managers need to do
 
 **Text:**
 
+Bed bugs need more from owners than other pests. The duties for every treatment, like notice before pesticides, are on [What to expect when your building is treated for pests](pestTreatmentInfo).
+
 - **Give tenants sealable plastic bags** for clothing before and after it is washed.
 - **Share a list of free and low-cost help** for unit preparation and laundry.
 - **Arrange reasonable accommodations** for tenants with a documented disability, such as help preparing the room or a different treatment method.
-- **Give advance notice of any pesticide treatment.** Tell tenants the name of the product and the phone number for Poison Control.
 - **Keep monitoring for 4 weeks after the last treatment.** Use bed bug monitors, such as interceptor cups under the bed legs, to check that the bed bugs are gone.
+
+**Links in this text — recreate each with the Link tool, do not paste them:**
+
+- "What to expect when your building is treated for pests" → shape 5 — rich text Link tool → Internal link → "What to expect when your building is treated for pests"
 
 ### Information section — \`information_section\` [TYPE] — page not approved
 
@@ -2243,8 +2278,6 @@ Start your report
 
 Use 311 to report garbage, clutter, or overgrown plants to the City. If the problem is urgent, report now. You can report a problem where you live or on a nearby property, or report for someone else.
 
-Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.
-
 **Section 2 — Section specifics → Button link → Link text:**
 
 Report through 311
@@ -2252,6 +2285,26 @@ Report through 311
 **Section 2 — Button link → destination:**
 
 None
+
+**Section 2 — Section specifics → Text (after the Button link):**
+
+**Other ways to report**
+
+**Call 311 to make a report**
+
+415-701-2311 if you are outside of San Francisco
+
+TDD/TTY 711 if you are deaf, hard of hearing, or have a speech disability
+
+**Use our Mobile App**
+
+Download our mobile app to report a problem and track your request. Available on Android or iOS.
+
+[Learn more about the SF311 mobile app](https://www.sf.gov/sf311-mobile-app)
+
+**Links in this text — recreate each with the Link tool, do not paste them:**
+
+- "Learn more about the SF311 mobile app" → shape 5 — rich text Link tool → External link
 
 ### Accordion title and text — \`supporting_information\` [TYPE] — page not approved
 
@@ -2573,8 +2626,6 @@ Use 311 to report cockroaches, fleas, flies, wasps, or mites to the City. If the
 
 Bed bugs and mosquitoes have their own pages: [Report bed bugs](bedBugReport) and [Report mosquitoes or standing water](mosquitoReport).
 
-Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.
-
 **Section 2 — Section specifics → Button link → Link text:**
 
 Report through 311
@@ -2582,6 +2633,22 @@ Report through 311
 **Section 2 — Button link → destination:**
 
 None
+
+**Section 2 — Section specifics → Text (after the Button link):**
+
+**Other ways to report**
+
+**Call 311 to make a report**
+
+415-701-2311 if you are outside of San Francisco
+
+TDD/TTY 711 if you are deaf, hard of hearing, or have a speech disability
+
+**Use our Mobile App**
+
+Download our mobile app to report a problem and track your request. Available on Android or iOS.
+
+[Learn more about the SF311 mobile app](https://www.sf.gov/sf311-mobile-app)
 
 **Section 3 — Section title:**
 
@@ -2599,6 +2666,7 @@ PLACEHOLDER: what happens when the nest is on private property.
 
 - "Report bed bugs" → shape 5 — rich text Link tool → Internal link → "Report bed bugs"
 - "Report mosquitoes or standing water" → shape 5 — rich text Link tool → Internal link → "Report mosquitoes or standing water"
+- "Learn more about the SF311 mobile app" → shape 5 — rich text Link tool → External link
 
 ### Accordion title and text — \`supporting_information\` [TYPE] — page not approved
 
@@ -3425,8 +3493,6 @@ Start your report
 
 Use 311 to report mold caused by humidity or condensation. You can report mold in your home or in a shared area, or report for someone else.
 
-Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.
-
 **Section 4 — Section specifics → Button link → Link text:**
 
 Report through 311
@@ -3434,6 +3500,26 @@ Report through 311
 **Section 4 — Button link → destination:**
 
 None
+
+**Section 4 — Section specifics → Text (after the Button link):**
+
+**Other ways to report**
+
+**Call 311 to make a report**
+
+415-701-2311 if you are outside of San Francisco
+
+TDD/TTY 711 if you are deaf, hard of hearing, or have a speech disability
+
+**Use our Mobile App**
+
+Download our mobile app to report a problem and track your request. Available on Android or iOS.
+
+[Learn more about the SF311 mobile app](https://www.sf.gov/sf311-mobile-app)
+
+**Links in this text — recreate each with the Link tool, do not paste them:**
+
+- "Learn more about the SF311 mobile app" → shape 5 — rich text Link tool → External link
 
 ### Accordion title and text — \`supporting_information\` [TYPE] — page not approved
 
@@ -3695,8 +3781,6 @@ Start your report
 
 Use 311 to report mosquitoes or standing water to the City. If the problem is urgent, report now. You can report mosquitoes where you live or standing water you see nearby, or report for someone else.
 
-Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.
-
 **Section 2 — Section specifics → Button link → Link text:**
 
 Report through 311
@@ -3704,6 +3788,22 @@ Report through 311
 **Section 2 — Button link → destination:**
 
 None
+
+**Section 2 — Section specifics → Text (after the Button link):**
+
+**Other ways to report**
+
+**Call 311 to make a report**
+
+415-701-2311 if you are outside of San Francisco
+
+TDD/TTY 711 if you are deaf, hard of hearing, or have a speech disability
+
+**Use our Mobile App**
+
+Download our mobile app to report a problem and track your request. Available on Android or iOS.
+
+[Learn more about the SF311 mobile app](https://www.sf.gov/sf311-mobile-app)
 
 **Section 3 — Section title:**
 
@@ -3720,6 +3820,10 @@ Report a dead bird
 **Section 3 — Button link → destination:**
 
 External URL → https://westnile.ca.gov/report
+
+**Links in this text — recreate each with the Link tool, do not paste them:**
+
+- "Learn more about the SF311 mobile app" → shape 5 — rich text Link tool → External link
 
 ### Accordion title and text — \`supporting_information\` [TYPE] — page not approved
 
@@ -4103,14 +4207,7 @@ Use IPM to prevent pests
 
 **Text:**
 
-Property owners, managers, and building operators must keep buildings free of vermin under San Francisco health and housing rules.
-
 Integrated Pest Management (IPM) is a prevention-first approach. It uses inspection, maintenance, sanitation, exclusion, monitoring, and targeted treatment to reduce pests and limit heavy pesticide use. This sits under Article 11 of the San Francisco Health Code.
-
-- Prevent pests before infestations spread
-- Fix building conditions that attract or shelter pests
-- Use records and monitoring to find repeated problems
-- Share clear instructions with residents and staff
 
 ### Information section — \`information_section\` [TYPE] — page not approved
 
@@ -4190,11 +4287,8 @@ Conditions outside and in shared areas that attract pests
 
 **Text:**
 
-San Francisco Department of Public Health (SFDPH) Director's Rules and Regulations set legal requirements for owners and managers. These apply to rental property and cover preventing and controlling rodents and other vectors.
+The legal requirements, including the 72-hour response, recordkeeping and licensed pest control, are on [Article 11 compliance for property owners](article11Compliance). Two more practices keep a building ready:
 
-- **Investigate reports:** Investigate any tenant reports of pest activity within 72 hours (Director's Rules §V.2).
-- **Recordkeeping:** Keep accurate records of pest complaints, inspections, and pest control services for at least 2 years. Make these records available to DPH on request.
-- **Hire licensed professionals:** Hire only licensed Pest Control Operators (PCOs) to apply pesticides or conduct rat trapping.
 - **Garbage management:** Provide enough rigid plastic or metal containers with tight-fitting lids. Ensure the garbage area is clean and serviced regularly to prevent overflow.
 - **Staff training:** Train building staff on pest recognition, sanitation, exclusion, and safe disposal of infested items.
 
@@ -4205,6 +4299,10 @@ Property owner responsibilities
 **Entry 1 — Text:**
 
 See fees, violation response, and other Article 11 obligations on SF.gov.
+
+**Links in this text — recreate each with the Link tool, do not paste them:**
+
+- "Article 11 compliance for property owners" → shape 5 — rich text Link tool → Internal link → "Article 11 compliance for property owners"
 
 ### Information section — \`information_section\` [TYPE] — page not approved
 
@@ -4879,7 +4977,6 @@ Most treatments need more than one visit. Pests that were missed or hatched late
 
 - **Stay out until you are told it is safe** to come back.
 - **Do not clean away baits or dusts** the technician left in cracks and corners.
-- **For bed bugs, leave monitors in place.** Monitoring continues for 4 weeks after the last treatment.
 - **Do not use your own sprays or bug bombs.** They can stop the treatment from working. If you buy a product yourself, choose a "Caution" label, not a "Warning" or "Danger" label.
 - **Keep notes and photos** of pests you still see, and share them with your landlord in writing.
 
@@ -5269,8 +5366,6 @@ Start your report
 
 Use 311 to report pigeon droppings, nesting, roosting, or feeding to the City. You can report pigeons on your building or nearby, or report for someone else.
 
-Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.
-
 **Section 2 — Section specifics → Button link → Link text:**
 
 Report through 311
@@ -5278,6 +5373,22 @@ Report through 311
 **Section 2 — Button link → destination:**
 
 None
+
+**Section 2 — Section specifics → Text (after the Button link):**
+
+**Other ways to report**
+
+**Call 311 to make a report**
+
+415-701-2311 if you are outside of San Francisco
+
+TDD/TTY 711 if you are deaf, hard of hearing, or have a speech disability
+
+**Use our Mobile App**
+
+Download our mobile app to report a problem and track your request. Available on Android or iOS.
+
+[Learn more about the SF311 mobile app](https://www.sf.gov/sf311-mobile-app)
 
 **Section 3 — Section title:**
 
@@ -5288,6 +5399,10 @@ If someone is feeding pigeons
 Tell us where and when the feeding happens. The person feeding them may be a neighbor, not the property owner.
 
 PLACEHOLDER: what HHVC does when the person feeding pigeons is not the property owner.
+
+**Links in this text — recreate each with the Link tool, do not paste them:**
+
+- "Learn more about the SF311 mobile app" → shape 5 — rich text Link tool → External link
 
 ### Accordion title and text — \`supporting_information\` [TYPE] — page not approved
 
@@ -6157,22 +6272,23 @@ _Optional, and this page leaves it out. If the form has inserted a Cost block, r
 
 **Block 1 — Title:**
 
-Raccoons and other wildlife
+If you rent
 
 **Block 1 — Text:**
 
-We do not remove live animals. The property owner hires a private wildlife company to remove live raccoons.
+The [Health Code](https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890) requires property owners to keep buildings free of rats and mice. Tell your landlord first, unless the problem is urgent. [Tenant rights when reporting housing conditions](tenantRights) explains how long to wait.
 
 **Block 2 — Title:**
 
-If you rent
+What you can report
 
 **Block 2 — Text:**
 
-Tell your landlord first, unless the problem is urgent. [Tenant rights when reporting housing conditions](tenantRights) explains how long to wait.
+You can report a problem in your home, a shared area, or at work, or report for someone else. We inspect for rats and mice, not live wildlife like raccoons.
 
 **Links in this text — recreate each with the Link tool, do not paste them:**
 
+- "Health Code" → shape 5 — rich text Link tool → External link
 - "Tenant rights when reporting housing conditions" → shape 5 — rich text Link tool → Internal link → "Tenant rights when reporting housing conditions"
 
 ### What to Do — \`what_to_do\` [TYPE] — page not approved
@@ -6189,7 +6305,7 @@ Gather your details
 
 Have these details ready before you start. Only share what applies to your situation:
 
-- **What you saw:** Rats or mice, droppings, burrows, gnaw marks, or bites from tiny mites. Mites often come with rats and mice.
+- **What you saw:** Rats, mice, droppings, burrows, gnaw marks, or mite bites.
 - **Where it is:** The address, and whether you saw it inside, outside, or in a shared area.
 - **When it started:** How long this has been happening.
 - **Other issues:** Any garbage, clutter, pet waste, holes, or overgrown plants nearby.
@@ -6205,9 +6321,7 @@ Start your report
 
 **Section 2 — Section specifics → Text:**
 
-Use 311 to report rats or mice to the City. If the problem is urgent, report now. You can report a problem in your home, a shared area, or at work, or report for someone else.
-
-Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.
+Use 311 to report rats or mice to the City.
 
 **Section 2 — Section specifics → Button link → Link text:**
 
@@ -6216,6 +6330,26 @@ Report through 311
 **Section 2 — Button link → destination:**
 
 None
+
+**Section 2 — Section specifics → Text (after the Button link):**
+
+**Other ways to report**
+
+**Call 311 to make a report**
+
+415-701-2311 if you are outside of San Francisco
+
+TDD/TTY 711 if you are deaf, hard of hearing, or have a speech disability
+
+**Use our Mobile App**
+
+Download our mobile app to report a problem and track your request. Available on Android or iOS.
+
+[Learn more about the SF311 mobile app](https://www.sf.gov/sf311-mobile-app)
+
+**Links in this text — recreate each with the Link tool, do not paste them:**
+
+- "Learn more about the SF311 mobile app" → shape 5 — rich text Link tool → External link
 
 ### Accordion title and text — \`supporting_information\` [TYPE] — page not approved
 
@@ -6227,7 +6361,6 @@ While you wait: tips to help with the problem
 
 It may take us a few weekdays to get back to you. In the meantime, here are a few things you can do to help with the problem.
 
-- **Close off entry points and hiding places:** Seal any gap bigger than 1/4 inch. Use rodent-proof materials like hardware cloth, copper mesh, or sheet metal. Clear clutter and trim overgrown plants where rats and mice hide or nest.
 - **Cut off food:** Store food and garbage in bins with tight-fitting lids. Do not leave pet food out overnight.
 - **Pick up pet waste daily:** It feeds rats. [Report animal waste on a property](animalWasteReport)
 - **Trap safely:** Use snap traps indoors. Do not use poisons — they can harm children, pets, and wildlife.
@@ -6236,25 +6369,6 @@ It may take us a few weekdays to get back to you. In the meantime, here are a fe
 **Links in this text — recreate each with the Link tool, do not paste them:**
 
 - "Report animal waste on a property" → shape 5 — rich text Link tool → Internal link → "Report animal waste on a property"
-
-### Custom Section — \`custom_section\` [TYPE] — page not approved
-
-⚠ Inferred mapping — verify the destination before saving.
-
-_Inferred mapping — the field map documents this panel only for supporting/flat sections. Transaction has no generic body stream and this is its only repeatable Title-and-text panel, so verify the destination before saving._
-
-**Title:**
-
-What the Health Code requires
-
-**Text:**
-
-- San Francisco Health Code Article 11 requires property owners to keep buildings clean, watertight, and completely free of rodent infestations.
-- [View Health Code Article 11](https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890)
-
-**Links in this text — recreate each with the Link tool, do not paste them:**
-
-- "View Health Code Article 11" → shape 5 — rich text Link tool → External link
 
 ### Related — \`related\` [CHOOSE] — page not approved
 
@@ -6313,10 +6427,6 @@ Report rats or mice | SF.gov
 **Meta description (\`search_description\`):**
 
 Report rats, mice, droppings, burrows, or rodent mites in a San Francisco home, building, or yard.
-
-## Flags — resolve before saving — page not approved
-
-- \`sections.1.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to supporting_information (Accordions). This accordion uses the mockup-only open flag so the tips are visible without a click — flag for Digital Services t". Resolve it before typing anything from them.
 "
 `;
 
@@ -6372,21 +6482,6 @@ San Francisco splits housing problems across several offices. You do not need to
 - No heat, no hot water, broken plumbing, bad wiring, or a structural repair: the Department of Building Inspection.
 - A rent increase, an eviction notice, or a dispute about your lease: the Rent Board.
 - Not sure, or more than one of these: start with 311.
-
-### Information section — \`information_section\` [TYPE] — page not approved
-
-**Title:**
-
-Check if HHVC can help before you report
-
-**Text:**
-
-This page helps you understand whether Healthy Housing and Vector Control may review a pest, vector, or housing health issue.
-
-Healthy Housing and Vector Control (HHVC) is part of the Environmental Health division. Environmental Health sits in the San Francisco Department of Public Health (DPH). You may see any of these names used across this site — they refer to the same program.
-
-- Tenants, tenant representatives, friends, family members, and employees usually use reporting pages to report active pest or vector problems.
-- Property owners and managers may use this page to understand HHVC scope before asking for prevention guidance or best-practice assistance.
 
 ### Information section — \`information_section\` [TYPE] — page not approved
 
@@ -6523,9 +6618,7 @@ If your problem is not listed
 **Text:**
 
 - Some housing problems are handled by other City programs. For example, structural water intrusion, leaks, and major heating or utility failures go to the [Department of Building Inspection (DBI)](#). DBI handles these under the San Francisco Housing Code (2025).
-- Rent increases, evictions, and lease disputes go to the Rent Board.
 - A fire hazard or a blocked exit goes to the Fire Department.
-- If your problem is not on this list, start with 311. They can send your report to the right place.
 - For lead, pesticides, water quality, food sanitation, or business hygiene, use the [Citywide health nuisance and hazards reporting service](https://www.sf.gov/report-health-nuisance-or-hazards).
 - If you are not sure whether HHVC can review your problem, it is still okay to report it. HHVC will review whether it may involve a housing or pest-related public health concern.
 
@@ -6650,8 +6743,6 @@ Report it right away
 
 Use 311 to report sewage as soon as you see it. Stay away from it, and keep children and pets away. You can report sewage in your home, a yard, or a shared area, or report for someone else.
 
-Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.
-
 **Section 1 — Section specifics → Button link → Link text:**
 
 Report through 311
@@ -6659,6 +6750,22 @@ Report through 311
 **Section 1 — Button link → destination:**
 
 None
+
+**Section 1 — Section specifics → Text (after the Button link):**
+
+**Other ways to report**
+
+**Call 311 to make a report**
+
+415-701-2311 if you are outside of San Francisco
+
+TDD/TTY 711 if you are deaf, hard of hearing, or have a speech disability
+
+**Use our Mobile App**
+
+Download our mobile app to report a problem and track your request. Available on Android or iOS.
+
+[Learn more about the SF311 mobile app](https://www.sf.gov/sf311-mobile-app)
 
 **Section 2 — Section title:**
 
@@ -6684,6 +6791,10 @@ What happens next
 **Section 3 — Section specifics → Text:**
 
 The property owner must hire a plumber to fix the problem. We check that the sewage is removed and the area is cleaned and sanitized.
+
+**Links in this text — recreate each with the Link tool, do not paste them:**
+
+- "Learn more about the SF311 mobile app" → shape 5 — rich text Link tool → External link
 
 ### Accordion title and text — \`supporting_information\` [TYPE] — page not approved
 

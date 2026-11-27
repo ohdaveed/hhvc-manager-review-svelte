@@ -41,9 +41,10 @@ describe('rats report (Transaction pilot)', () => {
 		expect(p.fields.get('whatToKnow.thingsToKnow.1.label')?.label).toBe(
 			'Things to Know · Block 2 · Title'
 		);
-		expect(p.fields.get('sections.what-the-health-code-requires.heading')?.label).toBe(
-			'Custom Section · Title'
-		);
+		// The live page has no Custom Section since 2026-11-26; the gap overlay keeps one.
+		expect(
+			gap('rodentsReport').fields.get('sections.what-the-health-code-requires.heading')?.label
+		).toBe('Custom Section · Title');
 	});
 
 	it('places the agency the page names (U6, narrowed)', () => {
@@ -55,7 +56,7 @@ describe('rats report (Transaction pilot)', () => {
 
 	it('has nothing left that will not carry over', () => {
 		expect(p.unplaced).toEqual([]);
-		expect(statusOf(p, 'sections.what-the-health-code-requires.bullets.1')).toBe('unconfirmed');
+		expect([...p.sections.values()].map((s) => s.status)).not.toContain('unconfirmed');
 	});
 
 	it('reports a section-level button as unplaced', () => {
@@ -82,8 +83,10 @@ describe('rats report (Transaction pilot)', () => {
 
 	it('calls the inferred Custom Section mapping unconfirmed, not settled', () => {
 		// "What the Health Code requires" is mapped to custom_section by inference.
-		expect(p.sections.get('what-the-health-code-requires')?.status).toBe('unconfirmed');
-		expect(statusOf(p, 'sections.what-the-health-code-requires.bullets.0')).toBe('unconfirmed');
+		// The live page folded it into What to know (2026-11-26); the overlay keeps it.
+		const g = gap('rodentsReport');
+		expect(g.sections.get('what-the-health-code-requires')?.status).toBe('unconfirmed');
+		expect(statusOf(g, 'sections.what-the-health-code-requires.bullets.0')).toBe('unconfirmed');
 	});
 
 	it('places the rest', () => {
@@ -101,7 +104,13 @@ describe('rats report (Transaction pilot)', () => {
 	it('lists the empty panels the Blueprint draws as placeholders', () => {
 		const empty = p.panels.filter((x) => !x.filled && !x.inert).map((x) => x.rawName);
 		// Cost is optional in Karl (field map E3) and the report pages leave it out.
-		expect(empty).toEqual(['cost', 'special_cases', 'good_for_community', 'topics']);
+		expect(empty).toEqual([
+			'cost',
+			'special_cases',
+			'custom_section',
+			'good_for_community',
+			'topics'
+		]);
 		expect(p.panels.find((x) => x.rawName === 'cost')?.required).toBe(false);
 		expect(p.panels.find((x) => x.rawName === 'redirect_url')?.inert).toBe(true);
 	});
@@ -147,8 +156,8 @@ describe('what happens after you report (Information pilot)', () => {
 			'Information section 4 · Title'
 		);
 		// Two slots later again since "If a problem is found" split into three
-		// sections on 2026-11-26 (deadlines, and what happens if one is missed).
-		expect(p.sections.get('what-this-page-does-not-promise')?.label).toBe('Information section 9');
+		// sections on 2026-11-26, then one back when "If a deadline is missed" moved to the owner page.
+		expect(p.sections.get('what-this-page-does-not-promise')?.label).toBe('Information section 8');
 		expect(p.unplaced).toEqual([]);
 	});
 
@@ -292,10 +301,11 @@ describe('outline summary', () => {
 		expect(outlineSummary(gap('rodentsReport'))).toBe(
 			'4 sections: 3 go into Karl, 1 unconfirmed. 1 thing won’t carry over to Karl.'
 		);
-		expect(outlineSummary(of('rodentsReport'))).toBe('4 sections: 3 go into Karl, 1 unconfirmed.');
-		// 9, not 7, since "If a problem is found" split into three sections (2026-11-26).
+		// 3, not 4, since the Health Code section folded into What to know (2026-11-26).
+		expect(outlineSummary(of('rodentsReport'))).toBe('3 sections: 3 go into Karl.');
+		// 8: "If a problem is found" split into three (2026-11-26), then "If a deadline is missed" moved to the owner page.
 		expect(outlineSummary(gap('afterReport'))).toBe(
-			'9 sections: 9 go into Karl. 1 thing won’t carry over to Karl.'
+			'8 sections: 8 go into Karl. 1 thing won’t carry over to Karl.'
 		);
 		expect(outlineSummary(of('ownerHub'))).toBe('4 sections: 3 go into Karl, 1 needs a fix.');
 	});

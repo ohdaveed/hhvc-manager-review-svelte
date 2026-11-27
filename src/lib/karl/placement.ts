@@ -225,6 +225,7 @@ function subLabel(rest: string, type = ''): string {
 		if (/^(text|bullets)\.\d+$/.test(field)) return `Section ${n} · Text`;
 		if (field === 'button') return `Section ${n} · Button link`;
 		if (field === 'buttonUrl') return `Section ${n} · Button link (URL)`;
+		if (/^after\.\d+$/.test(field)) return `Section ${n} · Text (after the button)`;
 		if (field.startsWith('callout.')) return `Section ${n} · Callout`;
 		return `Section ${n}`;
 	}

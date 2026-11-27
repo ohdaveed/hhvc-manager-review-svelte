@@ -58,11 +58,19 @@ export const insectsReport = {
 					title: 'Start your report',
 					text: [
 						'Use 311 to report cockroaches, fleas, flies, wasps, or mites to the City. If the problem is urgent, report now. You can report a problem in your home, a shared area, or at work, or report for someone else.',
-						'Bed bugs and mosquitoes have their own pages: [Report bed bugs](bedBugReport) and [Report mosquitoes or standing water](mosquitoReport).',
-						'Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.'
+						'Bed bugs and mosquitoes have their own pages: [Report bed bugs](bedBugReport) and [Report mosquitoes or standing water](mosquitoReport).'
 					],
 					button: 'Report through 311',
-					karl: 'what_to_do -> Section. Section title: "Start your report". Section specifics: Text block (these 3 paragraphs: the action, the two pages that took over bed bugs and mosquitoes, and the one-line SRO note every report page carries, Decided) + Button link block ("Report through 311").'
+					after: [
+						'**Other ways to report**',
+						'**Call 311 to make a report**',
+						'415-701-2311 if you are outside of San Francisco',
+						'TDD/TTY 711 if you are deaf, hard of hearing, or have a speech disability',
+						'**Use our Mobile App**',
+						'Download our mobile app to report a problem and track your request. Available on Android or iOS.',
+						'[Learn more about the SF311 mobile app](https://www.sf.gov/sf311-mobile-app)'
+					],
+					karl: 'what_to_do -> Section. Section title: "Start your report". Section specifics: Text block (these 2 paragraphs: the action, and the two pages that took over bed bugs and mosquitoes) + Button link block ("Report through 311") + Text block ("Other ways to report", the `after` lines). The one-line SRO note every report page carried was removed on 2026-11-26 (owner).'
 				},
 				{
 					title: 'If you see a wasp nest',
