@@ -361,6 +361,7 @@
 		pageStore.loadPreviewWidth();
 		pageStore.loadKarlOutline();
 		pageStore.loadCopiedSteps();
+		pageStore.loadBlueprintProgress();
 
 		loadQueue();
 
@@ -674,7 +675,9 @@
 		{:else if pageStore.mode === 'blueprint' && blueprintPlacements && pageData}
 			<BlueprintView
 				placements={blueprintPlacements}
-				title={String(pageData.title ?? '')}
+				page={pageData}
+				pageId={pageData.id}
+				{status}
 				onExit={() => pageStore.showReview()}
 				onShow={showOnPage}
 			/>
@@ -1058,16 +1061,6 @@
 		top: 0;
 	}
 
-	/* The mockup frame is the container every SF.gov component inside it
-	   queries. `inline-size` rather than `size`: only width drives SF.gov's
-	   reflow, and `size` would require the frame to carry an explicit height,
-	   which it does not -- it grows with its content so the footer stays
-	   reachable by scrolling. */
-	.mockup-frame {
-		container: mockup / inline-size;
-		max-width: 1440px;
-	}
-
 	/* Unpainted until the pane is measured. Before then `fit` has no width to
 	   work from, so the frame took the pane's width unzoomed -- sf.gov's tablet
 	   layout -- and then jumped to the zoomed desktop one. Measured on a
@@ -1076,33 +1069,6 @@
 	   after hydration; `noscript` in <svelte:head> shows it without JS. */
 	.mockup-frame[data-measured='false'] {
 		visibility: hidden;
-	}
-
-	/* sf.gov's gutters step rather than scale: 20px on a phone, 28px from a
-	   768px viewport (measured on `dph-leaves-absence` 2026-11-26), 96px from
-	   1024 (below). SiteHeader and SiteFooter use the same steps, so the page
-	   title, the header seal and the footer lockup share one left edge. 760
-	   rather than 768 because the frame's border makes the Tablet preset a
-	   766px box. */
-	.mock-page {
-		padding-block: clamp(1.25rem, 4cqi, 2.5rem);
-		padding-inline: 20px;
-	}
-	@container mockup (min-width: 760px) {
-		.mock-page {
-			padding-inline: 28px;
-		}
-	}
-
-	/* sf.gov's desktop gutter is 96px (`lg:mx-96`) from a 1024px viewport, the
-	   same step as its header and type. The frame's 1px border makes the
-	   "Desktop 1024px" preset a 1022px box, hence 1000. That leaves #mockPage an
-	   830px content box at that preset -- live's 832 -- which is what the
-	   column and type rules in app.css query. */
-	@container mockup (min-width: 1000px) {
-		.mock-page {
-			padding-inline: 96px;
-		}
 	}
 
 	/* The rails are viewport business, not container business, and this is the
