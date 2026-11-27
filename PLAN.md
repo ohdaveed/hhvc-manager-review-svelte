@@ -17,7 +17,7 @@ builds whatever that list settles.
 - [x] **L1. Land #247.** Nothing to land: #251 (`9789a0a`) had carried all eight of its commits, and
       merging `origin/main` into it gave a tree identical to `main`. Closed as superseded 2026-11-26;
       branch and worktree deleted.
-- [ ] **L2. Site structure PR 5: flag proposed pages in data.** `proposed: true` on the proposed modules,
+- [x] **L2. Site structure PR 5: flag proposed pages in data.** `proposed: true` on the proposed modules,
       replacing the comment in `index.ts`. That comment says ten; 9 modules carry "PROPOSED PAGE" today —
       find the tenth (merged or retired?) before writing the count down; a corpus test pins that the
       flag and the note agree; the review queue can filter on it. Test first; `corpus:lock`, `verify`,
@@ -25,7 +25,7 @@ builds whatever that list settles.
 - [x] **L3. One decision list.** `docs/reviews/2026-11-26-open-decisions.md`, measured over the corpus
       on `f9f54b8`. Four items are already settled (C4, C8, C7b, the after-report page); nine need a
       decision, and one of those (SS-3b, the workshops) needs a fact from HHVC.
-- [ ] **L4. UI copy review, tasks 1–3 below** (baseline, inventory, rendered walk). Read-only, so it can
+- [x] **L4. UI copy review, tasks 1–3 below** (baseline, inventory, rendered walk). Read-only, so it can
       run beside L2. Starts after L1.
 
 ## Leg 2 — build the 2026-11-26 rulings
@@ -33,12 +33,12 @@ builds whatever that list settles.
 From `docs/reviews/2026-11-26-open-decisions.md`. Copy changes shift positional field ids, so count
 production edits and comments on each touched page first (0 on 2026-11-24).
 
-- [ ] **M1. Fee page copy (C6, C7a)** — one content PR. `pay-healthy-housing-fee.ts`: a description
+- [x] **M1. Fee page copy (C6, C7a)** — one content PR. `pay-healthy-housing-fee.ts`: a description
       that doesn't restate the title; heading "Pay your invoice or contact us"; cut the second
       "annual fee supports" callout. `bed-bugs-…` Information page: a description that doesn't restate
       the title. `classifySection` before/after on each touched section, `corpus:lock`, `verify`, a
       screenshot of each page, and the `docs/karl-transaction-compliance.csv` rows if a section changed.
-- [ ] **M2. `findOrphans` counts prose links (SS-1)** — test first: a page reachable only through a
+- [x] **M2. `findOrphans` counts prose links (SS-1)** — test first: a page reachable only through a
       `[text](pageKey)` link is not an orphan. Then tick site-structure PR 1's follow-up.
 - [x] **M3. Record the rulings in the source plans** — Track C rows C3, C4, C6–C9 and site-structure
       PR 3 items marked Decided / Closed with a pointer to the decisions doc. SS-3a needs no build: the
@@ -91,11 +91,15 @@ PLAN in git history).
 
 ## Tasks
 
-- [ ] **1. Baseline.** Note the `main` SHA reviewed here.
-- [ ] **2. String inventory.** A script (scratchpad, not committed) extracts every in-scope text node and
+- [x] **1. Baseline.** `f9f54b8` (#262).
+- [x] **2. String inventory.** A script (scratchpad, not committed) extracts every in-scope text node and
       `placeholder` / `title` / `aria-label` / message literal with `file:line` into a CSV. Done when the
-      row count is recorded here and every in-scope file appears at least once.
-- [ ] **3. Rendered walk.** Playwright on a dev server on a free port (not :5173), at 1440 px and 390 px,
+      row count is recorded here and every in-scope file appears at least once. **615 rows, 34/35 files**
+      (`PageRow.svelte` has no fixed copy). Gap: Analysis/Karl copy in `src/lib/{analysis,karl}/**`,
+      `Section.svelte`, `WhatToKnow.svelte` is outside the list — add it before task 4.
+- [x] **3. Rendered walk.** 78 shots, local stack. **Not reached:** draft states (local `POST /api/pages`
+      500 — missing `GRANT SELECT ON public.reviews TO service_role`), AI 400 (the 501 key check runs first),
+      empty queue, some 390px panels. Playwright on a dev server on a free port (not :5173), at 1440 px and 390 px,
       local Supabase: signed-out `/`, `/login`, signed-in `/`, a corpus `/review/<slug>` with each panel
       (Fields, Rethink, Analysis, Review, queue, site map, blueprint), the Karl walkthrough, a draft in
       each state (drafting / ready / failed / stale), `/review/<bad-slug>` (404), an empty queue, an AI
