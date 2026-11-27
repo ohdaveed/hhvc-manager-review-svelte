@@ -22,10 +22,9 @@ builds whatever that list settles.
       find the tenth (merged or retired?) before writing the count down; a corpus test pins that the
       flag and the note agree; the review queue can filter on it. Test first; `corpus:lock`, `verify`,
       screenshot of the queue filter. Its own branch and PR.
-- [ ] **L3. One decision list.** A single doc for the manager / user, each item with the options and a
-      recommendation: Track C C3, C4, C6–C9; site-structure open decisions 1–2; PR 3's merges (fold
-      `tenantNoticeSteps` into `stepCorrectViolation`, the workshop pages, the canonical after-report
-      page); PR 1's `findOrphans` follow-up; PR 4's slug scheme. Done when it is published and linked here.
+- [x] **L3. One decision list.** `docs/reviews/2026-11-26-open-decisions.md`, measured over the corpus
+      on `f9f54b8`. Four items are already settled (C4, C8, C7b, the after-report page); nine need a
+      decision, and one of those (SS-3b, the workshops) needs a fact from HHVC.
 - [ ] **L4. UI copy review, tasks 1–3 below** (baseline, inventory, rendered walk). Read-only, so it can
       run beside L2. Starts after L1.
 
