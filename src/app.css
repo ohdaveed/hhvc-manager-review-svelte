@@ -38,8 +38,16 @@
 	--card-foreground: oklch(0.145 0 0);
 	--popover: oklch(1 0 0);
 	--popover-foreground: oklch(0.145 0 0);
-	--primary: oklch(0.205 0 0);
-	--primary-foreground: oklch(0.985 0 0);
+	/* SF blue, not shadcn's near-black: every default Button, the default Badge
+	   and a Switch's on state read this one token, so the primary action looks
+	   like SF.gov's everywhere at once. Set HERE, as `--ring` is below, so a
+	   regenerated components/ui leaves it alone. It is SFDS's action blue
+	   (`--color-sfds-action`); white on it measures 5.48:1. The hover the
+	   vendored Button gives an anchor (`bg-primary/80`) would lighten it to
+	   3.70:1 under white text, which is why a darker hover is set at the end
+	   of this file. */
+	--primary: #495ed4;
+	--primary-foreground: #ffffff;
 	--secondary: oklch(0.97 0 0);
 	--secondary-foreground: oklch(0.205 0 0);
 	--muted: oklch(0.97 0 0);
@@ -1410,4 +1418,13 @@ body {
 		font-size: 20px;
 		line-height: 28px;
 	}
+}
+
+/* The default Button's hover. The vendored base lightens an anchor to
+   `bg-primary/80`, which over white makes SF blue 3.70:1 against its white
+   label -- below WCAG AA. Darken instead, and for a <button> too, which had no
+   hover at all. Unlayered, so it outranks the utility in `@layer utilities`
+   without touching the generated component. */
+[data-slot='button'].bg-primary:not([aria-disabled='true']):not(:disabled):hover {
+	background-color: color-mix(in oklab, var(--primary) 82%, black);
 }
