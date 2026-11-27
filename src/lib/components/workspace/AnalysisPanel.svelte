@@ -14,7 +14,8 @@
 		type KarlHelpLink
 	} from '$lib/analysis';
 	import { MOCKUP_ROOT_SELECTOR } from '$lib/analysis/domChecks';
-	import type { EditRow } from '$lib/analysis/pageCopy';
+	import { reviewRecordFor } from '$lib/karl/reviewRecord';
+	import { pageStore } from '$lib/stores/pageData.svelte';
 	import { editsStore, pagesStore } from '$lib/stores/reviewState';
 
 	// `ReviewWorkspace` declares `pageData` as `unknown` and every sibling panel
@@ -52,23 +53,18 @@
 		};
 	});
 
-	// The reviewer's saved edits for this page, folded the way
-	// `$lib/karl/reviewRecord` folds them: append-only, last-write-wins, ordered
-	// explicitly by `created_at`.
-	const edits = $derived.by((): EditRow[] => {
-		const livePage = $pagesStore.find((p) => p.path === page?.id);
-		if (!livePage) return [];
-		return $editsStore
-			.filter((e) => e.page_id === livePage.id)
-			.map((e) => ({
-				field_id: e.field_id,
-				new_content: e.new_content,
-				created_at: e.created_at
-			}));
-	});
+	// `pageData` is the copy as shown -- saved edits and unsaved changes are
+	// already on it -- so it is judged as it is. The record is the same one the
+	// review layout hands the Karl outline, for what the page object cannot
+	// carry (an edited slug), so the panel and the outline cannot disagree.
+	const record = $derived(
+		typeof page?.id === 'string'
+			? reviewRecordFor(page.id, $pagesStore, $editsStore, pageStore.staleEditsOn(page.id))
+			: null
+	);
 
 	const analysis = $derived(
-		page ? analyzePage({ page: page as never, edits, root: mockupRoot }) : null
+		page ? analyzePage({ page: page as never, record, root: mockupRoot }) : null
 	);
 
 	// Karl component findings sit beside the Karl Jr. ones, sorted into the same

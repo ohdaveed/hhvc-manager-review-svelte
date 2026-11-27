@@ -69,36 +69,15 @@ export function classifyKey(key: string): CopyKind {
 }
 
 /**
- * One `edits` row, narrowed to what this module needs. Matches the shape
- * `$lib/karl/reviewRecord` folds, so the two readers cannot drift on what an
- * edit means.
- */
-export type EditRow = { field_id: string; new_content: string; created_at?: string | null };
-
-/**
- * The page's copy with the reviewer's saved edits applied.
+ * The page's copy as it is handed in, classified.
  *
- * `edits` is append-only and last-write-wins — the same fold `reviewRecordFor`
- * does,
- * and for the same reason: the table has no UPDATE policy, so a field can carry
- * several rows and only the newest is current. Rows are sorted by `created_at`
- * explicitly rather than trusting PostgREST's return order.
- *
- * An edit whose `field_id` is not a key of the corpus copy is still applied. It
- * would otherwise vanish from the score while being visible on the page, which
- * is the failure this whole module exists to avoid.
+ * The page is judged as given: the review workspace hands in the copy as shown
+ * (`CONTEXT.md`), which already carries the saved edits and the reviewer's
+ * unsaved changes on top. Laying the saved edits over it again is what made
+ * Analysis judge the saved wording under a field the reviewer was retyping.
  */
-export function analyzableCopy(page: CorpusPage, edits: EditRow[] = []): CopyEntry[] {
-	const copy = extractCopy(page);
-
-	const ordered = edits
-		.slice()
-		.sort((a, b) => (a.created_at ?? '').localeCompare(b.created_at ?? ''));
-	for (const edit of ordered) {
-		if (typeof edit.new_content === 'string') copy[edit.field_id] = edit.new_content;
-	}
-
-	return Object.entries(copy)
+export function analyzableCopy(page: CorpusPage): CopyEntry[] {
+	return Object.entries(extractCopy(page))
 		.filter(([, text]) => typeof text === 'string' && text.trim().length > 0)
 		.map(([key, text]) => ({ key, text, kind: classifyKey(key) }));
 }

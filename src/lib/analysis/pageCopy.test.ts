@@ -46,19 +46,9 @@ describe('analyzableCopy', () => {
 		expect(entries.some((e) => e.key === 'summary')).toBe(false);
 	});
 
-	it('applies a saved edit over the corpus text', () => {
-		const entries = analyzableCopy(page, [
-			{ field_id: 'title', new_content: 'Report rats and mice', created_at: '2026-08-01' }
-		]);
+	it('judges the page as given: the copy as shown carries its edits already', () => {
+		const entries = analyzableCopy({ ...page, title: 'Report rats and mice' });
 		expect(entries.find((e) => e.key === 'title')?.text).toBe('Report rats and mice');
-	});
-
-	it('applies the newest edit when a field has several, matching the append-only fold', () => {
-		const entries = analyzableCopy(page, [
-			{ field_id: 'title', new_content: 'second', created_at: '2026-08-02' },
-			{ field_id: 'title', new_content: 'first', created_at: '2026-08-01' }
-		]);
-		expect(entries.find((e) => e.key === 'title')?.text).toBe('second');
 	});
 });
 
