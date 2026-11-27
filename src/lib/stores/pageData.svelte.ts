@@ -172,6 +172,10 @@ export function fitFrame(paneWidth: number): { width: number; scale: number } | 
 	return paneWidth < phone ? { width: phone, scale: paneWidth / phone } : null;
 }
 const COPIED_KEY = 'hhvc:walkthroughCopied';
+const BLUEPRINT_KEY = 'hhvc:blueprintProgress';
+
+/** Blueprint build progress, per page: the Karl panels entered, and whether it is built. */
+export type BlueprintProgress = { entered: string[]; built: boolean };
 
 /**
  * Gives a section a stable key for `edits.field_id`.
@@ -979,6 +983,72 @@ class PageStore {
 		}
 	}
 
+	// ---- blueprint progress -------------------------------------------------
+
+	/**
+	 * Which Karl panels have been entered in Karl, and which pages are built,
+	 * keyed by page id. Local for the same reasons as `copiedSteps`: it is one
+	 * person's progress through Karl, not a property of the page, and keeping it
+	 * out of Supabase keeps a migration out of production.
+	 */
+	blueprintProgress = $state<Record<string, BlueprintProgress>>({});
+
+	/** Same reason as `loadRailState`: called from the layout, never on import. */
+	loadBlueprintProgress() {
+		try {
+			const raw = localStorage.getItem(BLUEPRINT_KEY);
+			if (!raw) return;
+			const parsed = JSON.parse(raw);
+			if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return;
+			const out: Record<string, BlueprintProgress> = {};
+			for (const [pageId, value] of Object.entries(parsed)) {
+				const v = value as { entered?: unknown; built?: unknown };
+				if (!v || typeof v !== 'object') continue;
+				out[pageId] = {
+					entered: Array.isArray(v.entered)
+						? v.entered.filter((id): id is string => typeof id === 'string')
+						: [],
+					built: v.built === true
+				};
+			}
+			this.blueprintProgress = out;
+		} catch {
+			// As `loadCopiedSteps`: progress is a convenience, not worth a failed load.
+		}
+	}
+
+	#saveBlueprintProgress(pageId: string, next: BlueprintProgress) {
+		this.blueprintProgress = { ...this.blueprintProgress, [pageId]: next };
+		try {
+			localStorage.setItem(BLUEPRINT_KEY, JSON.stringify(this.blueprintProgress));
+		} catch {
+			// As above.
+		}
+	}
+
+	isPanelEntered(pageId: string, rawName: string): boolean {
+		return (this.blueprintProgress[pageId]?.entered ?? []).includes(rawName);
+	}
+
+	/** Unchecking a panel also unmarks the page: it is no longer fully built. */
+	setPanelEntered(pageId: string, rawName: string, entered: boolean) {
+		const current = this.blueprintProgress[pageId] ?? { entered: [], built: false };
+		const rest = current.entered.filter((id) => id !== rawName);
+		this.#saveBlueprintProgress(pageId, {
+			entered: entered ? [...rest, rawName] : rest,
+			built: entered ? current.built : false
+		});
+	}
+
+	isPageBuilt(pageId: string): boolean {
+		return this.blueprintProgress[pageId]?.built ?? false;
+	}
+
+	setPageBuilt(pageId: string, built: boolean) {
+		const current = this.blueprintProgress[pageId] ?? { entered: [], built: false };
+		this.#saveBlueprintProgress(pageId, { ...current, built });
+	}
+
 	// ---- present ----------------------------------------------------------
 
 	/**
@@ -1041,13 +1111,28 @@ class PageStore {
 		this.mode = 'sitemap';
 	}
 
-	/** The page redrawn as its Karl form. A view, like the site map: not persisted. */
+	/** Rail state captured on entering the Blueprint, restored on leaving it. */
+	#railsBeforeBlueprint: { queue: boolean; panel: boolean } | null = null;
+
+	/**
+	 * The page redrawn as its Karl form, beside the mockup. A view, like the
+	 * site map: not persisted. It collapses both rails, as the walkthrough does,
+	 * because the mockup and the Karl list need the width side by side.
+	 */
 	showBlueprint() {
+		if (this.presenting && this.#railsBeforePresent) this.railCollapsed = this.#railsBeforePresent;
+		this.#endPresenting();
 		this.mobileSheet = 'none';
+		if (this.mode !== 'blueprint') this.#railsBeforeBlueprint = { ...this.railCollapsed };
+		this.railCollapsed = { queue: true, panel: true };
 		this.mode = 'blueprint';
 	}
 
 	showReview() {
+		if (this.mode === 'blueprint' && this.#railsBeforeBlueprint) {
+			this.railCollapsed = this.#railsBeforeBlueprint;
+			this.#railsBeforeBlueprint = null;
+		}
 		this.mode = 'review';
 	}
 }

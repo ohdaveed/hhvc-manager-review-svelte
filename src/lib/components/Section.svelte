@@ -10,6 +10,7 @@
 	import TableBlock from './blocks/TableBlock.svelte';
 	import KarlChip from './KarlChip.svelte';
 	import { outlineContext } from '$lib/karl/outlineContext';
+	import { isMockupReadonly } from './mockupReadonly';
 	import { RELATED_HEADING } from '$lib/karl/placement';
 	import { entryText, entryUnverified, sectionDisplayLabel } from '$lib/corpus/fieldResolver';
 	import { pageStore } from '$lib/stores/pageData.svelte';
@@ -47,7 +48,9 @@
 	// Undefined while the session check is in flight: treat as editable, so the
 	// control does not flicker out and back for a signed-in reviewer. Same rule
 	// `EditTarget` follows.
-	const editable = $derived(!sessionStore.knownSignedOut);
+	// Never inside a read-only mockup (the Blueprint's), signed in or not.
+	const readonly = isMockupReadonly();
+	const editable = $derived(!sessionStore.knownSignedOut && !readonly);
 	const sectionSelected = $derived(pageStore.selectedSectionKey === key);
 
 	// The Karl outline: where this section lands, read out before its heading so

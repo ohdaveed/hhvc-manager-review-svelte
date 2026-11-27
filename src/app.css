@@ -499,6 +499,46 @@ body {
    pages, at 554px and 1280px). This surface used to read the review tool's
    `--color-sfds-*` palette, which the `--color-site-*` comment further down
    says a mockup must not do: links rendered #495ed4 where sf.gov uses #1B519E. */
+/* The mockup frame and its gutters, shared by the review canvas and the
+   Blueprint's mockup column, so the two draw one page. Moved here from the
+   review layout's scoped styles when the Blueprint began drawing the mockup. */
+/* The mockup frame is the container every SF.gov component inside it
+   queries. `inline-size` rather than `size`: only width drives SF.gov's
+   reflow, and `size` would require the frame to carry an explicit height,
+   which it does not -- it grows with its content so the footer stays
+   reachable by scrolling. */
+.mockup-frame {
+	container: mockup / inline-size;
+	max-width: 1440px;
+}
+
+/* sf.gov's gutters step rather than scale: 20px on a phone, 28px from a
+   768px viewport (measured on `dph-leaves-absence` 2026-11-26), 96px from
+   1024 (below). SiteHeader and SiteFooter use the same steps, so the page
+   title, the header seal and the footer lockup share one left edge. 760
+   rather than 768 because the frame's border makes the Tablet preset a
+   766px box. */
+.mock-page {
+	padding-block: clamp(1.25rem, 4cqi, 2.5rem);
+	padding-inline: 20px;
+}
+@container mockup (min-width: 760px) {
+	.mock-page {
+		padding-inline: 28px;
+	}
+}
+
+/* sf.gov's desktop gutter is 96px (`lg:mx-96`) from a 1024px viewport, the
+   same step as its header and type. The frame's 1px border makes the
+   "Desktop 1024px" preset a 1022px box, hence 1000. That leaves #mockPage an
+   830px content box at that preset -- live's 832 -- which is what the
+   column and type rules in app.css query. */
+@container mockup (min-width: 1000px) {
+	.mock-page {
+		padding-inline: 96px;
+	}
+}
+
 #mockPage {
 	container: mockup / inline-size;
 	color: var(--color-site-ink);
