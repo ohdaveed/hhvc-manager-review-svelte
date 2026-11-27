@@ -12,7 +12,7 @@
 	import { reviewHrefFor } from '$lib/corpus/draftPath';
 	import { draftsStore } from '$lib/stores/draftPages';
 	import { pageTitleFor } from '$lib/corpus/pageTitle';
-	import { ArrowRight, ClipboardList } from '@lucide/svelte';
+	import { ArrowRight, Check, CircleAlert, ClipboardList } from '@lucide/svelte';
 	import { pageStore } from '$lib/stores/pageData.svelte';
 	import { sessionStore } from '$lib/stores/session.svelte';
 	import { STATUS_LABELS } from '$lib/review/statusLabels';
@@ -349,7 +349,7 @@
 					<ToggleGroup.Item
 						value={decision.value}
 						aria-label={decision.label}
-						class="h-auto min-h-7 min-w-0 flex-auto shrink px-0! py-1 leading-tight whitespace-normal disabled:text-sfds-slate-l2 disabled:opacity-100 data-[state=on]:text-white data-[state=on]:hover:text-white @max-[18rem]/decision:rounded-md! @max-[18rem]/decision:border-l! {decision.tone}"
+						class="h-auto min-h-7 min-w-0 flex-auto shrink px-0! py-1 leading-tight whitespace-normal disabled:text-sfds-slate-l3 disabled:opacity-100 data-[state=on]:text-white data-[state=on]:hover:text-white max-lg:min-h-11 @max-[18rem]/decision:rounded-md! @max-[18rem]/decision:border-l! {decision.tone}"
 					>
 						{decision.label}
 					</ToggleGroup.Item>
@@ -396,7 +396,9 @@
 			>
 				<span class="min-w-0">
 					<span class="block">Next undecided page</span>
-					<span class="block truncate text-xs font-normal text-sfds-slate-l3">{nextTitle}</span>
+					<span class="line-clamp-2 block text-xs font-normal text-pretty text-sfds-slate-l3"
+						>{nextTitle}</span
+					>
 				</span>
 				<ArrowRight class="size-4 shrink-0" aria-hidden="true" />
 			</a>
@@ -430,7 +432,7 @@
 		<Button
 			variant={liveRecord?.status === 'approved' ? 'default' : 'outline'}
 			size="sm"
-			class="w-full gap-1.5"
+			class="w-full gap-1.5 max-lg:min-h-11"
 			onclick={() => pageStore.enterWalkthrough()}
 		>
 			<ClipboardList class="size-4" aria-hidden="true" />
@@ -464,7 +466,17 @@
 					{@const check = raw as PageCheck}
 					<Card.Root size="sm">
 						<Card.Content class="flex items-start gap-3">
-							<Badge variant={check.status === 'pass' ? 'secondary' : 'outline'}>
+							<Badge
+								variant="outline"
+								class="gap-1 border-transparent {check.status === 'pass'
+									? 'bg-sfds-green-l1 text-sfds-green'
+									: 'bg-sfds-amber-l1 text-sfds-amber'}"
+							>
+								{#if check.status === 'pass'}
+									<Check class="size-3" aria-hidden="true" />
+								{:else}
+									<CircleAlert class="size-3" aria-hidden="true" />
+								{/if}
 								{check.status === 'pass' ? 'Pass' : 'Check'}
 							</Badge>
 							<div>

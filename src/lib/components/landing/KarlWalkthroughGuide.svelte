@@ -57,7 +57,7 @@
      the summary, and the heading inside it, stay. -->
 <section
 	aria-labelledby="karl-walkthrough-guide"
-	class="rounded-[3px] border border-sfds-grey-l2 bg-white"
+	class="rounded-[3px] border border-border bg-white"
 >
 	<details bind:open ontoggle={() => (touched = true)} class="group">
 		<summary
@@ -106,7 +106,7 @@
 					<!-- Each link opens the page with the walkthrough already running:
 			     `?view=walkthrough` is the deep link the review layout reads. -->
 					<h3 class="mt-4 text-sm font-semibold text-slate-900">Ready to move</h3>
-					<ul class="mt-2 divide-y divide-sfds-grey-l2 rounded-[3px] border border-sfds-grey-l2">
+					<ul class="mt-2 divide-y divide-border rounded-[3px] border border-border">
 						{#each shown as page (page.path)}
 							<li>
 								<!-- Named once: the visible title plus a hidden repeat read the

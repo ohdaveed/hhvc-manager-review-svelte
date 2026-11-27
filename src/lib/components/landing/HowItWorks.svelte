@@ -50,7 +50,7 @@
 <details
 	bind:open
 	ontoggle={() => (touched = true)}
-	class="group rounded-[3px] border border-sfds-grey-l2 bg-white"
+	class="group rounded-[3px] border border-border bg-white"
 >
 	<!-- The h2 sits inside the summary so the heading stays in the document
 	     outline and the summary still provides the control's accessible name.

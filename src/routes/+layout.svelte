@@ -24,6 +24,6 @@
 
 <!-- Not <main>: each route owns its landmark (`review/+layout`, `login`,
      `/`), and a <main> here nested a second one inside every page. -->
-<div class="min-h-screen bg-slate-50 antialiased">
+<div class="min-h-screen bg-slate-200/70 antialiased">
 	{@render children?.()}
 </div>

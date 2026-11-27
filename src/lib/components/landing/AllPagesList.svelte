@@ -196,7 +196,7 @@
 				bind:value={query}
 				placeholder="Title or path"
 				autocomplete="off"
-				class="w-full rounded-[3px] border border-sfds-grey-l2 bg-white px-3 py-2 text-[15px] text-sfds-black placeholder:text-sfds-slate-l3 focus:border-sfds-action focus:ring-1 focus:ring-sfds-action focus:outline-none"
+				class="w-full rounded-[3px] border border-input bg-white px-3 py-2 text-[15px] text-sfds-black placeholder:text-sfds-slate-l3 focus:border-sfds-action focus:ring-1 focus:ring-sfds-action focus:outline-none max-sm:min-h-11"
 			/>
 		</div>
 
@@ -220,7 +220,7 @@
 				{#each FILTERS as f (f.value)}
 					<ToggleGroup.Item
 						value={f.value}
-						class="group/chip rounded-md! border-l! px-2.5 data-[state=on]:border-sfds-action data-[state=on]:bg-sfds-action data-[state=on]:text-white data-[state=on]:hover:bg-sfds-action data-[state=on]:hover:text-white"
+						class="group/chip rounded-md! border-l! px-2.5 data-[state=on]:border-sfds-action data-[state=on]:bg-sfds-action data-[state=on]:text-white data-[state=on]:hover:bg-sfds-action data-[state=on]:hover:text-white max-sm:min-h-11 max-sm:px-3"
 					>
 						{f.label}
 						<span
@@ -237,7 +237,9 @@
 	{#if totalShown === 0}
 		<div class="flex flex-wrap items-center gap-x-4 gap-y-2 py-4">
 			<p role="status" class="text-slate-800">{emptyMessage}</p>
-			<Button variant="outline" onclick={clearAll}>Clear search and filter</Button>
+			<Button variant="outline" class="max-sm:min-h-11" onclick={clearAll}
+				>Clear search and filter</Button
+			>
 		</div>
 	{/if}
 
@@ -253,7 +255,7 @@
 
 	     Sections with no matches are dropped above rather than shown at zero, so
 	     a filter never leaves a count with nothing under it. -->
-	<div class="divide-y divide-sfds-grey-l2 border-y border-sfds-grey-l2">
+	<div class="divide-y divide-border rounded-[3px] border border-border bg-white">
 		{#each visible as section (section.id)}
 			<details open class="group">
 				<summary

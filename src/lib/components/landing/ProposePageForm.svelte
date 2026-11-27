@@ -145,7 +145,13 @@
 		{#if error}
 			<p id="propose-error" role="alert" class="text-sm font-semibold text-red-800">{error}</p>
 		{/if}
-		<Button type="submit" disabled={!canSubmit}>Draft this page</Button>
+		<Button
+			type="submit"
+			disabled={!canSubmit}
+			class="disabled:bg-sfds-grey-l2 disabled:text-sfds-slate-l3 disabled:opacity-100 max-sm:min-h-11"
+		>
+			Draft this page
+		</Button>
 		<div role="status">
 			{#if busy}
 				<p class="text-slate-800">Saving your description…</p>

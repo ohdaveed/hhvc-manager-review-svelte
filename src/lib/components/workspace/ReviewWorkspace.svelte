@@ -100,15 +100,15 @@
 	     the canvas toolbar. It used to sit on a grey tint at its own height.
 	     Decision comes FIRST: it is what the panel opens on and what the tool
 	     exists to record, and it was third. -->
-	<div
-		class="flex min-h-12 flex-none items-start gap-1 border-b border-sfds-grey-l2 bg-background pr-2"
-	>
+	<div class="flex min-h-12 flex-none items-start gap-1 border-b border-border bg-background pr-2">
 		<Tabs.List
 			variant="line"
 			class="h-auto! min-w-0 flex-1 flex-wrap justify-start gap-x-0 gap-y-2 border-0 bg-transparent px-1 pb-[5px]"
 		>
-			<Tabs.Trigger value="overview" class="flex-none px-2 py-2 leading-5">Decision</Tabs.Trigger>
-			<Tabs.Trigger value="fields" class="flex-none px-2 py-2 leading-5">
+			<Tabs.Trigger value="overview" class="flex-none px-2 py-2 leading-5 max-lg:min-h-11"
+				>Decision</Tabs.Trigger
+			>
+			<Tabs.Trigger value="fields" class="flex-none px-2 py-2 leading-5 max-lg:min-h-11">
 				Fields
 				{#if pageStore.selectedFieldIds.length > 0}
 					<span
@@ -118,15 +118,19 @@
 					</span>
 				{/if}
 			</Tabs.Trigger>
-			<Tabs.Trigger value="rethink" class="flex-none px-2 py-2 leading-5">Rethink</Tabs.Trigger>
-			<Tabs.Trigger value="analysis" class="flex-none px-2 py-2 leading-5">Analysis</Tabs.Trigger>
+			<Tabs.Trigger value="rethink" class="flex-none px-2 py-2 leading-5 max-lg:min-h-11"
+				>Rethink</Tabs.Trigger
+			>
+			<Tabs.Trigger value="analysis" class="flex-none px-2 py-2 leading-5 max-lg:min-h-11"
+				>Analysis</Tabs.Trigger
+			>
 		</Tabs.List>
 
 		{#if onCollapse}
 			<Button
 				variant="outline"
 				size="icon"
-				class="mt-[calc(0.25rem+4px)] size-7 flex-none"
+				class="mt-[calc(0.25rem+4px)] size-7 flex-none max-lg:mt-0.5 max-lg:size-11"
 				title={collapseLabel}
 				aria-label={collapseLabel}
 				onclick={onCollapse}
@@ -147,11 +151,11 @@
 	     carries its own "Karl fields shown · Hide" pill. -->
 	{#if karlViews && (activeTab === 'overview' || activeTab === 'fields')}
 		<div
-			class="flex flex-none items-center gap-3 border-b border-sfds-grey-l2 bg-background px-3 py-2"
+			class="flex flex-none items-center gap-3 border-b border-border bg-background px-3 py-2"
 			role="group"
 			aria-label="Karl views"
 		>
-			<label class="flex items-center gap-2 text-xs font-medium">
+			<label class="flex items-center gap-2 text-xs font-medium max-lg:min-h-11">
 				<Switch
 					checked={pageStore.karlOutline}
 					onCheckedChange={(on: boolean) => pageStore.setKarlOutline(on)}
@@ -161,7 +165,7 @@
 			<Button
 				variant="outline"
 				size="sm"
-				class="ml-auto h-7 text-xs"
+				class="ml-auto h-7 text-xs max-lg:h-11 max-lg:px-3"
 				aria-pressed={pageStore.mode === 'blueprint'}
 				onclick={() =>
 					pageStore.mode === 'blueprint' ? pageStore.showReview() : pageStore.showBlueprint()}

@@ -65,10 +65,7 @@
 
 <!-- The status card: progress, a key that doubles as filters, and the one
      action that resumes the review. -->
-<section
-	aria-label="Your progress"
-	class="rounded-[3px] border border-sfds-grey-l2 bg-white p-4 sm:p-5"
->
+<section aria-label="Your progress" class="rounded-[3px] border border-border bg-white p-4 sm:p-5">
 	<div class="flex items-baseline justify-between gap-3">
 		<p class="text-lg font-semibold text-slate-900">{decided} of {total} decided</p>
 		<p class="text-lg font-semibold text-sfds-slate-l3 tabular-nums">{pct}%</p>
@@ -87,7 +84,7 @@
 						type="button"
 						onclick={() => onShow(entry.status)}
 						aria-label="{entry.count} {label}: show these pages"
-						class="inline-flex items-center gap-1.5 rounded-full border border-sfds-grey-l2 bg-white px-2.5 py-1 text-sm text-slate-800 transition-colors hover:border-sfds-action hover:bg-sfds-blue-l1/60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sfds-black"
+						class="inline-flex items-center gap-1.5 rounded-full border border-border bg-white px-2.5 py-1 text-sm text-slate-800 transition-colors hover:border-sfds-action hover:bg-sfds-blue-l1/60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sfds-black max-sm:min-h-11 max-sm:px-3.5"
 					>
 						<span
 							class="size-2.5 shrink-0 rounded-full {entry.status === 'needs-review'
@@ -104,7 +101,7 @@
 	{/if}
 
 	<div
-		class="mt-4 flex flex-col gap-3 border-t border-sfds-grey-l2 pt-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6"
+		class="mt-4 flex flex-col gap-3 border-t border-border pt-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6"
 	>
 		<!-- `nextHref` is undefined only when every page IN THE REVIEW (every
 		     row) has a decision, because `reviewProgress` picks the first
@@ -125,7 +122,7 @@
 				href={resolve(nextHref)}
 				size="lg"
 				aria-label="{longVerb} {nextTitle}"
-				class="w-full px-6 sm:w-auto"
+				class="w-full px-6 max-sm:min-h-11 sm:w-auto"
 			>
 				{verb}
 				<ArrowRight aria-hidden="true" data-icon="inline-end" />
@@ -143,7 +140,7 @@
 				<Button
 					variant="outline"
 					size="lg"
-					class="w-full sm:w-auto"
+					class="w-full max-sm:min-h-11 sm:w-auto"
 					onclick={() => onShow('blocked')}
 				>
 					Review blocked pages
