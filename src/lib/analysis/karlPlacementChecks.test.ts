@@ -1,33 +1,21 @@
 import { describe, expect, it } from 'vitest';
 import { pagesByKey } from '$lib/data/index';
 import { gapPages } from '$lib/karl/gapFixtures';
-import { karlPlacementFindings, recordFromEdits } from './karlPlacementChecks';
+import { copyAsRecorded, type EditRow } from '$lib/corpus/overlay';
+import { karlPlacementFindings } from './karlPlacementChecks';
 import { analyzePage } from './index';
 
 const page = (key: string) => (pagesByKey as Record<string, object>)[key];
-const byId = (key: string, id: string, edits = []) =>
-	karlPlacementFindings(page(key) as never, edits).find((f) => f.id === id)!;
-
-describe('recordFromEdits', () => {
-	it('keeps the newest edit per field and splits out title and summary', () => {
-		const record = recordFromEdits([
-			{ field_id: 'sections.a.heading', new_content: 'new', created_at: '2026-11-02' },
-			{ field_id: 'sections.a.heading', new_content: 'old', created_at: '2026-11-01' },
-			{ field_id: 'title', new_content: 'T', created_at: '2026-11-01' },
-			{ field_id: 'summary', new_content: 'S', created_at: '2026-11-01' }
-		]);
-		expect(record.section_edits).toEqual({ 'sections.a.heading': 'new' });
-		expect(record.edited_title).toBe('T');
-		expect(record.edited_summary).toBe('S');
-	});
-});
+/** Findings for a corpus page with `edits` saved on it: the copy as recorded. */
+const byId = (key: string, id: string, edits: EditRow[] = []) =>
+	karlPlacementFindings(copyAsRecorded(page(key), edits) as never).find((f) => f.id === id)!;
 
 describe('the Analysis panel reads the same placements as the Karl outline', () => {
 	it('lists what will not carry over on the rats report', () => {
 		// Nothing does since the 2026-11-26 audit; the gap fixture puts the
 		// pre-audit section button back.
 		expect(byId('rodentsReport', 'karl-unplaced').status).toBe('pass');
-		const f = karlPlacementFindings(gapPages.rodentsReport as never, []).find(
+		const f = karlPlacementFindings(gapPages.rodentsReport as never).find(
 			(x) => x.id === 'karl-unplaced'
 		)!;
 		expect(f.status).toBe('issue');
@@ -50,7 +38,7 @@ describe('the Analysis panel reads the same placements as the Karl outline', () 
 		// Every report page folded its Custom Section into its steps (2026-11-26),
 		// so the gap overlay puts the rats page's inferred mapping back.
 		expect(byId('rodentsReport', 'karl-unconfirmed').status).toBe('pass');
-		const f = karlPlacementFindings(gapPages.rodentsReport as never, []).find(
+		const f = karlPlacementFindings(gapPages.rodentsReport as never).find(
 			(x) => x.id === 'karl-unconfirmed'
 		)!;
 		expect(f.status).toBe('unavailable');
@@ -179,10 +167,13 @@ describe('title words reused in the description', () => {
 
 describe('articles in the slug', () => {
 	const urlOf = (slug: string) =>
-		karlPlacementFindings(
-			{ slug, type: 'Transaction', title: 'T', summary: 'S', sections: [] } as never,
-			[]
-		).find((f) => f.id === 'karl-url-pattern')!;
+		karlPlacementFindings({
+			slug,
+			type: 'Transaction',
+			title: 'T',
+			summary: 'S',
+			sections: []
+		} as never).find((f) => f.id === 'karl-url-pattern')!;
 
 	it('flags an article as a whole word in the slug', () => {
 		const f = urlOf('sf.gov/report-a-pest-problem');
@@ -192,6 +183,22 @@ describe('articles in the slug', () => {
 
 	it('does not flag letters inside a word', () => {
 		expect(urlOf('sf.gov/data-analytics').status).toBe('pass');
+	});
+
+	it('judges a slug the reviewer edited, which only the review record carries', () => {
+		// The old fold filed a `slug` edit under `section_edits.slug`, so the
+		// check read the authored slug and missed the new one.
+		const f = karlPlacementFindings(
+			{
+				slug: 'sf.gov/data-analytics',
+				type: 'Transaction',
+				title: 'T',
+				summary: 'S',
+				sections: []
+			} as never,
+			{ section_edits: {}, decision: 'Needs review', url_slug: 'sf.gov/report-a-pest-problem' }
+		).find((x) => x.id === 'karl-url-pattern')!;
+		expect(f.status).toBe('issue');
 	});
 
 	it('flags exactly the Transaction slugs the review names', () => {

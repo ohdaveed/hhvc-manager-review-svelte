@@ -3,12 +3,26 @@ import { pagesByKey } from '$lib/data/index';
 import { outlineSummary, placementsFor, plainReason, worstOf } from './placement';
 import type { ReviewRecord } from './reviewRecord';
 import { toStorePage } from '$lib/stores/pageData.svelte';
+import { copyAsRecorded } from '$lib/corpus/overlay';
 import { gapPages, pagesByKeyWithGaps } from './gapFixtures';
 
 const page = (key: string) =>
 	(pagesByKey as Record<string, Parameters<typeof placementsFor>[0]>)[key];
+/** The record's edits as `edits` rows, so the page can carry them as the app's does. */
+const editsOf = (r: ReviewRecord | null) =>
+	r
+		? [
+				...Object.entries(r.section_edits).map(([field_id, new_content]) => ({
+					field_id,
+					new_content
+				})),
+				...(r.edited_title ? [{ field_id: 'title', new_content: r.edited_title }] : []),
+				...(r.edited_summary ? [{ field_id: 'summary', new_content: r.edited_summary }] : [])
+			]
+		: [];
+/** Placements for a corpus page with `record`'s edits applied: the copy as recorded. */
 const of = (key: string, record: ReviewRecord | null = null) =>
-	placementsFor(page(key), record, pagesByKey);
+	placementsFor(copyAsRecorded(page(key), editsOf(record)), record, pagesByKey);
 const record = (over: Partial<ReviewRecord>): ReviewRecord => ({
 	section_edits: {},
 	decision: 'Needs review',
@@ -246,17 +260,12 @@ describe('as-shown copy (the outline over the mockup)', () => {
 		// Saved: too long. On screen: an unsaved change back under the limit.
 		const saved = record({ section_edits: { [id]: 'Report this problem through 311 now' } });
 		const page = shown('Report now');
-		expect(statusOf(placementsFor(page as never, saved, pagesByKey), id)).toBe('needs-fix');
-		expect(
-			statusOf(placementsFor(page as never, saved, pagesByKey, { copy: 'as-shown' }), id)
-		).toBe('placed');
+		expect(statusOf(placementsFor(page as never, saved, pagesByKey), id)).toBe('placed');
 	});
 
 	it('judges an unsaved change that breaks a rule', () => {
 		const page = shown('Report this problem through 311 now');
-		expect(statusOf(placementsFor(page as never, null, pagesByKey, { copy: 'as-shown' }), id)).toBe(
-			'needs-fix'
-		);
+		expect(statusOf(placementsFor(page as never, null, pagesByKey), id)).toBe('needs-fix');
 	});
 });
 

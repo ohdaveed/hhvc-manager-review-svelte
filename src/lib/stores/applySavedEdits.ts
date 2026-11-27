@@ -18,6 +18,7 @@
  * and replacing it with another reviewer's save would throw the typing away.
  */
 import { resolveField } from '$lib/corpus/fieldResolver';
+import { latestBy } from '$lib/corpus/overlay';
 
 export type EditLike = {
 	id?: string;
@@ -48,14 +49,11 @@ export function latestEdits(
 	edits: readonly EditLike[]
 ): Map<string, EditLike & { path: string }> {
 	const pathOf = new Map(livePages.map((p) => [p.id, p.path]));
-	const latest = new Map<string, EditLike & { path: string }>();
-	const ordered = [...edits].sort((a, b) => (a.created_at ?? '').localeCompare(b.created_at ?? ''));
-	for (const edit of ordered) {
+	const withPath = edits.flatMap((edit) => {
 		const path = pathOf.get(edit.page_id);
-		if (path === undefined || typeof edit.new_content !== 'string') continue;
-		latest.set(editKey(path, edit.field_id), { ...edit, path });
-	}
-	return latest;
+		return path === undefined ? [] : [{ ...edit, path }];
+	});
+	return latestBy(withPath, (edit) => editKey(edit.path, edit.field_id));
 }
 
 /**

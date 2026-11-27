@@ -23,6 +23,15 @@ base copy just as a re-port changes the corpus.
 base copy at render time. Never folded back into the corpus except by an
 explicit, deliberate act.
 
+**Copy as recorded** — the base copy with the overlay applied: what the saved
+review says a page reads. The transcript is written from it.
+_Avoid_: saved copy, hydrated page
+
+**Copy as shown** — the copy as recorded with the reviewer's unsaved changes on
+top: what the mockup displays right now. Anything judging the page beside the
+mockup judges this, so it never disagrees with what the reviewer can see.
+_Avoid_: current copy, live copy
+
 **Notes** — a reviewer's reasoning, anchored to the copy it is about and tagged
 with the corpus version it was written against.
 
