@@ -240,6 +240,12 @@ export type SignedInOptions = {
 	 * fixture row is both, and a `reviewProgress` that ignored status would pass.
 	 */
 	decidedFirst?: boolean;
+	/**
+	 * Which rail the page is left with open. The workspace opens on the review
+	 * panel with the queue collapsed, and the two are exclusive, so a test that
+	 * works in the queue asks for it here and gets the panel collapsed.
+	 */
+	rail?: 'panel' | 'queue';
 };
 
 const json = (body: unknown) => ({
@@ -350,14 +356,20 @@ export async function gotoSignedIn(
 		// render is the progress line, which shows only once review rows have
 		// loaded (an empty table shows the "no review yet" card instead). Its
 		// total is every page a reviewer can open (`reconcileReview`), corpus
-		// pages with no row included, so it is not the stub's row count.
-		// Scoped to the progress card: each section of the list has an
-		// "N of M decided" line of its own.
+		// pages with no row included, so it is not the stub's row count. Scoped
+		// to the card: every heading in All pages carries its own "N of M decided".
 		await expect(
 			page.getByRole('region', { name: 'Your progress' }).getByText(/^\d+ of \d+ decided$/)
 		).toBeVisible();
 		return;
 	}
+	// The queue is collapsed when the workspace opens, and a collapsed rail
+	// renders no rows, so the guard opens it to count them: the rail's own
+	// button from 1024px, where that closes the review panel, and the toolbar's
+	// Queue sheet below it.
+	const narrow = (page.viewportSize()?.width ?? 1280) < 1024;
+	await page.getByRole('button', { name: narrow ? 'Queue' : 'Expand queue', exact: true }).click();
+
 	// Rows only: the stub holds six review rows over a 40-odd page corpus, so
 	// the queue also lists the rest under "Not in the review yet", which is
 	// corpus, not review data, and would pass this guard with no rows at all.
@@ -367,6 +379,13 @@ export async function gotoSignedIn(
 		)
 	).toHaveCount(total);
 	await expect(page.getByText('Viewing signed out.')).toHaveCount(0);
+
+	// Leave the page as the test asked for it: by default as the app opens.
+	// Scoped to the rail: the sheet's backdrop is a second "Close queue" button.
+	if (narrow)
+		await page.locator('#reviewQueueRail').getByRole('button', { name: 'Close queue' }).click();
+	else if (options.rail !== 'queue')
+		await page.getByRole('button', { name: 'Expand review panel', exact: true }).click();
 }
 
 export { DRAFT_IDS, DRAFT_PAGE_ROWS, PAGE_ROWS, REVIEW_ID };

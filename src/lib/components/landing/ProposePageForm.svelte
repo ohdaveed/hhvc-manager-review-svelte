@@ -4,39 +4,29 @@
 	import { resolve } from '$app/paths';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
-	import {
-		draftBrief,
-		draftHintLines,
-		MAX_DESCRIPTION_CHARS,
-		reviewHrefFor
-	} from '$lib/corpus/draftPath';
+	import { MAX_DESCRIPTION_CHARS, reviewHrefFor } from '$lib/corpus/draftPath';
+	import { composeDraftRequest, TEMPLATE_CHOICES, type TemplateChoice } from '$lib/landing/propose';
 	import { PAGE_GROUPS } from '$lib/landing/groups';
 	import { createDraft, draftsStore } from '$lib/stores/draftPages';
 	import { sessionStore } from '$lib/stores/session.svelte';
 
 	let {
-		onClose
+		onCancel
 	}: {
-		/** Closes the panel this form sits in. With it, the form offers Cancel. */
-		onClose?: () => void;
+		/** Cancel's action: the panel closes. Absent, there is no Cancel button. */
+		onCancel?: () => void;
 	} = $props();
 
 	let description = $state('');
-
-	// Three optional picks. None is stored as a fact about the draft: they go to
-	// the drafter as labelled lines after the description (`draftHintLines`),
-	// and an empty one says nothing, leaving the choice to the drafter.
+	// Steers for the drafter, not fields of their own: the model takes one
+	// free-text prompt, so they are written into the description it is sent --
+	// and stored, so a retry drafts from exactly the same request.
 	let section = $state('');
-	let template = $state('');
-	let path = $state('');
-
-	const TEMPLATES = [
-		{ value: 'Transaction', help: 'Resident completes a task: report, apply, pay' },
-		{ value: 'Step by step', help: 'Ordered process across several steps' },
-		{ value: 'Information', help: 'Guidance to read' }
-	];
-
-	const hints = $derived(draftHintLines({ section, template, path }));
+	let template = $state<TemplateChoice>('suggest');
+	let suggestedPath = $state('');
+	const request = $derived(
+		composeDraftRequest({ description, section, template, path: suggestedPath })
+	);
 	// True from the click until the row exists, which is what a double click needs
 	// to be refused. It is deliberately NOT held while the model runs (up to a
 	// minute): the queue row is the commitment, and the reviewer may leave.
@@ -44,12 +34,8 @@
 	let error = $state('');
 	let confirmed = $state<{ path: string; failed: boolean } | undefined>();
 
-	// Counted over everything sent, the hint lines included: that is the text
-	// the 2,000-character limit is enforced on.
-	const used = $derived(
-		description.trim() === '' ? description.length : draftBrief(description, hints).length
-	);
-	const over = $derived(used - MAX_DESCRIPTION_CHARS);
+	// Measured on the whole request, since that is what the server bounds.
+	const over = $derived(request.length - MAX_DESCRIPTION_CHARS);
 	const canSubmit = $derived(!busy && description.trim().length > 0 && over <= 0);
 	const invalid = $derived(over > 0 || error !== '');
 
@@ -57,7 +43,7 @@
 	const countText = $derived(
 		over > 0
 			? `${over} ${over === 1 ? 'character' : 'characters'} over the ${MAX_DESCRIPTION_CHARS.toLocaleString('en-US')} character limit. Shorten it to continue.`
-			: `${(MAX_DESCRIPTION_CHARS - used).toLocaleString('en-US')} characters left`
+			: `${(MAX_DESCRIPTION_CHARS - request.length).toLocaleString('en-US')} characters left`
 	);
 
 	// Each submission takes a number; only the latest may write form state. An
@@ -78,25 +64,23 @@
 		event.preventDefault();
 		if (!canSubmit) return;
 		const sent = description;
-		const sentHints = hints;
-		// What the row's `description` will hold, and so what to look for.
-		const trimmed = draftBrief(sent, sentHints);
+		const trimmed = request;
 		const mine = ++latest;
 		const current = () => mine === latest;
 		busy = true;
 		error = '';
 		confirmed = undefined;
 
-		function confirm(draftPath: string) {
+		function confirm(path: string) {
 			if (!current() || confirmed) return;
 			// Only clear what was sent: anything typed since is the reviewer's.
 			if (description === sent) {
 				description = '';
 				section = '';
-				template = '';
-				path = '';
+				template = 'suggest';
+				suggestedPath = '';
 			}
-			confirmed = { path: draftPath, failed: false };
+			confirmed = { path, failed: false };
 			busy = false;
 		}
 
@@ -123,7 +107,7 @@
 		if (stopped) unsubscribe();
 		stopWatching = stop;
 
-		createDraft(sent.trim(), sentHints).then(
+		createDraft(trimmed).then(
 			(done) => {
 				stop();
 				// Fallback if the store match never fired: the resolved row is proof it
@@ -156,7 +140,7 @@
 			<label for="propose-description" class="font-semibold text-slate-900">
 				What should the page do?
 			</label>
-			<p id="propose-example" class="text-sm text-slate-700">
+			<p id="propose-help" class="text-sm text-slate-700">
 				Describe it in plain words and an AI will draft it into the review queue. It takes up to a
 				minute, and you can leave this page while it works. For example: “A page explaining how
 				tenants report bed bugs, and what happens after.”
@@ -172,7 +156,7 @@
 				class="min-h-30"
 				aria-invalid={invalid ? 'true' : undefined}
 				aria-describedby={[
-					'propose-example',
+					'propose-help',
 					'propose-count',
 					over > 0 && 'propose-over',
 					error && 'propose-error'
@@ -182,10 +166,14 @@
 			/>
 			<p id="propose-count" class="text-sm text-slate-700">{countText}</p>
 			{#if over > 0}
-				<p id="propose-over" role="alert" class="text-sm font-semibold text-red-800">Too long</p>
+				<p id="propose-over" role="alert" class="text-sm font-semibold text-site-danger">
+					Too long
+				</p>
 			{/if}
 			{#if error}
-				<p id="propose-error" role="alert" class="text-sm font-semibold text-red-800">{error}</p>
+				<p id="propose-error" role="alert" class="text-sm font-semibold text-site-danger">
+					{error}
+				</p>
 			{/if}
 		</div>
 
@@ -194,7 +182,7 @@
 			<select
 				id="propose-section"
 				bind:value={section}
-				class="h-11 rounded-[3px] border border-slate-300 bg-white px-2.5 text-sfds-black focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sfds-black"
+				class="h-11 rounded-[4px] border border-slate-300 bg-white px-2.5 text-sfds-black focus:border-sfds-action focus:ring-1 focus:ring-sfds-action focus:outline-none"
 			>
 				<option value="">Not sure yet</option>
 				{#each PAGE_GROUPS as group (group.id)}
@@ -203,44 +191,34 @@
 			</select>
 		</div>
 
+		<!-- Each option is a whole bordered card: the `<label>` wraps the radio, so
+		     the card is the hit area and the hint is part of the name. The chosen
+		     card is tinted and bordered in the action blue (`has-checked`), and the
+		     drafter-suggests option is dashed, a choice not to choose. -->
 		<fieldset class="flex flex-col gap-2">
 			<legend class="mb-2 font-semibold text-slate-900">Template</legend>
-			{#each TEMPLATES as t (t.value)}
+			{#each TEMPLATE_CHOICES as choice (choice.value)}
 				<label
-					class="flex cursor-pointer items-start gap-2.5 rounded-[3px] border px-3 py-2.5 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-sfds-black {template ===
-					t.value
-						? 'border-sfds-action bg-sfds-blue-l1'
+					class="flex cursor-pointer items-start gap-2.5 rounded-[4px] border px-3 py-2.5 has-checked:border-sfds-action has-checked:bg-sfds-blue-l1 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-sfds-black {choice.value ===
+					'suggest'
+						? 'border-dashed border-slate-500 text-slate-800'
 						: 'border-slate-300'}"
 				>
 					<input
 						type="radio"
 						name="propose-template"
-						value={t.value}
+						value={choice.value}
 						bind:group={template}
-						class="mt-1 accent-sfds-action"
+						class="mt-1 accent-sfds-action focus:outline-none"
 					/>
 					<span class="flex flex-col gap-0.5">
-						<span class="font-medium text-slate-900">{t.value}</span>
-						<span class="text-sm text-slate-700">{t.help}</span>
+						<span class="font-medium text-slate-900">{choice.label}</span>
+						{#if choice.hint}
+							<span class="text-sm text-slate-700">{choice.hint}</span>
+						{/if}
 					</span>
 				</label>
 			{/each}
-			<!-- Dashed: it is the absence of a choice, not a fourth template. -->
-			<label
-				class="flex cursor-pointer items-start gap-2.5 rounded-[3px] border px-3 py-2.5 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-sfds-black {template ===
-				''
-					? 'border-sfds-action bg-sfds-blue-l1'
-					: 'border-dashed border-slate-500'}"
-			>
-				<input
-					type="radio"
-					name="propose-template"
-					value=""
-					bind:group={template}
-					class="mt-1 accent-sfds-action"
-				/>
-				<span class="font-medium text-slate-900">Let the drafter suggest one</span>
-			</label>
 		</fieldset>
 
 		<div class="flex flex-col gap-1.5">
@@ -249,31 +227,29 @@
 				Optional. Leave it blank and the drafter suggests one.
 			</p>
 			<div
-				class="flex h-11 items-center rounded-[3px] border border-slate-300 bg-slate-50 focus-within:border-sfds-action focus-within:ring-1 focus-within:ring-sfds-action"
+				class="flex h-11 items-center rounded-[4px] border border-slate-300 bg-slate-50 focus-within:border-sfds-action focus-within:ring-1 focus-within:ring-sfds-action"
 			>
-				<span aria-hidden="true" class="pl-3 font-mono text-sm text-slate-700">sf.gov/</span>
+				<span class="pl-3 font-mono text-sm text-slate-700" aria-hidden="true">sf.gov/</span>
 				<input
 					id="propose-path"
 					type="text"
-					bind:value={path}
+					bind:value={suggestedPath}
 					autocomplete="off"
 					spellcheck="false"
-					maxlength="120"
+					placeholder="report-dead-animal"
 					aria-describedby="propose-path-help"
-					class="h-full min-w-0 flex-1 border-0 bg-transparent p-0 pr-3 font-mono text-sm text-sfds-black focus:ring-0 focus:outline-none"
+					class="h-full min-w-0 flex-1 bg-transparent pr-3 font-mono text-sm text-sfds-black placeholder:text-sfds-slate-l3 focus:outline-none"
 				/>
 			</div>
 		</div>
 
 		<div class="flex flex-wrap justify-end gap-2">
-			{#if onClose}
-				<Button variant="outline" class="h-11 px-4" onclick={onClose}>Cancel</Button>
+			{#if onCancel}
+				<Button type="button" variant="outline" size="lg" class="h-11 px-4" onclick={onCancel}>
+					Cancel
+				</Button>
 			{/if}
-			<Button
-				type="submit"
-				class="h-11 bg-sfds-action px-4 font-semibold text-white hover:bg-sfds-blue-dark"
-				disabled={!canSubmit}
-			>
+			<Button type="submit" size="lg" class="h-11 px-4 font-semibold" disabled={!canSubmit}>
 				Draft this page
 			</Button>
 		</div>
@@ -290,7 +266,8 @@
 					{/if}
 					<a
 						href={resolve(reviewHrefFor(confirmed.path))}
-						class="font-semibold underline underline-offset-2">Open the draft</a
+						class="font-semibold text-site-action underline underline-offset-[3px] hover:text-site-action-dark"
+						>Open the draft</a
 					>
 				</p>
 			{/if}
@@ -299,7 +276,9 @@
 {:else if sessionStore.signedIn === false}
 	<p class="text-slate-800">
 		Creating a page needs an account.
-		<a href={resolve('/login')} class="font-semibold underline underline-offset-2"
+		<a
+			href={resolve('/login')}
+			class="font-semibold text-site-action underline underline-offset-[3px] hover:text-site-action-dark"
 			>Sign in to propose a page</a
 		>.
 	</p>

@@ -11,7 +11,9 @@ import ProgressSummary from '../src/lib/components/landing/ProgressSummary.svelt
 
 const base = {
 	counts: { approved: 33 },
-	hasNext: false,
+	nextHref: undefined,
+	nextTitle: undefined,
+	nextMeta: undefined,
 	onShow: () => {}
 };
 

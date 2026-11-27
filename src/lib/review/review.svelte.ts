@@ -37,7 +37,7 @@ class Review {
 		return this.#reconciled.rows;
 	}
 
-	/** Corpus pages with no row: viewable, but nothing in the app can decide them. */
+	/** Corpus pages with no row: viewable, but undecidable until a reviewer adds the row. */
 	get unreviewed(): string[] {
 		return this.#reconciled.unreviewed;
 	}

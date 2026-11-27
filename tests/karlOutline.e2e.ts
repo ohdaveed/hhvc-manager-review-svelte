@@ -112,7 +112,7 @@ const noViolations = async (page: Page) => {
 async function switchOnByKeyboard(page: Page) {
 	await page.getByRole('tab', { name: 'Karl' }).click();
 	const toggle = page
-		.getByRole('group', { name: 'Show on the page' })
+		.getByRole('group', { name: 'Karl views' })
 		.getByRole('button', { name: /^Overlay/ });
 	await expect(toggle).toBeVisible();
 	await toggle.focus();
@@ -208,7 +208,7 @@ test.describe('Karl outline', () => {
 	test('is not offered on an AI-drafted page', async ({ page }) => {
 		await gotoSignedIn(page, `/review/draft/${DRAFT_IDS.ready}`, { drafts: true });
 		await page.getByRole('tab', { name: 'Karl' }).click();
-		await expect(page.getByRole('group', { name: 'Show on the page' })).toHaveCount(0);
+		await expect(page.getByRole('group', { name: 'Karl views' })).toHaveCount(0);
 		await expect(
 			page.getByRole('button', { name: /^(Start|Resume) the Karl walkthrough$/ })
 		).toBeVisible();

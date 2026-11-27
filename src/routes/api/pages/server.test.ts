@@ -9,15 +9,40 @@ const updates: { table: string; patch: Record<string, unknown>; col: string; id:
 let reviewRows: { id: string }[] = [];
 let failInsertOn: string | null = null;
 let updateRows: { id: string }[] = [];
+const upserts: { table: string; row: Record<string, unknown>; opts: unknown }[] = [];
+const reads: { table: string; filters: [string, unknown][] }[] = [];
+let failUpsert = false;
 
 function from(table: string) {
 	return {
-		select: () => ({
-			order: (col: string, opts: unknown) => {
-				orders.push({ table, col, opts });
-				return { limit: async () => ({ data: reviewRows, error: null }) };
-			}
-		}),
+		select: () => {
+			const filters: [string, unknown][] = [];
+			const chain = {
+				order: (col: string, opts: unknown) => {
+					orders.push({ table, col, opts });
+					return { limit: async () => ({ data: reviewRows, error: null }) };
+				},
+				eq: (col: string, value: unknown) => {
+					filters.push([col, value]);
+					return chain;
+				},
+				single: async () => {
+					reads.push({ table, filters });
+					const [, reviewId] = filters.find(([c]) => c === 'review_id') ?? [];
+					const [, path] = filters.find(([c]) => c === 'path') ?? [];
+					return {
+						data: { id: 'page-9', review_id: reviewId, path, status: 'needs-review' },
+						error: null
+					};
+				}
+			};
+			return chain;
+		},
+		upsert: async (row: Record<string, unknown>, opts: unknown) => {
+			if (failUpsert) return { error: new Error('db down at 10.0.0.5') };
+			upserts.push({ table, row, opts });
+			return { error: null };
+		},
 		insert: async (row: Record<string, unknown>) => {
 			if (table === failInsertOn) return { error: new Error('db down at 10.0.0.5') };
 			inserts.push({ table, row });
@@ -46,12 +71,16 @@ vi.mock('@supabase/supabase-js', () => ({ createClient }));
 const privateEnv: Record<string, string | undefined> = { SUPABASE_SERVICE_ROLE_KEY: 'k' };
 vi.mock('$env/dynamic/private', () => ({ env: privateEnv }));
 
-const { POST, PATCH } = await import('./+server');
+const { POST, PATCH, PUT } = await import('./+server');
 
 const AUTHED = { Authorization: 'Bearer good-token' };
 const DRAFT_ID = '3f2b8c1e-5a47-4d0e-9a6b-0c1d2e3f4a5b';
 
-function event(method: 'POST' | 'PATCH', body: unknown, headers: Record<string, string> = AUTHED) {
+function event(
+	method: 'POST' | 'PATCH' | 'PUT',
+	body: unknown,
+	headers: Record<string, string> = AUTHED
+) {
 	const request = new Request('https://example.test/api/pages', {
 		method,
 		headers: { 'Content-Type': 'application/json', ...headers },
@@ -71,6 +100,9 @@ beforeEach(() => {
 	reviewRows = [{ id: 'review-1' }];
 	failInsertOn = null;
 	updateRows = [{ id: DRAFT_ID }];
+	upserts.length = 0;
+	reads.length = 0;
+	failUpsert = false;
 	privateEnv.SUPABASE_SERVICE_ROLE_KEY = 'k';
 });
 
@@ -152,6 +184,14 @@ describe('POST /api/pages', () => {
 		for (const w of title.slice(0, -1).split(' ')) expect(words.has(w)).toBe(true);
 	});
 
+	it('titles the row from the first paragraph, not the choices written after it', async () => {
+		const description =
+			'Report a dead animal\n\nKarl template: Transaction.\nSection of the HHVC site: Report a problem.';
+		const res = await POST(event('POST', { description }));
+		const { title } = await res.json();
+		expect(title).toBe('Report a dead animal');
+	});
+
 	it('joins the newest review: looks it up ordered by created_at descending', async () => {
 		await POST(event('POST', { description: 'a page' }));
 		expect(orders).toEqual([{ table: 'reviews', col: 'created_at', opts: { ascending: false } }]);
@@ -174,6 +214,80 @@ describe('POST /api/pages', () => {
 		});
 		const draft = inserts.find((i) => i.table === 'draft_pages')!.row;
 		expect(deletes).toEqual([{ table: 'draft_pages', col: 'id', id: draft.id }]);
+	});
+});
+
+describe('PUT /api/pages', () => {
+	// A real corpus id: the bed bugs page this route was added for.
+	const CORPUS_PATH = 'information-bed-bugs-prevent-find-and-prepare-for-treatment';
+
+	it('rejects an unauthenticated caller before building a service-role client', async () => {
+		getUser.mockResolvedValue({ data: { user: null }, error: { message: 'bad' } });
+		await expect(PUT(event('PUT', { path: CORPUS_PATH }))).rejects.toMatchObject({
+			status: 401
+		});
+		expect(createClient).toHaveBeenCalledTimes(1);
+		expect(upserts).toHaveLength(0);
+	});
+
+	it.each([
+		['a path the corpus does not have', { path: 'not-a-page' }],
+		['a draft path, which gets its row at creation', { path: `draft:${DRAFT_ID}` }],
+		['a missing path', {}],
+		['a non-string path', { path: 42 }]
+	])('refuses %s without writing anything', async (_label, body) => {
+		await expect(PUT(event('PUT', body))).rejects.toMatchObject({
+			status: 400,
+			body: { message: expect.stringMatching(/path/) }
+		});
+		expect(createClient).toHaveBeenCalledTimes(1);
+		expect(upserts).toHaveLength(0);
+	});
+
+	it('adds the row to the newest review, undecided, and answers with it', async () => {
+		const res = await PUT(event('PUT', { path: CORPUS_PATH }));
+		expect(res.status).toBe(200);
+		expect(await res.json()).toMatchObject({
+			id: 'page-9',
+			review_id: 'review-1',
+			path: CORPUS_PATH,
+			status: 'needs-review'
+		});
+		expect(orders).toEqual([{ table: 'reviews', col: 'created_at', opts: { ascending: false } }]);
+		// Status is left to the column default, as for a draft's row.
+		expect(upserts).toEqual([
+			{
+				table: 'pages',
+				row: { review_id: 'review-1', path: CORPUS_PATH },
+				opts: { onConflict: 'review_id,path', ignoreDuplicates: true }
+			}
+		]);
+		expect(reads).toEqual([
+			{
+				table: 'pages',
+				filters: [
+					['review_id', 'review-1'],
+					['path', CORPUS_PATH]
+				]
+			}
+		]);
+	});
+
+	it('fails with a clear status when there is no review', async () => {
+		reviewRows = [];
+		await expect(PUT(event('PUT', { path: CORPUS_PATH }))).rejects.toMatchObject({
+			status: 409
+		});
+		expect(upserts).toHaveLength(0);
+	});
+
+	it('answers a generic 500 when the write fails, without leaking the cause', async () => {
+		failUpsert = true;
+		vi.spyOn(console, 'error').mockImplementation(() => {});
+		await expect(PUT(event('PUT', { path: CORPUS_PATH }))).rejects.toMatchObject({
+			status: 500,
+			body: { message: expect.not.stringMatching(/10\.0\.0\.5/) }
+		});
 	});
 });
 

@@ -57,34 +57,3 @@ export function reviewHrefFor(path: string): `/review/${string}` {
 export function routePathFor(params: { slug?: string; id?: string }): string | undefined {
 	return params.id === undefined ? params.slug : draftPathFor(params.id);
 }
-
-/**
- * What the proposer picked beside the description: a landing section, a Karl
- * template and a path. All optional, and all hints to the drafter rather than
- * stored facts -- `draft_pages` has no column for them, so they travel as
- * labelled lines after the description.
- */
-export type DraftHints = { section?: string; template?: string; path?: string };
-
-/** The hint lines, or `''` when nothing was picked. */
-export function draftHintLines(hints: DraftHints): string {
-	const path = hints.path?.trim().replace(/^\/+/, '');
-	return [
-		hints.section && `Section: ${hints.section}`,
-		hints.template && `Template: ${hints.template}`,
-		path && `Suggested path: sf.gov/${path}`
-	]
-		.filter(Boolean)
-		.join('\n');
-}
-
-/**
- * The text stored as `draft_pages.description` and sent to the drafter. The API
- * route and the browser both build it here, so the row the form waits for in
- * `draftsStore` is the row the server wrote.
- */
-export function draftBrief(description: string, hintLines = ''): string {
-	const text = description.trim();
-	const lines = hintLines.trim();
-	return lines ? `${text}\n\n${lines}` : text;
-}

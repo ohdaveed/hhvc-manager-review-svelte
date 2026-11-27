@@ -37,8 +37,8 @@
 		{ id: 'mockup', label: 'Mockup', hint: 'The page as it would appear', icon: PanelTop },
 		{
 			id: 'blueprint',
-			label: 'Blueprint',
-			hint: 'Its Karl blocks, in page order',
+			label: 'Build in Karl',
+			hint: 'Its Karl blocks, beside the mockup',
 			icon: LayoutTemplate
 		},
 		{ id: 'overlay', label: 'Overlay', hint: 'The mockup with Karl fields marked', icon: Layers }
@@ -56,7 +56,7 @@
 
 <div class="flex flex-col gap-4 p-3">
 	{#if views}
-		<div role="group" aria-label="Show on the page" class="flex flex-col gap-2">
+		<div role="group" aria-label="Karl views" class="flex flex-col gap-2">
 			{#each VIEWS as v (v.id)}
 				<button
 					type="button"

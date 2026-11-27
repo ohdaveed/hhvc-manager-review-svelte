@@ -85,6 +85,13 @@
 		}
 	});
 
+	// The mockup shows its "Rethink section" buttons at rest while Rethink is
+	// the tool open; otherwise they wait for the pointer.
+	$effect(() => {
+		pageStore.rethinkTabOpen = activeTab === 'fix' && tool === 'rethink';
+		return () => (pageStore.rethinkTabOpen = false);
+	});
+
 	// The Fix badge: findings still open, as the Checks tool last measured them.
 	// `null` until it has, and again on a new page, so a count from the page
 	// just left is never shown over this one.

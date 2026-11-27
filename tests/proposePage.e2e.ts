@@ -76,6 +76,12 @@ async function stubApi(
 
 const form = (page: Page) => page.locator('form');
 
+/** The form lives in a side panel the header button opens. */
+async function openPanel(page: Page) {
+	await page.getByRole('button', { name: 'Propose a page' }).click();
+	await expect(page.getByRole('complementary', { name: 'Propose a new page' })).toBeVisible();
+}
+
 test('submitting shows the pending state, then confirms with a link to the draft', async ({
 	page
 }) => {
@@ -94,7 +100,7 @@ test('submitting shows the pending state, then confirms with a link to the draft
 		});
 	});
 	await gotoSignedIn(page, '/');
-	await page.getByRole('button', { name: 'Propose a page' }).click();
+	await openPanel(page);
 	await expect(form(page)).toBeVisible();
 
 	await page.getByLabel('What should the page do?').fill(DESCRIPTION);
@@ -132,7 +138,7 @@ test('an unsaved submission says so, keeps the text and can be retried', async (
 		route.fulfill({ status: 200, contentType: 'text/plain', body: 'not json' })
 	);
 	await gotoSignedIn(page, '/');
-	await page.getByRole('button', { name: 'Propose a page' }).click();
+	await openPanel(page);
 
 	const field = page.getByLabel('What should the page do?');
 	await field.fill(DESCRIPTION);
@@ -149,7 +155,7 @@ test('an unsaved submission says so, keeps the text and can be retried', async (
 test('a description over the limit is refused and named', async ({ page }) => {
 	const { requests } = await stubApi(page, (route) => route.abort());
 	await gotoSignedIn(page, '/');
-	await page.getByRole('button', { name: 'Propose a page' }).click();
+	await openPanel(page);
 
 	await page.getByLabel('What should the page do?').fill('a'.repeat(2001));
 

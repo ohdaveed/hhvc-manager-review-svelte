@@ -8,7 +8,8 @@
 	import { pageStore } from '$lib/stores/pageData.svelte';
 	import { sessionStore } from '$lib/stores/session.svelte';
 	import { STATUS_LABELS } from '$lib/review/statusLabels';
-	import { updatePageStatus, pagesStore } from '$lib/stores/reviewState';
+	import { Button } from '$lib/components/ui/button/index.js';
+	import { addPageToReview, updatePageStatus, pagesStore } from '$lib/stores/reviewState';
 
 	type Decision = 'needs-review' | 'approved' | 'blocked' | 'revise';
 
@@ -48,6 +49,25 @@
 
 	// Find the live record in the store matching the static corpus id
 	let liveRecord = $derived($pagesStore.find((p) => p.path === pageData?.id));
+
+	// A corpus page with no row can be added to the review from here, as from
+	// the queue's "Not in the review yet" list. `review.unreviewed` is exactly
+	// those pages: never a draft (its row is made with it) and never a retired
+	// row. The decision controls come alive once the row lands in the store.
+	const addable = $derived(pageData?.id ? review.unreviewed.includes(pageData.id) : false);
+	let adding = $state(false);
+	let addFailed = $state(false);
+	$effect(() => {
+		void pageData?.id;
+		addFailed = false;
+	});
+	async function addToReview() {
+		if (adding || !pageData?.id) return;
+		adding = true;
+		addFailed = false;
+		addFailed = !(await addPageToReview(pageData.id));
+		adding = false;
+	}
 
 	// `tone` is the FILLED selected state: a faint ring was the only cue once,
 	// and in a ~380px panel it was easy to miss. The fills are the SFDS status
@@ -224,6 +244,19 @@
 			{/if}
 		</span>
 	</div>
+
+	{#if addable && sessionStore.signedIn && $pagesStore.length > 0}
+		<!-- Same condition as the "No review record" line above, narrowed to
+		     corpus pages: the button creates the row through PUT /api/pages. -->
+		<div class="flex flex-wrap items-center gap-2">
+			<Button variant="outline" size="sm" aria-busy={adding} onclick={addToReview}>
+				{adding ? 'Adding…' : 'Add to review'}
+			</Button>
+			{#if addFailed}
+				<span role="alert" class="text-xs text-destructive">Couldn't add it. Try again.</span>
+			{/if}
+		</div>
+	{/if}
 
 	{#if liveRecord && (karlReadiness || unsavedHere || expiredHere)}
 		<!-- Read before the buttons, and tied to them by aria-describedby, so

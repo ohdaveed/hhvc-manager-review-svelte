@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { onMount, tick } from 'svelte';
-	import AllPagesList from '$lib/components/landing/AllPagesList.svelte';
 	import Plus from '@lucide/svelte/icons/plus';
 	import X from '@lucide/svelte/icons/x';
 	import { resolve } from '$app/paths';
-	import ReviewGuide from '$lib/components/landing/ReviewGuide.svelte';
-	import { Button } from '$lib/components/ui/button/index.js';
+	import AllPagesList from '$lib/components/landing/AllPagesList.svelte';
 	import ProgressSummary from '$lib/components/landing/ProgressSummary.svelte';
 	import ProposePageForm from '$lib/components/landing/ProposePageForm.svelte';
+	import ReviewGuide from '$lib/components/landing/ReviewGuide.svelte';
 	import StatusCard from '$lib/components/landing/StatusCard.svelte';
+	import { Button } from '$lib/components/ui/button/index.js';
 	import { pageTitleFor } from '$lib/corpus/pageTitle';
 	import type { StatusFilter } from '$lib/landing/filter';
 	import { reviewProgress } from '$lib/landing/progress';
@@ -29,6 +29,12 @@
 			? undefined
 			: pageTitleFor(progress.nextPath, pageStore.pages, $draftsStore)
 	);
+
+	// Short verb, then the page: "Continue: Report mold". The title is inside
+	// the button, so it truncates rather than push the button past a phone's
+	// edge, and the accessible name is the visible text, which is all of it.
+	const verb = $derived(progress.decided === 0 ? 'Start' : 'Continue');
+
 	// The list's search and status filter live here, not in the list, so the
 	// status card's shortcuts can set them.
 	let query = $state('');
@@ -114,25 +120,34 @@
 				: undefined
 	);
 
-	// Continue is in the header band, with the page it goes to in its label.
-	const verb = $derived(progress.decided === 0 ? 'Start' : 'Continue');
-
-	// The propose form is a panel beside the list, opened from the header. Focus
-	// goes into it on open and back to its button on close, so a keyboard user
-	// is not left at the top of a page whose content just moved.
-	let proposing = $state(false);
+	/**
+	 * Propose a page is a side panel the header button opens, not a form always
+	 * on the page: it is an occasional action, and the list is the page's main
+	 * thing. Opening moves focus to the panel's heading so a keyboard or
+	 * screen-reader user lands in it; closing returns focus to the button.
+	 * Closing does not cancel a draft -- the row is in the list by then.
+	 */
+	let proposeOpen = $state(false);
 	let proposeButton: HTMLElement | null = $state(null);
 
 	async function openPropose() {
-		proposing = true;
+		proposeOpen = true;
 		await tick();
-		document.getElementById('propose-description')?.focus();
+		document.getElementById('propose-a-page')?.focus();
 	}
 
 	async function closePropose() {
-		proposing = false;
+		proposeOpen = false;
 		await tick();
 		proposeButton?.focus();
+	}
+
+	// Escape closes the panel when focus is inside it. On the window rather
+	// than the `<aside>`, which is not an interactive element to listen on.
+	// `defaultPrevented`: an Escape something inside already handled is its own.
+	function onWindowKeydown(event: KeyboardEvent) {
+		if (event.key !== 'Escape' || event.defaultPrevented || !proposeOpen) return;
+		if (document.getElementById('propose-panel')?.contains(document.activeElement)) closePropose();
 	}
 
 	onMount(() => () => {
@@ -141,122 +156,145 @@
 	});
 </script>
 
-{#snippet guide()}
-	<ReviewGuide startOpen={guideOpen} />
-{/snippet}
+<!-- `max-w-6xl` now the list is a table: Template, Status, Notes and Karl
+     columns use the width that, as a two-line list, left a row's title at the
+     far left and its status 1,100px away at the far right. -->
+<svelte:window onkeydown={onWindowKeydown} />
 
-<!-- The header band: what this is, and the two things to do from here. Full
-     width and white, so it reads as the page's chrome over the grey ground. -->
-<header class="border-b border-sfds-grey-l2 bg-white">
-	<div
-		class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-6 gap-y-3 px-4 py-4"
-	>
-		<div class="min-w-0 flex-[1_1_28rem] space-y-1">
-			<h1 class="text-[1.375rem] leading-7 font-bold text-slate-900">HHVC mockup review</h1>
-			<!-- What the pages ARE, for anyone opening this to look at them -- the
+<!-- The page's anchor: a full-width white bar across the top, the same
+     surface the review workspace's toolbar sits on, with the title on the left
+     and the page's two actions on the right. A `<header>` outside `<main>` is
+     the page's banner landmark. -->
+<div class="site-skin min-h-screen">
+	<header class="border-b border-sfds-grey-l2 bg-white">
+		<div
+			class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-6 gap-y-3 px-4 py-4"
+		>
+			<!-- Grows and wraps its own text, so the actions stay on the right of a
+		     wide screen rather than dropping under a long subtitle. -->
+			<div class="min-w-0 flex-[1_1_28rem] space-y-1">
+				<h1 class="font-heading text-[1.75rem] leading-9 font-semibold text-slate-900">
+					HHVC mockup review
+				</h1>
+				<!-- What the pages ARE, for anyone opening this to look at them -- the
 			     manager first. Everything else on the page is about the review. -->
-			<p class="text-slate-700">
-				Proposed SF.gov pages for Healthy Housing and Vector Control, shown the way they would
-				appear on SF.gov.
-			</p>
-		</div>
-		<div class="flex max-w-full flex-wrap items-center gap-2">
-			<!-- Proposing needs an account, so signed out there is no button to
-			     open a panel that could only say "sign in". `signedIn === true`,
-			     not `!knownSignedOut`: it must not flash in during the check. -->
-			{#if sessionStore.signedIn === true}
-				<Button
-					bind:ref={proposeButton}
-					variant="outline"
-					class="h-11 gap-1.5 px-4 aria-expanded:border-sfds-action aria-expanded:bg-sfds-blue-l1 aria-expanded:text-sfds-blue-dark"
-					aria-expanded={proposing}
-					aria-controls="propose-panel"
-					onclick={() => (proposing ? closePropose() : openPropose())}
-				>
-					<Plus aria-hidden="true" />
-					Propose a page
-				</Button>
+				<p class="text-slate-700">
+					Proposed SF.gov pages for Healthy Housing and Vector Control, shown the way they would
+					appear on SF.gov.
+				</p>
+			</div>
+			<!-- Signed out, neither action applies: proposing a page needs an account,
+		     and there is no review to resume. `knownSignedOut`, so the button is not
+		     hidden during the session check and then flashed in. -->
+			{#if !sessionStore.knownSignedOut || (card === 'progress' && progress.nextHref)}
+				<div class="flex max-w-full min-w-0 flex-wrap items-center gap-2">
+					{#if !sessionStore.knownSignedOut}
+						<Button
+							variant="outline"
+							size="lg"
+							bind:ref={proposeButton}
+							aria-expanded={proposeOpen}
+							aria-controls="propose-panel"
+							onclick={() => (proposeOpen ? closePropose() : openPropose())}
+							class="h-11 bg-white px-4 {proposeOpen
+								? 'border-sfds-action bg-sfds-blue-l1 text-sfds-blue-dark'
+								: ''}"
+						>
+							<Plus aria-hidden="true" data-icon="inline-start" />
+							Propose a page
+						</Button>
+					{/if}
+					<!-- `nextHref` is undefined once every page in the review has a
+				     decision; the progress card then says so in place of a button. -->
+					{#if card === 'progress' && progress.nextHref}
+						<Button
+							href={resolve(progress.nextHref)}
+							size="lg"
+							class="h-11 max-w-full min-w-0 px-4 font-semibold"
+						>
+							<span class="truncate">{verb}: {nextTitle}</span>
+						</Button>
+					{/if}
+				</div>
 			{/if}
-			<!-- `nextHref` is undefined only when every page IN THE REVIEW has a
-			     decision, so there is deliberately no link then: Continue would
-			     point at a page with nothing left to resume. The title is inside
-			     the button and truncates, so a long one cannot push it past a
-			     phone's edge; `title` carries the whole of it. -->
-			{#if card === 'progress' && progress.nextHref}
-				<Button
-					href={resolve(progress.nextHref)}
-					class="h-11 max-w-full justify-start bg-sfds-action px-4 font-semibold text-white [a]:hover:bg-sfds-blue-dark"
-					title="{verb}: {nextTitle}"
-				>
-					<span class="truncate">{verb}: {nextTitle}</span>
-				</Button>
-			{/if}
 		</div>
-	</div>
-</header>
+	</header>
 
-<!-- `max-w-6xl`: the list is a table now, with its status, notes and Karl
-     columns, and needs the width a single stacked row did not. -->
-<main class="mx-auto max-w-6xl px-4 py-8">
-	<div class="flex flex-wrap items-start gap-6">
-		<!-- `min-w-0`: a flex item defaults to `min-width: auto`, so a long title
-		     would widen this column past a 375px phone. The huge grow factor
-		     gives the panel only what it asks for. -->
-		<div class="flex min-w-0 flex-[999_1_35rem] flex-col gap-6">
-			{#if card === 'progress'}
-				<ProgressSummary
-					decided={progress.decided}
-					total={progress.total}
-					{counts}
-					hasNext={progress.nextHref !== undefined}
-					unreviewed={review.unreviewed.length}
-					onShow={showStatus}
-					footer={guide}
-				/>
-			{:else if card === 'checking' || card === 'loading'}
-				<StatusCard
-					kind="loading"
-					loadingLabel={card === 'checking' ? 'Checking your session…' : 'Loading your progress…'}
-				/>
-			{:else}
-				<StatusCard kind={card} {retrying} onRetry={retry} />
-				<!-- Signed out the guide does not apply: it describes the review and
-				     the Karl move, which need an account. -->
-				{#if card !== 'signed-out'}
-					<div class="overflow-hidden rounded-[3px] border border-sfds-grey-l2 bg-white">
-						{@render guide()}
+	<main class="mx-auto max-w-6xl space-y-6 px-4 py-6 sm:py-8">
+		<!-- With the panel open, the list and the panel share the row on a wide
+	     screen; narrower, the panel comes first, where the button that opened it
+	     is. `min-w-0` on the column: a flex item defaults to `min-width: auto`,
+	     and a long title would otherwise widen it past a 375px phone. -->
+		<div class="flex flex-col gap-6 lg:flex-row lg:items-start">
+			<div class="min-w-0 flex-1 space-y-6">
+				{#if card === 'progress'}
+					<ProgressSummary
+						decided={progress.decided}
+						total={progress.total}
+						{counts}
+						nextHref={progress.nextHref}
+						unreviewed={review.unreviewed.length}
+						onShow={showStatus}
+					>
+						{#snippet footer()}
+							<ReviewGuide startOpen={guideOpen} attached />
+						{/snippet}
+					</ProgressSummary>
+				{:else}
+					<div class="space-y-3">
+						{#if card === 'checking' || card === 'loading'}
+							<StatusCard
+								kind="loading"
+								loadingLabel={card === 'checking'
+									? 'Checking your session…'
+									: 'Loading your progress…'}
+							/>
+						{:else}
+							<StatusCard kind={card} {retrying} onRetry={retry} />
+						{/if}
+						<!-- Signed out, the guide describes a review and a Karl move that
+					     need an account: a visitor gets the sign-in card and then the
+					     pages, which is what they came to see. -->
+						{#if !sessionStore.knownSignedOut}
+							<ReviewGuide startOpen={guideOpen} />
+						{/if}
 					</div>
 				{/if}
-			{/if}
 
-			<AllPagesList bind:query bind:status />
-		</div>
+				<AllPagesList bind:query bind:status />
+			</div>
 
-		{#if proposing}
-			<!-- Beside the list on a wide screen, under it on a narrow one (the
-			     row wraps). Not a modal: the list stays readable and usable, which
-			     is what "you can leave while it drafts" promises. -->
-			<aside
-				id="propose-panel"
-				aria-labelledby="propose-title"
-				class="w-full max-w-[26rem] flex-[1_1_25rem] rounded-[3px] border border-sfds-grey-l2 bg-white lg:sticky lg:top-4"
-			>
-				<div class="flex items-center justify-between border-b border-sfds-grey-l2 py-2 pr-2 pl-5">
-					<h2 id="propose-title" class="text-lg font-bold text-slate-900">Propose a new page</h2>
-					<Button
-						variant="ghost"
-						size="icon"
-						class="size-11"
-						aria-label="Close panel"
-						onclick={closePropose}
+			{#if proposeOpen}
+				<aside
+					id="propose-panel"
+					aria-labelledby="propose-a-page"
+					class="order-first rounded-[4px] border border-sfds-grey-l2 bg-white lg:sticky lg:top-6 lg:order-none lg:w-[26rem] lg:flex-none"
+				>
+					<div
+						class="flex items-center justify-between gap-3 border-b border-sfds-grey-l2 py-2 pr-2 pl-4 sm:pl-5"
 					>
-						<X aria-hidden="true" />
-					</Button>
-				</div>
-				<div class="p-5">
-					<ProposePageForm onClose={closePropose} />
-				</div>
-			</aside>
-		{/if}
-	</div>
-</main>
+						<h2
+							id="propose-a-page"
+							tabindex="-1"
+							class="font-heading text-xl leading-7 font-medium text-slate-900 focus:outline-none"
+						>
+							Propose a new page
+						</h2>
+						<Button
+							variant="ghost"
+							size="icon-lg"
+							class="size-11"
+							aria-label="Close panel"
+							onclick={closePropose}
+						>
+							<X aria-hidden="true" />
+						</Button>
+					</div>
+					<div class="p-4 sm:p-5">
+						<ProposePageForm onCancel={closePropose} />
+					</div>
+				</aside>
+			{/if}
+		</div>
+	</main>
+</div>

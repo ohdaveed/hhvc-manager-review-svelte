@@ -109,6 +109,19 @@ export type RethinkState =
 	  };
 
 const RAIL_KEY = 'hhvc:railCollapsed';
+
+/**
+ * How the workspace opens: the page queue collapsed, the review panel open.
+ *
+ * The page and the decision about it are the work; the queue is how you get to
+ * the next page, and the panel's "Next undecided page" does that without it.
+ * With both rails open a 1440px window left the mockup a 716px frame, drawn at
+ * 70% (16px copy read at 11.2px); with the queue collapsed the frame is 944px.
+ *
+ * The rails are also EXCLUSIVE: opening one closes the other (`toggleRail`),
+ * so the mockup never loses both columns at once. Both may be collapsed.
+ */
+const DEFAULT_RAILS = { queue: true, panel: false } as const;
 const PREVIEW_WIDTH_KEY = 'hhvc:previewWidth';
 const KARL_OUTLINE_KEY = 'hhvc:karlOutline';
 
@@ -172,6 +185,10 @@ export function fitFrame(paneWidth: number): { width: number; scale: number } | 
 	return paneWidth < phone ? { width: phone, scale: paneWidth / phone } : null;
 }
 const COPIED_KEY = 'hhvc:walkthroughCopied';
+const BLUEPRINT_KEY = 'hhvc:blueprintProgress';
+
+/** Blueprint build progress, per page: the Karl panels entered, and whether it is built. */
+export type BlueprintProgress = { entered: string[]; built: boolean };
 
 /**
  * Gives a section a stable key for `edits.field_id`.
@@ -268,7 +285,7 @@ class PageStore {
 	agentRec = $state<AgentRec>({ state: 'idle', text: '' });
 
 	/** Per-user, per-device chrome. Not review data, so it never leaves the browser. */
-	railCollapsed = $state<{ queue: boolean; panel: boolean }>({ queue: false, panel: false });
+	railCollapsed = $state<{ queue: boolean; panel: boolean }>({ ...DEFAULT_RAILS });
 
 	/**
 	 * Each page's BASE COPY, by field id, captured before anything is written
@@ -542,6 +559,13 @@ class PageStore {
 		}
 
 		this.selectedSectionKey = sectionKey;
+
+		// "Rethink section" does all of its work in the review panel. With the
+		// panel collapsed -- which opening the queue now does -- the click
+		// selected the section and showed nothing: measured 2026-11-27, the panel
+		// stayed a 52px strip. The panel opens, as a field's suggestion would
+		// have no other place to appear either.
+		if (this.railCollapsed.panel) this.#openRail('panel');
 	}
 
 	clearSectionSelection() {
@@ -781,22 +805,21 @@ class PageStore {
 	loadRailState() {
 		try {
 			const raw = localStorage.getItem(RAIL_KEY);
+			// No choice recorded yet: the default, NOT persisted. The first toggle
+			// records the reviewer's own choice, which wins from then on. Below
+			// 1024px the rails are sheets and this is moot.
 			if (!raw) {
-				// No choice recorded yet. On a laptop-width window (1024-1279px) both
-				// rails open leave the canvas ~440-600px, so Fit falls back to the
-				// phone layout at 1100px; the queue starts collapsed there and the
-				// mockup gets the desktop layout. NOT persisted: it is a default,
-				// and the first toggle records the reviewer's own choice, which wins
-				// from then on. Below 1024px the rails are sheets and this is moot.
-				if (window.matchMedia?.('(min-width: 1024px) and (max-width: 1279px)')?.matches)
-					this.railCollapsed = { queue: true, panel: false };
+				this.railCollapsed = { ...DEFAULT_RAILS };
 				return;
 			}
 			const parsed = JSON.parse(raw);
-			this.railCollapsed = {
-				queue: parsed?.queue === true,
-				panel: parsed?.panel === true
-			};
+			const queue = parsed?.queue === true;
+			const panel = parsed?.panel === true;
+			// "Both open" was a state a reviewer could save before the rails
+			// became exclusive (2026-11-27). It is no longer one they can reach,
+			// so it loads as the default rather than as a layout with no way back
+			// to it.
+			this.railCollapsed = !queue && !panel ? { ...DEFAULT_RAILS } : { queue, panel };
 		} catch {
 			// Private mode, disabled storage, or a value someone hand-edited.
 			// Chrome preferences are not worth failing a page load over.
@@ -804,13 +827,37 @@ class PageStore {
 	}
 
 	toggleRail(which: 'queue' | 'panel') {
-		this.railCollapsed = { ...this.railCollapsed, [which]: !this.railCollapsed[which] };
+		// Opening a rail by hand ends Present: the reviewer asked for review
+		// chrome back. The rails stay as they now are rather than jumping back to
+		// the pre-Present state, which would undo the toggle just made.
+		this.#endPresenting();
+		// Opening one closes the other. Closing one leaves the other alone, so
+		// both can be collapsed for a wide look at the page.
+		if (this.railCollapsed[which]) this.#openRail(which);
+		else this.#saveRails({ ...this.railCollapsed, [which]: true });
+	}
+
+	/** Open `which`, closing the other: the rails are exclusive. */
+	#openRail(which: 'queue' | 'panel') {
+		const other = which === 'queue' ? 'panel' : 'queue';
+		this.#saveRails({ [which]: false, [other]: true } as { queue: boolean; panel: boolean });
+	}
+
+	#saveRails(next: { queue: boolean; panel: boolean }) {
+		this.railCollapsed = next;
 		try {
-			localStorage.setItem(RAIL_KEY, JSON.stringify(this.railCollapsed));
+			localStorage.setItem(RAIL_KEY, JSON.stringify(next));
 		} catch {
 			// As above: the toggle still works for this session.
 		}
 	}
+
+	/**
+	 * Whether the review panel's Rethink tab is the one on screen. Set by the
+	 * panel; read by the mockup, which shows each section's "Rethink section"
+	 * button at rest while it is (they are hover-only otherwise).
+	 */
+	rethinkTabOpen = $state(false);
 
 	// ---- narrow-viewport sheets ------------------------------------------
 
@@ -975,7 +1022,112 @@ class PageStore {
 		}
 	}
 
+	// ---- blueprint progress -------------------------------------------------
+
+	/**
+	 * Which Karl panels have been entered in Karl, and which pages are built,
+	 * keyed by page id. Local for the same reasons as `copiedSteps`: it is one
+	 * person's progress through Karl, not a property of the page, and keeping it
+	 * out of Supabase keeps a migration out of production.
+	 */
+	blueprintProgress = $state<Record<string, BlueprintProgress>>({});
+
+	/** Same reason as `loadRailState`: called from the layout, never on import. */
+	loadBlueprintProgress() {
+		try {
+			const raw = localStorage.getItem(BLUEPRINT_KEY);
+			if (!raw) return;
+			const parsed = JSON.parse(raw);
+			if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return;
+			const out: Record<string, BlueprintProgress> = {};
+			for (const [pageId, value] of Object.entries(parsed)) {
+				const v = value as { entered?: unknown; built?: unknown };
+				if (!v || typeof v !== 'object') continue;
+				out[pageId] = {
+					entered: Array.isArray(v.entered)
+						? v.entered.filter((id): id is string => typeof id === 'string')
+						: [],
+					built: v.built === true
+				};
+			}
+			this.blueprintProgress = out;
+		} catch {
+			// As `loadCopiedSteps`: progress is a convenience, not worth a failed load.
+		}
+	}
+
+	#saveBlueprintProgress(pageId: string, next: BlueprintProgress) {
+		this.blueprintProgress = { ...this.blueprintProgress, [pageId]: next };
+		try {
+			localStorage.setItem(BLUEPRINT_KEY, JSON.stringify(this.blueprintProgress));
+		} catch {
+			// As above.
+		}
+	}
+
+	isPanelEntered(pageId: string, rawName: string): boolean {
+		return (this.blueprintProgress[pageId]?.entered ?? []).includes(rawName);
+	}
+
+	/** Unchecking a panel also unmarks the page: it is no longer fully built. */
+	setPanelEntered(pageId: string, rawName: string, entered: boolean) {
+		const current = this.blueprintProgress[pageId] ?? { entered: [], built: false };
+		const rest = current.entered.filter((id) => id !== rawName);
+		this.#saveBlueprintProgress(pageId, {
+			entered: entered ? [...rest, rawName] : rest,
+			built: entered ? current.built : false
+		});
+	}
+
+	isPageBuilt(pageId: string): boolean {
+		return this.blueprintProgress[pageId]?.built ?? false;
+	}
+
+	setPageBuilt(pageId: string, built: boolean) {
+		const current = this.blueprintProgress[pageId] ?? { entered: [], built: false };
+		this.#saveBlueprintProgress(pageId, { ...current, built });
+	}
+
+	// ---- present ----------------------------------------------------------
+
+	/**
+	 * Present: the mockup as it would look on SF.gov, for showing someone.
+	 *
+	 * Both rails collapse so Fit has the whole window: MEASURED at 1440px with
+	 * both rails open, the frame was 716px, so Fit drew the 1024px desktop
+	 * layout at 70% -- 16px body copy read at ~11px. With both collapsed the
+	 * pane is wider than 1024px and the page renders at 100%. The layout also
+	 * hides the review controls inside the mockup (`data-presenting`).
+	 *
+	 * Not persisted, like the walkthrough: it is a moment, not a preference, and
+	 * a reload should land back in the review.
+	 */
+	presenting = $state(false);
+	#railsBeforePresent: { queue: boolean; panel: boolean } | null = null;
+
+	togglePresent() {
+		if (this.presenting) {
+			if (this.#railsBeforePresent) this.railCollapsed = this.#railsBeforePresent;
+			this.#endPresenting();
+			return;
+		}
+		this.mobileSheet = 'none';
+		this.#railsBeforePresent = { ...this.railCollapsed };
+		this.railCollapsed = { queue: true, panel: true };
+		this.presenting = true;
+	}
+
+	#endPresenting() {
+		this.presenting = false;
+		this.#railsBeforePresent = null;
+	}
+
 	enterWalkthrough() {
+		// Present and the walkthrough both collapse the rails and both restore
+		// them on the way out; the walkthrough is the one asked for last, so it
+		// takes over, and restores the rails as Present found them.
+		if (this.presenting && this.#railsBeforePresent) this.railCollapsed = this.#railsBeforePresent;
+		this.#endPresenting();
 		// Both entries now live in the review panel, which below 1024px is a
 		// modal sheet over the canvas: leaving it open would cover the view just
 		// asked for.
@@ -998,13 +1150,30 @@ class PageStore {
 		this.mode = 'sitemap';
 	}
 
-	/** The page redrawn as its Karl form. A view, like the site map: not persisted. */
+	/** Rail state captured on entering the Blueprint, restored on leaving it. */
+	#railsBeforeBlueprint: { queue: boolean; panel: boolean } | null = null;
+
+	/**
+	 * The page redrawn as its Karl form, beside the mockup ("Build in Karl").
+	 * A view, like the site map: not persisted. The layout draws neither rail
+	 * while it is open (`data-build`); they are also collapsed here, so a page
+	 * with no Karl view, which falls back to the review with the mode still
+	 * set, keeps the canvas wide rather than springing both rails open.
+	 */
 	showBlueprint() {
+		if (this.presenting && this.#railsBeforePresent) this.railCollapsed = this.#railsBeforePresent;
+		this.#endPresenting();
 		this.mobileSheet = 'none';
+		if (this.mode !== 'blueprint') this.#railsBeforeBlueprint = { ...this.railCollapsed };
+		this.railCollapsed = { queue: true, panel: true };
 		this.mode = 'blueprint';
 	}
 
 	showReview() {
+		if (this.mode === 'blueprint' && this.#railsBeforeBlueprint) {
+			this.railCollapsed = this.#railsBeforeBlueprint;
+			this.#railsBeforeBlueprint = null;
+		}
 		this.mode = 'review';
 	}
 }

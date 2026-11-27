@@ -45,7 +45,6 @@ test('any other view value is ignored', async ({ page }) => {
 test('the home page links an approved page straight into its walkthrough', async ({ page }) => {
 	// `decidedFirst`: the default fixture has no approved pages to link.
 	await gotoSignedIn(page, '/', { decidedFirst: true });
-	// An approved page's row carries the link, in the Karl column.
 	const list = page.getByRole('region', { name: 'All pages' });
 	const first = list.getByRole('link', { name: /^Move to Karl: / }).first();
 	await expect(first).toBeVisible();

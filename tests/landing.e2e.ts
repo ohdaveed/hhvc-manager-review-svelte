@@ -33,6 +33,9 @@ test.describe('signed in', () => {
 		await next.click();
 
 		await expect(page).toHaveURL(/\/review\/report-garbage-clutter-or-overgrown-plants$/);
+		// The workspace opens on the decision, with the queue one click away.
+		await expect(page.getByRole('heading', { name: 'Decision' })).toBeVisible();
+		await page.getByRole('button', { name: 'Expand queue' }).click();
 		await expect(page.locator('nav[aria-label="Pages in this review"] a').first()).toBeVisible();
 	});
 
@@ -89,7 +92,7 @@ test.describe('signed in', () => {
 
 test.describe('the draft route', () => {
 	test('a draft in the queue links to the draft route and is marked current', async ({ page }) => {
-		await gotoSignedIn(page, draftUrl(DRAFT_IDS.drafting), { drafts: true });
+		await gotoSignedIn(page, draftUrl(DRAFT_IDS.drafting), { drafts: true, rail: 'queue' });
 
 		const row = page.locator(
 			`nav[aria-label="Pages in this review"] a[href="${draftUrl(DRAFT_IDS.drafting)}"]`
@@ -172,8 +175,10 @@ test.describe('signed out', () => {
 		await expect(page.getByText('Checking your session…')).toHaveCount(0);
 		// The review's own furniture is for signed-in reviewers; a visitor gets
 		// the sign-in card and then the pages.
-		await expect(page.getByRole('heading', { name: /Review guide/ })).toHaveCount(0);
-		await expect(page.getByRole('heading', { name: 'Propose a page' })).toHaveCount(0);
+		await expect(
+			page.getByRole('heading', { name: 'Review guide and moving pages into Karl' })
+		).toHaveCount(0);
+		await expect(page.getByRole('button', { name: 'Propose a page' })).toHaveCount(0);
 		await expect(page.getByRole('heading', { name: 'All pages' })).toBeVisible();
 	});
 });
@@ -184,8 +189,9 @@ test.describe('status card', () => {
 		await gotoSignedIn(page, '/', { drafts: true, decidedFirst: true });
 
 		await expect(page.getByRole('link', { name: /^Continue: / })).toBeVisible();
-		// The Continue button used to carry the page title and `nowrap`, measured
-		// at 437px inside a 343px card: the whole page scrolled 97px sideways.
+		// The Continue button carries the page title. It once did so with
+		// `nowrap`, measured at 437px inside a 343px card: the whole page scrolled
+		// 97px sideways. It truncates now; this holds it to that.
 		const overflow = await page.evaluate(
 			() => document.documentElement.scrollWidth - document.documentElement.clientWidth
 		);

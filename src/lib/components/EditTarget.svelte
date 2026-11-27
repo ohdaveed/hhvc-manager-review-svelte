@@ -4,6 +4,7 @@
 	import MarkdownText from './MarkdownText.svelte';
 	import KarlChip from './KarlChip.svelte';
 	import { outlineContext } from '$lib/karl/outlineContext';
+	import { isMockupReadonly } from './mockupReadonly';
 
 	/**
 	 * One editable piece of mockup copy.
@@ -54,7 +55,9 @@
 
 	// Undefined while the session check is in flight: treat as editable so a
 	// signed-in reviewer never sees the controls flicker out and back.
-	const editable = $derived(!sessionStore.knownSignedOut);
+	// Never inside a read-only mockup (the Blueprint's), signed in or not.
+	const readonly = isMockupReadonly();
+	const editable = $derived(!sessionStore.knownSignedOut && !readonly);
 
 	// The Karl outline (see `$lib/karl/outlineContext`). `placement` is undefined
 	// when the outline is off, so every attribute below drops away with it.

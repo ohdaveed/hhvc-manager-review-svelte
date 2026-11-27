@@ -10,6 +10,7 @@
 	import TableBlock from './blocks/TableBlock.svelte';
 	import KarlChip from './KarlChip.svelte';
 	import { outlineContext } from '$lib/karl/outlineContext';
+	import { isMockupReadonly } from './mockupReadonly';
 	import { RELATED_HEADING } from '$lib/karl/placement';
 	import { entryText, entryUnverified, sectionDisplayLabel } from '$lib/corpus/fieldResolver';
 	import { pageStore } from '$lib/stores/pageData.svelte';
@@ -47,7 +48,9 @@
 	// Undefined while the session check is in flight: treat as editable, so the
 	// control does not flicker out and back for a signed-in reviewer. Same rule
 	// `EditTarget` follows.
-	const editable = $derived(!sessionStore.knownSignedOut);
+	// Never inside a read-only mockup (the Blueprint's), signed in or not.
+	const readonly = isMockupReadonly();
+	const editable = $derived(!sessionStore.knownSignedOut && !readonly);
 	const sectionSelected = $derived(pageStore.selectedSectionKey === key);
 
 	// The Karl outline: where this section lands, read out before its heading so
@@ -254,5 +257,26 @@
 		background: transparent;
 		cursor: pointer;
 		white-space: nowrap;
+	}
+
+	/* The button sits inside the SF.gov rendering, so it stays out of sight until
+	   the reviewer points at its section or tabs to it -- one button per section
+	   on screen at rest made the mockup read as a form. `opacity`, not
+	   `visibility`: it stays focusable, and focusing it is what reveals it. Kept
+	   visible while its section is selected, on touch screens, which have no
+	   hover to reveal it with, and on every section while the panel's Rethink
+	   tab is open (`data-rethink`): that tab asks the reviewer to choose one,
+	   and a button they cannot see is not a choice. */
+	@media (hover: hover) {
+		.rethink-section:not([aria-pressed='true']) {
+			opacity: 0;
+			transition: opacity 0.15s;
+		}
+
+		.page-section:hover .rethink-section,
+		.page-section:focus-within .rethink-section,
+		:global(#mockPage[data-rethink]) .rethink-section {
+			opacity: 1;
+		}
 	}
 </style>

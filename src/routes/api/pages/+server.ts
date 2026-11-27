@@ -2,10 +2,13 @@ import { env } from '$env/dynamic/private';
 import { SVELTE_PUBLIC_SUPABASE_ANON_KEY, SVELTE_PUBLIC_SUPABASE_URL } from '$env/static/public';
 import { error, json } from '@sveltejs/kit';
 import { createClient } from '@supabase/supabase-js';
-import { draftBrief, draftPathFor, MAX_DESCRIPTION_CHARS } from '$lib/corpus/draftPath';
+import { draftPathFor, MAX_DESCRIPTION_CHARS } from '$lib/corpus/draftPath';
+import { allPages } from '$lib/data';
+import { routableId } from '$lib/corpus/pageId';
 
 /**
- * Creates and finalizes AI-drafted pages.
+ * Creates and finalizes AI-drafted pages (POST, PATCH), and adds a corpus page
+ * that has no `pages` row to the review (PUT).
  *
  * `pages` and `draft_pages` have no INSERT policy for `authenticated` -- pages
  * are seeded -- so both rows are written here with the service-role key, which
@@ -71,9 +74,18 @@ async function readJsonObject(request: Request): Promise<Record<string, unknown>
 	return payload;
 }
 
-/** The reviewer's own words, cut at a word boundary so it fits a queue row. */
+/**
+ * The reviewer's own words, cut at a word boundary so it fits a queue row.
+ *
+ * From the first paragraph only: the form writes the reviewer's section,
+ * template and path choices after a blank line (`composeDraftRequest`), and
+ * those are instructions to the drafter, not a name for the page.
+ */
 function titleFrom(description: string): string {
-	const text = description.replace(/\s+/g, ' ').trim();
+	const text = description
+		.split(/\n\s*\n/)[0]
+		.replace(/\s+/g, ' ')
+		.trim();
 	if (text.length <= MAX_TITLE_CHARS) return text;
 	const room = text.slice(0, MAX_TITLE_CHARS - 1);
 	const lastSpace = room.lastIndexOf(' ');
@@ -107,14 +119,7 @@ export async function POST({ request }) {
 		if (!description) {
 			throw error(400, 'description is required');
 		}
-		// Optional lines the form adds after the description (section, template,
-		// path). Stored with it, because the drafter reads the stored text, but
-		// kept out of the title, which is the reviewer's own words.
-		if (payload.hints !== undefined && typeof payload.hints !== 'string') {
-			throw error(400, 'hints, when present, must be a string');
-		}
-		const brief = draftBrief(description, payload.hints ?? '');
-		if (brief.length > MAX_DESCRIPTION_CHARS) {
+		if (description.length > MAX_DESCRIPTION_CHARS) {
 			throw error(400, `description must be at most ${MAX_DESCRIPTION_CHARS} characters`);
 		}
 
@@ -142,7 +147,7 @@ export async function POST({ request }) {
 			review_id: reviewId,
 			path,
 			title,
-			description: brief,
+			description,
 			created_by: caller.id
 		});
 		if (draftError) throw draftError;
@@ -162,6 +167,73 @@ export async function POST({ request }) {
 		return json({ id, path, title, state: 'drafting' }, { status: 201 });
 	} catch (err) {
 		handleUnexpected(err, 'Draft create failed');
+	}
+}
+
+/**
+ * The ids a PUT may add: the routable id of every corpus page, the same value
+ * `pageData.svelte.ts` derives and `reconcileReview` compares rows against.
+ * Built from the bundled corpus rather than taken on trust, so the service-role
+ * insert below can only ever create a row the queue will recognise -- not a
+ * draft path (those get their row at creation), and not an arbitrary string.
+ */
+const CORPUS_IDS = new Set(allPages.map((page) => routableId(page)).filter(Boolean));
+
+/**
+ * Adds a corpus page to the review: creates its `pages` row, undecided.
+ *
+ * For the queue's "Not in the review yet" list -- corpus pages with no row,
+ * which nothing else in the app can create. Idempotent: a page that already
+ * has a row (another reviewer added it, or a migration did) answers 200 with
+ * that row rather than an error, since the reviewer's intent is satisfied.
+ */
+export async function PUT({ request }) {
+	await requireUser(request);
+
+	try {
+		const payload = await readJsonObject(request);
+
+		if (typeof payload.path !== 'string' || !CORPUS_IDS.has(payload.path)) {
+			throw error(400, 'path must be the id of a page in the mockups');
+		}
+		const path = payload.path;
+
+		const admin = adminClient();
+
+		// The newest review, exactly as `loadReview()` picks it, as POST does.
+		const { data: reviews, error: reviewError } = await admin
+			.from('reviews')
+			.select('id')
+			.order('created_at', { ascending: false })
+			.limit(1);
+		if (reviewError) throw reviewError;
+		if (!reviews || reviews.length === 0) {
+			throw error(409, 'There is no review to add a page to');
+		}
+		const reviewId = reviews[0].id;
+
+		// `pages_review_id_path_key` makes a repeat a conflict; ignoring it is what
+		// makes this idempotent. Only review_id and path: status, manager_notes
+		// and page_checks take their defaults, so the page arrives undecided.
+		const { error: upsertError } = await admin
+			.from('pages')
+			.upsert(
+				{ review_id: reviewId, path },
+				{ onConflict: 'review_id,path', ignoreDuplicates: true }
+			);
+		if (upsertError) throw upsertError;
+
+		const { data: row, error: readError } = await admin
+			.from('pages')
+			.select('*')
+			.eq('review_id', reviewId)
+			.eq('path', path)
+			.single();
+		if (readError) throw readError;
+
+		return json(row);
+	} catch (err) {
+		handleUnexpected(err, 'Page add failed');
 	}
 }
 

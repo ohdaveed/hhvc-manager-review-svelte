@@ -62,6 +62,11 @@ test('no WCAG 2.1 AA violations in the signed-in queue and decision panel', asyn
 	// models it as a radiogroup. Asserting the wrong role here failed loudly,
 	// which is the point of asserting the surface rendered at all.
 	await expect(page.getByRole('radio', { name: 'Approve' })).toBeEnabled();
+	await noViolations(page);
+
+	// The two rails are exclusive, so the queue is scanned on its own: opening
+	// it closes the panel just scanned.
+	await page.getByRole('button', { name: 'Expand queue' }).click();
 	// The stub's four decided rows. Not a percentage: the denominator is every
 	// corpus page now, not the six rows, so it moves whenever the corpus does.
 	await expect(page.getByText(/^4 of \d+ decided$/)).toBeVisible();
