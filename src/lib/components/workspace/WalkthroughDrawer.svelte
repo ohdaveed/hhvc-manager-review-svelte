@@ -148,6 +148,20 @@
 	}
 
 	/**
+	 * Split a value label like `Then add an Image block — alt text` into the
+	 * group it belongs to and its own name, so three image values read as one
+	 * "Then add an Image block" heading over File / Alt text / Attribution
+	 * rather than the same prefix three times. Display only: the copy state
+	 * and the accessible name keep the full label.
+	 */
+	function labelParts(label: string): { group: string; name: string } {
+		const at = label.indexOf(' — ');
+		if (at < 0) return { group: '', name: label };
+		const name = label.slice(at + 3);
+		return { group: label.slice(0, at), name: name.charAt(0).toUpperCase() + name.slice(1) };
+	}
+
+	/**
 	 * A row's badge when there is nothing to paste, so an editor can see which
 	 * steps those are without opening each one. Named by what the step asks
 	 * for: a chooser and a gap are not blanks, and calling them "Empty" would
@@ -215,8 +229,9 @@
 						aria-labelledby={`step-name-${i}`}
 						tabindex="-1"
 					>
-						<!-- One header row. The gray mapping box that sat under it repeated
-						     the field name three more times; the raw name is the pill. -->
+						<!-- One header: the name, then one muted line naming where it goes
+						     in Karl -- the panel to add from the block menu (when the
+						     heading replaced it as the name) and the raw field name. -->
 						<div class="step-card-head">
 							<span
 								class="numeral numeral-active"
@@ -226,17 +241,16 @@
 								<span class="step-card-name" id={`step-name-${i}`}
 									>{step.heading ?? step.uiLabel}</span
 								>
-								<!-- The panel to add from Karl's block menu, which the heading
-								     replaced as the label. -->
-								{#if step.heading}<span class="step-card-panel">{step.uiLabel}</span>{/if}
+								<span class="step-card-panel"
+									>{#if step.heading}{step.uiLabel} ·
+									{/if}<code>{step.rawName}</code></span
+								>
 							</span>
-							<code class="raw-pill">{step.rawName}</code>
 						</div>
 
+						<!-- No FLAG hint: the coloured box below says the same thing. -->
 						{#if step.outcome === 'CHOOSE'}
 							<p class="step-hint">A chooser: search Karl for the entry rather than typing it.</p>
-						{:else if step.outcome === 'FLAG'}
-							<p class="step-hint">The mockup has nothing to supply here.</p>
 						{/if}
 
 						{#if step.outcome === 'FLAG'}
@@ -277,12 +291,16 @@
 						{/if}
 
 						{#each step.values as value, v (v)}
-							<div class="value">
+							{@const part = labelParts(value.label)}
+							{#if part.group && part.group !== labelParts(step.values[v - 1]?.label ?? '').group}
+								<p class="value-group">{part.group}</p>
+							{/if}
+							<div class="value" class:value-in-group={part.group}>
 								<div class="value-strip">
 									<!-- A lone value named like its panel ("Page title" under
 									     "Page title") is the header said again. -->
 									{#if value.label !== step.uiLabel || step.values.length > 1}
-										<span class="value-label">{value.label}</span>
+										<span class="value-label">{part.name}</span>
 									{/if}
 									<!-- Kept beside Copy & next: re-copying a value without
 									     advancing is a normal thing to need mid-paste. -->
@@ -362,11 +380,15 @@
 						     uses to say where they are. -->
 						<span class="numeral" class:numeral-done={done}>{step.n}</span>
 						<span class="step-row-name" class:step-row-name-done={done}>{name}</span>
-						<span class="step-row-meta">
-							{#if badge}<span class="badge badge-{badge.tone}">{badge.text}</span>{/if}
-							<code class="step-row-raw">{step.rawName}</code>
-							{#if done}<span class="step-row-copied">Copied</span>{/if}
-						</span>
+						<!-- No raw field name here: ten rows of `information_section`
+						     in a column was the noisiest thing in the drawer, and the
+						     open card names the field. -->
+						{#if badge || done}
+							<span class="step-row-meta">
+								{#if badge}<span class="badge badge-{badge.tone}">{badge.text}</span>{/if}
+								{#if done}<span class="step-row-copied">Copied</span>{/if}
+							</span>
+						{/if}
 					</button>
 				{/if}
 			</div>
@@ -591,7 +613,6 @@
 		gap: 8px;
 	}
 
-	.step-row-raw,
 	.gap-body code {
 		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
 		font-size: 0.6875rem;
@@ -658,15 +679,9 @@
 		color: var(--text-secondary, #5a7a92);
 	}
 
-	.raw-pill {
-		flex: none;
-		align-self: flex-start;
-		padding: 2px 8px;
-		border-radius: 999px;
-		background: var(--color-sfds-blue-l1, #edf4f7);
+	.step-card-panel code {
 		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
 		font-size: 0.6875rem;
-		color: var(--sfds-color-blue-dark, #0c1464);
 	}
 
 	.copy-failed {
@@ -843,27 +858,35 @@
 		color: var(--text-secondary, #5a7a92);
 	}
 
+	/* Values are the content, so they carry the least chrome: a small
+	   sentence-case label with Copy beside it, then the text on a light panel.
+	   The bordered box, grey strip and uppercase tracking each value used to
+	   get made five values read as five forms. */
 	.value {
-		border: 1px solid var(--sfds-color-grey-l2);
-		border-radius: 4px;
-		margin-bottom: 8px;
-		background: #ffffff;
+		margin-bottom: 12px;
+	}
+
+	.value-group {
+		margin: 4px 0 6px;
+		font-size: 0.8125rem;
+		font-weight: 700;
+	}
+
+	.value-in-group {
+		padding-left: 10px;
+		border-left: 2px solid var(--sfds-color-grey-l2);
 	}
 
 	.value-strip {
 		display: flex;
 		align-items: center;
 		gap: 8px;
-		padding: 6px 10px;
-		border-bottom: 1px solid var(--sfds-color-grey-l2);
-		background: #f7f7f7;
+		margin-bottom: 4px;
 	}
 
 	.value-label {
-		font-size: 0.6875rem;
-		font-weight: 700;
-		letter-spacing: 0.06em;
-		text-transform: uppercase;
+		font-size: 0.75rem;
+		font-weight: 600;
 		color: var(--text-secondary, #5a7a92);
 	}
 
@@ -881,15 +904,20 @@
 		cursor: pointer;
 	}
 
-	/* `anywhere`: an image credit carries a bare URL, which did not wrap and
+	/* `pre-line`: the text arrives with its paragraph breaks and one bullet per
+	   line, and collapsing them ran a whole list into a single paragraph.
+	   `anywhere`: an image credit carries a bare URL, which did not wrap and
 	   gave the whole step list a sideways scrollbar (bed-bugs page, step 9).
-	   Display only -- Copy still writes the unbroken value. */
+	   Both display only -- Copy still writes the value exactly as it is. */
 	.value-text {
+		white-space: pre-line;
 		overflow-wrap: anywhere;
 		margin: 0;
-		padding: 10px;
+		padding: 8px 10px;
+		border-radius: 4px;
+		background: #f7f7f7;
 		font-size: 0.8125rem;
-		line-height: 1.1875rem;
+		line-height: 1.25rem;
 	}
 
 	.why {

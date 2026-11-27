@@ -80,10 +80,32 @@ afterEach(() => {
 });
 
 describe('WalkthroughDrawer', () => {
-	it("labels a section step by its heading and keeps the panel's raw name beside it", () => {
+	it('labels a section step by its heading, leaving the raw field name to the open card', async () => {
 		render(WalkthroughDrawer, { walkthrough, pageId });
 		const row = screen.getByRole('button', { name: /Who can report/ });
-		expect(row.textContent).toContain('information_section');
+		expect(row.textContent).not.toContain('information_section');
+		await fireEvent.click(row);
+		await tick();
+		const card = screen.getByRole('group', { name: 'Who can report' });
+		expect(card.textContent).toContain('Information section');
+		expect(card.textContent).toContain('information_section');
+	});
+
+	it('groups values that share a prefix under one heading', () => {
+		const image = step(1, {
+			values: [
+				{ label: 'Then add an Image block — file', value: '/a.webp' },
+				{ label: 'Then add an Image block — alt text', value: 'A bug' }
+			]
+		});
+		render(WalkthroughDrawer, { walkthrough: { ...walkthrough, steps: [image] }, pageId });
+		expect(screen.getAllByText('Then add an Image block')).toHaveLength(1);
+		expect(screen.getByText('File')).toBeTruthy();
+		expect(screen.getByText('Alt text')).toBeTruthy();
+		// The accessible name keeps the full label.
+		expect(
+			screen.getByRole('button', { name: 'Copy Then add an Image block — file' })
+		).toBeTruthy();
 	});
 
 	it('copies a one-value step, marks it and moves on in one click', async () => {
