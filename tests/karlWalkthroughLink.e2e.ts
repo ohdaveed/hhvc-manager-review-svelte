@@ -42,8 +42,8 @@ test('any other view value is ignored', async ({ page }) => {
 test('the home page links an approved page straight into its walkthrough', async ({ page }) => {
 	// `decidedFirst`: the default fixture has no approved pages to link.
 	await gotoSignedIn(page, '/', { decidedFirst: true });
-	const guide = page.getByRole('region', { name: 'Move a page into Karl' });
-	const first = guide.getByRole('link', { name: /^Open walkthrough/ }).first();
+	const list = page.getByRole('region', { name: 'All pages' });
+	const first = list.getByRole('link', { name: /^Move to Karl: / }).first();
 	await expect(first).toBeVisible();
 	await first.click();
 	await expect(page).toHaveURL(/\/review\/.+\?view=walkthrough$/);

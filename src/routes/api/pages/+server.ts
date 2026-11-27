@@ -71,9 +71,18 @@ async function readJsonObject(request: Request): Promise<Record<string, unknown>
 	return payload;
 }
 
-/** The reviewer's own words, cut at a word boundary so it fits a queue row. */
+/**
+ * The reviewer's own words, cut at a word boundary so it fits a queue row.
+ *
+ * From the first paragraph only: the form writes the reviewer's section,
+ * template and path choices after a blank line (`composeDraftRequest`), and
+ * those are instructions to the drafter, not a name for the page.
+ */
 function titleFrom(description: string): string {
-	const text = description.replace(/\s+/g, ' ').trim();
+	const text = description
+		.split(/\n\s*\n/)[0]
+		.replace(/\s+/g, ' ')
+		.trim();
 	if (text.length <= MAX_TITLE_CHARS) return text;
 	const room = text.slice(0, MAX_TITLE_CHARS - 1);
 	const lastSpace = room.lastIndexOf(' ');
