@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "corpusHash": "86fe52674c3c54007cf56b429a3bef0e19df163cece3cc447550ea68817c6390",
+  "corpusHash": "960c9fae81960ae189086e5be2b0c10796a83991a846b3cc02bfc43cb31a4554",
   "pages": {
     "departments--healthy-housing-and-vector-control": {
       "contentHash": "0dbd9dd7bbad4361a566c5cd2c714223d97028f482b3ba8c958c082887615fc9",
@@ -132,7 +132,7 @@
       }
     },
     "information-bed-bugs-prevent-find-and-prepare-for-treatment": {
-      "contentHash": "fe3456cfc01f882eeea420c9a11c766b065be4bf69f28deae3cd5e14bc1b1cf3",
+      "contentHash": "c6434995a7b930557ac08be780646c975abbd9867116bd4bbdcb6c0fdcbe4944",
       "fieldHashes": {
         "sections.check-for-bed-bugs.bullets.0": "d44bd88de28668418bb15ed6a197fde5c64af320f1ced1a98a0821c8470ea84a",
         "sections.check-for-bed-bugs.bullets.1": "4ab10d6d5a0ec5bf846e4bc8349194f960760ba1d35f80cb471d57e42e2357ab",
@@ -190,7 +190,7 @@
         "sections.what-tenants-need-to-do-before-treatment.paragraphs.1": "c69608fed04ada384933445e06690fc993eb2dcf6b8b9f12a49980d9da99bd4f",
         "audience.0": "52c9fecd89adf1d0bd070cfd2575b42f99ae47abcb81fd3b6b1686d705a55037",
         "sections.who-this-information-is-for.heading": "46c502c4c2c97e0ef59078280882f103e27790dbf304ac81dfa6c5a41ae5d2b9",
-        "summary": "56ce50e77da65016ae0b19de620c99e2c00b2f83920687ca58b4e6852d5f0c36",
+        "summary": "7e2a53f536357b596eb532392c3d26f7036b22c94940d210adfb6c6b6b269237",
         "title": "6bc7cdaf960a65a8125fa34ac029bae10a7b2179c95ae43dfcfa6c8eac3ec1c1"
       }
     },
@@ -769,12 +769,12 @@
       }
     },
     "pay-your-annual-healthy-housing-fee-apartment-buildings": {
-      "contentHash": "c70032ada328acaac5a3d9ed6dc63f885d7cd97fd957ca0b22c9897e3f8e1fe4",
+      "contentHash": "e16970f28bae9a995fc2fa6f5fd75ea558da0fec8cd5951de9b1dda190420430",
       "fieldHashes": {
         "primaryAgency": "8a2847f0ee854052d30378a2ef091f979c9737bbd8219086a1e04dc0abd84f9f",
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",
         "sections.what-to-do.heading": "f47f1edc44ed92664871471b0cf8f463813788468c23680c12f52a36c2827e26",
-        "summary": "377eeee8d1f74b5594533654d4716d414b84d85a06673e511bf6ef6a96707aaa",
+        "summary": "21dec1ad2c510d56b0005605b404ae4a1aa73e8d9d2520bb8a6824d73a55c5df",
         "title": "53ddde206faf3313aa27a7d4b01e96f8846795d75233c4108ffbb36571c78c55"
       }
     },
