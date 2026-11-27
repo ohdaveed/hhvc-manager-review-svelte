@@ -40,7 +40,7 @@ production edits and comments on each touched page first (0 on 2026-11-24).
       screenshot of each page, and the `docs/karl-transaction-compliance.csv` rows if a section changed.
 - [ ] **M2. `findOrphans` counts prose links (SS-1)** — test first: a page reachable only through a
       `[text](pageKey)` link is not an orphan. Then tick site-structure PR 1's follow-up.
-- [ ] **M3. Record the rulings in the source plans** — Track C rows C3, C4, C6–C9 and site-structure
+- [x] **M3. Record the rulings in the source plans** — Track C rows C3, C4, C6–C9 and site-structure
       PR 3 items marked Decided / Closed with a pointer to the decisions doc. SS-3a needs no build: the
       two Notice of Violation pages already link each other.
 

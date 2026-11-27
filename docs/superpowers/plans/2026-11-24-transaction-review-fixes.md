@@ -181,6 +181,11 @@ The 9-page report regroup, the SRO page removal, the mosquito and pigeon pages a
 
 ## Track C — Decisions for the manager or HHVC (questions, not tasks)
 
+> **Rulings, 2026-11-26** (`docs/reviews/2026-11-26-open-decisions.md`): C1, C2, C5, C10 built in #212.
+> C3 decided **not Blocked**. C4 and C8 **closed** (already settled on `main`). C6 decided: rewrite the fee
+> and bed-bugs Information descriptions only. C7: heading becomes "Pay your invoice or contact us", the
+> second fee-supports callout is cut, and the $115/$117 question is moot. C9 decided: **keep per-page targets**.
+
 Raise these as one list for manager review. Nothing here gets built until it moves to **Decided**.
 
 | #   | Question                                                                                                                                                                                                                                                                                                   | Review blocker |
