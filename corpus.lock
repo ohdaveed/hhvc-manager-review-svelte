@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "corpusHash": "23a2c0618279ac1c0938c044697bb6ca359fc0feea6da48db08f684e092e048f",
+  "corpusHash": "ec4608c99251d32714bdc4c70ec598f3cc30c446f83d59df56ab113198a6eb05",
   "pages": {
     "departments--healthy-housing-and-vector-control": {
       "contentHash": "0dbd9dd7bbad4361a566c5cd2c714223d97028f482b3ba8c958c082887615fc9",
@@ -249,15 +249,12 @@
       }
     },
     "information-integrated-pest-management-for-property-owners-and-managers": {
-      "contentHash": "e1875500e99287b0831cfa0e802e4a67deef2c46e7aa26c31083959f3010c165",
+      "contentHash": "dce6899df7a60271bad2aad5792c33a690e48adafe1cfc4b0ca486e303a6b9ba",
       "fieldHashes": {
-        "sections.1-follow-san-francisco-owner-responsibilities.bullets.0": "477e91471218dee6d65ea350bf6839ed2decbf7c900445309f635dc321c9bb5f",
-        "sections.1-follow-san-francisco-owner-responsibilities.bullets.1": "02c69febeffc11da77e046f1c6ecef0badae06ad0b9f2964bece1667a4828ab0",
-        "sections.1-follow-san-francisco-owner-responsibilities.bullets.2": "1a085ca3816cb40e586b1755764b72ba82a40458f2acaa0154efcb769b0ff75a",
         "sections.1-follow-san-francisco-owner-responsibilities.bullets.3": "d1c901f87b0738f13007d49e9334cad86350823b43d0c61340ced7d4c3654c69",
         "sections.1-follow-san-francisco-owner-responsibilities.bullets.4": "93d7500b5c5de78e010cbcc15789c278e01ae113793d26311ef5d0c9e474d3db",
         "sections.1-follow-san-francisco-owner-responsibilities.heading": "5d1425906d51118c765f574dc810c8aaf991eb4ddba1514281e1d477f171c624",
-        "sections.1-follow-san-francisco-owner-responsibilities.paragraphs.0": "dd2980fd7621e3c918ff927cb75380e9a2489bce59c1340bf2a1eedbd5628f54",
+        "sections.1-follow-san-francisco-owner-responsibilities.paragraphs.0": "e78b5a68410331157fc9038ddec9c290d44fc5c63a21b3963eaeca8844d98b35",
         "sections.2-set-policies-plans-and-lease-expectations.bullets.0": "1431fa279c8b315e45b7ed067e0be61a960d717a7dd442b8b3b81ab4afa17f06",
         "sections.2-set-policies-plans-and-lease-expectations.bullets.1": "6fc3eda430f88e0c373a1b9afe35809ffd9fc50fceb16b611ca50a90af54f4ac",
         "sections.2-set-policies-plans-and-lease-expectations.bullets.2": "873f7765694152b7e19e7e9c380b9e762ece7a2fdfca186b6ab71c9c467db53b",
@@ -305,12 +302,7 @@
         "sections.primary-source-uc-ipm-guide-for-property-managers.paragraphs.0": "23d275d4205e6c9cff67d300f6f98bd939acf266df3e9b24a277f42a5b3fbe8d",
         "sections.primary-source-uc-ipm-guide-for-property-managers.paragraphs.1": "19e7d8bab85fa9d50da3f4080024166e03a26982f8e0cb7bf5b7abf3d8ad1cbf",
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",
-        "sections.use-ipm-to-prevent-pests.bullets.0": "98c02d1ff0125bbf28739ddc22da00d34874bbc842fbfa2902248caad4440f28",
-        "sections.use-ipm-to-prevent-pests.bullets.1": "f249bef89faaf8be64fd2a934515b60f27c6c61e4459391390953d92cbb8ae38",
-        "sections.use-ipm-to-prevent-pests.bullets.2": "2bf5f2ef48270d07c70d7cb58c057e232744b77207f2ba07e9f7482208b05748",
-        "sections.use-ipm-to-prevent-pests.bullets.3": "beba64bcb7fc3ea268329b2468aad6c93872ec195b8ce4d77a0f426168236e16",
         "sections.use-ipm-to-prevent-pests.heading": "d2b48f4df3ae76d287d6e50663cab63570c017af621102bf43bea2fa956104b0",
-        "sections.use-ipm-to-prevent-pests.paragraphs.0": "fe1f68ae52c8e7e3c6ab29b9228d4e955c0dbbec4c66b3ad86e4ecaf2511cd06",
         "sections.use-ipm-to-prevent-pests.paragraphs.1": "0000366e8313e53665b7f0cb53d87b07fd0619c0d6f5f246b75f765ba385b723",
         "audience.0": "df8c6f354b558e7728a8939b82309f3818a804f3820e5eb1b5fc16828c00f64c",
         "sections.who-this-information-is-for.heading": "46c502c4c2c97e0ef59078280882f103e27790dbf304ac81dfa6c5a41ae5d2b9",

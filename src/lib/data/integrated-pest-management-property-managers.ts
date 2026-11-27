@@ -40,17 +40,10 @@ export const ownerGuidance = {
 		},
 		{
 			heading: 'Use IPM to prevent pests',
-			karl: 'Maps to a second Title and text block: Title = this heading, Text = the two paragraphs plus the bulleted list below (bullets render as a bulleted list inside the same rich text field).',
+			karl: 'Maps to a second Title and text block: Title = this heading, Text = the paragraph below. On 2026-11-26 the legal-duty paragraph (stated again in step 1) and four bullets previewing steps 1 to 5 were removed, leaving the definition.',
 			kind: 'body',
 			paragraphs: [
-				'Property owners, managers, and building operators must keep buildings free of vermin under San Francisco health and housing rules.',
 				'Integrated Pest Management (IPM) is a prevention-first approach. It uses inspection, maintenance, sanitation, exclusion, monitoring, and targeted treatment to reduce pests and limit heavy pesticide use. This sits under Article 11 of the San Francisco Health Code.'
-			],
-			bullets: [
-				'Prevent pests before infestations spread',
-				'Fix building conditions that attract or shelter pests',
-				'Use records and monitoring to find repeated problems',
-				'Share clear instructions with residents and staff'
 			]
 		},
 		{
@@ -114,15 +107,12 @@ export const ownerGuidance = {
 		},
 		{
 			heading: '1. Follow San Francisco owner responsibilities',
-			karl: "Maps to a fifth Title and text block: Title = this heading, Text = the paragraph plus the bulleted list below (SFDPH Director's Rules and Regulations requirements).",
+			karl: "Maps to a fifth Title and text block: Title = this heading, Text = the paragraph plus the bulleted list below (SFDPH Director's Rules and Regulations requirements). On 2026-11-26 the 72-hour, recordkeeping and licensed-PCO bullets were removed: Article 11 compliance for property owners owns them, and the paragraph now links there.",
 			kind: 'body',
 			paragraphs: [
-				"San Francisco Department of Public Health (SFDPH) Director's Rules and Regulations set legal requirements for owners and managers. These apply to rental property and cover preventing and controlling rodents and other vectors."
+				'The legal requirements, including the 72-hour response, recordkeeping and licensed pest control, are on [Article 11 compliance for property owners](article11Compliance). Two more practices keep a building ready:'
 			],
 			bullets: [
-				"**Investigate reports:** Investigate any tenant reports of pest activity within 72 hours (Director's Rules §V.2).",
-				'**Recordkeeping:** Keep accurate records of pest complaints, inspections, and pest control services for at least 2 years. Make these records available to DPH on request.',
-				'**Hire licensed professionals:** Hire only licensed Pest Control Operators (PCOs) to apply pesticides or conduct rat trapping.',
 				'**Garbage management:** Provide enough rigid plastic or metal containers with tight-fitting lids. Ensure the garbage area is clean and serviced regularly to prevent overflow.',
 				'**Staff training:** Train building staff on pest recognition, sanitation, exclusion, and safe disposal of infested items.'
 			],
