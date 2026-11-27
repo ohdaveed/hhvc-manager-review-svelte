@@ -151,5 +151,5 @@ are committed on `refactor/overlay-views` (`05e5371`, unpushed) and ride with A2
 - [ ] **A5. `pageStore.sync(livePages, edits)`.** Owns hydration, edit-status classification (ADR 0001)
       and the `statusPass` race guard, moved out of `review/+layout.svelte`; the renderer reads
       `copyAsShown`, so nothing mutates page objects with edits. Node tests with plain edit rows.
-- [ ] **A6. Card classifier header.** `card-inheritance.js` header names its two real callers
+- [x] **A6. Card classifier header.** `card-inheritance.js` header names its two real callers
       (transcript, sitemap). The mockup marking dropped card text is a separate Figma question.

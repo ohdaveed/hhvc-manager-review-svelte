@@ -5,23 +5,22 @@
    DESTINATION page's title and description, its title alone, or the card's own
    authored words.
 
-   Consumed by the browser (js/mockup/page-render.js, which side-effect-imports this
-   file so the graph guarantees it) via window.cardInheritance, and by
-   build_scripts/audit-card-inheritance.js via a plain require — so it has no
-   DOM dependency and must stay loadable in both contexts, exactly like
-   js/review/review-merge.js.
+   An ES module with no imports and no DOM dependency. Two callers, by import:
 
-   It lives here rather than in the audit script because the renderer and the
-   audit must never come to disagree about what inherits. The audit's whole
-   claim is "this card text will not appear on SF.gov"; the renderer's whole
-   job, since this change, is to show what will. Two copies of these regexes
-   would let the mockup show one thing and the audit assert another, and the
-   drift would be invisible until a reviewer approved copy that cannot ship.
+   - `karl-transcript.js`, which tells the editor rebuilding the page which
+     card words to type and which Karl fills in from the destination page.
+   - `$lib/karl/sitemap.ts`, whose Sitemap view says which card text will not
+     appear on SF.gov.
 
-   Load-order dependency: none of its own — it imports nothing and reads no
-   global. It must simply be evaluated before anything calls
-   window.cardInheritance, which js/mockup/page-render.js's own import of this file
-   enforces, and js/main.js lists ahead of page-render.js as documentation. */
+   One classifier for both is the point: two copies of these regexes would let
+   the transcript and the sitemap disagree about what inherits, invisibly until
+   a reviewer approved copy that cannot ship.
+
+   The mockup renderer does NOT consult it. In the vanilla app this was ported
+   from, the renderer read it too and drew inherited cards as Karl would; no
+   Svelte component does, so the mockup shows card text Karl will drop and only
+   the Sitemap view says so. Whether the mockup should mark that text is a
+   design question, not a missing import. */
 
 /**
  * Karl blocks that render the destination's Title AND its Description. An
