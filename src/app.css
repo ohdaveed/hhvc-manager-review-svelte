@@ -51,7 +51,10 @@
 	--secondary: oklch(0.97 0 0);
 	--secondary-foreground: oklch(0.205 0 0);
 	--muted: oklch(0.97 0 0);
-	--muted-foreground: oklch(0.556 0 0);
+	/* shadcn's default was oklch(0.556 0 0), #737373: 4.74:1 on white, the
+	   lowest text pair measured in the app (the Analysis tab's explanatory
+	   lines). It is the same job as `sfds-slate-l3`, so it takes that grey. */
+	--muted-foreground: #3f3f46;
 	--accent: oklch(0.97 0 0);
 	--accent-foreground: oklch(0.205 0 0);
 	--destructive: oklch(0.577 0.245 27.325);
@@ -383,10 +386,14 @@ body {
 	   review). That navy sat beside the link colour (#495ed4) on every queue
 	   row, help line and readability tip, so metadata read as clickable and
 	   the panels had no hierarchy between "go here" and "for reference".
-	   #52525b keeps AA everywhere the tool puts it: 7.73:1 on white, 6.95 on
-	   blue-l1 (the selected queue row), 6.76 on red-l1, 5.97 on grey-l2. */
+	   #52525b kept AA everywhere the tool puts it (7.73:1 on white), but most
+	   of that text is 11-13px, where a pass on paper still reads as faint.
+	   Darkened to #3f3f46 by request (2026-11-27). MEASURED in the rendered
+	   app: 10.44:1 on white, 9.58 on the Fields footer's #f5f5f5 and 9.39 on
+	   blue-l1 (the selected queue row). Still a clear step lighter than body
+	   copy, so "for reference" keeps reading as secondary. */
 	--color-sfds-slate-l2: #5a7a92;
-	--color-sfds-slate-l3: #52525b;
+	--color-sfds-slate-l3: #3f3f46;
 	--color-sfds-grey-l2: #e2e2e2;
 
 	/* Review-status triplets. The queue needs a dot, a tint and readable text

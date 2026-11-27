@@ -241,6 +241,15 @@ describe('rails', () => {
 		expect(pageStore.railCollapsed).toEqual({ queue: false, panel: true });
 	});
 
+	// "Rethink section" does its work in the panel. With the panel collapsed the
+	// click selected the section and showed nothing at all.
+	it('choosing a section to rethink opens the review panel', () => {
+		pageStore.railCollapsed = { queue: false, panel: true };
+		pageStore.selectSection('what-to-do');
+		expect(pageStore.railCollapsed).toEqual({ queue: true, panel: false });
+		pageStore.clearSectionSelection();
+	});
+
 	// Saved before the rails were exclusive: a layout that can no longer be
 	// reached by hand loads as the default.
 	it('loads a saved "both open" as the default', () => {

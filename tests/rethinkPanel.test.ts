@@ -1,8 +1,10 @@
 /**
  * @vitest-environment jsdom
  *
- * `$lib/rethink/request` is mocked, which also keeps `$lib/supabase` -- a
- * `createClient` at module scope -- out of the run.
+ * `$lib/rethink/request` and the session store are mocked, which also keeps
+ * `$lib/supabase` -- a `createClient` at module scope -- out of the run. The
+ * real session store would also settle on "signed out" here (jsdom has no
+ * session), and the panel offers no sections to someone who cannot send one.
  */
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, fireEvent, screen } from '@testing-library/svelte';
@@ -14,6 +16,9 @@ const requestRethink = vi.fn();
 vi.mock('$lib/rethink/request', () => ({
 	requestRethink: (input: unknown) => requestRethink(input)
 }));
+
+const session = vi.hoisted(() => ({ knownSignedOut: false }));
+vi.mock('$lib/stores/session.svelte', () => ({ sessionStore: session }));
 
 const pageData = {
 	id: 'topic-x--about',
@@ -63,13 +68,35 @@ const result = {
 describe('RethinkPanel', () => {
 	beforeEach(() => {
 		requestRethink.mockReset();
+		session.knownSignedOut = false;
 		pageStore.enterPage('topic-x--about');
 		pageStore.clearSectionSelection();
 	});
 
-	it('says what to do when no section is selected', () => {
+	// The tab used to send the reviewer to the mockup for a "Rethink section"
+	// button that was hidden until hovered. It lists the sections itself now.
+	it('lists the page’s sections to choose from when none is selected', async () => {
 		render(RethinkPanel, { props: { pageData } });
-		expect(screen.getByText(/no section selected/i)).toBeTruthy();
+		expect(screen.getByText(/choose a section to rethink/i)).toBeTruthy();
+
+		const picker = screen.getByRole('list', { name: /sections on this page/i });
+		const buttons = [...picker.querySelectorAll('button')];
+		expect(buttons.map((b) => b.textContent?.trim())).toEqual(
+			pageData.sections.map((s) => s.heading)
+		);
+
+		await fireEvent.click(buttons[0]);
+		expect(pageStore.selectedSectionKey).toBe(pageData.sections[0].fieldKey);
+		expect(screen.getByRole('button', { name: /rethink this section/i })).toBeTruthy();
+	});
+
+	// The request carries the reviewer's session, so the list would only lead
+	// to a refusal.
+	it('asks a signed-out reader to sign in, and offers no sections', () => {
+		session.knownSignedOut = true;
+		render(RethinkPanel, { props: { pageData } });
+		expect(screen.getByRole('link', { name: /sign in/i })).toBeTruthy();
+		expect(screen.queryByRole('list', { name: /sections on this page/i })).toBeNull();
 	});
 
 	it('sends the reviewer instruction with the request', async () => {
