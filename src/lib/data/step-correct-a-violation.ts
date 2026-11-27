@@ -31,7 +31,7 @@ export const stepCorrectViolation = {
 				{
 					title: 'Read the notice and find your deadline',
 					text: [
-						'The notice lists the conditions to correct and the date they are due. That date governs everything below — this page does not set one.'
+						'The notice lists the conditions to correct and the date they are due. That date governs everything below. This page does not set one.'
 					],
 					bullets: [
 						'Check which actions are assigned to the owner, to the manager, and to a tenant.',
@@ -46,7 +46,7 @@ export const stepCorrectViolation = {
 						'Work in shared areas, structural repairs, professional pest treatment, and garbage removal are the owner or manager’s to arrange.'
 					],
 					bullets: [
-						'Use a licensed pest control operator when professional treatment is required.',
+						'Use a licensed pest control operator when professional treatment is needed.',
 						'Do not wait on a tenant’s task before starting work you control.',
 						'[Property owner responsibilities](ownerHub)',
 						'[Integrated pest management for property owners and managers](ownerGuidance)',
@@ -77,7 +77,7 @@ export const stepCorrectViolation = {
 					],
 					bullets: [
 						'Ask early. A request made after the deadline is a different conversation.',
-						'This page does not promise an extension — whether one is granted is the investigator’s call.'
+						'This page does not promise an extension. The investigator decides whether to grant one.'
 					],
 					karl: 'Step 4. This is where the proposed "Ask for more time to fix a violation" Transaction attaches as a Transaction link if it is built. The wording deliberately avoids promising an extension, matching noticeOfViolation, which was written not to.'
 				},
@@ -137,5 +137,5 @@ export const stepCorrectViolation = {
 	],
 	seoTitle: 'Correct a violation and close your case | SF.gov',
 	metaDescription:
-		'The steps from a Notice of Violation to a passed re-inspection, and who is responsible at each one.'
+		'Follow the steps from a Notice of Violation to a passed reinspection, and see who is responsible at each one.'
 };

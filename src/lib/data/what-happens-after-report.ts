@@ -19,7 +19,7 @@ export const afterReport = {
 			kind: 'body',
 			paragraphs: ['Anyone can report a housing or pest problem to 311.'],
 			bullets: [
-				'You can report anonymously. 311 does not require your name.',
+				'You can report anonymously. You do not have to give 311 your name.',
 				'You can report even if you are not the tenant. A friend, family member, advocate, or helper can report for someone else.',
 				'You can ask 311 for help in your language.',
 				'If you rent, tell your landlord first, unless the problem is urgent. [Tenant rights when reporting housing conditions](tenantRights) explains how long to wait.'
@@ -32,7 +32,7 @@ export const afterReport = {
 			ordered: true,
 			bullets: [
 				'**You report through 311.** 311 receives the report and sends it to the right City department when possible.',
-				'**Environmental Health reviews the report.** HHVC may review the complaint if it may involve a housing or pest-related public health concern. 311 routes the complaint to Environmental Health, and HHVC assigns it to an inspector. This can take a few days. Complaints are processed on weekdays.',
+				'**Environmental Health reviews the report.** HHVC may review the complaint if it may involve a housing or pest-related public health concern. 311 routes the complaint to Environmental Health, and HHVC assigns it to an inspector. This can take a few days. We process complaints on weekdays.',
 				{
 					text: '**Another agency may take it.** If your complaint involves structural water intrusion, HHVC routes it to the Department of Building Inspection (DBI). That includes leaking roof frames, structural plumbing leaks, and broken water heaters. DBI handles these under the San Francisco Housing Code (2025). HHVC focuses strictly on condensation, humidity, and ventilation-related moisture issues.',
 					unverified: true,
@@ -44,7 +44,8 @@ export const afterReport = {
 			]
 		},
 		{
-			heading: 'How to follow up on your report',
+			heading: 'Follow up on your report',
+			fieldKey: 'how-to-follow-up-on-your-report',
 			karl: 'Maps to a Title and text block: Title = this heading, Text = the paragraph plus the bulleted list below. Generic, safe steps only.',
 			kind: 'body',
 			paragraphs: [
@@ -63,7 +64,7 @@ export const afterReport = {
 			kind: 'body',
 			paragraphs: [
 				'You can report a condition in a building you rent. We never share your name or contact information.',
-				'If you are worried your landlord will retaliate, the tenant rights page explains what retaliation can look like and where to get help.'
+				'Worried your landlord will retaliate? The tenant rights page explains what retaliation looks like and where to get help.'
 			],
 			bullets: ['[Tenant rights and reporting](tenantRights)']
 		},
@@ -72,7 +73,7 @@ export const afterReport = {
 			karl: 'Maps to a Title and text block: Title = this heading, Text = the two paragraphs below. The enforcement-chain line (Article 11 Interpretation Guide v1.0) was the first item of an 8-item list until 2026-11-26; it is a sentence, so it is a paragraph now, and the deadlines and consequences that followed it are the next two sections.',
 			kind: 'body',
 			paragraphs: [
-				'If an inspection identifies a violation, Environmental Health will issue a Notice of Violation (NOV) to the responsible parties. The NOV will outline required corrections and set a specific compliance deadline based on severity.',
+				'If an inspection identifies a violation, Environmental Health will issue a Notice of Violation (NOV) to the responsible parties. The NOV lists what must be corrected and sets a deadline based on how serious the problem is.',
 				"**Complaint → Inspection → Notice of Violation → Compliance period → Follow-up inspection → Reinspection fee → Citation or Director's Hearing if unresolved.**"
 			]
 		},
@@ -81,7 +82,7 @@ export const afterReport = {
 			karl: 'Maps to a Title and text block: Title = this heading, Text = the paragraph plus the bulleted list below. Split on 2026-11-26 from one 8-item list: SF.gov keeps a bulleted list to 3 to 5 items (A-to-Z, Bullets). FLAG: the sewage 48-72h window, the generic 30-day correction window and the 2-working-day bed bug rule carry Unverified pills (source-of-truth audit 2026-07-06; Nov 24 decisions record) and need SME/legal confirmation before this is entered into Karl.',
 			kind: 'body',
 			paragraphs: [
-				'These timelines represent general enforcement standards. Actual correction deadlines are established on the official Notice of Violation based on the severity of the health hazard.'
+				'These timelines represent general enforcement standards. Your Notice of Violation sets the actual deadline, based on how serious the health hazard is.'
 			],
 			bullets: [
 				{
@@ -129,7 +130,7 @@ export const afterReport = {
 				'HHVC cannot promise an exact time or date when an inspector will call you or arrive at your building.',
 				'We cannot promise a specific inspection finding or guarantee that a Notice of Violation will be issued.',
 				'It does not replace a notice, citation, or legal document.',
-				'Complaints are not assigned instantly. 311 routing and HHVC inspector assignment can take a few days and are processed on weekdays.'
+				'Complaints are not assigned instantly. 311 and HHVC work on weekdays, so routing a complaint and assigning an inspector can take a few days.'
 			]
 		},
 		{

@@ -45,7 +45,7 @@ export const mosquitoWorkshop = {
 				'Science fairs and youth STEM events'
 			],
 			paragraphs: [
-				'Workshops are designed for elementary and middle school audiences. [Healthy Housing and Vector Control](pestsTopic) can help you choose the right station setup for your group size and space.'
+				'Workshops are for elementary and middle school students. [Healthy Housing and Vector Control](pestsTopic) can help you choose the right station setup for your group size and space.'
 			]
 		},
 		{
@@ -71,7 +71,7 @@ export const mosquitoWorkshop = {
 			component: 'supporting',
 			paragraphs: [
 				'Workshop activities are designed to support California classroom learning goals in life science, public health, and scientific inquiry.',
-				'Stations emphasize observation, evidence-based reasoning, and understanding how organisms interact with their environment—skills reflected in California educational standards for science.'
+				'Stations emphasize observation, evidence-based reasoning, and understanding how organisms interact with their environment. These skills are part of California’s science standards.'
 			],
 			bullets: [
 				'Life cycles and habitats of mosquitoes',

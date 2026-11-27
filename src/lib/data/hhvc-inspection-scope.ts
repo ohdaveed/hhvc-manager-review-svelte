@@ -5,7 +5,7 @@ export const scopeInfo = {
 	summary:
 		'See which conditions Environmental Health checks in apartments, residential hotels, and shelters.',
 	reading: 'Grade 7',
-	seoTitle: 'Learn what HHVC can inspect',
+	seoTitle: 'Learn what HHVC can inspect | SF.gov',
 	metaDescription: 'Check whether HHVC may review a pest, vector, or housing health condition.',
 	sections: [
 		{
@@ -22,7 +22,7 @@ export const scopeInfo = {
 			karl: 'Maps to an Information section → Title and text block. The opening paragraph plus the routing bullets fold into one rich text field. Moved here on 2026-11-26 from the retired "Who to call about a housing problem" page, which carried the same boundary as this page and had begun to drift from it. Organised by the condition the reader can see rather than by the department that owns it, because the reader knows the former and not the latter.',
 			kind: 'body',
 			paragraphs: [
-				'San Francisco splits housing problems across several offices. You do not need to know which one — you need to name the condition, and the condition decides.'
+				'San Francisco splits housing problems across several offices. You do not need to know which one. Name the condition, and the condition decides.'
 			],
 			bullets: [
 				'Pests, rodents, mold, garbage, or an unsanitary building: Healthy Housing and Vector Control.',
@@ -38,11 +38,11 @@ export const scopeInfo = {
 			kind: 'body',
 			paragraphs: [
 				'This page helps you understand whether Healthy Housing and Vector Control may review a pest, vector, or housing health issue.',
-				'Healthy Housing and Vector Control (HHVC) is part of the Environmental Health division. Environmental Health sits in the San Francisco Department of Public Health (DPH). You may see any of these names used across this site — they refer to the same program.'
+				'Healthy Housing and Vector Control (HHVC) is part of the Environmental Health division. Environmental Health sits in the San Francisco Department of Public Health (DPH). Across this site, all of these names mean the same program.'
 			],
 			bullets: [
 				'Tenants, tenant representatives, friends, family members, and employees usually use reporting pages to report active pest or vector problems.',
-				'Property owners and managers may use this page to understand HHVC scope before asking for prevention guidance or best-practice assistance.'
+				'Property owners and managers may use this page to understand HHVC scope before asking for prevention guidance or best-practice help.'
 			]
 		},
 		{

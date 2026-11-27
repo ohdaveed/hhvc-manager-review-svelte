@@ -30,7 +30,7 @@ export const stepPestReport = {
 				{
 					title: 'Report the problem to 311',
 					text: [
-						'Start with 311. Pick the report that matches what you have seen — the condition decides which team responds, not the building.'
+						'Start with 311. Pick the report that matches what you have seen. The condition decides which team responds, not the building.'
 					],
 					bullets: [
 						'[Report rats or mice](rodentsReport)',
@@ -109,7 +109,7 @@ export const stepPestReport = {
 				{
 					title: 'Follow the correction work',
 					text: [
-						'The notice sets what has to be corrected and by when. That deadline comes from the notice, not from this page.'
+						'The notice sets what must be corrected and by when. That deadline comes from the notice, not from this page.'
 					],
 					bullets: [
 						'[Correct a violation and close your case](stepCorrectViolation)',

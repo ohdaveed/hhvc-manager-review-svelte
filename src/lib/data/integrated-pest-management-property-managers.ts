@@ -43,7 +43,7 @@ export const ownerGuidance = {
 			karl: 'Maps to a second Title and text block: Title = this heading, Text = the two paragraphs plus the bulleted list below (bullets render as a bulleted list inside the same rich text field).',
 			kind: 'body',
 			paragraphs: [
-				'Property owners, managers, and building operators must keep buildings free of vermin under San Francisco health and housing rules.',
+				'If you own, manage, or operate a building, San Francisco health and housing rules say you must keep it free of vermin.',
 				'Integrated Pest Management (IPM) is a prevention-first approach. It uses inspection, maintenance, sanitation, exclusion, monitoring, and targeted treatment to reduce pests and limit heavy pesticide use. This sits under Article 11 of the San Francisco Health Code.'
 			],
 			bullets: [
@@ -72,13 +72,13 @@ export const ownerGuidance = {
 				},
 				{
 					title: 'UC IPM: More multi-unit housing resources',
-					text: 'Browse additional UC ANR trainings, Pest Notes, and prevention publications for housing managers.',
+					text: 'Browse more UC ANR trainings, Pest Notes, and prevention publications for housing managers.',
 					url: 'https://ipm.ucanr.edu/home-and-landscape/resources-for-multi-unit-housing-managers/',
 					karl: 'Body external link: UC IPM multi-unit housing resources index'
 				},
 				{
 					title: 'SF Environment: Pestec IPM guidelines for multifamily housing',
-					text: 'SF-local operations manual for multi-unit buildings — turnover proofing, resident toolkit gap sizes, and sample IPM plans.',
+					text: 'SF-local operations manual for multi-unit buildings. Covers turnover proofing, resident toolkit gap sizes, and sample IPM plans.',
 					url: 'https://sfenvironment.org/article/integrated-pest-management-ipm-guidelines-for-multifamily-housing',
 					karl: 'Body external link: SF Environment Pestec multifamily IPM guidelines (supplemental)'
 				}
@@ -171,11 +171,11 @@ export const ownerGuidance = {
 			karl: 'Maps to an eighth Title and text block: Title = this heading, Text = the paragraph plus the bulleted list below.',
 			kind: 'placement',
 			paragraphs: [
-				'Track pest activity so you can see patterns and respond before problems spread. Coordinated pest control services are required to handle infestations effectively.',
+				'Track pest activity so you can see patterns and respond before problems spread. To handle an infestation, you must coordinate pest control across the building.',
 				'[UC IPM: Pest monitoring and recordkeeping](https://ipm.ucanr.edu/home-and-landscape/guide-for-property-managers/pest-monitoring-and-recordkeeping/)'
 			],
 			bullets: [
-				'Use one system to log complaints, repairs, sanitation work, and contractor visits. A written log of vermin reports is required, not just good practice. See [Article 11 compliance for property owners](article11Compliance).',
+				'Use one system to log complaints, repairs, sanitation work, and contractor visits. You must keep a written log of vermin reports. It is not just good practice. See [Article 11 compliance for property owners](article11Compliance).',
 				'Ensure the PCO conducts a complete inspection and identifies the type and level of infestation.',
 				"Inspect adjacent units: When an infestation is reported, the PCO must inspect every adjacent unit. Treat them if needed (Director's Rules §VI.6).",
 				'Use least-toxic methods: Prioritize non-chemical methods (vacuuming, heat, steam, freezing) and gel baits over chemical sprays.',

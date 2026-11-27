@@ -66,7 +66,7 @@ export const pestTreatmentInfo = {
 				'**Plan for children and pets.** Ask if anyone needs to leave, and for how long.',
 				'**Ask what product will be used** if the notice does not say, especially if anyone at home is pregnant, under two, or has asthma.',
 				'**For bed bugs, there are extra laundry and bagging steps.** [Bed bugs: prevent them, find them, and get ready for treatment](bedBugsInfo)',
-				'**Ask for the treatment plan.** The pest control company should give you a plan that lists its methods and products, and what the landlord and tenants need to do.'
+				'**Ask for the treatment plan.** The pest control company should give you a plan that lists its methods and products. It should also say what the landlord and tenants need to do.'
 			]
 		},
 		{

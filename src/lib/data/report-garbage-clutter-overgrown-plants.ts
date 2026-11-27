@@ -22,7 +22,7 @@ export const garbageReport = {
 		thingsToKnow: [
 			{
 				label: 'If someone may need support',
-				text: 'If an older or dependent adult is living with a lot of stored items and may need help, Adult Protective Services can offer support. [Get help from Adult Protective Services](https://www.sf.gov/recognize-and-get-help-for-elder-abuse-in-san-francisco)'
+				text: 'Adult Protective Services can help an older or dependent adult who is living with a lot of stored items. [Get help from Adult Protective Services](https://www.sf.gov/recognize-and-get-help-for-elder-abuse-in-san-francisco)'
 			},
 			{
 				label: 'If stored items block an exit',

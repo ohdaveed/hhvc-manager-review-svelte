@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "corpusHash": "6aa526564a1abbea37ba27a7c1bd2a50e4281945275723c2ac3803a4600d5952",
+  "corpusHash": "6ade16694eaa4910c41df9a077ba4bc96dbf35d70a31af23d1ef6b7f53173db3",
   "pages": {
     "departments--healthy-housing-and-vector-control": {
       "contentHash": "0dbd9dd7bbad4361a566c5cd2c714223d97028f482b3ba8c958c082887615fc9",
@@ -71,7 +71,7 @@
       }
     },
     "find-residential-hotel-and-shelter-records": {
-      "contentHash": "65e37ca9c6435fb5d77541b98c385715b5284754cf0c18ff6d5d1af1d4c3c351",
+      "contentHash": "7c18c391a7ea87cc69b2a8b6daf7aa9c8a93797653c5a5471a29a045b6c3b5aa",
       "fieldHashes": {
         "primaryAgency": "8a2847f0ee854052d30378a2ef091f979c9737bbd8219086a1e04dc0abd84f9f",
         "sections.open-the-lookup-tool.heading": "f47f1edc44ed92664871471b0cf8f463813788468c23680c12f52a36c2827e26",
@@ -85,7 +85,7 @@
       }
     },
     "information--article-11-compliance-for-property-owners": {
-      "contentHash": "b2e0d35272813369ae57e9449a313fde20079eff388b70a36fd069d08173a38f",
+      "contentHash": "15f8db840e02daf5d1e36d3dcc7085f6616aed5305023a5b9cddc0229318757d",
       "fieldHashes": {
         "sections.contact-healthy-housing-and-vector-control.heading": "894fd5f4df753dfd3e6a91a16b05555a82f9340ef3a31198ed566d93ed7505c2",
         "sections.contact-healthy-housing-and-vector-control.paragraphs.0": "828a6f144909c96956f4ccc9dfad64ba06b8b178b0cbf5e179c2f8f32f36d8a7",
@@ -99,7 +99,7 @@
         "sections.if-you-get-a-report-or-notice.bullets.1": "f7d6e13d64e0e043c69b475484c4603c7d7495b204436e50bd43a5a6d9bbdd12",
         "sections.if-you-get-a-report-or-notice.heading": "612f3df8e2c5ab17f155e97353bcbf97bfa9a65f593c87481f3fc79ad52fc380",
         "sections.if-you-get-a-report-or-notice.paragraphs.0": "812c3fa52b9f2f2bf76f4f4c484a00039440cb4f94581f2e9b24d3585dfbbee9",
-        "sections.if-you-get-a-report-or-notice.paragraphs.1": "21c18cca0eaed23e79252c83890bac214249aee6baec62253598ca26addb0d47",
+        "sections.if-you-get-a-report-or-notice.paragraphs.1": "b4584505639b9f6eab22e9e57a7d9ae9813501b26779ab19c88826ba7b281969",
         "sections.what-you-must-do.bullets.2": "1bd13073d8730048e747cd74e8c8d1520c06b280e42e107ba4a551c5b687490b",
         "sections.keep-records-and-stay-in-compliance.bullets.1": "7eac9df56656bf1da4e5dfc40c325243a07792d483b52194ab067db33a119fa0",
         "sections.what-you-re-required-to-do.bullets.5": "6803a53cf21243433361a0aafc172fb6252ff264827a7d7195aaa8d683a0abd8",
@@ -128,7 +128,7 @@
       }
     },
     "information-bed-bugs-prevent-find-and-prepare-for-treatment": {
-      "contentHash": "cb9f2c0ded812632a3311bab9a3605529db5a6f512218604e9079fba58e8322d",
+      "contentHash": "aad35f04cd5396e88462a4f397e2e7598bcd4d47c49b35116309a034d98998e5",
       "fieldHashes": {
         "sections.check-for-bed-bugs.bullets.0": "d44bd88de28668418bb15ed6a197fde5c64af320f1ced1a98a0821c8470ea84a",
         "sections.check-for-bed-bugs.bullets.1": "4ab10d6d5a0ec5bf846e4bc8349194f960760ba1d35f80cb471d57e42e2357ab",
@@ -143,7 +143,7 @@
         "sections.how-bed-bugs-get-into-your-home.bullets.2": "7fa90934b36c92918503e15b6a7d9df8301669f4e15b862e2c370fe834587e43",
         "sections.how-bed-bugs-get-into-your-home.heading": "050214e0863a18100825c7f00bde03073544ad5c65e43c7470c375eae1fbac17",
         "sections.how-bed-bugs-get-into-your-home.paragraphs.0": "3ebb88a035bdb30de208a8fafd7b0d0e43148b398414959424023ea8b3b21aad",
-        "sections.if-you-think-you-have-bed-bugs.bullets.0": "6576d23c776e4e86af1a81ef7ed470ede5ce0e8ae0e460798d2123a2c2245825",
+        "sections.if-you-think-you-have-bed-bugs.bullets.0": "0840afc621ad6b78c9d41c1eff7522ff9d6afc7890127ec2e4ac744c108fcef0",
         "sections.if-you-think-you-have-bed-bugs.bullets.1": "94a901997e63cf6d2860ef908ba2a929e24e0f0bc0fc22f3be05682da3bff6b1",
         "sections.if-you-think-you-have-bed-bugs.bullets.2": "b2a802a43ab1b349b5f40d62f5914cfb14d6d240ce3403592f2fc4cd57c318ff",
         "sections.if-you-think-you-have-bed-bugs.bullets.3": "8b8ab7f9ef0637e9111d8af76fbad815e1e92e88e11c17ba3ac22801e66b541b",
@@ -181,7 +181,7 @@
         "sections.what-tenants-need-to-do-before-treatment.bullets.1": "2b70aa21b41f7b16179622ce12932ba4757fa157723a221f1227b504384c3540",
         "sections.what-tenants-need-to-do-before-treatment.bullets.2": "9ab611773e763c987dd9617d2d0e66232315d0639bec98f84601586c8cf8c0ea",
         "sections.what-tenants-need-to-do-before-treatment.bullets.3": "522caabdb02a4ea117373a85d35f6588fa40b36bfaff7645238d738c7c0fbc45",
-        "sections.what-tenants-need-to-do-before-treatment.bullets.4": "4cbfc5afae520e971b236b0fc3dfe54b799c786d9c3ca536d80adbb467ef9634",
+        "sections.what-tenants-need-to-do-before-treatment.bullets.4": "c295bb25af4ce27fad8808c0d7ee99dab70f8074ebd890d23b7a11983e386cc8",
         "sections.what-tenants-need-to-do-before-treatment.callout.text": "bc08d3ce8963b29249c2b42ac71397a53f3be8e234f8c4f558077252b678f576",
         "sections.what-tenants-need-to-do-before-treatment.heading": "c52ffdc607c009fee591a8a8b488eefd2bf7d65bd87d050827d254abf1f8a044",
         "sections.what-tenants-need-to-do-before-treatment.paragraphs.0": "e9fc4113ba704a806f82a32a3e90526805587717ca56581630b989aee91771d7",
@@ -245,7 +245,7 @@
       }
     },
     "information-integrated-pest-management-for-property-owners-and-managers": {
-      "contentHash": "e1875500e99287b0831cfa0e802e4a67deef2c46e7aa26c31083959f3010c165",
+      "contentHash": "127fe10ad7af2d62f4e4782a417b3ac5e50305fbd7c9b4c20b327e5c2877a74f",
       "fieldHashes": {
         "sections.1-follow-san-francisco-owner-responsibilities.bullets.0": "477e91471218dee6d65ea350bf6839ed2decbf7c900445309f635dc321c9bb5f",
         "sections.1-follow-san-francisco-owner-responsibilities.bullets.1": "02c69febeffc11da77e046f1c6ecef0badae06ad0b9f2964bece1667a4828ab0",
@@ -269,13 +269,13 @@
         "sections.3-prevent-pests-and-seal-entry-points.heading": "7f0cf22285f8e63b93621b187766bee834b2f280da644d9c47f28999b0764f03",
         "sections.3-prevent-pests-and-seal-entry-points.paragraphs.0": "5ee7e4647634f2e4199f985b20b4304bebac88c3e39fda3dfd46899c6b9c1d82",
         "sections.3-prevent-pests-and-seal-entry-points.paragraphs.1": "26e464e6ae5f7f12f4d7403dd3f39cfb8cd7676067bd3234766bbe63e19131dc",
-        "sections.4-track-pest-activity-and-coordinate-treatments.bullets.0": "21b33ba411748b7afa46463b7745580adb7e9af5d0cc5ecd7bd1cfc5bb4bd2b5",
+        "sections.4-track-pest-activity-and-coordinate-treatments.bullets.0": "c15b5c310c34ee7f0b460ec5c26ad5f9d3b4001913864e926571abe33bfa5cfa",
         "sections.4-track-pest-activity-and-coordinate-treatments.bullets.1": "6dc68d1addb901672d04595e9a26603133f7432eceeab342b0f9c4fd37ca3b4f",
         "sections.4-track-pest-activity-and-coordinate-treatments.bullets.2": "4a0ad73bbc55e3a7207701326557635d67c8ab5c498884d3f1547bae735046aa",
         "sections.4-track-pest-activity-and-coordinate-treatments.bullets.3": "c771aaa8c5babe8fac17799c16041a36701aa2173f02aa70498998a7f3b505b5",
         "sections.4-track-pest-activity-and-coordinate-treatments.bullets.4": "0d289ad4330936fe9b8501415ebaa99ebad2c0294059993159220674079792d7",
         "sections.4-track-pest-activity-and-coordinate-treatments.heading": "119a8b11b6843495a28e3c0c8c68c23ca6761603285906836b42359588bdab38",
-        "sections.4-track-pest-activity-and-coordinate-treatments.paragraphs.0": "6f4fc6b0d26b43c217d4fe2d99c62234598cdc95571693ee0a32a0584aeb9268",
+        "sections.4-track-pest-activity-and-coordinate-treatments.paragraphs.0": "a9ba4c25ec9b63c3aed061f1c75233c64977813de55cf7fbd482f5f15b755862",
         "sections.4-track-pest-activity-and-coordinate-treatments.paragraphs.1": "fdbab9b2a8c7ec30bf8967fc58ca6d8d73cef99f3a187ed5e3425c7c0e762eb4",
         "sections.5-share-clear-instructions-and-support-residents.bullets.0": "79758b0e00bd204aa72b21b2aed99b929f784bdf80a49520a8a4f48d57006ef8",
         "sections.5-share-clear-instructions-and-support-residents.bullets.1": "b243f150e9522e3060638e3350d2000a0bb2d83df356e868d22b9626ea2e3346",
@@ -306,7 +306,7 @@
         "sections.use-ipm-to-prevent-pests.bullets.2": "2bf5f2ef48270d07c70d7cb58c057e232744b77207f2ba07e9f7482208b05748",
         "sections.use-ipm-to-prevent-pests.bullets.3": "beba64bcb7fc3ea268329b2468aad6c93872ec195b8ce4d77a0f426168236e16",
         "sections.use-ipm-to-prevent-pests.heading": "d2b48f4df3ae76d287d6e50663cab63570c017af621102bf43bea2fa956104b0",
-        "sections.use-ipm-to-prevent-pests.paragraphs.0": "fe1f68ae52c8e7e3c6ab29b9228d4e955c0dbbec4c66b3ad86e4ecaf2511cd06",
+        "sections.use-ipm-to-prevent-pests.paragraphs.0": "24752e3d72f0ea7fc002dd0a5c03326fb742ae1123b0b9393954aa31f6d51681",
         "sections.use-ipm-to-prevent-pests.paragraphs.1": "0000366e8313e53665b7f0cb53d87b07fd0619c0d6f5f246b75f765ba385b723",
         "audience.0": "df8c6f354b558e7728a8939b82309f3818a804f3820e5eb1b5fc16828c00f64c",
         "sections.who-this-information-is-for.heading": "46c502c4c2c97e0ef59078280882f103e27790dbf304ac81dfa6c5a41ae5d2b9",
@@ -324,7 +324,7 @@
       }
     },
     "information-keep-rats-and-mice-out-of-your-home": {
-      "contentHash": "de7151d3a36c5d80d33865de1b3101ff93bf530cd2cde973493725193207465f",
+      "contentHash": "26796fb85fe8e4d15b6ef3f55085a322093d65acae39894fa6d4908d189c9212",
       "fieldHashes": {
         "sections.clean-up-droppings-safely.heading": "44a01c8d18ff68846a64e1305397e689b70175ac9ae94a2ae4d111763c9b67bb",
         "sections.clean-up-droppings-safely.paragraphs.0": "833ac3412d92976d2b6c4f521657a4db88a2ab2f32ef7eee65c2b024171c01c9",
@@ -354,7 +354,7 @@
         "sections.seal-holes-and-gaps.callout.text": "21908dfdab67aba6b8c7f6e9613e2e87a044e72ed8925881ad5985f4e8e88b5a",
         "sections.seal-holes-and-gaps.heading": "ef3f83e4477c0dc519d5a9a730669322faa21afbdf1f74790699f59e7a2ad260",
         "sections.seal-holes-and-gaps.paragraphs.0": "c4b2885708facc35379434befe5d76470f175f007f0538f4ef268c409db5d07d",
-        "sections.seal-holes-and-gaps.paragraphs.1": "17e64c105f5711abebdc3ea057b0b9284e2dbbe3f67281303f4dc18975f6d0a7",
+        "sections.seal-holes-and-gaps.paragraphs.1": "7ed96e527cfcdc319259a9d59e58d47373aa0a858259c45e79d0cceaad07210e",
         "sections.signs-of-rats-and-mice.bullets.0": "df7cc8e1e7bf5714265d764b67550c401442e2de342e9af877c1a01f2c80b5dc",
         "sections.signs-of-rats-and-mice.bullets.1": "7c9cbc02fdbd6d5e4c58473b1e4f7d49d839557e48c04874588ff57bc676cee0",
         "sections.signs-of-rats-and-mice.bullets.2": "c8e31961081d2f26e277470464c7d48788f9858487ccfb6ffa43f9acbc95da7b",
@@ -382,7 +382,7 @@
       }
     },
     "information-learn-what-hhvc-can-inspect": {
-      "contentHash": "c9daeabcadfde127e4c4ec5d0a889fe97ab1ecf8494aeaff97f59071eccf1fc6",
+      "contentHash": "a4a86a4471f94144e97aa7ff649a57054eb819e0fc356be8ce77ea3f8438d79d",
       "fieldHashes": {
         "sections.how-to-choose-the-right-page.bullets.1~2": "029b9aa45f74f693c1d22f73c108eeeb13e2e9aa172e25d543fdc7adb6bf2251",
         "sections.how-to-choose-the-right-page.bullets.6": "b4f9a3791e42fd853e812ff9fa479ad10c789de6779fc7ab7ba4767d04946f2f",
@@ -437,12 +437,12 @@
         "sections.start-with-what-you-can-see.bullets.2": "61d3bad97eb4a96aafbdc3cb9df88485f25801bf17f378d8d2af4eb07ed3d83c",
         "sections.start-with-what-you-can-see.bullets.3": "8cafd313ea31f8ae165cdd5bb5c13a5c6cf9fdc9a46bff84f53a2c567199b92f",
         "sections.start-with-what-you-can-see.heading": "763b127b20c96d750284a7970d3deec115413cb622d9073b0ee785862e44e0e6",
-        "sections.start-with-what-you-can-see.paragraphs.0": "c515901c9b7778f5ee8b09d2799752bd9d507478ff3e038c0bb9ff77858bedcf",
+        "sections.start-with-what-you-can-see.paragraphs.0": "2425e3bf0d96c095d0278a5499dcffa22b6ddb7f335f08e63871462abafce401",
         "sections.use-this-page-before-you-report.bullets.0": "a18afe48eeba652d8d8f73ec8a38e5cd289965543bff7f91ec57ff58ffec90a1",
-        "sections.use-this-page-before-you-report.bullets.1": "4845ea76e9a68c48812fd7b33a3264ac3de71aa75d8cd1693285fdefe2f5a4d1",
+        "sections.use-this-page-before-you-report.bullets.1": "090b4223f28ba5d90085ee9ebd6ca18914e76947777e5e34378b6413b5e46df7",
         "sections.use-this-page-before-you-report.heading": "2b21a2cbeb42785620389638504474584e4fa580e7a32d4e47091650de6b1995",
         "sections.use-this-page-before-you-report.paragraphs.0": "5dc12aa7ffdf16f451e7c371f183f4ae5f169999335caf47ee1334094dd15939",
-        "sections.use-this-page-before-you-report.paragraphs.1": "938c20a79b37bd12c9f983b2c39d43ee4d2faffc96af6ada5c5e6d4213261ecd",
+        "sections.use-this-page-before-you-report.paragraphs.1": "59e23c2e1ae9673d326e6c68f0544d9b8b5e29813ff9a3335789e77458a8edb0",
         "sections.when-more-than-one-office-is-involved.bullets.0": "293e0ea140169fe8e094de7e5d6b66796f3de061fc2c81d4844ff5e2adcf3306",
         "sections.when-more-than-one-office-is-involved.bullets.1": "e033ad0f9d0b4b17d940db0e0f19fe78251b71cd3d4d2f283f131bbd1b527667",
         "sections.when-more-than-one-office-is-involved.bullets.2": "75c8db5c704c29866cccd3477c90b00167b2d8933b0a74229846909433680ae8",
@@ -505,7 +505,7 @@
       }
     },
     "information-tenant-rights-and-reporting-housing-conditions": {
-      "contentHash": "5d35ed114d2aaa56f5a7dabeba1191c4e284e4d2d6d34c95624efe12497d8c0e",
+      "contentHash": "daa4cf1b82be8da05401749f851803a4b8beebf44fe61c848cfb2f0f27da09e5",
       "fieldHashes": {
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",
         "sections.tenant-responsibilities.bullets.0": "786d4e6a0591fa52d5b48e6be046284df4d7cd66b107ae2f645422292354c76d",
@@ -515,7 +515,7 @@
         "sections.tenant-responsibilities.bullets.4": "12b3c79f220381a22e1d30a43520a087859c56beb7bfd79fde8169d31fbe5027",
         "sections.tenant-responsibilities.callout.text": "06682ef1ab0c883c0b819b50488dcf62e9b5c08bf71858cf8cf716581a3b1d32",
         "sections.tenant-responsibilities.heading": "fbfb5166e1cd75e5d3164bb6ad5028a5ddd299045080b257c9a2c897b3b0fd1f",
-        "sections.tenant-responsibilities.paragraphs.0": "0b68f5100f9c0513760c3577b3422606480994777cca20eb8654bee7fefa4924",
+        "sections.tenant-responsibilities.paragraphs.0": "e59d3e5e8c01ed61a306cb89bde55a9dbdae0402151f0f53f5d8d7b334843d02",
         "sections.what-retaliation-can-look-like.bullets.0": "53b89de994ef8a5e0503b0d08f2fd3569929fc8d78b2a8afc24bea2b9eaabc32",
         "sections.what-retaliation-can-look-like.bullets.1": "ab96c0724495a0237135e6bf15f30e851bbfd355588442a382cb68d6afc20b9a",
         "sections.what-retaliation-can-look-like.bullets.2": "7bc71a769eabdb2c3f4a950f8c7acb79298fc9e0b580143b7f406134d16e423d",
@@ -535,7 +535,7 @@
         "sections.who-this-information-is-for.heading": "46c502c4c2c97e0ef59078280882f103e27790dbf304ac81dfa6c5a41ae5d2b9",
         "sections.you-can-ask-the-city-for-help.callout.text": "7328285f7eadb271756730e97cf485173a716c48e0f1e82124e29e46b91232ca",
         "sections.you-can-ask-the-city-for-help.heading": "7ada1941cb1a7d9fd8322ccd998dda6e17a3b82519e2145504d0ae101ed254dc",
-        "sections.you-can-ask-the-city-for-help.paragraphs.0": "d3c182b8db2f7a37177c143d536a927761ffcd48d25acedf98f09edfd9df56b9",
+        "sections.you-can-ask-the-city-for-help.paragraphs.0": "9d473d04cc804a349869824ecd2236f603963ecabfd8618214b08092c21558ce",
         "sections.you-can-ask-the-city-for-help.paragraphs.1": "5e52ee5b909f2bd3bba2da1880d186b566afebb1e6fe2b21b19e400b8ffe14d2",
         "summary": "8d5ff6a0d933a8ee49c97782915886316106d69a7ba0136cb31426621ec2a1ca",
         "title": "57a43417e514f27605ce12d89cec8ccb752017497486c615b5aa4c199622738d"
@@ -567,16 +567,16 @@
       }
     },
     "information-what-happens-after-you-report-housing-pest-problem": {
-      "contentHash": "16c98bf8588545f2b46febe284bf7ea1f2ae9feca388c94b16df96b40a8220b7",
+      "contentHash": "2951eafea97a6458826f63440510dab2978adf7debd77bc9b236104bf224bf70",
       "fieldHashes": {
         "sections.if-a-problem-is-found.bullets.1": "bb05a247ca922a27602110f1578a87089119687ee7860cd48c5e82df88a06c73",
         "sections.if-a-problem-is-found.bullets.2": "4852928a0af5af2f6a9c01c6c154cb020dda606d9f0293d2b04aad41cd15e788",
         "sections.if-a-problem-is-found.bullets.5": "353cfe29d88b1b45a4a23ba47813c3ebd453ac21736936b524d760da9fac8158",
         "sections.if-a-problem-is-found.bullets.4": "20a29c06044e966c1ab98d65a92b0cc7e3221a4ae359246ea779c8084382b364",
         "sections.deadlines-to-fix-a-violation.heading": "2315db1493596bc104578edd917ffa22bcb8e71b8642dbc9b2e873acee99f5f7",
-        "sections.if-a-problem-is-found.bullets.3": "85cade130e6596cf22449f646b7372db25d03e73418616181d908e8e59b9d2c3",
+        "sections.deadlines-to-fix-a-violation.paragraphs.0": "09cc6c6a19528666b2d5c7eaad6ed0acbbc636b6df4bc9d4787a1c9e1b7cf52b",
         "sections.how-a-report-moves-through-the-city.bullets.0": "9d6e74b59346d39437ca8f7f4fb021bee9a96ab270f10366f0b6b4a0d5246ef3",
-        "sections.how-a-report-moves-through-the-city.bullets.1": "f55f10bd725a1847bb9f05703a57ed1d622326822e4e92d4977edbe6e17373d4",
+        "sections.how-a-report-moves-through-the-city.bullets.1": "21324f1dde40f554146c97ad03dee66d1bc34a6ae970121ed93600036e487736",
         "sections.how-a-report-moves-through-the-city.bullets.2": "e62f0cf1c75f5ddafe98c13666210584b71956749fc2abaa83bfdd58fc91d6db",
         "sections.how-a-report-moves-through-the-city.bullets.4": "a20b7428ba9a7a03dfa52d976c5edd85d0709c55f6487fbc514a6400894a1080",
         "sections.how-a-report-moves-through-the-city.bullets.4~2": "b2165a76a31b1bc5b174b3a1bba575b820adc723ecc9a9facdff54f17943558d",
@@ -585,26 +585,26 @@
         "sections.how-to-follow-up-on-your-report.bullets.1": "bd028a23b7bec0596611c6db6393dab71ca42c0a4f51f4b0588c8fcd6fb085f2",
         "sections.how-to-follow-up-on-your-report.bullets.2": "cae4bca0d24b96846573a11ec8382ed396e1344858f7f1aa46722a699cca24b0",
         "sections.how-to-follow-up-on-your-report.bullets.3": "cb955fac849435a81a004a598d67b1cfc3a78dd736d3369e7d411793bc2c6a75",
-        "sections.how-to-follow-up-on-your-report.heading": "d5a672b1c39ef7cebd05cc455ac9281c3ed0e87ad9617433d152db0898f756ea",
+        "sections.how-to-follow-up-on-your-report.heading": "acf09e4f285f55654cb6af18305f3e681d2c6b02455a92b1fdd11c868528fca1",
         "sections.how-to-follow-up-on-your-report.paragraphs.0": "855aca1a91b42c28711d76fd263561133cfbedacb3199a2231f914ee383aa6a6",
         "sections.if-a-deadline-is-missed.heading": "24be348737970e77c76d2f341ee7cbc9cbe3e31a1b2027c1d8ee2188ad050822",
         "sections.if-a-deadline-is-missed.paragraphs.0": "4fc5840b19acd31a75d8e57108aa63e2bd9355f0d003cafa348b13228d779597",
         "sections.if-a-deadline-is-missed.paragraphs.1": "44c7dab0ffd8af4350b4c0b32a60cee768b174208ba0b0c1181fbe9e188962ab",
         "sections.if-a-problem-is-found.bullets.7": "fd3a91d5216533a5df28ab9fcbb3a917699051ad1ba45809dc4270c6bd28967b",
         "sections.if-a-problem-is-found.heading": "9895baa9750e1a0711e781788a6520e394a8f5917dc1a115b19ccd31b08866f4",
-        "sections.if-a-problem-is-found.paragraphs.0": "25101a12f7029aea87dcb0b3f469406695f743c9a3c31e06e02829e18d3c9179",
+        "sections.if-a-problem-is-found.paragraphs.0": "82974345ef6776ec633b39ec9cae7094aabdd1203e64d37e8ecf614979653756",
         "sections.if-a-problem-is-found.bullets.0": "7a360fb033bcd75894a5f2d70da7a442d08cea8223103d3a1ccec1a28eea044c",
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",
         "sections.tenant-rights-and-retaliation.bullets.0": "4a1ef6981ec415b767a364383541ba244a782736af5fa8f5d8ea1b5642c34364",
         "sections.tenant-rights-and-retaliation.heading": "cf8cd5d9cb1ea992c332b1f8c67589f274774f39b5df5ee06d1957248dae9d56",
         "sections.tenant-rights-and-retaliation.paragraphs.0": "e3efa284e02e83ef133ca0208ec5e827c8f114797c149a5ebfc15a8f8f12f12c",
-        "sections.tenant-rights-and-retaliation.paragraphs.1": "c6c90bd6ca16a5e44aab9465e8e40e8ae67cfcb08e39636585cc4d857bcbb326",
+        "sections.tenant-rights-and-retaliation.paragraphs.1": "c8d5dfe9bbbd8654d702e46a6f9f4274af2bd1dfd662ffa1ab61621aab0bc7f5",
         "sections.what-this-page-does-not-promise.bullets.0": "9f60ade73d09923ec6e42737be361fdd5e3a05655cfc65175225998ce679fe1e",
         "sections.what-this-page-does-not-promise.bullets.1": "b79b6d7d5509c5830c0257d64e56ce6b205a6324efda81ba71fa0214f34b308d",
         "sections.what-this-page-does-not-promise.bullets.2": "f974fede8e680d45b00ae3dd66bf8448653c2db1040ae79d1128b2523f01efc0",
-        "sections.what-this-page-does-not-promise.bullets.3": "90278a93c9d3d8c3452fd755ae74182f7966f87fe3f598e9ce4e2e3240b05888",
+        "sections.what-this-page-does-not-promise.bullets.3": "a615fac9151761e8e0a23bbb668a11b0eea778ff8b243883d4deb4863edea8d3",
         "sections.what-this-page-does-not-promise.heading": "0eb6762ae5536787c473f21f976a8dffd8bc745840fd03b7267cde06650405cd",
-        "sections.who-can-report.bullets.0": "bb6508e2fe9aba71ad2e40bfa676ee3de5925914b62cc162aacddedfba340dc8",
+        "sections.who-can-report.bullets.0": "e2a6fffe96c195cb0b08f3d232cbb44f273a1e387138b79ac46dfb4189bd5532",
         "sections.who-can-report.bullets.1": "8a6466a920982fa6e1168c6d99b5b5645de5e49099d9cd4a854a25f9a83933a2",
         "sections.who-can-report.bullets.2": "c611ee16da4ff1079def378046b55e1a2e6ddc15845ebff14a8522c0e14ee08e",
         "sections.who-can-report.bullets.3": "f65e38b65f8404e2c78da5080eb74a232f530a3e8eac41c358f1d399c9f0f28e",
@@ -617,14 +617,14 @@
       }
     },
     "information-what-to-expect-when-your-building-is-treated-for-pests": {
-      "contentHash": "fdf83df2203994d69cafff9258af89292e32ed45c314206a59f8fceb0e18e5bb",
+      "contentHash": "0f6e54943b17b0dc9295b1351a273da8f0630bc7431b52b8c0f3c1e4544a98a6",
       "fieldHashes": {
         "sections.before-the-visit.bullets.0": "8f6ff022addc2d31961e2300d75b487a3fc4ef6261ca5bde103ab64e01c8b889",
         "sections.before-the-visit.bullets.1": "220887098e4f888cea70100b098ed46bcd65ac091c964b8256c08130f96ce1e3",
         "sections.before-the-visit.bullets.2": "857d5f8604ad66f1be8192db9d820227d22cde66c8e1da8adc1d94a58b04d65a",
         "sections.before-the-visit.bullets.3": "e03a7d0b4dd464ba6e98a34f0c9714778d968cbb6cc30cd966ac19f58e966767",
         "sections.before-the-visit.bullets.4~2": "51fe331bc89f47af32c9d9d6cc8d6ec5e3637e191126cf5cacdb77cc508239d4",
-        "sections.before-the-visit.bullets.4": "4c77ba185f87abd711b1f5de83510d1c92a87115e93c1519de3f79a711143ec3",
+        "sections.before-the-visit.bullets.5": "f8dfb61e3732315dbb576617b0645cbb487ca8e2626b9a8652ebfd7363a43d21",
         "sections.before-the-visit.heading": "ed50aca56eda3c935833533e6887478c18935d9cb57d467a9ccec1e497934aed",
         "sections.before-the-visit.paragraphs.0": "ae3e6e6c5dfaccfc7f6695f79a73aa74e1b0ab106c1a9064433a94885af4f331",
         "sections.during-and-after-the-visit.bullets.0": "c550d33b2b69c25358523f3cb3da7f0a7100ae93f9088f66ad2d0c93157e3c49",
@@ -669,7 +669,7 @@
       }
     },
     "integrated-pest-management-education": {
-      "contentHash": "d930b809082b516500a2affa58788b9d23e7817805a263528cd4a9369c4dee4b",
+      "contentHash": "7bba92902c21247ce915e3550eecf5a43f9af37123bcf22c56df9aa56eb2e4cd",
       "fieldHashes": {
         "sections.grounded-in-san-francisco-health-code-and-uc-ipm-guidance.bullets.0": "62917ac28bf9593c2157e7377604ea83f2ac6ce563a8042f1da991eb7da123b7",
         "sections.grounded-in-san-francisco-health-code-and-uc-ipm-guidance.bullets.1": "b29d224889421ca854a05404d420a792f111786c3c5b95abbd283e987a3eb12b",
@@ -700,19 +700,19 @@
         "sections.who-can-request-a-session.bullets.2": "30643a25bdfd8811a1d077b9e0c913062d02ed2c123caf33e9b11ee730bc1657",
         "sections.who-can-request-a-session.bullets.3": "f3cb9daa23c25af87e64cdc17e45c233e44cce7ae05d30631b37fa1e81dec987",
         "sections.who-can-request-a-session.heading": "c53f7c333ae2991ce22770760141ae43ff8ce276a918f0ae037b29f3b50f7fa5",
-        "sections.who-can-request-a-session.paragraphs.0": "e349f3716ee594f4ee3635b631f9f1c57ff432166fad3f52ea050f67b6368c21",
+        "sections.who-can-request-a-session.paragraphs.0": "e3b9d95b0dc48c765f8a62ca7d8e3694dd3e423bdd9c9cc313fdb11aae768d3d",
         "title": "a3a7ee60e5c4dd754f51231699fa44a583e02f73fc23d7f3847d2145db702c4a"
       }
     },
     "location-environmental-health-office": {
-      "contentHash": "82132b479e4f7232e5a4a93157b5851b589135fd59c85358a7d53afd8de6b435",
+      "contentHash": "586a0b9e18a378b5975344d821b1ebf066124c5b8d855cd5d5b056b27292b733",
       "fieldHashes": {
         "sections.address-and-hours.bullets.0": "6b28692e9ce20519ecda233546f8ed28c4c11c1263281a978ed192c86edbeaec",
         "sections.address-and-hours.bullets.1": "c0299aca3f8e5af8c12ce26413e13f96b56111a4b7cc6d9286eee231af1c467f",
         "sections.address-and-hours.bullets.2": "0a4ef71ffad4ca72e6a23bdd70da78f22bc29cf8de0cd81339e29de77961d70a",
         "sections.address-and-hours.bullets.3": "ae982acc1a74b83a4ca0e8e2030ac0e06ed1381634af4536d2f126f7c78092b1",
         "sections.address-and-hours.heading": "bfd4c16de992bb160d00f7c06cdfd83c695bda7f4b18547952bd30a4f011dbea",
-        "sections.address-and-hours.paragraphs.0": "40f663dd70f5950402c26f61d6c038509384a583663f4edeab0153dad4b0082a",
+        "sections.address-and-hours.paragraphs.0": "fd6876b263f99bf323a670c5630b71978197acbe1f2ac44194033806c6c70847",
         "sections.before-you-come-in.bullets.0": "1c11c410a0f27d18eb7a1010b2fdd417ea60c0c5cc79e95aad2de8d44515f21c",
         "sections.before-you-come-in.bullets.1": "1481a239fd9e18eda114950fea2d5d01e0859bf4097284e2255936e8757b761e",
         "sections.before-you-come-in.bullets.2": "651a7f6831056d703bbcd566709994176f21e436037d7958377691805076d7e9",
@@ -731,7 +731,7 @@
       }
     },
     "make-public-records-request-environmental-health": {
-      "contentHash": "32df2287cdea97172f43e2df2a502cb4aff522369c10bb28a09ba23cbb33c3ed",
+      "contentHash": "10d81d6b65acbb6b7aa779da0aba0c57b78f4b7acd206bf91e81886b788dbf18",
       "fieldHashes": {
         "primaryAgency": "8a2847f0ee854052d30378a2ef091f979c9737bbd8219086a1e04dc0abd84f9f",
         "sections.before-you-request-records.bullets.0": "be2a5643abed5982190d2963946cfe6fa04cb2f601e2531084a68b06e3ceb524",
@@ -761,7 +761,7 @@
       }
     },
     "mosquito-education-workshop": {
-      "contentHash": "e65210cccd7120b836bc003f9745a04c8d67ca6f3bc8c67bf12dcd30872ff05f",
+      "contentHash": "4abd1e6c2b5dab90b6b0317a3192ca25618e8c8ebfe83ab08d7ef17fd918beb0",
       "fieldHashes": {
         "sections.aligned-with-california-education-standards.bullets.0": "96c484416a37bb9ffe2c03febc6a78685d1e3b3124626728bfdf3f897cf82a97",
         "sections.aligned-with-california-education-standards.bullets.1": "11ffb777af0f6dba7b9242ae1d9b0967d79ac1d01530346fad90d49e943c2e75",
@@ -770,7 +770,7 @@
         "sections.aligned-with-california-education-standards.callout.text": "50903137a329fc65f35afaf6e39039a9de4b9cbf8a55a9e4975d1206c431ae50",
         "sections.aligned-with-california-education-standards.heading": "0fbb92771e9479408dc0ae79ea2ea71cf1af0213acb3bb5a24273f09ab41edb6",
         "sections.aligned-with-california-education-standards.paragraphs.0": "e8b930fa14857e8752de31299bdeaaeb65e204e023dd8e991805d291c37400e9",
-        "sections.aligned-with-california-education-standards.paragraphs.1": "e98e162e2804964b64146319a983e5890bd72fa4c15a71e2b34b851c5b430deb",
+        "sections.aligned-with-california-education-standards.paragraphs.1": "265567275f6cd0a3b9d7e571c69dd201695ab1cc28b56f798c5dcede15436d3f",
         "sections.bring-mosquito-science-to-your-students.callout.text": "5559063ff4ac31281ddb4d9f6b46bad33cc6db9095bedb3fad2c53d2f4f4305a",
         "sections.bring-mosquito-science-to-your-students.heading": "e2a8882460222245d7e77eec63257227f0bbea68e083c06a6d923d32238ef69a",
         "sections.bring-mosquito-science-to-your-students.paragraphs.0": "344d722b6e9d2e82e45ba8dd7da2c95096c3b3b1dd7d544aa67caa603809176d",
@@ -793,12 +793,12 @@
         "sections.who-can-request-a-workshop.bullets.2": "716347ddc10704d6eb897b3f904a7ebd9a83d67041d76d582eb83173f22cfa38",
         "sections.who-can-request-a-workshop.bullets.3": "f17d18f3524b5aa7adb7f20f60c759ff4d050e1b582d0b4c6119f76aacf7185d",
         "sections.who-can-request-a-workshop.heading": "97c20ec8f632891bd58c90f5bd95a31c0aa37e00e40ab1e541a47f88c90bedf4",
-        "sections.who-can-request-a-workshop.paragraphs.0": "d54d1d6a66586c00526edf405eb7d0520eb1474718c410d1aff2b38a6eb72b48",
+        "sections.who-can-request-a-workshop.paragraphs.0": "9d521edf0376c0d3edb609540dbfd0dbd165bfcaeb57a7522233367d18aad1f2",
         "title": "d78f8f0d7cc5899f72f6a025e430d3a7877f06269e82c2ed07bb626b2462e6d6"
       }
     },
     "pay-healthy-housing-citation": {
-      "contentHash": "800795bb61b7f3bdbbaaa43c5c7c2e4e971f6185b8aed940494f273d579078a4",
+      "contentHash": "260d56032b7fb284bd71c93d24d1f4dd91f734e8abc613b77b2115a895d9cdee",
       "fieldHashes": {
         "primaryAgency": "8a2847f0ee854052d30378a2ef091f979c9737bbd8219086a1e04dc0abd84f9f",
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",
@@ -808,7 +808,7 @@
       }
     },
     "pay-your-annual-healthy-housing-fee-apartment-buildings": {
-      "contentHash": "a5f72576e76c07157f516a869a7d6d3314cd529fe842443c8784a31c276c028d",
+      "contentHash": "c70032ada328acaac5a3d9ed6dc63f885d7cd97fd957ca0b22c9897e3f8e1fe4",
       "fieldHashes": {
         "primaryAgency": "8a2847f0ee854052d30378a2ef091f979c9737bbd8219086a1e04dc0abd84f9f",
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",
@@ -818,10 +818,10 @@
       }
     },
     "property-owner-responsibilities-hhvc": {
-      "contentHash": "50c018a0b19bb25858057bdea6709aa6b3b99232c0c10b47b71988ec5f5a7a63",
+      "contentHash": "5794be1f9197f8aaed297fab9f30819a3c85a4ec2f42e8c30d7ed9f33e51cab9",
       "fieldHashes": {
         "sections.about-this-collection.heading": "4d07da7c322136cd91b01bf97e8ad975d8d8abdc6620e8bc46e7a1ba5c6d48e3",
-        "sections.about-this-collection.paragraphs.0": "a02d3a88f3ecb9f3fb829d74d286f5ee3460acc949000d4f864412f40cecc4a1",
+        "sections.about-this-collection.paragraphs.0": "a58faf8cff678feeae67236a3de0b9035e5e0303a160d0384e1e032d1a280fb9",
         "sections.about-this-collection.paragraphs.1~2": "2510945e341ee81b11a1df8dfbf4dd952cf87609e6504cbcd5e513b00a9b276b",
         "sections.about-this-collection.paragraphs.1": "bf83944bf43b70a3a663e99c91188ce509fda4650240c5979cc0bb009171e0e9",
         "sections.fee-schedule.heading": "3be0cc21b870545db27d2e81ce9039865bd230a6d86068be1026eb51db24938f",
@@ -842,7 +842,7 @@
       }
     },
     "rat-free-blocks": {
-      "contentHash": "1edc899647d8534a9ab7ce096b97214c9b1d36bdafa3d453d59223f6a01798a5",
+      "contentHash": "4f23a670e2377a0285cbe97cc80bbcefd86209f07af960eec8514448fa9f1777",
       "fieldHashes": {
         "sections.about-this-campaign.heading": "5d54006165017a68cd3e3ed65cb38d2867de0fa10b9e8341daa0796a89458197",
         "sections.about-this-campaign.paragraphs.0~2": "edb2d9aa01e3744b8aa366551c49bb562ff30592a80ac4467246f62de08303ca",
@@ -852,7 +852,7 @@
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",
         "sections.start-with-your-own-block.bullets.0": "20e7637cb28f57f1f3fd2f9b20c894643e0f96ae607b4a4afdd57cd80ec17756",
         "sections.start-with-your-own-block.bullets.1": "9ea1841369781e0f36cea1b80d021ecf32e432c952dbe4161d6e2a72109ad9c2",
-        "sections.start-with-your-own-block.bullets.2": "418d6c8d107b52765bd251e73acbba69c48f1d6044e186665b1ad592201358d4",
+        "sections.start-with-your-own-block.bullets.2": "a88e1b4ca6a0869eaa03ca7a9a59d355ffafccb403080011c09c9b20b690eab1",
         "sections.start-with-your-own-block.bullets.3~2": "e10728021741bc0244c875c6fc264241b1133e682afa68229be714df0ceb031c",
         "sections.start-with-your-own-block.heading": "68fee6e0d0c0f99d45961fa36609c417bc2b37b8cd6f6271eb0273ca6838d5b5",
         "sections.start-with-your-own-block.paragraphs.0": "62c7ecc1a18f091bc29f5f0fe80b1da909ec354f418c4e13e3184bc361578d8b",
@@ -917,7 +917,7 @@
       }
     },
     "report-garbage-clutter-or-overgrown-plants": {
-      "contentHash": "8c47426206686bd2ade19886ebcf0d657244b051314b2cfab4d9ef2f525871d8",
+      "contentHash": "12924743842695798d601384d77390aeb80e6373e16491be0fad1fed7ffed1bd",
       "fieldHashes": {
         "primaryAgency": "8a2847f0ee854052d30378a2ef091f979c9737bbd8219086a1e04dc0abd84f9f",
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",
@@ -935,7 +935,7 @@
       }
     },
     "report-health-code-article-11-plain-language": {
-      "contentHash": "e7169b4824ad1452a519154c8e02d996445265eef73a2531114c97612a2d134a",
+      "contentHash": "c79ce4a2023730378931335d2c21a2d28d78796244ae77823428858f4e4fc39b",
       "fieldHashes": {
         "sections.animals-clutter-and-other-health-threats.heading": "62fb5ffe07e7caa1b200888205994b3495e6e4f1838c94901c33ece0e1e0b2eb",
         "sections.animals-clutter-and-other-health-threats.paragraphs.0": "f53e9ca11083b402bc4ba487ece43c0bc30cff310b2038d90846de867ad6159c",
@@ -944,7 +944,7 @@
         "sections.article-11-sections-at-a-glance.heading": "28dca83c3a2fe9cb13c6e469e9d1d3641ec5e82eb508011bdb1aba1e81044eac",
         "sections.garbage-filth-and-waste.heading": "8d5b69a5c6d373194d22ae91142ee578cd45f14ddf88c34c0ef12f02ad8b43e8",
         "sections.garbage-filth-and-waste.paragraphs.0": "3d4fd0807f55a7b09578ccd97fdf295c0009568b2851b5ab1e19c3707fb4be75",
-        "sections.how-to-use-this-guide.callout.text": "f6158d53571ad8e4a3bf684e79a1603b81bfa8904605c74153e97f94c2a25554",
+        "sections.how-to-use-this-guide.callout.text": "a3c730a218dd341a9cdf6d0865ff90a290d2cdd8f6b6cef7c10cccdf6e50de48",
         "sections.how-to-use-this-guide.heading": "417ddaa80deaff0e6712700b24fa655b35931d38f675a9230e0c0a45d4efad56",
         "sections.how-to-use-this-guide.paragraphs.0": "efa682ae32b81a425fdf52f1a01801c4677575da3321c1c9189c0070712641f1",
         "sections.how-to-use-this-guide.paragraphs.1": "35b95a0fc903c07e3c8f6f4883ba6a0f606f70f9b6fd4a4b77f5f003ff07f3e0",
@@ -954,7 +954,7 @@
         "sections.pests-rodents-and-noxious-insects.heading": "77d2e14d4e31f2e5b89666adb093e166fa058bf90748ca13b4fa828fe93cb491",
         "sections.what-happens-after-hhvc-finds-a-violation.bullets.0": "6b7fc29e3e2f2cd6ce0c64432cb0309aecc7bd5e359dd54f64a770fc6b33b46b",
         "sections.what-happens-after-hhvc-finds-a-violation.bullets.1": "c75a5f83f4cf00f698663de3a07295bc7d1e954856cd7133b552c69dcfde9877",
-        "sections.what-happens-after-hhvc-finds-a-violation.bullets.2": "9787173d069a93d7a313758808316926dff320bb2a520d3c7010d736e2695ece",
+        "sections.what-happens-after-hhvc-finds-a-violation.bullets.2": "536185ea5a3b47bdc6023ac26b119ad8bf51fcc9fd2fe9d78be021510e577314",
         "sections.what-happens-after-hhvc-finds-a-violation.bullets.3": "1d0e45a1e4e45eac1316f455c35873ed85735b9ced3ec979a2813e94722545a6",
         "sections.what-happens-after-hhvc-finds-a-violation.heading": "b6a37bbd23f7ca91ef33388bfa8ec7814e19b6f94c401062f7bd3a042a8d3897",
         "sections.what-happens-after-hhvc-finds-a-violation.paragraphs.0": "86dc2201312f66550bd13db94307a21e755116f507c4e07fc478537831b9d3ec",
@@ -963,7 +963,7 @@
       }
     },
     "report-healthy-housing-inspections-annual-summary": {
-      "contentHash": "92df24150cff0a9c79f30c6f4613e53ad2b801a481a7adeedfa5c29dae77c995",
+      "contentHash": "7bfa29a28712fea717a934724fb6be52dd8d50b3a711ec38bd27e2ceb24a7cba",
       "fieldHashes": {
         "sections.about-these-figures.bullets.0": "248f1c1a28c3968e472d80be4fb8e28b617efa9cf23b65eb3c7a974ad4bcf263",
         "sections.about-these-figures.bullets.1": "d5dae9a4bb7b943d86ab48f3b4e93efb67ca2c6bb73dd55fe4fb0b7427d32164",
@@ -974,7 +974,7 @@
         "sections.how-to-read-these-numbers.bullets.1": "68135cec5229d3d7c089db869be11b2703dee650d0509c18fd952aef04edb295",
         "sections.how-to-read-these-numbers.bullets.2": "5a83fc70a607215401a1ffca1608ab7bb219a1e7157613d33229eee8a5ea117e",
         "sections.how-to-read-these-numbers.bullets.3": "b2e2a23d7a852895943ef76d47f9a276a1ddc90697a61f8ab22fd9ada0841f3e",
-        "sections.how-to-read-these-numbers.heading": "86e1733f9377270e62b74c14e780d3923ac3b91dd4af39f03894324d2e5c3dce",
+        "sections.how-to-read-these-numbers.heading": "5218f28d34b1a6a81b0a06ac7664991b0e4584bbe2ed5892e7681967258b41c8",
         "sections.how-to-read-these-numbers.paragraphs.0": "b57414e925c6d0336333323a01289889dfeba93c092e257381ee1b32015d4136",
         "sections.inspections-by-outcome.heading": "b52bbf58e4e4e182e4a1774470857e92afe855fb6e527c7c6b68717df32bf88f",
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",
@@ -984,7 +984,7 @@
       }
     },
     "report-mold": {
-      "contentHash": "6d258999d50f90c3b370eb7de049a100f76513321fcafb9be98d5b173838a0ce",
+      "contentHash": "536b58b361127fa64f75d157a39d43b9187643b6f10726019a2ebd34560395d4",
       "fieldHashes": {
         "primaryAgency": "8a2847f0ee854052d30378a2ef091f979c9737bbd8219086a1e04dc0abd84f9f",
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",
@@ -1035,7 +1035,7 @@
       }
     },
     "report-rats-or-mice": {
-      "contentHash": "0ab0bf51fdcfe80998fe822940195f39bfb5426c823d3fd138e6ac1d766be5e0",
+      "contentHash": "05fc355133431e4ac3db21c657019e4688609555093acf95cd295a7ce8df7345",
       "fieldHashes": {
         "primaryAgency": "8a2847f0ee854052d30378a2ef091f979c9737bbd8219086a1e04dc0abd84f9f",
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",
@@ -1046,7 +1046,7 @@
         "sections.while-you-wait-tips-to-help-with-the-problem.bullets.0": "542dde764015024306eed5995ef3f52a9cb371a1fb167cf4ef0eb739e838a122",
         "sections.while-you-wait-tips-to-help-with-the-problem.bullets.1": "667dd35d2f3b8558849ea999a5fd2f4cbe8819e40bced4fec614837d405ec108",
         "sections.while-you-wait-tips-to-help-with-the-problem.bullets.2": "dffe04fd69fa97a4e4b28e2b9611bd663e971215b0bc4141679d1150381aac31",
-        "sections.while-you-wait-tips-to-help-with-the-problem.bullets.4": "6b3d3c43b7546097a1a0efc8a9043fba738448f76fe29e491208640859aabdd7",
+        "sections.while-you-wait-tips-to-help-with-the-problem.bullets.3": "9490b4e115dcc25d2d9a60e507109eda9ee1a14250fd02b2e7d8b6ea2fb357f7",
         "sections.while-you-wait-tips-to-help-with-the-problem.bullets.5": "84dd61f7aeea411c4aee0dbb03cf776c58d697412821a85296ad46fcc0b7698d",
         "sections.while-you-wait-tips-to-help-with-the-problem.heading": "2a48c1f432e88393905002da6aa167655da242c845c0b5d3b6a2c5ac736416c1",
         "sections.while-you-wait-tips-to-help-with-the-problem.paragraphs.0": "a83aaa4be38220b027448141140b29300f531ed7b868b5f748ad42e685cc3a83",
@@ -1085,7 +1085,7 @@
       }
     },
     "step-by-step-correct-a-violation-and-close-your-case": {
-      "contentHash": "251d9fb60802ece17e43ac4f25d78eb121ee35b7ff38eafb57d6a2df628a91c2",
+      "contentHash": "88d504bbcc30c95f571d45c0b00c85ea719c829a274358dfa1fb3383ac7afc1b",
       "fieldHashes": {
         "sections.what-to-do.heading": "f47f1edc44ed92664871471b0cf8f463813788468c23680c12f52a36c2827e26",
         "sections.who-this-information-is-for.bullets.0": "571b7a788578e4db4dceea1fe9f27697489128cce582e5697dff5200dcd46611",
@@ -1098,7 +1098,7 @@
       }
     },
     "step-by-step-report-a-pest-problem": {
-      "contentHash": "88c7ec709df81f0cc15771c3b82c7c490353d4574163e2ee005897a33445c495",
+      "contentHash": "55ee958cd468f896cb1040f43c5eee44145216bd6e9fd70106ea72747a43b6a7",
       "fieldHashes": {
         "sections.what-to-do.heading": "f47f1edc44ed92664871471b0cf8f463813788468c23680c12f52a36c2827e26",
         "sections.who-this-information-is-for.bullets.0": "a527b0db5457b8ba908158e4414bac4d656f0faaaebf9998a3a3127ad3e7a5dd",
@@ -1111,7 +1111,7 @@
       }
     },
     "topics--healthy-housing-conditions": {
-      "contentHash": "f1e3efb3e7df1c29b6036c938796244c9a41879950bc7227b51849add083ec00",
+      "contentHash": "87a0578da6f0d554b8b342bdcc8c682a75a09ae35e4b0881a0712506f0491008",
       "fieldHashes": {
         "sections.for-property-owners.heading": "fca6336d9bef709786da917ca412021c730fa863ed15bf41988496491d349365",
         "sections.general-housing-issues.heading": "2e449dfec10b378d8e3fbaccd2386fd723c7652a174cdee05cf6ed98402a6929",

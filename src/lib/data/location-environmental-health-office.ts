@@ -46,7 +46,7 @@ export const ehOffice = {
 			karl: 'Maps to the Body panel. In Karl this content belongs with the page’s address fields; Location was captured at panel level, so the exact block is not recorded and this note does not guess one.',
 			kind: 'body',
 			paragraphs: [
-				'PLACEHOLDER — the street address, floor, and public counter hours are not confirmed and must be supplied before this page is published. Do not publish the page with this paragraph in it.'
+				'PLACEHOLDER: the street address, floor, and public counter hours are not confirmed. Supply them before this page is published. Do not publish the page with this paragraph in it.'
 			],
 			bullets: [
 				'PLACEHOLDER: street address and floor',

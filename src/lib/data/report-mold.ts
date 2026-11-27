@@ -42,7 +42,7 @@ export const moldReport = {
 						'Mold needs excess moisture to grow. Look for leaks from plumbing, roofs, or windows, and for condensation from humid indoor air.',
 						'If a leak is causing the mold, report it to the Department of Building Inspection instead.'
 					],
-					button: 'Report a building concern to DBI',
+					button: 'Report a leak to DBI',
 					buttonUrl: 'https://www.sf.gov/report-residential-building-concern',
 					karl: 'what_to_do -> Section. Section title: "Find the moisture source". Section specifics: Text block (these 2 paragraphs) + Button link block (Internal link to the DBI residential building concern Transaction on sf.gov). The DBI referral is C8.'
 				},

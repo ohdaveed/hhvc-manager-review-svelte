@@ -56,7 +56,8 @@ export const inspectionsAnnual = {
 			]
 		},
 		{
-			heading: 'How to read these numbers',
+			heading: 'Reading these numbers',
+			fieldKey: 'how-to-read-these-numbers',
 			karl: 'Report Content → Title and text block. Every published figure invites a comparison it does not support; this section states the limits rather than leaving a reader to assume them.',
 			kind: 'body',
 			paragraphs: [

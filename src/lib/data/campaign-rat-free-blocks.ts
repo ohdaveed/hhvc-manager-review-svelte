@@ -54,7 +54,7 @@ export const ratFreeBlocks = {
 			bullets: [
 				'Agree a week when everyone clears clutter and checks their bins.',
 				'Walk the block together afterwards and look for the gaps that remain.',
-				'Report what is left, especially anything on a property no one is maintaining: [rats or mice](rodentsReport), [animal waste](animalWasteReport), or [garbage, clutter, or overgrown plants](garbageReport).',
+				'Report what is left. Start with any property no one is looking after: [rats or mice](rodentsReport), [animal waste](animalWasteReport), or [garbage, clutter, or overgrown plants](garbageReport).',
 				'Pick up pet waste daily. It feeds rats.'
 			]
 		},
@@ -66,7 +66,7 @@ export const ratFreeBlocks = {
 			paragraphs: [
 				'Under Article 11, rodent conditions on a property you own or manage are yours to correct. This applies whether or not anyone has reported them.'
 			],
-			button: 'See owner responsibilities',
+			button: 'See what owners must do',
 			buttonTarget: 'ownerHub'
 		},
 		{
@@ -107,5 +107,5 @@ export const ratFreeBlocks = {
 	],
 	seoTitle: 'Rat-free blocks | SF.gov',
 	metaDescription:
-		'A neighborhood push to cut rat sightings through coordinated cleanup and prevention.'
+		'Join a neighborhood push to cut rat sightings through coordinated cleanup and prevention.'
 };
