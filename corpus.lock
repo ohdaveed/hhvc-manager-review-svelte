@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "corpusHash": "ec4608c99251d32714bdc4c70ec598f3cc30c446f83d59df56ab113198a6eb05",
+  "corpusHash": "5e572e098658781193933eeeb2ee47d4fe66a26cb02600446a00bdc4389214de",
   "pages": {
     "departments--healthy-housing-and-vector-control": {
       "contentHash": "0dbd9dd7bbad4361a566c5cd2c714223d97028f482b3ba8c958c082887615fc9",
@@ -132,7 +132,7 @@
       }
     },
     "information-bed-bugs-prevent-find-and-prepare-for-treatment": {
-      "contentHash": "cb9f2c0ded812632a3311bab9a3605529db5a6f512218604e9079fba58e8322d",
+      "contentHash": "58766521777d136714f38a144a204c1cd48f8b7a4630a18da94d4fa3636971c5",
       "fieldHashes": {
         "sections.check-for-bed-bugs.bullets.0": "d44bd88de28668418bb15ed6a197fde5c64af320f1ced1a98a0821c8470ea84a",
         "sections.check-for-bed-bugs.bullets.1": "4ab10d6d5a0ec5bf846e4bc8349194f960760ba1d35f80cb471d57e42e2357ab",
@@ -178,11 +178,9 @@
         "sections.what-owners-and-managers-need-to-do.bullets.0": "8584160eb3cc248efae130ff8fe255adfe5890d1830edcda5cd4e0b9371d59f9",
         "sections.what-owners-and-managers-need-to-do.bullets.1": "c6a6dd0bc96bd8591827e83c29aade5f5e028f22f9f250b45b555c1db10c0b76",
         "sections.what-owners-and-managers-need-to-do.bullets.2": "bd936ebbdf5d9757ab0b2e2088cb92e7ec8ce39d089bccbca2c2c7ea9384f110",
-        "sections.what-owners-and-managers-need-to-do.bullets.3": "72a53fc68e7c803b3fe861798fb2963ccfff92f4b4145755e719f0d10d7580d1",
         "sections.what-owners-and-managers-need-to-do.bullets.4": "b392cc58ddb77c9a744a04ae59f5585533ebdd803f52437330319422558ac28a",
         "sections.what-owners-and-managers-need-to-do.heading": "e8b569092f996e83031d028f1538f45d323bd19c626dadc19550ed7499f17dde",
-        "sections.what-tenants-need-to-do-before-treatment.bullets.0": "892e102a5a49e9b14408d0b3a6defdfd9b51bcbbc8b969b198d0a936534e4e25",
-        "sections.what-tenants-need-to-do-before-treatment.bullets.1": "2b70aa21b41f7b16179622ce12932ba4757fa157723a221f1227b504384c3540",
+        "sections.what-owners-and-managers-need-to-do.paragraphs.0": "42fb67737e4019c5dfe1ee765aeeb2f196690b62b3c87b9113971303bd5a85a7",
         "sections.what-tenants-need-to-do-before-treatment.bullets.2": "9ab611773e763c987dd9617d2d0e66232315d0639bec98f84601586c8cf8c0ea",
         "sections.what-tenants-need-to-do-before-treatment.bullets.3": "522caabdb02a4ea117373a85d35f6588fa40b36bfaff7645238d738c7c0fbc45",
         "sections.what-tenants-need-to-do-before-treatment.bullets.4": "4cbfc5afae520e971b236b0fc3dfe54b799c786d9c3ca536d80adbb467ef9634",
@@ -600,7 +598,7 @@
       }
     },
     "information-what-to-expect-when-your-building-is-treated-for-pests": {
-      "contentHash": "fdf83df2203994d69cafff9258af89292e32ed45c314206a59f8fceb0e18e5bb",
+      "contentHash": "4a2d553f3dcbf5ad8202c309227fde6594cd9e0be46a4897b514a3167b755cf8",
       "fieldHashes": {
         "sections.before-the-visit.bullets.0": "8f6ff022addc2d31961e2300d75b487a3fc4ef6261ca5bde103ab64e01c8b889",
         "sections.before-the-visit.bullets.1": "220887098e4f888cea70100b098ed46bcd65ac091c964b8256c08130f96ce1e3",
@@ -612,7 +610,6 @@
         "sections.before-the-visit.paragraphs.0": "ae3e6e6c5dfaccfc7f6695f79a73aa74e1b0ab106c1a9064433a94885af4f331",
         "sections.during-and-after-the-visit.bullets.0": "c550d33b2b69c25358523f3cb3da7f0a7100ae93f9088f66ad2d0c93157e3c49",
         "sections.during-and-after-the-visit.bullets.1": "f0c63dda7ea5889518f51da1198abb5b7c246f3ff6d8f9192b947d297a56c077",
-        "sections.during-and-after-the-visit.bullets.2": "a11e6830f7ab95f661270c42e099ce6994c770645cc54e87e01d9ec84088560d",
         "sections.during-and-after-the-visit.bullets.3": "f9780a200c39f489edc111b8ff6ee190144d54e4540970ecee8a9417ed7675c5",
         "sections.during-and-after-the-visit.bullets.5": "0588f43f44dbd18b6151a7bafbe2c01a665e99f10e0d135042c7c318a8f3d924",
         "sections.during-and-after-the-visit.callout.text": "da5480ac9f4cfdbeae25ec5a9280a7f4b724d9a3a30304ff9a84630136381b75",

@@ -113,15 +113,13 @@ export const bedBugsInfo = {
 		{
 			heading: 'What tenants need to do for treatment',
 			fieldKey: 'what-tenants-need-to-do-before-treatment',
-			karl: "Maps to a sixth Title and text block: Title = this heading, Text = the paragraph plus the bulleted list below. Paraphrases SFDPH Tenant Guidelines for Unit Preparation Prior to Bed Bug Treatment (Director's Rules Tenant 3.1-3.4). Dryer time is 45 minutes by HHVC decision 2026-11-26, following SF Environment's 2024 'Pest management in your home' handout; the 2012-era Director's Rules Tenant 3.4 states 30 minutes as the minimum. The 4-week monitoring bullet is also an HHVC decision 2026-11-26, consistent with bed bug Director's Rules Owner 6.1 (monitoring devices used for at least four weeks). The Callout below is its own Callout stream item. On 2026-11-26 the list went from 7 items to 5: the Prepare your unit link became a paragraph of its own, and the monitors bullet, which is about after treatment, joined \"Wait until you are cleared\" word for word. The heading says \"for treatment\" for that reason; the fieldKey keeps the original ids.",
+			karl: "Maps to a sixth Title and text block: Title = this heading, Text = the paragraph plus the bulleted list below. On 2026-11-26 'Let them in' and 'Make space' were removed: they apply to every treatment, and the linked treatment page says both. Paraphrases SFDPH Tenant Guidelines for Unit Preparation Prior to Bed Bug Treatment (Director's Rules Tenant 3.1-3.4). Dryer time is 45 minutes by HHVC decision 2026-11-26, following SF Environment's 2024 'Pest management in your home' handout; the 2012-era Director's Rules Tenant 3.4 states 30 minutes as the minimum. The 4-week monitoring bullet is also an HHVC decision 2026-11-26, consistent with bed bug Director's Rules Owner 6.1 (monitoring devices used for at least four weeks). The Callout below is its own Callout stream item. On 2026-11-26 the list went from 7 items to 5: the Prepare your unit link became a paragraph of its own, and the monitors bullet, which is about after treatment, joined \"Wait until you are cleared\" word for word. The heading says \"for treatment\" for that reason; the fieldKey keeps the original ids.",
 			kind: 'body',
 			paragraphs: [
 				'Treatment only works if the unit is ready. The pest control company will give you a checklist. If it is different from the list below, follow their checklist.',
 				'[What to expect when your building is treated for pests](pestTreatmentInfo)'
 			],
 			bullets: [
-				'**Let them in.** You must allow the owner or pest control company into your unit after you get notice that they will inspect or treat.',
-				'**Make space.** Move furniture away from the walls and clear clutter so they can reach every area.',
 				'**Do not remove items before treatment.** Only take out bagged clothing for laundry, or items the pest control company tells you to remove.',
 				'**Wash and dry all clothing and bedding.** Use hot water and the hottest dryer setting for at least 45 minutes. Then store it in new, clean, sealed plastic bags.',
 				'**Wait until you are cleared.** Do not move back in until the pest control company says it is safe. Leave bed bug monitors in place: monitoring continues for 4 weeks after the last treatment to make sure the bed bugs are gone.'
@@ -134,8 +132,11 @@ export const bedBugsInfo = {
 		},
 		{
 			heading: 'What owners and managers need to do',
-			karl: "Maps to a seventh Title and text block: Title = this heading, Text = the bulleted list below. Paraphrases Director's Rules Owner 3.3-3.5 as quoted in the SFDPH tenant guidelines. The 4-week monitoring bullet is an HHVC decision 2026-11-26, and matches bed bug Director's Rules Owner 6.1 (monitoring devices used for at least four weeks to confirm effective treatment).",
+			karl: "Maps to a seventh Title and text block: Title = this heading, Text = the paragraph plus the bulleted list below. On 2026-11-26 the advance-notice bullet was removed: it applies to every treatment and the treatment page owns it; the paragraph links there. Paraphrases Director's Rules Owner 3.3-3.5 as quoted in the SFDPH tenant guidelines. The 4-week monitoring bullet is an HHVC decision 2026-11-26, and matches bed bug Director's Rules Owner 6.1 (monitoring devices used for at least four weeks to confirm effective treatment).",
 			kind: 'body',
+			paragraphs: [
+				'Bed bugs need more from owners than other pests. The duties for every treatment, like notice before pesticides, are on [What to expect when your building is treated for pests](pestTreatmentInfo).'
+			],
 			bullets: [
 				'**Give tenants sealable plastic bags** for clothing before and after it is washed.',
 				'**Share a list of free and low-cost help** for unit preparation and laundry.',
@@ -145,7 +146,6 @@ export const bedBugsInfo = {
 					unverifiedReason:
 						'Director\'s Rules Owner 3.5 ("to the extent required by applicable City and County, State and Federal law"). Confirm the scope of this duty with HHVC and the City Attorney before publication.'
 				},
-				'**Give advance notice of any pesticide treatment.** Tell tenants the name of the product and the phone number for Poison Control.',
 				'**Keep monitoring for 4 weeks after the last treatment.** Use bed bug monitors, such as interceptor cups under the bed legs, to check that the bed bugs are gone.'
 			]
 		},
