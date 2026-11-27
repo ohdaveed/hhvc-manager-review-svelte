@@ -20,11 +20,13 @@ import { nextUndecidedPath, queueOrder, type ReviewPage } from '../src/lib/store
 // `ensureDevSession` is required because ReviewQueue now reads `sessionStore`
 // to tell "signed out" from "this review is empty" in its empty state, and
 // `SessionStore`'s constructor calls it at module scope.
+// Hoisted so a test can sign a reviewer in for "Add to review"; null elsewhere.
+const auth = vi.hoisted(() => ({ session: null as { access_token: string } | null }));
 vi.mock('$lib/supabase', () => ({
 	ensureDevSession: async () => {},
 	supabase: {
 		auth: {
-			getSession: async () => ({ data: { session: null } }),
+			getSession: async () => ({ data: { session: auth.session } }),
 			onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } })
 		},
 		from: () => ({}),
@@ -237,7 +239,7 @@ describe('ReviewQueue', () => {
 			expect(screen.getByText('1 of 2 decided')).toBeTruthy();
 			const group = screen.getByTestId('queue-unreviewed');
 			expect(group.textContent).toContain('Not in the review yet');
-			expect(group.textContent).toMatch(/can't be decided/);
+			expect(group.textContent).toMatch(/no review record yet/);
 			expect(screen.getByRole('link', { name: /Report a problem/ }).getAttribute('href')).toBe(
 				'/review/topic-x--report'
 			);
@@ -259,6 +261,59 @@ describe('ReviewQueue', () => {
 					.getAllByRole('link')
 					.some((a) => a.getAttribute('href') === '/review/topic-x--retired')
 			).toBe(false);
+		});
+
+		it('adds a page to the review: PUTs its path with the token, then files it as undecided', async () => {
+			auth.session = { access_token: 'tok' };
+			const fetchMock = vi.fn(async () =>
+				Response.json(row('topic-x--report', 'needs-review'), { status: 200 })
+			);
+			vi.stubGlobal('fetch', fetchMock);
+			try {
+				pagesStore.set([row('topic-x--about', 'approved')]);
+				render(ReviewQueue);
+
+				await fireEvent.click(
+					screen.getByRole('button', { name: 'Add “Report a problem” to the review' })
+				);
+				await vi.waitFor(() => expect(screen.queryByTestId('queue-unreviewed')).toBeNull());
+
+				expect(fetchMock).toHaveBeenCalledWith('/api/pages', {
+					method: 'PUT',
+					headers: { 'Content-Type': 'application/json', Authorization: 'Bearer tok' },
+					body: JSON.stringify({ path: 'topic-x--report' })
+				});
+				// Now a row like any other: counted, and listed under a decision group.
+				expect(screen.getByText('1 of 2 decided')).toBeTruthy();
+				expect(screen.getByText(/Undecided/)).toBeTruthy();
+			} finally {
+				auth.session = null;
+				vi.unstubAllGlobals();
+			}
+		});
+
+		it('says so when a page cannot be added, and leaves it listed', async () => {
+			auth.session = { access_token: 'tok' };
+			vi.stubGlobal(
+				'fetch',
+				vi.fn(async () => new Response('no', { status: 500 }))
+			);
+			vi.spyOn(console, 'error').mockImplementation(() => {});
+			try {
+				pagesStore.set([row('topic-x--about', 'approved')]);
+				render(ReviewQueue);
+
+				await fireEvent.click(
+					screen.getByRole('button', { name: 'Add “Report a problem” to the review' })
+				);
+				expect((await screen.findByRole('alert')).textContent).toMatch(/Couldn't add it/);
+				expect(screen.getByTestId('queue-unreviewed')).toBeTruthy();
+				expect(screen.getByText('1 of 2 decided')).toBeTruthy();
+			} finally {
+				auth.session = null;
+				vi.unstubAllGlobals();
+				vi.restoreAllMocks();
+			}
 		});
 
 		it('says nothing extra when they agree', () => {
