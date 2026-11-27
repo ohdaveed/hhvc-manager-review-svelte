@@ -32,20 +32,6 @@ export const scopeInfo = {
 			]
 		},
 		{
-			heading: 'Check if HHVC can help before you report',
-			fieldKey: 'use-this-page-before-you-report',
-			karl: 'Maps to an "Information section" → Title and text block: Title = this heading, Text = the two paragraphs plus the bulleted list below (bullets render as a bulleted list inside the same rich text field).',
-			kind: 'body',
-			paragraphs: [
-				'This page helps you understand whether Healthy Housing and Vector Control may review a pest, vector, or housing health issue.',
-				'Healthy Housing and Vector Control (HHVC) is part of the Environmental Health division. Environmental Health sits in the San Francisco Department of Public Health (DPH). You may see any of these names used across this site — they refer to the same program.'
-			],
-			bullets: [
-				'Tenants, tenant representatives, friends, family members, and employees usually use reporting pages to report active pest or vector problems.',
-				'Property owners and managers may use this page to understand HHVC scope before asking for prevention guidance or best-practice assistance.'
-			]
-		},
-		{
 			heading: 'Have this ready when you report',
 			karl: 'Maps to a second Title and text block: Title = this heading, Text = the paragraph plus three bullets. Adapted from the live Citywide "Report a health nuisance or hazards" service so HHVC reporters know what 311 needs without leaving this triage page.',
 			kind: 'body',
@@ -139,7 +125,7 @@ export const scopeInfo = {
 		},
 		{
 			heading: 'If your problem is not listed',
-			karl: 'Maps to a Title and text block: Title = this heading, Text = the bulleted list below. The Citywide health-nuisance route is an inline external link rather than an HHVC report page so this mockup does not claim responsibility for services other programs own.',
+			karl: 'Maps to a Title and text block: Title = this heading, Text = the bulleted list below. The Citywide health-nuisance route is an inline external link rather than an HHVC report page so this mockup does not claim responsibility for services other programs own. The Rent Board and start-with-311 bullets were removed on 2026-11-26: "Start with what you can see" already says both.',
 			kind: 'body',
 			bullets: [
 				{
@@ -148,9 +134,7 @@ export const scopeInfo = {
 					unverifiedReason:
 						'The "San Francisco Housing Code (2025)" citation has zero tier-1 support (source-of-truth audit 2026-07-06, cross-cutting finding #1) — the DBI routing split looks intentional, but the statutory citation and "(2025)" edition tag trace only to tier-3 NotebookLM material. Source a real Housing Code citation or soften to "may be routed to DBI" before publication.'
 				},
-				'Rent increases, evictions, and lease disputes go to the Rent Board.',
 				'A fire hazard or a blocked exit goes to the Fire Department.',
-				'If your problem is not on this list, start with 311. They can send your report to the right place.',
 				'For lead, pesticides, water quality, food sanitation, or business hygiene, use the [Citywide health nuisance and hazards reporting service](https://www.sf.gov/report-health-nuisance-or-hazards).',
 				'If you are not sure whether HHVC can review your problem, it is still okay to report it. HHVC will review whether it may involve a housing or pest-related public health concern.'
 			]

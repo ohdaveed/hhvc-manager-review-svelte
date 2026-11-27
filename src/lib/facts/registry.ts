@@ -128,7 +128,7 @@ export const OPEN_QUESTIONS: OpenQuestion[] = [
 		note: '"San Francisco Housing Code (2025)" has no tier-1 source. If there is no citation, the copy should say it "may be routed to DBI".',
 		fields: [
 			{ slug: HAPPENS, path: 'sections.2.bullets.2' },
-			{ slug: 'sf.gov/information/learn-what-hhvc-can-inspect', path: 'sections.11.bullets.0' }
+			{ slug: 'sf.gov/information/learn-what-hhvc-can-inspect', path: 'sections.10.bullets.0' }
 		]
 	},
 	{
