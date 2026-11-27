@@ -59,7 +59,7 @@ export const garbageReport = {
 				{
 					title: 'Start your report',
 					text: [
-						'Use 311 to report garbage, clutter, or overgrown plants to the City. If the problem is urgent, report now. You can report a problem where you live or on a nearby property, or report for someone else.'
+						'Use 311 to report garbage, clutter, or overgrown plants to the City. The [Health Code](https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890) requires property owners to keep trash, filth, and overgrown plants from building up. Build-up that shelters pests or creates a health hazard is a violation.'
 					],
 					button: 'Report through 311',
 					after: [
@@ -71,16 +71,15 @@ export const garbageReport = {
 						'Download our mobile app to report a problem and track your request. Available on Android or iOS.',
 						'[Learn more about the SF311 mobile app](https://www.sf.gov/sf311-mobile-app)'
 					],
-					karl: 'what_to_do -> Section. Section title: "Start your report". Section specifics: Text block (this paragraph) + Button link block ("Report through 311") + Text block ("Other ways to report", the `after` lines). The one-line SRO note every report page carried was removed on 2026-11-26 (owner).'
+					karl: 'what_to_do -> Section. Section title: "Start your report". Section specifics: Text block (this paragraph) + Button link block ("Report through 311") + Text block ("Other ways to report", the `after` lines). The one-line SRO note every report page carried was removed on 2026-11-26 (owner). The Article 11 line was folded in on 2026-11-26 from the retired "What the Health Code requires" custom section (HHVC content standards Ch. 8.7.1-8.7.2), and the who-can-report line was dropped: What happens after you report owns it.'
 				}
 			]
 		},
 		{
 			heading: 'While you wait: tips to help with the problem',
-			karl: 'Maps to supporting_information (Accordions). This accordion uses the mockup-only open flag so the tips are visible without a click — flag for Digital Services that the real accordion renders collapsed. Contents: one Text block (lead paragraph + IPM bullets) + a Resources-style external link (NEHA).',
+			karl: 'Maps to supporting_information (Accordions), collapsed by default as the real accordion renders. Contents: one Text block (lead paragraph + tips). Cut on 2026-11-26 (page review, as on Report rats or mice) to the tips a resident can act on now. The NEHA link, a national reference with no step a resident can take, was dropped.',
 			kind: 'body',
 			component: 'supporting',
-			open: true,
 			paragraphs: [
 				'It may take us a few weekdays to get back to you. In the meantime, here are a few things you can do to help with the problem.'
 			],
@@ -88,23 +87,6 @@ export const garbageReport = {
 				'**Contain garbage:** Bag garbage before you toss it, and keep bin lids fully closed.',
 				'**Trim plants:** Cut back overgrown plants and brush, especially where they touch buildings or fences.',
 				'**Store items off the ground:** Keep stored items on shelves or pallets so pests cannot hide under them.'
-			],
-			cards: [
-				{
-					title: 'NEHA: Vector control resources',
-					text: 'National Environmental Health Association vector control resources.',
-					url: 'https://www.neha.org/vector-control',
-					karl: 'External link inside the supporting_information accordion. Third-party NEHA reference.'
-				}
-			]
-		},
-		{
-			heading: 'What the Health Code requires',
-			karl: 'custom_section -> title_and_text. Title = this heading, Text = the Article 11 line (HHVC content standards Ch. 8.7.1). The municipal code is cited per Ch. 8.7.2 as an inline link, the last bullet: custom_section has no Button link block (U1), so the "View Article 11" button it used to carry had no Karl destination.',
-			kind: 'body',
-			bullets: [
-				'San Francisco Health Code Article 11 covers this. Property owners must not let trash, filth, or overgrown plants build up. Build-up that shelters pests or creates a health hazard is a violation.',
-				'[View Health Code Article 11](https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890)'
 			]
 		},
 		{

@@ -15,12 +15,13 @@ export const afterReport = {
 		},
 		{
 			heading: 'Who can report',
-			karl: 'Maps to an "Information section" → Title and text block: Title = this heading, Text = the paragraph plus the bulleted list. Added 2026-11-25 under the Decided shared-content rule: text every report page used to repeat (reporting anonymously, reporting for someone else, language help, the landlord notice) lives here and on Tenant rights, and the report pages keep only what is specific to their condition.',
+			karl: 'Maps to an "Information section" → Title and text block: Title = this heading, Text = the paragraph plus the bulleted list. Added 2026-11-25 under the Decided shared-content rule: text every report page used to repeat (reporting anonymously, reporting for someone else, language help, the landlord notice) lives here and on Tenant rights, and the report pages keep only what is specific to their condition. The nearby-property bullet was added on 2026-11-26, when the report pages dropped their own versions of it (a neighbor’s unit, a nearby property, at work).',
 			kind: 'body',
 			paragraphs: ['Anyone can report a housing or pest problem to 311.'],
 			bullets: [
 				'You can report anonymously. 311 does not require your name.',
 				'You can report even if you are not the tenant. A friend, family member, advocate, or helper can report for someone else.',
+				'You can report a problem on a property you do not live on, like a neighbor’s yard or a building nearby.',
 				'You can ask 311 for help in your language.',
 				'If you rent, tell your landlord first, unless the problem is urgent. [Tenant rights when reporting housing conditions](tenantRights) explains how long to wait.'
 			]

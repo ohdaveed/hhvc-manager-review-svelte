@@ -47,6 +47,12 @@ export const mosquitoControl = {
 					text: 'Dead birds help track West Nile virus. Report them to the State West Nile virus program.',
 					url: 'https://westnile.ca.gov/report',
 					karl: 'External-URL card with no clean mapping in the verified Information schema — same gap as the siblings above. Replaces the retired City dead-bird transaction page — the State runs this reporting line (manager decision at plan review).'
+				},
+				{
+					title: 'UC IPM Pest Notes: Mosquitoes',
+					text: 'University of California guidance on reducing mosquitoes around the home.',
+					url: 'https://ipm.ucanr.edu/home-and-landscape/mosquitoes/',
+					karl: 'External-URL card with no clean mapping in the verified Information schema, same gap as the siblings above. Moved here on 2026-11-26 from the Report mosquitoes or standing water accordion, which now keeps only tips a resident can act on.'
 				}
 			]
 		},

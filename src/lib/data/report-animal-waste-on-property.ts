@@ -25,7 +25,7 @@ export const animalWasteReport = {
 			},
 			{
 				label: 'Raccoon droppings',
-				text: 'Do not clean up raccoon droppings yourself. They can carry roundworm eggs that make people very sick. Report them instead.'
+				text: 'Do not clean up raccoon droppings yourself. They can carry roundworm eggs that make people very sick. Report them instead. [CDC: Preventing raccoon roundworm](https://www.cdc.gov/baylisascaris/prevention/index.html)'
 			}
 		]
 	},
@@ -41,7 +41,7 @@ export const animalWasteReport = {
 						'Have these details ready before you start. Only share what applies to your situation:'
 					],
 					bullets: [
-						'**What you saw:** Dog or cat waste, or raccoon droppings.',
+						'**What you saw:** The kind of waste, and how much has built up.',
 						'**Where it is:** The address, and where on the property, such as a yard, stairwell, roof, or shared area.',
 						'**When it started:** How long it has been building up.',
 						'**Other issues:** Whether it smells or draws flies, rats, or mice.',
@@ -57,7 +57,7 @@ export const animalWasteReport = {
 				{
 					title: 'Start your report',
 					text: [
-						'Use 311 to report animal waste on private property. You can report animal waste where you live or on a nearby property, or report for someone else.',
+						'Use 311 to report animal waste on private property. The [Health Code](https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890) requires property owners to keep animal waste from building up. Build-up that shelters pests or creates a health hazard is a violation.',
 						{
 							text: 'For dog waste on a sidewalk or street, ask 311 for street cleaning instead.',
 							unverified: true,
@@ -76,39 +76,21 @@ export const animalWasteReport = {
 						'Download our mobile app to report a problem and track your request. Available on Android or iOS.',
 						'[Learn more about the SF311 mobile app](https://www.sf.gov/sf311-mobile-app)'
 					],
-					karl: 'what_to_do -> Section. Section title: "Start your report". Section specifics: Text block (these 3 paragraphs: the action, the public-property routing, and the pigeon page) + Button link block ("Report through 311") + Text block ("Other ways to report", the `after` lines). The one-line SRO note every report page carried was removed on 2026-11-26 (owner).'
+					karl: 'what_to_do -> Section. Section title: "Start your report". Section specifics: Text block (these 3 paragraphs: the action, the public-property routing, and the pigeon page) + Button link block ("Report through 311") + Text block ("Other ways to report", the `after` lines). The one-line SRO note every report page carried was removed on 2026-11-26 (owner). The Article 11 line was folded in on 2026-11-26 from the retired "What the Health Code requires" custom section (HHVC content standards Ch. 8.7.1-8.7.2), and the who-can-report line was dropped: What happens after you report owns it.'
 				}
 			]
 		},
 		{
 			heading: 'While you wait: tips to help with the problem',
-			karl: 'Maps to supporting_information (Accordions). This accordion uses the mockup-only open flag so the tips are visible without a click — flag for Digital Services that the real accordion renders collapsed. Contents: one Text block (lead paragraph + tips) + a Resources-style external link (CDC). The pet waste tip is the Decided cross-link line. No raccoon cleanup steps (Decided).',
+			karl: 'Maps to supporting_information (Accordions), collapsed by default as the real accordion renders. Contents: one Text block (lead paragraph + tips). Cut on 2026-11-26 (page review, as on Report rats or mice) to the tips a resident can act on now. The pet waste tip is the Decided cross-link line. No raccoon cleanup steps (Decided). The CDC raccoon roundworm link moved inline into the Raccoon droppings item in What to know, beside the warning it backs.',
 			kind: 'body',
 			component: 'supporting',
-			open: true,
 			paragraphs: [
 				'It may take us a few weekdays to get back to you. In the meantime, here are a few things you can do to help with the problem.'
 			],
 			bullets: [
 				'**Pick up pet waste daily:** It feeds rats.',
 				'**Bag it:** Put pet waste in a bag, then in a bin with a tight lid.'
-			],
-			cards: [
-				{
-					title: 'CDC: Preventing raccoon roundworm',
-					text: 'Federal guidance on raccoon roundworm and how to avoid it.',
-					url: 'https://www.cdc.gov/baylisascaris/prevention/index.html',
-					karl: 'External link inside the supporting_information accordion. Third-party CDC reference for the raccoon roundworm risk (Decided).'
-				}
-			]
-		},
-		{
-			heading: 'What the Health Code requires',
-			karl: 'custom_section -> title_and_text. Title = this heading, Text = the Article 11 line, carried from the old combined garbage page (HHVC content standards Ch. 8.7.1). The municipal code is cited per Ch. 8.7.2 as an inline link, the last bullet: custom_section has no Button link block (U1), so the "View Article 11" button it used to carry had no Karl destination.',
-			kind: 'body',
-			bullets: [
-				'San Francisco Health Code Article 11 covers this. Property owners must not let animal waste build up. Build-up that shelters pests or creates a health hazard is a violation.',
-				'[View Health Code Article 11](https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890)'
 			]
 		},
 		{

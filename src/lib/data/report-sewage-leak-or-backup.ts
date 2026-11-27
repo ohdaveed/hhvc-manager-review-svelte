@@ -39,7 +39,7 @@ export const sewageReport = {
 				{
 					title: 'Report it right away',
 					text: [
-						'Use 311 to report sewage as soon as you see it. Stay away from it, and keep children and pets away. You can report sewage in your home, a yard, or a shared area, or report for someone else.'
+						'Use 311 to report sewage as soon as you see it. Stay away from it, and keep children and pets away.'
 					],
 					button: 'Report through 311',
 					after: [
@@ -51,7 +51,7 @@ export const sewageReport = {
 						'Download our mobile app to report a problem and track your request. Available on Android or iOS.',
 						'[Learn more about the SF311 mobile app](https://www.sf.gov/sf311-mobile-app)'
 					],
-					karl: 'what_to_do -> Section. Section title: "Report it right away". Section specifics: Text block (this paragraph) + Button link block ("Report through 311") + Text block ("Other ways to report", the `after` lines). The one-line SRO note every report page carried was removed on 2026-11-26 (owner).'
+					karl: 'what_to_do -> Section. Section title: "Report it right away". Section specifics: Text block (this paragraph) + Button link block ("Report through 311") + Text block ("Other ways to report", the `after` lines). The one-line SRO note every report page carried was removed on 2026-11-26 (owner). The who-can-report line was dropped on 2026-11-26: What happens after you report owns it.'
 				},
 				{
 					title: 'Tell us where it is',
@@ -80,10 +80,9 @@ export const sewageReport = {
 		},
 		{
 			heading: 'While you wait: tips to stay safe',
-			karl: "Maps to supporting_information (Accordions). This accordion uses the mockup-only open flag so the tips are visible without a click — flag for Digital Services that the real accordion renders collapsed. Contents: one Text block (safety tips). Shorter than the other report pages' lead, because sewage is handled within 48 hours.",
+			karl: "Maps to supporting_information (Accordions), collapsed by default as the real accordion renders. Contents: one Text block (safety tips). Shorter than the other report pages' lead, because sewage is handled within 48 hours.",
 			kind: 'body',
 			component: 'supporting',
-			open: true,
 			bullets: [
 				'**Stop using it:** Do not use the sink, toilet, or drain that is backing up.',
 				'**Wash up:** Wash your hands well if you touch anything the sewage reached.'

@@ -35,7 +35,8 @@ export const bedBugReport = {
 				{
 					title: 'Tell the owner',
 					text: [
-						'If you rent, tell the property owner or manager about the bed bugs right away. Owners must look into pest reports from tenants. You do not have to wait for the owner before you report to 311.'
+						'If you rent, tell the property owner or manager about the bed bugs right away. Owners must look into pest reports from tenants. You do not have to wait for the owner before you report to 311.',
+						'The [Health Code](https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890) requires property owners to keep buildings free of bed bugs.'
 					],
 					bullets: [
 						{
@@ -46,7 +47,7 @@ export const bedBugReport = {
 						},
 						'Bed bugs spread between units. The owner may also need to inspect or treat the units next to yours.'
 					],
-					karl: 'what_to_do -> Section. Section title: "Tell the owner". Section specifics: one Text block (the paragraph + the two owner-duty bullets: the treatment deadline and the adjacent units). Bed bug specific, so it stays here; the general landlord notice lives on Tenant rights.'
+					karl: 'what_to_do -> Section. Section title: "Tell the owner". Section specifics: one Text block (the paragraph + the two owner-duty bullets: the treatment deadline and the adjacent units). Bed bug specific, so it stays here; the general landlord notice lives on Tenant rights. The second paragraph is the Article 11 line, folded in on 2026-11-26 from the retired "What the Health Code requires" custom section (HHVC content standards Ch. 8.7.1-8.7.2).'
 				},
 				{
 					title: 'Gather your details',
@@ -65,7 +66,7 @@ export const bedBugReport = {
 				{
 					title: 'Start your report',
 					text: [
-						'Use 311 to report bed bugs to the City, especially if the owner does not respond or start treatment. You can report bed bugs in your unit or a neighbor’s unit, or report for someone else.'
+						'Use 311 to report bed bugs to the City, especially if the owner does not respond or start treatment.'
 					],
 					button: 'Report through 311',
 					after: [
@@ -77,16 +78,15 @@ export const bedBugReport = {
 						'Download our mobile app to report a problem and track your request. Available on Android or iOS.',
 						'[Learn more about the SF311 mobile app](https://www.sf.gov/sf311-mobile-app)'
 					],
-					karl: 'what_to_do -> Section. Section title: "Start your report". Section specifics: Text block (this paragraph) + Button link block ("Report through 311") + Text block ("Other ways to report", the `after` lines). The one-line SRO note every report page carried was removed on 2026-11-26 (owner).'
+					karl: 'what_to_do -> Section. Section title: "Start your report". Section specifics: Text block (this paragraph) + Button link block ("Report through 311") + Text block ("Other ways to report", the `after` lines). The one-line SRO note every report page carried was removed on 2026-11-26 (owner). The who-can-report line was dropped on 2026-11-26: What happens after you report owns it.'
 				}
 			]
 		},
 		{
 			heading: 'While you wait: tips to help with the problem',
-			karl: 'Maps to supporting_information (Accordions). This accordion uses the mockup-only open flag so the tips are visible without a click — flag for Digital Services that the real accordion renders collapsed. Contents: one Text block (lead paragraph + 2 tips + the prep link to the Information page). Kept lean on purpose (2026-11-26): the UC IPM and EPA links live on Bed bugs: prevent them, find them, and get ready for treatment.',
+			karl: 'Maps to supporting_information (Accordions), collapsed by default as the real accordion renders. Contents: one Text block (lead paragraph + 2 tips + the prep link to the Information page). Cut on 2026-11-26 (page review, as on Report rats or mice) to the tips a resident can act on now. The UC IPM and EPA links live on Bed bugs: prevent them, find them, and get ready for treatment.',
 			kind: 'body',
 			component: 'supporting',
-			open: true,
 			paragraphs: [
 				'It may take us a few weekdays to get back to you. In the meantime, here are a few things you can do to help with the problem.'
 			],
@@ -94,15 +94,6 @@ export const bedBugReport = {
 				'**Keep your furniture:** Do not throw out furniture before treatment. Moving it can spread the bugs.',
 				'**Wash on high heat:** Wash and dry bedding and clothes on the hottest setting they can take.',
 				'**Get your unit ready:** Treatment works only if the unit is ready. [Bed bugs: prevent them, find them, and get ready for treatment](bedBugsInfo) explains what to wash, bag, and leave in place.'
-			]
-		},
-		{
-			heading: 'What the Health Code requires',
-			karl: 'custom_section -> title_and_text. Title = this heading, Text = the Article 11 line, from Sec. 581(b)(8) (HHVC content standards Ch. 8.7.1). The municipal code is cited per Ch. 8.7.2 as an inline link, the last bullet: custom_section has no Button link block (U1), so the "View Article 11" button it used to carry had no Karl destination.',
-			kind: 'body',
-			bullets: [
-				'San Francisco Health Code Article 11 requires property owners to keep buildings free of insect infestations, including bed bugs.',
-				'[View Health Code Article 11](https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890)'
 			]
 		},
 		{

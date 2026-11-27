@@ -209,18 +209,21 @@ test.describe('Blueprint', () => {
 	});
 
 	test('"Show on page" lands on the field, focused, with the outline on', async ({ page }) => {
-		// Bed bugs, not rats: the rats page folded its Custom Section into What to
-		// know (2026-11-26), and bed bugs still carries the same one.
-		await gotoSignedIn(page, '/review/report-bed-bugs');
+		// The Step by step intro: no report page keeps an inferred Custom Section
+		// since each folded its Health Code line into its steps (2026-11-26).
+		await gotoSignedIn(page, '/review/step-by-step-report-a-pest-problem');
 		await openBlueprint(page);
 		// A slot, not a tray item: the tray is empty on every corpus page since
 		// the 2026-11-26 audit.
-		await page.getByRole('button', { name: 'Show on page: Custom Section, unconfirmed' }).click();
+		await page
+			.getByRole('button', { name: /^Show on page: .+, unconfirmed$/ })
+			.first()
+			.click();
 
 		await expect(page.getByRole('heading', { name: 'Blueprint', level: 2 })).toHaveCount(0);
 		await expect(page.locator('.karl-outline-summary')).toBeVisible();
 		const field = page.locator(
-			'[data-rewrite-field="sections.what-the-health-code-requires.heading"]'
+			'[data-rewrite-field="sections.who-this-information-is-for.heading"]'
 		);
 		await expect(field).toBeFocused();
 		await expect(field).toBeInViewport();

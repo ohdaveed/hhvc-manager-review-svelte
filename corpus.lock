@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "corpusHash": "43d1adae783fc84580b68447d5850423f086f4369ac5563de7994bd1d448a3a3",
+  "corpusHash": "919e7318b89db1ff686dcbe9fde02c23901c86f8bd8034fa715831b158ef2989",
   "pages": {
     "departments--healthy-housing-and-vector-control": {
       "contentHash": "0dbd9dd7bbad4361a566c5cd2c714223d97028f482b3ba8c958c082887615fc9",
@@ -554,7 +554,7 @@
       }
     },
     "information-what-happens-after-you-report-housing-pest-problem": {
-      "contentHash": "2cb66bde5d679d5f121deafb79ff9a368e5fe03f4a69194cfc4ee1d6c937e85e",
+      "contentHash": "349d79c3268132c6dd95932587682ba12b4e7cf5ea57d4a70fe441cbfd189217",
       "fieldHashes": {
         "sections.if-a-problem-is-found.bullets.1": "bb05a247ca922a27602110f1578a87089119687ee7860cd48c5e82df88a06c73",
         "sections.if-a-problem-is-found.bullets.2": "4852928a0af5af2f6a9c01c6c154cb020dda606d9f0293d2b04aad41cd15e788",
@@ -587,6 +587,7 @@
         "sections.what-this-page-does-not-promise.heading": "0eb6762ae5536787c473f21f976a8dffd8bc745840fd03b7267cde06650405cd",
         "sections.who-can-report.bullets.0": "bb6508e2fe9aba71ad2e40bfa676ee3de5925914b62cc162aacddedfba340dc8",
         "sections.who-can-report.bullets.1": "8a6466a920982fa6e1168c6d99b5b5645de5e49099d9cd4a854a25f9a83933a2",
+        "sections.who-can-report.bullets.2~2": "e4cb4c19943573fa705e600f74f58f197131f37f9150e523ebff7eb75b50ee84",
         "sections.who-can-report.bullets.2": "c611ee16da4ff1079def378046b55e1a2e6ddc15845ebff14a8522c0e14ee08e",
         "sections.who-can-report.bullets.3": "f65e38b65f8404e2c78da5080eb74a232f530a3e8eac41c358f1d399c9f0f28e",
         "sections.who-can-report.heading": "6064adc0166993c48c324a25e804f61ceac486a7d447b1a71a99ddf23935c8af",
@@ -727,7 +728,7 @@
       }
     },
     "mosquito-control-program": {
-      "contentHash": "353b77dcd8092dc35e29fa7bf453794d71d8a09bf596bde9a63ef252797b2b5e",
+      "contentHash": "13fe31cec7219cbfa66d9be3326917b63a781c70f19620f3214275ab9d007bd7",
       "fieldHashes": {
         "sections.more-mosquito-resources.heading": "ac31cbee0208a508219874fbe7233bd59c9e0e0064695b12f43f884390c2314f",
         "sections.prevent-mosquitoes-on-your-property.heading": "bf708e7bfc080735730c513df63487744f893d48009b9154aa9819b2ad92ed35",
@@ -843,13 +844,10 @@
       }
     },
     "report-animal-waste-on-property": {
-      "contentHash": "d6fa61b74b20175169c4a134eb8f1d42c4124e14b28e032ce30a322c57c97a34",
+      "contentHash": "026ea8e43ef1f766d42b1be3b3b03686e4781060ef5fc7a2747eca6b0d4043e2",
       "fieldHashes": {
         "primaryAgency": "8a2847f0ee854052d30378a2ef091f979c9737bbd8219086a1e04dc0abd84f9f",
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",
-        "sections.what-the-health-code-requires.bullets.0": "8b7f4461df79f609815a201f5bfbf1d35db4e14ae5a2e830fb397e02d9d8362f",
-        "sections.what-the-health-code-requires.bullets.1": "25a2e6bd8a855755d056579e8de1cbc3e7231c10927332092b18995d3ae0d4fd",
-        "sections.what-the-health-code-requires.heading": "13e7f9679361d6015ff823a78c3727f0056246ddc3619f6327039a4177b39212",
         "sections.what-to-do.heading": "f47f1edc44ed92664871471b0cf8f463813788468c23680c12f52a36c2827e26",
         "sections.while-you-wait-tips-to-help-with-the-problem.bullets.0": "f4296685c82b79944bc07af3c7d86c956b66cd6102bf5678d9b36dfa31e37f8f",
         "sections.while-you-wait-tips-to-help-with-the-problem.bullets.1": "14ddf21b523a1d9bbc78783eb7367c1b908eb8e848dd6ce9336613c56249e30b",
@@ -860,13 +858,10 @@
       }
     },
     "report-bed-bugs": {
-      "contentHash": "6f6278a37f997d007768b9b7e583334faa975556a65a712916758f6bae89d478",
+      "contentHash": "8c2f03b54a73564b4c78dee1fff0f67079d78696c2b40d5f4fdfe1a6abb96f7c",
       "fieldHashes": {
         "primaryAgency": "8a2847f0ee854052d30378a2ef091f979c9737bbd8219086a1e04dc0abd84f9f",
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",
-        "sections.what-the-health-code-requires.bullets.0": "9cd37f7c59fc7c0d1b8bc9628ccfd907dd8f4c90952ec2e65ac84eb7b885cb56",
-        "sections.what-the-health-code-requires.bullets.1": "25a2e6bd8a855755d056579e8de1cbc3e7231c10927332092b18995d3ae0d4fd",
-        "sections.what-the-health-code-requires.heading": "13e7f9679361d6015ff823a78c3727f0056246ddc3619f6327039a4177b39212",
         "sections.what-to-do.heading": "f47f1edc44ed92664871471b0cf8f463813788468c23680c12f52a36c2827e26",
         "sections.while-you-wait-tips-to-help-with-the-problem.bullets.0": "34a56d2db71aa94566b31eb78aa01b9044a520d5027cbf24bb24ae093618fc38",
         "sections.while-you-wait-tips-to-help-with-the-problem.bullets.1": "1dd1a68650669373998dc3a75e745ce9d4494fcc275dc312dcb7435df4e81c64",
@@ -878,15 +873,12 @@
       }
     },
     "report-cockroaches-or-other-insects": {
-      "contentHash": "56bc7ade16142682b4bddf50e6c79c886b9d81659f28f3da5aceeca5a14dd4f8",
+      "contentHash": "56e32de22581309fad9b666bb1cdbee563a18fdf362fdb1c39ef6ebc3b5840ae",
       "fieldHashes": {
         "primaryAgency": "8a2847f0ee854052d30378a2ef091f979c9737bbd8219086a1e04dc0abd84f9f",
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",
-        "sections.what-the-health-code-requires.bullets.0": "88df5368b4d7b5d38dbca7f9d8f3f3795625ab67e557c4152a165ebf34900e7d",
-        "sections.what-the-health-code-requires.bullets.1": "25a2e6bd8a855755d056579e8de1cbc3e7231c10927332092b18995d3ae0d4fd",
-        "sections.what-the-health-code-requires.heading": "13e7f9679361d6015ff823a78c3727f0056246ddc3619f6327039a4177b39212",
         "sections.what-to-do.heading": "f47f1edc44ed92664871471b0cf8f463813788468c23680c12f52a36c2827e26",
-        "sections.while-you-wait-tips-to-help-with-the-problem.bullets.0": "3f2d0bbdad85f544925a9f26448aee3b4206e496c123d76b2d9ec955679a1c31",
+        "sections.while-you-wait-tips-to-help-with-the-problem.bullets.0": "c42fc8d57c9b28781d5f939a0aae45d5a9a02c879a93459359fa75d63dd6e69d",
         "sections.while-you-wait-tips-to-help-with-the-problem.bullets.1": "87571ebef86cbfb2a6153b5deb64c5c612f07cbb36297184855238abacd17b4e",
         "sections.while-you-wait-tips-to-help-with-the-problem.bullets.2": "be28b77bb510e24c68e31ce96eddcc3a206f20fa57325f0d7e1fb046ad23d704",
         "sections.while-you-wait-tips-to-help-with-the-problem.bullets.3": "424530f5eea3b7f716b33b5d68a9568525a3bd2d2eeeabf3b7337aef98accd44",
@@ -897,13 +889,10 @@
       }
     },
     "report-garbage-clutter-or-overgrown-plants": {
-      "contentHash": "95a1b40cc10cb8ce60343dd0694feed4c1a45ee671ea45f22dd7613749e27fb0",
+      "contentHash": "784f715f723428729f6ca797b539d00e92d1ae2433dbf054afe0bb0b8251d367",
       "fieldHashes": {
         "primaryAgency": "8a2847f0ee854052d30378a2ef091f979c9737bbd8219086a1e04dc0abd84f9f",
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",
-        "sections.what-the-health-code-requires.bullets.0": "e9cc88cf042865e4836f98aef738c6267cf7d1124adfb27790869835361012bd",
-        "sections.what-the-health-code-requires.bullets.1": "25a2e6bd8a855755d056579e8de1cbc3e7231c10927332092b18995d3ae0d4fd",
-        "sections.what-the-health-code-requires.heading": "13e7f9679361d6015ff823a78c3727f0056246ddc3619f6327039a4177b39212",
         "sections.what-to-do.heading": "f47f1edc44ed92664871471b0cf8f463813788468c23680c12f52a36c2827e26",
         "sections.while-you-wait-tips-to-help-with-the-problem.bullets.0": "2aba7b76bf3b1577d3afb8057f8f10f7968f90630db765a81e7a036d4c7070f3",
         "sections.while-you-wait-tips-to-help-with-the-problem.bullets.1": "74023fe6b7398ebb926b7d3a99112677143467d55324bc09e3addb8c54190ce9",
@@ -964,13 +953,10 @@
       }
     },
     "report-mold": {
-      "contentHash": "1ec572b9a7536f9b8cd27b0ca569b3d0821eb4210050a54c2541c76d74c8d147",
+      "contentHash": "2c27779afa585e09639914b99681b855c233910a82a2a58d235f8b861f486a84",
       "fieldHashes": {
         "primaryAgency": "8a2847f0ee854052d30378a2ef091f979c9737bbd8219086a1e04dc0abd84f9f",
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",
-        "sections.what-the-health-code-requires.bullets.0": "74104b67fa5a5e77b7d2aca973bbaecd31793ef4f526cc1af57328148f5da0c2",
-        "sections.what-the-health-code-requires.bullets.1": "25a2e6bd8a855755d056579e8de1cbc3e7231c10927332092b18995d3ae0d4fd",
-        "sections.what-the-health-code-requires.heading": "13e7f9679361d6015ff823a78c3727f0056246ddc3619f6327039a4177b39212",
         "sections.what-to-do.heading": "f47f1edc44ed92664871471b0cf8f463813788468c23680c12f52a36c2827e26",
         "sections.while-you-wait-tips-to-help-with-the-problem.bullets.0": "1fedaced99120f3846827664185f848bbc91edbeb8a209dc7280ca35974b6cd3",
         "sections.while-you-wait-tips-to-help-with-the-problem.heading": "2a48c1f432e88393905002da6aa167655da242c845c0b5d3b6a2c5ac736416c1",
@@ -980,13 +966,10 @@
       }
     },
     "report-mosquitoes-or-standing-water": {
-      "contentHash": "479465d94b993d77e25aec028e65ae5f018a9fc7a03da768f54b442627222944",
+      "contentHash": "d5b09f6169399db5da797fcd915aee337e475e9b58570ec4185a0307d57a7491",
       "fieldHashes": {
         "primaryAgency": "8a2847f0ee854052d30378a2ef091f979c9737bbd8219086a1e04dc0abd84f9f",
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",
-        "sections.what-the-health-code-requires.bullets.0": "ba733e8ebfc887112fba84d2b8805e414bd510699db58d1b92a86b155b652abe",
-        "sections.what-the-health-code-requires.bullets.1": "25a2e6bd8a855755d056579e8de1cbc3e7231c10927332092b18995d3ae0d4fd",
-        "sections.what-the-health-code-requires.heading": "13e7f9679361d6015ff823a78c3727f0056246ddc3619f6327039a4177b39212",
         "sections.what-to-do.heading": "f47f1edc44ed92664871471b0cf8f463813788468c23680c12f52a36c2827e26",
         "sections.while-you-wait-tips-to-help-with-the-problem.bullets.0": "d70ff02a31df419c1e0888b994b34b3e8e6bc429717f2a0cff404d529a1719d0",
         "sections.while-you-wait-tips-to-help-with-the-problem.bullets.1": "de684f36443e98dba0068742f296b97370b5430875e5c6ca5178251625138757",
@@ -998,13 +981,10 @@
       }
     },
     "report-pigeon-droppings-nesting-or-feeding": {
-      "contentHash": "a58723759824eb9030d69eeb671e015be50a9da0e796653803c559780a51add4",
+      "contentHash": "94f853691f8456f4820542836034ddd07a28f03f76f1edd92489382319704865",
       "fieldHashes": {
         "primaryAgency": "8a2847f0ee854052d30378a2ef091f979c9737bbd8219086a1e04dc0abd84f9f",
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",
-        "sections.what-the-health-code-requires.bullets.0": "9dcf4363defcec02aa1d87ae49696405d48a21f6689fb27b78cab5064d247be6",
-        "sections.what-the-health-code-requires.bullets.1": "25a2e6bd8a855755d056579e8de1cbc3e7231c10927332092b18995d3ae0d4fd",
-        "sections.what-the-health-code-requires.heading": "13e7f9679361d6015ff823a78c3727f0056246ddc3619f6327039a4177b39212",
         "sections.what-to-do.heading": "f47f1edc44ed92664871471b0cf8f463813788468c23680c12f52a36c2827e26",
         "sections.while-you-wait-tips-to-help-with-the-problem.bullets.0": "4de142243569df90b44de127ae468dea9fe242a635653294d5965dd0f78e7ec8",
         "sections.while-you-wait-tips-to-help-with-the-problem.bullets.1": "d657cf58a72516e9b21dcf9ae8aa2d812977b64508bfc28114157d085e0f6d37",
@@ -1031,7 +1011,7 @@
       }
     },
     "report-sewage-leak-or-backup": {
-      "contentHash": "e3d7850d5ee08b8e118a56dbbf850d127659026ac20eaf8cbf778d0119895e23",
+      "contentHash": "d62ee4fb1293e14f8fdfc70e8263aaf89852af79c443676296faf8d541eaa638",
       "fieldHashes": {
         "primaryAgency": "8a2847f0ee854052d30378a2ef091f979c9737bbd8219086a1e04dc0abd84f9f",
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",

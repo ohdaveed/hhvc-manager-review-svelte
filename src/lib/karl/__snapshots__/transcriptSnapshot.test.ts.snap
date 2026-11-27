@@ -139,6 +139,7 @@ Anyone can report a housing or pest problem to 311.
 
 - You can report anonymously. 311 does not require your name.
 - You can report even if you are not the tenant. A friend, family member, advocate, or helper can report for someone else.
+- You can report a problem on a property you do not live on, like a neighbor’s yard or a building nearby.
 - You can ask 311 for help in your language.
 - If you rent, tell your landlord first, unless the problem is urgent. [Tenant rights when reporting housing conditions](tenantRights) explains how long to wait.
 
@@ -313,7 +314,11 @@ Raccoon droppings
 
 **Block 2 — Text:**
 
-Do not clean up raccoon droppings yourself. They can carry roundworm eggs that make people very sick. Report them instead.
+Do not clean up raccoon droppings yourself. They can carry roundworm eggs that make people very sick. Report them instead. [CDC: Preventing raccoon roundworm](https://www.cdc.gov/baylisascaris/prevention/index.html)
+
+**Links in this text — recreate each with the Link tool, do not paste them:**
+
+- "CDC: Preventing raccoon roundworm" → shape 5 — rich text Link tool → External link
 
 ### What to Do — \`what_to_do\` [TYPE] — page not approved
 
@@ -329,7 +334,7 @@ Gather your details
 
 Have these details ready before you start. Only share what applies to your situation:
 
-- **What you saw:** Dog or cat waste, or raccoon droppings.
+- **What you saw:** The kind of waste, and how much has built up.
 - **Where it is:** The address, and where on the property, such as a yard, stairwell, roof, or shared area.
 - **When it started:** How long it has been building up.
 - **Other issues:** Whether it smells or draws flies, rats, or mice.
@@ -345,7 +350,7 @@ Start your report
 
 **Section 2 — Section specifics → Text:**
 
-Use 311 to report animal waste on private property. You can report animal waste where you live or on a nearby property, or report for someone else.
+Use 311 to report animal waste on private property. The [Health Code](https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890) requires property owners to keep animal waste from building up. Build-up that shelters pests or creates a health hazard is a violation.
 
 For dog waste on a sidewalk or street, ask 311 for street cleaning instead.
 
@@ -377,6 +382,7 @@ Download our mobile app to report a problem and track your request. Available on
 
 **Links in this text — recreate each with the Link tool, do not paste them:**
 
+- "Health Code" → shape 5 — rich text Link tool → External link
 - "Report pigeon droppings, nesting, or feeding" → shape 5 — rich text Link tool → Internal link → "Report pigeon droppings, nesting, or feeding"
 - "Learn more about the SF311 mobile app" → shape 5 — rich text Link tool → External link
 
@@ -392,25 +398,6 @@ It may take us a few weekdays to get back to you. In the meantime, here are a fe
 
 - **Pick up pet waste daily:** It feeds rats.
 - **Bag it:** Put pet waste in a bag, then in a bin with a tight lid.
-
-### Custom Section — \`custom_section\` [TYPE] — page not approved
-
-⚠ Inferred mapping — verify the destination before saving.
-
-_Inferred mapping — the field map documents this panel only for supporting/flat sections. Transaction has no generic body stream and this is its only repeatable Title-and-text panel, so verify the destination before saving._
-
-**Title:**
-
-What the Health Code requires
-
-**Text:**
-
-- San Francisco Health Code Article 11 covers this. Property owners must not let animal waste build up. Build-up that shelters pests or creates a health hazard is a violation.
-- [View Health Code Article 11](https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890)
-
-**Links in this text — recreate each with the Link tool, do not paste them:**
-
-- "View Health Code Article 11" → shape 5 — rich text Link tool → External link
 
 ### Related — \`related\` [CHOOSE] — page not approved
 
@@ -467,10 +454,6 @@ Report animal waste on a property | SF.gov
 **Meta description (\`search_description\`):**
 
 Report dog poop, cat waste, or raccoon droppings in a San Francisco yard, building, or shared area.
-
-## Flags — resolve before saving — page not approved
-
-- \`sections.1.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to supporting_information (Accordions). This accordion uses the mockup-only open flag so the tips are visible without a click — flag for Digital Services t". Resolve it before typing anything from them.
 "
 `;
 
@@ -1160,6 +1143,8 @@ Tell the owner
 
 If you rent, tell the property owner or manager about the bed bugs right away. Owners must look into pest reports from tenants. You do not have to wait for the owner before you report to 311.
 
+The [Health Code](https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890) requires property owners to keep buildings free of bed bugs.
+
 - The owner or manager must start professional treatment within 2 working days of confirming bed bugs.
 - Bed bugs spread between units. The owner may also need to inspect or treat the units next to yours.
 
@@ -1183,7 +1168,7 @@ Start your report
 
 **Section 3 — Section specifics → Text:**
 
-Use 311 to report bed bugs to the City, especially if the owner does not respond or start treatment. You can report bed bugs in your unit or a neighbor’s unit, or report for someone else.
+Use 311 to report bed bugs to the City, especially if the owner does not respond or start treatment.
 
 **Section 3 — Section specifics → Button link → Link text:**
 
@@ -1211,6 +1196,7 @@ Download our mobile app to report a problem and track your request. Available on
 
 **Links in this text — recreate each with the Link tool, do not paste them:**
 
+- "Health Code" → shape 5 — rich text Link tool → External link
 - "Learn more about the SF311 mobile app" → shape 5 — rich text Link tool → External link
 
 ### Accordion title and text — \`supporting_information\` [TYPE] — page not approved
@@ -1230,25 +1216,6 @@ It may take us a few weekdays to get back to you. In the meantime, here are a fe
 **Links in this text — recreate each with the Link tool, do not paste them:**
 
 - "Bed bugs: prevent them, find them, and get ready for treatment" → shape 5 — rich text Link tool → Internal link → "Bed bugs: prevent them, find them, and get ready for treatment"
-
-### Custom Section — \`custom_section\` [TYPE] — page not approved
-
-⚠ Inferred mapping — verify the destination before saving.
-
-_Inferred mapping — the field map documents this panel only for supporting/flat sections. Transaction has no generic body stream and this is its only repeatable Title-and-text panel, so verify the destination before saving._
-
-**Title:**
-
-What the Health Code requires
-
-**Text:**
-
-- San Francisco Health Code Article 11 requires property owners to keep buildings free of insect infestations, including bed bugs.
-- [View Health Code Article 11](https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890)
-
-**Links in this text — recreate each with the Link tool, do not paste them:**
-
-- "View Health Code Article 11" → shape 5 — rich text Link tool → External link
 
 ### Related — \`related\` [CHOOSE] — page not approved
 
@@ -2276,7 +2243,7 @@ Start your report
 
 **Section 2 — Section specifics → Text:**
 
-Use 311 to report garbage, clutter, or overgrown plants to the City. If the problem is urgent, report now. You can report a problem where you live or on a nearby property, or report for someone else.
+Use 311 to report garbage, clutter, or overgrown plants to the City. The [Health Code](https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890) requires property owners to keep trash, filth, and overgrown plants from building up. Build-up that shelters pests or creates a health hazard is a violation.
 
 **Section 2 — Section specifics → Button link → Link text:**
 
@@ -2304,6 +2271,7 @@ Download our mobile app to report a problem and track your request. Available on
 
 **Links in this text — recreate each with the Link tool, do not paste them:**
 
+- "Health Code" → shape 5 — rich text Link tool → External link
 - "Learn more about the SF311 mobile app" → shape 5 — rich text Link tool → External link
 
 ### Accordion title and text — \`supporting_information\` [TYPE] — page not approved
@@ -2319,25 +2287,6 @@ It may take us a few weekdays to get back to you. In the meantime, here are a fe
 - **Contain garbage:** Bag garbage before you toss it, and keep bin lids fully closed.
 - **Trim plants:** Cut back overgrown plants and brush, especially where they touch buildings or fences.
 - **Store items off the ground:** Keep stored items on shelves or pallets so pests cannot hide under them.
-
-### Custom Section — \`custom_section\` [TYPE] — page not approved
-
-⚠ Inferred mapping — verify the destination before saving.
-
-_Inferred mapping — the field map documents this panel only for supporting/flat sections. Transaction has no generic body stream and this is its only repeatable Title-and-text panel, so verify the destination before saving._
-
-**Title:**
-
-What the Health Code requires
-
-**Text:**
-
-- San Francisco Health Code Article 11 covers this. Property owners must not let trash, filth, or overgrown plants build up. Build-up that shelters pests or creates a health hazard is a violation.
-- [View Health Code Article 11](https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890)
-
-**Links in this text — recreate each with the Link tool, do not paste them:**
-
-- "View Health Code Article 11" → shape 5 — rich text Link tool → External link
 
 ### Related — \`related\` [CHOOSE] — page not approved
 
@@ -2394,10 +2343,6 @@ Report garbage, clutter, or overgrown plants | SF.gov
 **Meta description (\`search_description\`):**
 
 Report garbage, clutter, stored materials, or overgrown plants that draw pests to a San Francisco property.
-
-## Flags — resolve before saving — page not approved
-
-- \`sections.1.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to supporting_information (Accordions). This accordion uses the mockup-only open flag so the tips are visible without a click — flag for Digital Services t". Resolve it before typing anything from them.
 "
 `;
 
@@ -2606,7 +2551,7 @@ Gather your details
 
 Have these details ready before you start. Only share what applies to your situation:
 
-- **What you saw:** Cockroaches, fleas, flies, wasps, or mites.
+- **What you saw:** Which insect, how many, and any bites or nests.
 - **Where it is:** The address, and whether you saw them inside, outside, or in a shared area.
 - **When it started:** How long this has been happening.
 - **Other issues:** Any garbage, animal waste, rats, mice, or pigeons nearby.
@@ -2622,7 +2567,7 @@ Start your report
 
 **Section 2 — Section specifics → Text:**
 
-Use 311 to report cockroaches, fleas, flies, wasps, or mites to the City. If the problem is urgent, report now. You can report a problem in your home, a shared area, or at work, or report for someone else.
+Use 311 to report cockroaches, fleas, flies, wasps, or mites to the City. The [Health Code](https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890) requires property owners to keep buildings free of them.
 
 Bed bugs and mosquitoes have their own pages: [Report bed bugs](bedBugReport) and [Report mosquitoes or standing water](mosquitoReport).
 
@@ -2664,6 +2609,7 @@ PLACEHOLDER: what happens when the nest is on private property.
 
 **Links in this text — recreate each with the Link tool, do not paste them:**
 
+- "Health Code" → shape 5 — rich text Link tool → External link
 - "Report bed bugs" → shape 5 — rich text Link tool → Internal link → "Report bed bugs"
 - "Report mosquitoes or standing water" → shape 5 — rich text Link tool → Internal link → "Report mosquitoes or standing water"
 - "Learn more about the SF311 mobile app" → shape 5 — rich text Link tool → External link
@@ -2678,29 +2624,10 @@ While you wait: tips to help with the problem
 
 It may take us a few weekdays to get back to you. In the meantime, here are a few things you can do to help with the problem.
 
-- **Cockroaches:** Clean up crumbs and grease, fix dripping faucets and leaks, and seal cracks near pipes. Use bait stations instead of sprays.
+- **Cockroaches:** Clean up crumbs and grease, and fix dripping faucets and leaks. Use bait stations instead of sprays.
 - **Flies:** Bag garbage tightly and keep bin lids closed so flies cannot breed in it.
 - **Drain flies:** Scrub slow or unused drains with a brush and flush them with hot water.
 - **Fruit flies:** Throw out overripe fruit and rinse cans and bottles before you recycle them.
-
-### Custom Section — \`custom_section\` [TYPE] — page not approved
-
-⚠ Inferred mapping — verify the destination before saving.
-
-_Inferred mapping — the field map documents this panel only for supporting/flat sections. Transaction has no generic body stream and this is its only repeatable Title-and-text panel, so verify the destination before saving._
-
-**Title:**
-
-What the Health Code requires
-
-**Text:**
-
-- San Francisco Health Code Article 11 requires property owners to keep buildings free of insect infestations, including cockroaches, fleas, flies, and wasps.
-- [View Health Code Article 11](https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890)
-
-**Links in this text — recreate each with the Link tool, do not paste them:**
-
-- "View Health Code Article 11" → shape 5 — rich text Link tool → External link
 
 ### Related — \`related\` [CHOOSE] — page not approved
 
@@ -2758,10 +2685,6 @@ Report cockroaches or other insects | SF.gov
 **Meta description (\`search_description\`):**
 
 Report cockroaches, fleas, flies, wasps, or mites in a San Francisco home, building, or yard.
-
-## Flags — resolve before saving — page not approved
-
-- \`sections.1.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to supporting_information (Accordions). This accordion uses the mockup-only open flag so the tips are visible without a click — flag for Digital Services t". Resolve it before typing anything from them.
 "
 `;
 
@@ -3465,6 +3388,8 @@ Tell the owner in writing
 
 If you rent, tell the property owner or manager in writing as soon as you find the mold. Include the date, where the mold is, and where you think the moisture is coming from. Keep a copy of your message.
 
+The [Health Code](https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890) lists visible mold inside a building as a public health nuisance. Fixing it means fixing the moisture source too.
+
 **Section 3 — Section title:**
 
 Gather your details
@@ -3491,7 +3416,7 @@ Start your report
 
 **Section 4 — Section specifics → Text:**
 
-Use 311 to report mold caused by humidity or condensation. You can report mold in your home or in a shared area, or report for someone else.
+Use 311 to report mold caused by humidity or condensation.
 
 **Section 4 — Section specifics → Button link → Link text:**
 
@@ -3519,6 +3444,7 @@ Download our mobile app to report a problem and track your request. Available on
 
 **Links in this text — recreate each with the Link tool, do not paste them:**
 
+- "Health Code" → shape 5 — rich text Link tool → External link
 - "Learn more about the SF311 mobile app" → shape 5 — rich text Link tool → External link
 
 ### Accordion title and text — \`supporting_information\` [TYPE] — page not approved
@@ -3532,25 +3458,6 @@ While you wait: tips to help with the problem
 It may take us a few weekdays to get back to you. In the meantime, here are a few things you can do to help with the problem.
 
 - **Reduce indoor moisture:** Open windows or run fans in kitchens and bathrooms to slow mold growth.
-
-### Custom Section — \`custom_section\` [TYPE] — page not approved
-
-⚠ Inferred mapping — verify the destination before saving.
-
-_Inferred mapping — the field map documents this panel only for supporting/flat sections. Transaction has no generic body stream and this is its only repeatable Title-and-text panel, so verify the destination before saving._
-
-**Title:**
-
-What the Health Code requires
-
-**Text:**
-
-- San Francisco Health Code Article 11 lists visible mold or mildew inside a building as a public health nuisance. Fixing it means fixing the moisture source too.
-- [View Health Code Article 11](https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890)
-
-**Links in this text — recreate each with the Link tool, do not paste them:**
-
-- "View Health Code Article 11" → shape 5 — rich text Link tool → External link
 
 ### Related — \`related\` [CHOOSE] — page not approved
 
@@ -3607,10 +3514,6 @@ Report mold | SF.gov
 **Meta description (\`search_description\`):**
 
 Report mold from humidity or condensation in a San Francisco home or building, and find where to report a leak.
-
-## Flags — resolve before saving — page not approved
-
-- \`sections.1.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to supporting_information (Accordions). This accordion uses the mockup-only open flag so the tips are visible without a click — flag for Digital Services t". Resolve it before typing anything from them.
 "
 `;
 
@@ -3779,7 +3682,7 @@ Start your report
 
 **Section 2 — Section specifics → Text:**
 
-Use 311 to report mosquitoes or standing water to the City. If the problem is urgent, report now. You can report mosquitoes where you live or standing water you see nearby, or report for someone else.
+Use 311 to report mosquitoes or standing water to the City. The [Health Code](https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890) requires property owners to remove places where mosquitoes breed.
 
 **Section 2 — Section specifics → Button link → Link text:**
 
@@ -3823,6 +3726,7 @@ External URL → https://westnile.ca.gov/report
 
 **Links in this text — recreate each with the Link tool, do not paste them:**
 
+- "Health Code" → shape 5 — rich text Link tool → External link
 - "Learn more about the SF311 mobile app" → shape 5 — rich text Link tool → External link
 
 ### Accordion title and text — \`supporting_information\` [TYPE] — page not approved
@@ -3838,25 +3742,6 @@ It may take us a few weekdays to get back to you. In the meantime, here are a fe
 - **Dump standing water:** Empty buckets, planters, saucers, and toys at least once a week.
 - **Clear gutters:** Clogged gutters hold water where mosquitoes breed.
 - **Fix screens:** Repair holes in window and door screens.
-
-### Custom Section — \`custom_section\` [TYPE] — page not approved
-
-⚠ Inferred mapping — verify the destination before saving.
-
-_Inferred mapping — the field map documents this panel only for supporting/flat sections. Transaction has no generic body stream and this is its only repeatable Title-and-text panel, so verify the destination before saving._
-
-**Title:**
-
-What the Health Code requires
-
-**Text:**
-
-- San Francisco Health Code Article 11 requires property owners to remove places where mosquitoes breed.
-- [View Health Code Article 11](https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890)
-
-**Links in this text — recreate each with the Link tool, do not paste them:**
-
-- "View Health Code Article 11" → shape 5 — rich text Link tool → External link
 
 ### Related — \`related\` [CHOOSE] — page not approved
 
@@ -3913,10 +3798,6 @@ Report mosquitoes or standing water | SF.gov
 **Meta description (\`search_description\`):**
 
 Report biting mosquitoes or standing water where they breed in San Francisco, and report dead birds to the State.
-
-## Flags — resolve before saving — page not approved
-
-- \`sections.1.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to supporting_information (Accordions). This accordion uses the mockup-only open flag so the tips are visible without a click — flag for Digital Services t". Resolve it before typing anything from them.
 "
 `;
 
@@ -5364,7 +5245,7 @@ Start your report
 
 **Section 2 — Section specifics → Text:**
 
-Use 311 to report pigeon droppings, nesting, roosting, or feeding to the City. You can report pigeons on your building or nearby, or report for someone else.
+Use 311 to report pigeon droppings, nesting, roosting, or feeding to the City. The [Health Code](https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890) does not allow pigeons to nest or roost on a property in ways that create a health hazard.
 
 **Section 2 — Section specifics → Button link → Link text:**
 
@@ -5402,6 +5283,7 @@ PLACEHOLDER: what HHVC does when the person feeding pigeons is not the property 
 
 **Links in this text — recreate each with the Link tool, do not paste them:**
 
+- "Health Code" → shape 5 — rich text Link tool → External link
 - "Learn more about the SF311 mobile app" → shape 5 — rich text Link tool → External link
 
 ### Accordion title and text — \`supporting_information\` [TYPE] — page not approved
@@ -5416,25 +5298,6 @@ It may take us a few weekdays to get back to you. In the meantime, here are a fe
 
 - **Do not feed pigeons:** Feeding attracts droppings, roosting, and other pests.
 - **Clean up droppings safely:** Wet down droppings with a disinfectant and wear gloves. Never dry-sweep them.
-
-### Custom Section — \`custom_section\` [TYPE] — page not approved
-
-⚠ Inferred mapping — verify the destination before saving.
-
-_Inferred mapping — the field map documents this panel only for supporting/flat sections. Transaction has no generic body stream and this is its only repeatable Title-and-text panel, so verify the destination before saving._
-
-**Title:**
-
-What the Health Code requires
-
-**Text:**
-
-- San Francisco Health Code Article 11 does not allow animals, including pigeons, to nest, roost, or live on a property in ways that create a health hazard.
-- [View Health Code Article 11](https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890)
-
-**Links in this text — recreate each with the Link tool, do not paste them:**
-
-- "View Health Code Article 11" → shape 5 — rich text Link tool → External link
 
 ### Related — \`related\` [CHOOSE] — page not approved
 
@@ -6741,7 +6604,7 @@ Report it right away
 
 **Section 1 — Section specifics → Text:**
 
-Use 311 to report sewage as soon as you see it. Stay away from it, and keep children and pets away. You can report sewage in your home, a yard, or a shared area, or report for someone else.
+Use 311 to report sewage as soon as you see it. Stay away from it, and keep children and pets away.
 
 **Section 1 — Section specifics → Button link → Link text:**
 
