@@ -19,6 +19,8 @@
  */
 import { classifySection } from '$lib/legacy-core/card-inheritance.js';
 import { pagesByKey } from '$lib/data';
+import { extractCopy, type CorpusPage } from '$lib/corpus/fields';
+import { markdownLinksIn } from '$lib/corpus/markdown';
 
 /** How a card's words reach the published page -- `classifySection`'s own vocabulary. */
 export type Publishes = 'authored' | 'title-only' | 'inherits' | 'unknown';
@@ -52,6 +54,13 @@ export type SitemapEntry = {
 	outgoing: SitemapLink[];
 	/** How many other pages point here. */
 	incoming: number;
+	/**
+	 * Routable ids of corpus pages this page links to from its body copy, as
+	 * `[text](pageKey)`. Kept apart from `outgoing`, which is CARDS: a prose link
+	 * has no card title, panel or publish rule, and the `incoming` count is card
+	 * links only. Only reachability reads it.
+	 */
+	proseLinks: string[];
 };
 
 /* eslint-disable-next-line @typescript-eslint/no-explicit-any --
@@ -110,13 +119,26 @@ export function buildSitemap(pages: AnyPage[]): SitemapEntry[] {
 			}
 		}
 
+		// Body-copy links, read through `extractCopy` so annotations (`karl`,
+		// `editorNote`) are excluded by the same rule that excludes them from
+		// copy, and parsed by the corpus's one markdown-link reading. A target
+		// that is not a corpus key (`https://…`, `#`, a typo) reaches no page.
+		const proseLinks = new Set<string>();
+		for (const text of Object.values(extractCopy(page as CorpusPage))) {
+			for (const { url } of markdownLinksIn(text)) {
+				const dest = byKey.get(url);
+				if (dest) proseLinks.add(String(dest.id));
+			}
+		}
+
 		return {
 			id: String(page.id ?? ''),
 			title: String(page.title ?? ''),
 			type: String(page.type ?? ''),
 			slug: String(page.slug ?? ''),
 			outgoing,
-			incoming: 0
+			incoming: 0,
+			proseLinks: [...proseLinks]
 		};
 	});
 
@@ -208,6 +230,9 @@ export function findRelatedTypeViolations(
  * both have an incoming link and neither can be found from anywhere a reader
  * starts. Walking out from the hubs is the question the UI actually asks --
  * "not linked from any hub".
+ *
+ * A link is a card OR a `[text](pageKey)` link in body copy (`proseLinks`):
+ * a reader follows either, so counting cards alone overstated the orphans.
  */
 export function findOrphans(
 	entries: SitemapEntry[],
@@ -221,10 +246,11 @@ export function findOrphans(
 	for (const hub of queue) reached.add(hub.id);
 	while (queue.length) {
 		const entry = queue.shift()!;
-		for (const link of entry.outgoing) {
-			if (!link.id || reached.has(link.id)) continue;
-			reached.add(link.id);
-			const next = byId.get(link.id);
+		const targets = [...entry.outgoing.map((link) => link.id), ...entry.proseLinks];
+		for (const id of targets) {
+			if (!id || reached.has(id)) continue;
+			reached.add(id);
+			const next = byId.get(id);
 			if (next) queue.push(next);
 		}
 	}
