@@ -54,10 +54,11 @@ const PILOTS = [
 		sections: { placed: 9, unplaced: 0 }
 	},
 	{
-		// Rollout step 3: Campaign. A 26-character spotlight button and About
-		// PLACEHOLDER text need a fix; "Start with your own block" has no panel.
+		// Rollout step 3: Campaign. About PLACEHOLDER text needs a fix (the
+		// 26-character spotlight button was shortened on 2026-11-27); "Start with
+		// your own block" has no panel.
 		slug: 'rat-free-blocks',
-		summary: '6 sections: 6 go into Karl. 2 details need a fix.',
+		summary: '6 sections: 6 go into Karl. 1 detail needs a fix.',
 		sections: { placed: 6, unplaced: 0 }
 	},
 	{
@@ -157,13 +158,15 @@ test.describe('Karl outline', () => {
 		// This used to be the rats report's "View Article 11" button, which had no
 		// Karl home (U1). Since the 2026-11-26 audit nothing in the corpus is
 		// unplaced, so the field with a reason of its own is a needs-fix one; the
-		// one-chip-per-unmapped-field rule is covered by placement.test.ts.
+		// one-chip-per-unmapped-field rule is covered by placement.test.ts. It was
+		// the owners Spotlight button until that was shortened to fit Karl's 25
+		// characters on 2026-11-27; the PLACEHOLDER paragraph is the one left.
 		await gotoSignedIn(page, '/review/rat-free-blocks');
 		await switchOnByKeyboard(page);
 		const target = page.locator(
-			'button[data-rewrite-field="sections.for-owners-and-managers.button"]'
+			'button[data-rewrite-field="sections.about-this-campaign.paragraphs.1"]'
 		);
-		await expect(target).toHaveAccessibleDescription(/Button text is 26 characters/);
+		await expect(target).toHaveAccessibleDescription(/Still holds PLACEHOLDER text/);
 	});
 
 	test('stays on across pages and a reload', async ({ page }) => {
