@@ -32,9 +32,9 @@ const shootViewport = async (page: Page, name: string) => {
 async function openBlueprint(page: Page) {
 	await page
 		.getByRole('group', { name: 'Karl views' })
-		.getByRole('button', { name: 'Blueprint' })
+		.getByRole('button', { name: 'Build in Karl' })
 		.click();
-	await expect(page.getByRole('heading', { name: 'Blueprint', level: 2 })).toBeVisible();
+	await expect(page.getByRole('heading', { name: 'Build in Karl', level: 2 })).toBeVisible();
 }
 
 const panelOrder = (page: Page) =>
@@ -202,6 +202,41 @@ test.describe('Blueprint', () => {
 		});
 	}
 
+	test('the top bar steps between pages without leaving the view, and Review leaves it', async ({
+		page
+	}) => {
+		await page.setViewportSize({ width: 1440, height: 900 });
+		await gotoSignedIn(page, '/review/report-rats-or-mice');
+		await openBlueprint(page);
+
+		// Neither rail is drawn, not even collapsed: the queue is the stepper.
+		await expect(page.locator('#reviewQueueRail')).toBeHidden();
+		await expect(page.locator('#reviewPanel')).toBeHidden();
+		const picker = page.getByLabel('Page', { exact: true });
+		await expect(picker.locator('option:checked')).toHaveText(
+			/^Report a problem · \d+ of \d+ — Report rats or mice$/
+		);
+
+		// Next is a link to the next page, and the view survives the navigation.
+		await page.getByRole('link', { name: /^Next page: / }).click();
+		await expect(page).not.toHaveURL(/\/review\/report-rats-or-mice$/);
+		await expect(page.getByRole('heading', { name: 'Build in Karl', level: 2 })).toBeVisible();
+		await expect(picker.locator('option:checked')).not.toHaveText(/Report rats or mice$/);
+
+		// The picker jumps anywhere in the queue.
+		await picker.selectOption('report-rats-or-mice');
+		await expect(page).toHaveURL(/\/review\/report-rats-or-mice$/);
+		await expect(page.getByRole('heading', { name: 'Build in Karl', level: 2 })).toBeVisible();
+
+		// Review is the other half of the mode switch, and brings the rails back.
+		await page
+			.getByRole('navigation', { name: 'Mode' })
+			.getByRole('button', { name: 'Review' })
+			.click();
+		await expect(page.getByRole('heading', { name: 'Build in Karl', level: 2 })).toHaveCount(0);
+		await expect(page.locator('#reviewPanel')).toBeVisible();
+	});
+
 	test('a required empty panel says Karl will not save without it', async ({ page }) => {
 		await gotoSignedIn(
 			page,
@@ -225,7 +260,7 @@ test.describe('Blueprint', () => {
 			.first()
 			.click();
 
-		await expect(page.getByRole('heading', { name: 'Blueprint', level: 2 })).toHaveCount(0);
+		await expect(page.getByRole('heading', { name: 'Build in Karl', level: 2 })).toHaveCount(0);
 		await expect(page.locator('.karl-outline-summary')).toBeVisible();
 		const field = page.locator(
 			'[data-rewrite-field="sections.who-this-information-is-for.heading"]'
@@ -311,19 +346,24 @@ test.describe('Blueprint', () => {
 		await expect(page.getByRole('note')).toHaveCount(0);
 	});
 
-	test('the Blueprint takes both rails and gives them back', async ({ page }) => {
+	const reviewTab = (page: Page) =>
+		page.getByRole('navigation', { name: 'Mode' }).getByRole('button', { name: 'Review' });
+
+	test('the view takes both rails and gives them back as they were', async ({ page }) => {
 		await page.setViewportSize({ width: 1440, height: 900 });
 		await gotoSignedIn(page, '/review/report-rats-or-mice');
 		await openBlueprint(page);
-		await expect(page.getByRole('button', { name: 'Expand queue' })).toBeVisible();
-		await page.getByRole('button', { name: 'Back to review' }).click();
+		// Gone, not collapsed: there is no "Expand queue" strip to reopen.
+		await expect(page.getByRole('button', { name: 'Expand queue' })).toHaveCount(0);
+		await expect(page.locator('#reviewQueueRail')).toBeHidden();
+		await reviewTab(page).click();
 		await expect(page.getByRole('button', { name: 'Collapse queue' })).toBeVisible();
 	});
 
-	test('Back to review returns to the mockup', async ({ page }) => {
+	test('Review returns to the mockup', async ({ page }) => {
 		await gotoSignedIn(page, '/review/property-owner-responsibilities-hhvc');
 		await openBlueprint(page);
-		await page.getByRole('button', { name: 'Back to review' }).click();
+		await reviewTab(page).click();
 		await expect(page.getByRole('region', { name: 'Mockup preview' })).toBeVisible();
 	});
 });

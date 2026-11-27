@@ -1115,9 +1115,11 @@ class PageStore {
 	#railsBeforeBlueprint: { queue: boolean; panel: boolean } | null = null;
 
 	/**
-	 * The page redrawn as its Karl form, beside the mockup. A view, like the
-	 * site map: not persisted. It collapses both rails, as the walkthrough does,
-	 * because the mockup and the Karl list need the width side by side.
+	 * The page redrawn as its Karl form, beside the mockup ("Build in Karl").
+	 * A view, like the site map: not persisted. The layout draws neither rail
+	 * while it is open (`data-build`); they are also collapsed here, so a page
+	 * with no Karl view, which falls back to the review with the mode still
+	 * set, keeps the canvas wide rather than springing both rails open.
 	 */
 	showBlueprint() {
 		if (this.presenting && this.#railsBeforePresent) this.railCollapsed = this.#railsBeforePresent;

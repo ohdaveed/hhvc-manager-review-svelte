@@ -166,7 +166,7 @@
 				onclick={() =>
 					pageStore.mode === 'blueprint' ? pageStore.showReview() : pageStore.showBlueprint()}
 			>
-				Blueprint
+				Build in Karl
 			</Button>
 		</div>
 	{/if}

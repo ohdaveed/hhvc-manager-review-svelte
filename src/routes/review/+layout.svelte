@@ -3,7 +3,7 @@
 	import { onMount, tick, untrack } from 'svelte';
 	import { warnBeforeLeaving } from '$lib/stores/leaveGuard';
 	import { page } from '$app/stores';
-	import { afterNavigate, replaceState } from '$app/navigation';
+	import { afterNavigate, goto, replaceState } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
 	import { ScrollArea } from '$lib/components/ui/scroll-area/index.js';
@@ -57,6 +57,7 @@
 	import { outlineSummary, placementsFor } from '$lib/karl/placement';
 	import { setOutlineContext } from '$lib/karl/outlineContext';
 	import { pagesByKey } from '$lib/data';
+	import { groupPaths } from '$lib/landing/groups';
 	import { triggerReviewExportDownload } from '$lib/data/exportReview';
 
 	let { children } = $props();
@@ -121,6 +122,9 @@
 	);
 	const outlinePlacements = $derived(pageStore.karlOutline ? placementsHere : null);
 	const blueprintPlacements = $derived(pageStore.mode === 'blueprint' ? placementsHere : null);
+	// The Build in Karl view is on screen: not merely the mode, which stays set
+	// on a page that has no Karl view and falls back to the review.
+	const building = $derived(Boolean(blueprintPlacements && pageData));
 	// The outline's own one-line summary, so the decision panel and the outline
 	// bar can never describe the same page two ways.
 	const karlReadiness = $derived(placementsHere ? outlineSummary(placementsHere) : null);
@@ -239,6 +243,25 @@
 	const prevPath = $derived(at > 0 ? order[at - 1] : undefined);
 	const nextPath = $derived(at >= 0 && at < order.length - 1 ? order[at + 1] : undefined);
 	const titleOf = (path: string) => pageTitleFor(path, pageStore.pages, $draftsStore, 'empty');
+
+	/**
+	 * Build in Karl hides both rails, so the queue becomes a stepper in its top
+	 * bar: every page in the queue's own order, named by its section and its
+	 * place in it ("Report a problem · 3 of 12"). Drafts are left out: a draft
+	 * has no Karl view (decision 12), so stepping onto one would drop out of the
+	 * mode with no rail to get back by.
+	 */
+	const buildPages = $derived(
+		groupPaths(order.filter((path) => !isDraftPath(path))).flatMap((section) =>
+			section.paths.map((path, i) => ({
+				path,
+				title: titleOf(path),
+				section: section.heading,
+				n: i + 1,
+				of: section.paths.length
+			}))
+		)
+	);
 
 	/**
 	 * This page's recorded decision, for the toolbar badge, the collapsed panel's
@@ -482,10 +505,12 @@
 <div
 	class="review-shell grid h-screen w-full grid-rows-[minmax(0,1fr)] overflow-hidden bg-muted/40"
 	data-sheet={pageStore.mobileSheet}
-	style="grid-template-columns: {pageStore.railCollapsed.queue ? '52px' : '280px'} 1fr {pageStore
-		.railCollapsed.panel
-		? '52px'
-		: '380px'}"
+	data-build={building ? '' : undefined}
+	style="grid-template-columns: {building
+		? 'minmax(0, 1fr)'
+		: `${pageStore.railCollapsed.queue ? '52px' : '280px'} 1fr ${
+				pageStore.railCollapsed.panel ? '52px' : '380px'
+			}`}"
 >
 	<!-- Backdrop for the narrow-viewport sheets. A real element rather than a
 	     giant box-shadow, because it has to take the click that closes the
@@ -678,6 +703,9 @@
 				page={pageData}
 				pageId={pageData.id}
 				{status}
+				pages={buildPages}
+				onGo={(path) => goto(resolve(reviewHrefFor(path)))}
+				onExport={() => triggerReviewExportDownload(pageStore.pages, $pagesStore, $editsStore)}
 				onExit={() => pageStore.showReview()}
 				onShow={showOnPage}
 			/>
@@ -1044,6 +1072,16 @@
 <style>
 	/* Visible only while focused. Off-screen rather than `display: none`, which
 	   would take it out of the focus order and defeat the purpose. */
+	/* Build in Karl takes the whole window: the queue is the stepper in its top
+	   bar and the review is one tab away, so neither rail is drawn -- not even
+	   collapsed. The grid template drops their tracks (inline, above); this
+	   stops them painting. The skip link goes too: its target is the panel. */
+	.review-shell[data-build] > .queue-rail,
+	.review-shell[data-build] > .panel-rail,
+	.review-shell[data-build] > .skip-to-panel {
+		display: none;
+	}
+
 	.skip-to-panel {
 		position: absolute;
 		left: -9999px;
