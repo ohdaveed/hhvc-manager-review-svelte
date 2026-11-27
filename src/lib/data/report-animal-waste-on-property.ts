@@ -4,11 +4,20 @@ export const animalWasteReport = {
 	title: 'Report animal waste on a property',
 	summary: 'Dog poop, cat waste, or raccoon droppings in a yard, building, or shared area.',
 	primaryAgency: 'Healthy Housing and Vector Control',
+	// Karl's Contact us block (get_help -> Phone number), in the order and wording
+	// live SF.gov 311 report pages use (2026-11-26 page review). In the step text
+	// it would push the 311 step past the three-sentence paragraph limit.
+	contact: {
+		phone: [
+			'311',
+			'415-701-2311 if you are outside of San Francisco',
+			'TDD/TTY 711 if you are deaf, hard of hearing, or have a speech disability'
+		]
+	},
 	reading: 'Grade 6',
 	editorNote:
 		"Report regroup (Decided, Nov 24, 2026), built 2026-11-25. New page, one of the 9 condition pages, and one of HHVC's largest complaint areas, so it is listed high in the Topic and Agency report groups (Decided). The description is the Decided search-words example. Private property only, said at the top (Decided): HHVC does not respond to dog waste on sidewalks or streets. Raccoon droppings are cited here because of the roundworm egg risk (Decided): the page says to report them rather than clean them, links the CDC raccoon roundworm guidance, and gives no cleanup steps. Pigeon droppings moved to their own page, which this one links. TO CONFIRM: which 311 service takes dog waste on public property (likely Public Works street cleaning), so that line is flagged unverified; and whether HHVC cites the owner in every raccoon latrine case (§596 also allows a manager or whoever created the condition), so the page does not say who is cited.",
 	whatToKnow: {
-		cost: 'Free',
 		thingsToKnow: [
 			{
 				label: 'Private property only',
@@ -27,6 +36,25 @@ export const animalWasteReport = {
 			kind: 'body',
 			steps: [
 				{
+					title: 'Gather your details',
+					text: [
+						'Have these details ready before you start. Only share what applies to your situation:'
+					],
+					bullets: [
+						'**What you saw:** Dog or cat waste, or raccoon droppings.',
+						'**Where it is:** The address, and where on the property, such as a yard, stairwell, roof, or shared area.',
+						'**When it started:** How long it has been building up.',
+						'**Other issues:** Whether it smells or draws flies, rats, or mice.',
+						'**Your contact info:** Leave a phone number or email if you want an inspector to contact you.'
+					],
+					callout: {
+						karl: 'Callout block inside the "Gather your details" Section specifics: single rich text field, no separate title. Text: the one confidentiality sentence (Decided: the same on every page, once per page) plus the photo note.',
+						text: 'We never share your name or contact information. You do not need to send photos.',
+						title: false
+					},
+					karl: 'what_to_do -> Section. Section title: "Gather your details". Section specifics: Text block (intro sentence + bulleted checklist) + Callout block below.'
+				},
+				{
 					title: 'Start your report',
 					text: [
 						'Use 311 to report animal waste on private property. You can report animal waste where you live or on a nearby property, or report for someone else.',
@@ -41,23 +69,6 @@ export const animalWasteReport = {
 					],
 					button: 'Report through 311',
 					karl: 'what_to_do -> Section. Section title: "Start your report". Section specifics: Text block (these 4 paragraphs: the action, the public-property routing, the pigeon page, and the one-line SRO note every report page carries, Decided) + Button link block ("Report through 311").'
-				},
-				{
-					title: 'Tell us what you saw',
-					text: ['Only share the details that apply to your situation:'],
-					bullets: [
-						'**What you saw:** Dog or cat waste, or raccoon droppings.',
-						'**Where it is:** The address, and where on the property, such as a yard, stairwell, roof, or shared area.',
-						'**When it started:** How long it has been building up.',
-						'**Other issues:** Whether it smells or draws flies, rats, or mice.',
-						'**Your contact info:** Leave a phone number or email if you want an inspector to contact you.'
-					],
-					callout: {
-						karl: 'Callout block inside the "Tell us what you saw" Section specifics: single rich text field, no separate title. Text: the one confidentiality sentence (Decided: the same on every page, once per page) plus the photo note.',
-						text: 'We never share your name or contact information. You do not need to send photos.',
-						title: false
-					},
-					karl: 'what_to_do -> Section. Section title: "Tell us what you saw". Section specifics: Text block (intro sentence + bulleted checklist) + Callout block below.'
 				}
 			]
 		},

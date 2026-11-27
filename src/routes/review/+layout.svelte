@@ -159,6 +159,9 @@
 	setOutlineContext({
 		get placements() {
 			return outlinePlacements;
+		},
+		get always() {
+			return placementsHere;
 		}
 	});
 

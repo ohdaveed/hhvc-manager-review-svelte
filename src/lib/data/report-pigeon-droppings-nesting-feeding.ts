@@ -4,11 +4,20 @@ export const pigeonReport = {
 	title: 'Report pigeon droppings, nesting, or feeding',
 	summary: 'Roosting birds, feathers, or bird waste on a building, and people who feed them.',
 	primaryAgency: 'Healthy Housing and Vector Control',
+	// Karl's Contact us block (get_help -> Phone number), in the order and wording
+	// live SF.gov 311 report pages use (2026-11-26 page review). In the step text
+	// it would push the 311 step past the three-sentence paragraph limit.
+	contact: {
+		phone: [
+			'311',
+			'415-701-2311 if you are outside of San Francisco',
+			'TDD/TTY 711 if you are deaf, hard of hearing, or have a speech disability'
+		]
+	},
 	reading: 'Grade 6',
 	editorNote:
 		'Report regroup (Decided, Nov 24, 2026), built 2026-11-25. New page, one of the 9 condition pages. Decided: HHVC cites roosting, nesting, feces, feathers, and people who feed pigeons; the description names roosting and feathers so those searches land here; pigeon droppings move off the animal waste page, which links here; mites are named here too, since they often come with pigeons. The feeding case means the person reported may be a neighbor, not the owner, and the Decided rule is to say what HHVC does then. That answer is STILL OPEN, so the step holds PLACEHOLDER text until HHVC answers. The Article 11 §596 line (a manager, or whoever created the condition) comes from the Questions and answers table. The old page linked a UC IPM pigeon Pest Note; UC IPM no longer publishes one (404 on 2026-11-25), so it is not carried.',
 	whatToKnow: {
-		cost: 'Free',
 		thingsToKnow: [
 			{
 				label: 'Who we contact',
@@ -27,17 +36,10 @@ export const pigeonReport = {
 			kind: 'body',
 			steps: [
 				{
-					title: 'Start your report',
+					title: 'Gather your details',
 					text: [
-						'Use 311 to report pigeon droppings, nesting, roosting, or feeding to the City. You can report pigeons on your building or nearby, or report for someone else.',
-						'Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.'
+						'Have these details ready before you start. Only share what applies to your situation:'
 					],
-					button: 'Report through 311',
-					karl: 'what_to_do -> Section. Section title: "Start your report". Section specifics: Text block (these 2 paragraphs, the second being the one-line SRO note every report page carries, Decided) + Button link block ("Report through 311").'
-				},
-				{
-					title: 'Tell us what you see',
-					text: ['Only share the details that apply to your situation:'],
 					bullets: [
 						'**What you see:** Pigeons roosting or nesting on ledges, roofs, or signs, or a build-up of droppings or feathers.',
 						'**Where it is:** The address, and where on the building or property.',
@@ -46,11 +48,20 @@ export const pigeonReport = {
 						'**Your contact info:** Leave a phone number or email if you want an inspector to contact you.'
 					],
 					callout: {
-						karl: 'Callout block inside the "Tell us what you see" Section specifics: single rich text field, no separate title. Text: the one confidentiality sentence (Decided: the same on every page, once per page) plus the photo note.',
+						karl: 'Callout block inside the "Gather your details" Section specifics: single rich text field, no separate title. Text: the one confidentiality sentence (Decided: the same on every page, once per page) plus the photo note.',
 						text: 'We never share your name or contact information. You do not need to send photos.',
 						title: false
 					},
-					karl: 'what_to_do -> Section. Section title: "Tell us what you see". Section specifics: Text block (intro sentence + bulleted checklist) + Callout block below.'
+					karl: 'what_to_do -> Section. Section title: "Gather your details". Section specifics: Text block (intro sentence + bulleted checklist) + Callout block below.'
+				},
+				{
+					title: 'Start your report',
+					text: [
+						'Use 311 to report pigeon droppings, nesting, roosting, or feeding to the City. You can report pigeons on your building or nearby, or report for someone else.',
+						'Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.'
+					],
+					button: 'Report through 311',
+					karl: 'what_to_do -> Section. Section title: "Start your report". Section specifics: Text block (these 2 paragraphs, the second being the one-line SRO note every report page carries, Decided) + Button link block ("Report through 311").'
 				},
 				{
 					title: 'If someone is feeding pigeons',

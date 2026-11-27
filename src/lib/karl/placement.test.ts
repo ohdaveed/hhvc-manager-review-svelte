@@ -35,8 +35,8 @@ describe('rats report (Transaction pilot)', () => {
 		expect(p.fields.get('sections.what-to-do.steps.1.title')?.label).toBe(
 			'What to Do · Section 2 · Section title'
 		);
-		expect(p.fields.get('sections.what-to-do.steps.0.button')?.label).toBe(
-			'What to Do · Section 1 · Button link'
+		expect(p.fields.get('sections.what-to-do.steps.1.button')?.label).toBe(
+			'What to Do · Section 2 · Button link'
 		);
 		expect(p.fields.get('whatToKnow.thingsToKnow.1.label')?.label).toBe(
 			'Things to Know · Block 2 · Title'
@@ -90,9 +90,8 @@ describe('rats report (Transaction pilot)', () => {
 		for (const id of [
 			'title',
 			'summary',
-			'whatToKnow.cost',
 			'sections.what-to-do.heading',
-			'sections.what-to-do.steps.1.callout.text',
+			'sections.what-to-do.steps.0.callout.text',
 			'sections.while-you-wait-tips-to-help-with-the-problem.heading',
 			'sections.related-pages.cards.0.title'
 		])
@@ -101,7 +100,9 @@ describe('rats report (Transaction pilot)', () => {
 
 	it('lists the empty panels the Blueprint draws as placeholders', () => {
 		const empty = p.panels.filter((x) => !x.filled && !x.inert).map((x) => x.rawName);
-		expect(empty).toEqual(['special_cases', 'good_for_community', 'get_help', 'topics']);
+		// Cost is optional in Karl (field map E3) and the report pages leave it out.
+		expect(empty).toEqual(['cost', 'special_cases', 'good_for_community', 'topics']);
+		expect(p.panels.find((x) => x.rawName === 'cost')?.required).toBe(false);
 		expect(p.panels.find((x) => x.rawName === 'redirect_url')?.inert).toBe(true);
 	});
 
@@ -188,7 +189,7 @@ describe('property owner responsibilities (Resource Collection pilot)', () => {
 
 describe('rules judge the copy on screen (decision 7)', () => {
 	it('fails a button an accepted edit pushed past 25 characters', () => {
-		const id = 'sections.what-to-do.steps.0.button';
+		const id = 'sections.what-to-do.steps.1.button';
 		expect(statusOf(of('rodentsReport'), id)).toBe('placed');
 		const edited = of(
 			'rodentsReport',
@@ -223,12 +224,12 @@ describe('rules judge the copy on screen (decision 7)', () => {
 });
 
 describe('as-shown copy (the outline over the mockup)', () => {
-	const id = 'sections.what-to-do.steps.0.button';
+	const id = 'sections.what-to-do.steps.1.button';
 	const shown = (button: string) => {
 		const page = toStorePage(pagesByKey.rodentsReport as never) as never as Record<string, unknown>;
 		const p = structuredClone(page) as { sections: { steps?: { button?: string }[] }[] };
-		const at = p.sections.findIndex((s) => Array.isArray(s.steps) && s.steps[0]?.button);
-		p.sections[at].steps![0].button = button;
+		const at = p.sections.findIndex((s) => Array.isArray(s.steps) && s.steps[1]?.button);
+		p.sections[at].steps![1].button = button;
 		return p;
 	};
 
@@ -320,7 +321,7 @@ describe('what a chip shows', () => {
 	});
 
 	it('chips the What to know box once, as its two panels', () => {
-		expect(of('rodentsReport').whatToKnow).toMatchObject({
+		expect(of('publicRecords').whatToKnow).toMatchObject({
 			label: 'Cost · Things to Know',
 			status: 'placed'
 		});
@@ -459,7 +460,7 @@ describe('Campaign', () => {
 	});
 
 	it('keeps callouts placed where Karl offers them', () => {
-		expect(of('rodentsReport').fields.get('sections.what-to-do.steps.1.callout.text')?.status).toBe(
+		expect(of('rodentsReport').fields.get('sections.what-to-do.steps.0.callout.text')?.status).toBe(
 			'placed'
 		);
 	});

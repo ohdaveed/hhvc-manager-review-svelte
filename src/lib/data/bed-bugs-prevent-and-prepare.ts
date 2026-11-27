@@ -159,6 +159,7 @@ export const bedBugsInfo = {
 			bullets: [
 				'[UC IPM: Bed bugs](https://ipm.ucanr.edu/home-and-landscape/bed-bugs/). How to identify, find, and control bed bugs.',
 				'[CDC: About bed bugs](https://www.cdc.gov/bed-bugs/about/index.html). Bites, health risks, and prevention.',
+				'[EPA: Bed bugs](https://www.epa.gov/bedbugs). Federal guidance on finding and treating bed bugs.',
 				'[UC IPM: Hiring a pest control company](https://ipm.ucanr.edu/home-and-landscape/hiring-a-pest-control-company/). Questions to ask before you hire.',
 				'[SF Environment: Pest management in your home (PDF)](https://www.sfenvironment.org/media/13819). A handout in English, Spanish, and Chinese.',
 				'[UC IPM: Recursos en español](https://ipm.ucanr.edu/IPMPROJECT/recursos-espanol.html). Guías sobre plagas en español.'

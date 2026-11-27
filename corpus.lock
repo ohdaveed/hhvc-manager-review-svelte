@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "corpusHash": "d3169ec6f0b85f297122a15a14d2824579b81ea188197eeb7ad3def123595c82",
+  "corpusHash": "6aa526564a1abbea37ba27a7c1bd2a50e4281945275723c2ac3803a4600d5952",
   "pages": {
     "departments--healthy-housing-and-vector-control": {
       "contentHash": "0dbd9dd7bbad4361a566c5cd2c714223d97028f482b3ba8c958c082887615fc9",
@@ -128,7 +128,7 @@
       }
     },
     "information-bed-bugs-prevent-find-and-prepare-for-treatment": {
-      "contentHash": "a54f37898f5d6eec1e93097cd1d6d38c1bc051a257fa45fbdc6b9031519fe56a",
+      "contentHash": "cb9f2c0ded812632a3311bab9a3605529db5a6f512218604e9079fba58e8322d",
       "fieldHashes": {
         "sections.check-for-bed-bugs.bullets.0": "d44bd88de28668418bb15ed6a197fde5c64af320f1ced1a98a0821c8470ea84a",
         "sections.check-for-bed-bugs.bullets.1": "4ab10d6d5a0ec5bf846e4bc8349194f960760ba1d35f80cb471d57e42e2357ab",
@@ -152,6 +152,7 @@
         "sections.if-you-think-you-have-bed-bugs.paragraphs.0": "147f68445eace3fa7f803eeb14842af72a513a8584e8b848a65394d4eea4b2b7",
         "sections.learn-more-about-bed-bugs.bullets.0": "d15a7c9b3783053028980a2d914d30111ff74ef4091d22f2bde578d68842507f",
         "sections.learn-more-about-bed-bugs.bullets.1": "77edb890ab7f933aa57b1921ec8cd084a9394e61f3c97803ac6816292827ec94",
+        "sections.learn-more-about-bed-bugs.bullets.2~2": "f7ba990d04487a08438dac94b9b245893a6c25fe23bc408ab7a31f4e1bcb4c12",
         "sections.learn-more-about-bed-bugs.bullets.2": "3d3b99020de6feef1334a46517db3986081a754d5ede1ba1fc693724bba99cb0",
         "sections.learn-more-about-bed-bugs.bullets.3": "80b141d43a97de2d31346181a6fad05d00b19affac55ea38a2f67da769d515e0",
         "sections.learn-more-about-bed-bugs.bullets.4": "acc5bfb32012975c435bb8b662f9dd5ba7833d57ef701d1eb8a8da379d05f69b",
@@ -862,7 +863,7 @@
       }
     },
     "report-animal-waste-on-property": {
-      "contentHash": "a3fa9b2e928ce451e384effd62e3b52c67f5e7eb95e7caeb9c7a5a951c0dd0ad",
+      "contentHash": "365b9296a0e0eab2feaadd2d09be92e98cb6307fa4d33d8aecacb7b528bd702a",
       "fieldHashes": {
         "primaryAgency": "8a2847f0ee854052d30378a2ef091f979c9737bbd8219086a1e04dc0abd84f9f",
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",
@@ -879,7 +880,7 @@
       }
     },
     "report-bed-bugs": {
-      "contentHash": "c3e284d5947204b4a9658ffe9e56d9fd473ad89934d3e0b12e961cbd8fbd6234",
+      "contentHash": "42d8f647e6faf132496f928088bd7de4a1fe46263d9408fabc4a147f77ddbdcd",
       "fieldHashes": {
         "primaryAgency": "8a2847f0ee854052d30378a2ef091f979c9737bbd8219086a1e04dc0abd84f9f",
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",
@@ -889,14 +890,15 @@
         "sections.what-to-do.heading": "f47f1edc44ed92664871471b0cf8f463813788468c23680c12f52a36c2827e26",
         "sections.while-you-wait-tips-to-help-with-the-problem.bullets.0": "34a56d2db71aa94566b31eb78aa01b9044a520d5027cbf24bb24ae093618fc38",
         "sections.while-you-wait-tips-to-help-with-the-problem.bullets.1": "1dd1a68650669373998dc3a75e745ce9d4494fcc275dc312dcb7435df4e81c64",
+        "sections.while-you-wait-tips-to-help-with-the-problem.bullets.2": "cb107509f2f2fb5ba0c0df4bdc59f02d12eda1d696bcb23c3d1d32024da463f2",
         "sections.while-you-wait-tips-to-help-with-the-problem.heading": "2a48c1f432e88393905002da6aa167655da242c845c0b5d3b6a2c5ac736416c1",
         "sections.while-you-wait-tips-to-help-with-the-problem.paragraphs.0": "a83aaa4be38220b027448141140b29300f531ed7b868b5f748ad42e685cc3a83",
-        "summary": "645ce8381f3373045edda702a2efe2162496f928e327e3d88696a410d308314e",
+        "summary": "d59975161d1aad905bb6a3b659ee4e26140ce4d16514bced275e141e8d5c141a",
         "title": "2f3c7cefe0b5a94ed5e9bfc7a14da99df743a6098a13bdd48b1d87473332aee8"
       }
     },
     "report-cockroaches-or-other-insects": {
-      "contentHash": "be37d81f06b7a9c936fc332d2e8d1898d1c1186e8d73adb34460a361566ca1be",
+      "contentHash": "993bb6e83df6d7621d8bab2371d5e76c6c56ccb69abe72aa7fbcce7b87bb8945",
       "fieldHashes": {
         "primaryAgency": "8a2847f0ee854052d30378a2ef091f979c9737bbd8219086a1e04dc0abd84f9f",
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",
@@ -915,7 +917,7 @@
       }
     },
     "report-garbage-clutter-or-overgrown-plants": {
-      "contentHash": "10ebee8f930c3c3ce2f54eb1e85b97dc606592f9fcd15e4c7000f1d1bc3e7721",
+      "contentHash": "8c47426206686bd2ade19886ebcf0d657244b051314b2cfab4d9ef2f525871d8",
       "fieldHashes": {
         "primaryAgency": "8a2847f0ee854052d30378a2ef091f979c9737bbd8219086a1e04dc0abd84f9f",
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",
@@ -982,7 +984,7 @@
       }
     },
     "report-mold": {
-      "contentHash": "8327432fdae82049d86d06b8b3ff19c875e1eed25013294b9bf5ef94b9c421ba",
+      "contentHash": "6d258999d50f90c3b370eb7de049a100f76513321fcafb9be98d5b173838a0ce",
       "fieldHashes": {
         "primaryAgency": "8a2847f0ee854052d30378a2ef091f979c9737bbd8219086a1e04dc0abd84f9f",
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",
@@ -998,7 +1000,7 @@
       }
     },
     "report-mosquitoes-or-standing-water": {
-      "contentHash": "99ab4a74585fc127b3b656c8275d6dcc7d2c2b36e2cedb34cb14bd74ff20d3b6",
+      "contentHash": "ce2057abfd4912d67033181df3bdd77ec5f0a8bd5ee7945ddd179a450e460d8e",
       "fieldHashes": {
         "primaryAgency": "8a2847f0ee854052d30378a2ef091f979c9737bbd8219086a1e04dc0abd84f9f",
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",
@@ -1016,7 +1018,7 @@
       }
     },
     "report-pigeon-droppings-nesting-or-feeding": {
-      "contentHash": "8b0879307f3b4ccc221dfb474540ef6e6fc300da2b29f72f390dafc2de8e1b9f",
+      "contentHash": "2519a97a24482e9cd537ff22eeb2486943f4375a948671f8ebbb69e7fbecfddb",
       "fieldHashes": {
         "primaryAgency": "8a2847f0ee854052d30378a2ef091f979c9737bbd8219086a1e04dc0abd84f9f",
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",
@@ -1033,7 +1035,7 @@
       }
     },
     "report-rats-or-mice": {
-      "contentHash": "107ca6b2ac83242c22f37795a357a0f92541ff5cbed776de15d2f2d91bcfae01",
+      "contentHash": "0ab0bf51fdcfe80998fe822940195f39bfb5426c823d3fd138e6ac1d766be5e0",
       "fieldHashes": {
         "primaryAgency": "8a2847f0ee854052d30378a2ef091f979c9737bbd8219086a1e04dc0abd84f9f",
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",
@@ -1053,7 +1055,7 @@
       }
     },
     "report-sewage-leak-or-backup": {
-      "contentHash": "fe4eb1abab4e0d735c6b6cb929eb577b3c2ef44b9a122c9882d468aa1abe7da4",
+      "contentHash": "43e7ab421f685a56d0d13a210b3ead94708fecfb377f12b2faf76a1ee13203ff",
       "fieldHashes": {
         "primaryAgency": "8a2847f0ee854052d30378a2ef091f979c9737bbd8219086a1e04dc0abd84f9f",
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",

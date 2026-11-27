@@ -41,7 +41,7 @@ const PILOTS = [
 	{
 		slug: 'report-rats-or-mice',
 		first: ['title', 'description', 'primary_agency', 'cost', 'things_to_know', 'what_to_do'],
-		empty: ['Contact us (empty)', 'Topics (empty)'],
+		empty: ['Cost (empty)', 'Topics (empty)'],
 		tray: 0
 	},
 	{
