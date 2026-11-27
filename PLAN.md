@@ -1,34 +1,121 @@
-# PLAN — Karl rebuild sidebar UX
+# PLAN — Leg 1: land what's waiting, decide what's blocked, start the UI copy review
 
-Branch `feat/karl-sidebar-ux`, cut from `origin/main` (`02d88be`), in worktree `../wt-karl-sidebar-ux`
-(the main checkout is shared with another session). Source: a pasted Laws-of-UX critique of the
-walkthrough drawer (`src/lib/components/workspace/WalkthroughDrawer.svelte`).
+Branch `docs/ui-copy-review-plan`, cut from `origin/main` (`f9f54b8`), in worktree `../wt-ui-copy-review`
+(the main checkout is shared).
 
-- [x] **1. Section labels.** Steps carry the section `heading` (review-record overlay included, via
-      `karl-transcript.js` `emitSection`) and `sectionIndex`. Rows and the active card lead with the
-      heading; `rawName` stays as the mono tag; the card keeps `uiLabel` visible. Corpus-wide unit test.
-- [x] **2. Copy & next.** One-value steps: primary "Copy & next →" copies, marks, advances; a clipboard
-      failure neither marks nor advances and says so. Multi-value steps keep per-value Copy and a
-      "Done · next →" primary; no-value steps "Mark done · next →". Focus moves into the new card; an
-      `aria-live` region announces the copy. Landing guide copy updated. jsdom drawer test.
-- [x] **3. Clutter.** Drawer title becomes `sr-only` (still the focus target); subtitle drops the
-      duplicated copied count; the mapping box collapses into the card's header row with a `rawName` pill,
-      keeping the CHOOSE/FLAG instructions. Navy header untouched.
-- [x] **4. No-paste badges.** Rows for steps with no values carry a badge by outcome — Choose, Blocking /
-      Flag, or Empty. No skip-empty toggle (it could hide a blocking gap) — deliberately skipped.
-- [x] **5. Preview sync.** `Section.svelte` root gets `data-section-index`; the active step's
-      `sectionIndex` scrolls the mockup preview (`scrollTop`, not `scrollIntoView`) and holds a highlight
-      on that section until the step changes or the walkthrough exits.
-- [x] **6. Verify.** Unit tests, `bun run check:ratchet`, `lint:ratchet`, `format:ratchet`, build, and a
-      Playwright screenshot of an Information-heavy page from a worktree dev server (not :5173).
+What is still open, measured 2026-11-26 against `main`:
 
-Notes from the browser check (1600×1000, bed-bugs Information page, worktree dev server :5199):
-- Rows first used one line, which left ~20 characters of heading beside the `information_section` tag
-  and cut most headings before the word that tells them apart. They now clamp at two lines.
-- A pre-existing sideways scrollbar in the step list came from an unwrapped photo-credit URL in
-  `.value-text`; fixed with `overflow-wrap: anywhere` (display only — Copy writes the value unbroken).
-- Copy & next observed end to end: clipboard written, Step 2 active, focus on the new card, live region
-  "Copied Page title", navy count 1 of 16. Clicking step 9 scrolled the mockup to "Check for bed bugs" and
-  marked only that section. The one console error was a local Supabase token refresh 400, unrelated.
-- Skip-empty toggle deliberately not built: it could hide a blocking gap.
-- Gates 2026-11-26: unit 1360/1360, svelte-check 0/0, eslint 2, prettier 40 (all at baseline), build ok.
+- `docs/superpowers/plans/2026-11-24-transaction-review-fixes.md` — built (#210, #212); only Track C
+  questions C3, C4, C6–C9 remain.
+- `docs/plans/site-structure.md` — PR 1 follow-up, PR 3 (minus the records merge), PR 4, PR 5.
+- PR #247 (`fix/workspace-review-findings`) — done, open, unmerged.
+- The UI copy review below.
+
+Leg 1 is the work that needs no product decision, plus one list that gets the decisions made. Leg 2
+builds whatever that list settles.
+
+- [x] **L1. Land #247.** Nothing to land: #251 (`9789a0a`) had carried all eight of its commits, and
+      merging `origin/main` into it gave a tree identical to `main`. Closed as superseded 2026-11-26;
+      branch and worktree deleted.
+- [x] **L2. Site structure PR 5: flag proposed pages in data.** `proposed: true` on the proposed modules,
+      replacing the comment in `index.ts`. That comment says ten; 9 modules carry "PROPOSED PAGE" today —
+      find the tenth (merged or retired?) before writing the count down; a corpus test pins that the
+      flag and the note agree; the review queue can filter on it. Test first; `corpus:lock`, `verify`,
+      screenshot of the queue filter. Its own branch and PR.
+- [x] **L3. One decision list.** `docs/reviews/2026-11-26-open-decisions.md`, measured over the corpus
+      on `f9f54b8`. Four items are already settled (C4, C8, C7b, the after-report page); nine need a
+      decision, and one of those (SS-3b, the workshops) needs a fact from HHVC.
+- [x] **L4. UI copy review, tasks 1–3 below** (baseline, inventory, rendered walk). Read-only, so it can
+      run beside L2. Starts after L1.
+
+## Leg 2 — build the 2026-11-26 rulings
+
+From `docs/reviews/2026-11-26-open-decisions.md`. Copy changes shift positional field ids, so count
+production edits and comments on each touched page first (0 on 2026-11-24).
+
+- [x] **M1. Fee page copy (C6, C7a)** — one content PR. `pay-healthy-housing-fee.ts`: a description
+      that doesn't restate the title; heading "Pay your invoice or contact us"; cut the second
+      "annual fee supports" callout. `bed-bugs-…` Information page: a description that doesn't restate
+      the title. `classifySection` before/after on each touched section, `corpus:lock`, `verify`, a
+      screenshot of each page, and the `docs/karl-transaction-compliance.csv` rows if a section changed.
+- [x] **M2. `findOrphans` counts prose links (SS-1)** — test first: a page reachable only through a
+      `[text](pageKey)` link is not an orphan. Then tick site-structure PR 1's follow-up.
+- [x] **M3. Record the rulings in the source plans** — Track C rows C3, C4, C6–C9 and site-structure
+      PR 3 items marked Decided / Closed with a pointer to the decisions doc. SS-3a needs no build: the
+      two Notice of Violation pages already link each other.
+
+Still open, not in leg 2: SS-3b (HHVC fact), SS-4, SS-D1, SS-D2.
+
+Not in leg 1: PR 4's `pages.path` migration (a merge applies it to production, so it waits on L3's
+slug decision), and every copy fix (waits on the review report).
+
+---
+
+## UI copy review: badly formatted text and text that adds nothing
+
+This part of the plan is the review; fixes land later, in their own branches.
+
+## Scope
+
+**In:** every string the review tool itself shows a reviewer — `src/routes/**`, and
+`src/lib/components/{workspace,landing,review}/**`, `KarlChip`, `KarlOrphanNotice`, `DraftBanner`,
+`EditTarget`. That covers headings, body copy, button labels, `placeholder`, `title`, `aria-label`,
+empty / loading / error states, toasts and live-region announcements, and server error messages that
+reach the UI (`src/routes/api/**`, `$lib/ai/generate`).
+
+**Out:**
+
+- The mockup corpus (`src/lib/data/**`) — it is the material under review, and editor notes drive the
+  card classifier (a reword can silently reclassify a section).
+- `src/lib/components/{sfgov,blocks}/**` — they reproduce SF.gov chrome; their fixed strings ("On this
+  page", footer) should match SF.gov, not be improved. Flag a mismatch with SF.gov, nothing else.
+- `src/lib/server/ai/vendor/**` — kept diffable against upstream.
+- `src/routes/demo/**`, `src/routes/sfgov-components` — developer pages.
+
+**Overlap:** none left. `fix/workspace-review-findings` (#247) turned out to be in `main` already via
+#251, so `main` is the baseline.
+
+## What counts as a finding
+
+| Category         | Examples                                                                                                                                                                         |
+| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Format**       | raw markdown or `**` leaking; bad wrap / clipping / overflow; `1 pages`; `(0)` counts; mixed title/sentence case; mixed `…`/`...`, `→`/`->`; stray punctuation or double spaces |
+| **Redundant**    | text that repeats a heading, a button label or a count shown beside it; intro paragraphs that restate the UI; a tooltip identical to its label                                   |
+| **Internal**     | schema / field ids, slugs, `draft:<uuid>`, model names, HTTP codes or "Supabase" shown to a reviewer who cannot act on them                                                      |
+| **Dead end**     | an empty or error state that says what happened but not what to do next                                                                                                          |
+| **Inconsistent** | the same thing named two ways ("page" / "mockup", "decision" / "status", "Karl" / "CMS")                                                                                         |
+
+Not findings: `sr-only` text and `aria-live` announcements that exist for screen readers (judge them by
+ear, not by eye); the walkthrough's CHOOSE / FLAG instructions (kept deliberately, see the Karl sidebar
+PLAN in git history).
+
+## Tasks
+
+- [x] **1. Baseline.** `f9f54b8` (#262).
+- [x] **2. String inventory.** A script (scratchpad, not committed) extracts every in-scope text node and
+      `placeholder` / `title` / `aria-label` / message literal with `file:line` into a CSV. Done when the
+      row count is recorded here and every in-scope file appears at least once. **615 rows, 34/35 files**
+      (`PageRow.svelte` has no fixed copy). Gap: Analysis/Karl copy in `src/lib/{analysis,karl}/**`,
+      `Section.svelte`, `WhatToKnow.svelte` is outside the list — add it before task 4.
+- [x] **3. Rendered walk.** 78 shots, local stack. **Not reached:** draft states (local `POST /api/pages`
+      500 — missing `GRANT SELECT ON public.reviews TO service_role`), AI 400 (the 501 key check runs first),
+      empty queue, some 390px panels. Playwright on a dev server on a free port (not :5173), at 1440 px and 390 px,
+      local Supabase: signed-out `/`, `/login`, signed-in `/`, a corpus `/review/<slug>` with each panel
+      (Fields, Rethink, Analysis, Review, queue, site map, blueprint), the Karl walkthrough, a draft in
+      each state (drafting / ready / failed / stale), `/review/<bad-slug>` (404), an empty queue, an AI
+      error (501 with no key; 400 over-length). Screenshot each; done when every state has a shot.
+- [ ] **4. Classify.** One row per finding: surface, `file:line`, current text, category, severity
+      (blocks understanding / noise / polish), proposed action (delete, rewrite to X, move to tooltip or
+      `sr-only`). Wrapping and clipping come from task 3 only — the CSV cannot see them.
+- [ ] **5. Guard check.** For each proposed change, grep `tests/**` and `**/*.e2e.ts` for the string
+      (`getByText`, `getByRole({ name })`); note which tests must change with it.
+- [ ] **6. Report.** Findings in `docs/reviews/<date>-ui-copy-review.md`, grouped by surface, highest
+      severity first; screenshots referenced, not committed. Reviewed with the user before any fix.
+- [ ] **7. Fixes (after approval).** One branch / PR per surface (landing, review workspace, walkthrough,
+      drafts, errors). Each PR: unit + e2e green, `check:ratchet`, `lint:ratchet`, `format:ratchet`,
+      and before/after screenshots of the changed states.
+
+## Decisions
+
+- Review first, fix later: deleting copy is a product call, so nothing is removed on the strength of
+  the inventory alone.

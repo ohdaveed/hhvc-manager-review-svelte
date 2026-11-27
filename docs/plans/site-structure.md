@@ -28,17 +28,19 @@ changed pages, CI green. Merging publishes production on Netlify — ask first.
 
 ## PR 3 — Collapse overlapping pages
 
-- [ ] Notice of Violation: `stepCorrectViolation` is the spine; fold in `tenantNoticeSteps`
-- [ ] Records: merge `findViolations` into `findRecords`; `recordsHub` routes by building type
-- [ ] One canonical "what happens after you report" page (`afterReport`)
-- [ ] Merge the two workshop campaigns
+- [x] ~~Notice of Violation: `stepCorrectViolation` is the spine; fold in `tenantNoticeSteps`~~ — **decided 2026-11-26: don't fold** (owner vs tenant readers); the two pages already link each other
+- [x] Records: merge `findViolations` into `findRecords`; `recordsHub` routes by building type — #212 (`1a5ad3f`)
+- [x] One canonical "what happens after you report" page (`afterReport`) — closed 2026-11-26: #210 made it so
+- [ ] Merge the two workshop campaigns — **open: needs HHVC** (one program with one sign-up → merge; two → retitle by pest)
 
 ## PR 4 — Consistent slugs and keys (touches the database)
 
+> **2026-11-26:** the slug scheme (SS-4) is not approved; this PR waits on a ruling. See `docs/reviews/2026-11-26-open-decisions.md`.
+
 - [ ] Slugs: `<type>/<name>` for non-transactions, `<name>` for transactions
-- [ ] Rename misleading keys/files (`pestsTopic`, `respond-to-notice-of-violation.ts`)
+- [ ] Rename misleading keys/files (`pestsTopic`, `respond-to-notice-of-violation.ts`) — the file went in #212; `pestsTopic` remains
 - [ ] `pages.path` migration, shaped like `20260829120000_rename_agency_page_paths.sql`
-- [ ] Merge applies the migration to production; push staging by hand after
+- [ ] Merge applies the migration to production (no staging project since 2026-11-26)
 
 ## PR 5 — Proposed pages flagged in data
 
