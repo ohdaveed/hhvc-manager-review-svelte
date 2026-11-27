@@ -67,6 +67,7 @@
 	data-component={section.component}
 	data-karl-section={karl ? (karl.rawName ?? 'unplaced') : undefined}
 	data-karl-status={karl?.status}
+	data-section-index={index}
 >
 	{#if karl}
 		<KarlChip as="p" status={karl.status} label={karl.label} reasons={karl.reasons} />

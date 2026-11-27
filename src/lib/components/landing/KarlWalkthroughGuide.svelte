@@ -88,13 +88,14 @@
 					<strong class="font-semibold">Start the Karl walkthrough</strong> under the decision.
 				</li>
 				<li>
-					Use <strong class="font-semibold">Open Karl add-page form</strong> to start the page in
-					Karl, then follow the steps: each names the Karl field and has a
-					<strong class="font-semibold">Copy</strong> button for its text.
+					Use <strong class="font-semibold">Open Karl add-page form</strong> to start the page in Karl,
+					then follow the steps: each names the Karl field, and the mockup scrolls to the section it comes
+					from.
 				</li>
 				<li>
-					Paste it into Karl and choose <strong class="font-semibold">Mark copied · next</strong>.
-					Your progress is kept on this device.
+					Choose <strong class="font-semibold">Copy &amp; next</strong> and paste into Karl. A step
+					with several fields has a <strong class="font-semibold">Copy</strong> button for each. Your
+					progress is kept on this device.
 				</li>
 				<li>
 					Fix anything flagged <strong class="font-semibold">Resolve before saving</strong> or
