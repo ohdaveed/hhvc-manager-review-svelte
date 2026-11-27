@@ -699,6 +699,8 @@ type InventoryPanel = {
 	uiLabel: string;
 	order: number;
 	required: boolean;
+	/** The field map's required column, verbatim: `yes (radio)` qualifies `required`. */
+	requiredDoc?: string;
 	repeatable: boolean;
 	blockTypesDoc?: string;
 	subPanelOf?: string;
@@ -731,7 +733,10 @@ export function schemaFor(type: unknown): ContentTypeSchema | null {
 			label: formLabel(panel.uiLabel),
 			...(spec.helpLabels?.[panel.rawName] ? { helpLabel: spec.helpLabels[panel.rawName] } : {}),
 			order: panel.order,
-			required: Boolean(panel.required),
+			// `yes (radio)` is a requirement inside an optional block (Cost, field
+			// map E3): Karl saves the page without the block. Same reading as
+			// `blocksSave` in `$lib/karl/walkthrough`.
+			required: Boolean(panel.required) && !String(panel.requiredDoc ?? '').includes('radio'),
 			repeatable: Boolean(panel.repeatable),
 			blockTypes: panel.blockTypesDoc ?? '',
 			...(panel.subPanelOf ? { subPanelOf: panel.subPanelOf } : {}),

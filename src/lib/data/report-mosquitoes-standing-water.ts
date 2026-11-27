@@ -5,11 +5,20 @@ export const mosquitoReport = {
 	summary:
 		'Biting insects or breeding water in a yard, building, public space, or nearby catch basin.',
 	primaryAgency: 'Healthy Housing and Vector Control',
+	// Karl's Contact us block (get_help -> Phone number), in the order and wording
+	// live SF.gov 311 report pages use (2026-11-26 page review). In the step text
+	// it would push the 311 step past the three-sentence paragraph limit.
+	contact: {
+		phone: [
+			'311',
+			'415-701-2311 if you are outside of San Francisco',
+			'TDD/TTY 711 if you are deaf, hard of hearing, or have a speech disability'
+		]
+	},
 	reading: 'Grade 6',
 	editorNote:
 		'Report regroup (Decided, Nov 24, 2026), built 2026-11-25. New page, one of the 9 condition pages: HHVC finds water sources and treats them, so mosquitoes get their own Transaction. The dead-bird West Nile referral moves here from the insects page, and Mosquito Control Program now links here instead of holding its own report section. Things to know follows the Decided order: item 1 is what HHVC checks, item 2 is access. The old insects page was rebuilt as "Report cockroaches or other insects" without its mosquito content (2026-11-25). Decided: move this page up in the Topic and Agency lists during mosquito season. Shared report text lives on What happens after you report and Tenant rights.',
 	whatToKnow: {
-		cost: 'Free',
 		thingsToKnow: [
 			{
 				label: 'What we check',
@@ -28,17 +37,10 @@ export const mosquitoReport = {
 			kind: 'body',
 			steps: [
 				{
-					title: 'Start your report',
+					title: 'Gather your details',
 					text: [
-						'Use 311 to report mosquitoes or standing water to the City. If the problem is urgent, report now. You can report mosquitoes where you live or standing water you see nearby, or report for someone else.',
-						'Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.'
+						'Have these details ready before you start. Only share what applies to your situation:'
 					],
-					button: 'Report through 311',
-					karl: 'what_to_do -> Section. Section title: "Start your report". Section specifics: Text block (these 2 paragraphs, the second being the one-line SRO note every report page carries, Decided) + Button link block ("Report through 311").'
-				},
-				{
-					title: 'Tell us where the water is',
-					text: ['Only share the details that apply to your situation:'],
 					bullets: [
 						'**What you saw:** Biting mosquitoes, or small wriggling larvae in water.',
 						'**Where the water is:** Buckets, planters, saucers, clogged gutters, fountains, pools, or a street catch basin.',
@@ -47,11 +49,20 @@ export const mosquitoReport = {
 						'**Your contact info:** Leave a phone number or email if you want an inspector to contact you.'
 					],
 					callout: {
-						karl: 'Callout block inside the "Tell us where the water is" Section specifics: single rich text field, no separate title. Text: the one confidentiality sentence (Decided: the same on every page, once per page) plus the photo note.',
+						karl: 'Callout block inside the "Gather your details" Section specifics: single rich text field, no separate title. Text: the one confidentiality sentence (Decided: the same on every page, once per page) plus the photo note.',
 						text: 'We never share your name or contact information. You do not need to send photos.',
 						title: false
 					},
-					karl: 'what_to_do -> Section. Section title: "Tell us where the water is". Section specifics: Text block (intro sentence + bulleted checklist) + Callout block below.'
+					karl: 'what_to_do -> Section. Section title: "Gather your details". Section specifics: Text block (intro sentence + bulleted checklist) + Callout block below.'
+				},
+				{
+					title: 'Start your report',
+					text: [
+						'Use 311 to report mosquitoes or standing water to the City. If the problem is urgent, report now. You can report mosquitoes where you live or standing water you see nearby, or report for someone else.',
+						'Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.'
+					],
+					button: 'Report through 311',
+					karl: 'what_to_do -> Section. Section title: "Start your report". Section specifics: Text block (these 2 paragraphs, the second being the one-line SRO note every report page carries, Decided) + Button link block ("Report through 311").'
 				},
 				{
 					title: 'See a dead bird? Report it to the State',

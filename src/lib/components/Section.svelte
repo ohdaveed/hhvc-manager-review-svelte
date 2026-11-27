@@ -52,6 +52,14 @@
 	// it is part of the reading order without renaming the heading.
 	const outline = outlineContext();
 	const karl = $derived(outline?.placements?.sections.get(key));
+	// Outline off: still name a section Karl has no settled home for, beside its
+	// Rethink control. Only the two gap statuses -- a pill on every placed
+	// section would be noise, and the outline already shows those in full.
+	const gap = $derived.by(() => {
+		if (karl) return undefined;
+		const s = outline?.always?.sections.get(key);
+		return s && (s.status === 'unconfirmed' || s.status === 'unplaced') ? s : undefined;
+	});
 </script>
 
 <div
@@ -63,21 +71,28 @@
 	{#if karl}
 		<KarlChip as="p" status={karl.status} label={karl.label} reasons={karl.reasons} />
 	{/if}
-	{#if editable}
+	{#if editable || gap}
 		<div class="page-section-chrome">
-			<button
-				type="button"
-				class="rethink-section"
-				data-rethink-section={key}
-				aria-label={`Rethink ${section.heading || label}`}
-				aria-pressed={sectionSelected}
-				onclick={(event) => {
-					event.stopPropagation();
-					pageStore.selectSection(key);
-				}}
-			>
-				Rethink section
-			</button>
+			{#if gap}
+				<!-- Status only: the reason is the outline's job, and here it squeezed
+				     the Rethink button onto two lines. -->
+				<KarlChip status={gap.status} />
+			{/if}
+			{#if editable}
+				<button
+					type="button"
+					class="rethink-section"
+					data-rethink-section={key}
+					aria-label={`Rethink ${section.heading || label}`}
+					aria-pressed={sectionSelected}
+					onclick={(event) => {
+						event.stopPropagation();
+						pageStore.selectSection(key);
+					}}
+				>
+					Rethink section
+				</button>
+			{/if}
 		</div>
 	{/if}
 
@@ -221,6 +236,8 @@
 	.page-section-chrome {
 		display: flex;
 		justify-content: flex-end;
+		align-items: center;
+		gap: 8px;
 	}
 
 	.rethink-section {
@@ -233,5 +250,6 @@
 		border-radius: 3px;
 		background: transparent;
 		cursor: pointer;
+		white-space: nowrap;
 	}
 </style>

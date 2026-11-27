@@ -3,21 +3,26 @@ export const bedBugReport = {
 	type: 'Transaction',
 	title: 'Report bed bugs',
 	summary:
-		'Bites, small brown insects, or dark spots on bedding in a unit or building, and what the owner must do.',
+		'Report bed bugs in your unit or building to 311, and learn what property owners must do.',
 	primaryAgency: 'Healthy Housing and Vector Control',
+	// Karl's Contact us block (get_help -> Phone number), in the order and wording
+	// live SF.gov 311 report pages use (2026-11-26 page review). In the step text
+	// it would push the 311 step past the three-sentence paragraph limit.
+	contact: {
+		phone: [
+			'311',
+			'415-701-2311 if you are outside of San Francisco',
+			'TDD/TTY 711 if you are deaf, hard of hearing, or have a speech disability'
+		]
+	},
 	reading: 'Grade 6',
 	editorNote:
-		'Report regroup (Decided, Nov 24, 2026), built 2026-11-25. New page, one of the 9 condition pages. Scope is the Decided one: bed bugs in a unit or building, including owner duties, unit prep and adjacent units. Text is carried from the bed bug lines of "Report cockroaches, mosquitoes, and other insects". The 2-working-day treatment rule comes from the drafts (writing audit row 132) and is still on the To confirm list, so it is flagged unverified. Unit prep links the existing Step by step rather than repeating it; that page cannot go in Related, which takes only Transaction, Information, Campaign and Topic pages.',
+		'Report regroup (Decided, Nov 24, 2026), built 2026-11-25. New page, one of the 9 condition pages. Scope is the Decided one: bed bugs in a unit or building, including owner duties, unit prep and adjacent units. Text is carried from the bed bug lines of "Report cockroaches, mosquitoes, and other insects". The 2-working-day treatment rule comes from the drafts (writing audit row 132) and is still on the To confirm list, so it is flagged unverified. Unit prep links the existing Step by step rather than repeating it; that page cannot go in Related, which takes only Transaction, Information, Campaign and Topic pages. 2026-11-26 (page review): What to know now holds only the confidentiality sentence, placed before the 311 step because fear of retaliation stops people filing; Cost is left blank (optional in Karl, and the live SF.gov 311 report pages omit it); Nearby units moved into Tell the owner as its second bullet and Get your unit ready into While you wait; the UC IPM and EPA links moved to the Information page.',
 	whatToKnow: {
-		cost: 'Free',
 		thingsToKnow: [
 			{
-				label: 'Nearby units',
-				text: 'Bed bugs spread between units. The owner may need to inspect or treat the units next to yours too.'
-			},
-			{
-				label: 'Get your unit ready',
-				text: 'Treatment works only if the unit is ready. [Bed bugs: prevent them, find them, and get ready for treatment](bedBugsInfo) explains what to wash, bag, and leave in place.'
+				label: 'Your privacy',
+				text: 'We never share your name or contact information.'
 			}
 		]
 	},
@@ -30,7 +35,7 @@ export const bedBugReport = {
 				{
 					title: 'Tell the owner',
 					text: [
-						'If you rent, tell the property owner or manager about the bed bugs right away. Owners must look into pest reports from tenants.'
+						'If you rent, tell the property owner or manager about the bed bugs right away. Owners must look into pest reports from tenants. You do not have to wait for the owner before you report to 311.'
 					],
 					bullets: [
 						{
@@ -38,9 +43,24 @@ export const bedBugReport = {
 							unverified: true,
 							unverifiedReason:
 								'Quoted from the draft pages (writing audit row 132) and listed under To confirm in the Nov 24 decisions record. Confirm the rule and its source with HHVC before publication.'
-						}
+						},
+						'Bed bugs spread between units. The owner may also need to inspect or treat the units next to yours.'
 					],
-					karl: 'what_to_do -> Section. Section title: "Tell the owner". Section specifics: one Text block (the paragraph + the owner-duty bullet). Bed bug specific, so it stays here; the general landlord notice lives on Tenant rights.'
+					karl: 'what_to_do -> Section. Section title: "Tell the owner". Section specifics: one Text block (the paragraph + the two owner-duty bullets: the treatment deadline and the adjacent units). Bed bug specific, so it stays here; the general landlord notice lives on Tenant rights.'
+				},
+				{
+					title: 'Gather your details',
+					text: [
+						'Have these details ready before you start. You do not need to send photos. Only share what applies to your situation:'
+					],
+					bullets: [
+						'**What you saw:** Bites, live bugs, shed skins, or small dark spots on bedding or furniture.',
+						'**Where it is:** The address and unit number, and whether neighbors have bed bugs too.',
+						'**When it started:** How long this has been happening.',
+						'**The owner:** Whether you told the owner or manager, and whether treatment has started.',
+						'**Your contact info:** Leave a phone number or email if you want an inspector to contact you.'
+					],
+					karl: 'what_to_do -> Section. Section title: "Gather your details". Section specifics: one Text block (intro, with the photo note, + bulleted checklist). No Callout: on this page the confidentiality sentence sits in What to know, above every step, so the reader sees it before reaching the 311 button.'
 				},
 				{
 					title: 'Start your report',
@@ -50,29 +70,12 @@ export const bedBugReport = {
 					],
 					button: 'Report through 311',
 					karl: 'what_to_do -> Section. Section title: "Start your report". Section specifics: Text block (these 2 paragraphs, the second being the one-line SRO note every report page carries, Decided) + Button link block ("Report through 311").'
-				},
-				{
-					title: 'Tell us what you saw',
-					text: ['Only share the details that apply to your situation:'],
-					bullets: [
-						'**What you saw:** Bites, live bugs, shed skins, or small dark spots on bedding or furniture.',
-						'**Where it is:** The address and unit number, and whether neighbors have bed bugs too.',
-						'**When it started:** How long this has been happening.',
-						'**The owner:** Whether you told the owner or manager, and whether treatment has started.',
-						'**Your contact info:** Leave a phone number or email if you want an inspector to contact you.'
-					],
-					callout: {
-						karl: 'Callout block inside the "Tell us what you saw" Section specifics: single rich text field, no separate title. Text: the one confidentiality sentence (Decided: the same on every page, once per page) plus the photo note.',
-						text: 'We never share your name or contact information. You do not need to send photos.',
-						title: false
-					},
-					karl: 'what_to_do -> Section. Section title: "Tell us what you saw". Section specifics: Text block (intro sentence + bulleted checklist) + Callout block below.'
 				}
 			]
 		},
 		{
 			heading: 'While you wait: tips to help with the problem',
-			karl: 'Maps to supporting_information (Accordions). This accordion uses the mockup-only open flag so the tips are visible without a click — flag for Digital Services that the real accordion renders collapsed. Contents: one Text block (lead paragraph + tips) + a Resources-style external links list (UC IPM, EPA).',
+			karl: 'Maps to supporting_information (Accordions). This accordion uses the mockup-only open flag so the tips are visible without a click — flag for Digital Services that the real accordion renders collapsed. Contents: one Text block (lead paragraph + 2 tips + the prep link to the Information page). Kept lean on purpose (2026-11-26): the UC IPM and EPA links live on Bed bugs: prevent them, find them, and get ready for treatment.',
 			kind: 'body',
 			component: 'supporting',
 			open: true,
@@ -81,21 +84,8 @@ export const bedBugReport = {
 			],
 			bullets: [
 				'**Keep your furniture:** Do not throw out furniture before treatment. Moving it can spread the bugs.',
-				'**Wash on high heat:** Wash and dry bedding and clothes on the hottest setting they can take.'
-			],
-			cards: [
-				{
-					title: 'UC IPM Pest Notes: Bed bugs',
-					text: 'University of California guidance on identifying and treating bed bugs.',
-					url: 'https://ipm.ucanr.edu/home-and-landscape/bed-bugs/',
-					karl: 'External link inside the supporting_information accordion. Third-party UC IPM reference.'
-				},
-				{
-					title: 'EPA: Bed bugs',
-					text: 'Federal guidance on finding and treating bed bugs.',
-					url: 'https://www.epa.gov/bedbugs',
-					karl: 'External link inside the supporting_information accordion. Third-party EPA reference.'
-				}
+				'**Wash on high heat:** Wash and dry bedding and clothes on the hottest setting they can take.',
+				'**Get your unit ready:** Treatment works only if the unit is ready. [Bed bugs: prevent them, find them, and get ready for treatment](bedBugsInfo) explains what to wash, bag, and leave in place.'
 			]
 		},
 		{

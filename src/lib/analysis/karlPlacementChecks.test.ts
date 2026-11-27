@@ -38,7 +38,7 @@ describe('the Analysis panel reads the same placements as the Karl outline', () 
 		expect(byId('rodentsReport', 'karl-needs-fix').status).toBe('pass');
 		const edited = byId('rodentsReport', 'karl-needs-fix', [
 			{
-				field_id: 'sections.what-to-do.steps.0.button',
+				field_id: 'sections.what-to-do.steps.1.button',
 				new_content: 'Report this problem through 311 now'
 			}
 		] as never);

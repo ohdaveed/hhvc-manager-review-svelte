@@ -15,7 +15,15 @@ import type { PagePlacements } from './placement';
 
 const KEY = Symbol('karl-outline');
 
-export type OutlineContext = { readonly placements: PagePlacements | null };
+export type OutlineContext = {
+	readonly placements: PagePlacements | null;
+	/**
+	 * The same placements whether the outline is on or off (still `null` on a
+	 * draft). Read only for the section pill beside Rethink, which flags a
+	 * Karl-mapping gap without the reviewer opening the outline.
+	 */
+	readonly always?: PagePlacements | null;
+};
 
 export const setOutlineContext = (context: OutlineContext): OutlineContext =>
 	setContext(KEY, context);
