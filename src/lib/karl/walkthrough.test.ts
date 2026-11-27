@@ -3,6 +3,7 @@ import { allPages, pagesByKey } from '$lib/data';
 import { buildWalkthrough, karlFormUrl, staleEditsMarkdown } from './walkthrough';
 import { gapPages, pagesByKeyWithGaps } from './gapFixtures';
 import { toStorePage } from '$lib/stores/pageData.svelte';
+import { copyAsRecorded } from '$lib/corpus/overlay';
 
 /**
  * The walkthrough is GENERATED from the Karl panel inventory, so these tests
@@ -128,22 +129,22 @@ describe('buildWalkthrough', () => {
 	 */
 	describe('carries what the transcript carries', () => {
 		it("transcribes the reviewer's edits, not the original mockup copy", () => {
+			// The page carries the copy (`./transcript`): handed the copy as
+			// recorded, the walkthrough transcribes the edit; handed the base page,
+			// the mockup's own title.
 			const page = allPages.find((p) => p.type === 'About us')!;
-			const record = {
-				section_edits: {},
-				decision: 'Approved',
-				edited_title: 'A TITLE THE REVIEWER WROTE'
-			};
+			const recorded = copyAsRecorded(page, [
+				{ field_id: 'title', new_content: 'A TITLE THE REVIEWER WROTE' }
+			]);
+			const record = { section_edits: {}, decision: 'Approved' };
 
 			const titleOf = (w: ReturnType<typeof buildWalkthrough>) =>
 				w.steps.flatMap((s) => s.values).find((v) => v.label === 'Title')?.value;
 
-			expect(titleOf(buildWalkthrough(page, pagesByKey, record))).toBe(
+			expect(titleOf(buildWalkthrough(recorded, pagesByKey, record))).toBe(
 				'A TITLE THE REVIEWER WROTE'
 			);
-			// Without the record it is the mockup's own title -- the state the
-			// drawer was in while the Help tab showed the edited version.
-			expect(titleOf(buildWalkthrough(page, pagesByKey))).toBe(page.title);
+			expect(titleOf(buildWalkthrough(page, pagesByKey, record))).toBe(page.title);
 		});
 
 		it('names chooser options instead of stringifying the record', () => {
@@ -215,11 +216,10 @@ describe('buildWalkthrough', () => {
 
 		it('renders the markdown export from the same transcript as the steps', () => {
 			const page = allPages.find((p) => p.type === 'About us')!;
-			const w = buildWalkthrough(page, pagesByKey, {
-				section_edits: {},
-				decision: 'Approved',
-				edited_title: 'A TITLE THE REVIEWER WROTE'
-			});
+			const recorded = copyAsRecorded(page, [
+				{ field_id: 'title', new_content: 'A TITLE THE REVIEWER WROTE' }
+			]);
+			const w = buildWalkthrough(recorded, pagesByKey, { section_edits: {}, decision: 'Approved' });
 			expect(w.markdown).toContain('Karl transcript');
 			expect(w.markdown).toContain('A TITLE THE REVIEWER WROTE');
 			// Approved, so the banner must be absent -- it is the one thing the

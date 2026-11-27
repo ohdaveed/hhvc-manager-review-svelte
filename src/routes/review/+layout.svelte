@@ -75,6 +75,14 @@
 	const currentPath = $derived(routePathFor($page.params));
 	const pageData = $derived(pageStore.pages.find((p) => p.id === currentPath));
 
+	// This page's review record: its decision, edited slug and stale-edit flags.
+	// The Karl outline, the Blueprint and the walkthrough all take this one.
+	const recordHere = $derived(
+		pageData
+			? reviewRecordFor(pageData.id, $pagesStore, $editsStore, pageStore.staleEditsOn(pageData.id))
+			: null
+	);
+
 	// Built on demand rather than eagerly: it walks the page against the whole
 	// Karl panel inventory, and 28 of the 29 pages are not the one on screen.
 	//
@@ -83,21 +91,15 @@
 	// - `pagesByKey`, NOT `pageStore.pages`. The transcript resolves card and
 	//   link destinations by TARGET KEY; handed the array it resolved none, and
 	//   130 chooser labels across the corpus degraded to raw keys.
-	// - the review record, NOT `null`. The walkthrough rebuilds the page the
-	//   reviewer APPROVED, so it has to transcribe their edits; without it the
-	//   drawer walked an editor through the original mockup copy while the
-	//   Help tab's markdown showed the edited version of the same field.
+	// - the copy as RECORDED, not the page on screen. The walkthrough rebuilds
+	//   the page the reviewer approved: their saved edits, and none of the typing
+	//   still unsaved on the mockup. `pageData` is the copy as shown.
 	const walkthrough = $derived(
 		pageStore.mode === 'walkthrough' && pageData
 			? buildWalkthrough(
-					pageData,
+					pageStore.recordedPage(pageData.id, $pagesStore, $editsStore) ?? pageData,
 					pagesByKey,
-					reviewRecordFor(
-						pageData.id,
-						$pagesStore,
-						$editsStore,
-						pageStore.staleEditsOn(pageData.id)
-					)
+					recordHere
 				)
 			: null
 	);
@@ -114,12 +116,7 @@
 		pageData && !onDraft
 			? placementsFor(
 					pageData as unknown as Parameters<typeof placementsFor>[0],
-					reviewRecordFor(
-						pageData.id,
-						$pagesStore,
-						$editsStore,
-						pageStore.staleEditsOn(pageData.id)
-					),
+					recordHere,
 					pagesByKey
 				)
 			: null

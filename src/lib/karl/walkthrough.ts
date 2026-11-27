@@ -21,9 +21,9 @@
  * outcome, by whether they are done, by anything -- would send them scrolling
  * back up the form.
  */
-import { buildTranscript, renderTranscriptMarkdown } from '$lib/legacy-core/karl-transcript.js';
 import { KARL_NAV, panelByRawName } from '$lib/legacy-core/karl-blocks.js';
 import type { ReviewRecord } from './reviewRecord';
+import { transcriptFor, transcriptMarkdown, type Corpus } from './transcript';
 
 /* eslint-disable-next-line @typescript-eslint/no-explicit-any --
    the legacy Karl modules are untyped JS, so this is the boundary where their
@@ -37,40 +37,6 @@ const navFor = (type: string): string =>
 	(KARL_NAV as unknown as Record<string, string>)[type] ?? '';
 const panelFor = (type: string, rawName: string): KarlPanel =>
 	(panelByRawName as unknown as (t: string, r: string) => KarlPanel)(type, rawName);
-/**
- * The corpus as `buildTranscript` wants it: KEYED BY PAGE KEY.
- *
- * Every lookup it does against this map is a TARGET lookup --
- * `linkRepresentation`, `buttonTarget`, `card.target` -- and a target is a
- * `pagesByKey` key (`afterReport`). Handed the `allPages` array instead,
- * `findPageKey` resolves through `Object.entries` and returns an array INDEX,
- * and no target resolves: measured across the corpus, 130 of the choice labels
- * degraded from a page title to the raw key and every internal link read
- * "unresolved target". `tests/helpPanelLinkTargets.test.ts` exists for exactly
- * this, which is why the type now says so instead of leaving it to the caller.
- */
-type Corpus = Record<string, AnyEntry>;
-
-/* `buildTranscript` is untyped legacy JS, so this is the boundary where the
-   call is narrowed -- rather than reshaping a 1185-line module around it.
-
-   The layout passes `pageStore.pages[n]`, which `toStorePage` gives a routable
-   `id`. It is not copy, and the transcript's sweep reports any page key it does
-   not know, so every page's drawer said "The page carries `id`" under No Karl
-   field for this content. Stripped here, as `placementsFor` already does. */
-const transcriptFor = (page: AnyEntry, pages: Corpus, record: ReviewRecord | null): AnyEntry => {
-	const { id: _routableId, ...corpusPage } = page;
-	void _routableId;
-	return (buildTranscript as unknown as (p: unknown, r: unknown, ps: unknown) => AnyEntry)(
-		corpusPage,
-		record,
-		pages
-	);
-};
-
-const markdownFor = (transcript: AnyEntry): string =>
-	(renderTranscriptMarkdown as unknown as (t: unknown) => string)(transcript);
-
 /** One saved edit that no longer answers its base copy (ADR 0001). */
 export type StaleEdit =
 	| { kind: 'expired'; fieldId: string; accepted: string; base: string }
@@ -395,22 +361,23 @@ function finding(
 /**
  * Build the walkthrough for one page.
  *
- * @param page the corpus page module.
+ * @param page the copy as recorded (`CONTEXT.md`): the page the reviewer
+ *   approved, saved edits applied and unsaved changes left out --
+ *   `pageStore.recordedPage`. The page carries the copy; see `./transcript`.
  * @param pages the full corpus keyed by page key (`pagesByKey`), which
  *   `buildTranscript` needs to resolve the page's own key and its
- *   cross-references. See `Corpus` above for what an array costs.
- * @param record the reviewer's saved edits and decision, from
- *   `reviewRecordFor`. **Omitting it transcribes the ORIGINAL mockup copy**:
- *   the walkthrough's whole job is rebuilding the page a reviewer approved, so
- *   a caller that has the record and does not pass it walks an editor through
- *   text the review replaced.
+ *   cross-references.
+ * @param record the review record from `reviewRecordFor`: the decision, the
+ *   edited slug and the stale-edit flags. **The copy itself comes from `page`**
+ *   -- handing in the base page instead of the recorded one walks an editor
+ *   through text the review replaced.
  */
 export function buildWalkthrough(
 	page: AnyEntry,
 	pages: Corpus,
 	record: ReviewRecord | null = null
 ): Walkthrough {
-	const transcript = transcriptFor(page, pages, record);
+	const transcript = transcriptFor(page, record, pages);
 	const stale = staleEditsOf(record);
 	const type = String(transcript.type ?? '');
 	const entries: AnyEntry[] = Array.isArray(transcript.entries) ? transcript.entries : [];
@@ -458,6 +425,6 @@ export function buildWalkthrough(
 		],
 		copyableCount: steps.filter((s) => s.values.length > 0).length,
 		stale,
-		markdown: withStale(markdownFor(transcript), stale)
+		markdown: withStale(transcriptMarkdown(transcript), stale)
 	};
 }

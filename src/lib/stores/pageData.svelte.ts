@@ -4,6 +4,8 @@ import { deriveFieldKey } from '$lib/corpus/fieldKey.js';
 import { routableId } from '$lib/corpus/pageId';
 import { resolveField } from '$lib/corpus/fieldResolver';
 import { extractCopy, type CopyMap, type CorpusPage } from '$lib/corpus/fields';
+import { copyAsRecorded, type EditRow } from '$lib/corpus/overlay';
+import { isOptimistic } from './applySavedEdits';
 import type { DraftPage } from './draftPages';
 import type { Op } from '$lib/rethink/diff';
 import type { RethinkResult } from '$lib/rethink/request';
@@ -332,9 +334,45 @@ class PageStore {
 		return this.baseCopy[pageId]?.[fieldId];
 	}
 
+	/**
+	 * Each page as built, before hydration or typing writes into it -- the page
+	 * object `baseCopy` is the field map of. What `recordedPage` lays the saved
+	 * edits on. Plain, not `$state`, for the same reason as `baseCopy`.
+	 */
+	private basePages: Record<string, Page> = {};
+
+	/** Records `page` as its id's base. Every place a page is (re)built calls this. */
+	private captureBase(page: Page) {
+		this.baseCopy[page.id] = extractCopy(page as CorpusPage);
+		this.basePages[page.id] = structuredClone($state.snapshot(page)) as Page;
+	}
+
+	/**
+	 * The copy as recorded (`CONTEXT.md`) for one page: its base with the saved
+	 * edits applied, and none of the reviewer's unsaved changes. What the
+	 * transcript and the walkthrough are written from -- the page object on
+	 * screen is the copy as SHOWN, typing included.
+	 *
+	 * Only edits the database has confirmed, as on the mockup: an optimistic row
+	 * may yet be rolled back.
+	 */
+	recordedPage(
+		pageId: string,
+		livePages: readonly { id: string; path: string }[],
+		edits: readonly (EditRow & { id?: string; page_id: string })[]
+	): Page | undefined {
+		const base = this.basePages[pageId];
+		if (!base) return undefined;
+		const liveId = livePages.find((p) => p.path === pageId)?.id;
+		const mine = edits.filter(
+			(e) => liveId !== undefined && e.page_id === liveId && !isOptimistic(e.id)
+		);
+		return copyAsRecorded(base, mine);
+	}
+
 	constructor() {
 		const pages = allPages.map(toStorePage);
-		for (const page of pages) this.baseCopy[page.id] = extractCopy(page as CorpusPage);
+		for (const page of pages) this.captureBase(page);
 		this.pages = pages;
 	}
 
@@ -354,7 +392,7 @@ class PageStore {
 			try {
 				const page = { ...toStorePage(draft.content), id: draft.path };
 				// A re-merge is the draft as the database now holds it: its base.
-				this.baseCopy[draft.path] = extractCopy(page as CorpusPage);
+				this.captureBase(page);
 				const at = this.pages.findIndex((p) => p.id === draft.path);
 				if (at === -1) this.pages.push(page);
 				else this.pages[at] = page;
@@ -381,7 +419,7 @@ class PageStore {
 	}
 
 	addPage(page: Page) {
-		this.baseCopy[page.id] = extractCopy(page as CorpusPage);
+		this.captureBase(page);
 		this.pages.push(page);
 	}
 
