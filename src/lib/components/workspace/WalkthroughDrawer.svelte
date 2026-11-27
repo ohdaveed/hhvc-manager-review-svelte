@@ -470,13 +470,13 @@
 		font-weight: 700;
 		letter-spacing: 0.1em;
 		text-transform: uppercase;
-		color: var(--text-secondary, #5a7a92);
+		color: var(--color-sfds-slate-l3);
 	}
 
 	.drawer-position {
 		margin-left: auto;
 		font-size: 0.75rem;
-		color: var(--text-secondary, #5a7a92);
+		color: var(--color-sfds-slate-l3);
 	}
 
 	.drawer-bar {
@@ -497,7 +497,7 @@
 	.drawer-sub {
 		margin: 8px 0 0;
 		font-size: 0.75rem;
-		color: var(--text-secondary, #5a7a92);
+		color: var(--color-sfds-slate-l3);
 	}
 
 	.drawer-list {
@@ -521,7 +521,7 @@
 		border: 1px solid #c2c2c2;
 		font-size: 0.75rem;
 		font-weight: 700;
-		color: var(--text-secondary, #5a7a92);
+		color: var(--color-sfds-slate-l3);
 	}
 
 	.numeral-done {
@@ -602,7 +602,7 @@
 	}
 
 	.step-row-name-done {
-		color: var(--text-secondary, #5a7a92);
+		color: var(--color-sfds-slate-l3);
 	}
 
 	.step-row-meta {
@@ -616,7 +616,7 @@
 	.gap-body code {
 		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
 		font-size: 0.6875rem;
-		color: var(--text-secondary, #5a7a92);
+		color: var(--color-sfds-slate-l3);
 	}
 
 	.step-row-copied {
@@ -676,7 +676,7 @@
 
 	.step-card-panel {
 		font-size: 0.75rem;
-		color: var(--text-secondary, #5a7a92);
+		color: var(--color-sfds-slate-l3);
 	}
 
 	.step-card-panel code {
@@ -694,7 +694,7 @@
 		margin: 0 0 10px;
 		font-size: 0.75rem;
 		line-height: 1.0625rem;
-		color: var(--sfds-color-slate-l3, #1d4d70);
+		color: var(--color-sfds-slate-l3);
 	}
 
 	.gap {
@@ -752,7 +752,7 @@
 		font-weight: 700;
 		letter-spacing: 0.06em;
 		text-transform: uppercase;
-		color: var(--text-secondary, #5a7a92);
+		color: var(--color-sfds-slate-l3);
 	}
 
 	.choices-list {
@@ -784,7 +784,7 @@
 		flex: none;
 		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
 		font-size: 0.6875rem;
-		color: var(--text-secondary, #5a7a92);
+		color: var(--color-sfds-slate-l3);
 	}
 
 	/* Bordered like .choices rather than coloured like .gap: a link to rebuild
@@ -802,7 +802,7 @@
 		font-weight: 700;
 		letter-spacing: 0.06em;
 		text-transform: uppercase;
-		color: var(--text-secondary, #5a7a92);
+		color: var(--color-sfds-slate-l3);
 	}
 
 	.links-list {
@@ -829,13 +829,13 @@
 	.link-target {
 		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
 		font-size: 0.6875rem;
-		color: var(--text-secondary, #5a7a92);
+		color: var(--color-sfds-slate-l3);
 	}
 
 	.links-note {
 		margin: 8px 0 0;
 		font-size: 0.6875rem;
-		color: var(--text-secondary, #5a7a92);
+		color: var(--color-sfds-slate-l3);
 	}
 
 	/* Grey, not amber: there is nothing here for the reviewer to fix, so
@@ -851,11 +851,11 @@
 	}
 
 	.gap-lede {
-		color: var(--text-secondary, #5a7a92);
+		color: var(--color-sfds-slate-l3);
 	}
 
 	.gap-unmapped .gap-lede {
-		color: var(--text-secondary, #5a7a92);
+		color: var(--color-sfds-slate-l3);
 	}
 
 	/* Values are the content, so they carry the least chrome: a small
@@ -887,7 +887,7 @@
 	.value-label {
 		font-size: 0.75rem;
 		font-weight: 600;
-		color: var(--text-secondary, #5a7a92);
+		color: var(--color-sfds-slate-l3);
 	}
 
 	.value-copy {
@@ -935,7 +935,7 @@
 		margin: 6px 0 0;
 		font-size: 0.75rem;
 		line-height: 1.125rem;
-		color: var(--text-secondary, #5a7a92);
+		color: var(--color-sfds-slate-l3);
 	}
 
 	.step-actions {

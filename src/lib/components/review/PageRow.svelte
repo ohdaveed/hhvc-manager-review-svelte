@@ -56,13 +56,12 @@
 				? 'text-[0.8125rem] leading-[1.125rem]'
 				: 'text-[0.6875rem] leading-[0.875rem]'} {metaTone === 'danger'
 				? 'text-sfds-red'
-				: comfortable
-					? 'text-slate-700'
-					: 'text-sfds-slate-l3'}"
+				: 'text-sfds-slate-l3'}"
 		>
-			<!-- Comfortable rows (the landing list) use neutral slate-700: the
-			     queue's slate blue under a link title read as a second link. The
-			     queue keeps its colour, measured against its selected-row tint. -->
+			<!-- One neutral grey for the meta line in both the landing list and the
+			     queue. The landing list used to switch to slate-700 because the
+			     queue's navy l3 under a link title read as a second link; l3 is a
+			     neutral grey now (app.css), so the switch has nothing left to fix. -->
 			{#if metaTone === 'progress'}
 				<span
 					class="mr-1.5 inline-block size-2 rounded-full bg-sfds-action align-[1px] motion-safe:animate-pulse"

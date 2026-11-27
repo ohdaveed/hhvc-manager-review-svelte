@@ -143,7 +143,7 @@
 	.sm-meta {
 		margin: 0;
 		font-size: 0.8125rem;
-		color: var(--text-secondary, #5a7a92);
+		color: var(--color-sfds-slate-l3);
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
@@ -215,7 +215,7 @@
 	.card-count {
 		margin-left: auto;
 		font-size: 0.75rem;
-		color: var(--text-secondary, #5a7a92);
+		color: var(--color-sfds-slate-l3);
 	}
 
 	.card-title {
@@ -243,7 +243,7 @@
 		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
 		font-size: 0.6875rem;
 		line-height: 1rem;
-		color: var(--text-secondary, #5a7a92);
+		color: var(--color-sfds-slate-l3);
 	}
 
 	.links {
@@ -287,7 +287,7 @@
 	}
 
 	.link-dead {
-		color: var(--text-secondary, #5a7a92);
+		color: var(--color-sfds-slate-l3);
 		text-decoration: none;
 	}
 
@@ -295,13 +295,13 @@
 		display: block;
 		font-size: 0.75rem;
 		line-height: 1.0625rem;
-		color: var(--text-secondary, #5a7a92);
+		color: var(--color-sfds-slate-l3);
 	}
 
 	.links-empty {
 		margin: 0;
 		padding: 12px 18px 16px;
 		font-size: 0.8125rem;
-		color: var(--text-secondary, #5a7a92);
+		color: var(--color-sfds-slate-l3);
 	}
 </style>
