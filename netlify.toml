@@ -8,3 +8,13 @@
 [build.environment]
 	# vite@8 requires ^20.19.0 || >=22.12.0; match the local toolchain.
 	NODE_VERSION = "24"
+
+# Every page renders an SF.gov mockup -- the City seal and "City and County of
+# San Francisco" header included -- readable without signing in. Indexed, a
+# search for "report rats San Francisco" could land on unapproved copy that
+# looks like the real site. A header covers every response, not just the HTML
+# routes that could carry a <meta name="robots">.
+[[headers]]
+	for = "/*"
+	[headers.values]
+		X-Robots-Tag = "noindex, nofollow"
