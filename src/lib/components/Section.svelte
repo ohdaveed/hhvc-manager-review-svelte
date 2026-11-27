@@ -255,4 +255,22 @@
 		cursor: pointer;
 		white-space: nowrap;
 	}
+
+	/* The button sits inside the SF.gov rendering, so it stays out of sight until
+	   the reviewer points at its section or tabs to it -- one button per section
+	   on screen at rest made the mockup read as a form. `opacity`, not
+	   `visibility`: it stays focusable, and focusing it is what reveals it. Kept
+	   visible while its section is selected, and on touch screens, which have no
+	   hover to reveal it with. */
+	@media (hover: hover) {
+		.rethink-section:not([aria-pressed='true']) {
+			opacity: 0;
+			transition: opacity 0.15s;
+		}
+
+		.page-section:hover .rethink-section,
+		.page-section:focus-within .rethink-section {
+			opacity: 1;
+		}
+	}
 </style>
