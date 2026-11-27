@@ -28,7 +28,7 @@ export const healthyHousingTopic = {
 		{
 			heading: 'Report pests',
 			fieldKey: 'general-housing-issues',
-			karl: 'Maps to a Services block (Title = this heading, Links = the cards). The Pests half of the report group (Decided): the 5 pest condition pages (report regroup, completed 2026-11-25), then the Step by step as the overview. Decided: move the mosquito page up during mosquito season.',
+			karl: 'Maps to a Services block (Title = this heading, Links = the cards). The Pests half of the report group (Decided): the 5 pest condition pages (report regroup, completed 2026-11-25), then the Step by step as the overview. Decided: move the mosquito page up during mosquito season. The Step by step guide (Report a pest problem, start to finish) moved to Learn more on 2026-11-26 (page review): it explains the process, it is not a report form.',
 			kind: 'body',
 			component: 'services',
 			cards: [
@@ -36,8 +36,7 @@ export const healthyHousingTopic = {
 				{ title: 'Report bed bugs', target: 'bedBugReport' },
 				{ title: 'Report cockroaches or other insects', target: 'insectsReport' },
 				{ title: 'Report mosquitoes or standing water', target: 'mosquitoReport' },
-				{ title: 'Report pigeon droppings, nesting, or feeding', target: 'pigeonReport' },
-				{ title: 'Report a pest problem, start to finish', target: 'stepPestReport' }
+				{ title: 'Report pigeon droppings, nesting, or feeding', target: 'pigeonReport' }
 			]
 		},
 		{
@@ -87,7 +86,7 @@ export const healthyHousingTopic = {
 		},
 		{
 			heading: 'Look up records',
-			karl: 'Maps to a Services block. Holds what the retired Look up building records Resource Collection listed: the three lookup Transactions and the public records request. Its annual fee link is under For property owners.',
+			karl: 'Maps to a Services block. Holds what the retired Look up building records Resource Collection listed: the three lookup Transactions and the public records request. Its annual fee link is under For property owners. The annual summary joined from Learn more on 2026-11-26 (page review): it is the program’s inspection record.',
 			kind: 'body',
 			component: 'services',
 			cards: [
@@ -97,24 +96,32 @@ export const healthyHousingTopic = {
 					title: 'Find your Healthy Housing inspector by neighborhood',
 					target: 'inspectorLookup'
 				},
-				{ title: 'Make a public records request', target: 'publicRecords' }
+				{ title: 'Make a public records request', target: 'publicRecords' },
+				{ title: 'Healthy Housing inspections: annual summary', target: 'inspectionsAnnual' }
 			]
 		},
 		{
 			heading: 'Learn more',
 			fieldKey: 'guidance-and-resources',
-			karl: 'Maps to a Resources block. Topic tab, suggested structure item 5, plus the pages the retired Healthy housing and pest resources collection linked that the list above lacks (guides in other languages, Rat-free blocks, the annual summary). The last two cards are the two workshop Campaigns, which used to sit in their own Related section: Topic has no `related` field (U5), so they moved into this Resources block (2026-11-26).',
+			karl: 'Maps to a Resources block. Topic tab, suggested structure item 5: the pages that explain how reporting works. Cut from 10 cards to 5 on 2026-11-26 (page review), because SF.gov keeps a list to 3 to 5 items: the programs and workshops moved to their own block below, the annual summary to Look up records, and Guides in other languages to Guides and forms. The Step by step guide joined from Report pests.',
 			kind: 'body',
 			component: 'resources',
 			cards: [
 				{ title: 'Learn what Healthy Housing and Vector Control can inspect', target: 'scopeInfo' },
+				{ title: 'Report a pest problem, start to finish', target: 'stepPestReport' },
 				{ title: 'What happens after you report a housing or pest problem', target: 'afterReport' },
 				{ title: 'Tenant rights when reporting housing conditions', target: 'tenantRights' },
-				{ title: 'Health Code Article 11 in plain language', target: 'article11Guide' },
+				{ title: 'Health Code Article 11 in plain language', target: 'article11Guide' }
+			]
+		},
+		{
+			heading: 'Programs and workshops',
+			karl: 'Maps to a Resources block (Title = this heading, Links = the cards). Split out of Learn more on 2026-11-26 (page review): the two programs and two free workshops are things to join, not explanations. The workshop Campaigns used to sit in their own Related section; Topic has no `related` field (U5).',
+			kind: 'body',
+			component: 'resources',
+			cards: [
 				{ title: 'Mosquito Control Program', target: 'mosquitoControl' },
 				{ title: 'Rat-free blocks', target: 'ratFreeBlocks' },
-				{ title: 'Guides in other languages', target: 'languageGuides' },
-				{ title: 'Healthy Housing inspections: annual summary', target: 'inspectionsAnnual' },
 				{ title: 'Free mosquito education workshop', target: 'mosquitoWorkshop' },
 				{ title: 'Free IPM education workshop', target: 'ipmEducation' }
 			]
@@ -143,10 +150,11 @@ export const healthyHousingTopic = {
 		},
 		{
 			heading: 'Guides and forms',
-			karl: 'Maps to a Resources block of External links. Carries every outside document and site the retired Healthy housing and pest resources collection linked, so the fold loses none of them. The api.sf.gov documents are Document Picker uploads in Karl; confirm the current file before publishing.',
+			karl: 'Maps to a Resources block of External links. Carries every outside document and site the retired Healthy housing and pest resources collection linked, so the fold loses none of them. The api.sf.gov documents are Document Picker uploads in Karl; confirm the current file before publishing. Guides in other languages joined first on 2026-11-26 (page review), from Learn more.',
 			kind: 'body',
 			component: 'resources',
 			cards: [
+				{ title: 'Guides in other languages', target: 'languageGuides' },
 				{
 					title: 'Prepare your unit for bed bug treatment',
 					url: 'https://api.sf.gov/documents/23140/GuidelinesforUnitPreparation_dP56n7G.pdf'

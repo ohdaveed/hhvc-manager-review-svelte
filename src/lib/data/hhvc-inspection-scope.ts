@@ -45,77 +45,42 @@ export const scopeInfo = {
 			]
 		},
 		{
-			heading: 'Indoor pests HHVC may inspect',
-			fieldKey: 'problems-hhvc-may-inspect',
-			karl: 'Maps to a Title and text block: Title = this heading, Text = the bulleted list below. One of four groups split on 2026-11-26 from a single 16-item list: SF.gov keeps a bulleted list to 3 to 5 items (A-to-Z, Bullets), and a subheading per group is what makes a long list scannable. The fieldKey keeps the ids of the section this was before the split, "Problems HHVC may inspect".',
-			kind: 'body',
-			bullets: [
-				'Rats or mice',
-				'Cockroaches',
-				'Bed bugs',
-				'Mite concerns linked to rodents, birds, or other pest sources in housing'
-			]
-		},
-		{
-			heading: 'Outdoor pests and birds HHVC may inspect',
-			karl: 'Maps to a Title and text block: Title = this heading, Text = the bulleted list below. One of four groups split on 2026-11-26 from a single 16-item list: SF.gov keeps a bulleted list to 3 to 5 items (A-to-Z, Bullets), and a subheading per group is what makes a long list scannable.',
-			kind: 'body',
-			bullets: [
-				'Mosquitoes or standing water',
-				'House flies breeding in garbage or organic waste',
-				'Ground wasp nests on or near residential property',
-				'Birds, pigeons, or bird-related nuisances tied to unsanitary conditions'
-			]
-		},
-		{
-			heading: 'Sanitation and moisture problems HHVC may inspect',
-			karl: 'Maps to a Title and text block: Title = this heading, Text = the bulleted list below. One of four groups split on 2026-11-26 from a single 16-item list: SF.gov keeps a bulleted list to 3 to 5 items (A-to-Z, Bullets), and a subheading per group is what makes a long list scannable.',
-			kind: 'body',
-			bullets: [
-				'Garbage, clutter, or animal waste that may attract pests',
-				'Overgrown vegetation that may support pests or vectors',
-				'Mold from humidity, condensation, or poor ventilation when the affected area is about 10 square feet or more',
-				'Active sewage leaks or backups from a drain, toilet, cleanout, or pipe, inside or outside a building'
-			]
-		},
-		{
-			heading: 'Other conditions HHVC may inspect',
-			karl: 'Maps to a Title and text block: Title = this heading, Text = the bulleted list below. One of four groups split on 2026-11-26 from a single 16-item list: SF.gov keeps a bulleted list to 3 to 5 items (A-to-Z, Bullets), and a subheading per group is what makes a long list scannable.',
-			kind: 'body',
-			bullets: [
-				'Shared SRO kitchens, bathrooms, garbage areas, or other shared spaces',
-				'Pest harborage or infestation conditions including burrows, nesting materials, and wildlife activity that may create a public health nuisance',
-				'Rodent-borne disease prevention under Article 2, Section 92: rodent access, droppings, gnaw marks, or failure to keep conditions rodent-free',
-				'Other conditions the Director determines to be a threat to public health or safety'
-			]
-		},
-		{
-			heading: 'Choose where to report a pest problem',
+			heading: 'Pests HHVC can inspect',
 			fieldKey: 'how-to-choose-the-right-page',
-			karl: 'Maps to a Title and text block: Title = this heading, Text = the bulleted list below. One of three groups split on 2026-11-26 from a single 12-item list: SF.gov keeps a bulleted list to 3 to 5 items (A-to-Z, Bullets), and a subheading per group is what makes a long list scannable. The fieldKey it already carried keeps its ids.',
+			karl: 'Maps to a Title and text block: Title = this heading, Text = the bulleted list below. On 2026-11-26 the "Indoor pests" and "Outdoor pests and birds" lists merged with "Choose where to report a pest problem", which named the same conditions a second time: each condition now carries its own report link. Details the old lists held stay in the bold label (flies that breed in garbage, ground wasp nests, mites from rodents or birds). The fieldKey keeps the ids of the link list this replaced.',
 			kind: 'body',
 			bullets: [
 				'**Rats or mice:** [Report rats or mice](rodentsReport)',
 				'**Bed bugs:** [Report bed bugs](bedBugReport)',
-				'**Cockroaches, fleas, flies, wasps, or mites:** [Report cockroaches or other insects](insectsReport)',
+				'**Cockroaches, fleas, flies breeding in garbage, ground wasp nests, or mites from rodents or birds:** [Report cockroaches or other insects](insectsReport)',
 				'**Mosquitoes or standing water:** [Report mosquitoes or standing water](mosquitoReport)',
 				'**Pigeon droppings, nesting, roosting, or feeding:** [Report pigeon droppings, nesting, or feeding](pigeonReport)'
 			]
 		},
 		{
-			heading: 'Choose where to report a sanitation or moisture problem',
-			karl: 'Maps to a Title and text block: Title = this heading, Text = the bulleted list below. One of three groups split on 2026-11-26 from a single 12-item list: SF.gov keeps a bulleted list to 3 to 5 items (A-to-Z, Bullets), and a subheading per group is what makes a long list scannable.',
+			heading: 'Sanitation and moisture problems HHVC can inspect',
+			karl: 'Maps to a Title and text block: Title = this heading, Text = the bulleted list below. Merged on 2026-11-26 with "Choose where to report a sanitation or moisture problem", which named the same four conditions a second time. The 10 square feet threshold for mold stays in its label. Poison oak on private property was added on 2026-11-26 from HHVC: owners must remove it when it is reported.',
 			kind: 'body',
 			bullets: [
+				'**Garbage, clutter, or overgrown plants that attract pests, or poison oak on private property:** [Report garbage, clutter, or overgrown plants](garbageReport)',
 				'**Dog or cat waste, or raccoon droppings, on private property:** [Report animal waste on a property](animalWasteReport)',
-				'**Sewage from a drain, toilet, cleanout, or pipe:** [Report a sewage leak or backup](sewageReport)',
-				'**Mold from humidity or condensation:** [Report mold](moldReport)',
-				'**Garbage, clutter, or overgrown plants:** [Report garbage, clutter, or overgrown plants](garbageReport)'
+				'**Mold from humidity or condensation, about 10 square feet or more:** [Report mold](moldReport)',
+				'**Sewage from a drain, toilet, cleanout, or pipe:** [Report a sewage leak or backup](sewageReport)'
+			]
+		},
+		{
+			heading: 'Other conditions HHVC can inspect',
+			karl: 'Maps to a Title and text block: Title = this heading, Text = the bulleted list below. Plain-language pass on 2026-11-26: "harborage" became where pests nest or hide, and the Article 2, Section 92 rodent line left because "Rats or mice" above already covers droppings, gnaw marks and rodent access.',
+			kind: 'body',
+			bullets: [
+				'Shared kitchens, bathrooms, and garbage areas in single room occupancy (SRO) hotels',
+				'Places where pests nest or hide, such as burrows, nesting materials, or wildlife dens, when they create a health hazard',
+				'Other conditions the Director of Health decides are a threat to public health or safety'
 			]
 		},
 		{
 			heading: 'Other places to report or learn more',
-			karl: "Maps to a Title and text block: Title = this heading, Text = the bulleted list below. One of three groups split on 2026-11-26 from a single 12-item list: SF.gov keeps a bulleted list to 3 to 5 items (A-to-Z, Bullets), and a subheading per group is what makes a long list scannable. The last bullet links the Agency page, which Karl's Related cannot hold (moved here 2026-11-26).",
+			karl: "Maps to a Title and text block: Title = this heading, Text = the bulleted list below. The last bullet links the Agency page, which Karl's Related cannot hold (moved here 2026-11-26).",
 			kind: 'body',
 			bullets: [
 				'**Dead birds:** [Report a dead bird to the State West Nile virus program](https://westnile.ca.gov/report)',
@@ -154,7 +119,7 @@ export const scopeInfo = {
 		},
 		{
 			heading: 'Related pages',
-			karl: 'Maps to the Related field: a generic unrestricted "Page" chooser, repeatable. The Healthy Housing and Vector Control card is now the last bullet of "Other places to report or learn more" (split out of "Choose where to report your problem" on 2026-11-26) (2026-11-26): Karl’s Related takes only Transaction, Information, Campaign and Topic pages (Help Center › Components › Related), and this is an Agency page.',
+			karl: 'Maps to the Related field: a generic unrestricted "Page" chooser, repeatable. The Healthy Housing and Vector Control card is now the last bullet of "Other places to report or learn more" (2026-11-26): Karl’s Related takes only Transaction, Information, Campaign and Topic pages (Help Center › Components › Related), and this is an Agency page.',
 			kind: 'placement',
 			cards: [
 				{

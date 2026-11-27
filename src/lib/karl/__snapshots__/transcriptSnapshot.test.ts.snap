@@ -2227,7 +2227,7 @@ Gather your details
 Have these details ready before you start. Only share what applies to your situation:
 
 - The address or location
-- The condition: garbage, debris, clutter, stored items, or overgrown plants and brush
+- The condition: garbage, debris, clutter, stored items, overgrown plants and brush, or poison oak
 - Whether it is inside, outside, or in a shared area
 - How long it has been happening
 - Whether you saw rats, mice, or other pests nearby
@@ -2244,6 +2244,8 @@ Start your report
 **Section 2 — Section specifics → Text:**
 
 Use 311 to report garbage, clutter, or overgrown plants to the City. The [Health Code](https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890) requires property owners to keep trash, filth, and overgrown plants from building up. Build-up that shelters pests or creates a health hazard is a violation.
+
+Poison oak is a noxious plant. When it is reported on private property, we require the property owner to remove it. If you see poison oak on public property, report it to Public Works.
 
 **Section 2 — Section specifics → Button link → Link text:**
 
@@ -2435,6 +2437,12 @@ Learn more
 
 **Title:**
 
+Programs and workshops
+
+### Child topics (outer StreamField; internally "Page content") — \`content_fields\` [TYPE] — page not approved
+
+**Title:**
+
 Prevent pests and mold at home
 
 ### Child topics (outer StreamField; internally "Page content") — \`content_fields\` [TYPE] — page not approved
@@ -2473,9 +2481,10 @@ Report housing health issues, find services and resources, and learn how San Fra
 - \`sections.3.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to a Services block. Topic tab, suggested structure item 2, with the tenant Information page added beside the owner steps.". Resolve it before typing anything from them.
 - \`sections.4.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to a Services block. Topic tab, suggested structure item 3. The owner-duty pages are listed separately until their merge is decided.". Resolve it before typing anything from them.
 - \`sections.5.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to a Services block. Holds what the retired Look up building records Resource Collection listed: the three lookup Transactions and the public records reque". Resolve it before typing anything from them.
-- \`sections.6.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to a Resources block. Topic tab, suggested structure item 5, plus the pages the retired Healthy housing and pest resources collection linked that the list ". Resolve it before typing anything from them.
-- \`sections.7.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to a Resources block (Title = this heading, Links = the cards). The five community-education Information pages ported from HHVC_manager_review_current_tool". Resolve it before typing anything from them.
-- \`sections.8.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to a Resources block of External links. Carries every outside document and site the retired Healthy housing and pest resources collection linked, so the fo". Resolve it before typing anything from them.
+- \`sections.6.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to a Resources block. Topic tab, suggested structure item 5: the pages that explain how reporting works. Cut from 10 cards to 5 on 2026-11-26 (page review)". Resolve it before typing anything from them.
+- \`sections.7.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to a Resources block (Title = this heading, Links = the cards). Split out of Learn more on 2026-11-26 (page review): the two programs and two free workshop". Resolve it before typing anything from them.
+- \`sections.8.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to a Resources block (Title = this heading, Links = the cards). The five community-education Information pages ported from HHVC_manager_review_current_tool". Resolve it before typing anything from them.
+- \`sections.9.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to a Resources block of External links. Carries every outside document and site the retired Healthy housing and pest resources collection linked, so the fo". Resolve it before typing anything from them.
 "
 `;
 
@@ -4062,11 +4071,9 @@ Protect residents’ health
 
 **Text:**
 
-Unmanaged pests do not just damage a building. They put residents' health at risk, and the risks compound the longer they go unaddressed.
+Pests put residents' health at risk, and the risk grows the longer they go untreated. A small rodent problem can turn into a mite outbreak, and moisture or clutter can support several pests at once.
 
-A small rodent problem can turn into a mite outbreak. Untreated moisture or clutter can support several pests at once.
-
-Prevention protects both residents' health and the owner's ability to meet Article 11 requirements. Common pests cause these health problems:
+Common pests cause these health problems:
 
 - Rodents can spread Hantavirus and Leptospirosis
 - Cockroach allergens can trigger asthma
@@ -4085,23 +4092,9 @@ Use IPM to prevent pests
 
 **Text:**
 
-Integrated Pest Management (IPM) is a prevention-first approach. It uses inspection, maintenance, sanitation, exclusion, monitoring, and targeted treatment to reduce pests and limit heavy pesticide use. This sits under Article 11 of the San Francisco Health Code.
+Integrated pest management (IPM) prevents pests first. It uses inspection, maintenance, sanitation, sealing entry points, monitoring, and targeted treatment, and limits heavy pesticide use.
 
-### Information section — \`information_section\` [TYPE] — page not approved
-
-**Title:**
-
-Use the UC IPM guide for property managers
-
-**Text:**
-
-The University of California Statewide IPM Program (UC IPM) publishes the main reference guide used on this page. Use it for policies, checklists, monitoring forms, and resident handouts.
-
-HHVC recommends UC IPM as a practical source for property owners and managers operating multi-unit housing in San Francisco.
-
-**Callout (rich text, no title field):**
-
-Sections below summarize HHVC expectations and point to specific UC IPM chapters. When details differ, follow San Francisco Health Code requirements and SFDPH Director’s Rules.
+HHVC recommends the University of California IPM program (UC IPM) guide for multi-unit housing. It has policies, checklists, monitoring forms, and resident handouts. Where it differs from the San Francisco Health Code or SFDPH Director’s Rules, follow the San Francisco rules.
 
 **Entry 1 — Title:**
 
@@ -4167,7 +4160,7 @@ Conditions outside and in shared areas that attract pests
 
 The legal requirements, including the 72-hour response, recordkeeping and licensed pest control, are on [Article 11 compliance for property owners](article11Compliance). Two more practices keep a building ready:
 
-- **Garbage management:** Provide enough rigid plastic or metal containers with tight-fitting lids. Ensure the garbage area is clean and serviced regularly to prevent overflow.
+- **Garbage management:** Provide enough rigid plastic or metal containers with tight-fitting lids. Keep the garbage area clean and serviced often enough that it never overflows.
 - **Staff training:** Train building staff on pest recognition, sanitation, exclusion, and safe disposal of infested items.
 
 **Entry 1 — Title:**
@@ -4234,13 +4227,13 @@ Prevent pest problems by fixing the conditions that let pests enter, hide, feed,
 
 **Text:**
 
-Track pest activity so you can see patterns and respond before problems spread. Coordinated pest control services are required to handle infestations effectively.
+Track pest activity so you can see patterns and respond before problems spread.
 
 [UC IPM: Pest monitoring and recordkeeping](https://ipm.ucanr.edu/home-and-landscape/guide-for-property-managers/pest-monitoring-and-recordkeeping/)
 
 - Use one system to log complaints, repairs, sanitation work, and contractor visits. A written log of vermin reports is required, not just good practice. See [Article 11 compliance for property owners](article11Compliance).
-- Ensure the PCO conducts a complete inspection and identifies the type and level of infestation.
-- Inspect adjacent units: When an infestation is reported, the PCO must inspect every adjacent unit. Treat them if needed (Director's Rules §VI.6).
+- Make sure your pest control company inspects fully and names the pest and how bad the infestation is.
+- Inspect adjacent units: When an infestation is reported, the pest control company must inspect every adjacent unit. Treat them if needed (Director's Rules §VI.6).
 - Use least-toxic methods: Prioritize non-chemical methods (vacuuming, heat, steam, freezing) and gel baits over chemical sprays.
 - Review records regularly to find repeated or building-wide problems.
 
@@ -6361,65 +6354,13 @@ You can make an HHVC report through 311. Having these details ready helps 311 se
 
 **Title:**
 
-Indoor pests HHVC may inspect
-
-**Text:**
-
-- Rats or mice
-- Cockroaches
-- Bed bugs
-- Mite concerns linked to rodents, birds, or other pest sources in housing
-
-### Information section — \`information_section\` [TYPE] — page not approved
-
-**Title:**
-
-Outdoor pests and birds HHVC may inspect
-
-**Text:**
-
-- Mosquitoes or standing water
-- House flies breeding in garbage or organic waste
-- Ground wasp nests on or near residential property
-- Birds, pigeons, or bird-related nuisances tied to unsanitary conditions
-
-### Information section — \`information_section\` [TYPE] — page not approved
-
-**Title:**
-
-Sanitation and moisture problems HHVC may inspect
-
-**Text:**
-
-- Garbage, clutter, or animal waste that may attract pests
-- Overgrown vegetation that may support pests or vectors
-- Mold from humidity, condensation, or poor ventilation when the affected area is about 10 square feet or more
-- Active sewage leaks or backups from a drain, toilet, cleanout, or pipe, inside or outside a building
-
-### Information section — \`information_section\` [TYPE] — page not approved
-
-**Title:**
-
-Other conditions HHVC may inspect
-
-**Text:**
-
-- Shared SRO kitchens, bathrooms, garbage areas, or other shared spaces
-- Pest harborage or infestation conditions including burrows, nesting materials, and wildlife activity that may create a public health nuisance
-- Rodent-borne disease prevention under Article 2, Section 92: rodent access, droppings, gnaw marks, or failure to keep conditions rodent-free
-- Other conditions the Director determines to be a threat to public health or safety
-
-### Information section — \`information_section\` [TYPE] — page not approved
-
-**Title:**
-
-Choose where to report a pest problem
+Pests HHVC can inspect
 
 **Text:**
 
 - **Rats or mice:** [Report rats or mice](rodentsReport)
 - **Bed bugs:** [Report bed bugs](bedBugReport)
-- **Cockroaches, fleas, flies, wasps, or mites:** [Report cockroaches or other insects](insectsReport)
+- **Cockroaches, fleas, flies breeding in garbage, ground wasp nests, or mites from rodents or birds:** [Report cockroaches or other insects](insectsReport)
 - **Mosquitoes or standing water:** [Report mosquitoes or standing water](mosquitoReport)
 - **Pigeon droppings, nesting, roosting, or feeding:** [Report pigeon droppings, nesting, or feeding](pigeonReport)
 
@@ -6435,21 +6376,33 @@ Choose where to report a pest problem
 
 **Title:**
 
-Choose where to report a sanitation or moisture problem
+Sanitation and moisture problems HHVC can inspect
 
 **Text:**
 
+- **Garbage, clutter, or overgrown plants that attract pests, or poison oak on private property:** [Report garbage, clutter, or overgrown plants](garbageReport)
 - **Dog or cat waste, or raccoon droppings, on private property:** [Report animal waste on a property](animalWasteReport)
+- **Mold from humidity or condensation, about 10 square feet or more:** [Report mold](moldReport)
 - **Sewage from a drain, toilet, cleanout, or pipe:** [Report a sewage leak or backup](sewageReport)
-- **Mold from humidity or condensation:** [Report mold](moldReport)
-- **Garbage, clutter, or overgrown plants:** [Report garbage, clutter, or overgrown plants](garbageReport)
 
 **Links in this text — recreate each with the Link tool, do not paste them:**
 
-- "Report animal waste on a property" → shape 5 — rich text Link tool → Internal link → "Report animal waste on a property"
-- "Report a sewage leak or backup" → shape 5 — rich text Link tool → Internal link → "Report a sewage leak or backup"
-- "Report mold" → shape 5 — rich text Link tool → Internal link → "Report mold"
 - "Report garbage, clutter, or overgrown plants" → shape 5 — rich text Link tool → Internal link → "Report garbage, clutter, or overgrown plants"
+- "Report animal waste on a property" → shape 5 — rich text Link tool → Internal link → "Report animal waste on a property"
+- "Report mold" → shape 5 — rich text Link tool → Internal link → "Report mold"
+- "Report a sewage leak or backup" → shape 5 — rich text Link tool → Internal link → "Report a sewage leak or backup"
+
+### Information section — \`information_section\` [TYPE] — page not approved
+
+**Title:**
+
+Other conditions HHVC can inspect
+
+**Text:**
+
+- Shared kitchens, bathrooms, and garbage areas in single room occupancy (SRO) hotels
+- Places where pests nest or hide, such as burrows, nesting materials, or wildlife dens, when they create a health hazard
+- Other conditions the Director of Health decides are a threat to public health or safety
 
 ### Information section — \`information_section\` [TYPE] — page not approved
 
