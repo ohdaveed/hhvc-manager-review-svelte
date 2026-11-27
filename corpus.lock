@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "corpusHash": "919e7318b89db1ff686dcbe9fde02c23901c86f8bd8034fa715831b158ef2989",
+  "corpusHash": "4b5b8dc31c92f8455250867d414b573efcf45801bc7219b9ba6e0d8ba34d495a",
   "pages": {
     "departments--healthy-housing-and-vector-control": {
       "contentHash": "0dbd9dd7bbad4361a566c5cd2c714223d97028f482b3ba8c958c082887615fc9",
@@ -873,18 +873,16 @@
       }
     },
     "report-cockroaches-or-other-insects": {
-      "contentHash": "56e32de22581309fad9b666bb1cdbee563a18fdf362fdb1c39ef6ebc3b5840ae",
+      "contentHash": "12b0fc97e31f5f563f866d12eaae8da2e020b6f38596590c8f8922c4d0e3d8d7",
       "fieldHashes": {
         "primaryAgency": "8a2847f0ee854052d30378a2ef091f979c9737bbd8219086a1e04dc0abd84f9f",
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",
         "sections.what-to-do.heading": "f47f1edc44ed92664871471b0cf8f463813788468c23680c12f52a36c2827e26",
         "sections.while-you-wait-tips-to-help-with-the-problem.bullets.0": "c42fc8d57c9b28781d5f939a0aae45d5a9a02c879a93459359fa75d63dd6e69d",
-        "sections.while-you-wait-tips-to-help-with-the-problem.bullets.1": "87571ebef86cbfb2a6153b5deb64c5c612f07cbb36297184855238abacd17b4e",
-        "sections.while-you-wait-tips-to-help-with-the-problem.bullets.2": "be28b77bb510e24c68e31ce96eddcc3a206f20fa57325f0d7e1fb046ad23d704",
-        "sections.while-you-wait-tips-to-help-with-the-problem.bullets.3": "424530f5eea3b7f716b33b5d68a9568525a3bd2d2eeeabf3b7337aef98accd44",
+        "sections.while-you-wait-tips-to-help-with-the-problem.bullets.1": "19247dc375ed4554fb8fb3ab89eaaccb0a85be6ce0dd7c6cf512278d564eff62",
         "sections.while-you-wait-tips-to-help-with-the-problem.heading": "2a48c1f432e88393905002da6aa167655da242c845c0b5d3b6a2c5ac736416c1",
         "sections.while-you-wait-tips-to-help-with-the-problem.paragraphs.0": "a83aaa4be38220b027448141140b29300f531ed7b868b5f748ad42e685cc3a83",
-        "summary": "c5e71abaedec02f862729947e72c9a43204462f8484f105279320d9a83bbbcc9",
+        "summary": "8f76741cbe6d6a1980c3224874e21fd8e9877770982003aeb34a05b51cd7183a",
         "title": "2a3312be65ccbe7b7c2b67dc16591e402c1a3d6f4a6df7828e263b88f9876357"
       }
     },

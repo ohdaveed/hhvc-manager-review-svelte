@@ -2,7 +2,7 @@ export const insectsReport = {
 	slug: 'sf.gov/report-cockroaches-or-other-insects',
 	type: 'Transaction',
 	title: 'Report cockroaches or other insects',
-	summary: 'Roaches, fleas, flies, wasps, or mites in a home, building, yard, or shared area.',
+	summary: 'Cockroaches, fleas, flies, wasps, or mites in a home, building, yard, or shared area.',
 	primaryAgency: 'Healthy Housing and Vector Control',
 	// Karl's Contact us block (get_help -> Phone number), in the order and wording
 	// live SF.gov 311 report pages use (2026-11-26 page review). In the step text
@@ -85,7 +85,7 @@ export const insectsReport = {
 		},
 		{
 			heading: 'While you wait: tips to help with the problem',
-			karl: 'Maps to supporting_information (Accordions), collapsed by default as the real accordion renders. Contents: one Text block (lead paragraph + tips per insect). Cut on 2026-11-26 (page review, as on Report rats or mice) to the tips a resident can act on now: the sealing tip and the UC IPM links are left to Get rid of cockroaches without heavy pesticides, and the flea and wasp links, which had no other home, were dropped. The drain fly and fruit fly tips are the Decided education for flies.',
+			karl: "Maps to supporting_information (Accordions), collapsed by default as the real accordion renders. Contents: one Text block (lead paragraph + tips per insect). Cut on 2026-11-26 (page review, as on Report rats or mice) to the tips a resident can act on now: the sealing tip and the UC IPM links are left to Get rid of cockroaches without heavy pesticides, and the flea and wasp links, which had no other home, were dropped. The drain fly and fruit fly tips are the Decided education for flies. The fly, drain fly and fruit fly tips became one Flies bullet on 2026-11-26, so the page's main pest is not outweighed.",
 			kind: 'body',
 			component: 'supporting',
 			paragraphs: [
@@ -93,14 +93,12 @@ export const insectsReport = {
 			],
 			bullets: [
 				'**Cockroaches:** Clean up crumbs and grease, and fix dripping faucets and leaks. Use bait stations instead of sprays.',
-				'**Flies:** Bag garbage tightly and keep bin lids closed so flies cannot breed in it.',
-				'**Drain flies:** Scrub slow or unused drains with a brush and flush them with hot water.',
-				'**Fruit flies:** Throw out overripe fruit and rinse cans and bottles before you recycle them.'
+				'**Flies:** Bag garbage tightly and keep bin lids closed so flies cannot breed in it. For drain flies, scrub slow or unused drains with a brush and flush them with hot water. For fruit flies, throw out overripe fruit and rinse cans and bottles before you recycle them.'
 			]
 		},
 		{
 			heading: 'Related pages',
-			karl: 'Maps to the related panel: repeatable field "Page *" with a "Choose a page" button. 5 cards below = 5 related "Page" entries. The last card links the community-education Information page for this condition (added 2026-11-26, appended so the earlier cards keep their `cards.N` field ids): it was reachable only from the Topic and the home page, so a reader who came to report had no route to prevention. All internal SF.gov pages — Karl Related is a page chooser and cannot hold external links.',
+			karl: 'Maps to the related panel: repeatable field "Page *" with a "Choose a page" button. 4 cards below = 4 related "Page" entries. Report bed bugs left on 2026-11-26: Start your report already links it. The last card links the community-education Information page for this condition (added 2026-11-26, appended so the earlier cards keep their `cards.N` field ids): it was reachable only from the Topic and the home page, so a reader who came to report had no route to prevention. All internal SF.gov pages — Karl Related is a page chooser and cannot hold external links.',
 			kind: 'placement',
 			cards: [
 				{
@@ -110,10 +108,6 @@ export const insectsReport = {
 				{
 					title: 'Tenant rights when reporting housing conditions',
 					target: 'tenantRights'
-				},
-				{
-					title: 'Report bed bugs',
-					target: 'bedBugReport'
 				},
 				{
 					title: 'Learn what Healthy Housing and Vector Control can inspect',

@@ -2500,7 +2500,7 @@ Report cockroaches or other insects
 
 **Description:**
 
-Roaches, fleas, flies, wasps, or mites in a home, building, yard, or shared area.
+Cockroaches, fleas, flies, wasps, or mites in a home, building, yard, or shared area.
 
 ### Primary agency — \`primary_agency\` [CHOOSE] — page not approved
 
@@ -2625,9 +2625,7 @@ While you wait: tips to help with the problem
 It may take us a few weekdays to get back to you. In the meantime, here are a few things you can do to help with the problem.
 
 - **Cockroaches:** Clean up crumbs and grease, and fix dripping faucets and leaks. Use bait stations instead of sprays.
-- **Flies:** Bag garbage tightly and keep bin lids closed so flies cannot breed in it.
-- **Drain flies:** Scrub slow or unused drains with a brush and flush them with hot water.
-- **Fruit flies:** Throw out overripe fruit and rinse cans and bottles before you recycle them.
+- **Flies:** Bag garbage tightly and keep bin lids closed so flies cannot breed in it. For drain flies, scrub slow or unused drains with a brush and flush them with hot water. For fruit flies, throw out overripe fruit and rinse cans and bottles before you recycle them.
 
 ### Related — \`related\` [CHOOSE] — page not approved
 
@@ -2635,9 +2633,8 @@ _This block publishes the destination page’s title and a link, and NOTHING els
 
 1. Choose page: "What happens after you report a housing or pest problem" (\`afterReport\` → /sf.gov/information/what-happens-after-you-report-housing-pest-problem)
 2. Choose page: "Tenant rights when reporting housing conditions" (\`tenantRights\` → /sf.gov/information/tenant-rights-and-reporting-housing-conditions)
-3. Choose page: "Report bed bugs" (\`bedBugReport\` → /sf.gov/report-bed-bugs)
-4. Choose page: "Learn what Healthy Housing and Vector Control can inspect" (\`scopeInfo\` → /sf.gov/information/learn-what-hhvc-can-inspect)
-5. Choose page: "Get rid of cockroaches without heavy pesticides" (\`cockroachesPrevention\` → /sf.gov/information/get-rid-of-cockroaches-without-heavy-pesticides)
+3. Choose page: "Learn what Healthy Housing and Vector Control can inspect" (\`scopeInfo\` → /sf.gov/information/learn-what-hhvc-can-inspect)
+4. Choose page: "Get rid of cockroaches without heavy pesticides" (\`cockroachesPrevention\` → /sf.gov/information/get-rid-of-cockroaches-without-heavy-pesticides)
 
 ### Contact us — \`get_help\` [TYPE] — page not approved
 
