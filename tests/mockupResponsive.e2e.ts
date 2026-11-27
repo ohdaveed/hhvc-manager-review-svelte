@@ -50,11 +50,12 @@ test.describe('the mockup scales with the space it has', () => {
 		expect(await frameWidth(page)).toBeGreaterThan(1200);
 		// SF.gov sets body copy to a fixed measure; a wider frame must widen the
 		// chrome, not the prose. 616px is 7 of 12 columns of its 1076px grid,
-		// measured on live sf.gov at 1280px (2026-11-22).
+		// measured on live sf.gov at 1280px (2026-11-22); the mockup widens it
+		// by 25% on purpose (app.css), so 770.
 		const column = await page
 			.locator('#mockPage .page-content')
 			.evaluate((el) => Math.round(el.getBoundingClientRect().width));
-		expect(column).toBe(616);
+		expect(column).toBe(770);
 		expect(await footerColumnCount(page)).toBe(4);
 		expect(await overflows(page)).toBe(false);
 	});
