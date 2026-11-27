@@ -209,7 +209,9 @@ test.describe('Blueprint', () => {
 	});
 
 	test('"Show on page" lands on the field, focused, with the outline on', async ({ page }) => {
-		await gotoSignedIn(page, '/review/report-rats-or-mice');
+		// Bed bugs, not rats: the rats page folded its Custom Section into What to
+		// know (2026-11-26), and bed bugs still carries the same one.
+		await gotoSignedIn(page, '/review/report-bed-bugs');
 		await openBlueprint(page);
 		// A slot, not a tray item: the tray is empty on every corpus page since
 		// the 2026-11-26 audit.

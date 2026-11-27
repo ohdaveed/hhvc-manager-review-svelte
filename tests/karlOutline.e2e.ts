@@ -20,9 +20,9 @@ const RULES = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];
 const PILOTS = [
 	{
 		slug: 'report-rats-or-mice',
-		// 4 sections since the report regroup moved the shared report text out (2026-11-25).
-		summary: '4 sections: 3 go into Karl, 1 unconfirmed.',
-		sections: { placed: 4, unconfirmed: 1, unplaced: 0 }
+		// 3 sections since the Health Code section folded into What to know (2026-11-26).
+		summary: '3 sections: 3 go into Karl.',
+		sections: { placed: 4, unconfirmed: 0, unplaced: 0 }
 	},
 	{
 		slug: 'information-what-happens-after-you-report-housing-pest-problem',
