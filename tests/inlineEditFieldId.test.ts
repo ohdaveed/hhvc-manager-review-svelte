@@ -101,7 +101,8 @@ describe('edit targets', () => {
 				ids.add(pageStore.selectedFieldIds[0]);
 			}
 
-			// Both share the display name `Section [1] Paragraph`; the ids must not.
+			// The display names now differ only by position (`… · Paragraph [1]`, `[2]`);
+			// the ids are the identity and must differ regardless.
 			expect([...ids].sort()).toEqual([
 				'sections.how-to-report.paragraphs.0',
 				'sections.how-to-report.paragraphs.1'

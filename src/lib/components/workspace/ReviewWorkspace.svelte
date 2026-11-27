@@ -136,11 +136,16 @@
 		{/if}
 	</div>
 
-	<!-- The Karl views, pinned under the tabs so every tab reaches them. They
-	     were in the canvas toolbar beside a black walkthrough button; the
-	     toolbar now holds canvas controls only (2026-11-26 layout review). The
-	     walkthrough's one entry is the Decision tab's "Move it into Karl". -->
-	{#if karlViews}
+	<!-- The Karl views, under the tabs. They were in the canvas toolbar beside a
+	     black walkthrough button; the toolbar now holds canvas controls only
+	     (2026-11-26 layout review). The walkthrough's one entry is the Decision
+	     tab's "Move it into Karl".
+	     Shown on Decision and Fields only (2026-11-27 design review): those are
+	     where a reviewer asks "where does this go in Karl". On Rethink and
+	     Analysis the strip was a second header above content about something
+	     else. Turning the outline off is never stranded: with it on, the canvas
+	     carries its own "Karl fields shown · Hide" pill. -->
+	{#if karlViews && (activeTab === 'overview' || activeTab === 'fields')}
 		<div
 			class="flex flex-none items-center gap-3 border-b border-sfds-grey-l2 bg-background px-3 py-2"
 			role="group"

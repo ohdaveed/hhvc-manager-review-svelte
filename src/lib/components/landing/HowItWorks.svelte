@@ -6,8 +6,8 @@
 	}: {
 		/**
 		 * Whether the explainer should start open, or `undefined` while that is not
-		 * known yet. The page decides: open for a signed-out visitor, and for a
-		 * reviewer who has decided nothing yet -- they are new to the tool too.
+		 * known yet. The page decides: open for a reviewer who has decided
+		 * nothing yet. (It is not rendered for a signed-out visitor.)
 		 */
 		startOpen: boolean | undefined;
 	} = $props();

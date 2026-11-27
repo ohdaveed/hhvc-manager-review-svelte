@@ -27,7 +27,7 @@
 					as="h3"
 					class="steps-block-title"
 					fieldId={`sections.${sectionKey}.steps.${i}.title`}
-					name={`${label} Step [${i + 1}] Title`}
+					name={`${label} · Step [${i + 1}] Title`}
 					value={step.title}
 				/>
 			{/if}
@@ -37,7 +37,7 @@
 					<EditTarget
 						as="p"
 						fieldId={`sections.${sectionKey}.steps.${i}.text.${j}`}
-						name={`${label} Step [${i + 1}] Text [${j + 1}]`}
+						name={`${label} · Step [${i + 1}] Text [${j + 1}]`}
 						value={entryText(entry)}
 						unverified={entryUnverified(entry)}
 					/>
@@ -51,7 +51,7 @@
 							as="li"
 							class="my-1"
 							fieldId={`sections.${sectionKey}.steps.${i}.bullets.${j}`}
-							name={`${label} Step [${i + 1}] Bullet [${j + 1}]`}
+							name={`${label} · Step [${i + 1}] Bullet [${j + 1}]`}
 							value={entryText(entry)}
 							unverified={entryUnverified(entry)}
 						/>
@@ -65,8 +65,8 @@
 					text={step.callout.text}
 					titleFieldId={`sections.${sectionKey}.steps.${i}.callout.title`}
 					textFieldId={`sections.${sectionKey}.steps.${i}.callout.text`}
-					titleName={`${label} Step [${i + 1}] Callout Title`}
-					textName={`${label} Step [${i + 1}] Callout Text`}
+					titleName={`${label} · Step [${i + 1}] Callout Title`}
+					textName={`${label} · Step [${i + 1}] Callout Text`}
 				/>
 			{/if}
 
@@ -76,7 +76,7 @@
 					url={step.buttonUrl}
 					fieldId={`sections.${sectionKey}.steps.${i}.button`}
 					urlFieldId={`sections.${sectionKey}.steps.${i}.buttonUrl`}
-					name={`${label} Step [${i + 1}] Button`}
+					name={`${label} · Step [${i + 1}] Button`}
 				/>
 			{/if}
 
@@ -86,7 +86,7 @@
 					<EditTarget
 						as="p"
 						fieldId={`sections.${sectionKey}.steps.${i}.after.${j}`}
-						name={`${label} Step [${i + 1}] After button [${j + 1}]`}
+						name={`${label} · Step [${i + 1}] After button [${j + 1}]`}
 						value={entryText(entry)}
 						unverified={entryUnverified(entry)}
 					/>

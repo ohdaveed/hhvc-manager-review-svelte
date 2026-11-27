@@ -129,7 +129,10 @@ describe('resolveField', () => {
 		const secondKey = page.sections[1].fieldKey;
 
 		expect(resolveField(page, 'title')!.name).toBe('Title');
-		expect(resolveField(page, `sections.${secondKey}.heading`)!.name).toBe('Section [2] Heading');
+		// Named by heading, as Section.svelte names it, not by position.
+		expect(resolveField(page, `sections.${secondKey}.heading`)!.name).toBe(
+			`${page.sections[1].heading} · Heading`
+		);
 	});
 
 	describe('returns null rather than guessing', () => {

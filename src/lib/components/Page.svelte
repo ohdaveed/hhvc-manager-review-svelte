@@ -74,25 +74,12 @@
 {/snippet}
 
 <div class="page-body" data-page-type={page.type}>
-	{#if page.type === 'About us'}
-		<!-- Live's agency template puts the title in a white card over the
-		     department's banner photo, with its logo in the card (measured
-		     2026-11-26 on `departments--department-public-health--about`). The
-		     department supplies both images; the mockup has neither, so each is a
-		     labelled placeholder of the size live gives it rather than an
-		     invented picture. -->
-		<div class="about-hero" aria-hidden="true">
-			<span>Banner photo, supplied by the department</span>
-		</div>
-		<div class="about-card">
-			<div class="about-logo" aria-hidden="true">Department logo</div>
-			<div class="about-card-text">
-				{@render pageHeader()}
-			</div>
-		</div>
-	{:else}
-		{@render pageHeader()}
-	{/if}
+	<!-- No banner photo or department logo placeholder above an About us
+	     title. In Karl the header image and logo come from the Agency page's
+	     branding, auto-applied to About pages with that Primary agency -- they
+	     are not fields on this page, so a grey "supplied by the department" box
+	     showed the manager something this page cannot set. -->
+	{@render pageHeader()}
 
 	<WhatToKnow whatToKnow={page.whatToKnow} type={page.type} />
 

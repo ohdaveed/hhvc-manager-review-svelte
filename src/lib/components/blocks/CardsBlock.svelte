@@ -54,7 +54,7 @@
 					as="h3"
 					class="cards-block-title"
 					fieldId={`sections.${sectionKey}.cards.${i}.title`}
-					name={`${label} Card [${i + 1}] Title`}
+					name={`${label} · Card [${i + 1}] Title`}
 					value={card.title}
 				/>
 			{/if}
@@ -62,7 +62,7 @@
 				<EditTarget
 					as="p"
 					fieldId={`sections.${sectionKey}.cards.${i}.text`}
-					name={`${label} Card [${i + 1}] Text`}
+					name={`${label} · Card [${i + 1}] Text`}
 					value={card.text}
 				/>
 			{:else if linkRows && targetSummary(card.target)}
@@ -84,7 +84,7 @@
 					as="p"
 					class="cards-block-url"
 					fieldId={`sections.${sectionKey}.cards.${i}.url`}
-					name={`${label} Card [${i + 1}] Link`}
+					name={`${label} · Card [${i + 1}] Link`}
 					value={card.url}
 				/>
 			{/if}

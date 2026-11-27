@@ -85,6 +85,12 @@
 
 	const selected = $derived(pageStore.isSelected(fieldId));
 	const badge = $derived(pageStore.badgeNumber(fieldId));
+	// The badge drops the section half of a name ("Who we are · Paragraph [1]"
+	// shows as "Paragraph [1]"): the section heading sits right above the
+	// selected copy, and a long heading pushed the badge past a 390px phone
+	// frame (tests/editTargetBadge.e2e.ts). The full name stays in the Fields
+	// panel and in this target's accessible description.
+	const badgeName = $derived(name.includes(' · ') ? name.slice(name.lastIndexOf(' · ') + 3) : name);
 	// A saved edit whose base copy has moved since (ADR 0001): still shown, never
 	// passed off as current. Resolved from the Fields panel.
 	const expired = $derived(pageStore.editStatusOf(pageStore.activePageId, fieldId) === 'expired');
@@ -119,7 +125,7 @@
 				<!-- Absolutely positioned, and never with a negative horizontal
 				     margin: that overflows the mockup sideways. Vertical room is
 				     made by the host element instead. -->
-				<span class="edit-target-badge" aria-hidden="true">{badge} · {name}</span>
+				<span class="edit-target-badge" aria-hidden="true">{badge} · {badgeName}</span>
 			{/if}
 			<!-- `interactive={false}`: this is inside the selection `<button>`, and an
 			     `<a>` nested in a `<button>` is invalid HTML. `value` itself is

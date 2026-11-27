@@ -202,6 +202,39 @@ describe('rail default', () => {
 		pageStore.loadRailState();
 		expect(pageStore.railCollapsed).toEqual({ queue: false, panel: false });
 	});
+
+	// A laptop-width window: both rails open left the canvas too narrow for the
+	// desktop layout, so with no recorded choice the queue starts collapsed.
+	// jsdom has no matchMedia, so it is assigned rather than spied on.
+	const laptop = (matches: boolean) => {
+		const original = window.matchMedia;
+		window.matchMedia = ((query: string) => ({
+			matches,
+			media: query
+		})) as typeof window.matchMedia;
+		return { mockRestore: () => (window.matchMedia = original) };
+	};
+
+	it('collapses the queue on a fresh load at laptop width', () => {
+		localStorage.clear();
+		const spy = laptop(true);
+		pageStore.railCollapsed = { queue: false, panel: false };
+		pageStore.loadRailState();
+		expect(pageStore.railCollapsed).toEqual({ queue: true, panel: false });
+		// A default, not a choice: nothing is written until the reviewer toggles.
+		expect(localStorage.getItem('hhvc:railCollapsed')).toBeNull();
+		spy.mockRestore();
+	});
+
+	it("keeps the reviewer's recorded choice over the laptop default", () => {
+		localStorage.setItem('hhvc:railCollapsed', JSON.stringify({ queue: false, panel: false }));
+		const spy = laptop(true);
+		pageStore.railCollapsed = { queue: true, panel: true };
+		pageStore.loadRailState();
+		expect(pageStore.railCollapsed).toEqual({ queue: false, panel: false });
+		spy.mockRestore();
+		localStorage.clear();
+	});
 });
 
 describe('unsaved changes', () => {

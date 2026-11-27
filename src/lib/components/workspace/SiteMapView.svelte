@@ -47,7 +47,9 @@
 	<nav class="sm-header" aria-label="Site map">
 		<div class="sm-head-left">
 			<h2 class="sm-title">Site map</h2>
-			<p class="sm-meta">{entries.length} pages · {breakdown}</p>
+			<p class="sm-meta" title="{entries.length} pages · {breakdown}">
+				{entries.length} pages · {breakdown}
+			</p>
 		</div>
 		<button type="button" class="sm-exit" onclick={onExit}>Back to review</button>
 	</nav>
@@ -125,7 +127,13 @@
 		min-width: 0;
 	}
 
+	/* `flex: none` + `nowrap`: as a shrinkable flex item the title gave its
+	   width to the long breakdown beside it and wrapped onto two lines, which
+	   overflowed the 48px band the queue and panel tops share. The breakdown is
+	   the part that truncates (full text in its tooltip). */
 	.sm-title {
+		flex: none;
+		white-space: nowrap;
 		margin: 0;
 		font-family: var(--font-display);
 		font-size: 0.9375rem;
@@ -135,7 +143,7 @@
 	.sm-meta {
 		margin: 0;
 		font-size: 0.8125rem;
-		color: var(--text-secondary, #5a7a92);
+		color: var(--color-sfds-slate-l3);
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
@@ -207,7 +215,7 @@
 	.card-count {
 		margin-left: auto;
 		font-size: 0.75rem;
-		color: var(--text-secondary, #5a7a92);
+		color: var(--color-sfds-slate-l3);
 	}
 
 	.card-title {
@@ -235,7 +243,7 @@
 		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
 		font-size: 0.6875rem;
 		line-height: 1rem;
-		color: var(--text-secondary, #5a7a92);
+		color: var(--color-sfds-slate-l3);
 	}
 
 	.links {
@@ -279,7 +287,7 @@
 	}
 
 	.link-dead {
-		color: var(--text-secondary, #5a7a92);
+		color: var(--color-sfds-slate-l3);
 		text-decoration: none;
 	}
 
@@ -287,13 +295,13 @@
 		display: block;
 		font-size: 0.75rem;
 		line-height: 1.0625rem;
-		color: var(--text-secondary, #5a7a92);
+		color: var(--color-sfds-slate-l3);
 	}
 
 	.links-empty {
 		margin: 0;
 		padding: 12px 18px 16px;
 		font-size: 0.8125rem;
-		color: var(--text-secondary, #5a7a92);
+		color: var(--color-sfds-slate-l3);
 	}
 </style>

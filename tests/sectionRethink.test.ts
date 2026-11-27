@@ -46,7 +46,7 @@ describe('Section rethink control', () => {
 		// name "Rethink " -- `||` is needed to catch the empty string too.
 		const blank = { ...section, fieldKey: 'section-3', heading: '' };
 		render(Section, { props: { section: blank, index: 2 } });
-		expect(screen.getByRole('button', { name: 'Rethink Section [3]' })).toBeTruthy();
+		expect(screen.getByRole('button', { name: 'Rethink Section 3' })).toBeTruthy();
 	});
 
 	it('has a differentiated aria-label using the section heading for accessibility', () => {

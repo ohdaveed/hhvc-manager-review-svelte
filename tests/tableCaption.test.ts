@@ -43,14 +43,14 @@ describe('table caption', () => {
 		const caps = [...render_().querySelectorAll('table.sfgov-table > caption')].map(
 			(c) => c.textContent
 		);
-		expect(caps).toEqual(['Inspections by outcome', 'Section [2] table']);
+		expect(caps).toEqual(['Inspections by outcome', 'Section 2 table']);
 	});
 
 	it('names the scrollable region with the same text', () => {
 		const regions = [...render_().querySelectorAll('.table-scroll[role="region"]')].map((r) =>
 			r.getAttribute('aria-label')
 		);
-		expect(regions).toEqual(['Inspections by outcome', 'Section [2] table']);
+		expect(regions).toEqual(['Inspections by outcome', 'Section 2 table']);
 	});
 
 	it('hides the caption visually without removing it from the accessibility tree', () => {

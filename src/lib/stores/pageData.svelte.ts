@@ -701,7 +701,17 @@ class PageStore {
 	loadRailState() {
 		try {
 			const raw = localStorage.getItem(RAIL_KEY);
-			if (!raw) return;
+			if (!raw) {
+				// No choice recorded yet. On a laptop-width window (1024-1279px) both
+				// rails open leave the canvas ~440-600px, so Fit falls back to the
+				// phone layout at 1100px; the queue starts collapsed there and the
+				// mockup gets the desktop layout. NOT persisted: it is a default,
+				// and the first toggle records the reviewer's own choice, which wins
+				// from then on. Below 1024px the rails are sheets and this is moot.
+				if (window.matchMedia?.('(min-width: 1024px) and (max-width: 1279px)')?.matches)
+					this.railCollapsed = { queue: true, panel: false };
+				return;
+			}
 			const parsed = JSON.parse(raw);
 			this.railCollapsed = {
 				queue: parsed?.queue === true,

@@ -17,11 +17,14 @@ const pages = (n: number) =>
 	Array.from({ length: n }, (_, i) => ({ path: `page-${i}`, title: `Page ${i}` }));
 
 describe('KarlWalkthroughGuide', () => {
-	it('is a named section that names the toolbar button it points at', () => {
+	it('is a named section that names the panel button it points at', () => {
 		render(KarlWalkthroughGuide, { approved: undefined, onShowApproved: () => {} });
 		expect(screen.getByRole('heading', { level: 2, name: 'Move a page into Karl' })).toBeTruthy();
 		expect(screen.getByRole('region', { name: 'Move a page into Karl' })).toBeTruthy();
-		expect(screen.getByText('Karl walkthrough')).toBeTruthy();
+		expect(screen.getByText('Start the Karl walkthrough')).toBeTruthy();
+		// The toolbar entry moved to the review panel on 2026-11-26; the guide
+		// must not send anyone looking for it there.
+		expect(screen.queryByText(/bar above the mockup/)).toBeNull();
 	});
 
 	it('says nothing about approved pages while no review is loaded', () => {

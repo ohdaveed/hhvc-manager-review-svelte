@@ -875,32 +875,39 @@
 	     accepted -- not selected fields: they look alike and are routinely
 	     different numbers. Changes on other pages are named at the top of the
 	     panel, not counted here: this button cannot save them. -->
-	<div class="flex-none border-t px-5 py-3">
-		{#if saveError}
-			<p class="mb-2 text-xs leading-[1.0625rem] text-sfds-amber" role="status">{saveError}</p>
-		{/if}
-		{#if sessionStore.knownSignedOut}
-			<p class="mb-2 text-xs leading-[1.0625rem] text-sfds-slate-l3">
-				<a
-					href={resolve('/login')}
-					class="font-semibold text-sfds-action underline underline-offset-2">Sign in</a
-				> to save changes
-			</p>
-		{/if}
-		<!-- Disabled keeps its label legible: the default 50% opacity left
+	<!-- Only when there is something in play: a selection, an unsaved change on
+	     this page, a save running or its error. With none, the panel's own
+	     empty state already says what to do, and a permanent disabled "No
+	     changes to save" bar was the loudest thing on it. Changes on OTHER pages
+	     are named at the top of the panel; this button cannot save them. -->
+	{#if selected.length > 0 || unsavedHere > 0 || saving || saveError}
+		<div class="flex-none border-t px-5 py-3">
+			{#if saveError}
+				<p class="mb-2 text-xs leading-[1.0625rem] text-sfds-amber" role="status">{saveError}</p>
+			{/if}
+			{#if sessionStore.knownSignedOut}
+				<p class="mb-2 text-xs leading-[1.0625rem] text-sfds-slate-l3">
+					<a
+						href={resolve('/login')}
+						class="font-semibold text-sfds-action underline underline-offset-2">Sign in</a
+					> to save changes
+				</p>
+			{/if}
+			<!-- Disabled keeps its label legible: the default 50% opacity left
 		     white-on-blue text well under 4.5:1. -->
-		<Button
-			class="w-full disabled:bg-muted disabled:text-sfds-slate-l3 disabled:opacity-100"
-			disabled={unsavedHere === 0 || saving || sessionStore.knownSignedOut}
-			onclick={saveAll}
-		>
-			<!-- "Save 0 changes" named an action that cannot happen; at zero the
+			<Button
+				class="w-full disabled:bg-muted disabled:text-sfds-slate-l3 disabled:opacity-100"
+				disabled={unsavedHere === 0 || saving || sessionStore.knownSignedOut}
+				onclick={saveAll}
+			>
+				<!-- "Save 0 changes" named an action that cannot happen; at zero the
 			     disabled button says why it is disabled instead. -->
-			{saving
-				? 'Saving…'
-				: unsavedHere === 0
-					? 'No changes to save'
-					: `Save ${unsavedHere} ${unsavedHere === 1 ? 'change' : 'changes'}`}
-		</Button>
-	</div>
+				{saving
+					? 'Saving…'
+					: unsavedHere === 0
+						? 'No changes to save'
+						: `Save ${unsavedHere} ${unsavedHere === 1 ? 'change' : 'changes'}`}
+			</Button>
+		</div>
+	{/if}
 </div>
