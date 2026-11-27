@@ -161,14 +161,15 @@ are committed on `refactor/overlay-views` (`05e5371`, unpushed) and ride with A2
       tails with no sub-panel, so folding it into `resolveField` would couple Karl naming to field
       resolution, and a coverage test would need a hand-kept allowlist. `fieldResolver.test.ts`'s
       parity test already guards `extractCopy` ↔ `resolveField`.
-- [ ] **A5. `pageStore.sync(livePages, edits)`.** Owns hydration, edit-status classification (ADR 0001)
+- [x] **A5. `pageStore.sync(livePages, edits)`.** Owns hydration, edit-status classification (ADR 0001)
       and the `statusPass` race guard, moved out of `review/+layout.svelte`; the renderer reads
       `copyAsShown`, so nothing mutates page objects with edits. Node tests with plain edit rows.
       **Sync built (2026-11-27):** `pageStore.syncEditStatus` (classification + the race guard) and
       `pageStore.hydrate`; the layout's two effects only track their inputs and call them;
       `tests/pageSync.test.ts` covers both, including a slow pass overtaken by a newer one.
-      **Open, needs a decision:** the renderer switch to a derived `copyAsShown`. Every edit path
-      (typing, accepted suggestions, Rethink ops) writes through `resolveField` into the page
-      objects, so it is a rewrite of the edit flow, not a refactor -- left out pending a ruling.
+      **Dropped by the user (2026-11-27):** the renderer switch to a derived `copyAsShown`. Every
+      edit path (typing, accepted suggestions, Rethink ops) writes through `resolveField` into the
+      page objects, so it would rewrite the edit flow rather than refactor it; the page objects stay
+      the copy as shown, and `copyAsShown` is not built.
 - [x] **A6. Card classifier header.** `card-inheritance.js` header names its two real callers
       (transcript, sitemap). The mockup marking dropped card text is a separate Figma question.
