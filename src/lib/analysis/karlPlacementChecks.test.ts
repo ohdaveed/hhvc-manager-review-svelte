@@ -47,10 +47,12 @@ describe('the Analysis panel reads the same placements as the Karl outline', () 
 	});
 
 	it('lists what Karl’s own pages leave unsettled, as unavailable rather than an issue', () => {
-		// The rats page folded its Custom Section into What to know (2026-11-26);
-		// bed bugs still carries the same inferred mapping.
+		// Every report page folded its Custom Section into its steps (2026-11-26),
+		// so the gap overlay puts the rats page's inferred mapping back.
 		expect(byId('rodentsReport', 'karl-unconfirmed').status).toBe('pass');
-		const f = byId('bedBugReport', 'karl-unconfirmed');
+		const f = karlPlacementFindings(gapPages.rodentsReport as never, []).find(
+			(x) => x.id === 'karl-unconfirmed'
+		)!;
 		expect(f.status).toBe('unavailable');
 		expect(f.items.map((i) => i.text)).toEqual(['What the Health Code requires']);
 		const location = byId('ehOffice', 'karl-unconfirmed');

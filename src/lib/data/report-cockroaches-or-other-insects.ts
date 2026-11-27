@@ -41,7 +41,7 @@ export const insectsReport = {
 						'Have these details ready before you start. Only share what applies to your situation:'
 					],
 					bullets: [
-						'**What you saw:** Cockroaches, fleas, flies, wasps, or mites.',
+						'**What you saw:** Which insect, how many, and any bites or nests.',
 						'**Where it is:** The address, and whether you saw them inside, outside, or in a shared area.',
 						'**When it started:** How long this has been happening.',
 						'**Other issues:** Any garbage, animal waste, rats, mice, or pigeons nearby.',
@@ -57,7 +57,7 @@ export const insectsReport = {
 				{
 					title: 'Start your report',
 					text: [
-						'Use 311 to report cockroaches, fleas, flies, wasps, or mites to the City. If the problem is urgent, report now. You can report a problem in your home, a shared area, or at work, or report for someone else.',
+						'Use 311 to report cockroaches, fleas, flies, wasps, or mites to the City. The [Health Code](https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890) requires property owners to keep buildings free of them.',
 						'Bed bugs and mosquitoes have their own pages: [Report bed bugs](bedBugReport) and [Report mosquitoes or standing water](mosquitoReport).'
 					],
 					button: 'Report through 311',
@@ -70,7 +70,7 @@ export const insectsReport = {
 						'Download our mobile app to report a problem and track your request. Available on Android or iOS.',
 						'[Learn more about the SF311 mobile app](https://www.sf.gov/sf311-mobile-app)'
 					],
-					karl: 'what_to_do -> Section. Section title: "Start your report". Section specifics: Text block (these 2 paragraphs: the action, and the two pages that took over bed bugs and mosquitoes) + Button link block ("Report through 311") + Text block ("Other ways to report", the `after` lines). The one-line SRO note every report page carried was removed on 2026-11-26 (owner).'
+					karl: 'what_to_do -> Section. Section title: "Start your report". Section specifics: Text block (these 2 paragraphs: the action with the Article 11 requirement, folded in on 2026-11-26 from the retired "What the Health Code requires" custom section per HHVC content standards Ch. 8.7.1-8.7.2, and the two pages that took over bed bugs and mosquitoes) + Button link block ("Report through 311") + Text block ("Other ways to report", the `after` lines). The one-line SRO note every report page carried was removed on 2026-11-26 (owner).'
 				},
 				{
 					title: 'If you see a wasp nest',
@@ -85,53 +85,17 @@ export const insectsReport = {
 		},
 		{
 			heading: 'While you wait: tips to help with the problem',
-			karl: 'Maps to supporting_information (Accordions). This accordion uses the mockup-only open flag so the tips are visible without a click — flag for Digital Services that the real accordion renders collapsed. Contents: one Text block (lead paragraph + tips per insect) + a Resources-style external links list (UC IPM). The drain fly and fruit fly tips are the Decided education for flies.',
+			karl: 'Maps to supporting_information (Accordions), collapsed by default as the real accordion renders. Contents: one Text block (lead paragraph + tips per insect). Cut on 2026-11-26 (page review, as on Report rats or mice) to the tips a resident can act on now: the sealing tip and the UC IPM links are left to Get rid of cockroaches without heavy pesticides, and the flea and wasp links, which had no other home, were dropped. The drain fly and fruit fly tips are the Decided education for flies.',
 			kind: 'body',
 			component: 'supporting',
-			open: true,
 			paragraphs: [
 				'It may take us a few weekdays to get back to you. In the meantime, here are a few things you can do to help with the problem.'
 			],
 			bullets: [
-				'**Cockroaches:** Clean up crumbs and grease, fix dripping faucets and leaks, and seal cracks near pipes. Use bait stations instead of sprays.',
+				'**Cockroaches:** Clean up crumbs and grease, and fix dripping faucets and leaks. Use bait stations instead of sprays.',
 				'**Flies:** Bag garbage tightly and keep bin lids closed so flies cannot breed in it.',
 				'**Drain flies:** Scrub slow or unused drains with a brush and flush them with hot water.',
 				'**Fruit flies:** Throw out overripe fruit and rinse cans and bottles before you recycle them.'
-			],
-			cards: [
-				{
-					title: 'UC IPM Pest Notes: Cockroaches',
-					text: 'University of California guidance on managing cockroaches.',
-					url: 'https://ipm.ucanr.edu/home-and-landscape/cockroaches/',
-					karl: 'External link inside the supporting_information accordion. Third-party UC IPM reference in place of a City-maintained prevention page (manager directive: do not reinvent the wheel).'
-				},
-				{
-					title: 'UC IPM Pest Notes: Fleas',
-					text: 'University of California guidance on managing fleas.',
-					url: 'https://ipm.ucanr.edu/home-and-landscape/fleas/',
-					karl: 'External link inside the supporting_information accordion. Third-party UC IPM reference.'
-				},
-				{
-					title: 'UC IPM Pest Notes: Moth or drain flies',
-					text: 'University of California guidance on drain flies.',
-					url: 'https://ipm.ucanr.edu/home-and-landscape/moth-or-drain-flies/',
-					karl: 'External link inside the supporting_information accordion. Third-party UC IPM reference.'
-				},
-				{
-					title: 'UC IPM Pest Notes: Yellowjackets and other social wasps',
-					text: 'University of California guidance on wasps and their nests.',
-					url: 'https://ipm.ucanr.edu/home-and-landscape/yellowjackets-and-other-social-wasps/',
-					karl: 'External link inside the supporting_information accordion. Third-party UC IPM reference.'
-				}
-			]
-		},
-		{
-			heading: 'What the Health Code requires',
-			karl: 'custom_section -> title_and_text. Title = this heading, Text = the Article 11 line, from Sec. 581(b)(8) (HHVC content standards Ch. 8.7.1). The municipal code is cited per Ch. 8.7.2 as an inline link, the last bullet: custom_section has no Button link block (U1), so the "View Article 11" button it used to carry had no Karl destination.',
-			kind: 'body',
-			bullets: [
-				'San Francisco Health Code Article 11 requires property owners to keep buildings free of insect infestations, including cockroaches, fleas, flies, and wasps.',
-				'[View Health Code Article 11](https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890)'
 			]
 		},
 		{
