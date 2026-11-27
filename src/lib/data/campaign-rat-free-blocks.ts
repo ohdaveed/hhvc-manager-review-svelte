@@ -50,10 +50,10 @@ export const ratFreeBlocks = {
 			component: 'supporting',
 			open: true,
 			paragraphs: [
-				'A coordinated week does more than a year of single properties acting alone. Neighbors, and neighborhood or merchant associations, do not need permission from the City to organize one.'
+				'A week when the whole block cleans up together does more than properties acting one at a time. Neighbors, and neighborhood or merchant associations, do not need permission from the City to organize one.'
 			],
 			bullets: [
-				'Agree a week when everyone clears clutter and checks their bins.',
+				'Agree on a week when everyone clears clutter and checks their bins.',
 				'Walk the block together afterwards and look for the gaps that remain.',
 				'Report what is left. Start with any property no one is looking after: [rats or mice](rodentsReport), [animal waste](animalWasteReport), or [garbage, clutter, or overgrown plants](garbageReport).',
 				'Pick up pet waste daily. It feeds rats.'

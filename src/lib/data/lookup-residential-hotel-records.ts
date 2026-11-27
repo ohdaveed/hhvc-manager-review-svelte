@@ -34,7 +34,7 @@ export const findHotelRecords = {
 				'Use this page for records about a residential hotel, SRO, or shelter. For a standard apartment or mixed-use building, use the general lookup.'
 			],
 			bullets: [
-				'**Note:** If you are staying at a regular tourist hotel, you may still use the general complaints and inspection lookup. Residential hotel and shelter records use a different program dataset.'
+				'If you are staying at a regular tourist hotel, you can use the general complaints and inspection lookup.'
 			]
 		},
 		{

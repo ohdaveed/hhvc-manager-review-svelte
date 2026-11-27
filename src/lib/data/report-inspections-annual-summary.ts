@@ -65,7 +65,7 @@ export const inspectionsAnnual = {
 				'A rise in violations can mean conditions worsened, or that more people reported them. The two cannot be separated from these counts alone.'
 			],
 			bullets: [
-				'These counts follow inspections, and inspections follow reports.',
+				'These counts come from inspections, and we inspect when someone reports a problem.',
 				'A neighborhood with more reports is not necessarily a neighborhood with more problems.',
 				'[Find complaints and inspection records](findRecords) for records on a specific address.',
 				'[Make a public records request](publicRecords) for data this summary does not cover.'

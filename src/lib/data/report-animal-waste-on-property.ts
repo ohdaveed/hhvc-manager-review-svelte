@@ -85,9 +85,7 @@ export const animalWasteReport = {
 			karl: 'Maps to supporting_information (Accordions), collapsed by default as the real accordion renders. Contents: one Text block (lead paragraph + tips). Cut on 2026-11-26 (page review, as on Report rats or mice) to the tips a resident can act on now. The pet waste tip is the Decided cross-link line. No raccoon cleanup steps (Decided). The CDC raccoon roundworm link moved inline into the Raccoon droppings item in What to know, beside the warning it backs.',
 			kind: 'body',
 			component: 'supporting',
-			paragraphs: [
-				'It may take us a few weekdays to get back to you. In the meantime, here are a few things you can do to help with the problem.'
-			],
+			paragraphs: ['It may take us a few weekdays to get back to you.'],
 			bullets: [
 				'**Pick up pet waste daily:** It feeds rats.',
 				'**Bag it:** Put pet waste in a bag, then in a bin with a tight lid.'

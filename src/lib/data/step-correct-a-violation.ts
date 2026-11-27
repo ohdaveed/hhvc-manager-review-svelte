@@ -16,7 +16,7 @@ export const stepCorrectViolation = {
 			kind: 'body',
 			component: 'intro',
 			paragraphs: [
-				'This page is the whole arc of one case, from the notice arriving to the case closing. Each step says who is responsible for it.'
+				'These steps follow one case, from the day the notice arrives to the day the case closes. Each step says who is responsible for it.'
 			],
 			bullets: [
 				'Property owners and managers named on a notice',
@@ -32,7 +32,7 @@ export const stepCorrectViolation = {
 				{
 					title: 'Read the notice and find your deadline',
 					text: [
-						'The notice lists the conditions to correct and the date they are due. That date governs everything below. This page does not set one.'
+						'The notice lists the conditions to correct and the date they are due. Use that date for every step below.'
 					],
 					bullets: [
 						'Check which actions are assigned to the owner, to the manager, and to a tenant.',
@@ -78,7 +78,7 @@ export const stepCorrectViolation = {
 					],
 					bullets: [
 						'Ask early. A request made after the deadline is a different conversation.',
-						'This page does not promise an extension. The investigator decides whether to grant one.'
+						'The investigator decides whether to grant an extension.'
 					],
 					karl: 'Step 4. This is where the proposed "Ask for more time to fix a violation" Transaction attaches as a Transaction link if it is built. The wording deliberately avoids promising an extension, matching noticeOfViolation, which was written not to.'
 				},

@@ -19,7 +19,8 @@ export const cockroachesPrevention = {
 			]
 		},
 		{
-			heading: 'Why cockroaches matter',
+			heading: 'Why cockroaches are a health risk',
+			fieldKey: 'why-cockroaches-matter',
 			karl: 'Maps to an "Information section" → Title and text block: Title = this heading, Text = the two paragraphs below.',
 			kind: 'body',
 			paragraphs: [
@@ -107,7 +108,7 @@ export const cockroachesPrevention = {
 			karl: 'Maps to a sixth Title and text block: Title = this heading, Text = the paragraph plus the bulleted list below. Each bullet carries a Link-tool External link folded into this block\'s rich text — the verified Information schema has no external-URL card, so links are kept inline rather than as cards. "UC IPM: What is integrated pest management?" was removed on 2026-11-26, leaving 5 links: it was the least specific, and this page explains the approach itself.',
 			kind: 'placement',
 			paragraphs: [
-				'The University of California Statewide Integrated Pest Management Program (UC IPM) publishes detailed, science-based guides.'
+				'These guides come from the University of California Statewide Integrated Pest Management Program (UC IPM) and SF Environment.'
 			],
 			bullets: [
 				'[UC IPM: Cockroaches](https://ipm.ucanr.edu/home-and-landscape/cockroaches/). How to identify the kind you have and control it.',

@@ -200,5 +200,5 @@ export const healthyHousingTopic = {
 	],
 	seoTitle: 'Healthy housing conditions | SF.gov',
 	metaDescription:
-		'Report housing health issues, find services and resources, and learn how San Francisco protects healthy housing conditions.'
+		'Report housing health problems in San Francisco, look up records, and find guides for preventing pests and mold.'
 };

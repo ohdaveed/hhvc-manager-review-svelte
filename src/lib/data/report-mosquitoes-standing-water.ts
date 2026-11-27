@@ -88,9 +88,7 @@ export const mosquitoReport = {
 			karl: 'Maps to supporting_information (Accordions), collapsed by default as the real accordion renders. Contents: one Text block (lead paragraph + tips). Cut on 2026-11-26 (page review, as on Report rats or mice) to the tips a resident can act on now. The UC IPM link moved to More mosquito resources on Mosquito Control Program; the CDC link is on Free mosquito education workshop.',
 			kind: 'body',
 			component: 'supporting',
-			paragraphs: [
-				'It may take us a few weekdays to get back to you. In the meantime, here are a few things you can do to help with the problem.'
-			],
+			paragraphs: ['It may take us a few weekdays to get back to you.'],
 			bullets: [
 				'**Dump standing water:** Empty buckets, planters, saucers, and toys at least once a week.',
 				'**Clear gutters:** Clogged gutters hold water where mosquitoes breed.',
