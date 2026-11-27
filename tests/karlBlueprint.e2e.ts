@@ -315,6 +315,30 @@ test.describe('Blueprint', () => {
 		);
 		await expect(page.getByRole('status').filter({ hasText: /^Copied Page title/ })).toBeVisible();
 
+		// A formatted value is shown, and copied, as the text it stands for: no
+		// markdown brackets or asterisks on screen or on the clipboard. The
+		// clipboard carries bare HTML too, with the outside link as a real link.
+		const rich = page.locator('[data-karl-panel="things_to_know"] .bp-value').nth(1);
+		await expect(rich.locator('.bp-value-text')).toContainText('The Health Code requires');
+		await expect(rich.locator('.bp-value-text')).not.toContainText('](');
+		await expect(rich.getByRole('list', { name: /^Links in / })).toContainText(
+			/External link.*Internal link\s*choose the page/s
+		);
+		await rich.getByRole('button', { name: /^Copy / }).click();
+		// The write is asynchronous: read only once the button says it landed, or
+		// the read races it ("Clipboard data has changed").
+		await expect(rich.getByRole('button', { name: /^Copy / })).toHaveText('Copied');
+		const clip = await page.evaluate(async () => {
+			const [item] = await navigator.clipboard.read();
+			const read = async (type: string) => (await item.getType(type)).text();
+			return { plain: await read('text/plain'), html: await read('text/html') };
+		});
+		expect(clip.plain).toContain('The Health Code requires');
+		expect(clip.plain).not.toMatch(/\]\(|\*\*/);
+		expect(clip.html).toContain('<a href="https://codelibrary.amlegal.com/');
+		// The SF.gov page is chosen in Karl: its words travel, a link does not.
+		expect(clip.html).not.toContain('/review/');
+
 		const mark = page.getByRole('button', { name: 'Mark page as built in Karl' });
 		await expect(mark).toBeDisabled();
 		const boxes = page.getByRole('checkbox', { name: 'Entered in Karl' });

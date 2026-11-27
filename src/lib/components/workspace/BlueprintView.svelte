@@ -11,6 +11,14 @@
 	import { setMockupReadonly } from '$lib/components/mockupReadonly';
 	import { setOutlineContext } from '$lib/karl/outlineContext';
 	import { outlineSummary, type PagePlacements } from '$lib/karl/placement';
+	import {
+		clipboardHtmlOf,
+		isFormatted,
+		linksOf,
+		parseRichValue,
+		plainTextOf,
+		type RichInline
+	} from '$lib/karl/richValue';
 	import { STATUS_LABELS, type ReviewStatus } from '$lib/review/statusLabels';
 	import { fitFrame, pageStore } from '$lib/stores/pageData.svelte';
 
@@ -203,9 +211,31 @@
 	let copyTimer: ReturnType<typeof setTimeout> | undefined;
 	$effect(() => () => clearTimeout(copyTimer));
 
+	/**
+	 * Copy one value as the text it stands for, never as the markdown it is
+	 * stored in (`richValue`).
+	 *
+	 * A formatted value goes on the clipboard twice: bare HTML, so a rich text
+	 * field can take its paragraphs, lists, bold and outside links in one paste,
+	 * and the words alone, which is what a plain field takes and what
+	 * Ctrl+Shift+V pastes anywhere. A plain value is written as text only, so a
+	 * title never arrives wrapped in a paragraph. `ClipboardItem` is missing in
+	 * some browsers; the words alone still copy there.
+	 */
 	async function copyValue(key: string, what: string, value: string) {
+		const blocks = parseRichValue(value);
+		const text = plainTextOf(blocks);
 		try {
-			await navigator.clipboard.writeText(value);
+			if (isFormatted(blocks) && typeof ClipboardItem !== 'undefined') {
+				await navigator.clipboard.write([
+					new ClipboardItem({
+						'text/html': new Blob([clipboardHtmlOf(blocks)], { type: 'text/html' }),
+						'text/plain': new Blob([text], { type: 'text/plain' })
+					})
+				]);
+			} else {
+				await navigator.clipboard.writeText(text);
+			}
 			copied = key;
 			failed = null;
 			announcement = `Copied ${what}.`;
@@ -222,6 +252,15 @@
 		}
 	}
 </script>
+
+<!-- One line of a value: its words, bold where the copy is bold, and a link
+     shown by its label. A link is a span, not an anchor: the box selects on a
+     click, and where each link goes is listed under it. One line of markup, so
+     no newline lands between two parts and renders as a stray space. -->
+{#snippet inlineRow(row: RichInline[])}
+	<!-- prettier-ignore -->
+	{#each row as part, i (i)}{#if part.kind === 'strong'}<strong>{part.text}</strong>{:else if part.kind === 'link'}<span class="bp-inline-link">{part.text}</span>{:else}{part.text}{/if}{/each}
+{/snippet}
 
 <div class="blueprint">
 	<header class="bp-header">
@@ -350,8 +389,9 @@
 			</div>
 
 			<p class="bp-howto">
-				Copy each value, then paste it into the matching Karl field. Click a text box to select all
-				of it.
+				Copy each value, then paste it into the matching Karl field. Copy carries bold, lists and
+				links to other websites; to paste the words alone, use Ctrl+Shift+V. Links to SF.gov pages
+				are chosen in Karl, and each is listed under its text.
 			</p>
 
 			<p class="bp-summary"><strong>On the mockup:</strong> {outlineSummary(placements)}</p>
@@ -423,10 +463,29 @@
 									     title"): say it once, on screen and in the button's name. -->
 									{@const same = v.label === slot.label}
 									{@const what = same ? slot.label : `${slot.label}, ${v.label}`}
+									{@const blocks = parseRichValue(v.value)}
+									{@const links = linksOf(blocks)}
 									<li class="bp-value">
 										<div class="bp-value-body">
 											{#if !same}<span class="bp-value-label">{v.label}</span>{/if}
-											<div class="bp-value-text">{v.value}</div>
+											<!-- The value as text: no markdown brackets, asterisks or
+											     dashes, on screen or on the clipboard. -->
+											<div class="bp-value-text">
+												{#each blocks as block, b (b)}
+													{#if block.kind === 'p'}
+														<p>
+															{#each block.lines as line, l (l)}{#if l > 0}<br
+																	/>{/if}{@render inlineRow(line)}{/each}
+														</p>
+													{:else}
+														<svelte:element this={block.kind}>
+															{#each block.items as item, n (n)}
+																<li>{@render inlineRow(item)}</li>
+															{/each}
+														</svelte:element>
+													{/if}
+												{/each}
+											</div>
 										</div>
 										<button
 											type="button"
@@ -442,6 +501,37 @@
 												Copy
 											{/if}
 										</button>
+										{#if links.length}
+											<!-- Where each link goes, in the terms Karl's link tool asks
+											     for. An SF.gov page is picked in Karl's chooser, so no
+											     paste can bring it; an outside address is spelled out to
+											     check, or to add again after a plain paste. -->
+											<ul class="bp-links" aria-label={`Links in ${what}`}>
+												{#each links as link, n (n)}
+													<li>
+														<span class="bp-links-text">“{link.text}”</span>
+														{#if link.to.kind === 'external'}
+															<span class="bp-links-kind">External link</span>
+															<!-- An absolute address from the corpus, which `resolve()`,
+															     a resolver for this app's own routes, has nothing to
+															     say about. -->
+															<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
+															<a href={link.to.href} target="_blank" rel="noopener noreferrer"
+																>{link.to.href}</a
+															>
+														{:else if link.to.kind === 'internal'}
+															<span class="bp-links-kind">Internal link</span>
+															choose the page “{link.to.title}” in Karl
+														{:else if link.to.kind === 'inert'}
+															<span class="bp-links-kind bp-links-gap">No destination yet</span>
+														{:else}
+															<span class="bp-links-kind bp-links-gap">Unknown destination</span>
+															{link.to.target}
+														{/if}
+													</li>
+												{/each}
+											</ul>
+										{/if}
 									</li>
 									{#if failed === key}
 										<li class="bp-copy-failed">
@@ -1046,14 +1136,17 @@
 		gap: 8px;
 	}
 
+	/* The text box and its Copy button share a row, the button at the box's
+	   foot; the value's link notes wrap onto a row of their own beneath. */
 	.bp-value {
 		display: flex;
+		flex-wrap: wrap;
 		align-items: flex-end;
-		gap: 8px;
+		gap: 4px 8px;
 	}
 
 	.bp-value-body {
-		flex: 1 1 auto;
+		flex: 1 1 0;
 		min-width: 0;
 		display: flex;
 		flex-direction: column;
@@ -1076,11 +1169,81 @@
 		font-size: 0.8125rem;
 		line-height: 1.125rem;
 		color: #1c2b39;
-		white-space: pre-line;
 		overflow-wrap: anywhere;
 		user-select: all;
 		-webkit-user-select: all;
 		cursor: text;
+	}
+
+	/* The value's own structure. Tailwind's reset strips list markers and
+	   margins, so the list look is stated here. */
+	.bp-value-text :is(p, ul, ol) {
+		margin: 0;
+	}
+
+	.bp-value-text :is(p, ul, ol) + :is(p, ul, ol) {
+		margin-top: 8px;
+	}
+
+	.bp-value-text ul {
+		padding-left: 18px;
+		list-style: disc;
+	}
+
+	.bp-value-text ol {
+		padding-left: 20px;
+		list-style: decimal;
+	}
+
+	.bp-value-text li + li {
+		margin-top: 2px;
+	}
+
+	.bp-inline-link {
+		color: #1b519e;
+		text-decoration: underline;
+		text-underline-offset: 2px;
+	}
+
+	/* Where each link in the value goes. */
+	.bp-links {
+		flex: 1 0 100%;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+		font-size: 0.75rem;
+		line-height: 1.0625rem;
+		color: #3d4551;
+		overflow-wrap: anywhere;
+	}
+
+	.bp-links-text {
+		color: #1c2b39;
+		font-weight: 600;
+	}
+
+	.bp-links-kind {
+		margin: 0 2px;
+		padding: 0 5px;
+		border-radius: 3px;
+		background: #eef1f4;
+		color: #3d4551;
+		font-weight: 600;
+		white-space: nowrap;
+	}
+
+	.bp-links-gap {
+		background: #fdebd8;
+		color: #8a3a06;
+	}
+
+	.bp-links a {
+		color: #1b519e;
+		text-decoration: underline;
+		text-underline-offset: 2px;
 	}
 
 	.bp-copy {
