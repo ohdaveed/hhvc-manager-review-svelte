@@ -105,19 +105,16 @@ const noViolations = async (page: Page) => {
 	).toEqual([]);
 };
 
-/** Turn the outline on the way a keyboard user would. */
+/** Turn the outline on the way a keyboard user would, from the panel's Karl strip. */
 async function switchOnByKeyboard(page: Page) {
-	const trigger = page.getByRole('button', { name: 'Karl views' });
-	await trigger.focus();
-	await page.keyboard.press('Enter');
-	const toggle = page.getByRole('switch', { name: 'Show Karl fields' });
+	const toggle = page
+		.getByRole('group', { name: 'Karl views' })
+		.getByRole('switch', { name: 'Show Karl fields' });
 	await expect(toggle).toBeVisible();
 	await toggle.focus();
 	await page.keyboard.press('Space');
 	await expect(toggle).toBeChecked();
-	await page.keyboard.press('Escape');
-	await expect(toggle).toBeHidden();
-	await expect(trigger).toBeFocused();
+	await expect(toggle).toBeFocused();
 }
 
 const shoot = async (page: Page, name: string) => {
@@ -177,6 +174,23 @@ test.describe('Karl outline', () => {
 		await expect(page.locator('.karl-outline-summary')).toBeVisible();
 	});
 
+	test('with the review panel collapsed, the canvas offers its own way to hide it', async ({
+		page
+	}) => {
+		await page.setViewportSize({ width: 1280, height: 900 });
+		await page.goto('/review/report-rats-or-mice');
+		await page.waitForLoadState('networkidle');
+		const pill = page.locator('.karl-outline-pill');
+		await switchOnByKeyboard(page);
+		// The switch is on screen beside the canvas, so the pill would only repeat it.
+		await expect(pill).toBeHidden();
+		await page.getByRole('button', { name: 'Collapse review panel' }).click();
+		await expect(pill).toBeVisible();
+		await pill.getByRole('button', { name: 'Hide' }).click();
+		await expect(page.locator('.karl-outline-summary')).toHaveCount(0);
+		await expect(pill).toHaveCount(0);
+	});
+
 	test('works signed out, from the base copy', async ({ page }) => {
 		await page.goto('/review/property-owner-responsibilities-hhvc');
 		await page.waitForLoadState('networkidle');
@@ -187,8 +201,10 @@ test.describe('Karl outline', () => {
 
 	test('is not offered on an AI-drafted page', async ({ page }) => {
 		await gotoSignedIn(page, `/review/draft/${DRAFT_IDS.ready}`, { drafts: true });
-		await expect(page.getByRole('button', { name: 'Karl views' })).toHaveCount(0);
-		await expect(page.getByRole('button', { name: 'Open Karl walkthrough' })).toBeVisible();
+		await expect(page.getByRole('group', { name: 'Karl views' })).toHaveCount(0);
+		await expect(
+			page.getByRole('button', { name: /^(Start|Resume) the Karl walkthrough$/ })
+		).toBeVisible();
 		await expect(page.locator('[data-karl-status]')).toHaveCount(0);
 	});
 });

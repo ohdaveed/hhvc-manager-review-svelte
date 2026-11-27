@@ -38,10 +38,9 @@ test('fits a 375px phone window: no overflow, every control on screen', async ({
 	await page.goto(PAGE);
 
 	const nav = page.locator('nav.review-toolbar');
-	await expect(nav.getByRole('button', { name: 'Karl views' })).toBeVisible();
-	// The walkthrough is a toolbar button of its own, not an item behind the
-	// Karl views disclosure, where nothing on screen said it existed.
-	await expect(nav.getByRole('button', { name: 'Open Karl walkthrough' })).toBeVisible();
+	// Canvas controls only: the Karl walkthrough, outline and Blueprint live in
+	// the review panel (2026-11-26).
+	await expect(nav.getByRole('button', { name: /Karl/ })).toHaveCount(0);
 
 	expect(
 		await page.evaluate(
@@ -67,11 +66,8 @@ test('keeps every toolbar control on one row at 1440x900 with both rails open', 
 	await expect(page.locator('.queue-rail')).toBeVisible();
 	await expect(page.locator('.panel-rail')).toBeVisible();
 	await expect(
-		page.locator('nav.review-toolbar').getByRole('button', { name: 'Karl views' })
-	).toBeVisible();
-	await expect(
-		page.locator('nav.review-toolbar').getByRole('button', { name: 'Open Karl walkthrough' })
-	).toBeVisible();
+		page.locator('nav.review-toolbar').getByRole('button', { name: /Karl/ })
+	).toHaveCount(0);
 
 	const controls = await toolbarControls(page);
 	expect(controls.length).toBeGreaterThan(3);
