@@ -5,7 +5,8 @@ import { routableId } from '$lib/corpus/pageId';
 import { resolveField } from '$lib/corpus/fieldResolver';
 import { extractCopy, type CopyMap, type CorpusPage } from '$lib/corpus/fields';
 import { copyAsRecorded, type EditRow } from '$lib/corpus/overlay';
-import { isOptimistic } from './applySavedEdits';
+import { hydrateMockup, isOptimistic, type EditLike } from './applySavedEdits';
+import { classifyLatestEdits } from './editStatus';
 import type { DraftPage } from './draftPages';
 import type { Op } from '$lib/rethink/diff';
 import type { RethinkResult } from '$lib/rethink/request';
@@ -282,12 +283,53 @@ class PageStore {
 	/**
 	 * Saved edits that no longer answer their field's base copy, keyed like
 	 * `changeKey(path, fieldId)`: `expired` or `orphaned`. A key's absence means
-	 * current. Filled by the review layout from `classifyLatestEdits`.
+	 * current. Filled by `syncEditStatus`.
 	 */
 	editStatus = $state<Record<string, 'expired' | 'orphaned'>>({});
 
 	editStatusOf(pageId: string | undefined, fieldId: string): 'expired' | 'orphaned' | undefined {
 		return pageId === undefined ? undefined : this.editStatus[changeKey(pageId, fieldId)];
+	}
+
+	/** How many `syncEditStatus` passes have started; the newest one wins. */
+	private statusPass = 0;
+
+	/**
+	 * Recomputes which saved edits no longer answer their base copy (ADR 0001)
+	 * and stores the answer in `editStatus`.
+	 *
+	 * Hashing is async (WebCrypto), so a pass that a newer one has overtaken is
+	 * dropped when it finishes -- otherwise an old result could land last and
+	 * mark a field that has since been re-saved. `hash` is for tests.
+	 */
+	async syncEditStatus(
+		livePages: readonly { id: string; path: string }[],
+		edits: readonly EditLike[],
+		hash?: (text: string) => Promise<string>
+	): Promise<void> {
+		const pass = ++this.statusPass;
+		const status = await classifyLatestEdits(
+			livePages,
+			edits,
+			(path, fieldId) => this.baseCopyOf(path, fieldId),
+			hash
+		);
+		if (pass === this.statusPass) this.editStatus = status;
+	}
+
+	/**
+	 * Puts confirmed saved edits on the mockup's page objects -- one hydration
+	 * pass, as `hydrateMockup` describes it. A field the reviewer is typing into
+	 * is left alone, and a save made elsewhere during the typing is flagged on
+	 * the unsaved change. Returns how many fields changed.
+	 */
+	hydrate(args: {
+		livePages: readonly { id: string; path: string }[];
+		edits: readonly EditLike[];
+		editsLoaded: boolean;
+		isOwnEdit: (id: string) => boolean;
+	}): number {
+		return hydrateMockup({ ...args, pages: [...this.pages], changes: this });
 	}
 
 	/**
