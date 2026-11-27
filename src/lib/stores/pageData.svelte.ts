@@ -804,6 +804,10 @@ class PageStore {
 	}
 
 	toggleRail(which: 'queue' | 'panel') {
+		// Opening a rail by hand ends Present: the reviewer asked for review
+		// chrome back. The rails stay as they now are rather than jumping back to
+		// the pre-Present state, which would undo the toggle just made.
+		this.#endPresenting();
 		this.railCollapsed = { ...this.railCollapsed, [which]: !this.railCollapsed[which] };
 		try {
 			localStorage.setItem(RAIL_KEY, JSON.stringify(this.railCollapsed));
@@ -975,7 +979,46 @@ class PageStore {
 		}
 	}
 
+	// ---- present ----------------------------------------------------------
+
+	/**
+	 * Present: the mockup as it would look on SF.gov, for showing someone.
+	 *
+	 * Both rails collapse so Fit has the whole window: MEASURED at 1440px with
+	 * both rails open, the frame was 716px, so Fit drew the 1024px desktop
+	 * layout at 70% -- 16px body copy read at ~11px. With both collapsed the
+	 * pane is wider than 1024px and the page renders at 100%. The layout also
+	 * hides the review controls inside the mockup (`data-presenting`).
+	 *
+	 * Not persisted, like the walkthrough: it is a moment, not a preference, and
+	 * a reload should land back in the review.
+	 */
+	presenting = $state(false);
+	#railsBeforePresent: { queue: boolean; panel: boolean } | null = null;
+
+	togglePresent() {
+		if (this.presenting) {
+			if (this.#railsBeforePresent) this.railCollapsed = this.#railsBeforePresent;
+			this.#endPresenting();
+			return;
+		}
+		this.mobileSheet = 'none';
+		this.#railsBeforePresent = { ...this.railCollapsed };
+		this.railCollapsed = { queue: true, panel: true };
+		this.presenting = true;
+	}
+
+	#endPresenting() {
+		this.presenting = false;
+		this.#railsBeforePresent = null;
+	}
+
 	enterWalkthrough() {
+		// Present and the walkthrough both collapse the rails and both restore
+		// them on the way out; the walkthrough is the one asked for last, so it
+		// takes over, and restores the rails as Present found them.
+		if (this.presenting && this.#railsBeforePresent) this.railCollapsed = this.#railsBeforePresent;
+		this.#endPresenting();
 		// Both entries now live in the review panel, which below 1024px is a
 		// modal sheet over the canvas: leaving it open would cover the view just
 		// asked for.
