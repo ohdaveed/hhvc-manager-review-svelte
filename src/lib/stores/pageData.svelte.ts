@@ -109,6 +109,19 @@ export type RethinkState =
 	  };
 
 const RAIL_KEY = 'hhvc:railCollapsed';
+
+/**
+ * How the workspace opens: the page queue collapsed, the review panel open.
+ *
+ * The page and the decision about it are the work; the queue is how you get to
+ * the next page, and the panel's "Next undecided page" does that without it.
+ * With both rails open a 1440px window left the mockup a 716px frame, drawn at
+ * 70% (16px copy read at 11.2px); with the queue collapsed the frame is 944px.
+ *
+ * The rails are also EXCLUSIVE: opening one closes the other (`toggleRail`),
+ * so the mockup never loses both columns at once. Both may be collapsed.
+ */
+const DEFAULT_RAILS = { queue: true, panel: false } as const;
 const PREVIEW_WIDTH_KEY = 'hhvc:previewWidth';
 const KARL_OUTLINE_KEY = 'hhvc:karlOutline';
 
@@ -272,7 +285,7 @@ class PageStore {
 	agentRec = $state<AgentRec>({ state: 'idle', text: '' });
 
 	/** Per-user, per-device chrome. Not review data, so it never leaves the browser. */
-	railCollapsed = $state<{ queue: boolean; panel: boolean }>({ queue: false, panel: false });
+	railCollapsed = $state<{ queue: boolean; panel: boolean }>({ ...DEFAULT_RAILS });
 
 	/**
 	 * Each page's BASE COPY, by field id, captured before anything is written
@@ -785,22 +798,21 @@ class PageStore {
 	loadRailState() {
 		try {
 			const raw = localStorage.getItem(RAIL_KEY);
+			// No choice recorded yet: the default, NOT persisted. The first toggle
+			// records the reviewer's own choice, which wins from then on. Below
+			// 1024px the rails are sheets and this is moot.
 			if (!raw) {
-				// No choice recorded yet. On a laptop-width window (1024-1279px) both
-				// rails open leave the canvas ~440-600px, so Fit falls back to the
-				// phone layout at 1100px; the queue starts collapsed there and the
-				// mockup gets the desktop layout. NOT persisted: it is a default,
-				// and the first toggle records the reviewer's own choice, which wins
-				// from then on. Below 1024px the rails are sheets and this is moot.
-				if (window.matchMedia?.('(min-width: 1024px) and (max-width: 1279px)')?.matches)
-					this.railCollapsed = { queue: true, panel: false };
+				this.railCollapsed = { ...DEFAULT_RAILS };
 				return;
 			}
 			const parsed = JSON.parse(raw);
-			this.railCollapsed = {
-				queue: parsed?.queue === true,
-				panel: parsed?.panel === true
-			};
+			const queue = parsed?.queue === true;
+			const panel = parsed?.panel === true;
+			// "Both open" was a state a reviewer could save before the rails
+			// became exclusive (2026-11-27). It is no longer one they can reach,
+			// so it loads as the default rather than as a layout with no way back
+			// to it.
+			this.railCollapsed = !queue && !panel ? { ...DEFAULT_RAILS } : { queue, panel };
 		} catch {
 			// Private mode, disabled storage, or a value someone hand-edited.
 			// Chrome preferences are not worth failing a page load over.
@@ -812,7 +824,13 @@ class PageStore {
 		// chrome back. The rails stay as they now are rather than jumping back to
 		// the pre-Present state, which would undo the toggle just made.
 		this.#endPresenting();
-		this.railCollapsed = { ...this.railCollapsed, [which]: !this.railCollapsed[which] };
+		const opening = this.railCollapsed[which];
+		const other = which === 'queue' ? 'panel' : 'queue';
+		// Opening one closes the other. Closing one leaves the other alone, so
+		// both can be collapsed for a wide look at the page.
+		this.railCollapsed = opening
+			? ({ [which]: false, [other]: true } as { queue: boolean; panel: boolean })
+			: { ...this.railCollapsed, [which]: true };
 		try {
 			localStorage.setItem(RAIL_KEY, JSON.stringify(this.railCollapsed));
 		} catch {

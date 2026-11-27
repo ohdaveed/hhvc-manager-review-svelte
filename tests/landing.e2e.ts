@@ -33,6 +33,9 @@ test.describe('signed in', () => {
 		await next.click();
 
 		await expect(page).toHaveURL(/\/review\/report-garbage-clutter-or-overgrown-plants$/);
+		// The workspace opens on the decision, with the queue one click away.
+		await expect(page.getByRole('heading', { name: 'Decision' })).toBeVisible();
+		await page.getByRole('button', { name: 'Expand queue' }).click();
 		await expect(page.locator('nav[aria-label="Pages in this review"] a').first()).toBeVisible();
 	});
 
@@ -89,7 +92,7 @@ test.describe('signed in', () => {
 
 test.describe('the draft route', () => {
 	test('a draft in the queue links to the draft route and is marked current', async ({ page }) => {
-		await gotoSignedIn(page, draftUrl(DRAFT_IDS.drafting), { drafts: true });
+		await gotoSignedIn(page, draftUrl(DRAFT_IDS.drafting), { drafts: true, rail: 'queue' });
 
 		const row = page.locator(
 			`nav[aria-label="Pages in this review"] a[href="${draftUrl(DRAFT_IDS.drafting)}"]`
