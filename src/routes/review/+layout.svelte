@@ -234,28 +234,27 @@
 	const unsavedCount = $derived(pageStore.unsavedChangeCount());
 
 	// The toolbar's previous / next buttons step through the queue in the order
-	// the sidebar renders it -- status groups, then the pages not in the review
-	// yet -- so they land on the row above or below the current one. Signed out
+	// the sidebar renders it (`queueOrder`: themed groups, then the pages not in
+	// the review yet), so they land on the row above or below the current one. Signed out
 	// the queue lists the corpus, so the fallback is corpus order. (They replace
 	// a single "First page" link, which jumped to the queue's top and was the
 	// toolbar's only navigation.)
 	//
 	// The order is taken when the queue's MEMBERSHIP changes, not on every
-	// decision. A decision moves its row to another group, so an order that
-	// followed it sent Next somewhere else the moment a reviewer chose Approved:
-	// measured on 2026-11-26, approving the About page moved it to the end of
-	// the queue and greyed Next out, with 37 undecided pages still to go. Held,
-	// Next still means the row that came after this one, and Prev from there
-	// comes back here. A reload regroups.
+	// decision. When the queue grouped by status, a decision moved its row to
+	// another group, so an order that followed it sent Next somewhere else the
+	// moment a reviewer chose Approved: measured on 2026-11-26, approving the
+	// About page moved it to the end of the queue and greyed Next out, with 37
+	// undecided pages still to go. Themed groups no longer move a decided row,
+	// but holding the order keeps Next stable even if they ever do again.
 	const queueMembership = $derived(
 		review.rows.map((p) => p.path).join('\n') + '\n\n' + review.unreviewed.join('\n')
 	);
 	const order = $derived.by(() => {
 		void queueMembership;
 		return untrack(() => {
-			const queued = queueOrder(review.rows);
-			return queued.length > 0
-				? [...queued, ...review.unreviewed]
+			return review.rows.length > 0
+				? queueOrder(review.rows, review.unreviewed)
 				: pageStore.pages.map((p) => p.id);
 		});
 	});

@@ -15,12 +15,7 @@ import { fireEvent, render, screen } from '@testing-library/svelte';
 import ReviewQueue from '../src/lib/components/workspace/ReviewQueue.svelte';
 import { pageStore } from '../src/lib/stores/pageData.svelte.js';
 import { sessionStore } from '../src/lib/stores/session.svelte.js';
-import {
-	firstQueuePath,
-	nextUndecidedPath,
-	QUEUE_STATUS_ORDER,
-	type ReviewPage
-} from '../src/lib/stores/reviewState';
+import { nextUndecidedPath, queueOrder, type ReviewPage } from '../src/lib/stores/reviewState';
 
 // `ensureDevSession` is required because ReviewQueue now reads `sessionStore`
 // to tell "signed out" from "this review is empty" in its empty state, and
@@ -460,39 +455,36 @@ describe('ReviewQueue', () => {
 	});
 });
 
-describe('firstQueuePath', () => {
-	const row = (path: string, status: ReviewPage['status']): ReviewPage => ({
-		id: `id-${path}`,
-		review_id: 'r1',
-		path,
-		status,
-		manager_notes: null,
-		page_checks: null
+describe('queueOrder is the order the sidebar renders', () => {
+	beforeEach(() => {
+		currentSlug = 'topic-x--about';
+		editsStore.set([]);
+		pageStore.pages = [
+			{ id: 'topic-x--about', title: 'About vector control', type: 'About us', sections: [] },
+			{ id: 'report-mold', title: 'Report mold', type: 'Transaction', sections: [] },
+			{ id: 'report-rats-or-mice', title: 'Report rats', type: 'Transaction', sections: [] }
+		];
 	});
 
-	it('names the row the queue renders first, not the row the store holds first', () => {
-		// Store order is decided-first here; the queue renders `needs-review`
-		// first, so the two disagree. This is exactly the case a second copy of
-		// the ordering would get wrong.
-		const pages = [row('approved-page', 'approved'), row('todo-page', 'needs-review')];
+	it('so Prev/Next, next undecided and the resume point land on the row above or below', () => {
+		// Store order and status order both disagree with the themed order here:
+		// the ungrouped page is stored first and undecided, the themed ones are
+		// decided. The sidebar puts the themes first.
+		const rows = [
+			row('topic-x--about', 'needs-review'),
+			row('report-mold', 'blocked'),
+			row('report-rats-or-mice', 'approved')
+		];
+		pagesStore.set(rows);
+		render(ReviewQueue);
 
-		expect(firstQueuePath(pages)).toBe('todo-page');
-	});
-
-	it('falls through the group order when earlier groups are empty', () => {
-		const pages = [row('blocked-page', 'blocked'), row('revise-page', 'revise')];
-
-		// `revise` precedes `blocked`, and neither `needs-review` nor `approved`
-		// has a row.
-		expect(firstQueuePath(pages)).toBe('revise-page');
-	});
-
-	it('returns undefined with no review loaded, rather than inventing a page', () => {
-		expect(firstQueuePath([])).toBeUndefined();
-	});
-
-	it('orders the rendered groups by the same constant', () => {
-		expect([...QUEUE_STATUS_ORDER]).toEqual(['needs-review', 'approved', 'revise', 'blocked']);
+		const rendered = screen
+			.getAllByRole('link')
+			.map((a) => a.getAttribute('href') ?? '')
+			.filter((href) => href.startsWith('/review/'))
+			.map((href) => href.slice('/review/'.length));
+		expect(rendered).toEqual(queueOrder(rows));
+		expect(rendered).toEqual(['report-rats-or-mice', 'report-mold', 'topic-x--about']);
 	});
 });
 
