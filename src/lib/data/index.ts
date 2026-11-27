@@ -27,12 +27,11 @@ import { payFee } from './pay-healthy-housing-fee';
 import { ipmEducation } from './integrated-pest-management-education';
 import { scopeInfo } from './hhvc-inspection-scope';
 
-// Ten proposed pages from `design/HHVC Page Ideas.dc.html`, drafted for a
-// supervisor review. They are NOT part of the reviewed 29 -- every one carries
-// `editorStatus: 'needs-review'` and an editorNote opening "PROPOSED PAGE".
-// Three of them hold facts the source plan flags as unconfirmed (the citation
-// amount, the language list, the office address) and those read PLACEHOLDER
-// rather than a plausible value.
+// Proposed pages from `design/HHVC Page Ideas.dc.html`, drafted for a
+// supervisor review. Each carries
+// `proposed: true` (what the review queue filters on) and an editorNote opening
+// "PROPOSED PAGE"; `tests/proposedPages.spec.ts` keeps the two in step. Facts the
+// source plan flags as unconfirmed read PLACEHOLDER rather than a plausible value.
 import { stepPestReport } from './step-report-a-pest-problem';
 import { stepCorrectViolation } from './step-correct-a-violation';
 import { ehOffice } from './location-environmental-health-office';

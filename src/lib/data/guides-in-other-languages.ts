@@ -4,6 +4,7 @@ export const languageGuides = {
 	title: 'Guides in other languages',
 	summary: 'Get pest, mold, and tenant rights guides in a language besides English.',
 	reading: 'Grade 6',
+	proposed: true,
 	editorNote:
 		'PROPOSED PAGE — not in the current 29. `design/HHVC Page Ideas.dc.html` observes that the three existing Resource Collections are organised by AUDIENCE, and proposes three organised by ARTIFACT — the downloads a person is sent to find after a phone call, which is the other way people arrive. THE LANGUAGE LIST IS ONE OF THE FOUR FLAGGED PLACEHOLDERS. The source plan names Spanish, Chinese, Filipino, Russian and Vietnamese; that list is carried below as a PROPOSAL and is not confirmed, so the summary deliberately says "languages other than English" rather than naming five. Which guides exist in which languages has to be checked before this page saves — publishing a language that has no document is worse than omitting it, because a reader travels to a dead end. The audience list was removed (2026-11-26): the introductory text already speaks to the reader, and Resource Collection has no things_to_know or intro panel to hold it.',
 	editorStatus: 'needs-review',

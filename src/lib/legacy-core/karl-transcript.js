@@ -58,6 +58,7 @@ const NOT_MIGRATED_PAGE_FIELDS = new Set([
 	'reading',
 	'editorNote',
 	'editorStatus',
+	'proposed',
 	'topicTag',
 	'primaryCta',
 	'type',

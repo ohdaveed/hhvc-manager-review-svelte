@@ -3,6 +3,7 @@ export const ratFreeBlocks = {
 	type: 'Campaign',
 	title: 'Rat-free blocks',
 	reading: 'Grade 6',
+	proposed: true,
 	editorNote:
 		'PROPOSED PAGE — not in the current 29. `design/HHVC Page Ideas.dc.html` makes a pointed observation: both existing Campaigns offer a free workshop, "which makes the type read as a booking page". Campaign is meant for a message-led push, and this page uses it that way — there is no form and no session to request. The IPM framing is deliberate and matches the enforcement model: rats leave when food, water, harborage and entry go, so the asks below are root-cause actions a block can verify on itself rather than a request to report more. NO SIGHTING STATISTICS, TARGET, OR DATE RANGE APPEARS. A campaign normally carries a number and a season; none is confirmed here, and inventing a "40% fewer sightings" figure would be exactly the fabricated statistic the content standard forbids. Campaign has no things_to_know and no intro panel, so the audience list was folded into the body (2026-11-26): neighborhood and merchant associations into "Start with your own block"; owners and managers already have their own Spotlight.',
 	editorStatus: 'needs-review',

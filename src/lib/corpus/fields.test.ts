@@ -376,7 +376,9 @@ describe('extractFields/extractCopy coverage of the real corpus', () => {
 	// excluded from both extractors on purpose (see `extractFields`'s own doc
 	// comment for `karl`, `editorNote`, `editorStatus`) or carry no
 	// reader-visible copy at all (discriminators, style/target ids, booleans).
-	const NON_COPY_TOP = ['editorNote', 'editorStatus', 'reading', 'slug', 'type'];
+	// `proposed` is a provenance flag (a page drafted from the page-ideas plan,
+	// not one of the reviewed pages), so it stays out of `content_hash`.
+	const NON_COPY_TOP = ['editorNote', 'editorStatus', 'proposed', 'reading', 'slug', 'type'];
 	// `fieldKey` is IDENTITY, not copy: it pins the `sections.<key>.*` ids so an
 	// editorial rewrite of the heading cannot re-key the section and orphan the
 	// edits stored against it. `deriveFieldKey` reads it; neither extractor
