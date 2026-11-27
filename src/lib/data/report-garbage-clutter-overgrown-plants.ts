@@ -5,11 +5,20 @@ export const garbageReport = {
 	summary:
 		'Trash build-up, stored materials, or brush that draws pests to a home, yard, or shared area.',
 	primaryAgency: 'Healthy Housing and Vector Control',
+	// Karl's Contact us block (get_help -> Phone number), in the order and wording
+	// live SF.gov 311 report pages use (2026-11-26 page review). In the step text
+	// it would push the 311 step past the three-sentence paragraph limit.
+	contact: {
+		phone: [
+			'311',
+			'415-701-2311 if you are outside of San Francisco',
+			'TDD/TTY 711 if you are deaf, hard of hearing, or have a speech disability'
+		]
+	},
 	reading: 'Grade 6',
 	editorNote:
 		'Report regroup (Decided, Nov 24, 2026), built 2026-11-25. New page, one of the 9 condition pages. Scope is the Decided one: garbage, excessive materials and overgrown vegetation, with links to Adult Protective Services and the Fire Marshal, phrased as offers of help rather than threats of enforcement. Both link targets were checked live on 2026-11-25: the APS page answers 200, and the fire safety page redirects to the Fire Department\'s own report form. Text is carried from "Report garbage, mold, and overgrown vegetation", which was retired once pigeons and animal waste got their own pages (2026-11-25). Shared report text lives on What happens after you report and Tenant rights.',
 	whatToKnow: {
-		cost: 'Free',
 		thingsToKnow: [
 			{
 				label: 'If someone may need support',
@@ -28,17 +37,10 @@ export const garbageReport = {
 			kind: 'body',
 			steps: [
 				{
-					title: 'Start your report',
+					title: 'Gather your details',
 					text: [
-						'Use 311 to report garbage, clutter, or overgrown plants to the City. If the problem is urgent, report now. You can report a problem where you live or on a nearby property, or report for someone else.',
-						'Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.'
+						'Have these details ready before you start. Only share what applies to your situation:'
 					],
-					button: 'Report through 311',
-					karl: 'what_to_do -> Section. Section title: "Start your report". Section specifics: Text block (these 2 paragraphs, the second being the one-line SRO note every report page carries, Decided) + Button link block ("Report through 311").'
-				},
-				{
-					title: 'Describe the condition',
-					text: ['Include only the details that apply:'],
 					bullets: [
 						'The address or location',
 						'The condition: garbage, debris, clutter, stored items, or overgrown plants and brush',
@@ -48,11 +50,20 @@ export const garbageReport = {
 						'Your contact information, if you want an inspector to contact you'
 					],
 					callout: {
-						karl: 'Callout block inside the "Describe the condition" Section specifics: single rich text field, no separate title. Text: the one confidentiality sentence (Decided: the same on every page, once per page) plus the photo note. The old page\'s "Reporter identities are only shared with the City Attorney\'s Office" line is not carried (Decided).',
+						karl: 'Callout block inside the "Gather your details" Section specifics: single rich text field, no separate title. Text: the one confidentiality sentence (Decided: the same on every page, once per page) plus the photo note. The old page\'s "Reporter identities are only shared with the City Attorney\'s Office" line is not carried (Decided).',
 						text: 'We never share your name or contact information. You do not need to send photos.',
 						title: false
 					},
-					karl: 'what_to_do -> Section. Section title: "Describe the condition". Section specifics: Text block (intro sentence + bulleted checklist) + Callout block below.'
+					karl: 'what_to_do -> Section. Section title: "Gather your details". Section specifics: Text block (intro sentence + bulleted checklist) + Callout block below.'
+				},
+				{
+					title: 'Start your report',
+					text: [
+						'Use 311 to report garbage, clutter, or overgrown plants to the City. If the problem is urgent, report now. You can report a problem where you live or on a nearby property, or report for someone else.',
+						'Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.'
+					],
+					button: 'Report through 311',
+					karl: 'what_to_do -> Section. Section title: "Start your report". Section specifics: Text block (these 2 paragraphs, the second being the one-line SRO note every report page carries, Decided) + Button link block ("Report through 311").'
 				}
 			]
 		},

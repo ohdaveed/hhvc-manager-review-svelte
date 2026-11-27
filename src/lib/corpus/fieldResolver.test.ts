@@ -275,7 +275,7 @@ describe('resolveField — extractCopy parity (Group D)', () => {
 
 	it('sections.<key>.steps.N.text.J keeps the unverified flag through a write', () => {
 		const page = findPage('sf.gov/report-animal-waste-on-property');
-		const id = 'sections.what-to-do.steps.0.text.1';
+		const id = 'sections.what-to-do.steps.1.text.1';
 
 		const before = resolveField(page, id)!;
 		expect(before.value).toMatch(/dog waste on a sidewalk/);
