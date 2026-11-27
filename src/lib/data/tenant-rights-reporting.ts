@@ -19,7 +19,7 @@ export const tenantRights = {
 			karl: 'Maps to an "Information section" → Title and text block: Title = this heading, Text = the paragraph below. A second sentence, "Retaliation can include trying to evict you, raising rent, reducing services, or threatening you because you reported a condition.", was removed on 2026-11-26: "What retaliation can look like" below lists all four, plus a fifth. The second paragraph, the rule itself, moved here on 2026-11-26 from afterReport, which had it while this page — the one about retaliation — did not.',
 			kind: 'body',
 			paragraphs: [
-				'Tenants have rights when they ask for repairs or report housing conditions to the City.',
+				'You have rights when you ask for repairs or report housing conditions to the City.',
 				'A property owner or manager cannot retaliate because you report a housing condition to 311 or a health department.'
 			],
 			callout: {
@@ -32,7 +32,7 @@ export const tenantRights = {
 			karl: 'Added from the Article 11 Interpretation Guide v1.0. Maps to a Title and text block with bulleted list.',
 			kind: 'body',
 			paragraphs: [
-				"Tenants also have responsibilities under Article 11 and the Director's Rules for keeping their home free of pests."
+				"You also have responsibilities under Article 11 and the Director's Rules for keeping your home free of pests."
 			],
 			bullets: [
 				'**Keep your home clean:** Regular cleaning, taking out trash, and not letting food or garbage build up helps prevent pests.',

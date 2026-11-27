@@ -10,7 +10,7 @@ export const payCitation = {
 		'PROPOSED PAGE — not in the current 29. THE CITATION AMOUNT IS ONE OF THE FOUR FACTS `design/HHVC Page Ideas.dc.html` FLAGS AS A PLACEHOLDER, and it is not supplied here. No dollar figure, no penalty schedule, no late interest and no payment deadline appears on this page, because none of them is confirmed anywhere in the corpus, and a plausible-looking number on a payment page is the worst possible invention — a reader would act on it. Every one is written as "your citation says". This is distinct from `payFee`, which is the ANNUAL Healthy Housing fee owed by buildings with three or more rental units; a citation is a penalty after enforcement, and the two are separated so neither reads as the other. The audience takes one of the two Things to know entries, matching the live pattern on sf.gov/manage-covid-19-schools-childcare-and-youth-programs.',
 	editorStatus: 'needs-review',
 	whatToKnow: {
-		cost: 'PLACEHOLDER — the citation amount is set on the citation and is not confirmed for this page',
+		cost: 'PLACEHOLDER: the citation amount is set on the citation and is not confirmed for this page',
 		thingsToKnow: [
 			{
 				label: 'Who this information is for',
@@ -18,7 +18,7 @@ export const payCitation = {
 			},
 			{
 				label: 'Paying is not the same as fixing',
-				text: 'A citation is a penalty. Paying it does not correct the cited condition or close the violation — the work still has to be done.'
+				text: 'A citation is a penalty. Paying it does not correct the cited condition or close the violation. You must still do the work.'
 			}
 		]
 	},
@@ -31,7 +31,7 @@ export const payCitation = {
 				{
 					title: 'Read your citation',
 					text: [
-						'The citation names the amount, the date it is due, and how to pay. Those are the figures that apply — this page does not repeat them.'
+						'The citation names the amount, the date it is due, and how to pay. Those are the figures that apply. This page does not repeat them.'
 					],
 					bullets: [
 						'Check which cited condition the penalty relates to.',
@@ -43,7 +43,7 @@ export const payCitation = {
 					title: 'Pay by the date on the citation',
 					text: ['Use the payment method your citation gives.'],
 					bullets: [
-						'PLACEHOLDER: the payment channels — online, by mail, in person — are not confirmed.',
+						'PLACEHOLDER: the payment channels (online, by mail, in person) are not confirmed.',
 						'Quote the case or notice number so the payment reaches the right case.',
 						'[Environmental Health office](ehOffice)'
 					],

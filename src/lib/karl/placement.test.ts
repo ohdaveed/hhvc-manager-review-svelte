@@ -478,11 +478,23 @@ describe('Campaign', () => {
 	});
 
 	it('fails a spotlight button over 25 characters', () => {
-		const p = of('ratFreeBlocks');
+		// The corpus button was shortened to fit on 2026-11-27, so the check runs
+		// against the page with its old 26-character text put back.
+		const real = page('ratFreeBlocks') as unknown as { sections: { heading?: string }[] };
+		const overlay = {
+			...real,
+			sections: real.sections.map((s) =>
+				s.heading === 'For owners and managers' ? { ...s, button: 'See owner responsibilities' } : s
+			)
+		};
+		const p = placementsFor(overlay as never, null, pagesByKey);
 		expect(p.fields.get('sections.for-owners-and-managers.button')?.reasons).toEqual([
 			'Button text is 26 characters; Karl wants 25 or fewer.'
 		]);
 		expect(p.fields.get('sections.take-away-what-rats-live-on.button')?.status).toBe('placed');
+		expect(
+			of('ratFreeBlocks').fields.get('sections.for-owners-and-managers.button')?.reasons
+		).toEqual([]);
 	});
 
 	it('places the About section and partner agencies, and flags the About placeholder', () => {
@@ -536,7 +548,7 @@ describe('Campaign', () => {
 			'7 sections: 7 go into Karl. 2 details need a fix, 1 detail is unconfirmed. 1 thing won’t carry over to Karl.'
 		);
 		expect(outlineSummary(gap('ratFreeBlocks'))).toBe(
-			'5 sections: 5 go into Karl. 2 details need a fix. 2 things won’t carry over to Karl.'
+			'5 sections: 5 go into Karl. 1 detail needs a fix. 2 things won’t carry over to Karl.'
 		);
 	});
 });

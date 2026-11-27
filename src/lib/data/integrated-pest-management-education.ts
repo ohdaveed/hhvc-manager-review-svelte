@@ -39,7 +39,7 @@ export const ipmEducation = {
 				'Building resident meetings organized by tenants, not by property management'
 			],
 			paragraphs: [
-				'Sessions are designed for adult residents and community members. [Healthy Housing and Vector Control](pestsTopic) can help you choose the right format for your group size and space.'
+				'Sessions are for adult residents and community members. [Healthy Housing and Vector Control](pestsTopic) can help you choose the right format for your group size and space.'
 			]
 		},
 		{

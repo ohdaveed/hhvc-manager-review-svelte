@@ -156,7 +156,7 @@ export const healthyHousingTopic = {
 			cards: [
 				{ title: 'Guides in other languages', target: 'languageGuides' },
 				{
-					title: 'Prepare your unit for bed bug treatment',
+					title: 'Prepare your unit for bed bug treatment (PDF)',
 					url: 'https://api.sf.gov/documents/23140/GuidelinesforUnitPreparation_dP56n7G.pdf'
 				},
 				{
@@ -164,7 +164,7 @@ export const healthyHousingTopic = {
 					url: 'https://api.sf.gov/documents/52936/R_Residential_Bldg_Owner-Operator_Guidelines_for_Vector_Control_2026_0SYmmSc.html'
 				},
 				{
-					title: 'Pest control reporting form',
+					title: 'Pest control reporting form (XLS)',
 					url: 'https://api.sf.gov/documents/23712/PCOReportingForm_2.xls'
 				},
 				{
@@ -180,7 +180,7 @@ export const healthyHousingTopic = {
 					url: 'https://ipm.ucanr.edu/home-and-landscape/'
 				},
 				{
-					title: 'Environmental health branch fee schedule',
+					title: 'Environmental Health Branch fee schedule (PDF)',
 					url: 'https://api.sf.gov/documents/17453/Website_Fees_FY25-26_fgM2WjX.pdf'
 				}
 			]

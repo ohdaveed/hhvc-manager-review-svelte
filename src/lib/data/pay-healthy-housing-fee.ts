@@ -9,7 +9,7 @@ export const payFee = {
 	editorNote:
 		'Transaction redesign based on the live FY 2026-27 payment page and fee schedule. It puts the payment action first, then separates eligibility, annual fee tiers, invoice corrections, and late-payment consequences. The annual apartment-building fee and a reinspection fee are distinct charges; do not present reinspection rates as part of the annual bill.',
 	whatToKnow: {
-		cost: 'Annual fee based on rental unit count — $103 (3 units) up to $808 (more than 30 units). Check your invoice for the exact amount.',
+		cost: 'Annual fee based on how many rental units you have. It ranges from $103 (3 units) to $808 (more than 30 units). Check your invoice for the exact amount.',
 		// Reorganized into ~2 named subsections (Karl's own "no more than 2, if
 		// you can" guidance) to match how real sf.gov Things to know entries
 		// render — each with its own H3, not one joined bullet list. The
@@ -80,7 +80,7 @@ export const payFee = {
 					],
 					bullets: [
 						'**In person:** pay by check, cash, or money order at City Hall, Room 140, 1 Dr. Carlton B. Goodlett Place.',
-						'**By mail:** make a check or money order payable to "Department of Public Health." Write your invoice number on it and mail it to P.O. Box 7429, San Francisco, CA 94120.'
+						'**By mail:** make a check or money order payable to "Department of Public Health." Write your invoice number on it. Mail it to P.O. Box 7429, San Francisco, CA 94120.'
 					],
 					button: 'Pay your fee online',
 					buttonUrl: 'https://services.paysf.co/service/healthy-housing-fee',

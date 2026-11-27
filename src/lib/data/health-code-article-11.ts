@@ -5,7 +5,7 @@ export const article11Guide = {
 	reading: 'Grade 7',
 	reportDate: 'August 7, 2026',
 	editorStatus: 'needs-review',
-	seoTitle: 'Health Code Article 11 in plain language',
+	seoTitle: 'Health Code Article 11 in plain language | SF.gov',
 	metaDescription:
 		'Plain-language explanations of San Francisco Health Code Article 11 rules for garbage, pests, mold, rodents, and other public health nuisances.',
 	editorNote:
@@ -30,7 +30,7 @@ export const article11Guide = {
 				'The left column names the code section. The right column explains what that rule means in everyday language. A condition may involve more than one section, and an inspector reviews the facts of each case.'
 			],
 			callout: {
-				text: '**This is not legal advice.** The municipal code controls if this guide and the code differ. The City will identify the applicable sections and required corrections in a Notice of Violation.',
+				text: '**This is not legal advice.** The municipal code controls if this guide and the code differ. If you get a Notice of Violation, it names the sections that apply and what you must correct.',
 				karl: 'Report Content -> Callout-style rich-text block. Karl’s Report editor does not have a dedicated legal-disclaimer component; retain the bold lead-in in the rich text if a visual callout is unavailable.'
 			}
 		},
@@ -213,7 +213,7 @@ export const article11Guide = {
 				'If HHVC confirms a public health nuisance, the City may use the Article 11 enforcement process to require correction.',
 				'The notice for a specific case identifies:'
 			],
-			bullets: ['The condition', 'The responsible party', 'The required work', 'The deadline'],
+			bullets: ['The condition', 'The responsible party', 'The work to be done', 'The deadline'],
 			table: [
 				['Health code', 'In plain language'],
 				[
