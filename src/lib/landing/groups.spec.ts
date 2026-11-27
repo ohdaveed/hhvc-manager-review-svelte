@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { routableId } from '$lib/corpus/pageId';
 import { allPages } from '$lib/data';
-import { PAGE_GROUPS } from './groups';
+import { PAGE_GROUPS, groupPaths } from './groups';
 
 // Every assertion compares lists of ids rather than counts, so a failure names
 // the page that needs a home instead of reporting "expected 39 to be 38".
@@ -37,5 +37,27 @@ describe('PAGE_GROUPS', () => {
 
 	it('gives each group a unique id', () => {
 		expect(duplicates(PAGE_GROUPS.map((group) => group.id))).toEqual([]);
+	});
+});
+
+describe('groupPaths', () => {
+	it('lists pages under the landing headings, in landing order, whatever order they arrive in', () => {
+		const sections = groupPaths([...corpusIds].reverse());
+		expect(sections.map((s) => s.heading)).toEqual(PAGE_GROUPS.map((g) => g.heading));
+		expect(sections.flatMap((s) => s.paths)).toEqual(groupedIds);
+	});
+
+	it('leaves out pages it was not given', () => {
+		const sections = groupPaths(['report-mold', 'rat-free-blocks']);
+		expect(sections.flatMap((s) => s.paths)).toEqual(['report-mold', 'rat-free-blocks']);
+		expect(sections.find((s) => s.id === 'records')?.paths).toEqual([]);
+	});
+
+	it('lists an unclaimed page under Other pages and a draft under Proposed pages, last', () => {
+		const sections = groupPaths(['draft:abc', 'not-a-themed-page', 'report-mold']);
+		expect(sections.slice(-2)).toEqual([
+			{ id: 'ungrouped', heading: 'Other pages', paths: ['not-a-themed-page'] },
+			{ id: 'drafts', heading: 'Proposed pages', paths: ['draft:abc'] }
+		]);
 	});
 });

@@ -19,6 +19,8 @@
  * naming the id, when a corpus page is in no group, in two groups, or when a
  * group names an id the corpus does not have.
  */
+import { isDraftPath } from '$lib/corpus/draftPath';
+
 export const PAGE_GROUPS = [
 	{
 		id: 'report',
@@ -98,3 +100,35 @@ export const PAGE_GROUPS = [
 		]
 	}
 ] as const satisfies readonly { id: string; heading: string; pages: readonly string[] }[];
+
+/** One heading's worth of pages, as the landing page and the review queue list them. */
+export type PageSection = { id: string; heading: string; paths: string[] };
+
+/**
+ * Sorts `paths` under the landing page's headings, in its order: the themes of
+ * `PAGE_GROUPS` (each in its authored order), then "Other pages" for a corpus
+ * page no group claims, then "Proposed pages" for AI drafts, which carry no
+ * theme. A path not in `paths` is left out, and every path in `paths` lands
+ * somewhere -- an unclaimed page is listed rather than dropped.
+ *
+ * Shared by the landing page and the review queue so the two lists cannot
+ * order the same pages differently. Empty sections are returned; callers
+ * filter them when they render.
+ */
+export function groupPaths(paths: readonly string[]): PageSection[] {
+	const present = new Set(paths);
+	const grouped = new Set<string>(PAGE_GROUPS.flatMap((g) => g.pages as readonly string[]));
+	const drafts = paths.filter(isDraftPath);
+	const ungrouped = paths.filter((p) => !grouped.has(p) && !isDraftPath(p));
+	return [
+		...PAGE_GROUPS.map((g) => ({
+			id: g.id,
+			heading: g.heading,
+			paths: (g.pages as readonly string[]).filter((p) => present.has(p))
+		})),
+		...(ungrouped.length > 0
+			? [{ id: 'ungrouped', heading: 'Other pages', paths: ungrouped }]
+			: []),
+		...(drafts.length > 0 ? [{ id: 'drafts', heading: 'Proposed pages', paths: drafts }] : [])
+	];
+}

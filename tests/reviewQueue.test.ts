@@ -161,12 +161,12 @@ describe('ReviewQueue', () => {
 		).toBeTruthy();
 	});
 
-	it('renders a row per page, with the corpus title and page type', () => {
+	it('renders a row per page, with the corpus title, its decision and page type', () => {
 		pagesStore.set([row('topic-x--about', 'needs-review')]);
 		render(ReviewQueue);
 
 		expect(screen.getByText('About vector control')).toBeTruthy();
-		expect(screen.getByText('About us')).toBeTruthy();
+		expect(screen.getByText('Undecided · About us')).toBeTruthy();
 	});
 
 	it('shows how many fields on a page have been edited', () => {
@@ -178,7 +178,7 @@ describe('ReviewQueue', () => {
 		]);
 		render(ReviewQueue);
 
-		expect(screen.getByText('About us · 2 edited fields')).toBeTruthy();
+		expect(screen.getByText('Undecided · About us · 2 edited fields')).toBeTruthy();
 	});
 
 	it('marks the page being reviewed as the current one', () => {
@@ -189,14 +189,30 @@ describe('ReviewQueue', () => {
 		expect(current.getAttribute('href')).toBe('/review/topic-x--about');
 	});
 
-	it('hides a status group that has no pages, and counts the ones that do', () => {
-		pagesStore.set([row('topic-x--about', 'approved'), row('topic-x--report', 'approved')]);
+	it('groups pages under the landing page headings, in its order, and counts each', () => {
+		// `report-mold` is themed (Report a problem); the fixture pages are in no
+		// group, so they fall under Other pages, after every theme.
+		pageStore.pages = [
+			...pageStore.pages,
+			{ id: 'report-mold', title: 'Report mold', type: 'Transaction', sections: [] }
+		];
+		pagesStore.set([
+			row('topic-x--about', 'approved'),
+			row('topic-x--report', 'approved'),
+			row('report-mold', 'blocked')
+		]);
 		render(ReviewQueue);
 
-		expect(screen.getByText('Approved')).toBeTruthy();
-		expect(screen.queryByText('Blocked')).toBeNull();
+		const headings = screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent);
+		expect(headings.map((t) => t?.replace(/\d+/g, '').trim())).toEqual([
+			'Report a problem',
+			'Other pages'
+		]);
 		// The count pill sits beside the heading it belongs to.
-		expect(screen.getByText('Approved').parentElement?.textContent).toContain('2');
+		expect(screen.getByText('Other pages').parentElement?.textContent).toContain('2');
+		// Empty themes are not drawn.
+		expect(screen.queryByText('About HHVC')).toBeNull();
+		expect(screen.getByText('Blocked · Transaction')).toBeTruthy();
 	});
 
 	it('says in words when a page has decision notes, with no colour-only marker', () => {
@@ -206,9 +222,9 @@ describe('ReviewQueue', () => {
 		]);
 		const { container } = render(ReviewQueue);
 
-		expect(screen.getByText('About us · has notes')).toBeTruthy();
+		expect(screen.getByText('Undecided · About us · has notes')).toBeTruthy();
 		// Whitespace-only notes are not notes.
-		expect(screen.getByText('Transaction')).toBeTruthy();
+		expect(screen.getByText('Undecided · Transaction')).toBeTruthy();
 		// The per-row status dot only repeated the group's colour; it is gone.
 		expect(container.querySelector('li .rounded-full')).toBeNull();
 	});
@@ -284,8 +300,8 @@ describe('ReviewQueue', () => {
 			expect(screen.getAllByRole('link').map((a) => a.getAttribute('href'))).toEqual([
 				'/review/topic-x--report'
 			]);
-			expect(screen.getByText('Undecided').parentElement?.textContent).toContain('1');
-			expect(screen.queryByText('Approved')).toBeNull();
+			expect(screen.getByText('Other pages').parentElement?.textContent).toContain('1');
+			expect(screen.queryByText(/^Approved/)).toBeNull();
 		});
 
 		it('matches the path too', async () => {

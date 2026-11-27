@@ -7,7 +7,7 @@
 	import { isDraftPath } from '$lib/corpus/draftPath';
 	import { pageTitleFor } from '$lib/corpus/pageTitle';
 	import { filterPages, type StatusFilter } from '$lib/landing/filter';
-	import { PAGE_GROUPS } from '$lib/landing/groups';
+	import { groupPaths } from '$lib/landing/groups';
 	import { STATUS_LABELS } from '$lib/review/statusLabels';
 	import { draftsStore, isStaleDraft } from '$lib/stores/draftPages';
 	import { pageStore } from '$lib/stores/pageData.svelte';
@@ -56,30 +56,18 @@
 	]);
 
 	/**
-	 * Corpus pages no group claims.
-	 *
-	 * `groups.spec.ts` asserts this is empty for the real corpus and fails naming
-	 * the id when it is not — but the component must not DEPEND on an invariant
-	 * enforced in a different file. Rendering only `PAGE_GROUPS` would mean a new
-	 * corpus module is invisible here, and invisible is the one failure mode a
-	 * review tool cannot have: a page nobody can see is a page nobody decides.
-	 * So an unclaimed page gets listed rather than dropped, and the spec is what
-	 * says it should have had a home.
+	 * Every corpus page and every draft, under the themed headings. `groupPaths`
+	 * lists a corpus page no group claims under "Other pages" rather than
+	 * dropping it -- `groups.spec.ts` asserts there are none, but this component
+	 * must not depend on an invariant enforced in a different file: a page nobody
+	 * can see is a page nobody decides. The review queue sorts by the same helper.
 	 */
-	const grouped = new Set(PAGE_GROUPS.flatMap((g) => g.pages as readonly string[]));
-	const ungrouped = $derived(
-		pageStore.pages.map((p) => p.id).filter((id) => !grouped.has(id) && !isDraftPath(id))
+	const sections = $derived(
+		groupPaths([
+			...pageStore.pages.map((p) => p.id).filter((id) => !isDraftPath(id)),
+			...draftPaths
+		])
 	);
-
-	const sections = $derived([
-		...PAGE_GROUPS.map((g) => ({ id: g.id, heading: g.heading, paths: [...g.pages] })),
-		...(ungrouped.length > 0
-			? [{ id: 'ungrouped', heading: 'Other pages', paths: ungrouped }]
-			: []),
-		...(draftPaths.length > 0
-			? [{ id: 'drafts', heading: 'Proposed pages', paths: draftPaths }]
-			: [])
-	]);
 
 	// Review data is `TO authenticated`, so signed out there is no status to show
 	// and nothing to filter by. The corpus still renders -- that is the point of
