@@ -7,6 +7,16 @@ Every product decision the remaining plans are blocked on, in one place. Sources
 
 Mark each **Decided: …** in place. Leg 2 builds only what is decided.
 
+## Rulings, 2026-11-26
+
+Approved as recommended: **C4, C8, C7b, SS-3c** (close), **C3** (not Blocked), **C6** (rewrite the
+first two descriptions only), **C7a**, **SS-3a** (link, don't fold), **C9** (keep per-page targets),
+**SS-1** (count prose links). **SS-3b** stays open until HHVC says whether the two workshops are one
+program.
+
+**Not approved: SS-4, SS-D1, SS-D2.** They stay open; site-structure PR 4 does not start until SS-4
+has a ruling.
+
 ## Already settled by later work — confirm and close
 
 | #     | Question                                              | Why it's settled                                                                                                          | Recommendation |

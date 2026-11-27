@@ -28,6 +28,24 @@ builds whatever that list settles.
 - [ ] **L4. UI copy review, tasks 1–3 below** (baseline, inventory, rendered walk). Read-only, so it can
       run beside L2. Starts after L1.
 
+## Leg 2 — build the 2026-11-26 rulings
+
+From `docs/reviews/2026-11-26-open-decisions.md`. Copy changes shift positional field ids, so count
+production edits and comments on each touched page first (0 on 2026-11-24).
+
+- [ ] **M1. Fee page copy (C6, C7a)** — one content PR. `pay-healthy-housing-fee.ts`: a description
+      that doesn't restate the title; heading "Pay your invoice or contact us"; cut the second
+      "annual fee supports" callout. `bed-bugs-…` Information page: a description that doesn't restate
+      the title. `classifySection` before/after on each touched section, `corpus:lock`, `verify`, a
+      screenshot of each page, and the `docs/karl-transaction-compliance.csv` rows if a section changed.
+- [ ] **M2. `findOrphans` counts prose links (SS-1)** — test first: a page reachable only through a
+      `[text](pageKey)` link is not an orphan. Then tick site-structure PR 1's follow-up.
+- [ ] **M3. Record the rulings in the source plans** — Track C rows C3, C4, C6–C9 and site-structure
+      PR 3 items marked Decided / Closed with a pointer to the decisions doc. SS-3a needs no build: the
+      two Notice of Violation pages already link each other.
+
+Still open, not in leg 2: SS-3b (HHVC fact), SS-4, SS-D1, SS-D2.
+
 Not in leg 1: PR 4's `pages.path` migration (a merge applies it to production, so it waits on L3's
 slug decision), and every copy fix (waits on the review report).
 
