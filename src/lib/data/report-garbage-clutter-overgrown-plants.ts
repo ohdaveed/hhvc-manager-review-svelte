@@ -43,7 +43,7 @@ export const garbageReport = {
 					],
 					bullets: [
 						'The address or location',
-						'The condition: garbage, debris, clutter, stored items, or overgrown plants and brush',
+						'The condition: garbage, debris, clutter, stored items, overgrown plants and brush, or poison oak',
 						'Whether it is inside, outside, or in a shared area',
 						'How long it has been happening',
 						'Whether you saw rats, mice, or other pests nearby',
@@ -59,7 +59,8 @@ export const garbageReport = {
 				{
 					title: 'Start your report',
 					text: [
-						'Use 311 to report garbage, clutter, or overgrown plants to the City. The [Health Code](https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890) requires property owners to keep trash, filth, and overgrown plants from building up. Build-up that shelters pests or creates a health hazard is a violation.'
+						'Use 311 to report garbage, clutter, or overgrown plants to the City. The [Health Code](https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890) requires property owners to keep trash, filth, and overgrown plants from building up. Build-up that shelters pests or creates a health hazard is a violation.',
+						'Poison oak is a noxious plant. When it is reported on private property, we require the property owner to remove it. If you see poison oak on public property, report it to Public Works.'
 					],
 					button: 'Report through 311',
 					after: [
@@ -71,7 +72,7 @@ export const garbageReport = {
 						'Download our mobile app to report a problem and track your request. Available on Android or iOS.',
 						'[Learn more about the SF311 mobile app](https://www.sf.gov/sf311-mobile-app)'
 					],
-					karl: 'what_to_do -> Section. Section title: "Start your report". Section specifics: Text block (this paragraph) + Button link block ("Report through 311") + Text block ("Other ways to report", the `after` lines). The one-line SRO note every report page carried was removed on 2026-11-26 (owner). The Article 11 line was folded in on 2026-11-26 from the retired "What the Health Code requires" custom section (HHVC content standards Ch. 8.7.1-8.7.2), and the who-can-report line was dropped: What happens after you report owns it.'
+					karl: 'what_to_do -> Section. Section title: "Start your report". Section specifics: Text block (these two paragraphs; the poison oak one was added on 2026-11-26 from HHVC: owners must remove reported poison oak, and Public Works takes it on public property) + Button link block ("Report through 311") + Text block ("Other ways to report", the `after` lines). The one-line SRO note every report page carried was removed on 2026-11-26 (owner). The Article 11 line was folded in on 2026-11-26 from the retired "What the Health Code requires" custom section (HHVC content standards Ch. 8.7.1-8.7.2), and the who-can-report line was dropped: What happens after you report owns it.'
 				}
 			]
 		},

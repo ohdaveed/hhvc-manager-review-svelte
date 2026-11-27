@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "corpusHash": "b5ec4a69d5fbad6936db3a2df48f0c1f4ffa9cbf016cb733115b15d13e9b96c3",
+  "corpusHash": "6e06f1d77ca1523f6dc7a50501c5732d85aa6b9848a980d7e7826f2daf0f28b0",
   "pages": {
     "departments--healthy-housing-and-vector-control": {
       "contentHash": "0dbd9dd7bbad4361a566c5cd2c714223d97028f482b3ba8c958c082887615fc9",
@@ -372,7 +372,7 @@
       }
     },
     "information-learn-what-hhvc-can-inspect": {
-      "contentHash": "1bcf7d67f9a084ac452f5403a9f44da7c0d44048c3f530c6e3b4e616324be243",
+      "contentHash": "32564ce480d34e7b44926baf21ae01748a5c271cbe62cce6e2d3265b4bb2d514",
       "fieldHashes": {
         "sections.have-this-ready-when-you-report.bullets.0": "0ada99febc0d66588ce80c35d0e44a6adc092048167eaf3c935b2eed2ad6ba76",
         "sections.have-this-ready-when-you-report.bullets.1": "62a32de0fa2c16248fe057bc4bf0435e996baa49b5f0c86bc229147d27d5e075",
@@ -399,7 +399,7 @@
         "sections.how-to-choose-the-right-page.bullets.11": "c39f9c7b950ac730936718381a0e9b0e37f0e294a482143accc3f5e3e6211f94",
         "sections.other-places-to-report-or-learn-more.heading": "bb4e8ed539385074c9241e5bd631a94136733585283492948cdc17c33fb32d85",
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",
-        "sections.sanitation-and-moisture-problems-hhvc-can-inspect.bullets.0": "b669b15fcee0533095eaacba40da6e20c40c362c8a3f5ddb9613f7b8f3104ce1",
+        "sections.sanitation-and-moisture-problems-hhvc-can-inspect.bullets.0": "2423ef45c9fb924f9f72a48210e478f57d646f2103384e8c6d7fa985fb6fd72a",
         "sections.how-to-choose-the-right-page.bullets.1~2": "029b9aa45f74f693c1d22f73c108eeeb13e2e9aa172e25d543fdc7adb6bf2251",
         "sections.sanitation-and-moisture-problems-hhvc-can-inspect.bullets.2": "d57c3b0d075aed85ab2e8b6eda7f07fa306c992497bcc37c4a7deb79c3e8cfef",
         "sections.how-to-choose-the-right-page.bullets.6": "b4f9a3791e42fd853e812ff9fa479ad10c789de6779fc7ab7ba4767d04946f2f",
@@ -867,7 +867,7 @@
       }
     },
     "report-garbage-clutter-or-overgrown-plants": {
-      "contentHash": "784f715f723428729f6ca797b539d00e92d1ae2433dbf054afe0bb0b8251d367",
+      "contentHash": "3b80d1a1bdbaf6f8f36a56a4b0c5d4456ec6cd12971d434ea6d6279e12cfeadc",
       "fieldHashes": {
         "primaryAgency": "8a2847f0ee854052d30378a2ef091f979c9737bbd8219086a1e04dc0abd84f9f",
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",

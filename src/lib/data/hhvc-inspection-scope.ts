@@ -59,10 +59,10 @@ export const scopeInfo = {
 		},
 		{
 			heading: 'Sanitation and moisture problems HHVC can inspect',
-			karl: 'Maps to a Title and text block: Title = this heading, Text = the bulleted list below. Merged on 2026-11-26 with "Choose where to report a sanitation or moisture problem", which named the same four conditions a second time. The 10 square feet threshold for mold stays in its label.',
+			karl: 'Maps to a Title and text block: Title = this heading, Text = the bulleted list below. Merged on 2026-11-26 with "Choose where to report a sanitation or moisture problem", which named the same four conditions a second time. The 10 square feet threshold for mold stays in its label. Poison oak on private property was added on 2026-11-26 from HHVC: owners must remove it when it is reported.',
 			kind: 'body',
 			bullets: [
-				'**Garbage, clutter, or overgrown plants that attract pests:** [Report garbage, clutter, or overgrown plants](garbageReport)',
+				'**Garbage, clutter, or overgrown plants that attract pests, or poison oak on private property:** [Report garbage, clutter, or overgrown plants](garbageReport)',
 				'**Dog or cat waste, or raccoon droppings, on private property:** [Report animal waste on a property](animalWasteReport)',
 				'**Mold from humidity or condensation, about 10 square feet or more:** [Report mold](moldReport)',
 				'**Sewage from a drain, toilet, cleanout, or pipe:** [Report a sewage leak or backup](sewageReport)'
