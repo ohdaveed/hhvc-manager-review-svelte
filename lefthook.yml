@@ -28,16 +28,12 @@ pre-commit:
       glob: '*.{js,ts,svelte,json,jsonc,md,yml,yaml,css}'
       run: bunx prettier --write {staged_files}
       stage_fixed: true
-    # Type-check only, not `bun run verify` (unit suite + production build):
-    # that cost 1-2 minutes on every commit, and the same gates run where they
-    # decide something -- CI's required `test & build` job blocks the merge,
-    # and `bun run verify` is run before each push. Skipped when no code is
-    # staged. A pre-push entry here is NOT an option: it would overwrite the
-    # machine's ggshield pre-push scan (see the note at the top).
-    check:
-      glob: '*.{js,ts,svelte}'
-      run: bun run check
-    # Blocking, unlike knip below: three eslint rules encode runtime failures
+    # Neither `bun run check` (`svelte-check`), `bunx knip`, nor `bun run verify`
+    # runs on pre-commit: whole-repo type/dead-code scans add several seconds
+    # (or 1-2 minutes for verify) to every commit. CI's required `test & build`
+    # job enforces `check:ratchet` before merge, `bun run check:watch` covers
+    # live type-checking locally, and `bun run verify` runs before each push.
+    # Blocking, unlike advisory checks: three eslint rules encode runtime failures
     # (a 401 from an unauthenticated fetch, a silently-undefined env var, a
     # server secret in a client bundle) that no test or type check catches.
     # They used to be ast-grep rules run here; eslint now hosts them, so eslint
@@ -56,8 +52,9 @@ pre-commit:
       # --force-exclude: typos skips _typos.toml's extend-exclude for paths
       # passed explicitly, which is every path lefthook hands it.
       run: bash scripts/local-tool.sh typos --force-exclude {staged_files}
-    knip:
-      run: bunx knip --no-exit-code
+
+# A pre-push entry here is NOT an option: it would overwrite the machine's
+# ggshield pre-push scan (see the note at the top).
 
 commit-msg:
   commands:
