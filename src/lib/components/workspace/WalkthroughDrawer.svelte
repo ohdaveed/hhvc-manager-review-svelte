@@ -32,27 +32,37 @@
 	let { walkthrough, pageId }: { walkthrough: Walkthrough; pageId: string } = $props();
 
 	let listEl = $state<HTMLDivElement | null>(null);
-	let headingEl = $state<HTMLHeadingElement | null>(null);
+	let cardEl = $state<HTMLDivElement | null>(null);
 	/** Step id -> its host element, for scrolling. A plain record: nothing
 	    subscribes to it, it is written during render and read in an effect. */
 	const stepEls: Record<string, HTMLElement> = {};
 	/** Which value's Copy button just fired, for the transient confirmation. */
 	let justCopied = $state<string | null>(null);
+	/** The step whose Copy & next could not reach the clipboard. */
+	let copyFailed = $state<string | null>(null);
+	/** Read out by the live region: a copy is otherwise silent. */
+	let announcement = $state('');
 
 	const steps = $derived(walkthrough.steps);
 	const flagGaps = $derived(walkthrough.gaps.filter((g) => g.kind === 'flag'));
 	const unmappedGaps = $derived(walkthrough.gaps.filter((g) => g.kind === 'unmapped'));
 	const index = $derived(Math.min(pageStore.stepIndex, Math.max(steps.length - 1, 0)));
 	const active = $derived(steps[index]);
-	const copiedCount = $derived(steps.filter((s) => pageStore.isCopied(pageId, s.id)).length);
 
 	/**
-	 * Focus moves into the drawer on open and returns to the opener on exit.
+	 * Focus moves into the drawer on open, onto the active step's card. The
+	 * card rather than the drawer's heading: that heading is screen-reader-only
+	 * (the navy bar above already shows the page title), and focus on an
+	 * invisible element leaves a sighted keyboard user with no ring to follow.
 	 * Without it a keyboard user tabs from wherever they were into a drawer that
 	 * has replaced the page, with no announcement that anything changed.
 	 */
+	let focusedOnOpen = false;
 	$effect(() => {
-		if (headingEl) headingEl.focus();
+		if (cardEl && !focusedOnOpen) {
+			focusedOnOpen = true;
+			cardEl.focus({ preventScroll: true });
+		}
 	});
 
 	/** Bring the active step into view within the LIST, never the whole page. */
@@ -69,35 +79,102 @@
 		revealActive();
 	});
 
+	/**
+	 * The active step's section, scrolled into the mockup preview and marked
+	 * there, so an editor can check its formatting (numbered or bulleted, where
+	 * the links are) before pasting. Positional on purpose: the transcript
+	 * indexes `page.sections`, and a field id built from `fieldKey` need not
+	 * match it. The mark is a data attribute, not a class -- Svelte owns the
+	 * section's `class` and would drop an added one on its next update -- and
+	 * the effect's cleanup clears it on every step change and when the drawer
+	 * closes. Same `scrollTop` arithmetic as the layout's `showOnPage`, for
+	 * the reason at the top of this file.
+	 */
+	$effect(() => {
+		const n = active?.sectionIndex;
+		if (n === undefined) return;
+		const region = document.querySelector<HTMLElement>(
+			'[role="region"][aria-label="Mockup preview"]'
+		);
+		const el = region?.querySelector<HTMLElement>(`[data-section-index="${n}"]`);
+		if (!region || !el) return;
+		region.scrollTop += el.getBoundingClientRect().top - region.getBoundingClientRect().top - 32;
+		el.setAttribute('data-walkthrough-active', '');
+		return () => el.removeAttribute('data-walkthrough-active');
+	});
+
 	function goTo(n: number) {
 		pageStore.stepIndex = Math.max(0, Math.min(n, steps.length - 1));
 	}
 
-	async function copyValue(step: WalkthroughStep, label: string, value: string) {
+	/** Copy one value; true when it reached the clipboard. */
+	async function copyValue(step: WalkthroughStep, label: string, value: string): Promise<boolean> {
 		try {
 			await navigator.clipboard.writeText(value);
 			justCopied = `${step.id}:${label}`;
+			copyFailed = null;
+			announcement = `Copied ${label}`;
 			setTimeout(() => {
 				if (justCopied === `${step.id}:${label}`) justCopied = null;
 			}, 1400);
+			return true;
 		} catch {
 			// Clipboard is permission-gated and unavailable over plain http. The
 			// value is on screen and selectable either way, so a failure here is
 			// an inconvenience, not a dead end -- and a thrown error would take
 			// the drawer down mid-rebuild.
 			justCopied = null;
+			return false;
 		}
 	}
 
-	function markCopiedAndNext(step: WalkthroughStep) {
+	/** After advancing, the button that was pressed is gone: put focus on the new card. */
+	async function advance(step: WalkthroughStep) {
 		pageStore.markCopied(pageId, step.id);
 		goTo(index + 1);
+		await tick();
+		cardEl?.focus({ preventScroll: true });
 	}
 
-	/** The structured path the mapping block shows, e.g. `things_to_know → Title and text`. */
-	function mappingPath(step: WalkthroughStep): string {
-		const sub = step.values.map((v) => v.label).join(', ');
-		return sub ? `${step.rawName} → ${sub}` : step.rawName;
+	/**
+	 * One click for a one-value step: copy, mark it, move on. It refuses to
+	 * advance on a failed copy -- marking a step copied with nothing on the
+	 * clipboard sends an editor to Karl to paste the previous field.
+	 */
+	async function copyAndNext(step: WalkthroughStep) {
+		const [only] = step.values;
+		if (await copyValue(step, only.label, only.value)) await advance(step);
+		else copyFailed = step.id;
+	}
+
+	/**
+	 * Split a value label like `Then add an Image block — alt text` into the
+	 * group it belongs to and its own name, so three image values read as one
+	 * "Then add an Image block" heading over File / Alt text / Attribution
+	 * rather than the same prefix three times. Display only: the copy state
+	 * and the accessible name keep the full label.
+	 */
+	function labelParts(label: string): { group: string; name: string } {
+		const at = label.indexOf(' — ');
+		if (at < 0) return { group: '', name: label };
+		const name = label.slice(at + 3);
+		return { group: label.slice(0, at), name: name.charAt(0).toUpperCase() + name.slice(1) };
+	}
+
+	/**
+	 * A row's badge when there is nothing to paste, so an editor can see which
+	 * steps those are without opening each one. Named by what the step asks
+	 * for: a chooser and a gap are not blanks, and calling them "Empty" would
+	 * invite skipping a field Karl will not save without.
+	 */
+	function badgeFor(step: WalkthroughStep): { text: string; tone: string } | null {
+		if (step.values.length > 0) return null;
+		if (step.outcome === 'CHOOSE') return { text: 'Choose', tone: 'choose' };
+		if (step.outcome === 'FLAG')
+			return step.severity === 'blocking'
+				? { text: 'Blocking', tone: 'blocking' }
+				: { text: 'Decide', tone: 'advisory' };
+		return { text: 'Empty', tone: 'empty' };
 	}
 </script>
 
@@ -123,15 +200,15 @@
 				style="transform: scaleX({steps.length ? (index + 1) / steps.length : 0})"
 			></div>
 		</div>
-		<h2 bind:this={headingEl} tabindex="-1" class="drawer-title">
-			Rebuild {walkthrough.title} in Karl
-		</h2>
+		<!-- Screen-reader-only: the navy bar above shows the title and the copied
+		     count, and repeating both here pushed the step list down. -->
+		<h2 class="sr-only">Rebuild {walkthrough.title} in Karl</h2>
 		<p class="drawer-sub">
-			<!-- One unit with "Step N of M" above it: every step can be marked
-			     copied, so counting them over the steps with values could read
-			     "13 of 8". Those steps are named as their own clause instead. -->
-			{copiedCount} of {steps.length} steps copied · {walkthrough.copyableCount} have values to paste
+			<!-- Over all steps, not "N of copyableCount": the badged rows are the
+			     rest, so the two numbers and the list agree. -->
+			{walkthrough.copyableCount} of {steps.length} have values to paste
 		</p>
+		<p class="sr-only" aria-live="polite">{announcement}</p>
 	</div>
 
 	<div bind:this={listEl} class="drawer-list">
@@ -144,29 +221,37 @@
 			>
 				{#if isActive}
 					<div
+						bind:this={cardEl}
 						class="step-card"
 						class:step-card-blocking={step.severity === 'blocking'}
 						class:step-card-advisory={step.severity === 'advisory'}
+						role="group"
+						aria-labelledby={`step-name-${i}`}
+						tabindex="-1"
 					>
+						<!-- One header: the name, then one muted line naming where it goes
+						     in Karl -- the panel to add from the block menu (when the
+						     heading replaced it as the name) and the raw field name. -->
 						<div class="step-card-head">
 							<span
 								class="numeral numeral-active"
 								class:numeral-blocking={step.severity === 'blocking'}>{step.n}</span
 							>
-							<span class="step-card-name">{step.uiLabel}</span>
+							<span class="step-card-titles">
+								<span class="step-card-name" id={`step-name-${i}`}
+									>{step.heading ?? step.uiLabel}</span
+								>
+								<span class="step-card-panel"
+									>{#if step.heading}{step.uiLabel} ·
+									{/if}<code>{step.rawName}</code></span
+								>
+							</span>
 						</div>
 
-						<div class="mapping">
-							<p class="mapping-path">{mappingPath(step)}</p>
-							<p class="mapping-note">
-								Karl field <code>{step.rawName}</code>
-								{#if step.outcome === 'CHOOSE'}
-									· a chooser: search Karl for the entry rather than typing it
-								{:else if step.outcome === 'FLAG'}
-									· the mockup has nothing to supply here
-								{/if}
-							</p>
-						</div>
+						<!-- No FLAG hint: the coloured box below says the same thing. -->
+						{#if step.outcome === 'CHOOSE'}
+							<p class="step-hint">A chooser: search Karl for the entry rather than typing it.</p>
+						{/if}
 
 						{#if step.outcome === 'FLAG'}
 							<div
@@ -206,15 +291,30 @@
 						{/if}
 
 						{#each step.values as value, v (v)}
-							<div class="value">
+							{@const part = labelParts(value.label)}
+							{#if part.group && part.group !== labelParts(step.values[v - 1]?.label ?? '').group}
+								<p class="value-group">{part.group}</p>
+							{/if}
+							<div class="value" class:value-in-group={part.group}>
 								<div class="value-strip">
-									<span class="value-label">{value.label}</span>
+									<!-- A lone value named like its panel ("Page title" under
+									     "Page title") is the header said again. -->
+									{#if value.label !== step.uiLabel || step.values.length > 1}
+										<span class="value-label">{part.name}</span>
+									{/if}
+									<!-- Kept beside Copy & next: re-copying a value without
+									     advancing is a normal thing to need mid-paste. -->
 									<button
 										type="button"
 										class="value-copy"
+										aria-label={step.values.length > 1 ? `Copy ${value.label}` : undefined}
 										onclick={() => copyValue(step, value.label, value.value)}
 									>
-										{justCopied === `${step.id}:${value.label}` ? 'Copied' : 'Copy'}
+										{justCopied === `${step.id}:${value.label}`
+											? 'Copied'
+											: step.values.length === 1
+												? 'Copy only'
+												: 'Copy'}
 									</button>
 								</div>
 								<p class="value-text">{value.value}</p>
@@ -250,24 +350,45 @@
 							</details>
 						{/if}
 
+						<!-- One click only where one clipboard write can serve the step.
+						     Title + Text, image file/alt/credit and the like go into
+						     separate Wagtail fields, so those keep a Copy per value. -->
 						<div class="step-actions">
-							<button type="button" class="btn-primary" onclick={() => markCopiedAndNext(step)}>
-								Mark copied · next
-							</button>
+							{#if step.values.length === 1}
+								<button type="button" class="btn-primary" onclick={() => copyAndNext(step)}>
+									Copy &amp; next →
+								</button>
+							{:else}
+								<button type="button" class="btn-primary" onclick={() => advance(step)}>
+									{step.values.length > 1 ? 'Done · next →' : 'Mark done · next →'}
+								</button>
+							{/if}
 							<button type="button" class="btn-ghost" onclick={() => goTo(index + 1)}>Skip</button>
 						</div>
+						{#if copyFailed === step.id}
+							<p class="copy-failed" role="alert">
+								Couldn’t reach the clipboard. Select the text above and copy it by hand.
+							</p>
+						{/if}
 					</div>
 				{:else}
-					<button type="button" class="step-row" onclick={() => goTo(i)}>
+					{@const badge = badgeFor(step)}
+					{@const name = step.heading ?? step.uiLabel}
+					<button type="button" class="step-row" title={name} onclick={() => goTo(i)}>
 						<!-- The numeral is the step's identity and survives completion; a
 						     checkmark replacing it would take away the thing a reviewer
 						     uses to say where they are. -->
 						<span class="numeral" class:numeral-done={done}>{step.n}</span>
-						<span class="step-row-name" class:step-row-name-done={done}>{step.uiLabel}</span>
-						<span class="step-row-meta">
-							<code class="step-row-raw">{step.rawName}</code>
-							{#if done}<span class="step-row-copied">Copied</span>{/if}
-						</span>
+						<span class="step-row-name" class:step-row-name-done={done}>{name}</span>
+						<!-- No raw field name here: ten rows of `information_section`
+						     in a column was the noisiest thing in the drawer, and the
+						     open card names the field. -->
+						{#if badge || done}
+							<span class="step-row-meta">
+								{#if badge}<span class="badge badge-{badge.tone}">{badge.text}</span>{/if}
+								{#if done}<span class="step-row-copied">Copied</span>{/if}
+							</span>
+						{/if}
 					</button>
 				{/if}
 			</div>
@@ -373,21 +494,8 @@
 		transition: transform 150ms ease;
 	}
 
-	.drawer-title {
-		margin: 12px 0 2px;
-		font-family: var(--font-display);
-		font-size: 0.9375rem;
-		line-height: 1.25rem;
-		font-weight: 700;
-	}
-
-	.drawer-title:focus-visible {
-		outline: 2px solid var(--color-sfds-action, #495ed4);
-		outline-offset: 3px;
-	}
-
 	.drawer-sub {
-		margin: 0;
+		margin: 8px 0 0;
 		font-size: 0.75rem;
 		color: var(--text-secondary, #5a7a92);
 	}
@@ -452,9 +560,45 @@
 		background: #f0f0f0;
 	}
 
+	/* A heading can run to sixty characters. Two lines at most keeps the list
+	   scannable; one line left about twenty characters beside the raw-name tag,
+	   which cut most headings before the word that tells them apart (observed at
+	   1600px). The row's title attribute carries the whole of it. */
 	.step-row-name {
+		flex: 1;
 		min-width: 0;
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 2;
+		line-clamp: 2;
+		overflow: hidden;
 		font-size: 0.875rem;
+		line-height: 1.25rem;
+	}
+
+	.badge {
+		flex: none;
+		padding: 1px 6px;
+		border-radius: 999px;
+		font-size: 0.6875rem;
+		font-weight: 600;
+		line-height: 1rem;
+	}
+
+	.badge-empty,
+	.badge-choose {
+		background: #f0f0f0;
+		color: #4f4f4f;
+	}
+
+	.badge-advisory {
+		background: #fff7e6;
+		color: #6f4a00;
+	}
+
+	.badge-blocking {
+		background: #fff1f0;
+		color: #8f1d15;
 	}
 
 	.step-row-name-done {
@@ -469,8 +613,6 @@
 		gap: 8px;
 	}
 
-	.step-row-raw,
-	.mapping-note code,
 	.gap-body code {
 		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
 		font-size: 0.6875rem;
@@ -505,35 +647,51 @@
 		background: #fff7e6;
 	}
 
+	/* Top-aligned: a heading that wraps would otherwise float the numeral
+	   between its lines. */
 	.step-card-head {
 		display: flex;
-		align-items: center;
+		align-items: flex-start;
 		gap: 10px;
 		margin-bottom: 10px;
 	}
 
+	.step-card:focus-visible {
+		outline: 2px solid var(--color-sfds-action, #495ed4);
+		outline-offset: 3px;
+	}
+
+	.step-card-titles {
+		flex: 1;
+		min-width: 0;
+		display: flex;
+		flex-direction: column;
+	}
+
 	.step-card-name {
 		font-size: 0.9375rem;
+		line-height: 1.25rem;
 		font-weight: 700;
 	}
 
-	.mapping {
-		background: var(--color-sfds-blue-l1, #edf4f7);
-		border-radius: 4px;
-		padding: 8px 10px;
-		margin-bottom: 12px;
-	}
-
-	.mapping-path {
-		margin: 0 0 4px;
-		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+	.step-card-panel {
 		font-size: 0.75rem;
-		line-height: 1.125rem;
-		color: var(--sfds-color-blue-dark, #0c1464);
+		color: var(--text-secondary, #5a7a92);
 	}
 
-	.mapping-note {
-		margin: 0;
+	.step-card-panel code {
+		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+		font-size: 0.6875rem;
+	}
+
+	.copy-failed {
+		margin: 8px 0 0;
+		font-size: 0.75rem;
+		color: #8f1d15;
+	}
+
+	.step-hint {
+		margin: 0 0 10px;
 		font-size: 0.75rem;
 		line-height: 1.0625rem;
 		color: var(--sfds-color-slate-l3, #1d4d70);
@@ -700,27 +858,35 @@
 		color: var(--text-secondary, #5a7a92);
 	}
 
+	/* Values are the content, so they carry the least chrome: a small
+	   sentence-case label with Copy beside it, then the text on a light panel.
+	   The bordered box, grey strip and uppercase tracking each value used to
+	   get made five values read as five forms. */
 	.value {
-		border: 1px solid var(--sfds-color-grey-l2);
-		border-radius: 4px;
-		margin-bottom: 8px;
-		background: #ffffff;
+		margin-bottom: 12px;
+	}
+
+	.value-group {
+		margin: 4px 0 6px;
+		font-size: 0.8125rem;
+		font-weight: 700;
+	}
+
+	.value-in-group {
+		padding-left: 10px;
+		border-left: 2px solid var(--sfds-color-grey-l2);
 	}
 
 	.value-strip {
 		display: flex;
 		align-items: center;
 		gap: 8px;
-		padding: 6px 10px;
-		border-bottom: 1px solid var(--sfds-color-grey-l2);
-		background: #f7f7f7;
+		margin-bottom: 4px;
 	}
 
 	.value-label {
-		font-size: 0.6875rem;
-		font-weight: 700;
-		letter-spacing: 0.06em;
-		text-transform: uppercase;
+		font-size: 0.75rem;
+		font-weight: 600;
 		color: var(--text-secondary, #5a7a92);
 	}
 
@@ -738,11 +904,20 @@
 		cursor: pointer;
 	}
 
+	/* `pre-line`: the text arrives with its paragraph breaks and one bullet per
+	   line, and collapsing them ran a whole list into a single paragraph.
+	   `anywhere`: an image credit carries a bare URL, which did not wrap and
+	   gave the whole step list a sideways scrollbar (bed-bugs page, step 9).
+	   Both display only -- Copy still writes the value exactly as it is. */
 	.value-text {
+		white-space: pre-line;
+		overflow-wrap: anywhere;
 		margin: 0;
-		padding: 10px;
+		padding: 8px 10px;
+		border-radius: 4px;
+		background: #f7f7f7;
 		font-size: 0.8125rem;
-		line-height: 1.1875rem;
+		line-height: 1.25rem;
 	}
 
 	.why {

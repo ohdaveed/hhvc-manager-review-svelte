@@ -732,6 +732,9 @@ function emitSection(context, panel, source, section, index) {
 
 	const headingPath = `sections.${index}.heading`;
 	const heading = resolveValue(context.page, context.reviewRecord, headingPath);
+	// Read by the walkthrough drawer, which labels a step by its section: nine
+	// rows reading "Information section" give a reviewer nothing to find.
+	entry.heading = String(heading.value ?? '');
 	claim(context, headingPath);
 
 	if (section.steps) {

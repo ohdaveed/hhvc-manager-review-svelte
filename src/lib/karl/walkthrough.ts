@@ -242,6 +242,18 @@ export type WalkthroughStep = {
 	notes: string[];
 	/** Set only when `outcome` is `FLAG`. */
 	severity?: GapSeverity;
+	/**
+	 * The mockup section this step transcribes, as its index in
+	 * `page.sections` -- positional, as the transcript is. Unset for panels
+	 * that come from the page rather than a section (title, description).
+	 */
+	sectionIndex?: number;
+	/**
+	 * That section's heading, with the reviewer's saved edit applied. It is
+	 * what tells nine "Information section" steps apart, so the drawer leads
+	 * with it; `uiLabel` stays the name of the panel to add in Karl.
+	 */
+	heading?: string;
 };
 
 export type Walkthrough = {
@@ -419,6 +431,10 @@ export function buildWalkthrough(
 			links: usableLinks(entry.links),
 			notes: Array.isArray(entry.notes) ? entry.notes.map(String) : []
 		};
+
+		if (typeof entry.sectionIndex === 'number') step.sectionIndex = entry.sectionIndex;
+		const heading = String(entry.heading ?? '').trim();
+		if (heading !== '') step.heading = heading;
 
 		if (outcome === 'FLAG') {
 			step.severity = blocksSave(panelFor(type, rawName)) ? 'blocking' : 'advisory';

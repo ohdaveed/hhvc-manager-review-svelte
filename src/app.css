@@ -1057,6 +1057,15 @@ body {
 	transition: box-shadow 0.2s;
 }
 
+/* Walkthrough: the mockup section the active Karl step transcribes. Held for
+   as long as the step is active, unlike the brief jump highlight above, so it
+   is an outline rather than a flash -- it should not compete with the copy. */
+.page-section[data-walkthrough-active] {
+	outline: 2px solid var(--color-sfds-action, #495ed4);
+	outline-offset: 6px;
+	border-radius: 2px;
+}
+
 /* Step by step pages draw their steps as a timeline; Transaction pages keep
    the numbered headings above, which is also what live does on them
    ("1. Check if your issue...", `report-health-nuisance-or-hazards`).
