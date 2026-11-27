@@ -21,7 +21,7 @@
 					as="dt"
 					class="facts-block-label"
 					fieldId={`sections.${sectionKey}.facts.${i}.label`}
-					name={`${label} Fact [${i + 1}] Label`}
+					name={`${label} · Fact [${i + 1}] Label`}
 					value={fact.label}
 				/>
 			{/if}
@@ -29,7 +29,7 @@
 				<EditTarget
 					as="dd"
 					fieldId={`sections.${sectionKey}.facts.${i}.text`}
-					name={`${label} Fact [${i + 1}] Text`}
+					name={`${label} · Fact [${i + 1}] Text`}
 					value={fact.text}
 					unverified={fact.unverified === true}
 				/>

@@ -11,7 +11,7 @@
 	import KarlChip from './KarlChip.svelte';
 	import { outlineContext } from '$lib/karl/outlineContext';
 	import { RELATED_HEADING } from '$lib/karl/placement';
-	import { entryText, entryUnverified } from '$lib/corpus/fieldResolver';
+	import { entryText, entryUnverified, sectionDisplayLabel } from '$lib/corpus/fieldResolver';
 	import { pageStore } from '$lib/stores/pageData.svelte';
 	import { sessionStore } from '$lib/stores/session.svelte';
 
@@ -37,10 +37,12 @@
 	// section constructed outside the store, e.g. in a test fixture.
 	const key = $derived(section.fieldKey ?? `section-${index}`);
 
-	// Display only, and deliberately still positional: it is what a reviewer
-	// reads in the ActionBar ("Section [2] Paragraph"), never what identifies a
-	// field. `fieldId` below is the identity.
-	const label = $derived(`Section [${index + 1}]`);
+	// Display only: what a reviewer reads in the Fields panel and on the
+	// selection tag ("Who we are · Paragraph [2]"), never what identifies a
+	// field. `fieldId` below is the identity. Named by heading because that is
+	// what the reviewer sees on the page and looks for in Karl; a positional
+	// "Section [2]" had to be counted out by eye.
+	const label = $derived(sectionDisplayLabel(section.heading, index));
 
 	// Undefined while the session check is in flight: treat as editable, so the
 	// control does not flicker out and back for a signed-in reviewer. Same rule
@@ -102,7 +104,7 @@
 			as="h2"
 			class="section-heading"
 			id={section.heading.toLowerCase().replace(/\s+/g, '-')}
-			name={`${label} Heading`}
+			name={`${label} · Heading`}
 			fieldId={`sections.${key}.heading`}
 			value={section.heading}
 		/>
@@ -122,7 +124,7 @@
 		{#if section.paragraphs}
 			{#each section.paragraphs as p, i (i)}
 				<EditTarget
-					name={`${label} Paragraph`}
+					name={`${label} · Paragraph [${i + 1}]`}
 					fieldId={`sections.${key}.paragraphs.${i}`}
 					value={entryText(p)}
 					unverified={entryUnverified(p)}
@@ -159,7 +161,7 @@
 			<LinkGrid
 				items={section.cards}
 				fieldPrefix={`sections.${key}.cards`}
-				label={`${label} Card`}
+				label={`${label} · Card`}
 				columns={3}
 				checkRelated={section.component === 'related'}
 			/>
@@ -186,7 +188,7 @@
 				url={section.buttonUrl}
 				fieldId={`sections.${key}.button`}
 				urlFieldId={`sections.${key}.buttonUrl`}
-				name={`${label} Button`}
+				name={`${label} · Button`}
 				variant={section.buttonStyle}
 			/>
 		{/if}
@@ -213,7 +215,7 @@
 			<EditTarget
 				as="li"
 				class="my-1"
-				name={`${label} Bullet`}
+				name={`${label} · Bullet [${i + 1}]`}
 				fieldId={`sections.${key}.bullets.${i}`}
 				value={entryText(b)}
 				unverified={entryUnverified(b)}

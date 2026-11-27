@@ -34,7 +34,7 @@
 
 	/**
 	 * The table's accessible name. `caption` is the section heading, passed down
-	 * by `Section.svelte`; the positional `label` ("Section [2]") is the fallback
+	 * by `Section.svelte`; the `label` ("Section 2" for a section with no heading) is the fallback
 	 * for a section constructed without one, e.g. in a test fixture.
 	 *
 	 * Karl's table editor carries a caption setting of its own
@@ -77,7 +77,7 @@
 						<th scope="col">
 							<EditTarget
 								as="span"
-								name={`${label} Table Header: ${cell}`}
+								name={`${label} · Table Header: ${cell}`}
 								fieldId={`sections.${sectionKey}.table.0.${c}`}
 								value={cell}
 							/>
@@ -92,7 +92,7 @@
 							<td>
 								<EditTarget
 									as="span"
-									name={`${label} Table Row ${r + 1}, ${header[c] || `Column ${c + 1}`}`}
+									name={`${label} · Table Row ${r + 1}, ${header[c] || `Column ${c + 1}`}`}
 									fieldId={`sections.${sectionKey}.table.${r + 1}.${c}`}
 									value={cell}
 								/>

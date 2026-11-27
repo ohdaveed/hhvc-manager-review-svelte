@@ -49,9 +49,9 @@ describe('CalloutBlock', () => {
 		expect(fields(container)).toEqual([
 			['sections.before.callout.title', 'Callout Title'],
 			['sections.before.callout.text', 'Callout Text'],
-			['sections.what.steps.0.callout.title', 'Section [2] Step [1] Callout Title'],
-			['sections.what.steps.0.callout.text', 'Section [2] Step [1] Callout Text'],
-			['sections.what.steps.1.callout.text', 'Section [2] Step [2] Callout Text']
+			['sections.what.steps.0.callout.title', 'What to do · Step [1] Callout Title'],
+			['sections.what.steps.0.callout.text', 'What to do · Step [1] Callout Text'],
+			['sections.what.steps.1.callout.text', 'What to do · Step [2] Callout Text']
 		]);
 	});
 

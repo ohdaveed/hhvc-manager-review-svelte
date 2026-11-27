@@ -47,7 +47,9 @@
 	<nav class="sm-header" aria-label="Site map">
 		<div class="sm-head-left">
 			<h2 class="sm-title">Site map</h2>
-			<p class="sm-meta">{entries.length} pages · {breakdown}</p>
+			<p class="sm-meta" title="{entries.length} pages · {breakdown}">
+				{entries.length} pages · {breakdown}
+			</p>
 		</div>
 		<button type="button" class="sm-exit" onclick={onExit}>Back to review</button>
 	</nav>
@@ -125,7 +127,13 @@
 		min-width: 0;
 	}
 
+	/* `flex: none` + `nowrap`: as a shrinkable flex item the title gave its
+	   width to the long breakdown beside it and wrapped onto two lines, which
+	   overflowed the 48px band the queue and panel tops share. The breakdown is
+	   the part that truncates (full text in its tooltip). */
 	.sm-title {
+		flex: none;
+		white-space: nowrap;
 		margin: 0;
 		font-family: var(--font-display);
 		font-size: 0.9375rem;

@@ -111,7 +111,7 @@ describe('TableBlock', () => {
 		expect(new Set(names).size).toBe(names.length);
 		// The column a cell belongs to is what makes it identifiable, so the
 		// header text has to appear in the name, not just an index.
-		expect(names).toContain('Section [1] Table Header: Health code');
-		expect(names).toContain('Section [1] Table Row 1, In plain language');
+		expect(names).toContain('Sections at a glance · Table Header: Health code');
+		expect(names).toContain('Sections at a glance · Table Row 1, In plain language');
 	});
 });

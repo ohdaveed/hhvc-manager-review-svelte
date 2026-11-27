@@ -24,7 +24,7 @@
 
 /** A resolved field: what to show, what it currently says, how to change it. */
 export type ResolvedField = {
-	/** Human-facing label, e.g. `Section [2] Paragraph`. Display only. */
+	/** Human-facing label, e.g. `Who we are · Paragraph [2]`. Display only. */
 	name: string;
 	value: string;
 	set: (next: string) => void;
@@ -126,10 +126,20 @@ function arrayStringField(list: unknown, i: number, name: string): ResolvedField
 	return { name, value: list[i], set: (v: string) => (list[i] = v) };
 }
 
-/** Mirrors the display labels `Page.svelte` and `Section.svelte` pass. */
+/**
+ * How a section is named to a reviewer: by its heading, which is what they see
+ * on the page and look for in Karl, or `Section N` when it has none. Display
+ * only -- `fieldKey` is the identity. Shared with `Section.svelte` so the panel
+ * and the page name a field the same way.
+ */
+export function sectionDisplayLabel(heading: unknown, index: number): string {
+	return typeof heading === 'string' && heading.trim() ? heading.trim() : `Section ${index + 1}`;
+}
+
 function sectionLabel(page: AnyPage, fieldKey: string): string {
-	const i = (page.sections ?? []).findIndex((s: AnyPage) => s.fieldKey === fieldKey);
-	return `Section [${i + 1}]`;
+	const sections = page.sections ?? [];
+	const i = sections.findIndex((s: AnyPage) => s.fieldKey === fieldKey);
+	return sectionDisplayLabel(sections[i]?.heading, i);
 }
 
 /**
@@ -251,7 +261,7 @@ export function resolveField(
 	if (rest.length === 1 && rest[0] === 'heading') {
 		if (typeof section.heading !== 'string') return null;
 		return {
-			name: `${label} Heading`,
+			name: `${label} · Heading`,
 			value: section.heading,
 			set: (v) => (section.heading = v)
 		};
@@ -265,7 +275,7 @@ export function resolveField(
 		if (!entry) return null;
 		const kind = rest[0] === 'paragraphs' ? 'Paragraph' : 'Bullet';
 		return {
-			name: `${label} ${kind}`,
+			name: `${label} · ${kind} [${i + 1}]`,
 			value: entry.text,
 			set: (v) => writeEntry(list, i, v),
 			unverified: entry.unverified,
@@ -286,11 +296,11 @@ export function resolveField(
 
 	if (rest.length === 1 && (rest[0] === 'button' || rest[0] === 'buttonUrl')) {
 		const kind = rest[0] === 'button' ? 'Button' : 'Button URL';
-		return stringField(section, rest[0], `${label} ${kind}`);
+		return stringField(section, rest[0], `${label} · ${kind}`);
 	}
 
 	if (rest.length === 2 && rest[0] === 'image' && rest[1] === 'alt') {
-		return stringField(section.image, 'alt', `${label} Image Alt Text`);
+		return stringField(section.image, 'alt', `${label} · Image Alt Text`);
 	}
 
 	if (rest.length === 3 && rest[0] === 'cards') {
@@ -299,14 +309,14 @@ export function resolveField(
 		if (!kind) return null;
 		const i = Number(rest[1]);
 		const card = Array.isArray(section.cards) ? section.cards[i] : undefined;
-		return stringField(card, rest[2], `${label} Card [${i + 1}] ${kind}`);
+		return stringField(card, rest[2], `${label} · Card [${i + 1}] ${kind}`);
 	}
 
 	if (rest.length === 3 && rest[0] === 'facts' && (rest[2] === 'label' || rest[2] === 'text')) {
 		const i = Number(rest[1]);
 		const fact = Array.isArray(section.facts) ? section.facts[i] : undefined;
 		const kind = rest[2] === 'label' ? 'Label' : 'Text';
-		const field = stringField(fact, rest[2], `${label} Fact [${i + 1}] ${kind}`);
+		const field = stringField(fact, rest[2], `${label} · Fact [${i + 1}] ${kind}`);
 		if (!field || rest[2] === 'label') return field;
 
 		// A fact carries `unverified`/`unverifiedReason` as SIBLINGS of `text`,
@@ -327,13 +337,13 @@ export function resolveField(
 		const r = Number(rest[1]);
 		const c = Number(rest[2]);
 		const row = Array.isArray(section.table) ? section.table[r] : undefined;
-		return arrayStringField(row, c, `${label} Table [${r + 1},${c + 1}]`);
+		return arrayStringField(row, c, `${label} · Table [${r + 1},${c + 1}]`);
 	}
 
 	if (rest[0] === 'steps' && rest.length >= 3) {
 		const i = Number(rest[1]);
 		const step = Array.isArray(section.steps) ? section.steps[i] : undefined;
-		const stepLabel = `${label} Step [${i + 1}]`;
+		const stepLabel = `${label} · Step [${i + 1}]`;
 
 		if (rest.length === 3) {
 			const STEP_NAMES: Record<string, string> = {
