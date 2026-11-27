@@ -6157,22 +6157,23 @@ _Optional, and this page leaves it out. If the form has inserted a Cost block, r
 
 **Block 1 — Title:**
 
-Raccoons and other wildlife
+If you rent
 
 **Block 1 — Text:**
 
-We do not remove live animals. The property owner hires a private wildlife company to remove live raccoons.
+The [Health Code](https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890) requires property owners to keep buildings free of rats and mice. Tell your landlord first, unless the problem is urgent. [Tenant rights when reporting housing conditions](tenantRights) explains how long to wait.
 
 **Block 2 — Title:**
 
-If you rent
+What you can report
 
 **Block 2 — Text:**
 
-Tell your landlord first, unless the problem is urgent. [Tenant rights when reporting housing conditions](tenantRights) explains how long to wait.
+You can report a problem in your home, a shared area, or at work, or report for someone else. We inspect for rats and mice, not live wildlife like raccoons.
 
 **Links in this text — recreate each with the Link tool, do not paste them:**
 
+- "Health Code" → shape 5 — rich text Link tool → External link
 - "Tenant rights when reporting housing conditions" → shape 5 — rich text Link tool → Internal link → "Tenant rights when reporting housing conditions"
 
 ### What to Do — \`what_to_do\` [TYPE] — page not approved
@@ -6189,7 +6190,7 @@ Gather your details
 
 Have these details ready before you start. Only share what applies to your situation:
 
-- **What you saw:** Rats or mice, droppings, burrows, gnaw marks, or bites from tiny mites. Mites often come with rats and mice.
+- **What you saw:** Rats, mice, droppings, burrows, gnaw marks, or mite bites.
 - **Where it is:** The address, and whether you saw it inside, outside, or in a shared area.
 - **When it started:** How long this has been happening.
 - **Other issues:** Any garbage, clutter, pet waste, holes, or overgrown plants nearby.
@@ -6205,9 +6206,9 @@ Start your report
 
 **Section 2 — Section specifics → Text:**
 
-Use 311 to report rats or mice to the City. If the problem is urgent, report now. You can report a problem in your home, a shared area, or at work, or report for someone else.
+Use 311 to report rats or mice to the City.
 
-Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.
+Live in an SRO or residential hotel? Report the same way. Senior inspectors handle SRO cases.
 
 **Section 2 — Section specifics → Button link → Link text:**
 
@@ -6227,7 +6228,6 @@ While you wait: tips to help with the problem
 
 It may take us a few weekdays to get back to you. In the meantime, here are a few things you can do to help with the problem.
 
-- **Close off entry points and hiding places:** Seal any gap bigger than 1/4 inch. Use rodent-proof materials like hardware cloth, copper mesh, or sheet metal. Clear clutter and trim overgrown plants where rats and mice hide or nest.
 - **Cut off food:** Store food and garbage in bins with tight-fitting lids. Do not leave pet food out overnight.
 - **Pick up pet waste daily:** It feeds rats. [Report animal waste on a property](animalWasteReport)
 - **Trap safely:** Use snap traps indoors. Do not use poisons — they can harm children, pets, and wildlife.
@@ -6236,25 +6236,6 @@ It may take us a few weekdays to get back to you. In the meantime, here are a fe
 **Links in this text — recreate each with the Link tool, do not paste them:**
 
 - "Report animal waste on a property" → shape 5 — rich text Link tool → Internal link → "Report animal waste on a property"
-
-### Custom Section — \`custom_section\` [TYPE] — page not approved
-
-⚠ Inferred mapping — verify the destination before saving.
-
-_Inferred mapping — the field map documents this panel only for supporting/flat sections. Transaction has no generic body stream and this is its only repeatable Title-and-text panel, so verify the destination before saving._
-
-**Title:**
-
-What the Health Code requires
-
-**Text:**
-
-- San Francisco Health Code Article 11 requires property owners to keep buildings clean, watertight, and completely free of rodent infestations.
-- [View Health Code Article 11](https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890)
-
-**Links in this text — recreate each with the Link tool, do not paste them:**
-
-- "View Health Code Article 11" → shape 5 — rich text Link tool → External link
 
 ### Related — \`related\` [CHOOSE] — page not approved
 
@@ -6313,10 +6294,6 @@ Report rats or mice | SF.gov
 **Meta description (\`search_description\`):**
 
 Report rats, mice, droppings, burrows, or rodent mites in a San Francisco home, building, or yard.
-
-## Flags — resolve before saving — page not approved
-
-- \`sections.1.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to supporting_information (Accordions). This accordion uses the mockup-only open flag so the tips are visible without a click — flag for Digital Services t". Resolve it before typing anything from them.
 "
 `;
 

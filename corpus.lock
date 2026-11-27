@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "corpusHash": "6aa526564a1abbea37ba27a7c1bd2a50e4281945275723c2ac3803a4600d5952",
+  "corpusHash": "7f091a48e4cc0d0de8d3401a011157851cbd7426a0da0d374a96e009043f1d6e",
   "pages": {
     "departments--healthy-housing-and-vector-control": {
       "contentHash": "0dbd9dd7bbad4361a566c5cd2c714223d97028f482b3ba8c958c082887615fc9",
@@ -1035,15 +1035,11 @@
       }
     },
     "report-rats-or-mice": {
-      "contentHash": "0ab0bf51fdcfe80998fe822940195f39bfb5426c823d3fd138e6ac1d766be5e0",
+      "contentHash": "294dc4c858826a8decf2bbba830ff23f8579ead5591eef520421f0237d88802b",
       "fieldHashes": {
         "primaryAgency": "8a2847f0ee854052d30378a2ef091f979c9737bbd8219086a1e04dc0abd84f9f",
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",
-        "sections.what-the-health-code-requires.bullets.0": "fd8eb71a3bbbfc98b08345cc0170711d398c960867cf0d31314a5926d310ec44",
-        "sections.what-the-health-code-requires.bullets.1": "25a2e6bd8a855755d056579e8de1cbc3e7231c10927332092b18995d3ae0d4fd",
-        "sections.what-the-health-code-requires.heading": "13e7f9679361d6015ff823a78c3727f0056246ddc3619f6327039a4177b39212",
         "sections.what-to-do.heading": "f47f1edc44ed92664871471b0cf8f463813788468c23680c12f52a36c2827e26",
-        "sections.while-you-wait-tips-to-help-with-the-problem.bullets.0": "542dde764015024306eed5995ef3f52a9cb371a1fb167cf4ef0eb739e838a122",
         "sections.while-you-wait-tips-to-help-with-the-problem.bullets.1": "667dd35d2f3b8558849ea999a5fd2f4cbe8819e40bced4fec614837d405ec108",
         "sections.while-you-wait-tips-to-help-with-the-problem.bullets.2": "dffe04fd69fa97a4e4b28e2b9611bd663e971215b0bc4141679d1150381aac31",
         "sections.while-you-wait-tips-to-help-with-the-problem.bullets.4": "6b3d3c43b7546097a1a0efc8a9043fba738448f76fe29e491208640859aabdd7",

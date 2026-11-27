@@ -43,12 +43,8 @@ describe('transcript claims', () => {
 			'sections.0.steps.1.button': 'what_to_do',
 			'sections.0.steps.0.callout.text': 'what_to_do',
 			'sections.1.heading': 'supporting_information',
-			'sections.2.heading': 'custom_section',
-			'sections.3.cards': 'related',
+			'sections.2.cards': 'related',
 			partnerAgencies: 'partner_agencies'
 		});
-		// The section-level "View Article 11" button has no Karl home (U1): it is
-		// unmapped, so nothing claims it.
-		expect(claims['sections.2.button']).toBeUndefined();
 	});
 });
