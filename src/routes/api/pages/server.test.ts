@@ -184,6 +184,14 @@ describe('POST /api/pages', () => {
 		for (const w of title.slice(0, -1).split(' ')) expect(words.has(w)).toBe(true);
 	});
 
+	it('titles the row from the first paragraph, not the choices written after it', async () => {
+		const description =
+			'Report a dead animal\n\nKarl template: Transaction.\nSection of the HHVC site: Report a problem.';
+		const res = await POST(event('POST', { description }));
+		const { title } = await res.json();
+		expect(title).toBe('Report a dead animal');
+	});
+
 	it('joins the newest review: looks it up ordered by created_at descending', async () => {
 		await POST(event('POST', { description: 'a page' }));
 		expect(orders).toEqual([{ table: 'reviews', col: 'created_at', opts: { ascending: false } }]);

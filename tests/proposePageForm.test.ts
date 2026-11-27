@@ -50,7 +50,7 @@ function pending() {
 	return { finish: () => finish(), fail: (e: Error) => fail(e) };
 }
 
-const field = () => screen.getByRole('textbox') as HTMLTextAreaElement;
+const field = () => screen.getByLabelText('What should the page do?') as HTMLTextAreaElement;
 const submit = () => screen.getByRole('button', { name: /draft this page/i }) as HTMLButtonElement;
 const type = (v: string) => fireEvent.input(field(), { target: { value: v } });
 
@@ -107,6 +107,51 @@ describe('ProposePageForm', () => {
 				.some((id) => document.getElementById(id)?.getAttribute('role') === 'alert')
 		).toBe(true);
 		expect(createDraft).not.toHaveBeenCalled();
+	});
+
+	it('sends the section, template and path as lines after the description', async () => {
+		pending();
+		render(ProposePageForm);
+		await type('Report a dead animal');
+		await fireEvent.change(screen.getByLabelText('Section'), {
+			target: { value: 'Report a problem' }
+		});
+		await fireEvent.click(screen.getByRole('radio', { name: /^Transaction/ }));
+		await fireEvent.input(screen.getByLabelText('Suggested path'), {
+			target: { value: 'report-dead-animal' }
+		});
+		await fireEvent.click(submit());
+
+		expect(createDraft).toHaveBeenCalledWith(
+			'Report a dead animal\n\nKarl template: Transaction.\nSection of the HHVC site: Report a problem.\nSuggested path: sf.gov/report-dead-animal'
+		);
+		// Confirmed by the row whose description is the composed request, and
+		// every choice is reset with the text.
+		await waitFor(() => expect(field().value).toBe(''));
+		expect((screen.getByLabelText('Section') as HTMLSelectElement).value).toBe('');
+		expect(
+			(screen.getByRole('radio', { name: 'Let the drafter suggest one' }) as HTMLInputElement)
+				.checked
+		).toBe(true);
+	});
+
+	it('starts with the drafter choosing the template and no section', () => {
+		render(ProposePageForm);
+		expect(
+			(screen.getByRole('radio', { name: 'Let the drafter suggest one' }) as HTMLInputElement)
+				.checked
+		).toBe(true);
+		expect((screen.getByLabelText('Section') as HTMLSelectElement).value).toBe('');
+	});
+
+	it('has a Cancel only when it has somewhere to go', async () => {
+		const onCancel = vi.fn();
+		const view = render(ProposePageForm, { onCancel });
+		await fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+		expect(onCancel).toHaveBeenCalledOnce();
+		view.unmount();
+		render(ProposePageForm);
+		expect(screen.queryByRole('button', { name: 'Cancel' })).toBeNull();
 	});
 
 	it('disables submit while a draft is in flight so a double click cannot create two rows', async () => {

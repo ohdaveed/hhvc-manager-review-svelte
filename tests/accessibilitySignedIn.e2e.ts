@@ -121,7 +121,7 @@ test('no WCAG 2.1 AA violations on the signed-in landing page', async ({ page })
 
 	// The progress line and Continue link only exist once the review loaded,
 	// and the list only names drafts once `draft_pages` did.
-	await expect(page.getByRole('link', { name: /^Continue to / })).toBeVisible();
+	await expect(page.getByRole('link', { name: /^Continue: / })).toBeVisible();
 	await expect(
 		page
 			.getByRole('region', { name: 'All pages' })

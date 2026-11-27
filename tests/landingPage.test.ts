@@ -6,7 +6,7 @@
  * it shows progress and a Continue link a person clicks.
  */
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { fireEvent, render, screen, within } from '@testing-library/svelte';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/svelte';
 import { tick } from 'svelte';
 
 const goto = vi.fn();
@@ -37,6 +37,10 @@ const { default: Page } = await import('../src/routes/+page.svelte');
 const { pagesStore } = await import('../src/lib/stores/reviewState');
 const { draftsStore } = await import('../src/lib/stores/draftPages');
 const { pageStore } = await import('../src/lib/stores/pageData.svelte.js');
+
+const progressCard = () => within(screen.getByRole('region', { name: 'Your progress' }));
+/** The loading card shares the region's name, so wait for the loaded text in it. */
+const findProgress = (text: RegExp) => waitFor(() => progressCard().getByText(text));
 
 const row = (path: string, status: 'needs-review' | 'approved') => ({
 	id: `id-${path}`,
@@ -70,8 +74,6 @@ describe('landing page', () => {
 		session.signedIn = false;
 		render(Page);
 
-		expect(screen.getByRole('heading', { name: /how it works/i })).toBeTruthy();
-		expect(screen.getAllByRole('listitem').length).toBeGreaterThanOrEqual(4);
 		expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/login');
 		expect(screen.queryByText(/\d+ of \d+ decided/i)).toBeNull();
 		expect(screen.queryByRole('link', { name: /continue/i })).toBeNull();
@@ -107,7 +109,10 @@ describe('landing page', () => {
 		expect(warnSpy).toHaveBeenCalledOnce();
 		expect(errorSpy).not.toHaveBeenCalled();
 		// Everything else on the page is unaffected.
-		expect(screen.getByRole('heading', { name: /how it works/i })).toBeTruthy();
+		expect(
+			screen.getByRole('heading', { name: 'Review guide and moving pages into Karl' })
+		).toBeTruthy();
+		expect(screen.getByRole('region', { name: 'All pages' })).toBeTruthy();
 	});
 
 	it('recovers in place when Try again succeeds', async () => {
@@ -120,7 +125,7 @@ describe('landing page', () => {
 		pagesStore.set([row('topic-x--about', 'approved'), row('topic-x--report', 'needs-review')]);
 		await fireEvent.click(retry);
 
-		expect(await screen.findByText(/1 of 2 decided/i)).toBeTruthy();
+		expect(await findProgress(/1 of 2 decided/i)).toBeTruthy();
 		expect(screen.queryByText(/didn't load/i)).toBeNull();
 		expect(loadReview).toHaveBeenCalledTimes(2);
 	});
@@ -145,13 +150,12 @@ describe('landing page', () => {
 		pagesStore.set([row('topic-x--about', 'approved'), row('topic-x--report', 'needs-review')]);
 		render(Page);
 
-		expect(await screen.findByText(/1 of 2 decided/i)).toBeTruthy();
-		const cont = screen.getByRole('link', { name: 'Continue to Report a problem' });
+		expect(await findProgress(/1 of 2 decided/i)).toBeTruthy();
+		// The header's one primary action. The title is inside the button and
+		// truncates there, so the accessible name is exactly the visible text.
+		const cont = screen.getByRole('link', { name: 'Continue: Report a problem' });
 		expect(cont.getAttribute('href')).toBe('/review/topic-x--report');
-		// The title sits beside the button, not inside it, so a long one cannot
-		// push the button past a phone's edge. The visible label starts the name.
-		expect(cont.textContent?.trim()).toBe('Continue');
-		expect(screen.getByText('Next up')).toBeTruthy();
+		expect(cont.textContent?.trim()).toBe('Continue: Report a problem');
 		expect(loadReview).toHaveBeenCalledOnce();
 	});
 
@@ -160,11 +164,10 @@ describe('landing page', () => {
 		pagesStore.set([row('topic-x--about', 'approved'), row('topic-x--report', 'needs-review')]);
 		render(Page);
 
-		await fireEvent.click(await screen.findByRole('button', { name: /^1 approved/ }));
+		await fireEvent.click(await screen.findByRole('button', { name: /^Approved 1/ }));
 
-		// Scoped to the list: the Karl section above it links approved pages too.
 		const list = within(screen.getByRole('region', { name: 'All pages' }));
-		expect(list.getByRole('link', { name: /About vector control/ })).toBeTruthy();
+		expect(list.getByRole('link', { name: /^About vector control/ })).toBeTruthy();
 		expect(list.queryByRole('link', { name: /^Report a problem/ })).toBeNull();
 		expect(screen.getByRole('radio', { name: /Approved/ }).getAttribute('aria-checked')).toBe(
 			'true'
@@ -178,7 +181,7 @@ describe('landing page', () => {
 		session.signedIn = true;
 		pagesStore.set([row('topic-x--about', 'approved'), row('topic-x--report', 'needs-review')]);
 		render(Page);
-		await screen.findByText(/1 of 2 decided/i);
+		await findProgress(/1 of 2 decided/i);
 
 		const chips = screen
 			.getAllByRole('radio')
@@ -192,7 +195,7 @@ describe('landing page', () => {
 		pagesStore.set([row('topic-x--about', 'approved'), row('topic-x--report', 'needs-review')]);
 		render(Page);
 
-		await fireEvent.click(await screen.findByRole('button', { name: /^1 approved/ }));
+		await fireEvent.click(await screen.findByRole('button', { name: /^Approved 1/ }));
 		pagesStore.set([row('topic-x--about', 'needs-review'), row('topic-x--report', 'needs-review')]);
 		await tick();
 
@@ -206,11 +209,11 @@ describe('landing page', () => {
 		pagesStore.set([row('topic-x--about', 'approved'), row('topic-x--report', 'needs-review')]);
 		render(Page);
 
-		await fireEvent.click(await screen.findByRole('button', { name: /^1 approved/ }));
+		await fireEvent.click(await screen.findByRole('button', { name: /^Approved 1/ }));
 		await fireEvent.input(screen.getByLabelText('Search pages'), { target: { value: 'zzzz' } });
 		expect(screen.getByText('No pages marked “Approved” match “zzzz”.')).toBeTruthy();
 
-		await fireEvent.click(screen.getByRole('button', { name: 'Clear search and filter' }));
+		await fireEvent.click(screen.getByRole('button', { name: 'Clear search and filters' }));
 		expect(screen.getByRole('link', { name: /^Report a problem/ })).toBeTruthy();
 		expect(document.activeElement?.id).toBe('page-search');
 	});
@@ -221,9 +224,9 @@ describe('landing page', () => {
 		render(Page);
 		// Not in pageStore, not in draftsStore: the path is the last-resort name.
 		// The verb depends on whether anything is decided -- nothing is here, so
-		// the button reads "Start with". This test is about the href either way.
+		// the button reads "Start". This test is about the href either way.
 		expect(
-			(await screen.findByRole('link', { name: /start with|continue to/i })).getAttribute('href')
+			(await screen.findByRole('link', { name: /^(start|continue):/i })).getAttribute('href')
 		).toBe('/review/draft/abc');
 	});
 
@@ -258,7 +261,11 @@ describe('landing page', () => {
 		// The meta line is the draft's state, so a reviewer who left while it
 		// drafted can see from here whether it finished.
 		expect(
-			screen.getByRole('link', { name: 'Proposed rodent page Drafting…' }).getAttribute('href')
+			screen
+				.getByRole('link', {
+					name: /^Proposed rodent page, Drafting, about a minute\. Safe to keep reviewing\.$/
+				})
+				.getAttribute('href')
 		).toBe('/review/draft/abc');
 	});
 
@@ -278,27 +285,132 @@ describe('landing page', () => {
 	it('lists every corpus page in All pages', () => {
 		session.signedIn = false;
 		render(Page);
-		// A row is ONE anchor covering the whole row, so its accessible name is
-		// every line inside it -- the title and the muted type line -- not the
-		// title alone. That is deliberate: a screen reader then hears what a
-		// sighted reader scans. `topic-x--about` is in no theme group, so this
-		// also covers the "Other pages" fallback.
-		expect(
-			screen.getByRole('link', { name: 'About vector control About us' }).getAttribute('href')
-		).toBe('/review/topic-x--about');
+		// A row's link is stretched over the whole row, and its name carries
+		// what the columns show -- the template here, signed out -- so a screen
+		// reader tabbing the list hears what a sighted reader scans.
+		// `topic-x--about` is in no theme group, so this also covers the "Other
+		// pages" fallback.
+		const link = screen.getByRole('link', { name: /^About vector control/ });
+		expect(link.getAttribute('href')).toBe('/review/topic-x--about');
+		expect(link.textContent?.replace(/\s+/g, ' ').trim()).toBe('About vector control, About us');
 	});
 
-	it('badges a page with its recorded status, inside the row name', async () => {
+	it('names a row by its title, status and template, and links approved pages into Karl', async () => {
 		session.signedIn = true;
-		pagesStore.set([row('topic-x--about', 'approved')]);
+		pagesStore.set([row('topic-x--about', 'approved'), row('topic-x--report', 'needs-review')]);
 		render(Page);
 
-		// The badge is a span inside the link, so it joins the row's name. Pinned
-		// deliberately: this is the composed order a screen reader announces.
-		const link = await screen.findByRole('link', { name: /About vector control/ });
+		const list = within(await screen.findByRole('region', { name: 'All pages' }));
+		const link = await list.findByRole('link', { name: /^About vector control/ });
 		expect(link.textContent?.replace(/\s+/g, ' ').trim()).toBe(
-			'About vector control Approved About us'
+			'About vector control, Approved, About us'
 		);
+		// The Karl column: straight into the walkthrough, through reviewHrefFor.
+		const karl = list.getByRole('link', { name: 'Move to Karl: About vector control' });
+		expect(karl.getAttribute('href')).toBe('/review/topic-x--about?view=walkthrough');
+		// Only approved pages are ready to move.
+		expect(list.queryByRole('link', { name: 'Move to Karl: Report a problem' })).toBeNull();
+	});
+
+	it('filters by template, and says which when nothing matches', async () => {
+		session.signedIn = false;
+		render(Page);
+		const list = within(screen.getByRole('region', { name: 'All pages' }));
+
+		await fireEvent.change(screen.getByLabelText('Template'), { target: { value: 'Transaction' } });
+		expect(list.getByRole('link', { name: /^Report a problem/ })).toBeTruthy();
+		expect(list.queryByRole('link', { name: /^About vector control/ })).toBeNull();
+
+		await fireEvent.input(screen.getByLabelText('Search pages'), { target: { value: 'vector' } });
+		expect(
+			screen.getByText('No pages using the Transaction template match “vector”.')
+		).toBeTruthy();
+	});
+
+	it('filters to pages with a manager note', async () => {
+		session.signedIn = true;
+		pagesStore.set([
+			{ ...row('topic-x--about', 'approved'), manager_notes: 'Check the hours' },
+			row('topic-x--report', 'needs-review')
+		]);
+		render(Page);
+		const list = within(await screen.findByRole('region', { name: 'All pages' }));
+
+		const notes = await list.findByRole('button', { name: 'Has notes 1' });
+		await fireEvent.click(notes);
+		expect(notes.getAttribute('aria-pressed')).toBe('true');
+		expect(list.getByRole('link', { name: /^About vector control.*has a note/ })).toBeTruthy();
+		expect(list.queryByRole('link', { name: /^Report a problem/ })).toBeNull();
+	});
+
+	it('sorts by title as one list, without the theme headings', async () => {
+		session.signedIn = false;
+		pageStore.pages = [
+			...pageStore.pages,
+			{ id: 'report-mold', title: 'Report mold', type: 'Transaction', sections: [] }
+		];
+		render(Page);
+		const region = screen.getByRole('region', { name: 'All pages' });
+		expect(region.querySelectorAll('details').length).toBeGreaterThan(0);
+
+		await fireEvent.change(screen.getByLabelText('Sort'), { target: { value: 'title' } });
+		expect(region.querySelectorAll('details')).toHaveLength(0);
+		const titles = within(region)
+			.getAllByRole('link')
+			.map((a) => a.querySelector('span')?.firstChild?.textContent);
+		expect(titles).toEqual(['About vector control', 'Report a problem', 'Report mold']);
+	});
+
+	it('collapses and expands every heading at once', async () => {
+		session.signedIn = false;
+		pageStore.pages = [
+			...pageStore.pages,
+			{ id: 'report-mold', title: 'Report mold', type: 'Transaction', sections: [] }
+		];
+		render(Page);
+		const all = () => [
+			...screen.getByRole('region', { name: 'All pages' }).querySelectorAll('details')
+		];
+		expect(all().length).toBe(2);
+		expect(all().every((d) => d.open)).toBe(true);
+
+		await fireEvent.click(screen.getByRole('button', { name: 'Collapse all' }));
+		expect(all().every((d) => !d.open)).toBe(true);
+		await fireEvent.click(screen.getByRole('button', { name: 'Expand all' }));
+		expect(all().every((d) => d.open)).toBe(true);
+	});
+
+	it('opens Propose a page as a panel, and Close returns focus to the button', async () => {
+		session.signedIn = true;
+		render(Page);
+		const open = screen.getByRole('button', { name: 'Propose a page' });
+		expect(open.getAttribute('aria-expanded')).toBe('false');
+		expect(screen.queryByRole('complementary', { name: 'Propose a new page' })).toBeNull();
+
+		await fireEvent.click(open);
+		await tick();
+		expect(open.getAttribute('aria-expanded')).toBe('true');
+		expect(screen.getByRole('complementary', { name: 'Propose a new page' })).toBeTruthy();
+		expect(document.activeElement?.id).toBe('propose-a-page');
+
+		await fireEvent.click(screen.getByRole('button', { name: 'Close panel' }));
+		await tick();
+		expect(screen.queryByRole('complementary', { name: 'Propose a new page' })).toBeNull();
+		expect(document.activeElement).toBe(open);
+	});
+
+	it('offers no Propose a page or guide to a visitor known to be signed out', () => {
+		session.signedIn = false;
+		Object.assign(session, { knownSignedOut: true });
+		try {
+			render(Page);
+			expect(screen.queryByRole('button', { name: 'Propose a page' })).toBeNull();
+			expect(
+				screen.queryByRole('heading', { name: 'Review guide and moving pages into Karl' })
+			).toBeNull();
+		} finally {
+			Object.assign(session, { knownSignedOut: undefined });
+		}
 	});
 
 	it('shows no status badge when signed out, there being no review to read', () => {
