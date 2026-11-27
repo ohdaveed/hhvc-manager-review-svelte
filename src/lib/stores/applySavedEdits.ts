@@ -33,6 +33,9 @@ export type EditLike = {
 };
 /** The id `saveInlineEdit` gives its optimistic row until the insert returns. */
 const OPTIMISTIC_PREFIX = 'temp-';
+/** True for a row still in flight: `saveInlineEdit`'s optimistic insert. */
+export const isOptimistic = (id: string | undefined): boolean =>
+	id?.startsWith(OPTIMISTIC_PREFIX) ?? false;
 
 type LivePageLike = { id: string; path: string };
 type PageLike = { id: string };
@@ -74,7 +77,7 @@ export function applySavedEdits(
 	for (const edit of latestEdits(livePages, edits).values()) {
 		// The newest row is still in flight: skip the field rather than fall back
 		// to an older confirmed row, which would put stale copy back.
-		if (edit.id?.startsWith(OPTIMISTIC_PREFIX)) continue;
+		if (isOptimistic(edit.id)) continue;
 		if (hasUnsavedChange(edit.path, edit.field_id)) {
 			onHeldBack?.(edit.path, edit.field_id, edit);
 			continue;

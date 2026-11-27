@@ -12,17 +12,17 @@
  * converted with `deriveFieldKey` -- the one definition of a section key -- and
  * each field id takes its longest matching prefix.
  *
- * **The copy judged is the copy on screen**: the base corpus with the
- * reviewer's accepted edits on top, read from the review record by field id.
+ * **The copy judged is the page's own**: the review workspace hands in the
+ * copy as shown, saved edits and unsaved changes already on it.
  *
  * Nothing is stored. Placements are recomputed from the page and its record,
  * so `edits.field_id`, the record fold and the export are untouched.
  */
-import { buildTranscript } from '$lib/legacy-core/karl-transcript.js';
 import { PROMOTE_PANEL, panelByRawName } from '$lib/legacy-core/karl-blocks.js';
 import { deriveFieldKey } from '$lib/corpus/fieldKey';
 import { extractCopy, type CorpusPage } from '$lib/corpus/fields';
 import type { ReviewRecord } from './reviewRecord';
+import { transcriptFor, type Corpus } from './transcript';
 import { formLabel, schemaFor, type FieldRule } from './schema';
 import { COMPONENT_SUPPORT, isSupported, type KarlComponent } from './componentSupport';
 
@@ -122,21 +122,8 @@ type Entry = {
 	fields: { label: string; value: string }[];
 	choices: { label: string }[];
 };
-type Transcript = {
-	type: string;
-	entries: Entry[];
-	claims: Record<string, string>;
-	unmapped: { path: string; shape: string; reason: string }[];
-};
 type Section = { heading?: unknown; fieldKey?: unknown };
 type Page = CorpusPage & { type?: unknown; sections?: Section[] };
-
-const transcriptOf = (page: Page, record: ReviewRecord | null, pages: object): Transcript =>
-	(buildTranscript as unknown as (p: unknown, r: unknown, ps: unknown) => Transcript)(
-		page,
-		record,
-		pages
-	);
 
 const panelLabel = (type: string, rawName: string): string => {
 	if (rawName === 'promote') return PROMOTE_PANEL.uiLabel;
@@ -287,13 +274,9 @@ export function placementsFor(
 	record: ReviewRecord | null,
 	pages: object
 ): PagePlacements {
-	// The app renders `pageStore` pages, which `toStorePage` gives a routable
-	// `id`. It is not copy, but the transcript's sweep reports any page key it
-	// does not know, so it would surface as unplaced. Dropped here, at the one
-	// boundary this module owns, rather than taught to the transcript.
-	const { id: _routableId, ...corpusPage } = page as Page & { id?: unknown };
-	void _routableId;
-	const transcript = transcriptOf(corpusPage, record, pages);
+	const raw = transcriptFor(page, record, pages as Corpus);
+	// The entry fields this module reads, named; `./transcript` keeps them loose.
+	const transcript = { ...raw, entries: raw.entries as Entry[] };
 	const type = String(page.type ?? '');
 	const schema = schemaFor(type);
 	const sections: Section[] = Array.isArray(page.sections) ? page.sections : [];
