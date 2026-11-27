@@ -117,18 +117,16 @@
 	});
 
 	/**
-	 * How it works starts open for a signed-out visitor and for a reviewer who
-	 * has decided nothing yet; `undefined` until that is known, so a returning
-	 * reviewer never sees it flash open.
+	 * How it works starts open for a reviewer who has decided nothing yet;
+	 * `undefined` until that is known, so a returning reviewer never sees it
+	 * flash open. Signed out it is not rendered at all (see the markup).
 	 */
 	const howItWorksOpen = $derived(
-		sessionStore.knownSignedOut
-			? true
-			: card === 'progress'
-				? progress.decided === 0
-				: card === 'failed' || card === 'empty'
-					? false
-					: undefined
+		card === 'progress'
+			? progress.decided === 0
+			: card === 'failed' || card === 'empty'
+				? false
+				: undefined
 	);
 
 	onMount(() => () => {
@@ -137,9 +135,20 @@
 	});
 </script>
 
-<main class="mx-auto max-w-6xl space-y-8 px-4 py-8">
+<!-- `max-w-4xl`, not 6xl: the page list is the main thing here, and at 6xl a
+     row's title sat at the far left and its status 1,100px away at the far
+     right. 4xl still fits How it works and Propose a page side by side. -->
+<main class="mx-auto max-w-4xl space-y-8 px-4 py-8">
 	<header class="space-y-4">
-		<h1 class="text-2xl font-bold text-slate-900">HHVC mockup review</h1>
+		<div class="space-y-1">
+			<h1 class="text-2xl font-bold text-slate-900">HHVC mockup review</h1>
+			<!-- What the pages ARE, for anyone opening this to look at them -- the
+			     manager first. Everything else on the page is about the review. -->
+			<p class="text-slate-700">
+				Proposed SF.gov pages for Healthy Housing and Vector Control, shown the way they would
+				appear on SF.gov.
+			</p>
+		</div>
 		{#if card === 'progress'}
 			<ProgressSummary
 				decided={progress.decided}
@@ -166,22 +175,31 @@
 	     several disclosure sections do not fit a third of it. `items-start`: the
 	     grid would otherwise stretch a collapsed How it works into a bordered box
 	     of empty space as tall as the propose form. -->
-	<div class="grid items-start gap-8 md:grid-cols-2">
-		<!-- `min-w-0`: a grid item defaults to `min-width: auto`, so a long
+	<!-- Signed out, none of this row applies: How it works and the Karl guide
+	     describe the review and the Karl move, which need an account, and
+	     proposing a page needs one too. A visitor gets the sign-in card and then
+	     the pages, which is what they came to see. `knownSignedOut`, so it is not
+	     hidden during the session check and then flashed in. -->
+	{#if !sessionStore.knownSignedOut}
+		<div class="grid items-start gap-8 md:grid-cols-2">
+			<!-- `min-w-0`: a grid item defaults to `min-width: auto`, so a long
 		     approved-page title in the Karl section widened this column past a
 		     375px phone (measured: 420px) despite truncating. -->
-		<div class="min-w-0 space-y-8">
-			<HowItWorks startOpen={howItWorksOpen} />
-			<KarlWalkthroughGuide
-				approved={card === 'progress' ? approvedPages : undefined}
-				onShowApproved={() => showStatus('approved')}
-			/>
+			<div class="min-w-0 space-y-8">
+				<HowItWorks startOpen={howItWorksOpen} />
+				<KarlWalkthroughGuide
+					approved={card === 'progress' ? approvedPages : undefined}
+					onShowApproved={() => showStatus('approved')}
+				/>
+			</div>
+			<section aria-labelledby="propose-a-page">
+				<h2 id="propose-a-page" class="mb-3 text-lg font-semibold text-slate-900">
+					Propose a page
+				</h2>
+				<ProposePageForm />
+			</section>
 		</div>
-		<section aria-labelledby="propose-a-page">
-			<h2 id="propose-a-page" class="mb-3 text-lg font-semibold text-slate-900">Propose a page</h2>
-			<ProposePageForm />
-		</section>
-	</div>
+	{/if}
 
 	<AllPagesList bind:query bind:status />
 </main>

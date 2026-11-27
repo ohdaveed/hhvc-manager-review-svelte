@@ -168,6 +168,11 @@ test.describe('signed out', () => {
 		await expect(page.getByText(/\d+ of \d+ decided/)).toHaveCount(0);
 		await expect(page.getByRole('link', { name: /^Continue to / })).toHaveCount(0);
 		await expect(page.getByText('Checking your session…')).toHaveCount(0);
+		// The review's own furniture is for signed-in reviewers; a visitor gets
+		// the sign-in card and then the pages.
+		await expect(page.getByRole('heading', { name: 'How it works' })).toHaveCount(0);
+		await expect(page.getByRole('heading', { name: 'Propose a page' })).toHaveCount(0);
+		await expect(page.getByRole('heading', { name: 'All pages' })).toBeVisible();
 	});
 });
 
