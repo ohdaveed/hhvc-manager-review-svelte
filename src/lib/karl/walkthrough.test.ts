@@ -39,6 +39,25 @@ describe('buildWalkthrough', () => {
 		expect(w.steps[1].rawName).toBe('description');
 	});
 
+	it("labels every section step with that section's own heading", () => {
+		// Nine rows reading "Information section" are indistinguishable; the
+		// heading is what a reviewer finds their place by.
+		let labelled = 0;
+		for (const page of allPages) {
+			const w = buildWalkthrough(page, pagesByKey);
+			for (const step of w.steps) {
+				if (step.sectionIndex === undefined) {
+					expect(step.heading, `${page.slug} ${step.id}`).toBeUndefined();
+					continue;
+				}
+				const heading = String(page.sections[step.sectionIndex]?.heading ?? '').trim();
+				expect(step.heading, `${page.slug} ${step.id}`).toBe(heading || undefined);
+				if (heading) labelled++;
+			}
+		}
+		expect(labelled).toBeGreaterThan(50);
+	});
+
 	it('derives the add-page URL from the content type, never hardcoding one', () => {
 		// Two of the eight do not follow from the type name by any rule.
 		expect(karlFormUrl('Transaction')).toContain('/sf/transaction/');

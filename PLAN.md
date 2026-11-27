@@ -1,36 +1,34 @@
-# PLAN — Report page structure (bed bug page review)
+# PLAN — Karl rebuild sidebar UX
 
-Branch `feat/report-pages-structure`, cut from `origin/main` at `9789a0a`. Source: a reviewer's five-point
-critique of `report-bed-bugs`. Scope chosen by the user (2026-11-26): structural fixes on all nine
-condition report pages, option B for the step order (keep three steps, details before the 311 button).
+Branch `feat/karl-sidebar-ux`, cut from `origin/main` (`02d88be`), in worktree `../wt-karl-sidebar-ux`
+(the main checkout is shared with another session). Source: a pasted Laws-of-UX critique of the
+walkthrough drawer (`src/lib/components/workspace/WalkthroughDrawer.svelte`).
 
-Checked before editing:
+- [x] **1. Section labels.** Steps carry the section `heading` (review-record overlay included, via
+      `karl-transcript.js` `emitSection`) and `sectionIndex`. Rows and the active card lead with the
+      heading; `rawName` stays as the mono tag; the card keeps `uiLabel` visible. Corpus-wide unit test.
+- [x] **2. Copy & next.** One-value steps: primary "Copy & next →" copies, marks, advances; a clipboard
+      failure neither marks nor advances and says so. Multi-value steps keep per-value Copy and a
+      "Done · next →" primary; no-value steps "Mark done · next →". Focus moves into the new card; an
+      `aria-live` region announces the copy. Landing guide copy updated. jsdom drawer test.
+- [x] **3. Clutter.** Drawer title becomes `sr-only` (still the focus target); subtitle drops the
+      duplicated copied count; the mapping box collapses into the card's header row with a `rawName` pill,
+      keeping the CHOOSE/FLAG instructions. Navy header untouched.
+- [x] **4. No-paste badges.** Rows for steps with no values carry a badge by outcome — Choose, Blocking /
+      Flag, or Empty. No skip-empty toggle (it could hide a blocking gap) — deliberately skipped.
+- [x] **5. Preview sync.** `Section.svelte` root gets `data-section-index`; the active step's
+      `sectionIndex` scrolls the mockup preview (`scrollTop`, not `scrollIntoView`) and holds a highlight
+      on that section until the step changes or the walkthrough exits.
+- [x] **6. Verify.** Unit tests, `bun run check:ratchet`, `lint:ratchet`, `format:ratchet`, build, and a
+      Playwright screenshot of an Information-heavy page from a worktree dev server (not :5173).
 
-- Live SF.gov `report-health-nuisance-or-hazards` and `report-residential-building-concern` have no Cost
-  block and list the details before the 311 button. Phone wording on both: "415-701-2311 if you are
-  outside of San Francisco", "TDD/TTY 711". Neither says "24/7" or "free interpretation" — not added.
-- Karl: `cost` is optional (field map E3); Things to know is capped at 2 (confirmed); a Section's
-  specifics can hold a `Phone number` block.
-- Production holds no edits or comments on the bed bug page, so re-keyed step field ids orphan nothing.
-
-Decisions forced by constraints:
-
-- Every condition page already has 2 Things to know items (Karl's cap). The privacy sentence moves into
-  What to know only on bed bugs, where both items move out. On the other eight it stays in the details
-  step's callout, which the reorder now puts above the 311 button.
-- Sewage keeps "Report it right away" first: that order is Decided (48-hour response, urgent).
-
-- [x] **1. All nine pages.** `cost: 'Free'` removed; the details step (renamed "Gather your details")
-      moved above the 311 button step (sewage excepted); Karl notes updated to match. The 311 phone/TTY
-      lines went into Karl's Contact us block (`contact.phone`), NOT the step: in the step they broke the
-      three-sentence paragraph / three-item text limits `validate-output` enforces on five pages.
-      Also fixed: the transcript and the schema read Cost's `yes (radio)` as "Karl won't save without it";
-      both now treat it as optional, as `walkthrough.ts` already did.
-- [x] **2. Bed bug copy.** Action-first subtitle; Nearby units folded into Step 1 as its second bullet;
-      prep link and privacy sentence placed per the review; While you wait cut to two tips plus the prep
-      link, with UC IPM and EPA moved onto `bed-bugs-prevent-and-prepare`; Step 1→2 bridge says you can
-      report without waiting.
-- [x] **3. Gates.** `bun run verify` green (1345 tests, build), check/lint/format ratchets at baseline,
-      corpus.lock regenerated, bed bug page checked on :5173 (no console errors).
-- [ ] **4. PR opened, CI green.**
-- [ ] **5. Separate PR: "Unconfirmed in Karl" pill** beside the section's Rethink control (review item 5).
+Notes from the browser check (1600×1000, bed-bugs Information page, worktree dev server :5199):
+- Rows first used one line, which left ~20 characters of heading beside the `information_section` tag
+  and cut most headings before the word that tells them apart. They now clamp at two lines.
+- A pre-existing sideways scrollbar in the step list came from an unwrapped photo-credit URL in
+  `.value-text`; fixed with `overflow-wrap: anywhere` (display only — Copy writes the value unbroken).
+- Copy & next observed end to end: clipboard written, Step 2 active, focus on the new card, live region
+  "Copied Page title", navy count 1 of 16. Clicking step 9 scrolled the mockup to "Check for bed bugs" and
+  marked only that section. The one console error was a local Supabase token refresh 400, unrelated.
+- Skip-empty toggle deliberately not built: it could hide a blocking gap.
+- Gates 2026-11-26: unit 1360/1360, svelte-check 0/0, eslint 2, prettier 40 (all at baseline), build ok.
