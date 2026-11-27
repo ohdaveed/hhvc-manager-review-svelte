@@ -381,7 +381,10 @@ test.describe('Blueprint', () => {
 		await expect(page.getByRole('button', { name: 'Expand queue' })).toHaveCount(0);
 		await expect(page.locator('#reviewQueueRail')).toBeHidden();
 		await reviewTab(page).click();
-		await expect(page.getByRole('button', { name: 'Collapse queue' })).toBeVisible();
+		// As the helper left them, which is as the workspace opens: the review
+		// panel open, the queue collapsed.
+		await expect(page.getByRole('button', { name: 'Collapse review panel' })).toBeVisible();
+		await expect(page.getByRole('button', { name: 'Expand queue' })).toBeVisible();
 	});
 
 	test('Review returns to the mockup', async ({ page }) => {
