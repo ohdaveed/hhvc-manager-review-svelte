@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { panelsFor } from '$lib/legacy-core/karl-blocks.js';
-import { SCHEMA_TYPES, declaredRules, schemaFor } from './schema';
+import { SCHEMA_TYPES, declaredRules, requiredToSave, schemaFor } from './schema';
 
 type Row = { rawName: string; order: number };
 const inventory = (type: string) => (panelsFor as unknown as (t: string) => Row[])(type);
@@ -157,5 +157,31 @@ describe('Campaign schema', () => {
 	it('has a confirmed URL and a Related panel', () => {
 		expect(campaign.url.status).toBe('confirmed');
 		expect(campaign.relatedTargets).toContain('Transaction');
+	});
+});
+
+describe('required: one reading of the field map', () => {
+	// The schema and the walkthrough used to read the field map's required
+	// column with two predicates whose comments each called them the same. They
+	// differed on one panel: Transaction's "Page" entry, whose requiredDoc is
+	// `"Page " required per entry` -- a requirement within each entry of a block
+	// the page need not have, which does not stop Karl saving the page.
+	it('does not count a requirement within an optional block as required', () => {
+		const panels = inventory('Transaction') as (Row & { requiredDoc?: string })[];
+		const perEntry = panels.find((p) => /required per entry/.test(p.requiredDoc ?? ''))!;
+		expect(perEntry).toBeDefined();
+		const panel = schemaFor('Transaction')!.panels.find((p) => p.rawName === perEntry.rawName)!;
+		expect(panel.required).toBe(false);
+	});
+
+	it('agrees with requiredToSave on every panel of every type', () => {
+		for (const type of SCHEMA_TYPES) {
+			const byName = new Map(inventory(type).map((p) => [p.rawName, p]));
+			for (const panel of schemaFor(type)!.panels) {
+				expect(panel.required, `${type}.${panel.rawName}`).toBe(
+					requiredToSave(byName.get(panel.rawName) as never)
+				);
+			}
+		}
 	});
 });
