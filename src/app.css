@@ -839,10 +839,14 @@ body {
    of 12 grid columns with 28px gutters -- 473px at 1024, 616px at 1280 --
    while the title and summary span the whole grid. Below that, body copy runs
    the full width. `min(100cqi, 1076px)` is the grid: the container, capped
-   where the page wrapper caps it. */
+   where the page wrapper caps it.
+
+   The mockup widens that measure by 25% (591px at 1024, 770px at 1280), a
+   deliberate departure from live sf.gov asked for on 2026-11-27 so the body
+   copy reads larger in review. Drop the `* 1.25` to return to live's 7 of 12. */
 @container mockup (min-width: 800px) {
 	#mockPage :is(.what-to-know, .page-content) {
-		max-width: calc((min(100cqi, 1076px) + 28px) * 7 / 12 - 28px);
+		max-width: calc(((min(100cqi, 1076px) + 28px) * 7 / 12 - 28px) * 1.25);
 	}
 	#mockPage h1 {
 		font-size: 2.875rem;
