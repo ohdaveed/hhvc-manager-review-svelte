@@ -5,6 +5,7 @@
 	import { Badge } from '$lib/components/ui/badge/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { Separator } from '$lib/components/ui/separator/index.js';
+	import { Switch } from '$lib/components/ui/switch/index.js';
 	import * as ToggleGroup from '$lib/components/ui/toggle-group/index.js';
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
 	import { onDestroy } from 'svelte';
@@ -14,7 +15,7 @@
 	import { reviewHrefFor } from '$lib/corpus/draftPath';
 	import { draftsStore } from '$lib/stores/draftPages';
 	import { pageTitleFor } from '$lib/corpus/pageTitle';
-	import { ArrowRight, ClipboardList } from '@lucide/svelte';
+	import { ArrowRight, ClipboardList, Columns2 } from '@lucide/svelte';
 	import { pageStore } from '$lib/stores/pageData.svelte';
 	import { sessionStore } from '$lib/stores/session.svelte';
 	import { STATUS_LABELS } from '$lib/review/statusLabels';
@@ -26,7 +27,7 @@
 		type PageCheck
 	} from '$lib/stores/reviewState';
 
-	let { pageData, karlReadiness = null } = $props();
+	let { pageData, karlReadiness = null, karlViews = false } = $props();
 
 	// What a decision is being made over. PRODUCT.md: a review succeeds when
 	// the Karl builder never has to go back to the manager, so Approve should
@@ -541,6 +542,35 @@
 				{copiedHere === 1 ? 'field' : 'fields'} copied so far on this device.
 			</p>
 		{/if}
+
+		<!-- The other two Karl views. They were a strip of their own under the
+		     tabs, which read as a second tab bar ("the Karl tab"); they are now
+		     buttons here, beside the walkthrough they belong with (2026-11-27).
+		     Not offered on a draft (decision 12). Turning the outline off is
+		     never stranded on another tab: with it on, the canvas carries its
+		     own "Karl fields shown · Hide" pill. -->
+		{#if karlViews}
+			<div class="space-y-3" role="group" aria-label="Karl views">
+				<Button
+					variant="outline"
+					size="sm"
+					class="w-full gap-1.5"
+					aria-pressed={pageStore.mode === 'blueprint'}
+					onclick={() =>
+						pageStore.mode === 'blueprint' ? pageStore.showReview() : pageStore.showBlueprint()}
+				>
+					<Columns2 class="size-4" aria-hidden="true" />
+					Build in Karl
+				</Button>
+				<label class="flex items-center justify-between gap-2 text-sm font-medium">
+					Show Karl fields on the page
+					<Switch
+						checked={pageStore.karlOutline}
+						onCheckedChange={(on: boolean) => pageStore.setKarlOutline(on)}
+					/>
+				</label>
+			</div>
+		{/if}
 	</section>
 
 	{#if checks.length > 0}
@@ -553,7 +583,7 @@
 	     decision they bear on. -->
 		<!-- No scroller of its own: the tab panel around it already scrolls and is
 		     focusable. Nested, this box became a scroll region whenever the panel
-		     was short (the Karl strip took 48px at 1280x720), holding nothing
+		     was short (a Karl strip then took 48px at 1280x720), holding nothing
 		     focusable -- axe's scrollable-region-focusable. -->
 		<div class="flex-1 bg-muted/40 p-6">
 			<h3 class="mb-4 text-sm font-bold">Page checks</h3>

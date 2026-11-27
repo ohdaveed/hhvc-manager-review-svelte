@@ -934,7 +934,7 @@
 							</Button>
 						</div>
 						<!-- Canvas controls only. The Karl walkthrough, the Karl field
-						     outline and the Blueprint moved to the review panel's Karl strip
+						     outline and Build in Karl live in the review panel's Decision tab
 						     (2026-11-26 layout review): the bar had two jobs, and the black
 						     walkthrough button was the heaviest thing on screen while the same
 						     entry sat in the panel. -->

@@ -202,6 +202,32 @@ test.describe('Blueprint', () => {
 		});
 	}
 
+	// The Karl views were a strip of their own under the tabs, which read as a
+	// second tab bar. They are buttons in the Decision tab now, beside the
+	// walkthrough -- so no other tab carries them, and nothing sits between
+	// the tab strip and the tab's content.
+	test('the Karl views are buttons in the Decision tab, not a strip under the tabs', async ({
+		page
+	}) => {
+		await page.setViewportSize({ width: 1440, height: 900 });
+		await gotoSignedIn(page, '/review/report-rats-or-mice');
+
+		const views = page.getByRole('group', { name: 'Karl views' });
+		const decision = page.getByRole('tabpanel', { name: 'Decision' });
+		await expect(decision.getByRole('button', { name: 'Build in Karl' })).toBeVisible();
+		await expect(decision.getByRole('switch', { name: 'Show Karl fields' })).toBeVisible();
+		await expect(
+			decision.getByRole('button', { name: /^(Start|Resume) the Karl walkthrough$/ })
+		).toBeVisible();
+		await expect(views).toHaveCount(1);
+
+		for (const tab of ['Fields', 'Rethink', 'Analysis']) {
+			await page.getByRole('tab', { name: tab }).click();
+			await expect(page.getByRole('tabpanel', { name: tab })).toBeVisible();
+			await expect(views).toBeHidden();
+		}
+	});
+
 	test('the top bar steps between pages without leaving the view, and Review leaves it', async ({
 		page
 	}) => {
