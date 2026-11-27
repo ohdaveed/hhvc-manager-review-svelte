@@ -127,7 +127,7 @@ this order; each opens with a failing test that reproduces its defect. Merging t
 production, so every merge is asked for first. Glossary terms **copy as recorded** / **copy as shown**
 are committed on `refactor/overlay-views` (`05e5371`, unpushed) and ride with A2.
 
-- [ ] **A1. One queue order (`queueRows`).** The sidebar groups by theme (`groupPaths`, since #254);
+- [x] **A1. One queue order (`queueRows`).** The sidebar groups by theme (`groupPaths`, since #254);
       Prev/Next, the landing resume point (`firstQueuePath`) and next undecided (`nextUndecidedPath`)
       still follow status order. One function returns the rendered order and all four read it; the
       membership-snapshot rule for Prev/Next stays. `QUEUE_STATUS_ORDER` survives only for status
