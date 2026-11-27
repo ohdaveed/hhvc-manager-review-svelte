@@ -139,3 +139,64 @@ describe('matchesQuery', () => {
 		expect(matchesQuery('lead', 'About Mold', 'topic-mold')).toBe(false);
 	});
 });
+
+describe('filterPages template and notes', () => {
+	const types: Record<string, string> = {
+		'topic-mold--about': 'Information',
+		'topic-rodents--about': 'Information',
+		'service-report-pests': 'Transaction'
+	};
+	const typeOf = (path: string) => types[path] ?? '';
+	const noted = new Set(['topic-rodents--about', 'service-report-pests']);
+	const hasNotes = (path: string) => noted.has(path);
+
+	it('keeps only the chosen template, with the other filters still applied', () => {
+		expect(
+			filterPages({
+				paths,
+				query: '',
+				status: 'all',
+				statusOf,
+				titleOf,
+				template: 'Information',
+				typeOf
+			})
+		).toEqual(['topic-mold--about', 'topic-rodents--about']);
+		expect(
+			filterPages({
+				paths,
+				query: 'mice',
+				status: 'all',
+				statusOf,
+				titleOf,
+				template: 'Transaction',
+				typeOf
+			})
+		).toEqual([]);
+	});
+
+	it('ignores an empty template without asking for any type', () => {
+		const spy = vi.fn(typeOf);
+		expect(
+			filterPages({ paths, query: '', status: 'all', statusOf, titleOf, template: '', typeOf: spy })
+		).toEqual(paths);
+		expect(spy).not.toHaveBeenCalled();
+	});
+
+	it('keeps only pages with a note when asked', () => {
+		expect(
+			filterPages({ paths, query: '', status: 'all', statusOf, titleOf, withNotes: true, hasNotes })
+		).toEqual(['topic-rodents--about', 'service-report-pests']);
+		expect(
+			filterPages({
+				paths,
+				query: '',
+				status: 'blocked',
+				statusOf,
+				titleOf,
+				withNotes: true,
+				hasNotes
+			})
+		).toEqual(['service-report-pests']);
+	});
+});

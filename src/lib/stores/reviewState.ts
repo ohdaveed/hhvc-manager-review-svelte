@@ -74,8 +74,8 @@ export function queueOrder(pages: ReviewPage[], unreviewed: readonly string[] = 
  * on `/review/[slug]`'s static guard.
  *
  * - `rows` -- rows a reviewer can open: a corpus page or a draft. Store order.
- * - `unreviewed` -- corpus ids with no row. Viewable, but undecidable: the
- *   table has no INSERT policy, so nothing in the app can create their row.
+ * - `unreviewed` -- corpus ids with no row. Viewable, but undecidable until a
+ *   reviewer adds the row (`addPageToReview`) or a migration does.
  * - `retired` -- rows for a page that is no longer in the corpus.
  * - `total` -- every page a reviewer can open, the progress denominator.
  */
@@ -252,6 +252,19 @@ function initializeRealtime(reviewId: string) {
 		}
 	);
 
+	// Listen for new rows: a page another reviewer added to the review from the
+	// queue's "Not in the review yet" list, or a draft created in another tab.
+	// Deduplicated by id, since the reviewer who added it already holds it.
+	channel.on(
+		'postgres_changes',
+		{ event: 'INSERT', schema: 'public', table: 'pages', filter: `review_id=eq.${reviewId}` },
+		(payload) => {
+			runOrBuffer(() =>
+				pagesStore.update((pages) => withPageRow(pages, payload.new as ReviewPage))
+			);
+		}
+	);
+
 	// Listen for new inline edits
 	channel.on(
 		'postgres_changes',
@@ -279,6 +292,48 @@ function initializeRealtime(reviewId: string) {
 			supabase.removeChannel(channel);
 		}
 	};
+}
+
+/** `pages` with `row` added, unless a row with its id is already there. */
+export function withPageRow(pages: ReviewPage[], row: ReviewPage): ReviewPage[] {
+	return pages.some((p) => p.id === row.id) ? pages : [...pages, row];
+}
+
+/**
+ * Adds a corpus page with no row to the review, so it can be decided.
+ *
+ * Not a direct insert: `pages` has no INSERT policy, so the row is written by
+ * `PUT /api/pages` with the service-role key after it verifies the caller and
+ * checks `path` is a corpus page. Not optimistic either -- the row's id comes
+ * from the database, and a decision cannot be recorded without it -- so the
+ * page moves into the queue when the server answers. Returns false on any
+ * failure, for the caller to say so; the page stays where it was.
+ */
+export async function addPageToReview(path: string): Promise<boolean> {
+	try {
+		const {
+			data: { session }
+		} = await supabase.auth.getSession();
+		if (!session) return false;
+		const res = await fetch('/api/pages', {
+			method: 'PUT',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${session.access_token}`
+			},
+			body: JSON.stringify({ path })
+		});
+		if (!res.ok) {
+			console.error('Failed to add page to review:', res.status);
+			return false;
+		}
+		const row = (await res.json()) as ReviewPage;
+		pagesStore.update((pages) => withPageRow(pages, row));
+		return true;
+	} catch (err) {
+		console.error('Failed to add page to review:', err);
+		return false;
+	}
 }
 
 /**

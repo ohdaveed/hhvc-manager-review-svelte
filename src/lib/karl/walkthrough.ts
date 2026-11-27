@@ -24,6 +24,7 @@
 import { KARL_NAV, panelByRawName } from '$lib/legacy-core/karl-blocks.js';
 import type { ReviewRecord } from './reviewRecord';
 import { transcriptFor, transcriptMarkdown, type Corpus } from './transcript';
+import { requiredToSave } from './schema';
 
 /* eslint-disable-next-line @typescript-eslint/no-explicit-any --
    the legacy Karl modules are untyped JS, so this is the boundary where their
@@ -164,20 +165,6 @@ export type StepOutcome = 'TYPE' | 'CHOOSE' | 'FLAG';
  * So a conditional requirement inside an optional block is advisory.
  */
 export type GapSeverity = 'blocking' | 'advisory';
-
-/**
- * Whether a flagged panel actually stops the page saving.
- *
- * `requiredDoc` is the field map's own required column, carried through the
- * inventory verbatim, so this reads the documentation rather than second-
- * guessing it. Anything qualified by `(radio)` is a requirement *within* a
- * block the page need not have at all.
- */
-function blocksSave(panel: KarlPanel): boolean {
-	if (!panel?.required) return false;
-	const doc = String(panel.requiredDoc ?? '');
-	return doc.startsWith('yes') && !doc.includes('radio');
-}
 
 export type WalkthroughStep = {
 	/**
@@ -404,7 +391,7 @@ export function buildWalkthrough(
 		if (heading !== '') step.heading = heading;
 
 		if (outcome === 'FLAG') {
-			step.severity = blocksSave(panelFor(type, rawName)) ? 'blocking' : 'advisory';
+			step.severity = requiredToSave(panelFor(type, rawName)) ? 'blocking' : 'advisory';
 		}
 
 		return step;

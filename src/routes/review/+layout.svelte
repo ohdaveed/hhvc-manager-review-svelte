@@ -1,8 +1,6 @@
 <script lang="ts">
 	import { review } from '$lib/review/review.svelte';
 	import { onMount, tick, untrack } from 'svelte';
-	import { hydrateMockup } from '$lib/stores/applySavedEdits';
-	import { classifyLatestEdits } from '$lib/stores/editStatus';
 	import { warnBeforeLeaving } from '$lib/stores/leaveGuard';
 	import { page } from '$app/stores';
 	import { afterNavigate, replaceState } from '$app/navigation';
@@ -183,22 +181,14 @@
 		pageStore.enterPage(pageData?.id);
 	});
 
-	// Which saved edits no longer answer their base copy (ADR 0001). Hashing is
-	// async (WebCrypto), so a slow pass is dropped if a newer one has started --
-	// otherwise an old result could land last and mark a field that has since
-	// been re-saved. Tracks the page list shallowly, since a re-merged draft
-	// page is a new base.
-	let statusPass = 0;
+	// Which saved edits no longer answer their base copy (ADR 0001); the store
+	// drops a slow pass a newer one has overtaken. Tracks the page list
+	// shallowly, since a re-merged draft page is a new base.
 	$effect(() => {
 		const edits = $editsStore;
 		const live = $pagesStore;
 		void [...pageStore.pages];
-		const pass = ++statusPass;
-		classifyLatestEdits(live, edits, (path, fieldId) => pageStore.baseCopyOf(path, fieldId)).then(
-			(status) => {
-				if (pass === statusPass) pageStore.editStatus = status;
-			}
-		);
+		void pageStore.syncEditStatus(live, edits);
 	});
 
 	// Saved edits onto the mockup: after `loadReview`, on every realtime insert,
@@ -209,18 +199,9 @@
 		const edits = $editsStore;
 		const loaded = $editsLoaded;
 		const live = $pagesStore;
-		const pages = [...pageStore.pages];
+		void [...pageStore.pages];
 		void Object.keys(pageStore.unsavedChanges);
-		untrack(() =>
-			hydrateMockup({
-				pages,
-				livePages: live,
-				edits,
-				editsLoaded: loaded,
-				isOwnEdit,
-				changes: pageStore
-			})
-		);
+		untrack(() => pageStore.hydrate({ livePages: live, edits, editsLoaded: loaded, isOwnEdit }));
 	});
 
 	// Unsaved changes on EVERY page, typed or accepted -- work does not follow the
