@@ -1,34 +1,67 @@
-# PLAN — Karl rebuild sidebar UX
+# PLAN — UI copy review: badly formatted text and text that adds nothing
 
-Branch `feat/karl-sidebar-ux`, cut from `origin/main` (`02d88be`), in worktree `../wt-karl-sidebar-ux`
-(the main checkout is shared with another session). Source: a pasted Laws-of-UX critique of the
-walkthrough drawer (`src/lib/components/workspace/WalkthroughDrawer.svelte`).
+Branch `docs/ui-copy-review-plan`, cut from `origin/main` (`f9f54b8`), in worktree `../wt-ui-copy-review`
+(the main checkout is shared). This plan is the review; fixes land later, in their own branches.
 
-- [x] **1. Section labels.** Steps carry the section `heading` (review-record overlay included, via
-      `karl-transcript.js` `emitSection`) and `sectionIndex`. Rows and the active card lead with the
-      heading; `rawName` stays as the mono tag; the card keeps `uiLabel` visible. Corpus-wide unit test.
-- [x] **2. Copy & next.** One-value steps: primary "Copy & next →" copies, marks, advances; a clipboard
-      failure neither marks nor advances and says so. Multi-value steps keep per-value Copy and a
-      "Done · next →" primary; no-value steps "Mark done · next →". Focus moves into the new card; an
-      `aria-live` region announces the copy. Landing guide copy updated. jsdom drawer test.
-- [x] **3. Clutter.** Drawer title becomes `sr-only` (still the focus target); subtitle drops the
-      duplicated copied count; the mapping box collapses into the card's header row with a `rawName` pill,
-      keeping the CHOOSE/FLAG instructions. Navy header untouched.
-- [x] **4. No-paste badges.** Rows for steps with no values carry a badge by outcome — Choose, Blocking /
-      Flag, or Empty. No skip-empty toggle (it could hide a blocking gap) — deliberately skipped.
-- [x] **5. Preview sync.** `Section.svelte` root gets `data-section-index`; the active step's
-      `sectionIndex` scrolls the mockup preview (`scrollTop`, not `scrollIntoView`) and holds a highlight
-      on that section until the step changes or the walkthrough exits.
-- [x] **6. Verify.** Unit tests, `bun run check:ratchet`, `lint:ratchet`, `format:ratchet`, build, and a
-      Playwright screenshot of an Information-heavy page from a worktree dev server (not :5173).
+## Scope
 
-Notes from the browser check (1600×1000, bed-bugs Information page, worktree dev server :5199):
-- Rows first used one line, which left ~20 characters of heading beside the `information_section` tag
-  and cut most headings before the word that tells them apart. They now clamp at two lines.
-- A pre-existing sideways scrollbar in the step list came from an unwrapped photo-credit URL in
-  `.value-text`; fixed with `overflow-wrap: anywhere` (display only — Copy writes the value unbroken).
-- Copy & next observed end to end: clipboard written, Step 2 active, focus on the new card, live region
-  "Copied Page title", navy count 1 of 16. Clicking step 9 scrolled the mockup to "Check for bed bugs" and
-  marked only that section. The one console error was a local Supabase token refresh 400, unrelated.
-- Skip-empty toggle deliberately not built: it could hide a blocking gap.
-- Gates 2026-11-26: unit 1360/1360, svelte-check 0/0, eslint 2, prettier 40 (all at baseline), build ok.
+**In:** every string the review tool itself shows a reviewer — `src/routes/**`, and
+`src/lib/components/{workspace,landing,review}/**`, `KarlChip`, `KarlOrphanNotice`, `DraftBanner`,
+`EditTarget`. That covers headings, body copy, button labels, `placeholder`, `title`, `aria-label`,
+empty / loading / error states, toasts and live-region announcements, and server error messages that
+reach the UI (`src/routes/api/**`, `$lib/ai/generate`).
+
+**Out:**
+
+- The mockup corpus (`src/lib/data/**`) — it is the material under review, and editor notes drive the
+  card classifier (a reword can silently reclassify a section).
+- `src/lib/components/{sfgov,blocks}/**` — they reproduce SF.gov chrome; their fixed strings ("On this
+  page", footer) should match SF.gov, not be improved. Flag a mismatch with SF.gov, nothing else.
+- `src/lib/server/ai/vendor/**` — kept diffable against upstream.
+- `src/routes/demo/**`, `src/routes/sfgov-components` — developer pages.
+
+**Overlap:** `fix/workspace-review-findings` (`../wt-workspace-review`, unmerged) already rewrites
+toolbar, queue, walkthrough and analysis copy. Review against `main` _after_ it merges, or the findings
+will describe text that is already gone.
+
+## What counts as a finding
+
+| Category         | Examples                                                                                                                                                                         |
+| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Format**       | raw markdown or `**` leaking; bad wrap / clipping / overflow; `1 pages`; `(0)` counts; mixed title/sentence case; mixed `…`/`...`, `→`/`->`; stray punctuation or double spaces |
+| **Redundant**    | text that repeats a heading, a button label or a count shown beside it; intro paragraphs that restate the UI; a tooltip identical to its label                                   |
+| **Internal**     | schema / field ids, slugs, `draft:<uuid>`, model names, HTTP codes or "Supabase" shown to a reviewer who cannot act on them                                                      |
+| **Dead end**     | an empty or error state that says what happened but not what to do next                                                                                                          |
+| **Inconsistent** | the same thing named two ways ("page" / "mockup", "decision" / "status", "Karl" / "CMS")                                                                                         |
+
+Not findings: `sr-only` text and `aria-live` announcements that exist for screen readers (judge them by
+ear, not by eye); the walkthrough's CHOOSE / FLAG instructions (kept deliberately, see the Karl sidebar
+PLAN in git history).
+
+## Tasks
+
+- [ ] **1. Baseline.** `fix/workspace-review-findings` merged (or explicitly included); note the SHA
+      reviewed here.
+- [ ] **2. String inventory.** A script (scratchpad, not committed) extracts every in-scope text node and
+      `placeholder` / `title` / `aria-label` / message literal with `file:line` into a CSV. Done when the
+      row count is recorded here and every in-scope file appears at least once.
+- [ ] **3. Rendered walk.** Playwright on a dev server on a free port (not :5173), at 1440 px and 390 px,
+      local Supabase: signed-out `/`, `/login`, signed-in `/`, a corpus `/review/<slug>` with each panel
+      (Fields, Rethink, Analysis, Review, queue, site map, blueprint), the Karl walkthrough, a draft in
+      each state (drafting / ready / failed / stale), `/review/<bad-slug>` (404), an empty queue, an AI
+      error (501 with no key; 400 over-length). Screenshot each; done when every state has a shot.
+- [ ] **4. Classify.** One row per finding: surface, `file:line`, current text, category, severity
+      (blocks understanding / noise / polish), proposed action (delete, rewrite to X, move to tooltip or
+      `sr-only`). Wrapping and clipping come from task 3 only — the CSV cannot see them.
+- [ ] **5. Guard check.** For each proposed change, grep `tests/**` and `**/*.e2e.ts` for the string
+      (`getByText`, `getByRole({ name })`); note which tests must change with it.
+- [ ] **6. Report.** Findings in `docs/reviews/<date>-ui-copy-review.md`, grouped by surface, highest
+      severity first; screenshots referenced, not committed. Reviewed with the user before any fix.
+- [ ] **7. Fixes (after approval).** One branch / PR per surface (landing, review workspace, walkthrough,
+      drafts, errors). Each PR: unit + e2e green, `check:ratchet`, `lint:ratchet`, `format:ratchet`,
+      and before/after screenshots of the changed states.
+
+## Decisions
+
+- Review first, fix later: deleting copy is a product call, so nothing is removed on the strength of
+  the inventory alone.
