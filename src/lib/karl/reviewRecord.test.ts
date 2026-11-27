@@ -56,13 +56,13 @@ describe('reviewRecordFor', () => {
 				edit('title', 'New title', '2026-01-01T00:00:00Z'),
 				edit('summary', 'New summary', '2026-01-01T00:00:01Z'),
 				edit('slug', 'new-slug', '2026-01-01T00:00:02Z'),
-				edit('sections.0.paragraphs', 'New body', '2026-01-01T00:00:03Z')
+				edit('sections.who-we-are.paragraphs.0', 'New body', '2026-01-01T00:00:03Z')
 			]
 		);
 		expect(record?.edited_title).toBe('New title');
 		expect(record?.edited_summary).toBe('New summary');
 		expect(record?.url_slug).toBe('new-slug');
-		expect(record?.section_edits).toEqual({ 'sections.0.paragraphs': 'New body' });
+		expect(record?.section_edits).toEqual({ 'sections.who-we-are.paragraphs.0': 'New body' });
 	});
 
 	it('is last-write-wins by created_at, not by row order', () => {

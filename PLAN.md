@@ -142,9 +142,15 @@ are committed on `refactor/overlay-views` (`05e5371`, unpushed) and ride with A2
       `copyAsShown`: the page object already IS the copy as shown, so it had no caller — it arrives
       with A5, which is where the parity test belongs too. Analysis takes the same `reviewRecordFor`
       record as the outline (for the slug), not `null`.
-- [ ] **A3. Typed transcript adapter.** `$lib/karl/transcript.ts` owns the call into `buildTranscript`:
+- [x] **A3. Typed transcript adapter.** `$lib/karl/transcript.ts` owns the call into `buildTranscript`:
       field id → positional path translation, `pagesByKey`, id strip, types. `karl-transcript.js`
       untouched. `reviewRecord.test.ts:65` rewritten to field-id keys.
+      **Built (2026-11-27) with a different mechanism:** translation was impossible -- the transcript
+      reads whole containers (`sections.2.paragraphs`), not leaves. Instead the PAGE carries the copy
+      and the record carries only metadata (decision, `url_slug`, stale flags); `transcriptFor` strips
+      copy from the record. The walkthrough now gets the copy as recorded
+      (`pageStore.recordedPage`, base page + confirmed saved edits), so unsaved typing no longer
+      leaks into the drawer / Help markdown -- a visible change. Placement still gets the copy as shown.
 - [ ] **A4. Karl rules in one place.** One `required` predicate in `schema.ts` with `blocksSave`'s
       reading (the Transaction panel with `"Page " required per entry` stops counting as required);
       one label-stripping regex; one field-id parser behind `extractCopy`, `resolveField`, `subLabel`.
