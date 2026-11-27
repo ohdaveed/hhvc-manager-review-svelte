@@ -166,10 +166,14 @@
 			/>
 			<p id="propose-count" class="text-sm text-slate-700">{countText}</p>
 			{#if over > 0}
-				<p id="propose-over" role="alert" class="text-sm font-semibold text-red-800">Too long</p>
+				<p id="propose-over" role="alert" class="text-sm font-semibold text-site-danger">
+					Too long
+				</p>
 			{/if}
 			{#if error}
-				<p id="propose-error" role="alert" class="text-sm font-semibold text-red-800">{error}</p>
+				<p id="propose-error" role="alert" class="text-sm font-semibold text-site-danger">
+					{error}
+				</p>
 			{/if}
 		</div>
 
@@ -178,7 +182,7 @@
 			<select
 				id="propose-section"
 				bind:value={section}
-				class="h-11 rounded-[3px] border border-slate-300 bg-white px-2.5 text-sfds-black focus:border-sfds-action focus:ring-1 focus:ring-sfds-action focus:outline-none"
+				class="h-11 rounded-[4px] border border-slate-300 bg-white px-2.5 text-sfds-black focus:border-sfds-action focus:ring-1 focus:ring-sfds-action focus:outline-none"
 			>
 				<option value="">Not sure yet</option>
 				{#each PAGE_GROUPS as group (group.id)}
@@ -195,7 +199,7 @@
 			<legend class="mb-2 font-semibold text-slate-900">Template</legend>
 			{#each TEMPLATE_CHOICES as choice (choice.value)}
 				<label
-					class="flex cursor-pointer items-start gap-2.5 rounded-[3px] border px-3 py-2.5 has-checked:border-sfds-action has-checked:bg-sfds-blue-l1 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-sfds-black {choice.value ===
+					class="flex cursor-pointer items-start gap-2.5 rounded-[4px] border px-3 py-2.5 has-checked:border-sfds-action has-checked:bg-sfds-blue-l1 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-sfds-black {choice.value ===
 					'suggest'
 						? 'border-dashed border-slate-500 text-slate-800'
 						: 'border-slate-300'}"
@@ -223,7 +227,7 @@
 				Optional. Leave it blank and the drafter suggests one.
 			</p>
 			<div
-				class="flex h-11 items-center rounded-[3px] border border-slate-300 bg-slate-50 focus-within:border-sfds-action focus-within:ring-1 focus-within:ring-sfds-action"
+				class="flex h-11 items-center rounded-[4px] border border-slate-300 bg-slate-50 focus-within:border-sfds-action focus-within:ring-1 focus-within:ring-sfds-action"
 			>
 				<span class="pl-3 font-mono text-sm text-slate-700" aria-hidden="true">sf.gov/</span>
 				<input
@@ -262,7 +266,8 @@
 					{/if}
 					<a
 						href={resolve(reviewHrefFor(confirmed.path))}
-						class="font-semibold underline underline-offset-2">Open the draft</a
+						class="font-semibold text-site-action underline underline-offset-[3px] hover:text-site-action-dark"
+						>Open the draft</a
 					>
 				</p>
 			{/if}
@@ -271,7 +276,9 @@
 {:else if sessionStore.signedIn === false}
 	<p class="text-slate-800">
 		Creating a page needs an account.
-		<a href={resolve('/login')} class="font-semibold underline underline-offset-2"
+		<a
+			href={resolve('/login')}
+			class="font-semibold text-site-action underline underline-offset-[3px] hover:text-site-action-dark"
 			>Sign in to propose a page</a
 		>.
 	</p>

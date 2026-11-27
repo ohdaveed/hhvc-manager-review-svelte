@@ -63,7 +63,7 @@
 <!-- The progress card: the count, the bar and its key, and -- once nothing is
      left to resume -- what is left instead. The one action that resumes the
      review is the header's Continue button. -->
-<section aria-label="Your progress" class="rounded-[3px] border border-sfds-grey-l2 bg-white">
+<section aria-label="Your progress" class="rounded-[4px] border border-sfds-grey-l2 bg-white">
 	<div class="space-y-3 p-4 sm:p-5">
 		<div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
 			<p class="text-xl font-bold text-slate-900">{decided} of {total} decided</p>
@@ -85,7 +85,7 @@
 						<button
 							type="button"
 							onclick={() => onShow(entry.status)}
-							class="inline-flex min-h-8 items-center gap-1.5 rounded-[3px] text-sm text-slate-800 underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sfds-black"
+							class="inline-flex min-h-8 items-center gap-1.5 rounded-[4px] text-sm text-slate-800 underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sfds-black"
 						>
 							<span
 								class="size-2.5 shrink-0 rounded-[2px] {entry.status === 'needs-review'
