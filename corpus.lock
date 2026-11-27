@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "corpusHash": "960c9fae81960ae189086e5be2b0c10796a83991a846b3cc02bfc43cb31a4554",
+  "corpusHash": "0a346755e589dd499ddee32a966d14d1a79a2d3ace858a99b25ab7c0be4ef3c0",
   "pages": {
     "departments--healthy-housing-and-vector-control": {
       "contentHash": "0dbd9dd7bbad4361a566c5cd2c714223d97028f482b3ba8c958c082887615fc9",
@@ -722,20 +722,20 @@
       }
     },
     "mosquito-education-workshop": {
-      "contentHash": "4abd1e6c2b5dab90b6b0317a3192ca25618e8c8ebfe83ab08d7ef17fd918beb0",
+      "contentHash": "ab08c05c9b3f8ee280daa394425e201f6e9ec71477ca82396c32dffa592fd852",
       "fieldHashes": {
         "sections.aligned-with-california-education-standards.bullets.0": "96c484416a37bb9ffe2c03febc6a78685d1e3b3124626728bfdf3f897cf82a97",
         "sections.aligned-with-california-education-standards.bullets.1": "11ffb777af0f6dba7b9242ae1d9b0967d79ac1d01530346fad90d49e943c2e75",
         "sections.aligned-with-california-education-standards.bullets.2": "166bff7824cae863b4d3139bc61e353c6e7a0ee5bfadee5a7c43bad2321f2313",
-        "sections.aligned-with-california-education-standards.bullets.3": "2898700d0ff51c933b8d50701f65ef2fa30e03050678961a27d97b12da0b406c",
-        "sections.aligned-with-california-education-standards.callout.text": "50903137a329fc65f35afaf6e39039a9de4b9cbf8a55a9e4975d1206c431ae50",
+        "sections.aligned-with-california-education-standards.bullets.3": "a0454e3dda20636aa4c00df8bdcf1fc0485167efc638148f6701c042c88daf02",
+        "sections.aligned-with-california-education-standards.callout.text": "b8f927aec8318059733645420eee4e42c50a54abf28cc6548f8c9d83955f7c0f",
         "sections.aligned-with-california-education-standards.heading": "0fbb92771e9479408dc0ae79ea2ea71cf1af0213acb3bb5a24273f09ab41edb6",
-        "sections.aligned-with-california-education-standards.paragraphs.0": "e8b930fa14857e8752de31299bdeaaeb65e204e023dd8e991805d291c37400e9",
-        "sections.aligned-with-california-education-standards.paragraphs.1": "265567275f6cd0a3b9d7e571c69dd201695ab1cc28b56f798c5dcede15436d3f",
+        "sections.aligned-with-california-education-standards.paragraphs.0": "c4734714c8b1855975747bac32ec747c2a8c13d7396cad00e457158d717f24f4",
+        "sections.aligned-with-california-education-standards.paragraphs.1": "76de9138943cde2408dd3b0c34b821dc31ea4fb9735e1277943e1e4a9e494b89",
         "sections.bring-mosquito-science-to-your-students.callout.text": "5559063ff4ac31281ddb4d9f6b46bad33cc6db9095bedb3fad2c53d2f4f4305a",
         "sections.bring-mosquito-science-to-your-students.heading": "e2a8882460222245d7e77eec63257227f0bbea68e083c06a6d923d32238ef69a",
         "sections.bring-mosquito-science-to-your-students.paragraphs.0": "344d722b6e9d2e82e45ba8dd7da2c95096c3b3b1dd7d544aa67caa603809176d",
-        "sections.bring-mosquito-science-to-your-students.paragraphs.1": "45545c2a97c5740e1c4b355aed570944958d57f5dfcdbcb41c035037070047e4",
+        "sections.bring-mosquito-science-to-your-students.paragraphs.1": "a13e5cb28c89811961d4a412f11712eeba3552a0b2bc4a77fcb71b7dcbd74e90",
         "sections.questions-before-you-apply.heading": "8f57f005692450c3632d7c84c2ffa5e77c493b73d3c0f0edf76d77b914806110",
         "sections.questions-before-you-apply.paragraphs.0": "39f103c0ca276c119ec27f416a3c182d06b633552810e0a766e5bfffe5288098",
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",

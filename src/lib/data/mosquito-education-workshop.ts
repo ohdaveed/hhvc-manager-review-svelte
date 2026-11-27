@@ -26,7 +26,7 @@ export const mosquitoWorkshop = {
 			component: 'spotlight',
 			paragraphs: [
 				'Healthy Housing and Vector Control (HHVC) offers a free mosquito education workshop for youth audiences in San Francisco.',
-				'Our team sets up interactive science stations. Students explore mosquito biology, breeding habitats, and disease prevention through hands-on learning.'
+				'Our team sets up science stations where students look at mosquitoes up close, find out where they breed, and learn how avoiding bites helps prevent disease.'
 			],
 			callout: {
 				karl: 'Spotlight has no callout field — fold this "free program" note into the Spotlight description as a bolded lead-in, or flag for Digital Services if a distinct callout is needed.',
@@ -70,18 +70,18 @@ export const mosquitoWorkshop = {
 			kind: 'body',
 			component: 'supporting',
 			paragraphs: [
-				'Workshop activities are designed to support California classroom learning goals in life science, public health, and scientific inquiry.',
-				'Stations emphasize observation, evidence-based reasoning, and understanding how organisms interact with their environment. These skills are part of California’s science standards.'
+				'The activities support California’s science standards for life science and public health.',
+				'At each station, students make observations, use them as evidence, and explain how mosquitoes depend on their surroundings.'
 			],
 			bullets: [
 				'Life cycles and habitats of mosquitoes',
 				'How environmental conditions affect public health',
 				'Using tools such as microscopes to collect and interpret observations',
-				'Applying science concepts to real-world prevention choices'
+				'Using what they learn to stop mosquitoes breeding at home'
 			],
 			callout: {
-				karl: 'No callout field on Accordion section or its items — fold this "standards summary available on request" note into the sidebar text or the last Accordion item\'s Body, or flag for Digital Services.',
-				text: 'HHVC can provide a standards-alignment summary for teachers upon request. Verify the final standards crosswalk before publication.'
+				karl: 'No callout field on Accordion section or its items — fold this "standards summary available on request" note into the sidebar text or the last Accordion item\'s Body, or flag for Digital Services. Verify the final standards crosswalk with HHVC before publication (moved here from the callout text, 2026-11-26: it is an instruction to editors, not copy for teachers).',
+				text: 'Teachers can ask HHVC for a summary of which standards the workshop covers.'
 			}
 		},
 		{
