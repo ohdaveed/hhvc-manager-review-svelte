@@ -1014,6 +1014,62 @@ body {
 }
 
 /* ---------------------------------------------------------------------------
+   `.site-skin`: an sf.gov-styled TOOL surface. The landing page (`/`) wears
+   it, as `/login` already wears the site's button, field and alert.
+
+   The landing page is built from the same shared pieces as the review
+   workspace (`PageRow`, `StatusBar`, the shadcn `Button` and `ToggleGroup`),
+   which read the chrome palette. Editing them would restyle the workspace
+   too, where the tool must stay visibly apart from the mockup. So the chrome
+   tokens are re-pointed at the site palette INSIDE this class only, and every
+   utility that reads them follows.
+
+   This is the one sanctioned alias between the two palettes, and it is scoped:
+   never put `.site-skin` on or around the review workspace.
+
+   Review-status colours (`sfds-green`, `-amber`, `-red`) are not remapped. They
+   are review marks, not sf.gov, and they mean the same thing here as in the
+   queue.
+   --------------------------------------------------------------------------- */
+.site-skin {
+	--color-sfds-action: var(--color-site-action);
+	--color-sfds-blue-dark: var(--color-site-action-dark);
+	--color-sfds-blue-l1: var(--color-site-action-soft);
+	--color-sfds-black: var(--color-site-ink);
+	--color-sfds-slate-l2: var(--color-site-ink-muted);
+	--color-sfds-slate-l3: var(--color-site-ink-secondary);
+	--color-sfds-grey-l2: var(--color-site-border);
+	--color-slate-900: var(--color-site-ink);
+	--color-slate-800: var(--color-site-ink);
+	--color-slate-700: var(--color-site-ink-secondary);
+	--color-slate-500: var(--color-site-ink-muted);
+	--color-slate-300: var(--color-site-ink-muted);
+	--color-slate-50: var(--color-site-tint);
+
+	--foreground: var(--color-site-ink);
+	--primary: var(--color-site-action);
+	--primary-foreground: var(--color-site-surface);
+	--border: var(--color-site-border);
+	--input: var(--color-site-ink-muted);
+	--ring: var(--color-site-focus);
+
+	background: var(--color-site-surface);
+	color: var(--color-site-ink);
+	font-family: var(--site-font-body);
+}
+/* The site's 4px corner and two-stop ring on the page's buttons. Unlayered, so
+   it outranks the shadcn utilities without editing the generated component.
+   The shared rows keep their inset outline: a ring outside a row would be
+   clipped by the list. */
+.site-skin [data-slot='button'] {
+	border-radius: var(--site-radius);
+}
+.site-skin [data-slot='button']:focus-visible {
+	outline: none;
+	box-shadow: var(--site-focus-ring);
+}
+
+/* ---------------------------------------------------------------------------
    Karl outline: where each part of the mockup lands in Karl.
 
    Review-tool chrome, drawn only while `.karl-outline-on` is set on #mockPage.
