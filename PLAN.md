@@ -119,3 +119,32 @@ PLAN in git history).
 
 - Review first, fix later: deleting copy is a product call, so nothing is removed on the strength of
   the inventory alone.
+
+## Leg 3 — architecture deepening (review of 2026-11-26)
+
+Six candidates from the architecture review, settled with the user on 2026-11-26/27. One PR each, in
+this order; each opens with a failing test that reproduces its defect. Merging to `main` publishes
+production, so every merge is asked for first. Glossary terms **copy as recorded** / **copy as shown**
+are committed on `refactor/overlay-views` (`05e5371`, unpushed) and ride with A2.
+
+- [ ] **A1. One queue order (`queueRows`).** The sidebar groups by theme (`groupPaths`, since #254);
+      Prev/Next, the landing resume point (`firstQueuePath`) and next undecided (`nextUndecidedPath`)
+      still follow status order. One function returns the rendered order and all four read it; the
+      membership-snapshot rule for Prev/Next stays. `QUEUE_STATUS_ORDER` survives only for status
+      labels and progress counts. Done = a test asserting sidebar order equals Next order, PR green.
+- [ ] **A2. Overlay module.** `$lib/corpus/overlay.ts` exports `copyAsRecorded` / `copyAsShown`. The
+      Analysis panel judges copy as shown (today it re-overlays saved edits onto a hydrated page and
+      judges stale wording while the reviewer types). Delete `recordFromEdits`, the `pageCopy` fold and
+      `placementsFor`'s `copy:` option; `reviewRecordFor` becomes the recorded view's record form,
+      field-id keyed. Renderer still reads mutated page objects; a parity test pins agreement.
+- [ ] **A3. Typed transcript adapter.** `$lib/karl/transcript.ts` owns the call into `buildTranscript`:
+      field id → positional path translation, `pagesByKey`, id strip, types. `karl-transcript.js`
+      untouched. `reviewRecord.test.ts:65` rewritten to field-id keys.
+- [ ] **A4. Karl rules in one place.** One `required` predicate in `schema.ts` with `blocksSave`'s
+      reading (the Transaction panel with `"Page " required per entry` stops counting as required);
+      one label-stripping regex; one field-id parser behind `extractCopy`, `resolveField`, `subLabel`.
+- [ ] **A5. `pageStore.sync(livePages, edits)`.** Owns hydration, edit-status classification (ADR 0001)
+      and the `statusPass` race guard, moved out of `review/+layout.svelte`; the renderer reads
+      `copyAsShown`, so nothing mutates page objects with edits. Node tests with plain edit rows.
+- [ ] **A6. Card classifier header.** `card-inheritance.js` header names its two real callers
+      (transcript, sitemap). The mockup marking dropped card text is a separate Figma question.
