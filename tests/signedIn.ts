@@ -228,8 +228,12 @@ const DRAFT_PAGE_ROWS = draftRowsNow()
 export type SignedInOptions = {
 	/** Add the four draft states to the queue and `draft_pages`. */
 	drafts?: boolean;
-	/** Put the draft rows BEFORE the corpus rows, so the first undecided page is a draft. */
-	draftsFirst?: boolean;
+	/**
+	 * Add the drafts and decide every corpus row, so the next undecided page is
+	 * a draft. Row order cannot do this: `reconcileReview` sorts rows into list
+	 * order (`groupPaths`), where drafts come after every corpus page.
+	 */
+	draftNext?: boolean;
 	/**
 	 * Put the decided rows ahead of the first undecided one, so "the first row"
 	 * and "the first undecided row" are different rows. Without it the first
@@ -254,12 +258,12 @@ const json = (body: unknown) => ({
  * is turned into a loud one here.
  */
 export async function signedIn(page: Page, options: SignedInOptions = {}): Promise<void> {
-	const withDrafts = options.drafts === true || options.draftsFirst === true;
+	const withDrafts = options.drafts === true || options.draftNext === true;
 	const decided = options.decidedFirst ? PAGE_ROWS.filter((r) => r.status !== 'needs-review') : [];
-	const body = PAGE_ROWS.filter((r) => !decided.includes(r));
-	const pageRows = options.draftsFirst
-		? [...decided, ...DRAFT_PAGE_ROWS, ...body]
-		: [...decided, ...body, ...(withDrafts ? DRAFT_PAGE_ROWS : [])];
+	const body = PAGE_ROWS.filter((r) => !decided.includes(r)).map((r) =>
+		options.draftNext && r.status === 'needs-review' ? { ...r, status: 'approved' } : r
+	);
+	const pageRows = [...decided, ...body, ...(withDrafts ? DRAFT_PAGE_ROWS : [])];
 
 	// The storage key is `sb-<project-ref>-auth-token`, and the ref comes from
 	// whatever SVELTE_PUBLIC_SUPABASE_URL the bundle was built with -- a
@@ -336,7 +340,7 @@ export async function gotoSignedIn(
 
 	// The guard. Without rows the panels render their empty states and an axe
 	// pass over them would be the blind spot wearing a new name.
-	const withDrafts = options.drafts === true || options.draftsFirst === true;
+	const withDrafts = options.drafts === true || options.draftNext === true;
 	const total = PAGE_ROWS.length + (withDrafts ? DRAFT_PAGE_ROWS.length : 0);
 	if (path === '/') {
 		// The landing page has no queue. Its proof of a populated, signed-in

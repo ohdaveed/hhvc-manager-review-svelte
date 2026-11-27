@@ -35,9 +35,9 @@ test.describe('signed in', () => {
 	});
 
 	test('Continue to a draft goes to the draft route, never a draft: URL', async ({ page }) => {
-		// Drafts first, so the next undecided page IS a draft: `pages.path` is
-		// `draft:<uuid>`, which `/review/[slug]` would hard-404.
-		await gotoSignedIn(page, '/', { draftsFirst: true, decidedFirst: true });
+		// Every corpus page decided, so the next undecided page IS a draft:
+		// `pages.path` is `draft:<uuid>`, which `/review/[slug]` would hard-404.
+		await gotoSignedIn(page, '/', { draftNext: true });
 
 		const next = page.getByRole('link', { name: /^Continue to / });
 		await expect(next).toHaveAttribute('href', draftUrl(DRAFT_IDS.ready));
