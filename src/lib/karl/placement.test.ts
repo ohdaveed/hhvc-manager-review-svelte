@@ -156,8 +156,8 @@ describe('what happens after you report (Information pilot)', () => {
 			'Information section 4 · Title'
 		);
 		// Two slots later again since "If a problem is found" split into three
-		// sections on 2026-11-26 (deadlines, and what happens if one is missed).
-		expect(p.sections.get('what-this-page-does-not-promise')?.label).toBe('Information section 9');
+		// sections on 2026-11-26, then one back when "If a deadline is missed" moved to the owner page.
+		expect(p.sections.get('what-this-page-does-not-promise')?.label).toBe('Information section 8');
 		expect(p.unplaced).toEqual([]);
 	});
 
@@ -303,9 +303,9 @@ describe('outline summary', () => {
 		);
 		// 3, not 4, since the Health Code section folded into What to know (2026-11-26).
 		expect(outlineSummary(of('rodentsReport'))).toBe('3 sections: 3 go into Karl.');
-		// 9, not 7, since "If a problem is found" split into three sections (2026-11-26).
+		// 8: "If a problem is found" split into three (2026-11-26), then "If a deadline is missed" moved to the owner page.
 		expect(outlineSummary(gap('afterReport'))).toBe(
-			'9 sections: 9 go into Karl. 1 thing won’t carry over to Karl.'
+			'8 sections: 8 go into Karl. 1 thing won’t carry over to Karl.'
 		);
 		expect(outlineSummary(of('ownerHub'))).toBe('4 sections: 3 go into Karl, 1 needs a fix.');
 	});

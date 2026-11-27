@@ -101,22 +101,6 @@ export const afterReport = {
 					unverified: true,
 					unverifiedReason:
 						'Quoted from the draft pages (writing audit row 132) and listed under To confirm in the Nov 24 decisions record, as on Report bed bugs. Confirm the rule and its source with HHVC before publication.'
-				},
-				'**Extensions:** HHVC may offer an extension to the compliance deadline if the property owner contacts the inspector before the deadline.'
-			]
-		},
-		{
-			heading: 'If a deadline is missed',
-			karl: 'Maps to a Title and text block: Title = this heading, Text = the three paragraphs below. Split on 2026-11-26 from one 8-item list: SF.gov keeps a bulleted list to 3 to 5 items (A-to-Z, Bullets). Reinspection rates ($256/hour inspector, $234/hour technician) verified against the SFDPH Environmental Health Branch Fee Schedule, "Rates effective 7/1/26-6/30/27" (docs/source/hhvc-policy/2026-07-06-dph-ehb-fee-schedule-fy26-27.md). FLAG: the Director\'s Hearing / attorneys\' fees enforcement chain carries an Unverified pill (source-of-truth audit 2026-07-06) and needs legal confirmation.',
-			kind: 'body',
-			paragraphs: [
-				'If a property owner misses the deadline, HHVC may charge reinspection fees. These are $256/hour for inspectors and $234/hour for technicians.',
-				'Invoices must be paid within 30 days. Unpaid bills get a $10 or $30 late penalty, and interest accrues at 1.5% per month.',
-				{
-					text: "Persistent violations can result in citations, civil liabilities, or a Director's Hearing to recover attorneys' fees and administrative abatement costs.",
-					unverified: true,
-					unverifiedReason:
-						"No tier-1 corroboration for this enforcement mechanism — the Director's Hearing / attorneys' fees / administrative abatement chain traces only to tier-3 material (source-of-truth audit 2026-07-06 — High). Confirm with HHVC/legal before publication."
 				}
 			]
 		},
@@ -128,8 +112,7 @@ export const afterReport = {
 			bullets: [
 				'HHVC cannot promise an exact time or date when an inspector will call you or arrive at your building.',
 				'We cannot promise a specific inspection finding or guarantee that a Notice of Violation will be issued.',
-				'It does not replace a notice, citation, or legal document.',
-				'Complaints are not assigned instantly. 311 routing and HHVC inspector assignment can take a few days and are processed on weekdays.'
+				'It does not replace a notice, citation, or legal document.'
 			]
 		},
 		{

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "corpusHash": "d1800eb243eb622e52df37dbe71b8669b28a844fb90fc94c36e9408e6c8dd875",
+  "corpusHash": "4ffc657069a52e1272026b1695f349c678c387971e457d51c86e9beca1c773c9",
   "pages": {
     "departments--healthy-housing-and-vector-control": {
       "contentHash": "0dbd9dd7bbad4361a566c5cd2c714223d97028f482b3ba8c958c082887615fc9",
@@ -85,7 +85,7 @@
       }
     },
     "information--article-11-compliance-for-property-owners": {
-      "contentHash": "b2e0d35272813369ae57e9449a313fde20079eff388b70a36fd069d08173a38f",
+      "contentHash": "619148950a3c7724ac289086da6e1618dae6139cf85f07e5e5da8d755b87054d",
       "fieldHashes": {
         "sections.contact-healthy-housing-and-vector-control.heading": "894fd5f4df753dfd3e6a91a16b05555a82f9340ef3a31198ed566d93ed7505c2",
         "sections.contact-healthy-housing-and-vector-control.paragraphs.0": "828a6f144909c96956f4ccc9dfad64ba06b8b178b0cbf5e179c2f8f32f36d8a7",
@@ -100,8 +100,12 @@
         "sections.if-you-get-a-report-or-notice.heading": "612f3df8e2c5ab17f155e97353bcbf97bfa9a65f593c87481f3fc79ad52fc380",
         "sections.if-you-get-a-report-or-notice.paragraphs.0": "812c3fa52b9f2f2bf76f4f4c484a00039440cb4f94581f2e9b24d3585dfbbee9",
         "sections.if-you-get-a-report-or-notice.paragraphs.1": "21c18cca0eaed23e79252c83890bac214249aee6baec62253598ca26addb0d47",
+        "sections.if-you-need-more-time-or-miss-a-deadline.heading": "b8968ab75393dfeda5306fed78a1ed1679da106ece644cd7073c3049d9ef1930",
+        "sections.if-you-need-more-time-or-miss-a-deadline.paragraphs.0": "6295a80e0982c7ec2442830dc3edad303512429d6621000c00a87e16df993041",
+        "sections.if-you-need-more-time-or-miss-a-deadline.paragraphs.1": "62610ca1385f5da804b79fdc1dd67c14677e72168c790d6b8781c5789635cf9a",
+        "sections.if-you-need-more-time-or-miss-a-deadline.paragraphs.2": "44c7dab0ffd8af4350b4c0b32a60cee768b174208ba0b0c1181fbe9e188962ab",
+        "sections.if-you-need-more-time-or-miss-a-deadline.paragraphs.3": "fd3a91d5216533a5df28ab9fcbb3a917699051ad1ba45809dc4270c6bd28967b",
         "sections.what-you-must-do.bullets.2": "1bd13073d8730048e747cd74e8c8d1520c06b280e42e107ba4a551c5b687490b",
-        "sections.keep-records-and-stay-in-compliance.bullets.1": "7eac9df56656bf1da4e5dfc40c325243a07792d483b52194ab067db33a119fa0",
         "sections.what-you-re-required-to-do.bullets.5": "6803a53cf21243433361a0aafc172fb6252ff264827a7d7195aaa8d683a0abd8",
         "sections.what-you-re-required-to-do.bullets.6": "17533238601dcb466d5a57cda2a9e3112f33665ea4d7ee9bd5c9181d8ea40e52",
         "sections.keep-records-and-stay-in-compliance.heading": "6c3ec1c4806d74ff4c3fc2b3c7ee3c269acd3423af2da72bcb494dc0c9ac8558",
@@ -567,12 +571,11 @@
       }
     },
     "information-what-happens-after-you-report-housing-pest-problem": {
-      "contentHash": "16c98bf8588545f2b46febe284bf7ea1f2ae9feca388c94b16df96b40a8220b7",
+      "contentHash": "2cb66bde5d679d5f121deafb79ff9a368e5fe03f4a69194cfc4ee1d6c937e85e",
       "fieldHashes": {
         "sections.if-a-problem-is-found.bullets.1": "bb05a247ca922a27602110f1578a87089119687ee7860cd48c5e82df88a06c73",
         "sections.if-a-problem-is-found.bullets.2": "4852928a0af5af2f6a9c01c6c154cb020dda606d9f0293d2b04aad41cd15e788",
         "sections.if-a-problem-is-found.bullets.5": "353cfe29d88b1b45a4a23ba47813c3ebd453ac21736936b524d760da9fac8158",
-        "sections.if-a-problem-is-found.bullets.4": "20a29c06044e966c1ab98d65a92b0cc7e3221a4ae359246ea779c8084382b364",
         "sections.deadlines-to-fix-a-violation.heading": "2315db1493596bc104578edd917ffa22bcb8e71b8642dbc9b2e873acee99f5f7",
         "sections.if-a-problem-is-found.bullets.3": "85cade130e6596cf22449f646b7372db25d03e73418616181d908e8e59b9d2c3",
         "sections.how-a-report-moves-through-the-city.bullets.0": "9d6e74b59346d39437ca8f7f4fb021bee9a96ab270f10366f0b6b4a0d5246ef3",
@@ -587,10 +590,6 @@
         "sections.how-to-follow-up-on-your-report.bullets.3": "cb955fac849435a81a004a598d67b1cfc3a78dd736d3369e7d411793bc2c6a75",
         "sections.how-to-follow-up-on-your-report.heading": "d5a672b1c39ef7cebd05cc455ac9281c3ed0e87ad9617433d152db0898f756ea",
         "sections.how-to-follow-up-on-your-report.paragraphs.0": "855aca1a91b42c28711d76fd263561133cfbedacb3199a2231f914ee383aa6a6",
-        "sections.if-a-deadline-is-missed.heading": "24be348737970e77c76d2f341ee7cbc9cbe3e31a1b2027c1d8ee2188ad050822",
-        "sections.if-a-deadline-is-missed.paragraphs.0": "4fc5840b19acd31a75d8e57108aa63e2bd9355f0d003cafa348b13228d779597",
-        "sections.if-a-deadline-is-missed.paragraphs.1": "44c7dab0ffd8af4350b4c0b32a60cee768b174208ba0b0c1181fbe9e188962ab",
-        "sections.if-a-problem-is-found.bullets.7": "fd3a91d5216533a5df28ab9fcbb3a917699051ad1ba45809dc4270c6bd28967b",
         "sections.if-a-problem-is-found.heading": "9895baa9750e1a0711e781788a6520e394a8f5917dc1a115b19ccd31b08866f4",
         "sections.if-a-problem-is-found.paragraphs.0": "25101a12f7029aea87dcb0b3f469406695f743c9a3c31e06e02829e18d3c9179",
         "sections.if-a-problem-is-found.bullets.0": "7a360fb033bcd75894a5f2d70da7a442d08cea8223103d3a1ccec1a28eea044c",
@@ -602,7 +601,6 @@
         "sections.what-this-page-does-not-promise.bullets.0": "9f60ade73d09923ec6e42737be361fdd5e3a05655cfc65175225998ce679fe1e",
         "sections.what-this-page-does-not-promise.bullets.1": "b79b6d7d5509c5830c0257d64e56ce6b205a6324efda81ba71fa0214f34b308d",
         "sections.what-this-page-does-not-promise.bullets.2": "f974fede8e680d45b00ae3dd66bf8448653c2db1040ae79d1128b2523f01efc0",
-        "sections.what-this-page-does-not-promise.bullets.3": "90278a93c9d3d8c3452fd755ae74182f7966f87fe3f598e9ce4e2e3240b05888",
         "sections.what-this-page-does-not-promise.heading": "0eb6762ae5536787c473f21f976a8dffd8bc745840fd03b7267cde06650405cd",
         "sections.who-can-report.bullets.0": "bb6508e2fe9aba71ad2e40bfa676ee3de5925914b62cc162aacddedfba340dc8",
         "sections.who-can-report.bullets.1": "8a6466a920982fa6e1168c6d99b5b5645de5e49099d9cd4a854a25f9a83933a2",

@@ -90,6 +90,9 @@ const FOLLOWUP = 'sf.gov/step-by-step/correct-a-violation-and-close-your-case';
 const TENANT = 'sf.gov/information/tenant-steps-after-notice-of-violation';
 const MOSQUITO_WS = 'sf.gov/mosquito-education-workshop';
 const IPM_ED = 'sf.gov/integrated-pest-management-education';
+// The missed-deadline paragraphs moved from HAPPENS to the owner page on
+// 2026-11-26: they are what an owner must act on, not what a reporter waits for.
+const OWNER_COMPLIANCE = 'sf.gov/information--article-11-compliance-for-property-owners';
 
 export const OPEN_QUESTIONS: OpenQuestion[] = [
 	// --- Reporting and routing
@@ -180,7 +183,7 @@ export const OPEN_QUESTIONS: OpenQuestion[] = [
 		id: 'enforcement-chain',
 		question:
 			"Can persistent violations lead to citations, civil liability, or a Director's Hearing that recovers attorneys' fees and abatement costs?",
-		fields: [{ slug: HAPPENS, path: 'sections.7.paragraphs.2' }]
+		fields: [{ slug: OWNER_COMPLIANCE, path: 'sections.3.paragraphs.3' }]
 	},
 	{
 		id: 'partial-correction',
