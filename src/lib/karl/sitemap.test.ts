@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { allPages } from '$lib/data';
+import { allPages, pagesByKey } from '$lib/data';
 import { deriveFieldKey } from '$lib/corpus/fieldKey';
 import { routableId } from '$lib/corpus/pageId';
 import {
@@ -105,7 +105,8 @@ describe('findRelatedTypeViolations', () => {
 		type: 'Transaction',
 		slug: id,
 		outgoing,
-		incoming: 0
+		incoming: 0,
+		proseLinks: [] as string[]
 	});
 
 	it('accepts the four permitted types', () => {
@@ -147,6 +148,7 @@ describe('findOrphans', () => {
 		type,
 		slug: id,
 		incoming: 0,
+		proseLinks: [] as string[],
 		outgoing: targets.map((t) => ({
 			target: t,
 			live: true,
@@ -191,6 +193,63 @@ describe('findOrphans', () => {
 
 		expect(findOrphans(entries).map((e) => e.id)).toEqual(['x', 'y']);
 	});
+
+	// A reader follows a link in body copy as readily as a card, so a page the
+	// hub reaches only through `[text](pageKey)` in its prose is not lost. The
+	// key resolves through the real corpus, so the destination is a real page.
+	describe('through links in body copy', () => {
+		const { stepCorrectViolation } = pagesByKey;
+		const dest = { ...stepCorrectViolation, id: routableId(stepCorrectViolation) };
+		const hub = (section: Record<string, unknown>) => ({
+			id: 'hub',
+			title: 'Hub',
+			type: 'Topic',
+			slug: 'sf.gov/hub',
+			sections: [section]
+		});
+		const orphanIds = (pages: Record<string, unknown>[]) =>
+			findOrphans(buildSitemap(pages)).map((e) => e.id);
+
+		it('reaches a page linked only from a paragraph', () => {
+			const pages = [
+				hub({ paragraphs: ['Then [correct the violation](stepCorrectViolation).'] }),
+				dest
+			];
+
+			expect(orphanIds(pages)).toEqual([]);
+		});
+
+		it('reaches a page linked only from a bullet', () => {
+			const pages = [hub({ bullets: ['[Correct the violation](stepCorrectViolation)'] }), dest];
+
+			expect(orphanIds(pages)).toEqual([]);
+		});
+
+		it('ignores a link whose target is not a corpus key', () => {
+			const pages = [
+				hub({
+					paragraphs: ['[Elsewhere](https://sf.gov) and [nowhere](notAPageKey) and [later](#).']
+				}),
+				dest
+			];
+
+			expect(orphanIds(pages)).toEqual([dest.id]);
+		});
+
+		it('ignores a link written in an annotation rather than in copy', () => {
+			const pages = [hub({ editorNote: 'Compare [steps](stepCorrectViolation).' }), dest];
+
+			expect(orphanIds(pages)).toEqual([dest.id]);
+		});
+
+		it('leaves incoming card counts to cards', () => {
+			const pages = [hub({ paragraphs: ['[Steps](stepCorrectViolation)'] }), dest];
+			const [hubEntry, destEntry] = buildSitemap(pages);
+
+			expect(hubEntry.outgoing).toEqual([]);
+			expect(destEntry.incoming).toBe(0);
+		});
+	});
 });
 
 describe('the real corpus', () => {
@@ -206,23 +265,22 @@ describe('the real corpus', () => {
 		expect(targets).toEqual([]);
 	});
 
-	// Pinned so a corpus change cannot quietly move the figure the UI quotes.
-	// Five of these carry inbound links and are still unreachable from a hub.
-	// The weaker `incoming === 0` test reports five pages and misses those
-	// five, which is why this is a reachability pass rather than a count.
+	// Pinned so a corpus change cannot quietly move the figure.
 	// Ten before Track C (2026-11-25), six after it, three after the Topic merge,
 	// which put tenant steps, the citation page and Question a NOV on the Topic, and
-	// two after the unit-preparation Step by step was retired (2026-11-26).
-	it('has two pages unreachable from the Agency and Topic hubs', () => {
-		expect(findOrphans(entries).map((e) => e.id)).toEqual([
+	// two after the unit-preparation Step by step was retired (2026-11-26), and
+	// none once body-copy links counted (SS-1, 2026-11-26): those two were
+	// reached all along, by prose links rather than cards.
+	it('has no page unreachable from the Agency and Topic hubs', () => {
+		expect(findOrphans(entries).map((e) => e.id)).toEqual([]);
+	});
+
+	it('reaches two pages only through body-copy links', () => {
+		const cardsOnly = entries.map((e) => ({ ...e, proseLinks: [] }));
+
+		expect(findOrphans(cardsOnly).map((e) => e.id)).toEqual([
 			'departments--healthy-housing-and-vector-control--about',
 			'location-environmental-health-office'
 		]);
-	});
-
-	it('finds one orphan that inbound-link counting would miss', () => {
-		const missed = findOrphans(entries).filter((e) => e.incoming > 0);
-
-		expect(missed).toHaveLength(1);
 	});
 });
