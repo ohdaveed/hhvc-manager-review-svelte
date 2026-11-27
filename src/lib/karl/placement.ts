@@ -808,7 +808,13 @@ export function outlineSummary(placements: PagePlacements): string {
 		.map(([status, one, many]) => [count(status), one, many] as const)
 		.filter(([n]) => n > 0)
 		.map(([n, one, many]) => `${n} ${n === 1 ? one : many}`);
-	const lead = `${sections.length} ${sections.length === 1 ? 'section' : 'sections'}${parts.length ? `: ${parts.join(', ')}` : ''}.`;
+	// Every section placed reads "4 sections go into Karl.", not "4 sections:
+	// 4 go into Karl." -- the count said twice read as a stutter in the
+	// decision panel and on the canvas.
+	const allPlaced = sections.length > 0 && count('placed') === sections.length;
+	const lead = allPlaced
+		? `${sections.length} ${sections.length === 1 ? 'section goes' : 'sections go'} into Karl.`
+		: `${sections.length} ${sections.length === 1 ? 'section' : 'sections'}${parts.length ? `: ${parts.join(', ')}` : ''}.`;
 	// Findings on single strings inside placed sections -- a callout on a type
 	// with none, a button over 25 characters, PLACEHOLDER text. Counting
 	// sections alone reported "7 go into Karl" over a page with two of these.

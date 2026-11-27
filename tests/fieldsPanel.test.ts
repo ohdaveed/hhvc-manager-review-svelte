@@ -335,10 +335,9 @@ describe('FieldsPanel', () => {
 		};
 		render(FieldsPanel, { props: { pageData: page, livePageId: 'live-1' } });
 
-		expect(screen.getByRole('button', { name: 'No changes to save' })).toHaveProperty(
-			'disabled',
-			true
-		);
+		// Nothing selected and nothing unsaved on THIS page, so there is no save
+		// bar at all -- the other page's change is named, not offered.
+		expect(screen.queryByRole('button', { name: /save/i })).toBeNull();
 		await screen.findByText(/waiting on other pages/);
 		expect(saveInlineEdit).not.toHaveBeenCalled();
 		expect(page.title).toBe('About vector control');

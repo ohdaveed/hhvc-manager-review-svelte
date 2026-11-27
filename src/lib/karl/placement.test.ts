@@ -302,10 +302,10 @@ describe('outline summary', () => {
 			'4 sections: 3 go into Karl, 1 unconfirmed. 1 thing won’t carry over to Karl.'
 		);
 		// 3, not 4, since the Health Code section folded into What to know (2026-11-26).
-		expect(outlineSummary(of('rodentsReport'))).toBe('3 sections: 3 go into Karl.');
+		expect(outlineSummary(of('rodentsReport'))).toBe('3 sections go into Karl.');
 		// 8: "If a problem is found" split into three (2026-11-26), then "If a deadline is missed" moved to the owner page.
 		expect(outlineSummary(gap('afterReport'))).toBe(
-			'8 sections: 8 go into Karl. 1 thing won’t carry over to Karl.'
+			'8 sections go into Karl. 1 thing won’t carry over to Karl.'
 		);
 		expect(outlineSummary(of('ownerHub'))).toBe('4 sections: 3 go into Karl, 1 needs a fix.');
 	});
@@ -542,13 +542,13 @@ describe('Campaign', () => {
 
 	it('counts findings inside placed sections in the summary', () => {
 		expect(outlineSummary(gap('mosquitoWorkshop'))).toBe(
-			'7 sections: 7 go into Karl. 2 details need a fix. 1 thing won’t carry over to Karl.'
+			'7 sections go into Karl. 2 details need a fix. 1 thing won’t carry over to Karl.'
 		);
 		expect(outlineSummary(gap('ipmEducation'))).toBe(
-			'7 sections: 7 go into Karl. 2 details need a fix, 1 detail is unconfirmed. 1 thing won’t carry over to Karl.'
+			'7 sections go into Karl. 2 details need a fix, 1 detail is unconfirmed. 1 thing won’t carry over to Karl.'
 		);
 		expect(outlineSummary(gap('ratFreeBlocks'))).toBe(
-			'5 sections: 5 go into Karl. 1 detail needs a fix. 2 things won’t carry over to Karl.'
+			'5 sections go into Karl. 1 detail needs a fix. 2 things won’t carry over to Karl.'
 		);
 	});
 });
@@ -730,11 +730,11 @@ describe('About us', () => {
 	});
 
 	it('keeps a summary unplaced (no Description, U21) and the URL unconfirmed', () => {
-		expect(outlineSummary(p)).toBe('4 sections: 4 go into Karl.');
+		expect(outlineSummary(p)).toBe('4 sections go into Karl.');
 		const g = gap('aboutHhvcTeam');
 		expect(g.unplaced.map((u) => u.subject)).toContain('The summary under the title');
 		expect(p.url?.status).toBe('unconfirmed');
-		expect(outlineSummary(g)).toBe('4 sections: 4 go into Karl. 1 thing won’t carry over to Karl.');
+		expect(outlineSummary(g)).toBe('4 sections go into Karl. 1 thing won’t carry over to Karl.');
 	});
 });
 

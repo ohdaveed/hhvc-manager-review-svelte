@@ -21,7 +21,7 @@ const PILOTS = [
 	{
 		slug: 'report-rats-or-mice',
 		// 3 sections since the Health Code section folded into What to know (2026-11-26).
-		summary: '3 sections: 3 go into Karl.',
+		summary: '3 sections go into Karl.',
 		sections: { placed: 4, unconfirmed: 0, unplaced: 0 }
 	},
 	{
@@ -29,7 +29,7 @@ const PILOTS = [
 		// 6 sections since "Who can report" took the shared report text (2026-11-25);
 		// 10 since "If a problem is found" split into three sections (2026-11-26);
 		// 9 since "If a deadline is missed" moved to the owner page (2026-11-26).
-		summary: '9 sections: 9 go into Karl.',
+		summary: '9 sections go into Karl.',
 		sections: { placed: 9, unplaced: 0 }
 	},
 	{
@@ -51,7 +51,7 @@ const PILOTS = [
 		// 8 sections since the Topic merge folded both hubs in (2026-11-25), plus
 		// the prevention Resources block for the ported education pages; 10 since
 		// Programs and workshops split out of Learn more (2026-11-26).
-		summary: '10 sections: 10 go into Karl. 1 detail is unconfirmed.',
+		summary: '10 sections go into Karl. 1 detail is unconfirmed.',
 		caveat: 'Only SF.gov Digital Services can create a new Topic page.',
 		sections: { placed: 10, unplaced: 0 }
 	},
@@ -60,13 +60,13 @@ const PILOTS = [
 		// 26-character spotlight button was shortened on 2026-11-27); "Start with
 		// your own block" has no panel.
 		slug: 'rat-free-blocks',
-		summary: '6 sections: 6 go into Karl. 1 detail needs a fix.',
+		summary: '6 sections go into Karl. 1 detail needs a fix.',
 		sections: { placed: 6, unplaced: 0 }
 	},
 	{
 		// Two callouts Karl has no Campaign component for; Contact us unconfirmed.
 		slug: 'integrated-pest-management-education',
-		summary: '7 sections: 7 go into Karl. 2 details need a fix, 1 detail is unconfirmed.',
+		summary: '7 sections go into Karl. 2 details need a fix, 1 detail is unconfirmed.',
 		sections: { placed: 7 }
 	},
 	{
@@ -80,7 +80,7 @@ const PILOTS = [
 		// Rollout step 5: Agency. Four Subsection intro paragraphs have no field
 		// (U20); the sections themselves place.
 		slug: 'departments--healthy-housing-and-vector-control',
-		summary: '6 sections: 6 go into Karl.',
+		summary: '6 sections go into Karl.',
 		sections: { placed: 6 }
 	},
 	{
@@ -94,7 +94,7 @@ const PILOTS = [
 	{
 		// Rollout step 7: About us, the last type the corpus uses.
 		slug: 'departments--healthy-housing-and-vector-control--about',
-		summary: '4 sections: 4 go into Karl.',
+		summary: '4 sections go into Karl.',
 		caveat: 'Karl adds a button to this department’s Agency page that links here automatically',
 		sections: { placed: 4 }
 	}
