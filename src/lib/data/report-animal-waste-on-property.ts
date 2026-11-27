@@ -65,16 +65,16 @@ export const animalWasteReport = {
 								'Decided: send public-property reports to the right 311 service, and confirm the agency, likely Public Works street cleaning. Confirm the 311 service name before publication.'
 						},
 						'Pigeon droppings have their own page: [Report pigeon droppings, nesting, or feeding](pigeonReport).',
-						'Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.'
+						'Live in an SRO or residential hotel? Report the same way. Senior inspectors handle SRO cases.'
 					],
 					button: 'Report through 311',
 					after: [
 						'**Other ways to report**',
 						'**Call 311 to make a report**',
 						'415-701-2311 if you are outside of San Francisco',
-						'Hearing or speaking impaired; please call TDD/TTY 711',
+						'TDD/TTY 711 if you are deaf, hard of hearing, or have a speech disability',
 						'**Use our Mobile App**',
-						'Download our mobile app to report a problem and track your request! Available on Android or iOS.',
+						'Download our mobile app to report a problem and track your request. Available on Android or iOS.',
 						'[Learn more about the SF311 mobile app](https://www.sf.gov/sf311-mobile-app)'
 					],
 					karl: 'what_to_do -> Section. Section title: "Start your report". Section specifics: Text block (these 4 paragraphs: the action, the public-property routing, the pigeon page, and the one-line SRO note every report page carries, Decided) + Button link block ("Report through 311").'

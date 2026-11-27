@@ -66,16 +66,16 @@ export const bedBugReport = {
 					title: 'Start your report',
 					text: [
 						'Use 311 to report bed bugs to the City, especially if the owner does not respond or start treatment. You can report bed bugs in your unit or a neighbor’s unit, or report for someone else.',
-						'Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.'
+						'Live in an SRO or residential hotel? Report the same way. Senior inspectors handle SRO cases.'
 					],
 					button: 'Report through 311',
 					after: [
 						'**Other ways to report**',
 						'**Call 311 to make a report**',
 						'415-701-2311 if you are outside of San Francisco',
-						'Hearing or speaking impaired; please call TDD/TTY 711',
+						'TDD/TTY 711 if you are deaf, hard of hearing, or have a speech disability',
 						'**Use our Mobile App**',
-						'Download our mobile app to report a problem and track your request! Available on Android or iOS.',
+						'Download our mobile app to report a problem and track your request. Available on Android or iOS.',
 						'[Learn more about the SF311 mobile app](https://www.sf.gov/sf311-mobile-app)'
 					],
 					karl: 'what_to_do -> Section. Section title: "Start your report". Section specifics: Text block (these 2 paragraphs, the second being the one-line SRO note every report page carries, Decided) + Button link block ("Report through 311").'
