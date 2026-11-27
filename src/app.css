@@ -1052,6 +1052,12 @@ body {
    tall (below WCAG 2.5.8's 24px), measured 2026-11-26 at 1280px with both
    rails open. `zoom` compounds, so the inverse here renders them at true
    size. The mockup copy itself keeps the preview scale: it is the page. */
+/* Present: the page as it would appear on SF.gov, so the review controls that
+   sit inside the mockup go. The edit targets stay -- they draw nothing at rest. */
+#mockPage[data-presenting] .page-section-chrome {
+	display: none;
+}
+
 #mockPage :is(.karl-chip, .karl-outline-summary, .rethink-section, [data-edit-expired]) {
 	zoom: calc(1 / var(--fit-scale, 1));
 }
