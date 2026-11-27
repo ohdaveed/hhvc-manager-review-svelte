@@ -1,3 +1,5 @@
-# allow crawling everything by default
+# Mockups of SF.gov pages, not SF.gov: keep them out of search results.
+# The X-Robots-Tag header in netlify.toml is what actually stops indexing;
+# this stops the crawl.
 User-agent: *
-Disallow:
+Disallow: /
