@@ -50,7 +50,7 @@ function pending() {
 	return { finish: () => finish(), fail: (e: Error) => fail(e) };
 }
 
-const field = () => screen.getByRole('textbox') as HTMLTextAreaElement;
+const field = () => screen.getByLabelText('What should the page do?') as HTMLTextAreaElement;
 const submit = () => screen.getByRole('button', { name: /draft this page/i }) as HTMLButtonElement;
 const type = (v: string) => fireEvent.input(field(), { target: { value: v } });
 

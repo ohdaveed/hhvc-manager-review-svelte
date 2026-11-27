@@ -21,7 +21,14 @@
 	// `ReviewWorkspace` declares `pageData` as `unknown` and every sibling panel
 	// takes it untyped, so it is accepted as `unknown` and narrowed here rather
 	// than widening the call site's type for one consumer.
-	let { pageData }: { pageData?: unknown } = $props();
+	let {
+		pageData,
+		onIssues
+	}: {
+		pageData?: unknown;
+		/** Told how many findings are open, for the Fix tab's badge. */
+		onIssues?: (count: number) => void;
+	} = $props();
 
 	const page = $derived(
 		pageData && typeof pageData === 'object' ? (pageData as Record<string, unknown>) : undefined
@@ -80,6 +87,9 @@
 			: []
 	);
 	const issues = $derived(allFindings.filter((f) => f.status === 'issue'));
+	$effect(() => {
+		if (analysis) onIssues?.(issues.length);
+	});
 	const passes = $derived(allFindings.filter((f) => f.status === 'pass'));
 	const unavailable = $derived(allFindings.filter((f) => f.status === 'unavailable'));
 

@@ -74,16 +74,16 @@ for (const path of PAGES) {
  * what those two features render.
  */
 for (const view of [
-	// The walkthrough's one entry is the Decision tab's "Move it into Karl"
-	// card (the toolbar button went on 2026-11-26), so it needs no trigger first.
-	{ name: 'Karl walkthrough', via: null, open: 'Start the Karl walkthrough', ready: '.drawer' },
+	// The walkthrough's entry in the workspace is the Karl tab's "Move it into
+	// Karl" card (the toolbar button went on 2026-11-26), so the tab comes first.
+	{ name: 'Karl walkthrough', via: 'Karl', open: 'Start the Karl walkthrough', ready: '.drawer' },
 	{ name: 'site map', via: null, open: 'Site map', ready: '.sitemap' }
 ]) {
 	test(`no WCAG 2.1 AA violations in the ${view.name}`, async ({ page }) => {
 		await page.goto('/review/report-garbage-clutter-or-overgrown-plants');
 		await page.waitForLoadState('networkidle');
 
-		if (view.via) await page.getByRole('button', { name: view.via }).click();
+		if (view.via) await page.getByRole('tab', { name: view.via }).click();
 		await page.getByRole('button', { name: view.open }).click();
 		await page.waitForSelector(view.ready);
 

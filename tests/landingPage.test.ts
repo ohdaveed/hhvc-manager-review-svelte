@@ -70,8 +70,11 @@ describe('landing page', () => {
 		session.signedIn = false;
 		render(Page);
 
-		expect(screen.getByRole('heading', { name: /how it works/i })).toBeTruthy();
-		expect(screen.getAllByRole('listitem').length).toBeGreaterThanOrEqual(4);
+		// The review guide and the propose button describe work that needs an
+		// account, so a visitor gets the sign-in card and the pages.
+		expect(screen.queryByRole('heading', { name: /review guide/i })).toBeNull();
+		expect(screen.queryByRole('button', { name: 'Propose a page' })).toBeNull();
+		expect(screen.getAllByRole('listitem').length).toBeGreaterThanOrEqual(2);
 		expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/login');
 		expect(screen.queryByText(/\d+ of \d+ decided/i)).toBeNull();
 		expect(screen.queryByRole('link', { name: /continue/i })).toBeNull();
@@ -107,7 +110,7 @@ describe('landing page', () => {
 		expect(warnSpy).toHaveBeenCalledOnce();
 		expect(errorSpy).not.toHaveBeenCalled();
 		// Everything else on the page is unaffected.
-		expect(screen.getByRole('heading', { name: /how it works/i })).toBeTruthy();
+		expect(screen.getByRole('heading', { name: /review guide/i })).toBeTruthy();
 	});
 
 	it('recovers in place when Try again succeeds', async () => {
@@ -120,7 +123,7 @@ describe('landing page', () => {
 		pagesStore.set([row('topic-x--about', 'approved'), row('topic-x--report', 'needs-review')]);
 		await fireEvent.click(retry);
 
-		expect(await screen.findByText(/1 of 2 decided/i)).toBeTruthy();
+		expect((await screen.findAllByText(/^1 of 2 decided$/i))[0]).toBeTruthy();
 		expect(screen.queryByText(/didn't load/i)).toBeNull();
 		expect(loadReview).toHaveBeenCalledTimes(2);
 	});
@@ -145,13 +148,10 @@ describe('landing page', () => {
 		pagesStore.set([row('topic-x--about', 'approved'), row('topic-x--report', 'needs-review')]);
 		render(Page);
 
-		expect(await screen.findByText(/1 of 2 decided/i)).toBeTruthy();
-		const cont = screen.getByRole('link', { name: 'Continue to Report a problem' });
+		expect((await screen.findAllByText(/^1 of 2 decided$/i))[0]).toBeTruthy();
+		// In the header band, named by its visible text: the verb and the page.
+		const cont = screen.getByRole('link', { name: 'Continue: Report a problem' });
 		expect(cont.getAttribute('href')).toBe('/review/topic-x--report');
-		// The title sits beside the button, not inside it, so a long one cannot
-		// push the button past a phone's edge. The visible label starts the name.
-		expect(cont.textContent?.trim()).toBe('Continue');
-		expect(screen.getByText('Next up')).toBeTruthy();
 		expect(loadReview).toHaveBeenCalledOnce();
 	});
 
@@ -160,11 +160,11 @@ describe('landing page', () => {
 		pagesStore.set([row('topic-x--about', 'approved'), row('topic-x--report', 'needs-review')]);
 		render(Page);
 
-		await fireEvent.click(await screen.findByRole('button', { name: /^1 approved/ }));
+		await fireEvent.click(await screen.findByRole('button', { name: /^Approved 1/ }));
 
 		// Scoped to the list: the Karl section above it links approved pages too.
 		const list = within(screen.getByRole('region', { name: 'All pages' }));
-		expect(list.getByRole('link', { name: /About vector control/ })).toBeTruthy();
+		expect(list.getByRole('link', { name: 'About vector control' })).toBeTruthy();
 		expect(list.queryByRole('link', { name: /^Report a problem/ })).toBeNull();
 		expect(screen.getByRole('radio', { name: /Approved/ }).getAttribute('aria-checked')).toBe(
 			'true'
@@ -178,7 +178,7 @@ describe('landing page', () => {
 		session.signedIn = true;
 		pagesStore.set([row('topic-x--about', 'approved'), row('topic-x--report', 'needs-review')]);
 		render(Page);
-		await screen.findByText(/1 of 2 decided/i);
+		await screen.findAllByText(/^1 of 2 decided$/i);
 
 		const chips = screen
 			.getAllByRole('radio')
@@ -192,7 +192,7 @@ describe('landing page', () => {
 		pagesStore.set([row('topic-x--about', 'approved'), row('topic-x--report', 'needs-review')]);
 		render(Page);
 
-		await fireEvent.click(await screen.findByRole('button', { name: /^1 approved/ }));
+		await fireEvent.click(await screen.findByRole('button', { name: /^Approved 1/ }));
 		pagesStore.set([row('topic-x--about', 'needs-review'), row('topic-x--report', 'needs-review')]);
 		await tick();
 
@@ -206,7 +206,7 @@ describe('landing page', () => {
 		pagesStore.set([row('topic-x--about', 'approved'), row('topic-x--report', 'needs-review')]);
 		render(Page);
 
-		await fireEvent.click(await screen.findByRole('button', { name: /^1 approved/ }));
+		await fireEvent.click(await screen.findByRole('button', { name: /^Approved 1/ }));
 		await fireEvent.input(screen.getByLabelText('Search pages'), { target: { value: 'zzzz' } });
 		expect(screen.getByText('No pages marked “Approved” match “zzzz”.')).toBeTruthy();
 
@@ -223,7 +223,7 @@ describe('landing page', () => {
 		// The verb depends on whether anything is decided -- nothing is here, so
 		// the button reads "Start with". This test is about the href either way.
 		expect(
-			(await screen.findByRole('link', { name: /start with|continue to/i })).getAttribute('href')
+			(await screen.findByRole('link', { name: /^(Start|Continue): / })).getAttribute('href')
 		).toBe('/review/draft/abc');
 	});
 
@@ -233,7 +233,7 @@ describe('landing page', () => {
 		render(Page);
 		// 1 of 3: the approved page, the draft, and `topic-x--report`, a corpus
 		// page with no row -- counted, as the queue counts it (`reconcileReview`).
-		expect(await screen.findByText(/1 of 3 decided/i)).toBeTruthy();
+		expect(await screen.findByText(/^1 of 3 decided$/i)).toBeTruthy();
 	});
 
 	it('names a drafting draft by its stored title in All pages', () => {
@@ -258,7 +258,11 @@ describe('landing page', () => {
 		// The meta line is the draft's state, so a reviewer who left while it
 		// drafted can see from here whether it finished.
 		expect(
-			screen.getByRole('link', { name: 'Proposed rodent page Drafting…' }).getAttribute('href')
+			screen
+				.getByRole('link', {
+					name: 'Proposed rodent page Drafting, about a minute. Safe to keep reviewing.'
+				})
+				.getAttribute('href')
 		).toBe('/review/draft/abc');
 	});
 
@@ -278,27 +282,27 @@ describe('landing page', () => {
 	it('lists every corpus page in All pages', () => {
 		session.signedIn = false;
 		render(Page);
-		// A row is ONE anchor covering the whole row, so its accessible name is
-		// every line inside it -- the title and the muted type line -- not the
-		// title alone. That is deliberate: a screen reader then hears what a
-		// sighted reader scans. `topic-x--about` is in no theme group, so this
-		// also covers the "Other pages" fallback.
-		expect(
-			screen.getByRole('link', { name: 'About vector control About us' }).getAttribute('href')
-		).toBe('/review/topic-x--about');
+		// The row's link is its title (and SF.gov path, when the page has one);
+		// template and status are text in the row beside it. `topic-x--about`
+		// is in no theme group, so this also covers the "Other pages" fallback.
+		const link = screen.getByRole('link', { name: 'About vector control' });
+		expect(link.getAttribute('href')).toBe('/review/topic-x--about');
+		expect(link.closest('li')?.textContent).toContain('About us');
 	});
 
-	it('badges a page with its recorded status, inside the row name', async () => {
+	it('badges a page with its recorded status, and offers an approved one its Karl move', async () => {
 		session.signedIn = true;
 		pagesStore.set([row('topic-x--about', 'approved')]);
 		render(Page);
 
-		// The badge is a span inside the link, so it joins the row's name. Pinned
-		// deliberately: this is the composed order a screen reader announces.
-		const link = await screen.findByRole('link', { name: /About vector control/ });
-		expect(link.textContent?.replace(/\s+/g, ' ').trim()).toBe(
-			'About vector control Approved About us'
+		// Pinned deliberately: this is the order a screen reader meets the row in.
+		const link = await screen.findByRole('link', { name: 'About vector control' });
+		expect(link.closest('li')?.textContent?.replace(/\s+/g, ' ').trim()).toBe(
+			'About vector control About us Approved — Move to Karl'
 		);
+		expect(
+			screen.getByRole('link', { name: 'Move to Karl: About vector control' }).getAttribute('href')
+		).toBe('/review/topic-x--about?view=walkthrough');
 	});
 
 	it('shows no status badge when signed out, there being no review to read', () => {

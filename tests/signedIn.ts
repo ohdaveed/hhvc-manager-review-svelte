@@ -351,7 +351,11 @@ export async function gotoSignedIn(
 		// loaded (an empty table shows the "no review yet" card instead). Its
 		// total is every page a reviewer can open (`reconcileReview`), corpus
 		// pages with no row included, so it is not the stub's row count.
-		await expect(page.getByText(/^\d+ of \d+ decided$/)).toBeVisible();
+		// Scoped to the progress card: each section of the list has an
+		// "N of M decided" line of its own.
+		await expect(
+			page.getByRole('region', { name: 'Your progress' }).getByText(/^\d+ of \d+ decided$/)
+		).toBeVisible();
 		return;
 	}
 	// Rows only: the stub holds six review rows over a 40-odd page corpus, so

@@ -19,12 +19,14 @@ test('the deep link opens the walkthrough, and Exit takes the parameter away', a
 	await expect(page).toHaveURL(new RegExp(`${PAGE}$`));
 
 	await page.reload();
+	await page.getByRole('tab', { name: 'Karl' }).click();
 	await expect(page.getByRole('button', { name: 'Start the Karl walkthrough' })).toBeVisible();
 	await expect(page.locator('.drawer')).toHaveCount(0);
 });
 
 test('opening the walkthrough puts it in the URL, and a reload keeps it', async ({ page }) => {
 	await page.goto(PAGE);
+	await page.getByRole('tab', { name: 'Karl' }).click();
 	await page.getByRole('button', { name: 'Start the Karl walkthrough' }).click();
 	await expect(page.locator('.drawer')).toBeVisible();
 	await expect(page).toHaveURL(new RegExp(`${PAGE}\\?view=walkthrough$`));
@@ -35,6 +37,7 @@ test('opening the walkthrough puts it in the URL, and a reload keeps it', async 
 
 test('any other view value is ignored', async ({ page }) => {
 	await page.goto(`${PAGE}?view=nonsense`);
+	await page.getByRole('tab', { name: 'Karl' }).click();
 	await expect(page.getByRole('button', { name: 'Start the Karl walkthrough' })).toBeVisible();
 	await expect(page.locator('.drawer')).toHaveCount(0);
 });
@@ -42,8 +45,9 @@ test('any other view value is ignored', async ({ page }) => {
 test('the home page links an approved page straight into its walkthrough', async ({ page }) => {
 	// `decidedFirst`: the default fixture has no approved pages to link.
 	await gotoSignedIn(page, '/', { decidedFirst: true });
-	const guide = page.getByRole('region', { name: 'Move a page into Karl' });
-	const first = guide.getByRole('link', { name: /^Open walkthrough/ }).first();
+	// An approved page's row carries the link, in the Karl column.
+	const list = page.getByRole('region', { name: 'All pages' });
+	const first = list.getByRole('link', { name: /^Move to Karl: / }).first();
 	await expect(first).toBeVisible();
 	await first.click();
 	await expect(page).toHaveURL(/\/review\/.+\?view=walkthrough$/);

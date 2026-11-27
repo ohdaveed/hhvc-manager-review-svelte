@@ -4,11 +4,39 @@
 	import { resolve } from '$app/paths';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
-	import { MAX_DESCRIPTION_CHARS, reviewHrefFor } from '$lib/corpus/draftPath';
+	import {
+		draftBrief,
+		draftHintLines,
+		MAX_DESCRIPTION_CHARS,
+		reviewHrefFor
+	} from '$lib/corpus/draftPath';
+	import { PAGE_GROUPS } from '$lib/landing/groups';
 	import { createDraft, draftsStore } from '$lib/stores/draftPages';
 	import { sessionStore } from '$lib/stores/session.svelte';
 
+	let {
+		onClose
+	}: {
+		/** Closes the panel this form sits in. With it, the form offers Cancel. */
+		onClose?: () => void;
+	} = $props();
+
 	let description = $state('');
+
+	// Three optional picks. None is stored as a fact about the draft: they go to
+	// the drafter as labelled lines after the description (`draftHintLines`),
+	// and an empty one says nothing, leaving the choice to the drafter.
+	let section = $state('');
+	let template = $state('');
+	let path = $state('');
+
+	const TEMPLATES = [
+		{ value: 'Transaction', help: 'Resident completes a task: report, apply, pay' },
+		{ value: 'Step by step', help: 'Ordered process across several steps' },
+		{ value: 'Information', help: 'Guidance to read' }
+	];
+
+	const hints = $derived(draftHintLines({ section, template, path }));
 	// True from the click until the row exists, which is what a double click needs
 	// to be refused. It is deliberately NOT held while the model runs (up to a
 	// minute): the queue row is the commitment, and the reviewer may leave.
@@ -16,7 +44,12 @@
 	let error = $state('');
 	let confirmed = $state<{ path: string; failed: boolean } | undefined>();
 
-	const over = $derived(description.length - MAX_DESCRIPTION_CHARS);
+	// Counted over everything sent, the hint lines included: that is the text
+	// the 2,000-character limit is enforced on.
+	const used = $derived(
+		description.trim() === '' ? description.length : draftBrief(description, hints).length
+	);
+	const over = $derived(used - MAX_DESCRIPTION_CHARS);
 	const canSubmit = $derived(!busy && description.trim().length > 0 && over <= 0);
 	const invalid = $derived(over > 0 || error !== '');
 
@@ -24,7 +57,7 @@
 	const countText = $derived(
 		over > 0
 			? `${over} ${over === 1 ? 'character' : 'characters'} over the ${MAX_DESCRIPTION_CHARS.toLocaleString('en-US')} character limit. Shorten it to continue.`
-			: `${(MAX_DESCRIPTION_CHARS - description.length).toLocaleString('en-US')} characters left`
+			: `${(MAX_DESCRIPTION_CHARS - used).toLocaleString('en-US')} characters left`
 	);
 
 	// Each submission takes a number; only the latest may write form state. An
@@ -45,18 +78,25 @@
 		event.preventDefault();
 		if (!canSubmit) return;
 		const sent = description;
-		const trimmed = sent.trim();
+		const sentHints = hints;
+		// What the row's `description` will hold, and so what to look for.
+		const trimmed = draftBrief(sent, sentHints);
 		const mine = ++latest;
 		const current = () => mine === latest;
 		busy = true;
 		error = '';
 		confirmed = undefined;
 
-		function confirm(path: string) {
+		function confirm(draftPath: string) {
 			if (!current() || confirmed) return;
 			// Only clear what was sent: anything typed since is the reviewer's.
-			if (description === sent) description = '';
-			confirmed = { path, failed: false };
+			if (description === sent) {
+				description = '';
+				section = '';
+				template = '';
+				path = '';
+			}
+			confirmed = { path: draftPath, failed: false };
 			busy = false;
 		}
 
@@ -83,7 +123,7 @@
 		if (stopped) unsubscribe();
 		stopWatching = stop;
 
-		createDraft(trimmed).then(
+		createDraft(sent.trim(), sentHints).then(
 			(done) => {
 				stop();
 				// Fallback if the store match never fired: the resolved row is proof it
@@ -111,41 +151,132 @@
 </script>
 
 {#if sessionStore.signedIn === true}
-	<form onsubmit={submit} class="space-y-3">
-		<label for="propose-description" class="block text-slate-800">
-			Describe a page in plain words and an AI will draft it into the review queue. The draft takes
-			up to a minute, and you can leave this page while it works.
-		</label>
-		<p id="propose-example" class="text-sm text-slate-700">
-			For example: “A page explaining how tenants report bed bugs, and what happens after.”
-		</p>
-		<!-- `min-h-30`: the shadcn Textarea is `field-sizing-content`, which ignores
-		     `rows`, and its `min-h-16` rendered an empty box two lines tall -- too
-		     small to invite a paragraph. 7.5rem is five lines of 20px plus padding.
-		     It still grows with the text. -->
-		<Textarea
-			id="propose-description"
-			bind:value={description}
-			rows={5}
-			class="min-h-30"
-			aria-invalid={invalid ? 'true' : undefined}
-			aria-describedby={[
-				'propose-example',
-				'propose-count',
-				over > 0 && 'propose-over',
-				error && 'propose-error'
-			]
-				.filter(Boolean)
-				.join(' ')}
-		/>
-		<p id="propose-count" class="text-sm text-slate-700">{countText}</p>
-		{#if over > 0}
-			<p id="propose-over" role="alert" class="text-sm font-semibold text-red-800">Too long</p>
-		{/if}
-		{#if error}
-			<p id="propose-error" role="alert" class="text-sm font-semibold text-red-800">{error}</p>
-		{/if}
-		<Button type="submit" disabled={!canSubmit}>Draft this page</Button>
+	<form onsubmit={submit} class="flex flex-col gap-5">
+		<div class="flex flex-col gap-1.5">
+			<label for="propose-description" class="font-semibold text-slate-900">
+				What should the page do?
+			</label>
+			<p id="propose-example" class="text-sm text-slate-700">
+				Describe it in plain words and an AI will draft it into the review queue. It takes up to a
+				minute, and you can leave this page while it works. For example: “A page explaining how
+				tenants report bed bugs, and what happens after.”
+			</p>
+			<!-- `min-h-30`: the shadcn Textarea is `field-sizing-content`, which ignores
+			     `rows`, and its `min-h-16` rendered an empty box two lines tall -- too
+			     small to invite a paragraph. 7.5rem is five lines of 20px plus padding.
+			     It still grows with the text. -->
+			<Textarea
+				id="propose-description"
+				bind:value={description}
+				rows={5}
+				class="min-h-30"
+				aria-invalid={invalid ? 'true' : undefined}
+				aria-describedby={[
+					'propose-example',
+					'propose-count',
+					over > 0 && 'propose-over',
+					error && 'propose-error'
+				]
+					.filter(Boolean)
+					.join(' ')}
+			/>
+			<p id="propose-count" class="text-sm text-slate-700">{countText}</p>
+			{#if over > 0}
+				<p id="propose-over" role="alert" class="text-sm font-semibold text-red-800">Too long</p>
+			{/if}
+			{#if error}
+				<p id="propose-error" role="alert" class="text-sm font-semibold text-red-800">{error}</p>
+			{/if}
+		</div>
+
+		<div class="flex flex-col gap-1.5">
+			<label for="propose-section" class="font-semibold text-slate-900">Section</label>
+			<select
+				id="propose-section"
+				bind:value={section}
+				class="h-11 rounded-[3px] border border-slate-300 bg-white px-2.5 text-sfds-black focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sfds-black"
+			>
+				<option value="">Not sure yet</option>
+				{#each PAGE_GROUPS as group (group.id)}
+					<option value={group.heading}>{group.heading}</option>
+				{/each}
+			</select>
+		</div>
+
+		<fieldset class="flex flex-col gap-2">
+			<legend class="mb-2 font-semibold text-slate-900">Template</legend>
+			{#each TEMPLATES as t (t.value)}
+				<label
+					class="flex cursor-pointer items-start gap-2.5 rounded-[3px] border px-3 py-2.5 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-sfds-black {template ===
+					t.value
+						? 'border-sfds-action bg-sfds-blue-l1'
+						: 'border-slate-300'}"
+				>
+					<input
+						type="radio"
+						name="propose-template"
+						value={t.value}
+						bind:group={template}
+						class="mt-1 accent-sfds-action"
+					/>
+					<span class="flex flex-col gap-0.5">
+						<span class="font-medium text-slate-900">{t.value}</span>
+						<span class="text-sm text-slate-700">{t.help}</span>
+					</span>
+				</label>
+			{/each}
+			<!-- Dashed: it is the absence of a choice, not a fourth template. -->
+			<label
+				class="flex cursor-pointer items-start gap-2.5 rounded-[3px] border px-3 py-2.5 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-sfds-black {template ===
+				''
+					? 'border-sfds-action bg-sfds-blue-l1'
+					: 'border-dashed border-slate-500'}"
+			>
+				<input
+					type="radio"
+					name="propose-template"
+					value=""
+					bind:group={template}
+					class="mt-1 accent-sfds-action"
+				/>
+				<span class="font-medium text-slate-900">Let the drafter suggest one</span>
+			</label>
+		</fieldset>
+
+		<div class="flex flex-col gap-1.5">
+			<label for="propose-path" class="font-semibold text-slate-900">Suggested path</label>
+			<p id="propose-path-help" class="text-sm text-slate-700">
+				Optional. Leave it blank and the drafter suggests one.
+			</p>
+			<div
+				class="flex h-11 items-center rounded-[3px] border border-slate-300 bg-slate-50 focus-within:border-sfds-action focus-within:ring-1 focus-within:ring-sfds-action"
+			>
+				<span aria-hidden="true" class="pl-3 font-mono text-sm text-slate-700">sf.gov/</span>
+				<input
+					id="propose-path"
+					type="text"
+					bind:value={path}
+					autocomplete="off"
+					spellcheck="false"
+					maxlength="120"
+					aria-describedby="propose-path-help"
+					class="h-full min-w-0 flex-1 border-0 bg-transparent p-0 pr-3 font-mono text-sm text-sfds-black focus:ring-0 focus:outline-none"
+				/>
+			</div>
+		</div>
+
+		<div class="flex flex-wrap justify-end gap-2">
+			{#if onClose}
+				<Button variant="outline" class="h-11 px-4" onclick={onClose}>Cancel</Button>
+			{/if}
+			<Button
+				type="submit"
+				class="h-11 bg-sfds-action px-4 font-semibold text-white hover:bg-sfds-blue-dark"
+				disabled={!canSubmit}
+			>
+				Draft this page
+			</Button>
+		</div>
 		<div role="status">
 			{#if busy}
 				<p class="text-slate-800">Saving your description…</p>

@@ -1,10 +1,15 @@
 <script lang="ts">
+	import ArrowRight from '@lucide/svelte/icons/arrow-right';
 	import ChevronDown from '@lucide/svelte/icons/chevron-down';
-	import PageRow from '$lib/components/review/PageRow.svelte';
+	import MessageSquare from '@lucide/svelte/icons/message-square';
+	import Search from '@lucide/svelte/icons/search';
 	import * as ToggleGroup from '$lib/components/ui/toggle-group/index.js';
 	import { tick } from 'svelte';
+	import { SvelteSet } from 'svelte/reactivity';
+	import { resolve } from '$app/paths';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import { isDraftPath } from '$lib/corpus/draftPath';
+	import { isDraftPath, reviewHrefFor } from '$lib/corpus/draftPath';
+	import { WALKTHROUGH_QUERY } from '$lib/karl/walkthroughLink';
 	import { pageTitleFor } from '$lib/corpus/pageTitle';
 	import { filterPages, type StatusFilter } from '$lib/landing/filter';
 	import { groupPaths } from '$lib/landing/groups';
@@ -81,16 +86,63 @@
 	// also means they appear once rather than flashing in and out.
 	const hasReview = $derived($pagesStore.length > 0);
 
-	const shownIn = (paths: string[]) =>
-		filterPages({ paths, query, status, statusOf, titleOf: titleFor });
+	// `metaFor` deliberately omits the status: the badge already states it.
+	const typeOf = (path: string) => pageStore.pages.find((p) => p.id === path)?.type ?? '';
 
+	/** Whether the review holds feedback for this page. Blank notes are none. */
+	const hasNotes = (path: string) =>
+		($pagesStore.find((p) => p.path === path)?.manager_notes ?? '').trim() !== '';
+
+	// Two filters the search and status ones cannot express. They live here
+	// rather than on the page: nothing outside the list sets them.
+	let template = $state('all');
+	let notesOnly = $state(false);
+	let sort = $state<'section' | 'title'>('section');
+
+	const shownIn = (paths: string[]) =>
+		filterPages({ paths, query, status, statusOf, titleOf: titleFor }).filter(
+			(path) => (template === 'all' || typeOf(path) === template) && (!notesOnly || hasNotes(path))
+		);
+
+	/**
+	 * Section order keeps the themed headings. Title order is one flat list:
+	 * a heading over three rows of an alphabet would only interrupt it.
+	 */
 	const visible = $derived(
-		sections.map((s) => ({ ...s, shown: shownIn(s.paths) })).filter((s) => s.shown.length > 0)
+		sort === 'title'
+			? [
+					{
+						id: 'all',
+						heading: '',
+						paths: [] as string[],
+						shown: shownIn(sections.flatMap((s) => s.paths)).sort((a, b) =>
+							titleFor(a).localeCompare(titleFor(b))
+						)
+					}
+				].filter((s) => s.shown.length > 0)
+			: sections.map((s) => ({ ...s, shown: shownIn(s.paths) })).filter((s) => s.shown.length > 0)
 	);
 
 	const totalShown = $derived(visible.reduce((n, s) => n + s.shown.length, 0));
 	const totalPages = $derived(sections.reduce((n, s) => n + s.paths.length, 0));
-	const filtering = $derived(query.trim() !== '' || status !== 'all');
+	const filtering = $derived(
+		query.trim() !== '' || status !== 'all' || template !== 'all' || notesOnly
+	);
+
+	/** A section's own progress, over every page in it, whatever is filtered. */
+	const decidedIn = (paths: string[]) =>
+		paths.filter((p) => {
+			const s = statusOf(p);
+			return s !== undefined && s !== 'needs-review';
+		}).length;
+
+	// Which sections are closed. Sections start open (see the markup).
+	const collapsed = new SvelteSet<string>();
+	const allCollapsed = $derived(visible.length > 0 && visible.every((s) => collapsed.has(s.id)));
+	function toggleAll() {
+		if (allCollapsed) collapsed.clear();
+		else for (const s of visible) collapsed.add(s.id);
+	}
 
 	/**
 	 * A chip's count is how many rows clicking it shows -- nothing else.
@@ -125,22 +177,28 @@
 		}))
 	]);
 
-	// `metaFor` deliberately omits the status: the badge already states it, and
-	// repeating it in the muted line is the kind of duplication that makes a row
-	// slower to scan rather than faster.
-	const typeOf = (path: string) => pageStore.pages.find((p) => p.id === path)?.type ?? '';
+	const templates = $derived(
+		[...new Set(sections.flatMap((s) => s.paths).map(typeOf))].filter(Boolean).sort()
+	);
+	const notesCount = $derived(allPaths.filter(hasNotes).length);
 
 	/**
-	 * A draft's meta line is its drafting state, not its type: a reviewer who
+	 * The muted line under a title. For a corpus page it is the SF.gov path the
+	 * page is proposed at. For a draft it is its drafting state: a reviewer who
 	 * left while it drafted comes back here to see whether it finished. That
 	 * state is a different fact from the review decision, which stays the badge.
 	 */
 	const metaFor = (path: string): { meta: string; tone: 'default' | 'progress' | 'danger' } => {
 		const draft = $draftsStore.find((d) => d.path === path);
-		if (!draft) return { meta: typeOf(path), tone: 'default' };
-		if (draft.state === 'failed') return { meta: 'Draft failed — open to retry', tone: 'danger' };
-		if (isStaleDraft(draft)) return { meta: 'Drafting stalled — open to retry', tone: 'danger' };
-		if (draft.state === 'drafting') return { meta: 'Drafting…', tone: 'progress' };
+		if (!draft) {
+			const slug = (pageStore.pages.find((p) => p.id === path) as { slug?: string } | undefined)
+				?.slug;
+			return { meta: slug ? slug.replace(/^sf\.gov/, '') : '', tone: 'default' };
+		}
+		if (draft.state === 'failed') return { meta: 'Draft failed. Open to retry.', tone: 'danger' };
+		if (isStaleDraft(draft)) return { meta: 'Drafting stalled. Open to retry.', tone: 'danger' };
+		if (draft.state === 'drafting')
+			return { meta: 'Drafting, about a minute. Safe to keep reviewing.', tone: 'progress' };
 		return { meta: 'Draft ready', tone: 'default' };
 	};
 
@@ -150,7 +208,8 @@
 		const q = query.trim();
 		if (q && statusName) return `No pages marked “${statusName}” match “${q}”.`;
 		if (q) return `No pages match “${q}”.`;
-		return `No pages are marked “${statusName}”.`;
+		if (statusName) return `No pages are marked “${statusName}”.`;
+		return 'No pages match these filters.';
 	});
 
 	let searchInput: HTMLInputElement | undefined = $state();
@@ -158,144 +217,302 @@
 	async function clearAll() {
 		query = '';
 		status = 'all';
+		template = 'all';
+		notesOnly = false;
 		await tick();
 		searchInput?.focus();
 	}
 </script>
 
-<section aria-labelledby="all-pages" class="space-y-4">
-	<div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2">
-		<!-- `tabindex="-1"`: the status card's shortcuts move focus here, so a
-		     keyboard or screen-reader user lands where the filtered rows begin. -->
-		<h2
-			id="all-pages"
-			tabindex="-1"
-			class="scroll-mt-4 text-lg font-semibold text-slate-900 focus:outline-none"
-		>
-			All pages
-		</h2>
-		<!-- A filter changes what is on screen without moving focus, so a sighted
-		     user sees it and a screen-reader user is told. Only while filtering:
-		     an unconditional live region would announce on first paint. -->
-		<p role="status" class="text-sm text-slate-700">
-			{#if filtering}
-				{totalShown} of {totalPages} pages
-			{/if}
-		</p>
-	</div>
+{#snippet statusPill(s: keyof typeof STATUS_LABELS)}
+	<span
+		class="inline-flex shrink-0 items-center justify-self-start rounded-full border px-2.5 py-0.5 text-xs font-medium {STATUS_LABELS[
+			s
+		].badge}"
+	>
+		{STATUS_LABELS[s].label}
+	</span>
+{/snippet}
 
-	<div class="space-y-3">
-		<div>
-			<label for="page-search" class="mb-1 block text-sm font-medium text-slate-900">
-				Search pages
+{#snippet dash()}
+	<span class="hidden text-slate-500 @3xl/list:inline" aria-hidden="true">—</span>
+{/snippet}
+
+{#snippet row(path: string)}
+	{@const s = statusOf(path)}
+	{@const m = metaFor(path)}
+	{@const type = typeOf(path)}
+	{@const title = titleFor(path)}
+	<!-- The title link is stretched over the whole row (`after:inset-0`), so the
+	     hit area is the row and a list of 40 pages is 40 tab stops. Status,
+	     template and notes are plain text beside it, read in column order. The
+	     one other link, Move to Karl, is lifted above the stretched one. -->
+	<li
+		class="relative grid gap-2 border-t border-sfds-grey-l2 px-5 py-3 hover:bg-sfds-blue-l1/60 @3xl/list:grid-cols-(--page-cols) @3xl/list:items-center @3xl/list:gap-4 {m.tone ===
+		'progress'
+			? 'bg-sfds-blue-l1/60 shadow-[inset_3px_0_0_var(--color-sfds-action)]'
+			: 'bg-white'}"
+	>
+		<a
+			href={resolve(reviewHrefFor(path))}
+			class="block min-w-0 text-[0.9375rem] font-medium text-sfds-black after:absolute after:inset-0 hover:text-sfds-action hover:underline focus-visible:outline-none focus-visible:after:outline-2 focus-visible:after:-outline-offset-2 focus-visible:after:outline-sfds-black"
+		>
+			{title}
+			{#if m.meta}
+				<span
+					class="mt-0.5 block text-[0.8125rem] font-normal break-words {m.tone === 'danger'
+						? 'text-sfds-red'
+						: 'text-sfds-slate-l3'}"
+				>
+					{#if m.tone === 'progress'}
+						<span
+							class="mr-1.5 inline-block size-2 rounded-full bg-sfds-action align-[1px] motion-safe:animate-pulse"
+							aria-hidden="true"
+						></span>
+					{/if}
+					{m.meta}
+				</span>
+			{/if}
+		</a>
+		<div class="flex flex-wrap items-center gap-2 @3xl/list:contents">
+			{#if type}
+				<span
+					class="justify-self-start rounded-full border border-slate-300 px-2.5 py-0.5 text-xs text-sfds-black"
+				>
+					{type}
+				</span>
+			{:else}
+				{@render dash()}
+			{/if}
+			{#if hasReview}
+				{#if s}{@render statusPill(s)}{:else}{@render dash()}{/if}
+				{#if hasNotes(path)}
+					<span class="flex items-center gap-1 text-[0.8125rem] text-slate-700">
+						<MessageSquare class="size-3.5" aria-hidden="true" />
+						Note
+					</span>
+				{:else}
+					{@render dash()}
+				{/if}
+				{#if s === 'approved'}
+					<a
+						href="{resolve(reviewHrefFor(path))}{WALKTHROUGH_QUERY}"
+						aria-label="Move to Karl: {title}"
+						class="relative z-10 inline-flex h-7 items-center gap-1 justify-self-start rounded-lg bg-sfds-action pr-2 pl-2.5 text-[0.8125rem] font-medium text-white hover:bg-sfds-blue-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sfds-black"
+					>
+						Move to Karl
+						<ArrowRight class="size-3.5" aria-hidden="true" />
+					</a>
+				{:else}
+					{@render dash()}
+				{/if}
+			{/if}
+		</div>
+	</li>
+{/snippet}
+
+<!-- `--page-cols` is the grid for a row and for the column heads, so the two
+     cannot drift. It applies only when the LIST is wide enough (a container
+     query, not the viewport): beside the propose panel the list is narrow on a
+     wide screen, and each row stacks instead. -->
+<section
+	aria-labelledby="all-pages"
+	class="@container/list overflow-hidden rounded-[3px] border border-sfds-grey-l2 bg-white {hasReview
+		? '[--page-cols:minmax(0,1fr)_8.5rem_8.5rem_4rem_8.5rem]'
+		: '[--page-cols:minmax(0,1fr)_8.5rem]'}"
+>
+	<div class="flex flex-col gap-3 p-5">
+		<div class="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+			<div class="flex flex-wrap items-baseline gap-x-2">
+				<!-- `tabindex="-1"`: the status card's shortcuts move focus here, so a
+				     keyboard or screen-reader user lands where the filtered rows begin.
+				     The count sits beside the heading, not in it, so the region is
+				     still named "All pages". -->
+				<h2
+					id="all-pages"
+					tabindex="-1"
+					class="scroll-mt-4 text-lg font-bold text-slate-900 focus:outline-none"
+				>
+					All pages
+				</h2>
+				<!-- A filter changes what is on screen without moving focus, so a
+				     sighted user sees it and a screen-reader user is told. A live
+				     region only while filtering: an unconditional one would announce
+				     on first paint. -->
+				<p role={filtering ? 'status' : undefined} class="text-lg font-bold text-slate-900">
+					{#if filtering}
+						<span class="text-sm font-normal text-slate-700"
+							>{totalShown} of {totalPages} pages</span
+						>
+					{:else}
+						({totalPages})
+					{/if}
+				</p>
+			</div>
+			<div class="flex flex-wrap items-center gap-2">
+				<label for="page-sort" class="text-sm text-slate-700">Sort</label>
+				<select
+					id="page-sort"
+					bind:value={sort}
+					class="h-9 rounded-[3px] border border-slate-300 bg-white px-2 text-sm text-sfds-black focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sfds-black"
+				>
+					<option value="section">Section order</option>
+					<option value="title">Title A–Z</option>
+				</select>
+				{#if sort === 'section'}
+					<button
+						type="button"
+						onclick={toggleAll}
+						class="h-9 rounded-[3px] px-2.5 text-sm font-medium text-sfds-action hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sfds-black"
+					>
+						{allCollapsed ? 'Expand all' : 'Collapse all'}
+					</button>
+				{/if}
+			</div>
+		</div>
+
+		<div class="flex flex-wrap items-center gap-2">
+			<label
+				class="flex h-10 min-w-0 flex-[1_1_16rem] items-center gap-2 rounded-[3px] border border-slate-300 bg-white px-3 text-sfds-slate-l3 focus-within:border-sfds-action focus-within:ring-1 focus-within:ring-sfds-action"
+			>
+				<Search class="size-4 shrink-0" aria-hidden="true" />
+				<span class="sr-only">Search pages</span>
+				<input
+					id="page-search"
+					type="search"
+					bind:this={searchInput}
+					bind:value={query}
+					placeholder="Search by title or path"
+					autocomplete="off"
+					class="min-w-0 flex-1 border-0 bg-transparent p-0 text-sm text-sfds-black placeholder:text-sfds-slate-l3 focus:ring-0 focus:outline-none"
+				/>
 			</label>
-			<input
-				id="page-search"
-				type="search"
-				bind:this={searchInput}
-				bind:value={query}
-				placeholder="Title or path"
-				autocomplete="off"
-				class="w-full rounded-[3px] border border-sfds-grey-l2 bg-white px-3 py-2 text-[15px] text-sfds-black placeholder:text-sfds-slate-l3 focus:border-sfds-action focus:ring-1 focus:ring-sfds-action focus:outline-none"
-			/>
+			{#if templates.length > 1}
+				<select
+					aria-label="Template"
+					bind:value={template}
+					class="h-10 rounded-[3px] border border-slate-300 bg-white px-2.5 text-sm text-sfds-black focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sfds-black"
+				>
+					<option value="all">All templates</option>
+					{#each templates as t (t)}
+						<option value={t}>{t}</option>
+					{/each}
+				</select>
+			{/if}
 		</div>
 
 		{#if hasReview}
-			<ToggleGroup.Root
-				type="single"
-				variant="outline"
-				size="sm"
-				spacing={0}
-				class="flex flex-wrap justify-start gap-1"
-				aria-label="Filter by status"
-				bind:value={status}
-			>
-				<!-- The selected chip is FILLED, not ringed. The outline variant's
-				     default on-state was too faint to find at a glance in a row of
-				     five, so there was no way to tell which filter was running --
-				     seen on screen, not in a test. White on `sfds-action` is 5.5:1,
-				     the pair `ReviewPanel`'s selected decision pill already uses. The
-				     count inherits the fill's foreground so it does not stay grey on
-				     blue. -->
-				{#each FILTERS as f (f.value)}
-					<ToggleGroup.Item
-						value={f.value}
-						class="group/chip rounded-md! border-l! px-2.5 data-[state=on]:border-sfds-action data-[state=on]:bg-sfds-action data-[state=on]:text-white data-[state=on]:hover:bg-sfds-action data-[state=on]:hover:text-white"
-					>
-						{f.label}
-						<span
-							class="ml-1.5 text-sfds-slate-l3 tabular-nums group-data-[state=on]/chip:text-white"
+			<div class="flex flex-wrap items-center gap-2">
+				<ToggleGroup.Root
+					type="single"
+					variant="outline"
+					size="sm"
+					spacing={0}
+					class="flex flex-wrap justify-start gap-2"
+					aria-label="Filter by status"
+					bind:value={status}
+				>
+					<!-- Pills. The selected one is tinted, bordered in the action blue
+					     and set in semibold navy: three cues, none of them colour alone
+					     (navy on the tint is 15:1). -->
+					{#each FILTERS as f (f.value)}
+						<ToggleGroup.Item
+							value={f.value}
+							class="h-9 rounded-full! border! border-slate-300 bg-white px-3 text-sm font-normal text-slate-900 data-[state=on]:border-sfds-action data-[state=on]:bg-sfds-blue-l1 data-[state=on]:font-semibold data-[state=on]:text-sfds-blue-dark data-[state=on]:hover:bg-sfds-blue-l1"
 						>
-							{countFor(f.value)}
-						</span>
-					</ToggleGroup.Item>
-				{/each}
-			</ToggleGroup.Root>
+							{f.label}
+							<span class="ml-1.5 tabular-nums">{countFor(f.value)}</span>
+						</ToggleGroup.Item>
+					{/each}
+				</ToggleGroup.Root>
+				{#if notesCount > 0 || notesOnly}
+					<span class="mx-1 h-6 w-px bg-sfds-grey-l2" aria-hidden="true"></span>
+					<button
+						type="button"
+						aria-pressed={notesOnly}
+						onclick={() => (notesOnly = !notesOnly)}
+						class="h-9 rounded-full border px-3 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sfds-black {notesOnly
+							? 'border-sfds-action bg-sfds-blue-l1 font-semibold text-sfds-blue-dark'
+							: 'border-slate-300 bg-white text-slate-900 hover:bg-muted'}"
+					>
+						Has notes
+						<span class="ml-1.5 tabular-nums">{notesCount}</span>
+					</button>
+				{/if}
+			</div>
+		{/if}
+
+		{#if totalShown === 0}
+			<div class="flex flex-wrap items-center gap-x-4 gap-y-2 py-2">
+				<p role="status" class="text-slate-800">{emptyMessage}</p>
+				<Button variant="outline" onclick={clearAll}>Clear search and filter</Button>
+			</div>
 		{/if}
 	</div>
 
-	{#if totalShown === 0}
-		<div class="flex flex-wrap items-center gap-x-4 gap-y-2 py-4">
-			<p role="status" class="text-slate-800">{emptyMessage}</p>
-			<Button variant="outline" onclick={clearAll}>Clear search and filter</Button>
+	{#if totalShown > 0}
+		<!-- Column heads, for the eye only: each cell already says what it is
+		     ("Approved", "Note", "Move to Karl"), so they are hidden from a screen
+		     reader rather than read out as five loose words. -->
+		<div
+			aria-hidden="true"
+			class="hidden grid-cols-(--page-cols) gap-4 border-t border-sfds-grey-l2 bg-slate-50 px-5 py-2 text-xs font-semibold tracking-[0.04em] text-slate-700 uppercase @3xl/list:grid"
+		>
+			<span>Page</span><span>Template</span>
+			{#if hasReview}<span>Status</span><span>Notes</span><span>Karl</span>{/if}
 		</div>
 	{/if}
 
-	<!-- Native `<details>`, the same mechanism as How it works, so the page has
-	     one disclosure pattern rather than two keyboard behaviours.
+	<!-- Native `<details>`, the same mechanism as the review guide, so the page
+	     has one disclosure pattern rather than two keyboard behaviours.
 
 	     SECTIONS DEFAULT TO OPEN. A closed `<details>` has its contents removed
 	     from the accessibility tree — not merely hidden visually — so rows inside
 	     a collapsed section are unreachable by a screen reader and invisible to
-	     `getByRole`. Scannable rows that start hidden are not scannable, and
-	     collapsing is the affordance for tidying 39 of them away, not the
-	     resting state.
+	     `getByRole`. Collapsing is the affordance for tidying 40 rows away, not
+	     the resting state.
 
 	     Sections with no matches are dropped above rather than shown at zero, so
 	     a filter never leaves a count with nothing under it. -->
-	<div class="divide-y divide-sfds-grey-l2 border-y border-sfds-grey-l2">
-		{#each visible as section (section.id)}
-			<details open class="group">
+	{#each visible as section (section.id)}
+		{#if section.heading}
+			<details
+				open={!collapsed.has(section.id)}
+				ontoggle={(e) => {
+					if (e.currentTarget.open) collapsed.delete(section.id);
+					else collapsed.add(section.id);
+				}}
+				class="group"
+			>
 				<summary
-					class="flex cursor-pointer list-none items-center justify-between gap-3 px-3 py-2.5 marker:content-none hover:bg-sfds-blue-l1/60 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-sfds-black"
+					class="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 border-t border-sfds-grey-l2 bg-slate-100 px-5 py-2 marker:content-none hover:bg-sfds-blue-l1 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-sfds-black"
 				>
-					<span class="flex items-baseline gap-2">
+					<span class="flex items-center gap-2">
+						<ChevronDown
+							class="size-4 shrink-0 -rotate-90 text-slate-700 transition-transform group-open:rotate-0"
+							aria-hidden="true"
+						/>
 						<span class="font-semibold text-slate-900">{section.heading}</span>
-						<span class="text-sm text-sfds-slate-l3 tabular-nums">{section.shown.length}</span>
+						<span class="text-slate-700 tabular-nums">({section.shown.length})</span>
 					</span>
-					<ChevronDown
-						class="size-4 shrink-0 text-sfds-slate-l3 transition-transform group-open:rotate-180"
-						aria-hidden="true"
-					/>
+					{#if hasReview}
+						<span class="text-sm text-slate-700 tabular-nums">
+							{decidedIn(section.paths)} of {section.paths.length} decided
+						</span>
+					{/if}
 				</summary>
-				<ul class="pb-2">
+				<ul>
 					{#each section.shown as path (path)}
-						{@const s = statusOf(path)}
-						{@const m = metaFor(path)}
-						<li>
-							<PageRow
-								{path}
-								title={titleFor(path)}
-								meta={m.meta}
-								metaTone={m.tone}
-								density="comfortable"
-							>
-								{#snippet badge()}
-									{#if s}
-										<span
-											class="inline-flex shrink-0 items-center rounded-4xl border px-2 py-0.5 text-xs font-medium {STATUS_LABELS[
-												s
-											].badge}"
-										>
-											{STATUS_LABELS[s].label}
-										</span>
-									{/if}
-								{/snippet}
-							</PageRow>
-						</li>
+						{@render row(path)}
 					{/each}
 				</ul>
 			</details>
-		{/each}
-	</div>
+		{:else}
+			<ul>
+				{#each section.shown as path (path)}
+					{@render row(path)}
+				{/each}
+			</ul>
+		{/if}
+	{/each}
 </section>

@@ -25,8 +25,9 @@ const shoot = async (page: Page, name: string) => {
 };
 
 async function openBlueprint(page: Page) {
+	await page.getByRole('tab', { name: 'Karl' }).click();
 	await page
-		.getByRole('group', { name: 'Karl views' })
+		.getByRole('group', { name: 'Show on the page' })
 		.getByRole('button', { name: 'Blueprint' })
 		.click();
 	await expect(page.getByRole('heading', { name: 'Blueprint', level: 2 })).toBeVisible();

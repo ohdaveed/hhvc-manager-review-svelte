@@ -2,7 +2,7 @@ import { env } from '$env/dynamic/private';
 import { SVELTE_PUBLIC_SUPABASE_ANON_KEY, SVELTE_PUBLIC_SUPABASE_URL } from '$env/static/public';
 import { error, json } from '@sveltejs/kit';
 import { createClient } from '@supabase/supabase-js';
-import { draftPathFor, MAX_DESCRIPTION_CHARS } from '$lib/corpus/draftPath';
+import { draftBrief, draftPathFor, MAX_DESCRIPTION_CHARS } from '$lib/corpus/draftPath';
 
 /**
  * Creates and finalizes AI-drafted pages.
@@ -107,7 +107,14 @@ export async function POST({ request }) {
 		if (!description) {
 			throw error(400, 'description is required');
 		}
-		if (description.length > MAX_DESCRIPTION_CHARS) {
+		// Optional lines the form adds after the description (section, template,
+		// path). Stored with it, because the drafter reads the stored text, but
+		// kept out of the title, which is the reviewer's own words.
+		if (payload.hints !== undefined && typeof payload.hints !== 'string') {
+			throw error(400, 'hints, when present, must be a string');
+		}
+		const brief = draftBrief(description, payload.hints ?? '');
+		if (brief.length > MAX_DESCRIPTION_CHARS) {
 			throw error(400, `description must be at most ${MAX_DESCRIPTION_CHARS} characters`);
 		}
 
@@ -135,7 +142,7 @@ export async function POST({ request }) {
 			review_id: reviewId,
 			path,
 			title,
-			description,
+			description: brief,
 			created_by: caller.id
 		});
 		if (draftError) throw draftError;

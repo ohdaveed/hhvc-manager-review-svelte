@@ -94,9 +94,10 @@ test('submitting shows the pending state, then confirms with a link to the draft
 		});
 	});
 	await gotoSignedIn(page, '/');
+	await page.getByRole('button', { name: 'Propose a page' }).click();
 	await expect(form(page)).toBeVisible();
 
-	await page.getByLabel(/Describe a page in plain words/).fill(DESCRIPTION);
+	await page.getByLabel('What should the page do?').fill(DESCRIPTION);
 	const submit = page.getByRole('button', { name: 'Draft this page' });
 	await expect(submit).toBeEnabled();
 	await submit.click();
@@ -113,7 +114,7 @@ test('submitting shows the pending state, then confirms with a link to the draft
 	const open = form(page).getByRole('link', { name: 'Open the draft' });
 	await expect(open).toHaveAttribute('href', `/review/draft/${DRAFT_ID}`);
 	await expect(form(page).getByText(/is being drafted/)).toBeVisible();
-	await expect(page.getByLabel(/Describe a page in plain words/)).toHaveValue('');
+	await expect(page.getByLabel('What should the page do?')).toHaveValue('');
 	await expect(form(page).getByText('Saving your description…')).toHaveCount(0);
 	await noViolations(page);
 
@@ -131,8 +132,9 @@ test('an unsaved submission says so, keeps the text and can be retried', async (
 		route.fulfill({ status: 200, contentType: 'text/plain', body: 'not json' })
 	);
 	await gotoSignedIn(page, '/');
+	await page.getByRole('button', { name: 'Propose a page' }).click();
 
-	const field = page.getByLabel(/Describe a page in plain words/);
+	const field = page.getByLabel('What should the page do?');
 	await field.fill(DESCRIPTION);
 	await page.getByRole('button', { name: 'Draft this page' }).click();
 
@@ -147,8 +149,9 @@ test('an unsaved submission says so, keeps the text and can be retried', async (
 test('a description over the limit is refused and named', async ({ page }) => {
 	const { requests } = await stubApi(page, (route) => route.abort());
 	await gotoSignedIn(page, '/');
+	await page.getByRole('button', { name: 'Propose a page' }).click();
 
-	await page.getByLabel(/Describe a page in plain words/).fill('a'.repeat(2001));
+	await page.getByLabel('What should the page do?').fill('a'.repeat(2001));
 
 	await expect(form(page).getByRole('alert')).toHaveText('Too long');
 	await expect(form(page).getByText(/1 character over the 2,000 character limit/)).toBeVisible();

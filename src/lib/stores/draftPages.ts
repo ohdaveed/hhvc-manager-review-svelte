@@ -2,6 +2,7 @@ import { writable } from 'svelte/store';
 import { supabase } from '$lib/supabase';
 import { requestGeneration } from '$lib/ai/generate';
 import { pageStore } from './pageData.svelte';
+import { draftBrief } from '$lib/corpus/draftPath';
 
 export type DraftPage = {
 	id: string;
@@ -116,8 +117,10 @@ async function generateAndRecord(drafting: DraftPage): Promise<DraftPage> {
  * An invalid draft is kept: it is saved as `ready` with `valid: false` and its
  * issues, because the reviewer's job is to edit an imperfect draft.
  */
-export async function createDraft(description: string): Promise<DraftPage> {
-	const created = (await (await authedFetch('POST', { description })).json()) as {
+export async function createDraft(description: string, hints = ''): Promise<DraftPage> {
+	const created = (await (
+		await authedFetch('POST', hints ? { description, hints } : { description })
+	).json()) as {
 		id: string;
 		path: string;
 		title: string;
@@ -130,7 +133,7 @@ export async function createDraft(description: string): Promise<DraftPage> {
 		id: created.id,
 		path: created.path,
 		title: created.title,
-		description: description.trim(),
+		description: draftBrief(description, hints),
 		state: 'drafting',
 		content: null,
 		valid: null,

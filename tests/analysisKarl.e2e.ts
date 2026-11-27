@@ -14,7 +14,7 @@ const RULES = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];
 test('the Analysis panel shows where the page lands in Karl', async ({ page }) => {
 	await page.setViewportSize({ width: 1280, height: 900 });
 	await gotoSignedIn(page, '/review/report-rats-or-mice');
-	await page.getByRole('tab', { name: 'Analysis' }).click();
+	await page.getByRole('radio', { name: 'Checks' }).click();
 
 	const panel = page.getByRole('tabpanel');
 	await expect(panel).toContainText('Copy that won’t carry over');
@@ -38,7 +38,7 @@ test('the Analysis panel shows where the page lands in Karl', async ({ page }) =
 // the issue path with fixtures.
 test('a Transaction’s What to do section is reported in the panel', async ({ page }) => {
 	await gotoSignedIn(page, '/review/find-complaints-and-inspection-records');
-	await page.getByRole('tab', { name: 'Analysis' }).click();
+	await page.getByRole('radio', { name: 'Checks' }).click();
 	await expect(page.getByRole('tabpanel')).toContainText(
 		'This Transaction has a What to do section, headed “What to do”.'
 	);
@@ -47,7 +47,7 @@ test('a Transaction’s What to do section is reported in the panel', async ({ p
 test('the Transaction review findings show in the panel', async ({ page }) => {
 	await page.setViewportSize({ width: 1280, height: 900 });
 	await gotoSignedIn(page, '/review/pay-your-annual-healthy-housing-fee-apartment-buildings');
-	await page.getByRole('tab', { name: 'Analysis' }).click();
+	await page.getByRole('radio', { name: 'Checks' }).click();
 	const panel = page.getByRole('tabpanel');
 	await expect(panel).toContainText('Title words in the description');
 
@@ -59,7 +59,7 @@ test('the Transaction review findings show in the panel', async ({ page }) => {
 	}
 
 	await gotoSignedIn(page, '/review/pay-healthy-housing-citation');
-	await page.getByRole('tab', { name: 'Analysis' }).click();
+	await page.getByRole('radio', { name: 'Checks' }).click();
 	await expect(panel).toContainText('A Transaction should let people act');
 	// C5 dropped the article from this URL, so its old "remove “a”" finding is
 	// gone; the placeholder finding is the other one this page still carries.

@@ -108,15 +108,16 @@ const noViolations = async (page: Page) => {
 	).toEqual([]);
 };
 
-/** Turn the outline on the way a keyboard user would, from the panel's Karl strip. */
+/** Turn the outline on the way a keyboard user would, from the panel's Karl tab. */
 async function switchOnByKeyboard(page: Page) {
+	await page.getByRole('tab', { name: 'Karl' }).click();
 	const toggle = page
-		.getByRole('group', { name: 'Karl views' })
-		.getByRole('switch', { name: 'Show Karl fields' });
+		.getByRole('group', { name: 'Show on the page' })
+		.getByRole('button', { name: /^Overlay/ });
 	await expect(toggle).toBeVisible();
 	await toggle.focus();
 	await page.keyboard.press('Space');
-	await expect(toggle).toBeChecked();
+	await expect(toggle).toHaveAttribute('aria-pressed', 'true');
 	await expect(toggle).toBeFocused();
 }
 
@@ -206,7 +207,8 @@ test.describe('Karl outline', () => {
 
 	test('is not offered on an AI-drafted page', async ({ page }) => {
 		await gotoSignedIn(page, `/review/draft/${DRAFT_IDS.ready}`, { drafts: true });
-		await expect(page.getByRole('group', { name: 'Karl views' })).toHaveCount(0);
+		await page.getByRole('tab', { name: 'Karl' }).click();
+		await expect(page.getByRole('group', { name: 'Show on the page' })).toHaveCount(0);
 		await expect(
 			page.getByRole('button', { name: /^(Start|Resume) the Karl walkthrough$/ })
 		).toBeVisible();

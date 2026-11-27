@@ -1004,6 +1004,9 @@
 				{livePageId}
 				{karlReadiness}
 				karlViews={!onDraft}
+				{prevPath}
+				{nextPath}
+				{titleOf}
 				collapseLabel={pageStore.mobileSheet === 'panel'
 					? 'Close review panel'
 					: 'Collapse review panel'}
