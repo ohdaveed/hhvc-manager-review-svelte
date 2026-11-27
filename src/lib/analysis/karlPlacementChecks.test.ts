@@ -136,10 +136,29 @@ describe('dead button links', () => {
 });
 
 describe('title words reused in the description', () => {
-	it('flags the annual fee page, which repeats 6 title words', () => {
-		const f = byId('payFee', 'karl-description-reuse');
+	it('flags a description that repeats 6 title words', () => {
+		const edits = [
+			{
+				field_id: 'summary',
+				new_content:
+					'Pay your annual Healthy Housing fee if you own an apartment building with 3 or more rental units.',
+				created_at: 'z'
+			}
+		];
+		const f = byId('payFee', 'karl-description-reuse', edits as never);
 		expect(f.status).toBe('issue');
 		expect(f.items[0].text).toBe('pay, annual, healthy, housing, fee, apartment');
+	});
+
+	it('passes the annual fee page after its rewrite', () => {
+		expect(byId('payFee', 'karl-description-reuse').status).toBe('pass');
+	});
+
+	// Ruling 2026-11-26: the bed bugs description names bed bugs rather than
+	// "these pests", because a description is also read without its title.
+	// Naming the subject costs two title words, so this flag is accepted.
+	it('flags the bed bugs page, which names its subject on purpose', () => {
+		expect(byId('bedBugsInfo', 'karl-description-reuse').status).toBe('issue');
 	});
 
 	it('passes the complaints records page, which repeats 1', () => {

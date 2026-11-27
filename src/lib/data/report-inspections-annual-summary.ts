@@ -3,6 +3,7 @@ export const inspectionsAnnual = {
 	type: 'Report',
 	title: 'Healthy Housing inspections: annual summary',
 	reading: 'Grade 8',
+	proposed: true,
 	editorNote:
 		'PROPOSED PAGE — not in the current 29. Report is the only Karl type that supports tables and the only one carrying a publication date, which is what makes it right for a figures page and wrong for the plain-language guide it is currently also used for (see `article11Guide`, where the type IS correct because that page is built from tables too). EVERY NUMBER IN THE TABLES BELOW IS A PLACEHOLDER. None is estimated, rounded, or carried over from another document — the cells read "PLACEHOLDER" rather than holding a figure, because a page of invented statistics is the single most damaging thing this corpus could publish, and a plausible number is harder to catch than an obvious gap. The table STRUCTURE is the reviewable part: what gets counted, and cut which way. Karl generates the table of contents from Heading 2s, which is why the section headings below are the navigation. Tables work best at three columns or fewer, so none here exceeds three.',
 	editorStatus: 'needs-review',

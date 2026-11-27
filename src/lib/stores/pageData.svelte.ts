@@ -11,6 +11,11 @@ import type { RethinkResult } from '$lib/rethink/request';
 type Page = {
 	id: string;
 	title: string;
+	/**
+	 * A page drafted from the page-ideas plan for supervisor review; its
+	 * editorNote opens "PROPOSED PAGE". Absent on every other page.
+	 */
+	proposed?: boolean;
 	/** The corpus modules carry no shared declaration; see `fieldResolver.ts`. */
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	[key: string]: any;

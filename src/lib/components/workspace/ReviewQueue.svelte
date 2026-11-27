@@ -5,7 +5,7 @@
 	import { groupPaths } from '$lib/landing/groups';
 	import { review } from '$lib/review/review.svelte';
 	import { pageStore } from '$lib/stores/pageData.svelte';
-	import { routePathFor } from '$lib/corpus/draftPath';
+	import { isDraftPath, routePathFor } from '$lib/corpus/draftPath';
 	import { pageTitleFor } from '$lib/corpus/pageTitle';
 	import { draftsStore } from '$lib/stores/draftPages';
 	import { Badge } from '$lib/components/ui/badge/index.js';
@@ -61,10 +61,15 @@
 	// "N of M decided" describes the review, not the current search.
 	let query = $state('');
 	const needle = $derived(query.trim().toLowerCase());
+	// A corpus page flagged `proposed`, or an AI draft: the queue already files
+	// drafts under "Proposed pages", so the toggle that says so keeps them.
+	let proposedOnly = $state(false);
+	const isProposed = (path: string) => isDraftPath(path) || corpusFor(path)?.proposed === true;
 	const matches = (path: string) =>
-		needle === '' ||
-		titleFor(path).toLowerCase().includes(needle) ||
-		path.toLowerCase().includes(needle);
+		(!proposedOnly || isProposed(path)) &&
+		(needle === '' ||
+			titleFor(path).toLowerCase().includes(needle) ||
+			path.toLowerCase().includes(needle));
 	const shown = $derived(review.rows.filter((p) => matches(p.path)));
 	const unreviewedShown = $derived(review.unreviewed.filter(matches));
 
@@ -72,13 +77,15 @@
 	// queue lists the mockups in corpus order. No status, notes or progress:
 	// those are review data.
 	const browsing = $derived(!loaded && sessionStore.knownSignedOut);
-	const corpusShown = $derived(
-		needle === ''
-			? pageStore.pages
-			: pageStore.pages.filter(
-					(p) => p.title.toLowerCase().includes(needle) || p.id.toLowerCase().includes(needle)
-				)
-	);
+	const corpusShown = $derived(pageStore.pages.filter((p) => matches(p.id)));
+
+	// What the corpus says about a page, for every row's second line: its type,
+	// and "Proposed" as a word for a page not yet in the reviewed set.
+	const pageFacts = (path: string) => {
+		const page = corpusFor(path);
+		return [page?.type, page?.proposed && 'Proposed'];
+	};
+	const joinMeta = (parts: unknown[]) => parts.filter(Boolean).join(' · ') || undefined;
 
 	// The row's second line, as text. The queue is grouped by theme, the same
 	// headings as the landing page, so the decision is the first thing said here
@@ -86,14 +93,12 @@
 	// facts worth a glance: type, edits, notes.
 	const metaFor = (p: (typeof $pagesStore)[number]) => {
 		const edits = editCount(p.id);
-		return [
+		return joinMeta([
 			STATUS_LABELS[p.status]?.label,
-			corpusFor(p.path)?.type,
+			...pageFacts(p.path),
 			edits > 0 && `${edits} edited ${edits === 1 ? 'field' : 'fields'}`,
 			p.manager_notes?.trim() && 'has notes'
-		]
-			.filter(Boolean)
-			.join(' · ');
+		]);
 	};
 
 	const counts = $derived(review.counts);
@@ -108,7 +113,7 @@
 			const r = rowsByPath.get(path);
 			return r
 				? { path, title: titleFor(path), meta: metaFor(r) }
-				: { path, title: titleFor(path), meta: corpusFor(path)?.type };
+				: { path, title: titleFor(path), meta: joinMeta(pageFacts(path)) };
 		};
 		const paths = browsing ? corpusShown.map((p) => p.id) : shown.map((p) => p.path);
 		return groupPaths(paths)
@@ -235,10 +240,20 @@
 					autocomplete="off"
 					class="w-full rounded-[3px] border border-sfds-grey-l2 bg-white px-2.5 py-1.5 text-[0.8125rem] text-sfds-black placeholder:text-sfds-slate-l3 focus:border-sfds-action focus:ring-1 focus:ring-sfds-action focus:outline-none"
 				/>
+				<label class="mt-2 flex items-center gap-2 text-[0.8125rem] text-sfds-black">
+					<input type="checkbox" bind:checked={proposedOnly} class="accent-sfds-action" />
+					Proposed pages only
+				</label>
 			</div>
 		</div>
 		{#if (browsing ? corpusShown.length : shown.length + unreviewedShown.length) === 0}
-			<p role="status" class="text-sm text-sfds-slate-l3">No pages match “{query.trim()}”.</p>
+			<p role="status" class="text-sm text-sfds-slate-l3">
+				{#if proposedOnly && query.trim() === ''}
+					No proposed pages.
+				{:else}
+					No {proposedOnly ? 'proposed ' : ''}pages match “{query.trim()}”.
+				{/if}
+			</p>
 		{/if}
 	{/if}
 
@@ -286,7 +301,7 @@
 			</p>
 			<ul class="space-y-0.5">
 				{#each unreviewedShown as id (id)}
-					<li>{@render queueLink(id, titleFor(id), corpusFor(id)?.type)}</li>
+					<li>{@render queueLink(id, titleFor(id), joinMeta(pageFacts(id)))}</li>
 				{/each}
 			</ul>
 		</section>
