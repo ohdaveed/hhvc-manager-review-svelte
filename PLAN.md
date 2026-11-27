@@ -1,7 +1,41 @@
-# PLAN — UI copy review: badly formatted text and text that adds nothing
+# PLAN — Leg 1: land what's waiting, decide what's blocked, start the UI copy review
 
 Branch `docs/ui-copy-review-plan`, cut from `origin/main` (`f9f54b8`), in worktree `../wt-ui-copy-review`
-(the main checkout is shared). This plan is the review; fixes land later, in their own branches.
+(the main checkout is shared).
+
+What is still open, measured 2026-11-26 against `main`:
+
+- `docs/superpowers/plans/2026-11-24-transaction-review-fixes.md` — built (#210, #212); only Track C
+  questions C3, C4, C6–C9 remain.
+- `docs/plans/site-structure.md` — PR 1 follow-up, PR 3 (minus the records merge), PR 4, PR 5.
+- PR #247 (`fix/workspace-review-findings`) — done, open, unmerged.
+- The UI copy review below.
+
+Leg 1 is the work that needs no product decision, plus one list that gets the decisions made. Leg 2
+builds whatever that list settles.
+
+- [ ] **L1. Land #247.** Merge `origin/main` in if `BEHIND`, wait for CI, **ask before merging** (it
+      publishes production). Done when `verify:live` reports the merged SHA as published.
+- [ ] **L2. Site structure PR 5: flag proposed pages in data.** `proposed: true` on the proposed modules,
+      replacing the comment in `index.ts`. That comment says ten; 9 modules carry "PROPOSED PAGE" today —
+      find the tenth (merged or retired?) before writing the count down; a corpus test pins that the
+      flag and the note agree; the review queue can filter on it. Test first; `corpus:lock`, `verify`,
+      screenshot of the queue filter. Its own branch and PR.
+- [ ] **L3. One decision list.** A single doc for the manager / user, each item with the options and a
+      recommendation: Track C C3, C4, C6–C9; site-structure open decisions 1–2; PR 3's merges (fold
+      `tenantNoticeSteps` into `stepCorrectViolation`, the workshop pages, the canonical after-report
+      page); PR 1's `findOrphans` follow-up; PR 4's slug scheme. Done when it is published and linked here.
+- [ ] **L4. UI copy review, tasks 1–3 below** (baseline, inventory, rendered walk). Read-only, so it can
+      run beside L2. Starts after L1.
+
+Not in leg 1: PR 4's `pages.path` migration (a merge applies it to production, so it waits on L3's
+slug decision), and every copy fix (waits on the review report).
+
+---
+
+## UI copy review: badly formatted text and text that adds nothing
+
+This part of the plan is the review; fixes land later, in their own branches.
 
 ## Scope
 

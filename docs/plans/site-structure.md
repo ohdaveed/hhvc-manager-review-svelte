@@ -29,16 +29,16 @@ changed pages, CI green. Merging publishes production on Netlify — ask first.
 ## PR 3 — Collapse overlapping pages
 
 - [ ] Notice of Violation: `stepCorrectViolation` is the spine; fold in `tenantNoticeSteps`
-- [ ] Records: merge `findViolations` into `findRecords`; `recordsHub` routes by building type
+- [x] Records: merge `findViolations` into `findRecords`; `recordsHub` routes by building type — #212 (`1a5ad3f`)
 - [ ] One canonical "what happens after you report" page (`afterReport`)
 - [ ] Merge the two workshop campaigns
 
 ## PR 4 — Consistent slugs and keys (touches the database)
 
 - [ ] Slugs: `<type>/<name>` for non-transactions, `<name>` for transactions
-- [ ] Rename misleading keys/files (`pestsTopic`, `respond-to-notice-of-violation.ts`)
+- [ ] Rename misleading keys/files (`pestsTopic`, `respond-to-notice-of-violation.ts`) — the file went in #212; `pestsTopic` remains
 - [ ] `pages.path` migration, shaped like `20260829120000_rename_agency_page_paths.sql`
-- [ ] Merge applies the migration to production; push staging by hand after
+- [ ] Merge applies the migration to production (no staging project since 2026-11-26)
 
 ## PR 5 — Proposed pages flagged in data
 
