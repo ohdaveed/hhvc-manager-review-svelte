@@ -21,8 +21,8 @@ test.describe('signed in', () => {
 		await gotoSignedIn(page, '/', { decidedFirst: true });
 
 		await expect(page.getByText(/\d+ of \d+ decided/)).toBeVisible();
-		// The first `needs-review` row, NOT the first row: `decidedFirst` puts
-		// decided pages ahead of it, so only a status-aware Continue lands here.
+		// The first `needs-review` row in queue order. `decidedFirst` puts decided
+		// rows ahead of it in store order, which Continue must not follow.
 		const next = page.getByRole('link', { name: /^Continue to / });
 		await expect(next).toHaveAttribute(
 			'href',
@@ -35,9 +35,9 @@ test.describe('signed in', () => {
 	});
 
 	test('Continue to a draft goes to the draft route, never a draft: URL', async ({ page }) => {
-		// Drafts first, so the next undecided page IS a draft: `pages.path` is
-		// `draft:<uuid>`, which `/review/[slug]` would hard-404.
-		await gotoSignedIn(page, '/', { draftsFirst: true, decidedFirst: true });
+		// Every corpus row decided, so the next undecided page IS a draft:
+		// `pages.path` is `draft:<uuid>`, which `/review/[slug]` would hard-404.
+		await gotoSignedIn(page, '/', { corpusDecided: true });
 
 		const next = page.getByRole('link', { name: /^Continue to / });
 		await expect(next).toHaveAttribute('href', draftUrl(DRAFT_IDS.ready));
