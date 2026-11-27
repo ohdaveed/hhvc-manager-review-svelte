@@ -27,9 +27,10 @@ const PILOTS = [
 	{
 		slug: 'information-what-happens-after-you-report-housing-pest-problem',
 		// 6 sections since "Who can report" took the shared report text (2026-11-25);
-		// 10 since "If a problem is found" split into three sections (2026-11-26).
-		summary: '10 sections: 10 go into Karl.',
-		sections: { placed: 10, unplaced: 0 }
+		// 10 since "If a problem is found" split into three sections (2026-11-26);
+		// 9 since "If a deadline is missed" moved to the owner page (2026-11-26).
+		summary: '9 sections: 9 go into Karl.',
+		sections: { placed: 9, unplaced: 0 }
 	},
 	{
 		slug: 'property-owner-responsibilities-hhvc',
