@@ -311,11 +311,7 @@ _U6, narrowed — the mockup names the agency as text, not as a page reference, 
 
 ### Cost — \`cost\` [TYPE] — page not approved
 
-_Choose the Cost radio first (Free, Flat fee, Range, Minimum and up, None) — all five variants end at this same description field._
-
-**Cost description:**
-
-Free
+_Optional, and this page leaves it out. If the form has inserted a Cost block, remove it: its radio is required only while the block exists._
 
 ### Things to Know — \`things_to_know\` [TYPE] — page not approved
 
@@ -343,33 +339,11 @@ _A step with text, a button and a callout becomes ONE Section block whose Sectio
 
 **Section 1 — Section title:**
 
-Start your report
+Gather your details
 
 **Section 1 — Section specifics → Text:**
 
-Use 311 to report animal waste on private property. You can report animal waste where you live or on a nearby property, or report for someone else.
-
-For dog waste on a sidewalk or street, ask 311 for street cleaning instead.
-
-Pigeon droppings have their own page: [Report pigeon droppings, nesting, or feeding](pigeonReport).
-
-Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.
-
-**Section 1 — Section specifics → Button link → Link text:**
-
-Report through 311
-
-**Section 1 — Button link → destination:**
-
-None
-
-**Section 2 — Section title:**
-
-Tell us what you saw
-
-**Section 2 — Section specifics → Text:**
-
-Only share the details that apply to your situation:
+Have these details ready before you start. Only share what applies to your situation:
 
 - **What you saw:** Dog or cat waste, or raccoon droppings.
 - **Where it is:** The address, and where on the property, such as a yard, stairwell, roof, or shared area.
@@ -380,6 +354,28 @@ Only share the details that apply to your situation:
 **Callout (rich text, no title field):**
 
 We never share your name or contact information. You do not need to send photos.
+
+**Section 2 — Section title:**
+
+Start your report
+
+**Section 2 — Section specifics → Text:**
+
+Use 311 to report animal waste on private property. You can report animal waste where you live or on a nearby property, or report for someone else.
+
+For dog waste on a sidewalk or street, ask 311 for street cleaning instead.
+
+Pigeon droppings have their own page: [Report pigeon droppings, nesting, or feeding](pigeonReport).
+
+Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.
+
+**Section 2 — Section specifics → Button link → Link text:**
+
+Report through 311
+
+**Section 2 — Button link → destination:**
+
+None
 
 **Links in this text — recreate each with the Link tool, do not paste them:**
 
@@ -425,6 +421,22 @@ _This block publishes the destination page’s title and a link, and NOTHING els
 2. Choose page: "Report pigeon droppings, nesting, or feeding" (\`pigeonReport\` → /sf.gov/report-pigeon-droppings-nesting-or-feeding)
 3. Choose page: "Report rats or mice" (\`rodentsReport\` → /sf.gov/report-rats-or-mice)
 4. Choose page: "Tenant rights when reporting housing conditions" (\`tenantRights\` → /sf.gov/information/tenant-rights-and-reporting-housing-conditions)
+
+### Contact us — \`get_help\` [TYPE] — page not approved
+
+_Address is a snippet chooser referencing a stored Address record, not inline fields, and Phone number’s first field is labelled "Owner" rather than "Name"._
+
+**Phone number:**
+
+311
+
+**Phone number:**
+
+415-701-2311 if you are outside of San Francisco
+
+**Phone number:**
+
+TDD/TTY 711 if you are deaf, hard of hearing, or have a speech disability
 
 ### Partner agencies — \`partner_agencies\` [CHOOSE] — page not approved
 
@@ -1098,7 +1110,7 @@ Report bed bugs
 
 **Description:**
 
-Bites, small brown insects, or dark spots on bedding in a unit or building, and what the owner must do.
+Report bed bugs in your unit or building to 311, and learn what property owners must do.
 
 ### Primary agency — \`primary_agency\` [CHOOSE] — page not approved
 
@@ -1108,33 +1120,17 @@ _U6, narrowed — the mockup names the agency as text, not as a page reference, 
 
 ### Cost — \`cost\` [TYPE] — page not approved
 
-_Choose the Cost radio first (Free, Flat fee, Range, Minimum and up, None) — all five variants end at this same description field._
-
-**Cost description:**
-
-Free
+_Optional, and this page leaves it out. If the form has inserted a Cost block, remove it: its radio is required only while the block exists._
 
 ### Things to Know — \`things_to_know\` [TYPE] — page not approved
 
 **Block 1 — Title:**
 
-Nearby units
+Your privacy
 
 **Block 1 — Text:**
 
-Bed bugs spread between units. The owner may need to inspect or treat the units next to yours too.
-
-**Block 2 — Title:**
-
-Get your unit ready
-
-**Block 2 — Text:**
-
-Treatment works only if the unit is ready. [Bed bugs: prevent them, find them, and get ready for treatment](bedBugsInfo) explains what to wash, bag, and leave in place.
-
-**Links in this text — recreate each with the Link tool, do not paste them:**
-
-- "Bed bugs: prevent them, find them, and get ready for treatment" → shape 5 — rich text Link tool → Internal link → "Bed bugs: prevent them, find them, and get ready for treatment"
+We never share your name or contact information.
 
 ### What to Do — \`what_to_do\` [TYPE] — page not approved
 
@@ -1148,35 +1144,18 @@ Tell the owner
 
 **Section 1 — Section specifics → Text:**
 
-If you rent, tell the property owner or manager about the bed bugs right away. Owners must look into pest reports from tenants.
+If you rent, tell the property owner or manager about the bed bugs right away. Owners must look into pest reports from tenants. You do not have to wait for the owner before you report to 311.
 
 - The owner or manager must start professional treatment within 2 working days of confirming bed bugs.
+- Bed bugs spread between units. The owner may also need to inspect or treat the units next to yours.
 
 **Section 2 — Section title:**
 
-Start your report
+Gather your details
 
 **Section 2 — Section specifics → Text:**
 
-Use 311 to report bed bugs to the City, especially if the owner does not respond or start treatment. You can report bed bugs in your unit or a neighbor’s unit, or report for someone else.
-
-Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.
-
-**Section 2 — Section specifics → Button link → Link text:**
-
-Report through 311
-
-**Section 2 — Button link → destination:**
-
-None
-
-**Section 3 — Section title:**
-
-Tell us what you saw
-
-**Section 3 — Section specifics → Text:**
-
-Only share the details that apply to your situation:
+Have these details ready before you start. You do not need to send photos. Only share what applies to your situation:
 
 - **What you saw:** Bites, live bugs, shed skins, or small dark spots on bedding or furniture.
 - **Where it is:** The address and unit number, and whether neighbors have bed bugs too.
@@ -1184,9 +1163,23 @@ Only share the details that apply to your situation:
 - **The owner:** Whether you told the owner or manager, and whether treatment has started.
 - **Your contact info:** Leave a phone number or email if you want an inspector to contact you.
 
-**Callout (rich text, no title field):**
+**Section 3 — Section title:**
 
-We never share your name or contact information. You do not need to send photos.
+Start your report
+
+**Section 3 — Section specifics → Text:**
+
+Use 311 to report bed bugs to the City, especially if the owner does not respond or start treatment. You can report bed bugs in your unit or a neighbor’s unit, or report for someone else.
+
+Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.
+
+**Section 3 — Section specifics → Button link → Link text:**
+
+Report through 311
+
+**Section 3 — Button link → destination:**
+
+None
 
 ### Accordion title and text — \`supporting_information\` [TYPE] — page not approved
 
@@ -1200,6 +1193,11 @@ It may take us a few weekdays to get back to you. In the meantime, here are a fe
 
 - **Keep your furniture:** Do not throw out furniture before treatment. Moving it can spread the bugs.
 - **Wash on high heat:** Wash and dry bedding and clothes on the hottest setting they can take.
+- **Get your unit ready:** Treatment works only if the unit is ready. [Bed bugs: prevent them, find them, and get ready for treatment](bedBugsInfo) explains what to wash, bag, and leave in place.
+
+**Links in this text — recreate each with the Link tool, do not paste them:**
+
+- "Bed bugs: prevent them, find them, and get ready for treatment" → shape 5 — rich text Link tool → Internal link → "Bed bugs: prevent them, find them, and get ready for treatment"
 
 ### Custom Section — \`custom_section\` [TYPE] — page not approved
 
@@ -1229,6 +1227,22 @@ _This block publishes the destination page’s title and a link, and NOTHING els
 3. Choose page: "Report cockroaches or other insects" (\`insectsReport\` → /sf.gov/report-cockroaches-or-other-insects)
 4. Choose page: "Learn what Healthy Housing and Vector Control can inspect" (\`scopeInfo\` → /sf.gov/information/learn-what-hhvc-can-inspect)
 5. Choose page: "Bed bugs: prevent them, find them, and get ready for treatment" (\`bedBugsInfo\` → /sf.gov/information/bed-bugs-prevent-find-and-prepare-for-treatment)
+
+### Contact us — \`get_help\` [TYPE] — page not approved
+
+_Address is a snippet chooser referencing a stored Address record, not inline fields, and Phone number’s first field is labelled "Owner" rather than "Name"._
+
+**Phone number:**
+
+311
+
+**Phone number:**
+
+415-701-2311 if you are outside of San Francisco
+
+**Phone number:**
+
+TDD/TTY 711 if you are deaf, hard of hearing, or have a speech disability
 
 ### Partner agencies — \`partner_agencies\` [CHOOSE] — page not approved
 
@@ -1260,10 +1274,6 @@ Report bed bugs | SF.gov
 **Meta description (\`search_description\`):**
 
 Report bed bugs in a San Francisco apartment or building, and learn what the property owner must do.
-
-## Flags — resolve before saving — page not approved
-
-- \`sections.1.cards\` — The card-inheritance classifier returns "unknown" for this section, so whether these cards publish their own words or the destination page's is undecided. Its karl note reads: "Maps to supporting_information (Accordions). This accordion uses the mockup-only open flag so the tips are visible without a click — flag for Digital Services t". Resolve it before typing anything from them.
 "
 `;
 
@@ -1459,6 +1469,7 @@ The University of California Statewide Integrated Pest Management Program (UC IP
 
 - [UC IPM: Bed bugs](https://ipm.ucanr.edu/home-and-landscape/bed-bugs/). How to identify, find, and control bed bugs.
 - [CDC: About bed bugs](https://www.cdc.gov/bed-bugs/about/index.html). Bites, health risks, and prevention.
+- [EPA: Bed bugs](https://www.epa.gov/bedbugs). Federal guidance on finding and treating bed bugs.
 - [UC IPM: Hiring a pest control company](https://ipm.ucanr.edu/home-and-landscape/hiring-a-pest-control-company/). Questions to ask before you hire.
 - [SF Environment: Pest management in your home (PDF)](https://www.sfenvironment.org/media/13819). A handout in English, Spanish, and Chinese.
 - [UC IPM: Recursos en español](https://ipm.ucanr.edu/IPMPROJECT/recursos-espanol.html). Guías sobre plagas en español.
@@ -1467,6 +1478,7 @@ The University of California Statewide Integrated Pest Management Program (UC IP
 
 - "UC IPM: Bed bugs" → shape 5 — rich text Link tool → External link
 - "CDC: About bed bugs" → shape 5 — rich text Link tool → External link
+- "EPA: Bed bugs" → shape 5 — rich text Link tool → External link
 - "UC IPM: Hiring a pest control company" → shape 5 — rich text Link tool → External link
 - "SF Environment: Pest management in your home (PDF)" → shape 5 — rich text Link tool → External link
 - "UC IPM: Recursos en español" → shape 5 — rich text Link tool → External link
@@ -2173,11 +2185,7 @@ _U6, narrowed — the mockup names the agency as text, not as a page reference, 
 
 ### Cost — \`cost\` [TYPE] — page not approved
 
-_Choose the Cost radio first (Free, Flat fee, Range, Minimum and up, None) — all five variants end at this same description field._
-
-**Cost description:**
-
-Free
+_Optional, and this page leaves it out. If the form has inserted a Cost block, remove it: its radio is required only while the block exists._
 
 ### Things to Know — \`things_to_know\` [TYPE] — page not approved
 
@@ -2210,29 +2218,11 @@ _A step with text, a button and a callout becomes ONE Section block whose Sectio
 
 **Section 1 — Section title:**
 
-Start your report
+Gather your details
 
 **Section 1 — Section specifics → Text:**
 
-Use 311 to report garbage, clutter, or overgrown plants to the City. If the problem is urgent, report now. You can report a problem where you live or on a nearby property, or report for someone else.
-
-Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.
-
-**Section 1 — Section specifics → Button link → Link text:**
-
-Report through 311
-
-**Section 1 — Button link → destination:**
-
-None
-
-**Section 2 — Section title:**
-
-Describe the condition
-
-**Section 2 — Section specifics → Text:**
-
-Include only the details that apply:
+Have these details ready before you start. Only share what applies to your situation:
 
 - The address or location
 - The condition: garbage, debris, clutter, stored items, or overgrown plants and brush
@@ -2244,6 +2234,24 @@ Include only the details that apply:
 **Callout (rich text, no title field):**
 
 We never share your name or contact information. You do not need to send photos.
+
+**Section 2 — Section title:**
+
+Start your report
+
+**Section 2 — Section specifics → Text:**
+
+Use 311 to report garbage, clutter, or overgrown plants to the City. If the problem is urgent, report now. You can report a problem where you live or on a nearby property, or report for someone else.
+
+Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.
+
+**Section 2 — Section specifics → Button link → Link text:**
+
+Report through 311
+
+**Section 2 — Button link → destination:**
+
+None
 
 ### Accordion title and text — \`supporting_information\` [TYPE] — page not approved
 
@@ -2286,6 +2294,22 @@ _This block publishes the destination page’s title and a link, and NOTHING els
 2. Choose page: "Tenant rights when reporting housing conditions" (\`tenantRights\` → /sf.gov/information/tenant-rights-and-reporting-housing-conditions)
 3. Choose page: "Report rats or mice" (\`rodentsReport\` → /sf.gov/report-rats-or-mice)
 4. Choose page: "Learn what Healthy Housing and Vector Control can inspect" (\`scopeInfo\` → /sf.gov/information/learn-what-hhvc-can-inspect)
+
+### Contact us — \`get_help\` [TYPE] — page not approved
+
+_Address is a snippet chooser referencing a stored Address record, not inline fields, and Phone number’s first field is labelled "Owner" rather than "Name"._
+
+**Phone number:**
+
+311
+
+**Phone number:**
+
+415-701-2311 if you are outside of San Francisco
+
+**Phone number:**
+
+TDD/TTY 711 if you are deaf, hard of hearing, or have a speech disability
 
 ### Partner agencies — \`partner_agencies\` [CHOOSE] — page not approved
 
@@ -2488,11 +2512,7 @@ _U6, narrowed — the mockup names the agency as text, not as a page reference, 
 
 ### Cost — \`cost\` [TYPE] — page not approved
 
-_Choose the Cost radio first (Free, Flat fee, Range, Minimum and up, None) — all five variants end at this same description field._
-
-**Cost description:**
-
-Free
+_Optional, and this page leaves it out. If the form has inserted a Cost block, remove it: its radio is required only while the block exists._
 
 ### Things to Know — \`things_to_know\` [TYPE] — page not approved
 
@@ -2527,31 +2547,11 @@ _A step with text, a button and a callout becomes ONE Section block whose Sectio
 
 **Section 1 — Section title:**
 
-Start your report
+Gather your details
 
 **Section 1 — Section specifics → Text:**
 
-Use 311 to report cockroaches, fleas, flies, wasps, or mites to the City. If the problem is urgent, report now. You can report a problem in your home, a shared area, or at work, or report for someone else.
-
-Bed bugs and mosquitoes have their own pages: [Report bed bugs](bedBugReport) and [Report mosquitoes or standing water](mosquitoReport).
-
-Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.
-
-**Section 1 — Section specifics → Button link → Link text:**
-
-Report through 311
-
-**Section 1 — Button link → destination:**
-
-None
-
-**Section 2 — Section title:**
-
-Tell us what you saw
-
-**Section 2 — Section specifics → Text:**
-
-Only share the details that apply to your situation:
+Have these details ready before you start. Only share what applies to your situation:
 
 - **What you saw:** Cockroaches, fleas, flies, wasps, or mites.
 - **Where it is:** The address, and whether you saw them inside, outside, or in a shared area.
@@ -2562,6 +2562,26 @@ Only share the details that apply to your situation:
 **Callout (rich text, no title field):**
 
 We never share your name or contact information. You do not need to send photos.
+
+**Section 2 — Section title:**
+
+Start your report
+
+**Section 2 — Section specifics → Text:**
+
+Use 311 to report cockroaches, fleas, flies, wasps, or mites to the City. If the problem is urgent, report now. You can report a problem in your home, a shared area, or at work, or report for someone else.
+
+Bed bugs and mosquitoes have their own pages: [Report bed bugs](bedBugReport) and [Report mosquitoes or standing water](mosquitoReport).
+
+Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.
+
+**Section 2 — Section specifics → Button link → Link text:**
+
+Report through 311
+
+**Section 2 — Button link → destination:**
+
+None
 
 **Section 3 — Section title:**
 
@@ -2623,6 +2643,22 @@ _This block publishes the destination page’s title and a link, and NOTHING els
 3. Choose page: "Report bed bugs" (\`bedBugReport\` → /sf.gov/report-bed-bugs)
 4. Choose page: "Learn what Healthy Housing and Vector Control can inspect" (\`scopeInfo\` → /sf.gov/information/learn-what-hhvc-can-inspect)
 5. Choose page: "Get rid of cockroaches without heavy pesticides" (\`cockroachesPrevention\` → /sf.gov/information/get-rid-of-cockroaches-without-heavy-pesticides)
+
+### Contact us — \`get_help\` [TYPE] — page not approved
+
+_Address is a snippet chooser referencing a stored Address record, not inline fields, and Phone number’s first field is labelled "Owner" rather than "Name"._
+
+**Phone number:**
+
+311
+
+**Phone number:**
+
+415-701-2311 if you are outside of San Francisco
+
+**Phone number:**
+
+TDD/TTY 711 if you are deaf, hard of hearing, or have a speech disability
 
 ### Partner agencies — \`partner_agencies\` [CHOOSE] — page not approved
 
@@ -3307,11 +3343,7 @@ _U6, narrowed — the mockup names the agency as text, not as a page reference, 
 
 ### Cost — \`cost\` [TYPE] — page not approved
 
-_Choose the Cost radio first (Free, Flat fee, Range, Minimum and up, None) — all five variants end at this same description field._
-
-**Cost description:**
-
-Free
+_Optional, and this page leaves it out. If the form has inserted a Cost block, remove it: its radio is required only while the block exists._
 
 ### Things to Know — \`things_to_know\` [TYPE] — page not approved
 
@@ -3367,29 +3399,11 @@ If you rent, tell the property owner or manager in writing as soon as you find t
 
 **Section 3 — Section title:**
 
-Start your report
+Gather your details
 
 **Section 3 — Section specifics → Text:**
 
-Use 311 to report mold caused by humidity or condensation. You can report mold in your home or in a shared area, or report for someone else.
-
-Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.
-
-**Section 3 — Section specifics → Button link → Link text:**
-
-Report through 311
-
-**Section 3 — Button link → destination:**
-
-None
-
-**Section 4 — Section title:**
-
-Describe the mold
-
-**Section 4 — Section specifics → Text:**
-
-Include only the details that apply:
+Have these details ready before you start. Only share what applies to your situation:
 
 - The address, and the room or shared area
 - Whether the mold is on a wall, ceiling, or somewhere else
@@ -3402,6 +3416,24 @@ Include only the details that apply:
 **Callout (rich text, no title field):**
 
 We never share your name or contact information. You do not need to send photos.
+
+**Section 4 — Section title:**
+
+Start your report
+
+**Section 4 — Section specifics → Text:**
+
+Use 311 to report mold caused by humidity or condensation. You can report mold in your home or in a shared area, or report for someone else.
+
+Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.
+
+**Section 4 — Section specifics → Button link → Link text:**
+
+Report through 311
+
+**Section 4 — Button link → destination:**
+
+None
 
 ### Accordion title and text — \`supporting_information\` [TYPE] — page not approved
 
@@ -3442,6 +3474,22 @@ _This block publishes the destination page’s title and a link, and NOTHING els
 2. Choose page: "Tenant rights when reporting housing conditions" (\`tenantRights\` → /sf.gov/information/tenant-rights-and-reporting-housing-conditions)
 3. Choose page: "Learn what Healthy Housing and Vector Control can inspect" (\`scopeInfo\` → /sf.gov/information/learn-what-hhvc-can-inspect)
 4. Choose page: "Reduce moisture and mold in your home" (\`reduceMoisture\` → /sf.gov/information/reduce-moisture-and-mold-in-your-home)
+
+### Contact us — \`get_help\` [TYPE] — page not approved
+
+_Address is a snippet chooser referencing a stored Address record, not inline fields, and Phone number’s first field is labelled "Owner" rather than "Name"._
+
+**Phone number:**
+
+311
+
+**Phone number:**
+
+415-701-2311 if you are outside of San Francisco
+
+**Phone number:**
+
+TDD/TTY 711 if you are deaf, hard of hearing, or have a speech disability
 
 ### Partner agencies — \`partner_agencies\` [CHOOSE] — page not approved
 
@@ -3595,11 +3643,7 @@ _U6, narrowed — the mockup names the agency as text, not as a page reference, 
 
 ### Cost — \`cost\` [TYPE] — page not approved
 
-_Choose the Cost radio first (Free, Flat fee, Range, Minimum and up, None) — all five variants end at this same description field._
-
-**Cost description:**
-
-Free
+_Optional, and this page leaves it out. If the form has inserted a Cost block, remove it: its radio is required only while the block exists._
 
 ### Things to Know — \`things_to_know\` [TYPE] — page not approved
 
@@ -3627,29 +3671,11 @@ _A step with text, a button and a callout becomes ONE Section block whose Sectio
 
 **Section 1 — Section title:**
 
-Start your report
+Gather your details
 
 **Section 1 — Section specifics → Text:**
 
-Use 311 to report mosquitoes or standing water to the City. If the problem is urgent, report now. You can report mosquitoes where you live or standing water you see nearby, or report for someone else.
-
-Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.
-
-**Section 1 — Section specifics → Button link → Link text:**
-
-Report through 311
-
-**Section 1 — Button link → destination:**
-
-None
-
-**Section 2 — Section title:**
-
-Tell us where the water is
-
-**Section 2 — Section specifics → Text:**
-
-Only share the details that apply to your situation:
+Have these details ready before you start. Only share what applies to your situation:
 
 - **What you saw:** Biting mosquitoes, or small wriggling larvae in water.
 - **Where the water is:** Buckets, planters, saucers, clogged gutters, fountains, pools, or a street catch basin.
@@ -3660,6 +3686,24 @@ Only share the details that apply to your situation:
 **Callout (rich text, no title field):**
 
 We never share your name or contact information. You do not need to send photos.
+
+**Section 2 — Section title:**
+
+Start your report
+
+**Section 2 — Section specifics → Text:**
+
+Use 311 to report mosquitoes or standing water to the City. If the problem is urgent, report now. You can report mosquitoes where you live or standing water you see nearby, or report for someone else.
+
+Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.
+
+**Section 2 — Section specifics → Button link → Link text:**
+
+Report through 311
+
+**Section 2 — Button link → destination:**
+
+None
 
 **Section 3 — Section title:**
 
@@ -3718,6 +3762,22 @@ _This block publishes the destination page’s title and a link, and NOTHING els
 2. Choose page: "What happens after you report a housing or pest problem" (\`afterReport\` → /sf.gov/information/what-happens-after-you-report-housing-pest-problem)
 3. Choose page: "Free mosquito education workshop" (\`mosquitoWorkshop\` → /sf.gov/mosquito-education-workshop)
 4. Choose page: "Learn what Healthy Housing and Vector Control can inspect" (\`scopeInfo\` → /sf.gov/information/learn-what-hhvc-can-inspect)
+
+### Contact us — \`get_help\` [TYPE] — page not approved
+
+_Address is a snippet chooser referencing a stored Address record, not inline fields, and Phone number’s first field is labelled "Owner" rather than "Name"._
+
+**Phone number:**
+
+311
+
+**Phone number:**
+
+415-701-2311 if you are outside of San Francisco
+
+**Phone number:**
+
+TDD/TTY 711 if you are deaf, hard of hearing, or have a speech disability
 
 ### Partner agencies — \`partner_agencies\` [CHOOSE] — page not approved
 
@@ -5157,11 +5217,7 @@ _U6, narrowed — the mockup names the agency as text, not as a page reference, 
 
 ### Cost — \`cost\` [TYPE] — page not approved
 
-_Choose the Cost radio first (Free, Flat fee, Range, Minimum and up, None) — all five variants end at this same description field._
-
-**Cost description:**
-
-Free
+_Optional, and this page leaves it out. If the form has inserted a Cost block, remove it: its radio is required only while the block exists._
 
 ### Things to Know — \`things_to_know\` [TYPE] — page not approved
 
@@ -5189,29 +5245,11 @@ _A step with text, a button and a callout becomes ONE Section block whose Sectio
 
 **Section 1 — Section title:**
 
-Start your report
+Gather your details
 
 **Section 1 — Section specifics → Text:**
 
-Use 311 to report pigeon droppings, nesting, roosting, or feeding to the City. You can report pigeons on your building or nearby, or report for someone else.
-
-Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.
-
-**Section 1 — Section specifics → Button link → Link text:**
-
-Report through 311
-
-**Section 1 — Button link → destination:**
-
-None
-
-**Section 2 — Section title:**
-
-Tell us what you see
-
-**Section 2 — Section specifics → Text:**
-
-Only share the details that apply to your situation:
+Have these details ready before you start. Only share what applies to your situation:
 
 - **What you see:** Pigeons roosting or nesting on ledges, roofs, or signs, or a build-up of droppings or feathers.
 - **Where it is:** The address, and where on the building or property.
@@ -5222,6 +5260,24 @@ Only share the details that apply to your situation:
 **Callout (rich text, no title field):**
 
 We never share your name or contact information. You do not need to send photos.
+
+**Section 2 — Section title:**
+
+Start your report
+
+**Section 2 — Section specifics → Text:**
+
+Use 311 to report pigeon droppings, nesting, roosting, or feeding to the City. You can report pigeons on your building or nearby, or report for someone else.
+
+Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.
+
+**Section 2 — Section specifics → Button link → Link text:**
+
+Report through 311
+
+**Section 2 — Button link → destination:**
+
+None
 
 **Section 3 — Section title:**
 
@@ -5273,6 +5329,22 @@ _This block publishes the destination page’s title and a link, and NOTHING els
 2. Choose page: "Report animal waste on a property" (\`animalWasteReport\` → /sf.gov/report-animal-waste-on-property)
 3. Choose page: "Tenant rights when reporting housing conditions" (\`tenantRights\` → /sf.gov/information/tenant-rights-and-reporting-housing-conditions)
 4. Choose page: "Learn what Healthy Housing and Vector Control can inspect" (\`scopeInfo\` → /sf.gov/information/learn-what-hhvc-can-inspect)
+
+### Contact us — \`get_help\` [TYPE] — page not approved
+
+_Address is a snippet chooser referencing a stored Address record, not inline fields, and Phone number’s first field is labelled "Owner" rather than "Name"._
+
+**Phone number:**
+
+311
+
+**Phone number:**
+
+415-701-2311 if you are outside of San Francisco
+
+**Phone number:**
+
+TDD/TTY 711 if you are deaf, hard of hearing, or have a speech disability
 
 ### Partner agencies — \`partner_agencies\` [CHOOSE] — page not approved
 
@@ -6079,11 +6151,7 @@ _U6, narrowed — the mockup names the agency as text, not as a page reference, 
 
 ### Cost — \`cost\` [TYPE] — page not approved
 
-_Choose the Cost radio first (Free, Flat fee, Range, Minimum and up, None) — all five variants end at this same description field._
-
-**Cost description:**
-
-Free
+_Optional, and this page leaves it out. If the form has inserted a Cost block, remove it: its radio is required only while the block exists._
 
 ### Things to Know — \`things_to_know\` [TYPE] — page not approved
 
@@ -6115,29 +6183,11 @@ _A step with text, a button and a callout becomes ONE Section block whose Sectio
 
 **Section 1 — Section title:**
 
-Start your report
+Gather your details
 
 **Section 1 — Section specifics → Text:**
 
-Use 311 to report rats or mice to the City. If the problem is urgent, report now. You can report a problem in your home, a shared area, or at work, or report for someone else.
-
-Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.
-
-**Section 1 — Section specifics → Button link → Link text:**
-
-Report through 311
-
-**Section 1 — Button link → destination:**
-
-None
-
-**Section 2 — Section title:**
-
-Tell us what you saw
-
-**Section 2 — Section specifics → Text:**
-
-Only share the details that apply to your situation:
+Have these details ready before you start. Only share what applies to your situation:
 
 - **What you saw:** Rats or mice, droppings, burrows, gnaw marks, or bites from tiny mites. Mites often come with rats and mice.
 - **Where it is:** The address, and whether you saw it inside, outside, or in a shared area.
@@ -6148,6 +6198,24 @@ Only share the details that apply to your situation:
 **Callout (rich text, no title field):**
 
 We never share your name or contact information. You do not need to send photos.
+
+**Section 2 — Section title:**
+
+Start your report
+
+**Section 2 — Section specifics → Text:**
+
+Use 311 to report rats or mice to the City. If the problem is urgent, report now. You can report a problem in your home, a shared area, or at work, or report for someone else.
+
+Live in an SRO or residential hotel? Report the same way. One clerk takes every report and assigns SRO cases to senior inspectors.
+
+**Section 2 — Section specifics → Button link → Link text:**
+
+Report through 311
+
+**Section 2 — Button link → destination:**
+
+None
 
 ### Accordion title and text — \`supporting_information\` [TYPE] — page not approved
 
@@ -6198,6 +6266,22 @@ _This block publishes the destination page’s title and a link, and NOTHING els
 4. Choose page: "Learn what Healthy Housing and Vector Control can inspect" (\`scopeInfo\` → /sf.gov/information/learn-what-hhvc-can-inspect)
 5. Choose page: "Rat-free blocks" (\`ratFreeBlocks\` → /sf.gov/rat-free-blocks)
 6. Choose page: "Keep rats and mice out of your home" (\`rodentsPrevention\` → /sf.gov/information/keep-rats-and-mice-out-of-your-home)
+
+### Contact us — \`get_help\` [TYPE] — page not approved
+
+_Address is a snippet chooser referencing a stored Address record, not inline fields, and Phone number’s first field is labelled "Owner" rather than "Name"._
+
+**Phone number:**
+
+311
+
+**Phone number:**
+
+415-701-2311 if you are outside of San Francisco
+
+**Phone number:**
+
+TDD/TTY 711 if you are deaf, hard of hearing, or have a speech disability
 
 ### Partner agencies — \`partner_agencies\` [CHOOSE] — page not approved
 
@@ -6528,11 +6612,7 @@ _U6, narrowed — the mockup names the agency as text, not as a page reference, 
 
 ### Cost — \`cost\` [TYPE] — page not approved
 
-_Choose the Cost radio first (Free, Flat fee, Range, Minimum and up, None) — all five variants end at this same description field._
-
-**Cost description:**
-
-Free
+_Optional, and this page leaves it out. If the form has inserted a Cost block, remove it: its radio is required only while the block exists._
 
 ### Things to Know — \`things_to_know\` [TYPE] — page not approved
 
@@ -6623,6 +6703,22 @@ _This block publishes the destination page’s title and a link, and NOTHING els
 1. Choose page: "What happens after you report a housing or pest problem" (\`afterReport\` → /sf.gov/information/what-happens-after-you-report-housing-pest-problem)
 2. Choose page: "Tenant rights when reporting housing conditions" (\`tenantRights\` → /sf.gov/information/tenant-rights-and-reporting-housing-conditions)
 3. Choose page: "Learn what Healthy Housing and Vector Control can inspect" (\`scopeInfo\` → /sf.gov/information/learn-what-hhvc-can-inspect)
+
+### Contact us — \`get_help\` [TYPE] — page not approved
+
+_Address is a snippet chooser referencing a stored Address record, not inline fields, and Phone number’s first field is labelled "Owner" rather than "Name"._
+
+**Phone number:**
+
+311
+
+**Phone number:**
+
+415-701-2311 if you are outside of San Francisco
+
+**Phone number:**
+
+TDD/TTY 711 if you are deaf, hard of hearing, or have a speech disability
 
 ### Partner agencies — \`partner_agencies\` [CHOOSE] — page not approved
 

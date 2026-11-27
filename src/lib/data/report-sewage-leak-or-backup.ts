@@ -5,11 +5,20 @@ export const sewageReport = {
 	summary:
 		'Raw waste from a drain, toilet, cleanout, or pipe, inside a building or in a yard or shared area.',
 	primaryAgency: 'Healthy Housing and Vector Control',
+	// Karl's Contact us block (get_help -> Phone number), in the order and wording
+	// live SF.gov 311 report pages use (2026-11-26 page review). In the step text
+	// it would push the 311 step past the three-sentence paragraph limit.
+	contact: {
+		phone: [
+			'311',
+			'415-701-2311 if you are outside of San Francisco',
+			'TDD/TTY 711 if you are deaf, hard of hearing, or have a speech disability'
+		]
+	},
 	reading: 'Grade 6',
 	editorNote:
 		"Report regroup (Decided, Nov 24, 2026), built 2026-11-25. New page, one of the 9 condition pages. Content is the Decided \"Sewage page\" record: sewage from a drain, toilet, cleanout or pipe, inside or outside a building, including yards and shared areas; HHVC responds within 48 hours of the complaint, so the page says to report right away; the owner hires a plumber and HHVC confirms the sewage is removed and the area sanitized; a leaking pipe with no sewage goes to DBI. The 48-to-72-hour correction window on What happens after you report is the owner's deadline, not HHVC's response time. STILL OPEN, and not on this page: sewage at the property line (the building's sewer line vs. the public sewer, likely SFPUC). No Article 11 line: the plain-language guide in this mockup cites no sewage section, so none is quoted rather than guessing one.",
 	whatToKnow: {
-		cost: 'Free',
 		thingsToKnow: [
 			{
 				label: 'How fast we respond',
