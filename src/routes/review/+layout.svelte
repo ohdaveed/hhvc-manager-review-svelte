@@ -979,6 +979,7 @@
 							class="mock-page"
 							class:karl-outline-on={outlinePlacements}
 							data-presenting={pageStore.presenting ? '' : undefined}
+							data-rethink={pageStore.rethinkTabOpen ? '' : undefined}
 						>
 							{#if outlinePlacements}
 								<!-- Review-tool chrome, like the Karl notices inside sections: the

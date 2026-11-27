@@ -263,8 +263,10 @@
 	   the reviewer points at its section or tabs to it -- one button per section
 	   on screen at rest made the mockup read as a form. `opacity`, not
 	   `visibility`: it stays focusable, and focusing it is what reveals it. Kept
-	   visible while its section is selected, and on touch screens, which have no
-	   hover to reveal it with. */
+	   visible while its section is selected, on touch screens, which have no
+	   hover to reveal it with, and on every section while the panel's Rethink
+	   tab is open (`data-rethink`): that tab asks the reviewer to choose one,
+	   and a button they cannot see is not a choice. */
 	@media (hover: hover) {
 		.rethink-section:not([aria-pressed='true']) {
 			opacity: 0;
@@ -272,7 +274,8 @@
 		}
 
 		.page-section:hover .rethink-section,
-		.page-section:focus-within .rethink-section {
+		.page-section:focus-within .rethink-section,
+		:global(#mockPage[data-rethink]) .rethink-section {
 			opacity: 1;
 		}
 	}

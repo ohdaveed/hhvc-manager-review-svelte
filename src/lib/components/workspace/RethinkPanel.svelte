@@ -8,9 +8,12 @@
 	 * accepted-edit overlay exists, and a button that silently loses added
 	 * copy is worse than no button.
 	 */
+	import { resolve } from '$app/paths';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
+	import { sectionDisplayLabel } from '$lib/corpus/fieldResolver';
 	import { pageStore } from '$lib/stores/pageData.svelte';
+	import { sessionStore } from '$lib/stores/session.svelte';
 	import { requestRethink } from '$lib/rethink/request';
 	import type { Op } from '$lib/rethink/diff';
 
@@ -24,6 +27,26 @@
 			?.sections;
 		return (sections ?? []).find((s) => s.fieldKey === sectionKey)?.heading ?? sectionKey;
 	});
+
+	/**
+	 * Every section of the page, to choose from in the panel itself.
+	 *
+	 * The tab used to send the reviewer to the mockup: "Choose Rethink section
+	 * on any section". Measured 2026-11-27 on "Report animal waste on a
+	 * property": the first screen (title, summary, What to know) has no such
+	 * button, and the three further down were hidden until hovered, so the tab
+	 * pointed at a control that was nowhere on screen. Keys and names are the
+	 * ones `Section.svelte` uses, so a pick here and a click there select the
+	 * same thing.
+	 */
+	const sections = $derived(
+		((pageData as { sections?: { fieldKey?: string; heading?: unknown }[] })?.sections ?? []).map(
+			(section, index) => ({
+				key: section.fieldKey ?? `section-${index}`,
+				label: sectionDisplayLabel(section.heading, index)
+			})
+		)
+	);
 
 	let instruction = $state('');
 	let controller: AbortController | undefined;
@@ -144,15 +167,52 @@
 	<div class="min-h-0 flex-1 overflow-y-auto">
 		{#if !sectionKey}
 			<div class="px-5 py-6 text-sm">
-				<p class="font-semibold">No section selected</p>
+				<p class="font-semibold">Choose a section to rethink</p>
 				<p class="mt-1.5 leading-5">
-					Choose <strong>Rethink section</strong> on any section of the mockup. The assistant will reconsider
-					how it is written and structured, and say what it thinks is missing.
+					The assistant will reconsider how the section is written and structured, and say what it
+					thinks is missing.
 				</p>
+				{#if sessionStore.knownSignedOut}
+					<!-- The request carries the reviewer's session; without one it is
+					     refused, so the list would only lead to an error. -->
+					<p class="mt-4 leading-5">
+						<a href={resolve('/login')} class="font-semibold underline underline-offset-2"
+							>Sign in</a
+						> to rethink a section.
+					</p>
+				{:else if sections.length === 0}
+					<p class="mt-4 leading-5">This page has no sections to rethink.</p>
+				{:else}
+					<ul class="mt-4 space-y-2" aria-label="Sections on this page">
+						{#each sections as section (section.key)}
+							<li>
+								<Button
+									variant="outline"
+									class="h-auto min-h-10 w-full justify-start px-3 py-2 text-left text-[0.8125rem] whitespace-normal"
+									onclick={() => pageStore.selectSection(section.key)}
+								>
+									{section.label}
+								</Button>
+							</li>
+						{/each}
+					</ul>
+					<p class="mt-4 text-xs leading-[1.0625rem]">
+						Each section in the mockup also has a <strong>Rethink section</strong> button, shown while
+						this tab is open.
+					</p>
+				{/if}
 			</div>
 		{:else}
-			<div class="border-b px-5 py-3">
+			<div class="flex items-center justify-between gap-3 border-b px-5 py-3">
 				<span class="text-[0.8125rem] font-semibold">{heading}</span>
+				<Button
+					variant="ghost"
+					size="sm"
+					class="h-7 flex-none px-2 text-xs"
+					onclick={() => pageStore.clearSectionSelection()}
+				>
+					Change section
+				</Button>
 			</div>
 
 			<section class="mx-5 mt-4" aria-label="Rethink">

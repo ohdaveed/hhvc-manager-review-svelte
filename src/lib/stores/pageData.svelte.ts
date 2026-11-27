@@ -559,6 +559,13 @@ class PageStore {
 		}
 
 		this.selectedSectionKey = sectionKey;
+
+		// "Rethink section" does all of its work in the review panel. With the
+		// panel collapsed -- which opening the queue now does -- the click
+		// selected the section and showed nothing: measured 2026-11-27, the panel
+		// stayed a 52px strip. The panel opens, as a field's suggestion would
+		// have no other place to appear either.
+		if (this.railCollapsed.panel) this.#openRail('panel');
 	}
 
 	clearSectionSelection() {
@@ -824,19 +831,33 @@ class PageStore {
 		// chrome back. The rails stay as they now are rather than jumping back to
 		// the pre-Present state, which would undo the toggle just made.
 		this.#endPresenting();
-		const opening = this.railCollapsed[which];
-		const other = which === 'queue' ? 'panel' : 'queue';
 		// Opening one closes the other. Closing one leaves the other alone, so
 		// both can be collapsed for a wide look at the page.
-		this.railCollapsed = opening
-			? ({ [which]: false, [other]: true } as { queue: boolean; panel: boolean })
-			: { ...this.railCollapsed, [which]: true };
+		if (this.railCollapsed[which]) this.#openRail(which);
+		else this.#saveRails({ ...this.railCollapsed, [which]: true });
+	}
+
+	/** Open `which`, closing the other: the rails are exclusive. */
+	#openRail(which: 'queue' | 'panel') {
+		const other = which === 'queue' ? 'panel' : 'queue';
+		this.#saveRails({ [which]: false, [other]: true } as { queue: boolean; panel: boolean });
+	}
+
+	#saveRails(next: { queue: boolean; panel: boolean }) {
+		this.railCollapsed = next;
 		try {
-			localStorage.setItem(RAIL_KEY, JSON.stringify(this.railCollapsed));
+			localStorage.setItem(RAIL_KEY, JSON.stringify(next));
 		} catch {
 			// As above: the toggle still works for this session.
 		}
 	}
+
+	/**
+	 * Whether the review panel's Rethink tab is the one on screen. Set by the
+	 * panel; read by the mockup, which shows each section's "Rethink section"
+	 * button at rest while it is (they are hover-only otherwise).
+	 */
+	rethinkTabOpen = $state(false);
 
 	// ---- narrow-viewport sheets ------------------------------------------
 
