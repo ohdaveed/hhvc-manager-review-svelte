@@ -66,7 +66,7 @@
 	aria-labelledby="review-guide"
 	class={attached
 		? 'border-t border-sfds-grey-l2'
-		: 'rounded-[3px] border border-sfds-grey-l2 bg-white'}
+		: 'rounded-[4px] border border-sfds-grey-l2 bg-white'}
 >
 	<details bind:open ontoggle={() => (touched = true)} class="group">
 		<!-- The h2 sits inside the summary so the heading stays in the document
@@ -76,7 +76,7 @@
 		<summary
 			class="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 px-4 py-2.5 marker:content-none hover:bg-sfds-blue-l1/60 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-sfds-black sm:px-5 {attached
 				? 'rounded-b-[3px] bg-slate-50'
-				: 'rounded-[3px]'}"
+				: 'rounded-[4px]'}"
 		>
 			<h2 id="review-guide" class="font-medium text-slate-900">
 				Review guide and moving pages into Karl

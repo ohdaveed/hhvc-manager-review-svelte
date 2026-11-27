@@ -264,12 +264,12 @@
 	const chipOn =
 		'data-[state=on]:border-sfds-action! data-[state=on]:bg-sfds-blue-l1 data-[state=on]:font-semibold data-[state=on]:text-sfds-blue-dark data-[state=on]:hover:bg-sfds-blue-l1';
 	const control =
-		'h-10 rounded-[3px] border border-slate-300 bg-white text-sm text-sfds-black focus:border-sfds-action focus:ring-1 focus:ring-sfds-action focus:outline-none';
+		'h-10 rounded-[4px] border border-slate-300 bg-white text-sm text-sfds-black focus:border-sfds-action focus:ring-1 focus:ring-sfds-action focus:outline-none';
 </script>
 
 <section
 	aria-labelledby="all-pages"
-	class="@container overflow-hidden rounded-[3px] border border-sfds-grey-l2 bg-white"
+	class="@container overflow-hidden rounded-[4px] border border-sfds-grey-l2 bg-white"
 >
 	<div class="space-y-3 p-4 sm:p-5">
 		<div class="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
@@ -280,11 +280,13 @@
 				<h2
 					id="all-pages"
 					tabindex="-1"
-					class="scroll-mt-4 text-lg font-bold text-slate-900 focus:outline-none"
+					class="scroll-mt-4 font-heading text-xl leading-7 font-medium text-slate-900 focus:outline-none"
 				>
 					All pages
 				</h2>
-				<span class="text-lg font-bold text-slate-900 tabular-nums">({allPaths.length})</span>
+				<span class="font-heading text-xl leading-7 font-medium text-slate-900 tabular-nums"
+					>({allPaths.length})</span
+				>
 			</div>
 			<div class="flex flex-wrap items-center gap-2">
 				<label for="page-sort" class="text-sm text-slate-700">Sort</label>

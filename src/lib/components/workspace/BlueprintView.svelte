@@ -1,7 +1,9 @@
 <script lang="ts">
 	import ArrowLeft from '@lucide/svelte/icons/arrow-left';
+	import ArrowRight from '@lucide/svelte/icons/arrow-right';
 	import Check from '@lucide/svelte/icons/check';
-	import Copy from '@lucide/svelte/icons/copy';
+	import { resolve } from '$app/paths';
+	import { reviewHrefFor } from '$lib/corpus/draftPath';
 	import KarlChip from '$lib/components/KarlChip.svelte';
 	import Page from '$lib/components/Page.svelte';
 	import SiteFooter from '$lib/components/sfgov/SiteFooter.svelte';
@@ -9,6 +11,14 @@
 	import { setMockupReadonly } from '$lib/components/mockupReadonly';
 	import { setOutlineContext } from '$lib/karl/outlineContext';
 	import { outlineSummary, type PagePlacements } from '$lib/karl/placement';
+	import {
+		clipboardHtmlOf,
+		isFormatted,
+		linksOf,
+		parseRichValue,
+		plainTextOf,
+		type RichInline
+	} from '$lib/karl/richValue';
 	import { STATUS_LABELS, type ReviewStatus } from '$lib/review/statusLabels';
 	import { fitFrame, pageStore } from '$lib/stores/pageData.svelte';
 
@@ -34,6 +44,17 @@
 	 *   mockup's;
 	 * - everything that WON'T CARRY OVER, collected in one tray.
 	 *
+	 * The view takes the whole window, as the design it follows does
+	 * (SplitKarl, 2026-11-27): neither rail is drawn. The queue is the page
+	 * stepper in the top bar, which moves between pages without leaving the
+	 * view, and the review is the other half of the mode switch beside it.
+	 *
+	 * Where this departs from that design, on purpose: the mockup column is the
+	 * real SF.gov rendering at two thirds of the width (by request), statuses
+	 * are the app's own `KarlChip` words rather than "Mapped"/"Fix", and
+	 * "Show on page" and the won't-carry-over tray stay, because they do work
+	 * the design's sample data had no case for.
+	 *
 	 * The mockup here is read-only (`setMockupReadonly`): edits belong to the
 	 * review view, whose unsaved-change count this view never shows. And it
 	 * carries no Karl outline -- the right column says all of that, once.
@@ -45,6 +66,9 @@
 		page,
 		pageId,
 		status,
+		pages,
+		onGo,
+		onExport,
 		onExit,
 		onShow
 	}: {
@@ -55,6 +79,11 @@
 		pageId: string;
 		/** The review decision; `undefined` when the page is not in the review. */
 		status: ReviewStatus | undefined;
+		/** Every page the stepper can reach, in queue order, with its section. */
+		pages: { path: string; title: string; section: string; n: number; of: number }[];
+		/** Open another page, staying in this view. Takes a `pages.path`. */
+		onGo: (path: string) => void;
+		onExport: () => void;
 		onExit: () => void;
 		onShow: (fieldId: string) => void;
 	} = $props();
@@ -74,6 +103,13 @@
 	const built = $derived(pageStore.isPageBuilt(pageId));
 	const fixCount = $derived(slots.filter((s) => s.status === 'needs-fix').length);
 	const approved = $derived(status === 'approved');
+
+	// ---- the page stepper ----------------------------------------------------
+
+	const at = $derived(pages.findIndex((p) => p.path === pageId));
+	const prev = $derived(at > 0 ? pages[at - 1] : undefined);
+	const next = $derived(at >= 0 && at < pages.length - 1 ? pages[at + 1] : undefined);
+	const stepLabel = (p: (typeof pages)[number]) => `${p.section} · ${p.n} of ${p.of} — ${p.title}`;
 
 	const statusWord: Record<string, string> = {
 		placed: 'placed',
@@ -121,9 +157,14 @@
 			const [first] = fieldEls(s.fieldIds);
 			if (!first) return [];
 			first.setAttribute('data-bp-n', String(s.n));
+			first.toggleAttribute('data-bp-fix', s.status === 'needs-fix');
 			return [first];
 		});
-		return () => marked.forEach((el) => el.removeAttribute('data-bp-n'));
+		return () =>
+			marked.forEach((el) => {
+				el.removeAttribute('data-bp-n');
+				el.removeAttribute('data-bp-fix');
+			});
 	});
 
 	// The picked panel's copy, outlined, and scrolled into the mockup pane.
@@ -170,9 +211,31 @@
 	let copyTimer: ReturnType<typeof setTimeout> | undefined;
 	$effect(() => () => clearTimeout(copyTimer));
 
+	/**
+	 * Copy one value as the text it stands for, never as the markdown it is
+	 * stored in (`richValue`).
+	 *
+	 * A formatted value goes on the clipboard twice: bare HTML, so a rich text
+	 * field can take its paragraphs, lists, bold and outside links in one paste,
+	 * and the words alone, which is what a plain field takes and what
+	 * Ctrl+Shift+V pastes anywhere. A plain value is written as text only, so a
+	 * title never arrives wrapped in a paragraph. `ClipboardItem` is missing in
+	 * some browsers; the words alone still copy there.
+	 */
 	async function copyValue(key: string, what: string, value: string) {
+		const blocks = parseRichValue(value);
+		const text = plainTextOf(blocks);
 		try {
-			await navigator.clipboard.writeText(value);
+			if (isFormatted(blocks) && typeof ClipboardItem !== 'undefined') {
+				await navigator.clipboard.write([
+					new ClipboardItem({
+						'text/html': new Blob([clipboardHtmlOf(blocks)], { type: 'text/html' }),
+						'text/plain': new Blob([text], { type: 'text/plain' })
+					})
+				]);
+			} else {
+				await navigator.clipboard.writeText(text);
+			}
 			copied = key;
 			failed = null;
 			announcement = `Copied ${what}.`;
@@ -190,18 +253,69 @@
 	}
 </script>
 
+<!-- One line of a value: its words, bold where the copy is bold, and a link
+     shown by its label. A link is a span, not an anchor: the box selects on a
+     click, and where each link goes is listed under it. One line of markup, so
+     no newline lands between two parts and renders as a stray space. -->
+{#snippet inlineRow(row: RichInline[])}
+	<!-- prettier-ignore -->
+	{#each row as part, i (i)}{#if part.kind === 'strong'}<strong>{part.text}</strong>{:else if part.kind === 'link'}<span class="bp-inline-link">{part.text}</span>{:else}{part.text}{/if}{/each}
+{/snippet}
+
 <div class="blueprint">
-	<nav class="bp-header" aria-label="Blueprint">
-		<div class="bp-head-left">
-			<h2 class="bp-title">Blueprint</h2>
-			<!-- The cards are Karl panels; the summary below counts the mockup's
-			     sections. Naming both units keeps "4 sections" over 14 cards from
-			     reading as a miscount. -->
-			<p class="bp-meta">
-				{title} · {placements.type} form, {slots.length}
-				{slots.length === 1 ? 'panel' : 'panels'} in Karl’s order, {filled.length} with copy
-			</p>
+	<header class="bp-header">
+		<h2 class="sr-only">Build in Karl</h2>
+		<!-- The two modes of one page. "Review" is a button, not a link: it
+		     changes the view, not the address. -->
+		<nav class="bp-modes" aria-label="Mode">
+			<button type="button" class="bp-mode" onclick={onExit}>Review</button>
+			<span class="bp-mode" aria-current="page">Build in Karl</span>
+		</nav>
+
+		<!-- The queue, as a stepper. Previous and Next are real links, so they
+		     open in a new tab and announce where they go; at either end the
+		     arrow stays in place, dimmed, so the bar does not shift. -->
+		<div class="bp-stepper">
+			{#if prev}
+				<a
+					class="bp-step"
+					href={resolve(reviewHrefFor(prev.path))}
+					aria-label={`Previous page: ${prev.title}`}
+					title={`Previous page: ${prev.title}`}
+				>
+					<ArrowLeft class="size-4" aria-hidden="true" />
+				</a>
+			{:else}
+				<span class="bp-step" data-off aria-hidden="true"><ArrowLeft class="size-4" /></span>
+			{/if}
+			<label class="sr-only" for="bp-page">Page</label>
+			<select
+				id="bp-page"
+				class="bp-page"
+				value={pageId}
+				onchange={(e) => onGo(e.currentTarget.value)}
+			>
+				{#if at < 0}
+					<option value={pageId}>{title}</option>
+				{/if}
+				{#each pages as p (p.path)}
+					<option value={p.path}>{stepLabel(p)}</option>
+				{/each}
+			</select>
+			{#if next}
+				<a
+					class="bp-step"
+					href={resolve(reviewHrefFor(next.path))}
+					aria-label={`Next page: ${next.title}`}
+					title={`Next page: ${next.title}`}
+				>
+					<ArrowRight class="size-4" aria-hidden="true" />
+				</a>
+			{:else}
+				<span class="bp-step" data-off aria-hidden="true"><ArrowRight class="size-4" /></span>
+			{/if}
 		</div>
+
 		<div class="bp-progress">
 			<span class="bp-progress-text">{enteredCount} of {filled.length} entered in Karl</span>
 			<span
@@ -215,11 +329,8 @@
 				></span>
 			</span>
 		</div>
-		<button type="button" class="bp-exit" onclick={onExit}>
-			<ArrowLeft class="size-3.5" aria-hidden="true" />
-			Back to review
-		</button>
-	</nav>
+		<button type="button" class="bp-link bp-export" onclick={onExport}>Export</button>
+	</header>
 
 	{#if !approved}
 		<div class="bp-approval" role="note">
@@ -231,7 +342,9 @@
 					? ` and ${fixCount} Karl ${fixCount === 1 ? 'panel needs' : 'panels need'} a fix`
 					: ''}. Don’t publish it in Karl until it’s approved.
 			</span>
-			<button type="button" class="bp-link" onclick={onExit}>Go to review</button>
+			<button type="button" class="bp-link" onclick={onExit}>
+				Go to review <ArrowRight class="inline size-3.5" aria-hidden="true" />
+			</button>
 		</div>
 	{/if}
 
@@ -275,6 +388,12 @@
 				</p>
 			</div>
 
+			<p class="bp-howto">
+				Copy each value, then paste it into the matching Karl field. Copy carries bold, lists and
+				links to other websites; to paste the words alone, use Ctrl+Shift+V. Links to SF.gov pages
+				are chosen in Karl, and each is listed under its text.
+			</p>
+
 			<p class="bp-summary"><strong>On the mockup:</strong> {outlineSummary(placements)}</p>
 
 			{#if placements.url}
@@ -291,10 +410,6 @@
 				<p class="bp-page-caveat"><strong>Before you start:</strong> {caveat}</p>
 			{/each}
 
-			<p class="bp-howto">
-				Copy each value, then paste it into the matching Karl field. Click a text box to select all
-				of it.
-			</p>
 			<p class="bp-live" role="status" aria-live="polite">{announcement}</p>
 
 			<ol class="bp-slots" aria-label="Karl form panels, in order">
@@ -326,10 +441,15 @@
 								</h3>
 								<KarlChip status={slot.status} />
 							{:else}
+								<!-- "(empty)" stays in the heading's name for a screen reader;
+								     on screen the same word sits where a filled panel's status
+								     does, so the right edge reads as one column of states. -->
 								<h3 class="bp-slot-title">
-									{slot.label} <span class="bp-empty">(empty)</span>
+									{slot.label} <span class="sr-only">(empty)</span>
 								</h3>
+								<span class="bp-empty" aria-hidden="true">— Empty</span>
 							{/if}
+							<p class="bp-kind">{slot.required ? 'Required' : 'Optional'}</p>
 						</div>
 
 						{#if slot.filled}
@@ -343,10 +463,29 @@
 									     title"): say it once, on screen and in the button's name. -->
 									{@const same = v.label === slot.label}
 									{@const what = same ? slot.label : `${slot.label}, ${v.label}`}
+									{@const blocks = parseRichValue(v.value)}
+									{@const links = linksOf(blocks)}
 									<li class="bp-value">
 										<div class="bp-value-body">
 											{#if !same}<span class="bp-value-label">{v.label}</span>{/if}
-											<div class="bp-value-text">{v.value}</div>
+											<!-- The value as text: no markdown brackets, asterisks or
+											     dashes, on screen or on the clipboard. -->
+											<div class="bp-value-text">
+												{#each blocks as block, b (b)}
+													{#if block.kind === 'p'}
+														<p>
+															{#each block.lines as line, l (l)}{#if l > 0}<br
+																	/>{/if}{@render inlineRow(line)}{/each}
+														</p>
+													{:else}
+														<svelte:element this={block.kind}>
+															{#each block.items as item, n (n)}
+																<li>{@render inlineRow(item)}</li>
+															{/each}
+														</svelte:element>
+													{/if}
+												{/each}
+											</div>
 										</div>
 										<button
 											type="button"
@@ -356,13 +495,43 @@
 											onclick={() => copyValue(key, what, v.value)}
 										>
 											{#if copied === key}
-												<Check class="size-3.5" aria-hidden="true" />
 												Copied
+												<Check class="size-3.5" aria-hidden="true" />
 											{:else}
-												<Copy class="size-3.5" aria-hidden="true" />
 												Copy
 											{/if}
 										</button>
+										{#if links.length}
+											<!-- Where each link goes, in the terms Karl's link tool asks
+											     for. An SF.gov page is picked in Karl's chooser, so no
+											     paste can bring it; an outside address is spelled out to
+											     check, or to add again after a plain paste. -->
+											<ul class="bp-links" aria-label={`Links in ${what}`}>
+												{#each links as link, n (n)}
+													<li>
+														<span class="bp-links-text">“{link.text}”</span>
+														{#if link.to.kind === 'external'}
+															<span class="bp-links-kind">External link</span>
+															<!-- An absolute address from the corpus, which `resolve()`,
+															     a resolver for this app's own routes, has nothing to
+															     say about. -->
+															<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
+															<a href={link.to.href} target="_blank" rel="noopener noreferrer"
+																>{link.to.href}</a
+															>
+														{:else if link.to.kind === 'internal'}
+															<span class="bp-links-kind">Internal link</span>
+															choose the page “{link.to.title}” in Karl
+														{:else if link.to.kind === 'inert'}
+															<span class="bp-links-kind bp-links-gap">No destination yet</span>
+														{:else}
+															<span class="bp-links-kind bp-links-gap">Unknown destination</span>
+															{link.to.target}
+														{/if}
+													</li>
+												{/each}
+											</ul>
+										{/if}
 									</li>
 									{#if failed === key}
 										<li class="bp-copy-failed">
@@ -487,40 +656,99 @@
 
 	/* ---- header ---------------------------------------------------------- */
 
+	/* The bar is the design's: 44px controls, so every one is a comfortable
+	   target, and it wraps -- mode, stepper, progress, Export -- as the window
+	   narrows rather than squeezing any of them. */
 	.bp-header {
-		min-height: 48px;
 		flex: none;
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
-		gap: 8px 20px;
-		padding: 6px 20px;
+		gap: 12px 20px;
+		padding: 12px 24px;
 		background: #ffffff;
 		border-bottom: 1px solid var(--sfds-color-grey-l2);
 	}
 
-	.bp-head-left {
+	.bp-modes {
+		flex: none;
 		display: flex;
-		align-items: baseline;
-		gap: 12px;
+		gap: 4px;
+		padding: 4px;
+		border-radius: 8px;
+		background: #eef1f4;
+	}
+
+	.bp-mode {
+		display: flex;
+		align-items: center;
+		min-height: 40px;
+		padding: 0 14px;
+		border: 0;
+		border-radius: 6px;
+		background: none;
+		color: #3d4550;
+		font-size: 0.875rem;
+		font-weight: 500;
+		cursor: pointer;
+	}
+
+	button.bp-mode:hover {
+		background: #e1e6eb;
+	}
+
+	.bp-mode[aria-current] {
+		background: #ffffff;
+		color: #13294b;
+		font-weight: 600;
+		box-shadow: 0 1px 2px rgba(16, 24, 40, 0.12);
+		cursor: default;
+	}
+
+	.bp-stepper {
+		flex: 1 1 380px;
 		min-width: 0;
-		flex: 1 1 320px;
+		display: flex;
+		align-items: center;
+		gap: 8px;
 	}
 
-	.bp-title {
-		margin: 0;
-		font-family: var(--font-display);
-		font-size: 0.9375rem;
-		font-weight: 700;
+	.bp-step {
+		flex: none;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 44px;
+		height: 44px;
+		border: 1px solid #c5cbd3;
+		border-radius: 6px;
+		background: #ffffff;
+		color: #1c2b39;
 	}
 
-	.bp-meta {
-		margin: 0;
-		font-size: 0.8125rem;
-		color: #3d4551;
-		overflow: hidden;
+	a.bp-step:hover {
+		border-color: #1b519e;
+		color: #1b519e;
+	}
+
+	/* First or last page: the arrow holds its place, dimmed and inert. */
+	.bp-step[data-off] {
+		border-color: #e3e7ec;
+		color: #aab2bd;
+	}
+
+	.bp-page {
+		flex: 1 1 auto;
+		min-width: 0;
+		min-height: 44px;
+		padding: 0 12px;
+		border: 1px solid #c5cbd3;
+		border-radius: 6px;
+		background: #ffffff;
+		color: #1c2b39;
+		font-size: 0.875rem;
+		font-weight: 600;
 		text-overflow: ellipsis;
-		white-space: nowrap;
 	}
 
 	.bp-progress {
@@ -552,7 +780,6 @@
 		transition: width 0.2s;
 	}
 
-	.bp-exit,
 	.bp-show {
 		flex: none;
 		display: inline-flex;
@@ -577,8 +804,8 @@
 		flex-wrap: wrap;
 		align-items: center;
 		gap: 4px 16px;
-		margin: 12px 20px 0;
-		padding: 8px 14px;
+		margin: 16px 24px 0;
+		padding: 10px 16px;
 		border: 1px solid #f0c9a4;
 		border-radius: 8px;
 		background: #fff7ef;
@@ -595,6 +822,9 @@
 	}
 
 	.bp-link {
+		display: inline-flex;
+		align-items: center;
+		gap: 4px;
 		min-height: 32px;
 		padding: 0;
 		border: 0;
@@ -604,6 +834,13 @@
 		text-decoration: underline;
 		text-underline-offset: 2px;
 		cursor: pointer;
+	}
+
+	/* After `.bp-link`, which it refines: same link, the bar's height and weight. */
+	.bp-export {
+		min-height: 44px;
+		font-size: 0.875rem;
+		font-weight: 500;
 	}
 
 	/* ---- two columns -------------------------------------------------------
@@ -705,6 +942,11 @@
 		text-align: center;
 	}
 
+	/* A panel that needs a fix is numbered in the list's orange, here too. */
+	.bp-col-mock :global([data-bp-fix])::before {
+		background: #a84b00;
+	}
+
 	/* From sf.gov's 96px desktop gutter there is room to number the copy from
 	   the left, where the eye starts each line. Narrower, the gutter is 20-28px
 	   and a left badge clips at the frame, so it overlaps the top-right corner.
@@ -782,18 +1024,24 @@
 		background: #eaf5f6;
 	}
 
-	/* An empty panel: dashed, and named as empty in text, not by the line alone. */
-	.bp-slot[data-filled='false'] {
-		border: 2px dashed #8b949e;
-		padding: 11px 13px;
-		background: transparent;
-	}
+	/* An empty panel is a plain card with a grey number, named as empty in
+	   words ("— Empty") where a filled panel carries its status. */
 
+	/* `relative`, so a panel's pick button can cover the whole head (below). */
 	.bp-slot-head {
+		position: relative;
 		display: flex;
 		align-items: center;
-		gap: 10px;
+		gap: 2px 10px;
 		flex-wrap: wrap;
+	}
+
+	/* Required or optional, under the name, on a row of its own. */
+	.bp-kind {
+		flex: 1 0 100%;
+		margin: 0 0 0 32px;
+		font-size: 0.75rem;
+		color: #545b64;
 	}
 
 	.bp-n {
@@ -843,13 +1091,22 @@
 		text-decoration-color: currentColor;
 	}
 
+	/* The whole head picks the panel, not only the words of its name. */
+	.bp-pick::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+	}
+
 	.bp-slot-head :global(.karl-chip) {
 		margin: 0;
 	}
 
 	.bp-empty {
-		font-weight: 400;
-		color: #3d4551;
+		flex: none;
+		font-size: 0.75rem;
+		font-weight: 600;
+		color: #545b64;
 	}
 
 	.bp-reason {
@@ -879,14 +1136,17 @@
 		gap: 8px;
 	}
 
+	/* The text box and its Copy button share a row, the button at the box's
+	   foot; the value's link notes wrap onto a row of their own beneath. */
 	.bp-value {
 		display: flex;
+		flex-wrap: wrap;
 		align-items: flex-end;
-		gap: 8px;
+		gap: 4px 8px;
 	}
 
 	.bp-value-body {
-		flex: 1 1 auto;
+		flex: 1 1 0;
 		min-width: 0;
 		display: flex;
 		flex-direction: column;
@@ -909,11 +1169,81 @@
 		font-size: 0.8125rem;
 		line-height: 1.125rem;
 		color: #1c2b39;
-		white-space: pre-line;
 		overflow-wrap: anywhere;
 		user-select: all;
 		-webkit-user-select: all;
 		cursor: text;
+	}
+
+	/* The value's own structure. Tailwind's reset strips list markers and
+	   margins, so the list look is stated here. */
+	.bp-value-text :is(p, ul, ol) {
+		margin: 0;
+	}
+
+	.bp-value-text :is(p, ul, ol) + :is(p, ul, ol) {
+		margin-top: 8px;
+	}
+
+	.bp-value-text ul {
+		padding-left: 18px;
+		list-style: disc;
+	}
+
+	.bp-value-text ol {
+		padding-left: 20px;
+		list-style: decimal;
+	}
+
+	.bp-value-text li + li {
+		margin-top: 2px;
+	}
+
+	.bp-inline-link {
+		color: #1b519e;
+		text-decoration: underline;
+		text-underline-offset: 2px;
+	}
+
+	/* Where each link in the value goes. */
+	.bp-links {
+		flex: 1 0 100%;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+		font-size: 0.75rem;
+		line-height: 1.0625rem;
+		color: #3d4551;
+		overflow-wrap: anywhere;
+	}
+
+	.bp-links-text {
+		color: #1c2b39;
+		font-weight: 600;
+	}
+
+	.bp-links-kind {
+		margin: 0 2px;
+		padding: 0 5px;
+		border-radius: 3px;
+		background: #eef1f4;
+		color: #3d4551;
+		font-weight: 600;
+		white-space: nowrap;
+	}
+
+	.bp-links-gap {
+		background: #fdebd8;
+		color: #8a3a06;
+	}
+
+	.bp-links a {
+		color: #1b519e;
+		text-decoration: underline;
+		text-underline-offset: 2px;
 	}
 
 	.bp-copy {
@@ -923,7 +1253,7 @@
 		justify-content: center;
 		gap: 6px;
 		min-width: 84px;
-		min-height: 34px;
+		min-height: 44px;
 		padding: 0 12px;
 		border: 1px solid #1b519e;
 		border-radius: 6px;
@@ -960,7 +1290,7 @@
 		display: flex;
 		align-items: center;
 		gap: 8px;
-		min-height: 36px;
+		min-height: 44px;
 		font-size: 0.8125rem;
 		color: #3d4551;
 		cursor: pointer;
@@ -1028,7 +1358,7 @@
 		flex-wrap: wrap;
 		align-items: center;
 		gap: 8px 16px;
-		padding: 10px 20px;
+		padding: 14px 24px;
 		border-top: 1px solid #c6cdd4;
 		background: #ffffff;
 		box-shadow: 0 -4px 12px rgba(16, 24, 40, 0.06);
@@ -1042,8 +1372,8 @@
 	}
 
 	.bp-mark {
-		min-height: 40px;
-		padding: 0 18px;
+		min-height: 44px;
+		padding: 0 20px;
 		border: 0;
 		border-radius: 6px;
 		background: #1f7a4d;
