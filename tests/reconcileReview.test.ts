@@ -26,30 +26,10 @@ const row = (path: string, status: Status = 'needs-review') => ({
 const DRAFT = 'draft:6f1c2a7e-0000-4000-8000-000000000001';
 
 describe('reconcileReview', () => {
-	it('keeps rows for corpus pages and drafts, drafts last', () => {
+	it('keeps rows for corpus pages and drafts, in store order', () => {
 		const rows = [row('b', 'approved'), row(DRAFT), row('a')];
 		const { rows: kept } = reconcileReview(rows, ['a', 'b']);
-		expect(kept.map((r) => r.path)).toEqual(['b', 'a', DRAFT]);
-	});
-
-	// Store order is heap order (`loadReview` has no ORDER BY), so it is
-	// arbitrary and moves as rows are updated. Start and Next undecided read
-	// `rows`, and in heap order they skipped to a page near the list's end.
-	it('orders rows the way the page lists do, not the way the table returned them', () => {
-		const heap = [
-			row('location-environmental-health-office'),
-			row('departments--healthy-housing-and-vector-control--about'),
-			row('report-rats-or-mice')
-		];
-		const { rows: kept } = reconcileReview(
-			heap,
-			heap.map((r) => r.path)
-		);
-		expect(kept.map((r) => r.path)).toEqual([
-			'report-rats-or-mice',
-			'departments--healthy-housing-and-vector-control--about',
-			'location-environmental-health-office'
-		]);
+		expect(kept.map((r) => r.path)).toEqual(['b', DRAFT, 'a']);
 	});
 
 	it('flags corpus pages that have no row, in corpus order', () => {

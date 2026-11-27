@@ -36,13 +36,10 @@ export type Edit = {
 
 // Our central stores
 /**
- * The order the queue groups pages in, and therefore the order a reviewer reads
- * them. `needs-review` first because it is the work; the decided groups follow.
- *
- * Exported so `ReviewQueue` and anything that needs to name the queue's FIRST
- * page read the same list. Two copies of this drift the moment a status is
- * added, and the symptom would be a link that lands somewhere other than the
- * row it points at.
+ * The order the decision statuses are listed in wherever statuses are counted
+ * or filtered -- the landing page's status filter and progress counts.
+ * `needs-review` first because it is the work. NOT the queue's row order: the
+ * queue is grouped by theme (`queueOrder`), so a decision never moves a row.
  */
 export const QUEUE_STATUS_ORDER = [
 	'needs-review',
@@ -52,34 +49,20 @@ export const QUEUE_STATUS_ORDER = [
 ] as const satisfies readonly ReviewPage['status'][];
 
 /**
- * The path of the first page as the queue renders it: earliest group first,
- * store order within a group.
+ * Every path in the order the review queue renders its rows: the review's rows
+ * under the landing page's themed headings (`groupPaths`), then `unreviewed`
+ * -- corpus pages with no row yet, which the sidebar lists last.
  *
- * Returns `undefined` when no review is loaded -- signed out, or Supabase
- * unreachable -- which is a real state, not an error. Callers pick their own
- * fallback rather than being handed a path to a page that is not in the queue.
- */
-export function firstQueuePath(pages: ReviewPage[]): string | undefined {
-	for (const status of QUEUE_STATUS_ORDER) {
-		const first = pages.find((p) => p.status === status);
-		if (first) return first.path;
-	}
-	return undefined;
-}
-
-/**
- * Every path in the order the queue renders its rows: groups in
- * `QUEUE_STATUS_ORDER`, store order within a group. The toolbar's previous and
- * next buttons step through this, so they move to the row above or below the
- * current one -- the same rows the reviewer sees in the sidebar.
+ * The queue's one order. The sidebar renders it; the toolbar's previous/next,
+ * `nextUndecidedPath` and the landing page's resume point step through it, so
+ * "next" is always the row below the current one on screen. A decision does
+ * not change it, because the groups are themes rather than statuses.
  *
  * Empty when no review is loaded; callers fall back to corpus order, which is
  * what the queue lists while browsing signed out.
  */
-export function queueOrder(pages: ReviewPage[]): string[] {
-	return QUEUE_STATUS_ORDER.flatMap((status) =>
-		pages.filter((p) => p.status === status).map((p) => p.path)
-	);
+export function queueOrder(pages: ReviewPage[], unreviewed: readonly string[] = []): string[] {
+	return [...groupPaths(pages.map((p) => p.path)).flatMap((s) => s.paths), ...unreviewed];
 }
 
 /**
@@ -90,13 +73,7 @@ export function queueOrder(pages: ReviewPage[]): string[] {
  * Read alone, the table under-counts the review and lists rows whose link 404s
  * on `/review/[slug]`'s static guard.
  *
- * - `rows` -- rows a reviewer can open: a corpus page or a draft, in the order
- *   the page lists show them (`groupPaths`: themed sections, then other pages,
- *   then drafts). NOT store order: `loadReview` selects with no `ORDER BY`, so
- *   the rows arrive in heap order, which changes as rows are updated. Every
- *   "next" reads this order -- the landing page's Start, the panel's Next
- *   undecided, the toolbar's prev/next -- and in heap order Start sent a
- *   reviewer to "Environmental Health office", 40th of 41 in the list.
+ * - `rows` -- rows a reviewer can open: a corpus page or a draft. Store order.
  * - `unreviewed` -- corpus ids with no row. Viewable, but undecidable: the
  *   table has no INSERT policy, so nothing in the app can create their row.
  * - `retired` -- rows for a page that is no longer in the corpus.
@@ -110,9 +87,6 @@ export function reconcileReview(
 	const rows: ReviewPage[] = [];
 	const retired: ReviewPage[] = [];
 	for (const p of pages) (corpus.has(p.path) || isDraftPath(p.path) ? rows : retired).push(p);
-	const listOrder = groupPaths(rows.map((p) => p.path)).flatMap((section) => section.paths);
-	const rank = new Map(listOrder.map((path, i) => [path, i]));
-	rows.sort((a, b) => (rank.get(a.path) ?? 0) - (rank.get(b.path) ?? 0));
 	const rowed = new Set(rows.map((p) => p.path));
 	const unreviewed = corpusIds.filter((id) => !rowed.has(id));
 	return { rows, unreviewed, retired, total: rows.length + unreviewed.length };
@@ -122,17 +96,19 @@ export function reconcileReview(
  * The page after `current` that still has no decision, so a reviewer can move on
  * without going back to the sidebar.
  *
- * Searches in the order of `pages` (for `review.rows`, list order: see
- * `reconcileReview`), starting after `current` and wrapping round. That order
- * rather than status-group order is deliberate: a decision moves the row to another
- * group, and "next" should still mean the row that came after it. Never returns
- * `current`; `undefined` once every page has a decision.
+ * Searches in `queueOrder` -- the order the sidebar renders -- starting after
+ * `current` and wrapping round, so it names the next undecided row below the
+ * current one on screen. Deciding `current` does not move it, so "next" still
+ * means the row that came after it. Never returns `current`; `undefined` once
+ * every page has a decision.
  */
 export function nextUndecidedPath(pages: ReviewPage[], current: string): string | undefined {
-	const start = pages.findIndex((p) => p.path === current) + 1;
-	for (let i = 0; i < pages.length; i++) {
-		const p = pages[(start + i) % pages.length];
-		if (p.status === 'needs-review' && p.path !== current) return p.path;
+	const statusOf = new Map(pages.map((p) => [p.path, p.status]));
+	const order = queueOrder(pages);
+	const start = order.indexOf(current) + 1;
+	for (let i = 0; i < order.length; i++) {
+		const path = order[(start + i) % order.length];
+		if (statusOf.get(path) === 'needs-review' && path !== current) return path;
 	}
 	return undefined;
 }
