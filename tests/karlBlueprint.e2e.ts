@@ -377,14 +377,14 @@ test.describe('Blueprint', () => {
 		await page.setViewportSize({ width: 1440, height: 900 });
 		await gotoSignedIn(page, '/review/report-rats-or-mice');
 		await openBlueprint(page);
-		// Gone, not collapsed: there is no "Expand queue" strip to reopen.
-		await expect(page.getByRole('button', { name: 'Expand queue' })).toHaveCount(0);
+		// Gone with the toolbar that carries it: no Queue button to reopen.
+		await expect(page.getByRole('button', { name: /^Queue/ })).toHaveCount(0);
 		await expect(page.locator('#reviewQueueRail')).toBeHidden();
 		await reviewTab(page).click();
 		// As the helper left them, which is as the workspace opens: the review
 		// panel open, the queue collapsed.
 		await expect(page.getByRole('button', { name: 'Collapse review panel' })).toBeVisible();
-		await expect(page.getByRole('button', { name: 'Expand queue' })).toBeVisible();
+		await expect(page.getByRole('button', { name: /^Queue/ })).toBeVisible();
 	});
 
 	test('Review returns to the mockup', async ({ page }) => {

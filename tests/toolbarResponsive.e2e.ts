@@ -57,22 +57,37 @@ test('fits a 375px phone window: no overflow, every control on screen', async ({
 	}
 });
 
-test('keeps every toolbar control on one row at 1440x900 with both rails open', async ({
-	page
-}) => {
-	await page.setViewportSize({ width: 1440, height: 900 });
-	await page.goto(PAGE);
+// The rails are exclusive, so "both open" is no longer a state to test. The
+// two the toolbar has to fit are the way the workspace opens (review panel
+// open, and the bar carrying the Queue button and the way back to the landing
+// page) and its mirror (queue open, panel collapsed). 1100px is the laptop
+// width where the bar has no slack: measured, a labelled Queue button wrapped
+// it there, which is why it drops to its icon below a 50rem bar.
+for (const width of [1100, 1280, 1440]) {
+	test(`keeps every toolbar control on one row at ${width}px, either rail open`, async ({
+		page
+	}) => {
+		await page.setViewportSize({ width, height: 900 });
+		await page.goto(PAGE);
+		const bar = page.locator('nav.review-toolbar');
+		const oneRow = async () => {
+			const controls = await toolbarControls(page);
+			expect(controls.length).toBeGreaterThan(3);
+			// One row: some horizontal line passes through every control.
+			const lowestTop = Math.max(...controls.map((r) => r.top));
+			const highestBottom = Math.min(...controls.map((r) => r.bottom));
+			expect(lowestTop).toBeLessThan(highestBottom);
+		};
 
-	await expect(page.locator('.queue-rail')).toBeVisible();
-	await expect(page.locator('.panel-rail')).toBeVisible();
-	await expect(
-		page.locator('nav.review-toolbar').getByRole('button', { name: /Karl/ })
-	).toHaveCount(0);
+		// As it opens: the panel, and the Queue button in the bar.
+		await expect(page.locator('.panel-rail')).toBeVisible();
+		await expect(page.locator('.queue-rail')).toBeHidden();
+		await expect(bar.getByRole('button', { name: /^Queue/ })).toBeVisible();
+		await expect(bar.getByRole('button', { name: /Karl/ })).toHaveCount(0);
+		await oneRow();
 
-	const controls = await toolbarControls(page);
-	expect(controls.length).toBeGreaterThan(3);
-	// One row: some horizontal line passes through every control.
-	const lowestTop = Math.max(...controls.map((r) => r.top));
-	const highestBottom = Math.min(...controls.map((r) => r.bottom));
-	expect(lowestTop).toBeLessThan(highestBottom);
-});
+		await bar.getByRole('button', { name: /^Queue/ }).click();
+		await expect(page.locator('.queue-rail')).toBeVisible();
+		await oneRow();
+	});
+}

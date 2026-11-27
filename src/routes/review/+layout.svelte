@@ -28,8 +28,8 @@
 		ChevronLeft,
 		ChevronRight,
 		ChevronsLeft,
-		ChevronsRight,
 		Download,
+		List,
 		Maximize2,
 		Monitor,
 		Presentation,
@@ -58,6 +58,7 @@
 	import { setOutlineContext } from '$lib/karl/outlineContext';
 	import { pagesByKey } from '$lib/data';
 	import { groupPaths } from '$lib/landing/groups';
+	import { QUEUE_KEY, isPlainKey } from '$lib/review/shortcuts';
 	import { triggerReviewExportDownload } from '$lib/data/exportReview';
 
 	let { children } = $props();
@@ -348,6 +349,23 @@
 		// already handled closes that, not the sheet around it.
 		if (event.key === 'Escape' && !event.defaultPrevented && pageStore.mobileSheet !== 'none')
 			closeSheet();
+
+		// Backslash opens or closes the page queue: the rail from 1024px, the
+		// sheet below it. Only where the toolbar's Queue button is on screen to
+		// do the same (the review view), and never while typing.
+		if (
+			event.key === QUEUE_KEY &&
+			pageStore.shortcutsOn &&
+			pageStore.mode === 'review' &&
+			!building &&
+			isPlainKey(event)
+		) {
+			event.preventDefault();
+			// 1025px: the stylesheet's sheet rules apply up to and including 1024.
+			if (window.matchMedia('(min-width: 1025px)').matches) pageStore.toggleRail('queue');
+			else if (pageStore.mobileSheet === 'queue') closeSheet();
+			else pageStore.openSheet('queue');
+		}
 	};
 
 	// A sheet exists only below 1024px. Widened past it (a tablet rotating, a
@@ -381,6 +399,7 @@
 		// in the store's constructor: that module is imported during SSR, where
 		// `localStorage` does not exist.
 		pageStore.loadRailState();
+		pageStore.loadShortcuts();
 		pageStore.loadPreviewWidth();
 		pageStore.loadKarlOutline();
 		pageStore.loadCopiedSteps();
@@ -493,6 +512,19 @@
      "Undecided" (an empty slot, as the queue's progress bar shows it).
      Decorative wherever it appears beside the words; the collapsed panel
      gives its own a label. -->
+<!-- How far the review is, on the Queue button: "4/41" to the eye, and
+     "4 of 41 decided" to a screen reader, after the visible word "Queue". No
+     comma: markup whitespace lands before it, and the name read "Queue , 4 of
+     41 decided". Only once a review has loaded: signed out there is nothing to
+     count. -->
+{#snippet queueCount()}
+	{#if review.loaded}
+		<span class="font-normal text-sfds-slate-l3 tabular-nums" aria-hidden="true"
+			>{review.decided}/{review.total}</span
+		><span class="sr-only"> {review.decided} of {review.total} decided</span>
+	{/if}
+{/snippet}
+
 {#snippet statusDot(s: NonNullable<typeof status>)}
 	<span
 		class="inline-block size-2.5 flex-none rounded-full {s === 'needs-review'
@@ -508,7 +540,7 @@
 	data-build={building ? '' : undefined}
 	style="grid-template-columns: {building
 		? 'minmax(0, 1fr)'
-		: `${pageStore.railCollapsed.queue ? '52px' : '280px'} 1fr ${
+		: `${pageStore.railCollapsed.queue ? '' : '280px '}1fr ${
 				pageStore.railCollapsed.panel ? '52px' : '380px'
 			}`}"
 >
@@ -551,36 +583,18 @@
 		role={pageStore.mobileSheet === 'queue' ? 'dialog' : undefined}
 		aria-modal={pageStore.mobileSheet === 'queue' ? 'true' : undefined}
 		inert={pageStore.mobileSheet === 'panel'}
+		data-collapsed={queueCollapsed ? '' : undefined}
 		class="queue-rail flex h-full min-w-0 flex-col border-r bg-background"
 	>
 		<!-- Every column's top row is `h-12` with a bottom border, so the queue,
 		     the canvas toolbar and the panel's tabs share one 48px band and one
 		     border line. They used to be 83px, 48px and 48px-on-grey: three tops
 		     that read as three unrelated strips. -->
-		{#if queueCollapsed}
-			<div class="flex flex-col items-center">
-				<div class="flex h-12 w-full items-center justify-center border-b border-sfds-grey-l2">
-					<Button
-						variant="outline"
-						size="icon"
-						class="size-7"
-						title="Expand queue"
-						aria-label="Expand queue"
-						onclick={() => pageStore.toggleRail('queue')}
-					>
-						<ChevronsRight class="size-3.5" />
-					</Button>
-				</div>
-				<a
-					href={resolve('/')}
-					class="mt-3 flex size-7 items-center justify-center rounded-md border border-sfds-grey-l2 text-sfds-action hover:bg-sfds-blue-l1/60"
-					title="All pages"
-					aria-label="All pages"
-				>
-					<ArrowLeft class="size-3.5" aria-hidden="true" />
-				</a>
-			</div>
-		{:else}
+		<!-- Collapsed, the rail draws nothing and takes no grid track: the
+		     toolbar's Queue button opens it. It used to be a 52px strip with two
+		     unlabelled icons, on screen most of the time since the queue starts
+		     collapsed (2026-11-27). -->
+		{#if !queueCollapsed}
 			<!-- The way back to `/`, which nothing in the workspace offered before:
 			     the landing page (progress, propose a page, every page) was a dead
 			     end once a reviewer left it. The app name and the account moved
@@ -735,11 +749,48 @@
 						<Button
 							variant="outline"
 							size="sm"
-							class="narrow-only h-7 flex-none px-2.5 text-xs font-semibold"
+							class="narrow-only h-7 flex-none gap-1.5 px-2.5 text-xs font-semibold"
 							onclick={(e: MouseEvent) => openSheet('queue', e)}
 						>
-							Queue
+							Queue{@render queueCount()}
 						</Button>
+						<!-- Above 1024px, the same button opens the queue's rail whenever it
+						     is collapsed, which is how the workspace opens. With it, the
+						     way back to the landing page the collapsed rail used to carry.
+						     `wide-only`: hidden up to 1024px, where the button above opens
+						     the sheet.
+
+						     The bar has no slack at laptop widths. MEASURED at 1100px (a
+						     720px bar): the labelled button and the link wrapped it onto a
+						     second row. So below a 50rem bar the link goes and the button
+						     is its icon alone, named by `aria-label` and its tooltip; from
+						     50rem (a 1280px window gives 900px) both show in full. -->
+						{#if pageStore.railCollapsed.queue}
+							<a
+								href={resolve('/')}
+								class="{buttonVariants({
+									variant: 'outline',
+									size: 'icon'
+								})} wide-only size-7 flex-none text-sfds-action @max-[50rem]/toolbar:hidden!"
+								title="All pages"
+								aria-label="All pages"
+								data-testid="all-pages-link-toolbar"
+							>
+								<ArrowLeft class="size-3.5" aria-hidden="true" />
+							</a>
+							<Button
+								variant="outline"
+								size="sm"
+								class="wide-only h-7 flex-none gap-1.5 px-2.5 text-xs font-semibold @max-[50rem]/toolbar:px-1.5"
+								title="Open the page queue ({QUEUE_KEY})"
+								data-testid="open-queue"
+								onclick={() => pageStore.toggleRail('queue')}
+							>
+								<List class="size-3.5" aria-hidden="true" />
+								<span class="@max-[50rem]/toolbar:sr-only">Queue</span>
+								<span class="contents @max-[50rem]/toolbar:hidden">{@render queueCount()}</span>
+							</Button>
+						{/if}
 						<!-- Below 1024px the panel is off screen, so this button carries the
 						     decision: a dot, and the status in the accessible name after
 						     the visible "Review", as "Review (Undecided)" (WCAG 2.5.3). -->
@@ -1081,6 +1132,15 @@
 	.review-shell[data-build] > .panel-rail,
 	.review-shell[data-build] > .skip-to-panel {
 		display: none;
+	}
+
+	/* Above 1024px a collapsed queue is not drawn at all; its grid track is
+	   dropped inline, above. Up to 1024px the rail is a sheet, hidden and shown
+	   by the rules further down. */
+	@media (min-width: 1025px) {
+		.queue-rail[data-collapsed] {
+			display: none;
+		}
 	}
 
 	.skip-to-panel {

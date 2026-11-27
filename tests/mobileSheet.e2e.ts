@@ -15,7 +15,8 @@ const PAGE = '/review/report-garbage-clutter-or-overgrown-plants';
 
 for (const sheet of [
 	{ trigger: /^Review/, panel: '#reviewPanel', close: 'Close review panel' },
-	{ trigger: 'Queue', panel: '#reviewQueueRail', close: 'Close queue' }
+	// Signed in, the button's name goes on to say how far the review is.
+	{ trigger: /^Queue/, panel: '#reviewQueueRail', close: 'Close queue' }
 ]) {
 	test(`the ${sheet.close.replace('Close ', '')} sheet is a modal dialog`, async ({ page }) => {
 		await page.setViewportSize({ width: 390, height: 844 });
