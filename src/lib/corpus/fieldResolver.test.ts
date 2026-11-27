@@ -371,7 +371,7 @@ describe('resolveField — extractCopy parity (Group D)', () => {
 		const article11 = findPage('sf.gov/report/health-code-article-11-plain-language');
 		expect(resolveField(article11, 'reportDate')!.value).toBe('August 7, 2026');
 		expect(resolveField(article11, 'seoTitle')!.value).toBe(
-			'Health Code Article 11 in plain language'
+			'Health Code Article 11 in plain language | SF.gov'
 		);
 		resolveField(article11, 'metaDescription')!.set('Updated description.');
 		expect(resolveField(article11, 'metaDescription')!.value).toBe('Updated description.');

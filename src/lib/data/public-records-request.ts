@@ -16,11 +16,11 @@ export const publicRecords = {
 		thingsToKnow: [
 			{
 				label: 'Check the lookup tools first',
-				text: 'Many complaint and inspection records are already available through the online lookup tools — check there first.'
+				text: 'Many complaint and inspection records are already in the online lookup tools. Check there first.'
 			},
 			{
 				label: 'Leaving SF.gov',
-				text: 'Requests are handled through the citywide San Francisco NextRequest portal. You will leave SF.gov.'
+				text: 'You make requests through the citywide San Francisco NextRequest portal. You will leave SF.gov.'
 			}
 		]
 	},
@@ -48,7 +48,7 @@ export const publicRecords = {
 				{
 					title: 'Submit your request',
 					text: [
-						'Public records requests are handled through the citywide San Francisco NextRequest portal. You will leave SF.gov.'
+						'Make your request through the citywide San Francisco NextRequest portal. You will leave SF.gov.'
 					],
 					button: 'Request records',
 					buttonUrl: 'https://sanfrancisco.nextrequest.com/requests/new'

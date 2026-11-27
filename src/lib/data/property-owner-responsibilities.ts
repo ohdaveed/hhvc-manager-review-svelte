@@ -14,7 +14,7 @@ export const ownerHub = {
 			karl: 'Maps to the top-level "Introductory text" field (Title + rich-text Text) — a repeatable field separate from the Body stream. Heading → Title, paragraphs → Text.',
 			kind: 'body',
 			paragraphs: [
-				"Property owners and managers must keep buildings free of pests, vectors, garbage, and other housing health nuisances. Article 11 covers these. The Director's Rules and the Article 11 Interpretation Guide set what owners and managers must do.",
+				"If you own or manage a building, you must keep it free of pests, vectors, garbage, and other housing health nuisances. Article 11 covers these. The Director's Rules and the Article 11 Interpretation Guide set out what you must do.",
 				'Respond quickly to pest reports, document actions, and use qualified professionals when needed. Keep garbage areas clean and prevent conditions that support pests.',
 				'Use these pages to meet program requirements, respond to enforcement, and prevent problems before they spread.'
 			]
@@ -57,8 +57,8 @@ export const ownerHub = {
 			kind: 'body',
 			cards: [
 				{
-					title: 'SFDPH Environmental Health Branch fee schedule (current)',
-					text: 'Official fee schedule, including the Healthy Housing apartment-building fee tiers and hourly reinspection rates. Rates effective 7/1/26-6/30/27 — check for a newer schedule before relying on it for a specific billing year.',
+					title: 'SFDPH Environmental Health Branch fee schedule (PDF)',
+					text: 'Official fee schedule, including the Healthy Housing apartment-building fee tiers and hourly reinspection rates. Rates apply from July 1, 2026 to June 30, 2027. Check for a newer schedule before you rely on it for a billing year.',
 					url: 'https://media.api.sf.gov/documents/Website_Fees_FY25-26_1M8m5aT.pdf',
 					karl: "Document Picker upload in the real CMS (see section-level karl note); content now sourced from docs/source/hhvc-policy/2026-07-06-dph-ehb-fee-schedule-fy26-27.md (current fiscal year). NOTE: the `url` above still points to the FY25-26 PDF's live SF.gov location — the FY26-27 PDF was obtained directly and has no confirmed public URL yet; do not publish this card until a live FY26-27 URL is confirmed."
 				}

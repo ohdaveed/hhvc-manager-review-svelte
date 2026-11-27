@@ -99,7 +99,7 @@ export const bedBugsInfo = {
 			],
 			bullets: [
 				{
-					text: '**Owners must act fast.** Within 2 working days of your report, your landlord must hire a licensed pest control company to inspect your unit and the units next to it.',
+					text: '**Owners must act fast.** Your landlord must hire a licensed pest control company within 2 working days of your report. The company inspects your unit and the units next to it.',
 					unverified: true,
 					unverifiedReason:
 						"From the SFDPH bed bug Director's Rules, Owner 2.4-2.6 (docs/source/hhvc-policy/2026-07-02-bed-bug-directors-rules-tenant-guidelines.md): within two working days of the tenant's complaint, contract a PCO to inspect the unit and adjacent units. This is the bed bug timeline, distinct from the general 72-hour owner investigation (see the v4 gap analysis, 'Three distinct timelines'). Confirm it still reads the same in the v4 Director's Rules draft before publication."
@@ -122,7 +122,7 @@ export const bedBugsInfo = {
 			bullets: [
 				'**Do not remove items before treatment.** Only take out bagged clothing for laundry, or items the pest control company tells you to remove.',
 				'**Wash and dry all clothing and bedding.** Use hot water and the hottest dryer setting for at least 45 minutes. Then store it in new, clean, sealed plastic bags.',
-				'**Wait until you are cleared.** Do not move back in until the pest control company says it is safe. Leave bed bug monitors in place: monitoring continues for 4 weeks after the last treatment to make sure the bed bugs are gone.'
+				'**Wait until you are cleared.** Do not move back in until the pest control company says it is safe. Leave bed bug monitors in place for 4 weeks after the last treatment. They show whether the bed bugs are gone.'
 			],
 			callout: {
 				karl: 'Maps to its own Callout stream item (a sibling of the Title and text item above). Single rich text field only, no separate title field — this callout has none, so no mismatch.',

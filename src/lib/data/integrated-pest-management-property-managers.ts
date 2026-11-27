@@ -56,13 +56,13 @@ export const ownerGuidance = {
 				},
 				{
 					title: 'UC IPM: More multi-unit housing resources',
-					text: 'Browse additional UC ANR trainings, Pest Notes, and prevention publications for housing managers.',
+					text: 'Browse more UC ANR trainings, Pest Notes, and prevention publications for housing managers.',
 					url: 'https://ipm.ucanr.edu/home-and-landscape/resources-for-multi-unit-housing-managers/',
 					karl: 'Body external link: UC IPM multi-unit housing resources index'
 				},
 				{
 					title: 'SF Environment: Pestec IPM guidelines for multifamily housing',
-					text: 'SF-local operations manual for multi-unit buildings — turnover proofing, resident toolkit gap sizes, and sample IPM plans.',
+					text: 'SF-local operations manual for multi-unit buildings. Covers turnover proofing, resident toolkit gap sizes, and sample IPM plans.',
 					url: 'https://sfenvironment.org/article/integrated-pest-management-ipm-guidelines-for-multifamily-housing',
 					karl: 'Body external link: SF Environment Pestec multifamily IPM guidelines (supplemental)'
 				}
@@ -152,7 +152,7 @@ export const ownerGuidance = {
 				'[UC IPM: Pest monitoring and recordkeeping](https://ipm.ucanr.edu/home-and-landscape/guide-for-property-managers/pest-monitoring-and-recordkeeping/)'
 			],
 			bullets: [
-				'Use one system to log complaints, repairs, sanitation work, and contractor visits. A written log of vermin reports is required, not just good practice. See [Article 11 compliance for property owners](article11Compliance).',
+				'Use one system to log complaints, repairs, sanitation work, and contractor visits. You must keep a written log of vermin reports. It is not just good practice. See [Article 11 compliance for property owners](article11Compliance).',
 				'Make sure your pest control company inspects fully and names the pest and how bad the infestation is.',
 				"Inspect adjacent units: When an infestation is reported, the pest control company must inspect every adjacent unit. Treat them if needed (Director's Rules §VI.6).",
 				'Use least-toxic methods: Prioritize non-chemical methods (vacuuming, heat, steam, freezing) and gel baits over chemical sprays.',

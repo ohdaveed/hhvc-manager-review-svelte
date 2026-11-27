@@ -83,7 +83,7 @@ export const rodentsReport = {
 			bullets: [
 				'**Cut off food:** Store food and garbage in bins with tight-fitting lids. Do not leave pet food out overnight.',
 				'**Pick up pet waste daily:** It feeds rats. [Report animal waste on a property](animalWasteReport)',
-				'**Trap safely:** Use snap traps indoors. Do not use poisons — they can harm children, pets, and wildlife.',
+				'**Trap safely:** Use snap traps indoors. Do not use poisons. They can harm children, pets, and wildlife.',
 				'**Clean up safely:** Wet down droppings with a disinfectant and wear gloves. Never dry-sweep or vacuum droppings.'
 			]
 		},

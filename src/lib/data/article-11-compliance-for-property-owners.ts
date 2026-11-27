@@ -32,7 +32,7 @@ export const article11Compliance = {
 			kind: 'body',
 			paragraphs: [
 				'When a tenant reports a pest or housing health problem, owners and managers must start investigating within 72 hours.',
-				'If Environmental Health finds a violation, they issue a notice of violation (NOV). It lists the required corrections and a compliance deadline.'
+				'If Environmental Health finds a violation, they issue a notice of violation (NOV). It lists what you must correct and the deadline to do it.'
 			],
 			bullets: [
 				'[Correct a violation and close your case](stepCorrectViolation)',
@@ -141,5 +141,5 @@ export const article11Compliance = {
 	],
 	seoTitle: 'Article 11 compliance for property owners | SF.gov',
 	metaDescription:
-		'What property owners and managers must do to comply with Health Code Article 11 — fees, response times, and required actions.'
+		'What property owners and managers must do to comply with Health Code Article 11, including fees, response times, and required actions.'
 };

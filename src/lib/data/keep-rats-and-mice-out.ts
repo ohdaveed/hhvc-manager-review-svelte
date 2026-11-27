@@ -92,7 +92,7 @@ export const rodentsPrevention = {
 			kind: 'body',
 			paragraphs: [
 				'A mouse can squeeze through a hole about the size of a pencil (about 1/4 inch). Rats and mice get in around pipes, vents, and gaps under doors.',
-				"In a rental, sealing the building is the owner's responsibility. Holes should be closed with metal, concrete, or steel wool covered with caulk, because rats and mice chew through foam, rubber, plastic, and wood."
+				"In a rental, sealing the building is the owner's responsibility. The owner should close holes with metal, concrete, or steel wool covered with caulk. Rats and mice chew through foam, rubber, plastic, and wood."
 			],
 			bullets: [
 				'**Tell your landlord in writing** about the signs you see and any holes you find.',

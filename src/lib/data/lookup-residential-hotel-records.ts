@@ -16,7 +16,7 @@ export const findHotelRecords = {
 		thingsToKnow: [
 			{
 				label: 'What this tool covers',
-				text: 'This lookup covers residential hotels, SROs, and shelters — a separate dataset from the general complaints and inspection lookup.'
+				text: 'This lookup covers residential hotels, SROs, and shelters. It is a separate dataset from the general complaints and inspection lookup.'
 			},
 			{
 				label: 'Leaving SF.gov',
