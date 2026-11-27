@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "corpusHash": "c951046d46347582bf9f1b781314e56d31f398adafb20f0aabe82a866be2f4c1",
+  "corpusHash": "960c9fae81960ae189086e5be2b0c10796a83991a846b3cc02bfc43cb31a4554",
   "pages": {
     "departments--healthy-housing-and-vector-control": {
       "contentHash": "0dbd9dd7bbad4361a566c5cd2c714223d97028f482b3ba8c958c082887615fc9",
@@ -132,7 +132,7 @@
       }
     },
     "information-bed-bugs-prevent-find-and-prepare-for-treatment": {
-      "contentHash": "0bcd7bb3146f51be4aaad86ca57fad2ea940425d1b32e81e5685554865ba0291",
+      "contentHash": "c6434995a7b930557ac08be780646c975abbd9867116bd4bbdcb6c0fdcbe4944",
       "fieldHashes": {
         "sections.check-for-bed-bugs.bullets.0": "d44bd88de28668418bb15ed6a197fde5c64af320f1ced1a98a0821c8470ea84a",
         "sections.check-for-bed-bugs.bullets.1": "4ab10d6d5a0ec5bf846e4bc8349194f960760ba1d35f80cb471d57e42e2357ab",
@@ -190,7 +190,7 @@
         "sections.what-tenants-need-to-do-before-treatment.paragraphs.1": "c69608fed04ada384933445e06690fc993eb2dcf6b8b9f12a49980d9da99bd4f",
         "audience.0": "52c9fecd89adf1d0bd070cfd2575b42f99ae47abcb81fd3b6b1686d705a55037",
         "sections.who-this-information-is-for.heading": "46c502c4c2c97e0ef59078280882f103e27790dbf304ac81dfa6c5a41ae5d2b9",
-        "summary": "b036bbc7dd107cc49258150e66e4a933d2662004e3d9d7938b9270fed2cc62d3",
+        "summary": "7e2a53f536357b596eb532392c3d26f7036b22c94940d210adfb6c6b6b269237",
         "title": "6bc7cdaf960a65a8125fa34ac029bae10a7b2179c95ae43dfcfa6c8eac3ec1c1"
       }
     },
@@ -769,7 +769,7 @@
       }
     },
     "pay-your-annual-healthy-housing-fee-apartment-buildings": {
-      "contentHash": "1861d03fc7b1b3c54201fb0ab12ac732c2928cac4f17e2ad8c143f6e07959849",
+      "contentHash": "e16970f28bae9a995fc2fa6f5fd75ea558da0fec8cd5951de9b1dda190420430",
       "fieldHashes": {
         "primaryAgency": "8a2847f0ee854052d30378a2ef091f979c9737bbd8219086a1e04dc0abd84f9f",
         "sections.related-pages.heading": "a3aae40a974e7f32803330a6f1d580ad7223dbb71dbf6b5c50bd5ed71cd2efbe",

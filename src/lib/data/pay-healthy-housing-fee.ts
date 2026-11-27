@@ -68,7 +68,7 @@ export const payFee = {
 						'More than 30 units: $808'
 					],
 					callout: {
-						text: '**Annual fee and reinspection fees are different:** the annual fee supports Healthy Housing inspections. If an inspection finds an uncorrected violation, a separate reinspection fee may apply. It is $256 per hour for an Environmental Health Inspector, or $234 per hour for a Technician. Additional half-hours cost $128 and $115.',
+						text: '**Annual fee and reinspection fees are different:** the annual fee supports Healthy Housing inspections. Inspectors look at common areas, yards, garbage storage areas, and lobbies. They check for conditions that may support pests or create housing health hazards. If an inspection finds an uncorrected violation, a separate reinspection fee may apply. It is $256 per hour for an Environmental Health Inspector, or $234 per hour for a Technician. Additional half-hours cost $128 and $115.',
 						karl: 'Callout inside the Transaction Step rich-text description. Keep the reinspection rates separate from the annual tier list so a reviewer does not mistake a potential enforcement cost for the amount due on the annual invoice. Rates are from the FY 2026-27 Environmental Health Branch fee schedule.'
 					},
 					karl: 'what_to_do -> Section. Section title: "Confirm your annual fee". Section specifics: one Text block (intro plus seven fee-tier bullets) + one Callout block. The Callout is a single rich text field with no separate title field like this mockup callout has, and the distinction is the bolded lead-in of that one field -- retype it exactly, bold included. The tier rates are from the FY 2026-27 Environmental Health Branch fee schedule; recheck against a newly certified schedule before publication.'
@@ -110,11 +110,7 @@ export const payFee = {
 						'A $30 late penalty applies after 60 days.',
 						'Unpaid balances may accrue 1.5% interest per month and may become a property lien.'
 					],
-					callout: {
-						text: '**What the annual fee supports:** Healthy Housing uses these fees to support inspections of apartment buildings. Inspectors look at common areas, yards, garbage storage areas, and lobbies. They check for conditions that may support pests or create housing health hazards.',
-						karl: 'Callout inside the Transaction Step rich-text description. This is the live page’s program-context copy, moved to the end so it explains the fee without delaying the payment decision.'
-					},
-					karl: 'what_to_do -> Section. Section title: "Pay your invoice or contact us". Section specifics: one Text block (intro plus late-payment bullets) + one Callout block. Same shape as the fee-tier callout above: the label is the bolded lead-in of the single rich text field, not a heading. Penalty timing is presented after the normal payment path rather than competing with it at the top of the page.'
+					karl: 'what_to_do -> Section. Section title: "Pay your invoice or contact us". Section specifics: one Text block (intro plus late-payment bullets). The "What the annual fee supports" callout that sat here was folded into the fee-tier callout above (C7, 2026-11-26). Penalty timing is presented after the normal payment path rather than competing with it at the top of the page.'
 				}
 			]
 		},

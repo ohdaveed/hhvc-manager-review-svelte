@@ -3,7 +3,7 @@ export const bedBugsInfo = {
 	type: 'Information',
 	title: 'Bed bugs: prevent them, find them, and get ready for treatment',
 	summary:
-		'Learn how these pests spread, how to check your home, and what tenants and owners must do before pest control.',
+		'Learn how bed bugs spread, how to check your home, and what tenants and owners must do before pest control.',
 	reading: 'Grade 4–6',
 	editorStatus: 'needs-review',
 	editorNote:
