@@ -3,7 +3,7 @@ export const payFee = {
 	type: 'Transaction',
 	title: 'Pay your annual Healthy Housing fee for apartment buildings',
 	summary:
-		'Pay your annual Healthy Housing fee if you own an apartment building with 3 or more rental units.',
+		'Owners of a building with 3 or more rental units get a yearly invoice. The amount ranges from $103 to $808.',
 	primaryAgency: 'Healthy Housing and Vector Control',
 	reading: 'Grade 7',
 	editorNote:
@@ -14,7 +14,7 @@ export const payFee = {
 		// you can" guidance) to match how real sf.gov Things to know entries
 		// render — each with its own H3, not one joined bullet list. The
 		// late-penalty fact that used to be a third bullet here is dropped as a
-		// duplicate: Step 5 ("Pay by the due date or contact us") already states
+		// duplicate: Step 5 ("Pay your invoice or contact us") already states
 		// it, and none of these dollar figures are touched/reworded.
 		thingsToKnow: [
 			{
@@ -101,7 +101,7 @@ export const payFee = {
 					karl: 'what_to_do -> Section. Section title: "Correct an invoice or update your information". Section specifics: one Text block (one intro paragraph and five bullets). Consolidates the live page’s scattered owner-occupied, unit-count, building-type, ownership, and mailing-address exceptions into one correction path.'
 				},
 				{
-					title: 'Pay by the due date or contact us',
+					title: 'Pay your invoice or contact us',
 					text: [
 						'Pay within 30 days of the invoice due date. Keep your invoice number or property address if you need help with your account.'
 					],
@@ -114,7 +114,7 @@ export const payFee = {
 						text: '**What the annual fee supports:** Healthy Housing uses these fees to support inspections of apartment buildings. Inspectors look at common areas, yards, garbage storage areas, and lobbies. They check for conditions that may support pests or create housing health hazards.',
 						karl: 'Callout inside the Transaction Step rich-text description. This is the live page’s program-context copy, moved to the end so it explains the fee without delaying the payment decision.'
 					},
-					karl: 'what_to_do -> Section. Section title: "Pay by the due date or contact us". Section specifics: one Text block (intro plus late-payment bullets) + one Callout block. Same shape as the fee-tier callout above: the label is the bolded lead-in of the single rich text field, not a heading. Penalty timing is presented after the normal payment path rather than competing with it at the top of the page.'
+					karl: 'what_to_do -> Section. Section title: "Pay your invoice or contact us". Section specifics: one Text block (intro plus late-payment bullets) + one Callout block. Same shape as the fee-tier callout above: the label is the bolded lead-in of the single rich text field, not a heading. Penalty timing is presented after the normal payment path rather than competing with it at the top of the page.'
 				}
 			]
 		},

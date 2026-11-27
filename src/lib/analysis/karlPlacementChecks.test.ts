@@ -136,10 +136,23 @@ describe('dead button links', () => {
 });
 
 describe('title words reused in the description', () => {
-	it('flags the annual fee page, which repeats 6 title words', () => {
-		const f = byId('payFee', 'karl-description-reuse');
+	it('flags a description that repeats 6 title words', () => {
+		const edits = [
+			{
+				field_id: 'summary',
+				new_content:
+					'Pay your annual Healthy Housing fee if you own an apartment building with 3 or more rental units.',
+				created_at: 'z'
+			}
+		];
+		const f = byId('payFee', 'karl-description-reuse', edits as never);
 		expect(f.status).toBe('issue');
 		expect(f.items[0].text).toBe('pay, annual, healthy, housing, fee, apartment');
+	});
+
+	it('passes the annual fee page and the bed bugs page after their rewrites', () => {
+		expect(byId('payFee', 'karl-description-reuse').status).toBe('pass');
+		expect(byId('bedBugsInfo', 'karl-description-reuse').status).toBe('pass');
 	});
 
 	it('passes the complaints records page, which repeats 1', () => {
