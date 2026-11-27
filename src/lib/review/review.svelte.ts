@@ -32,7 +32,7 @@ class Review {
 		)
 	);
 
-	/** Rows a reviewer can open (a corpus page or a draft), in store order. */
+	/** Rows a reviewer can open (a corpus page or a draft), in list order. */
 	get rows(): ReviewPage[] {
 		return this.#reconciled.rows;
 	}

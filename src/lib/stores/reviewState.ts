@@ -2,6 +2,7 @@ import { writable, get } from 'svelte/store';
 import { supabase, ensureDevSession } from '$lib/supabase';
 import { loadDrafts } from './draftPages';
 import { isDraftPath } from '$lib/corpus/draftPath';
+import { groupPaths } from '$lib/landing/groups';
 
 // Define the shape of our data
 export type PageCheck = { status: string; message: string };
@@ -89,7 +90,13 @@ export function queueOrder(pages: ReviewPage[]): string[] {
  * Read alone, the table under-counts the review and lists rows whose link 404s
  * on `/review/[slug]`'s static guard.
  *
- * - `rows` -- rows a reviewer can open: a corpus page or a draft. Store order.
+ * - `rows` -- rows a reviewer can open: a corpus page or a draft, in the order
+ *   the page lists show them (`groupPaths`: themed sections, then other pages,
+ *   then drafts). NOT store order: `loadReview` selects with no `ORDER BY`, so
+ *   the rows arrive in heap order, which changes as rows are updated. Every
+ *   "next" reads this order -- the landing page's Start, the panel's Next
+ *   undecided, the toolbar's prev/next -- and in heap order Start sent a
+ *   reviewer to "Environmental Health office", 40th of 41 in the list.
  * - `unreviewed` -- corpus ids with no row. Viewable, but undecidable: the
  *   table has no INSERT policy, so nothing in the app can create their row.
  * - `retired` -- rows for a page that is no longer in the corpus.
@@ -103,6 +110,9 @@ export function reconcileReview(
 	const rows: ReviewPage[] = [];
 	const retired: ReviewPage[] = [];
 	for (const p of pages) (corpus.has(p.path) || isDraftPath(p.path) ? rows : retired).push(p);
+	const listOrder = groupPaths(rows.map((p) => p.path)).flatMap((section) => section.paths);
+	const rank = new Map(listOrder.map((path, i) => [path, i]));
+	rows.sort((a, b) => (rank.get(a.path) ?? 0) - (rank.get(b.path) ?? 0));
 	const rowed = new Set(rows.map((p) => p.path));
 	const unreviewed = corpusIds.filter((id) => !rowed.has(id));
 	return { rows, unreviewed, retired, total: rows.length + unreviewed.length };
@@ -112,9 +122,9 @@ export function reconcileReview(
  * The page after `current` that still has no decision, so a reviewer can move on
  * without going back to the sidebar.
  *
- * Searches in store order (the order rows appear in inside the queue's
- * needs-review group), starting after `current` and wrapping round. Store order
- * rather than group order is deliberate: a decision moves the row to another
+ * Searches in the order of `pages` (for `review.rows`, list order: see
+ * `reconcileReview`), starting after `current` and wrapping round. That order
+ * rather than status-group order is deliberate: a decision moves the row to another
  * group, and "next" should still mean the row that came after it. Never returns
  * `current`; `undefined` once every page has a decision.
  */
