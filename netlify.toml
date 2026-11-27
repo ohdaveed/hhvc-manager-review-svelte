@@ -12,8 +12,9 @@
 # Every page renders an SF.gov mockup -- the City seal and "City and County of
 # San Francisco" header included -- readable without signing in. Indexed, a
 # search for "report rats San Francisco" could land on unapproved copy that
-# looks like the real site. A header covers every response, not just the HTML
-# routes that could carry a <meta name="robots">.
+# looks like the real site. This header reaches static files only: Netlify
+# does not apply it to the SvelteKit function that serves the pages, so the
+# pages carry <meta name="robots"> from src/routes/+layout.svelte.
 [[headers]]
 	for = "/*"
 	[headers.values]
