@@ -7,8 +7,8 @@
  * same page. Now both read `placementsFor`, which reads the transcript and
  * `schema.ts`. See `CONTEXT.md` for placement, unplaced, and the statuses.
  *
- * Judged on the copy on screen: the base corpus plus the reviewer's saved
- * edits, folded the same way `reviewRecordFor` folds them.
+ * Judged on the copy as shown, with the same page object and review record the
+ * Karl outline is given, so the panel and the outline cannot disagree.
  */
 import { pagesByKey } from '$lib/data';
 import { placementsFor, plainReason, type PagePlacements } from '$lib/karl/placement';
@@ -17,7 +17,6 @@ import { schemaFor } from '$lib/karl/schema';
 import type { CorpusPage } from '$lib/corpus/fields';
 import type { ComponentFinding } from './karlComponentChecks';
 import type { KarlHelpLink } from './karlHelp';
-import type { EditRow } from './pageCopy';
 import { titleWordsInDescription } from './textChecks';
 import type { FindingItem } from './index';
 
@@ -43,23 +42,6 @@ const typeHelp = (type: string): KarlHelpLink => ({
 	url: `${TYPES}/${TYPE_PAGES[type] ?? ''}`,
 	why: `What a ${type} page holds in Karl, field by field.`
 });
-
-/**
- * Saved edits as a review record: append-only rows, newest wins, with `title`
- * and `summary` split out as the record does.
- */
-export function recordFromEdits(edits: EditRow[]): ReviewRecord {
-	const sorted = [...edits].sort((a, b) =>
-		String(a.created_at ?? '').localeCompare(String(b.created_at ?? ''))
-	);
-	const record: ReviewRecord = { section_edits: {}, decision: '' };
-	for (const row of sorted) {
-		if (row.field_id === 'title') record.edited_title = row.new_content;
-		else if (row.field_id === 'summary') record.edited_summary = row.new_content;
-		else record.section_edits[row.field_id] = row.new_content;
-	}
-	return record;
-}
 
 const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
 
@@ -168,11 +150,13 @@ const ARTICLES = new Set(['a', 'an', 'the']);
 function urlFinding(
 	page: CorpusPage,
 	p: PagePlacements,
-	record: ReviewRecord
+	record: ReviewRecord | null
 ): ComponentFinding | null {
 	const schema = schemaFor(p.type);
 	if (!schema) return null;
-	const slug = String(record.url_slug || (page as { slug?: unknown }).slug || '');
+	// The page object never carries an edited slug -- the mockup does not render
+	// one -- so the record is where a reviewer's new URL is.
+	const slug = String(record?.url_slug || (page as { slug?: unknown }).slug || '');
 	const help: KarlHelpLink = {
 		title: schema.url.cite.helpTitle,
 		url: schema.url.cite.url,
@@ -223,12 +207,9 @@ const DESCRIPTION_HELP: KarlHelpLink = {
 };
 
 /** Pass at 0 or 1 reused words: one shared key word is often unavoidable. */
-function descriptionReuseFinding(page: CorpusPage, record: ReviewRecord): ComponentFinding {
+function descriptionReuseFinding(page: CorpusPage): ComponentFinding {
 	const p = page as { title?: unknown; summary?: unknown };
-	const reused = titleWordsInDescription(
-		String(record.edited_title || p.title || ''),
-		String(record.edited_summary || p.summary || '')
-	);
+	const reused = titleWordsInDescription(String(p.title || ''), String(p.summary || ''));
 	const ok = reused.length < 2;
 	return {
 		id: 'karl-description-reuse',
@@ -242,10 +223,17 @@ function descriptionReuseFinding(page: CorpusPage, record: ReviewRecord): Compon
 	};
 }
 
-export function karlPlacementFindings(page: CorpusPage, edits: EditRow[] = []): ComponentFinding[] {
+/**
+ * @param page the copy as shown -- the same page object the Karl outline reads.
+ * @param record the page's review record from `reviewRecordFor`, the same one
+ *   the outline is given, so the two cannot disagree. `null` signed out.
+ */
+export function karlPlacementFindings(
+	page: CorpusPage,
+	record: ReviewRecord | null = null
+): ComponentFinding[] {
 	const type = String((page as { type?: unknown }).type ?? '');
 	if (!type) return [];
-	const record = recordFromEdits(edits);
 	const placements = placementsFor(page as never, record, pagesByKey);
 	const help = typeHelp(type);
 	const unconfirmedPageNotes = (schemaFor(type)?.pageCaveats ?? [])
@@ -258,6 +246,6 @@ export function karlPlacementFindings(page: CorpusPage, edits: EditRow[] = []): 
 		unconfirmedFinding(placements, unconfirmedPageNotes, help),
 		emptyFieldsFinding(placements, help),
 		...(url ? [url] : []),
-		descriptionReuseFinding(page, record)
+		descriptionReuseFinding(page)
 	];
 }

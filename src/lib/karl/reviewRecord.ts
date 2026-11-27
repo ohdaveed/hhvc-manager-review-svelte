@@ -9,12 +9,11 @@
  * approved version of the same page: two callers, one of them passing `null`,
  * and nothing naming the difference.
  *
- * So the fold lives here and only here. Three of its properties are load-
+ * So the record is built here and only here. Three of its properties are load-
  * bearing rather than incidental:
  *
- * 1. **Ordered explicitly by `created_at`.** `edits` is append-only and a
- *    field can hold several rows, so the fold is last-write-wins. Row order
- *    from PostgREST is not a guarantee; the timestamp is.
+ * 1. **Last write wins, by `created_at`.** `edits` is append-only and a field
+ *    can hold several rows; the fold is `latestByField` in `$lib/corpus/overlay`.
  * 2. **`title`, `summary` and `slug` are page fields, not sections.**
  *    `resolveValue` in `karl-transcript.js` reads them under those names
  *    (`edited_title`, `edited_summary`, `url_slug`); everything else is a
@@ -24,6 +23,7 @@
  *    empty object would report a review that never happened -- and the
  *    transcript's "NOT APPROVED" banner reads differently for the two.
  */
+import { latestByField } from '$lib/corpus/overlay';
 import type { Edit, ReviewPage } from '$lib/stores/reviewState';
 
 /**
@@ -88,27 +88,24 @@ export function reviewRecordFor(
 	if (!pageId) return null;
 
 	const livePage = pages.find((p) => p.path === pageId);
-	const mine = edits
-		.filter((e) => e.page_id === livePage?.id)
-		.slice()
-		.sort((a, b) => (a.created_at ?? '').localeCompare(b.created_at ?? ''));
+	const latest = latestByField(edits.filter((e) => e.page_id === livePage?.id));
 
-	if (mine.length === 0 && !livePage?.status) return null;
+	if (latest.size === 0 && !livePage?.status) return null;
 
 	const record: ReviewRecord = {
 		section_edits: {},
 		decision: STATUS_LABELS[livePage?.status as ReviewPage['status']] ?? 'Needs review'
 	};
 
-	for (const edit of mine) {
-		if (edit.field_id === 'title') record.edited_title = edit.new_content;
-		else if (edit.field_id === 'summary') record.edited_summary = edit.new_content;
-		else if (edit.field_id === 'slug') record.url_slug = edit.new_content;
-		else record.section_edits[edit.field_id] = edit.new_content;
+	// The newest wording per field: what the record carries and what a stale
+	// flag is about.
+	const accepted = new Map([...latest].map(([fieldId, e]) => [fieldId, e.new_content]));
+	for (const [fieldId, text] of accepted) {
+		if (fieldId === 'title') record.edited_title = text;
+		else if (fieldId === 'summary') record.edited_summary = text;
+		else if (fieldId === 'slug') record.url_slug = text;
+		else record.section_edits[fieldId] = text;
 	}
-
-	// The newest wording per field, which is what a stale flag is about.
-	const accepted = new Map(mine.map((e) => [e.field_id, e.new_content]));
 	for (const [fieldId, base] of Object.entries(stale?.expired ?? {})) {
 		const text = accepted.get(fieldId);
 		if (text !== undefined) (record.expired ??= {})[fieldId] = { accepted: text, base };

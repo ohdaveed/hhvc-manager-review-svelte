@@ -119,9 +119,7 @@
 						$editsStore,
 						pageStore.staleEditsOn(pageData.id)
 					),
-					pagesByKey,
-					// Judge the wording on screen, unsaved changes included.
-					{ copy: 'as-shown' }
+					pagesByKey
 				)
 			: null
 	);

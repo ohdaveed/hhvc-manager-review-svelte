@@ -19,7 +19,8 @@
 
 import type { CorpusPage } from '$lib/corpus/fields';
 import type { KarlHelpKey } from './karlHelp';
-import { analyzableCopy, readabilityTextFrom, type CopyEntry, type EditRow } from './pageCopy';
+import type { ReviewRecord } from '$lib/karl/reviewRecord';
+import { analyzableCopy, readabilityTextFrom, type CopyEntry } from './pageCopy';
 import {
 	normalizeForReadability,
 	parseReadingTarget,
@@ -83,14 +84,16 @@ export type Analysis = {
 export const SFGOV_READING_GUIDELINE = 5;
 
 export type AnalyzeInput = {
+	/** The copy as shown: saved edits and unsaved changes already on it. */
 	page: CorpusPage & { reading?: unknown };
-	edits?: EditRow[];
+	/** The page's review record (`reviewRecordFor`), as the Karl outline gets it. */
+	record?: ReviewRecord | null;
 	/** The rendered mockup root. Omitted in tests that only exercise the copy checks. */
 	root?: ParentNode | null;
 };
 
-export function analyzePage({ page, edits = [], root = null }: AnalyzeInput): Analysis {
-	const entries: CopyEntry[] = analyzableCopy(page, edits);
+export function analyzePage({ page, record = null, root = null }: AnalyzeInput): Analysis {
+	const entries: CopyEntry[] = analyzableCopy(page);
 	const text = normalizeForReadability(readabilityTextFrom(entries));
 	const readability = scoreReadability(text);
 
@@ -245,7 +248,7 @@ export function analyzePage({ page, edits = [], root = null }: AnalyzeInput): An
 		findings,
 		componentFindings: karlComponentFindings(page),
 		contentTypeFindings: karlContentTypeFindings(page),
-		placementFindings: karlPlacementFindings(page, edits),
+		placementFindings: karlPlacementFindings(page, record),
 		measuredFields: entries.filter((e) => e.kind === 'heading' || e.kind === 'prose').length
 	};
 }
