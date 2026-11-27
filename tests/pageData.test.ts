@@ -237,6 +237,49 @@ describe('rail default', () => {
 	});
 });
 
+describe('present', () => {
+	beforeEach(() => {
+		localStorage.clear();
+		if (pageStore.presenting) pageStore.togglePresent();
+		if (pageStore.mode === 'walkthrough') pageStore.exitWalkthrough();
+		pageStore.railCollapsed = { queue: false, panel: true };
+	});
+
+	// Both rails collapsed is what gives Fit a pane wider than the 1024px
+	// desktop layout, so the page renders at 100% instead of ~70% at 1440.
+	it('collapses both rails, and restores them as they were on the way out', () => {
+		pageStore.togglePresent();
+		expect(pageStore.presenting).toBe(true);
+		expect(pageStore.railCollapsed).toEqual({ queue: true, panel: true });
+
+		pageStore.togglePresent();
+		expect(pageStore.presenting).toBe(false);
+		expect(pageStore.railCollapsed).toEqual({ queue: false, panel: true });
+	});
+
+	it('is not persisted as a rail choice', () => {
+		pageStore.togglePresent();
+		expect(localStorage.getItem('hhvc:railCollapsed')).toBeNull();
+	});
+
+	it('ends when the reviewer opens a rail by hand, keeping that rail open', () => {
+		pageStore.togglePresent();
+		pageStore.toggleRail('queue');
+		expect(pageStore.presenting).toBe(false);
+		expect(pageStore.railCollapsed).toEqual({ queue: false, panel: true });
+	});
+
+	it('hands over to the walkthrough, which restores the pre-Present rails on exit', () => {
+		pageStore.togglePresent();
+		pageStore.enterWalkthrough();
+		expect(pageStore.presenting).toBe(false);
+		expect(pageStore.railCollapsed).toEqual({ queue: true, panel: true });
+
+		pageStore.exitWalkthrough();
+		expect(pageStore.railCollapsed).toEqual({ queue: false, panel: true });
+	});
+});
+
 describe('unsaved changes', () => {
 	const A = () => pageStore.pages[0];
 	const B = () => pageStore.pages[1];

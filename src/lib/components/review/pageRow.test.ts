@@ -81,4 +81,22 @@ describe.each(['compact', 'comfortable'] as const)('PageRow (%s)', (density) => 
 	it('has a focus-visible cue, not hover alone', () => {
 		expect(row().querySelector('a')!.className).toMatch(/focus-visible:outline-/);
 	});
+
+	// The landing list's rows read as plain text; the chevron is the cue that a
+	// row opens a page. Decorative, so hidden from the accessible name, which
+	// stays "title, status, type".
+	it(
+		density === 'comfortable'
+			? 'ends in a decorative chevron'
+			: 'carries no chevron in the sidebar',
+		() => {
+			const chevron = row({ badge }).querySelector('[data-slot="page-row-chevron"]');
+			if (density === 'comfortable') {
+				expect(chevron).not.toBeNull();
+				expect(chevron!.getAttribute('aria-hidden')).toBe('true');
+			} else {
+				expect(chevron).toBeNull();
+			}
+		}
+	);
 });

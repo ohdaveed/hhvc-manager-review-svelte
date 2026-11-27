@@ -32,6 +32,7 @@
 		Download,
 		Maximize2,
 		Monitor,
+		Presentation,
 		Smartphone,
 		Tablet
 	} from '@lucide/svelte';
@@ -831,6 +832,24 @@
 									</ToggleGroup.Item>
 								{/each}
 							</ToggleGroup.Root>
+							<!-- Present: both rails away and the review controls hidden, so
+							     the page is shown the way it would look on SF.gov and at
+							     full size. Icon-only for the same reason as the width
+							     control beside it. -->
+							<Button
+								variant={pageStore.presenting ? 'default' : 'outline'}
+								size="icon-sm"
+								class="size-7"
+								aria-pressed={pageStore.presenting}
+								aria-label="Present"
+								title={pageStore.presenting
+									? 'Stop presenting: show the review controls again'
+									: 'Present: hide the review controls and show the page full size'}
+								data-testid="present-toggle"
+								onclick={() => pageStore.togglePresent()}
+							>
+								<Presentation class="size-3.5" aria-hidden="true" />
+							</Button>
 						</div>
 						<!-- Canvas controls only. The Karl walkthrough, the Karl field
 						     outline and the Blueprint moved to the review panel's Karl strip
@@ -924,7 +943,12 @@
 					     (`max-w-xl`, measured 2026-11-22). Title and summary span it;
 					     body copy sits in 7 of its 12 columns (app.css). The chrome
 					     above and below is full-bleed, which is why it sits outside. -->
-						<div id="mockPage" class="mock-page" class:karl-outline-on={outlinePlacements}>
+						<div
+							id="mockPage"
+							class="mock-page"
+							class:karl-outline-on={outlinePlacements}
+							data-presenting={pageStore.presenting ? '' : undefined}
+						>
 							{#if outlinePlacements}
 								<!-- Review-tool chrome, like the Karl notices inside sections: the
 								     one-line count a reviewer reads before the chips. -->
