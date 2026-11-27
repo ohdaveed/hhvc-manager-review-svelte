@@ -32,7 +32,7 @@ export const payCitation = {
 				{
 					title: 'Read your citation',
 					text: [
-						'The citation names the amount, the date it is due, and how to pay. Those are the figures that apply. This page does not repeat them.'
+						'The citation names the amount, the date it is due, and how to pay. Use the figures on your citation.'
 					],
 					bullets: [
 						'Check which cited condition the penalty relates to.',

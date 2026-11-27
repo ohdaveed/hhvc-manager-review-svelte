@@ -33,9 +33,9 @@ export const afterReport = {
 			ordered: true,
 			bullets: [
 				'**You report through 311.** 311 receives the report and sends it to the right City department when possible.',
-				'**Environmental Health reviews the report.** HHVC may review the complaint if it may involve a housing or pest-related public health concern. 311 routes the complaint to Environmental Health, and HHVC assigns it to an inspector. This can take a few days. We process complaints on weekdays.',
+				'**Environmental Health reviews the report.** HHVC may review the complaint if it involves a housing or pest-related public health concern. 311 routes the complaint to Environmental Health, and HHVC assigns it to an inspector. This can take a few days. We process complaints on weekdays.',
 				{
-					text: '**Another agency may take it.** If your complaint involves structural water intrusion, HHVC routes it to the Department of Building Inspection (DBI). That includes leaking roof frames, structural plumbing leaks, and broken water heaters. DBI handles these under the San Francisco Housing Code (2025). HHVC focuses strictly on condensation, humidity, and ventilation-related moisture issues.',
+					text: '**Another agency may take it.** If your complaint involves structural water intrusion, HHVC routes it to the Department of Building Inspection (DBI). That includes leaking roof frames, structural plumbing leaks, and broken water heaters. DBI handles these under the San Francisco Housing Code (2025). HHVC handles only moisture from condensation, humidity, or poor ventilation.',
 					unverified: true,
 					unverifiedReason:
 						'The "San Francisco Housing Code (2025)" citation has zero tier-1 support (source-of-truth audit 2026-07-06, cross-cutting finding #1) — the DBI routing split looks intentional, but the statutory citation and "(2025)" edition tag trace only to tier-3 NotebookLM material. Source a real Housing Code citation or soften to "may be routed to DBI" before publication.'
@@ -87,19 +87,19 @@ export const afterReport = {
 			],
 			bullets: [
 				{
-					text: '**Sewage Backups (48 to 72 hours):** Raw sewage backups need immediate correction. The standard 30-day compliance window does not apply.',
+					text: '**Sewage backups (48 to 72 hours):** Raw sewage backups need immediate correction. The standard 30-day compliance window does not apply.',
 					unverified: true,
 					unverifiedReason:
 						'No tier-1 doc mentions sewage backups or a 48-to-72-hour window (source-of-truth audit 2026-07-06 — High). Traces only to tier-3 chapter drafts and NotebookLM material. Confirm with HHVC/legal before publication.'
 				},
 				{
-					text: '**All Other Violations (30 days):** Most cited conditions must be corrected within 30 days. These include overgrown vegetation, trash piles, rodent harborages, general sanitation problems, minor gaps or cracks, and mold remediation.',
+					text: '**All other violations (30 days):** Most cited conditions must be corrected within 30 days. These include overgrown vegetation, trash piles, rodent harborages, general sanitation problems, minor gaps or cracks, and mold remediation.',
 					unverified: true,
 					unverifiedReason:
 						'No tier-1 doc establishes a generic 30-day correction window (source-of-truth audit 2026-07-06 — Medium-high); the only tier-1 "30 days" figures govern the fee late-payment deadline, a different thing. Traces to tier-3 material that itself cites SF Building Code, not Health Code Article 11. Confirm with HHVC/legal before publication.'
 				},
 				{
-					text: '**Bed Bug Treatment:** A property owner or manager must initiate professional treatment within 2 working days of confirmation.',
+					text: '**Bed bug treatment:** A property owner or manager must start professional treatment within 2 working days of confirmation.',
 					unverified: true,
 					unverifiedReason:
 						'Quoted from the draft pages (writing audit row 132) and listed under To confirm in the Nov 24 decisions record, as on Report bed bugs. Confirm the rule and its source with HHVC before publication.'

@@ -19,7 +19,7 @@ export const inspectorLookup = {
 			kind: 'body',
 			paragraphs: [
 				{
-					text: 'Healthy Housing and Vector Control assigns inspectors by neighborhood. Use this page to find contact information for the inspector who covers your area.',
+					text: 'Healthy Housing and Vector Control assigns inspectors by neighborhood. Find contact information for the inspector who covers your area.',
 					unverified: true,
 					unverifiedReason:
 						'Whether HHVC organizes inspector assignments strictly by neighborhood, or by some other territory division, has no tier-1 source. Confirm with HHVC before publication.'

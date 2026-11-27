@@ -39,7 +39,7 @@ export const appealNotice = {
 				{
 					title: 'Find the investigator named on your notice',
 					text: [
-						'Your notice names the person who issued it. They are who to talk to about what it says.'
+						'Your notice names the person who issued it. Talk to that person about what it says.'
 					],
 					bullets: [
 						'Note the investigator’s name and contact details.',
@@ -54,7 +54,7 @@ export const appealNotice = {
 					],
 					bullets: [
 						'Ask what condition was cited and what evidence it rests on.',
-						'Say so straight away if you believe the notice names the wrong party.',
+						'Say so right away if you believe the notice names the wrong party.',
 						'Bring dated photos, receipts, and treatment reports if you have them.',
 						'[Health Code Article 11 in plain language](article11Guide)'
 					],

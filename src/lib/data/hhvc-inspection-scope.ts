@@ -101,7 +101,7 @@ export const scopeInfo = {
 				},
 				'A fire hazard or a blocked exit goes to the Fire Department.',
 				'For lead, pesticides, water quality, food sanitation, or business hygiene, use the [Citywide health nuisance and hazards reporting service](https://www.sf.gov/report-health-nuisance-or-hazards).',
-				'If you are not sure whether HHVC can review your problem, it is still okay to report it. HHVC will review whether it may involve a housing or pest-related public health concern.'
+				'If you are not sure whether HHVC can review your problem, it is still okay to report it. HHVC will look at it and decide whether it is a housing or pest health concern it handles.'
 			]
 		},
 		{

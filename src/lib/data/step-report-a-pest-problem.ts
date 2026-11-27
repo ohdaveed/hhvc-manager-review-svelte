@@ -15,7 +15,7 @@ export const stepPestReport = {
 			kind: 'body',
 			component: 'intro',
 			paragraphs: [
-				'This page follows one pest report from the moment you file it to the moment the case closes. It links to the page for each stage rather than repeating it.'
+				'Follow one pest report from the day you file it until the case closes. Each stage links to its own page for the details.'
 			],
 			bullets: [
 				'Tenants and residents who have reported a problem',
@@ -109,9 +109,7 @@ export const stepPestReport = {
 				},
 				{
 					title: 'Follow the correction work',
-					text: [
-						'The notice sets what must be corrected and by when. That deadline comes from the notice, not from this page.'
-					],
+					text: ['The notice sets what must be corrected and by when.'],
 					bullets: [
 						'[Correct a violation and close your case](stepCorrectViolation)',
 						'[What tenants need to do after a Notice of Violation](tenantNoticeSteps)'

@@ -51,7 +51,7 @@ export const tenantRights = {
 			karl: 'Maps to a second Title and text block: Title = this heading, Text = the paragraph plus the bulleted list below. General information, not legal advice.',
 			kind: 'body',
 			paragraphs: [
-				'Retaliation is when a property owner or manager punishes you for reporting a condition. It can take different forms.'
+				'Retaliation is when a property owner or manager punishes you for reporting a condition. It can include:'
 			],
 			bullets: [
 				'Trying to evict you or threatening eviction',

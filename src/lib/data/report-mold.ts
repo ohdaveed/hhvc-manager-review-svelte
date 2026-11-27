@@ -102,9 +102,7 @@ export const moldReport = {
 			karl: 'Maps to supporting_information (Accordions), collapsed by default as the real accordion renders. Contents: one Text block (lead paragraph + tips). Cut on 2026-11-26 (page review, as on Report rats or mice) to the tips a resident can act on now. The EPA and CDC links were dropped: Reduce moisture and mold in your home carries both.',
 			kind: 'body',
 			component: 'supporting',
-			paragraphs: [
-				'It may take us a few weekdays to get back to you. In the meantime, here are a few things you can do to help with the problem.'
-			],
+			paragraphs: ['It may take us a few weekdays to get back to you.'],
 			bullets: [
 				'**Reduce indoor moisture:** Open windows or run fans in kitchens and bathrooms to slow mold growth.'
 			]
