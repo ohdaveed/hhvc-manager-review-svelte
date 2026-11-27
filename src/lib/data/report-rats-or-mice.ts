@@ -62,6 +62,15 @@ export const rodentsReport = {
 						'Live in an SRO or residential hotel? Report the same way. Senior inspectors handle SRO cases.'
 					],
 					button: 'Report through 311',
+					after: [
+						'**Other ways to report**',
+						'**Call 311 to make a report**',
+						'415-701-2311 if you are outside of San Francisco',
+						'Hearing or speaking impaired; please call TDD/TTY 711',
+						'**Use our Mobile App**',
+						'Download our mobile app to report a problem and track your request! Available on Android or iOS.',
+						'[Learn more about the SF311 mobile app](https://www.sf.gov/sf311-mobile-app)'
+					],
 					karl: 'what_to_do -> Section. Section title: "Start your report". Section specifics: Text block (these 2 paragraphs, the second being the one-line SRO note every report page carries, Decided) + Button link block ("Report through 311"). Who can report and when to report now moved to What to know on 2026-11-26 (page review), so eligibility and timing are read before the details are gathered. The SRO note drops the clerk-routing sentence on this page only: it is internal workflow, and the other report pages still carry it.'
 				}
 			]

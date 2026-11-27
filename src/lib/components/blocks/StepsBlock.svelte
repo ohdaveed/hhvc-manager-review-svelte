@@ -79,6 +79,19 @@
 					name={`${label} Step [${i + 1}] Button`}
 				/>
 			{/if}
+
+			<!-- `after`: a Text block below the button, e.g. "Other ways to report". -->
+			{#if step.after}
+				{#each step.after as entry, j (j)}
+					<EditTarget
+						as="p"
+						fieldId={`sections.${sectionKey}.steps.${i}.after.${j}`}
+						name={`${label} Step [${i + 1}] After button [${j + 1}]`}
+						value={entryText(entry)}
+						unverified={entryUnverified(entry)}
+					/>
+				{/each}
+			{/if}
 		</li>
 	{/each}
 </ol>

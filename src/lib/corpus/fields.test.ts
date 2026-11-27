@@ -408,7 +408,7 @@ describe('extractFields/extractCopy coverage of the real corpus', () => {
 	const COPY_ONLY_FACT = ['label', 'text'];
 	const NON_COPY_FACT = ['unverified', 'unverifiedReason'];
 
-	const COPY_ONLY_STEP = ['title', 'text', 'button', 'buttonUrl', 'callout', 'bullets'];
+	const COPY_ONLY_STEP = ['title', 'text', 'button', 'buttonUrl', 'callout', 'bullets', 'after'];
 	const NON_COPY_STEP = ['karl'];
 
 	const COPY_ONLY_STEP_CALLOUT = ['title', 'text'];

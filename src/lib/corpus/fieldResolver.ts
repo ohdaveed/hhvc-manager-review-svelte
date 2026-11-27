@@ -346,13 +346,13 @@ export function resolveField(
 			return stringField(step, rest[2], `${stepLabel} ${kind}`);
 		}
 
-		if (rest.length === 4 && (rest[2] === 'text' || rest[2] === 'bullets')) {
+		if (rest.length === 4 && (rest[2] === 'text' || rest[2] === 'bullets' || rest[2] === 'after')) {
 			const list = step?.[rest[2]];
 			const j = Number(rest[3]);
 			if (!Array.isArray(list) || !Number.isInteger(j)) return null;
 			const entry = readEntry(list[j]);
 			if (!entry) return null;
-			const kind = rest[2] === 'text' ? 'Text' : 'Bullet';
+			const kind = { text: 'Text', bullets: 'Bullet', after: 'After button' }[rest[2]];
 			return {
 				name: `${stepLabel} ${kind} [${j + 1}]`,
 				value: entry.text,

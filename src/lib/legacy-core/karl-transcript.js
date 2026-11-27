@@ -1069,6 +1069,23 @@ function emitSteps(context, entry, section, index) {
 			claim(context, `${base}.buttonUrl`);
 		}
 
+		// `after`: a second Text block below the Button link, e.g. "Other ways to
+		// report" on the report pages. Karl's Section specifics stream takes blocks
+		// in any order, so it is a sibling Text block after the button.
+		const after = resolveValue(context.page, context.reviewRecord, `${base}.after`);
+		const afterText = foldTextAndBullets(after.value, []);
+		if (afterText) {
+			entry.fields.push({
+				label: stepByStep
+					? `Step ${stepIndex + 1} — Step description (after the link)`
+					: `Section ${stepIndex + 1} — Section specifics → Text (after the Button link)`,
+				value: afterText
+			});
+			collectLinks(context, entry, afterText);
+			entry.overlaid = entry.overlaid || after.overlaid;
+		}
+		claim(context, `${base}.after`);
+
 		if (step.callout) emitCallout(context, entry, step.callout, `${base}.callout`);
 	});
 	claim(context, `sections.${index}.steps`);
