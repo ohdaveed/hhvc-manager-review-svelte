@@ -4,6 +4,7 @@ export const stepPestReport = {
 	title: 'Report a pest problem, start to finish',
 	summary: 'Follow a 311 report from filing through inspection, notice, and re-inspection.',
 	reading: 'Grade 7',
+	proposed: true,
 	editorNote:
 		'PROPOSED PAGE — not in the current 29. Drafted from `design/HHVC Page Ideas.dc.html`, which argues this is one of the four that change the most for a reader. Step by step is the type Karl documents for "a process that unfolds over weeks with a deadline at each stage", and it is the only type whose Step block carries a Transaction link chooser — which is what lets this page stay an overview and send the detail to the existing Transaction pages rather than restating them. Nothing here states a timeline the corpus has not already established: the 72-hour landlord wait is linked to Tenant rights rather than restated, and no inspection, correction or re-inspection interval is given a number, because none is confirmed. Every step that names a duration says what governs it instead. Step by step has no page-level cost and no things_to_know, so the audience sits in Intro rather than in a What-to-know entry.',
 	editorStatus: 'needs-review',

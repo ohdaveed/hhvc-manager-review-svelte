@@ -333,6 +333,95 @@ describe('ReviewQueue', () => {
 		});
 	});
 
+	// `proposed: true` marks a page drafted from the page-ideas plan. The toggle
+	// narrows every list the queue renders: reviewed rows, corpus pages with no
+	// row (proposed pages are the likeliest to lack one), and the signed-out list.
+	describe('Proposed pages only', () => {
+		const toggle = () => screen.getByRole('checkbox', { name: 'Proposed pages only' });
+		const hrefs = () => screen.getAllByRole('link').map((a) => a.getAttribute('href'));
+
+		beforeEach(() => {
+			pageStore.pages = [
+				...pageStore.pages,
+				{
+					id: 'topic-x--idea',
+					title: 'An idea',
+					type: 'Step by step',
+					proposed: true,
+					sections: []
+				},
+				{
+					id: 'topic-x--unrowed',
+					title: 'No row yet',
+					type: 'Campaign',
+					proposed: true,
+					sections: []
+				}
+			];
+			pagesStore.set([
+				row('topic-x--about', 'approved'),
+				row('topic-x--report', 'needs-review'),
+				row('topic-x--idea', 'needs-review')
+			]);
+		});
+
+		it('is off by default, and on lists only proposed pages, reviewed or not', async () => {
+			render(ReviewQueue);
+			expect((toggle() as HTMLInputElement).checked).toBe(false);
+			expect(hrefs()).toContain('/review/topic-x--report');
+
+			await fireEvent.click(toggle());
+
+			expect(hrefs()).toEqual(['/review/topic-x--idea', '/review/topic-x--unrowed']);
+			// Progress still describes the whole review, not the filtered rows.
+			expect(screen.getByText(/of 4 decided/)).toBeTruthy();
+		});
+
+		it('says "Proposed" in the meta line, as a word', () => {
+			render(ReviewQueue);
+			const idea = screen.getByRole('link', { name: /An idea/ });
+			expect(idea.textContent).toContain('Step by step · Proposed');
+			const unrowed = screen.getByRole('link', { name: /No row yet/ });
+			expect(unrowed.textContent).toContain('Campaign · Proposed');
+			const report = screen.getByRole('link', { name: /Report a problem/ });
+			expect(report.textContent).not.toContain('Proposed');
+		});
+
+		it('combines with the text filter, and says when nothing is left', async () => {
+			render(ReviewQueue);
+			await fireEvent.click(toggle());
+			const box = screen.getByRole('searchbox', { name: 'Filter pages' });
+
+			await fireEvent.input(box, { target: { value: 'idea' } });
+			expect(hrefs()).toEqual(['/review/topic-x--idea']);
+
+			await fireEvent.input(box, { target: { value: 'report' } });
+			expect(screen.queryAllByRole('link')).toHaveLength(0);
+			expect(screen.getByRole('status').textContent).toMatch(/No proposed pages match “report”/);
+		});
+
+		it('says so when there are no proposed pages at all', async () => {
+			pageStore.pages = pageStore.pages.filter((p) => !p.proposed);
+			pagesStore.set([row('topic-x--about', 'approved')]);
+			render(ReviewQueue);
+			await fireEvent.click(toggle());
+
+			expect(screen.getByRole('status').textContent).toMatch(/No proposed pages\./);
+		});
+
+		it('narrows the signed-out corpus list too', async () => {
+			pagesStore.set([]);
+			render(ReviewQueue);
+			await screen.findByRole('link', { name: 'Sign in' });
+			await fireEvent.click(toggle());
+
+			expect(hrefs().filter((h) => h !== '/login')).toEqual([
+				'/review/topic-x--idea',
+				'/review/topic-x--unrowed'
+			]);
+		});
+	});
+
 	// Signed in with an empty store, the queue said "This review has no pages
 	// yet." while the load was still in flight -- seen 1.5s into a normal load.
 	// The empty message is now reserved for a load that resolved with nothing.

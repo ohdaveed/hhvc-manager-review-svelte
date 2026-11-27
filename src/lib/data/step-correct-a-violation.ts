@@ -5,6 +5,7 @@ export const stepCorrectViolation = {
 	summary:
 		'The steps from a Notice of Violation to a passed re-inspection, and who is responsible at each one.',
 	reading: 'Grade 7',
+	proposed: true,
 	editorNote:
 		'PROPOSED PAGE — not in the current 29. This is the sequence `design/HHVC Page Ideas.dc.html` says is "scattered across four Transaction pages" today, with the reader left to assemble it. It is the page the four proposed post-inspection Transactions attach to: "Ask for more time" and "Tell us your violation is fixed" are steps here rather than sibling pages, which is how Karl documents Step by step working — an overview whose Step blocks carry a Transaction link to the detail. NO DEADLINE OR INTERVAL IS STATED. Every correction period comes from the individual notice, and the corpus has no confirmed default; steps say what governs the date instead of naming one. Party responsibility is split per step rather than pooled into one list, because this is the page an owner reads under deadline pressure and a mixed list is where someone reads past the line that was theirs. MERGED 2026-11-25 (C1, decided Nov 24, 2026): Fix your Healthy Housing and Vector Control violation merged into this page, and Get ready for a follow-up inspection folded into Steps 5 and 6. Both pages are removed. Their facts this page lacked are carried with their unverified flags; the rest it already said.',
 	editorStatus: 'needs-review',
