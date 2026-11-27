@@ -411,9 +411,10 @@
 		{/if}
 	</div>
 
-	<!-- The way into the walkthrough from where the decision is made. The
-	     toolbar has the same entry; this one says what it is for, because a
-	     button name alone did not tell anyone the transfer step existed. -->
+	<!-- The way into the walkthrough, from where the decision is made, and its
+	     only entry since the toolbar's button was removed (2026-11-26). It says
+	     what it is for, because a button name alone did not tell anyone the
+	     transfer step existed. -->
 	<Separator />
 	<section class="space-y-3 p-6" aria-labelledby="karl-handoff">
 		<div class="flex items-baseline justify-between gap-2">
@@ -451,7 +452,11 @@
 	     `showOnlyChecks`, which made one tab a strict subset of another. The
 	     tab is gone; this is the single home for them, directly under the
 	     decision they bear on. -->
-		<div class="flex-1 overflow-y-auto bg-muted/40 p-6">
+		<!-- No scroller of its own: the tab panel around it already scrolls and is
+		     focusable. Nested, this box became a scroll region whenever the panel
+		     was short (the Karl strip took 48px at 1280x720), holding nothing
+		     focusable -- axe's scrollable-region-focusable. -->
+		<div class="flex-1 bg-muted/40 p-6">
 			<h3 class="mb-4 text-sm font-bold">Page checks</h3>
 
 			<div class="space-y-3">

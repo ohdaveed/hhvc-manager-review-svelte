@@ -881,6 +881,10 @@ class PageStore {
 	}
 
 	enterWalkthrough() {
+		// Both entries now live in the review panel, which below 1024px is a
+		// modal sheet over the canvas: leaving it open would cover the view just
+		// asked for.
+		this.mobileSheet = 'none';
 		this.#railsBeforeWalkthrough = { ...this.railCollapsed };
 		this.railCollapsed = { queue: true, panel: true };
 		this.stepIndex = 0;
@@ -901,6 +905,7 @@ class PageStore {
 
 	/** The page redrawn as its Karl form. A view, like the site map: not persisted. */
 	showBlueprint() {
+		this.mobileSheet = 'none';
 		this.mode = 'blueprint';
 	}
 

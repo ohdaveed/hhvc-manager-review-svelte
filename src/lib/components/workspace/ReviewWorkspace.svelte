@@ -2,6 +2,7 @@
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { ChevronsRight } from '@lucide/svelte';
+	import { Switch } from '$lib/components/ui/switch/index.js';
 	import ReviewPanel from './ReviewPanel.svelte';
 	import FieldsPanel from './FieldsPanel.svelte';
 	import RethinkPanel from './RethinkPanel.svelte';
@@ -12,6 +13,7 @@
 		pageData,
 		livePageId,
 		karlReadiness = null,
+		karlViews = false,
 		collapseLabel = 'Collapse review panel',
 		onCollapse
 	}: {
@@ -21,6 +23,8 @@
 		livePageId?: string;
 		/** The Karl outline's summary for this page, for the decision panel. */
 		karlReadiness?: string | null;
+		/** Show the Karl strip (outline switch, Blueprint). Off on drafts (decision 12). */
+		karlViews?: boolean;
 		onCollapse?: () => void;
 	} = $props();
 
@@ -131,6 +135,36 @@
 			</Button>
 		{/if}
 	</div>
+
+	<!-- The Karl views, pinned under the tabs so every tab reaches them. They
+	     were in the canvas toolbar beside a black walkthrough button; the
+	     toolbar now holds canvas controls only (2026-11-26 layout review). The
+	     walkthrough's one entry is the Decision tab's "Move it into Karl". -->
+	{#if karlViews}
+		<div
+			class="flex flex-none items-center gap-3 border-b border-sfds-grey-l2 bg-background px-3 py-2"
+			role="group"
+			aria-label="Karl views"
+		>
+			<label class="flex items-center gap-2 text-xs font-medium">
+				<Switch
+					checked={pageStore.karlOutline}
+					onCheckedChange={(on: boolean) => pageStore.setKarlOutline(on)}
+				/>
+				Show Karl fields
+			</label>
+			<Button
+				variant="outline"
+				size="sm"
+				class="ml-auto h-7 text-xs"
+				aria-pressed={pageStore.mode === 'blueprint'}
+				onclick={() =>
+					pageStore.mode === 'blueprint' ? pageStore.showReview() : pageStore.showBlueprint()}
+			>
+				Blueprint
+			</Button>
+		</div>
+	{/if}
 
 	<Tabs.Content value="fields" class="min-h-0 flex-1 overflow-hidden bg-background">
 		<FieldsPanel {pageData} {livePageId} />

@@ -8,8 +8,6 @@
 	import { afterNavigate, replaceState } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
-	import { Switch } from '$lib/components/ui/switch/index.js';
-	import { Popover } from 'bits-ui';
 	import { ScrollArea } from '$lib/components/ui/scroll-area/index.js';
 	import { Separator } from '$lib/components/ui/separator/index.js';
 	import { draftsStore } from '$lib/stores/draftPages';
@@ -33,9 +31,7 @@
 		ChevronRight,
 		ChevronsLeft,
 		ChevronsRight,
-		ClipboardList,
 		Download,
-		Layers,
 		Maximize2,
 		Monitor,
 		Smartphone,
@@ -168,7 +164,6 @@
 			return placementsHere;
 		}
 	});
-	let karlMenuOpen = $state(false);
 
 	const copiedHere = $derived(
 		walkthrough && pageData
@@ -862,86 +857,27 @@
 								{/each}
 							</ToggleGroup.Root>
 						</div>
-						<!-- The tool's second job, so it is a labelled, filled button of its
-						     own rather than an item behind the Karl views disclosure, where
-						     nothing on screen said it existed. Entering collapses both
-						     rails; exiting puts them back as they were. The accessible name
-						     stays "Open Karl walkthrough" (it contains the visible label,
-						     WCAG 2.5.3). The visible label drops to "Karl" when the BAR is
-						     narrow, not the window -- the rails decide its width. At 52rem
-						     rather than 32rem since the title got a floor: with both rails
-						     open at 1440px the full label left the title 184px, and at
-						     1280px pushed the bar to the title floor. -->
-						<Button
-							size="sm"
-							class="h-7 flex-none gap-1.5 text-xs font-semibold"
-							onclick={() => pageStore.enterWalkthrough()}
-							data-testid="karl-walkthrough"
-						>
-							<ClipboardList class="size-3.5" aria-hidden="true" />
-							<!-- One span, so the button's flex gap does not land between words;
-							     `&nbsp;` because Svelte trims a span's leading whitespace. -->
-							<span
-								><span class="sr-only">Open&nbsp;</span>Karl<span
-									class="@max-[52rem]/toolbar:sr-only">&nbsp;walkthrough</span
-								></span
-							>
-						</Button>
-						{#if !onDraft}
-							<!-- The other two Karl views. A disclosure of a switch and a plain
-							     button, NOT `role="menu"`; Popover handles Escape, outside
-							     clicks and focus return. Off on drafts (decision 12). -->
-							<Popover.Root bind:open={karlMenuOpen}>
-								<Popover.Trigger
-									class="{buttonVariants({
-										variant: 'outline',
-										size: 'sm'
-									})} size-7 flex-none px-0"
-									aria-label="Karl views"
-									title="Karl views: field outline and Blueprint"
-								>
-									<!-- Icon-only: the labelled walkthrough button beside it spent
-									     the width, and at 1080px a labelled trigger wrapped the bar
-									     onto a third row. Named by aria-label, described by title. -->
-									<Layers class="size-3.5" aria-hidden="true" />
-								</Popover.Trigger>
-								<Popover.Portal>
-									<Popover.Content
-										align="end"
-										sideOffset={6}
-										class="karl-menu z-50 flex w-64 flex-col gap-2 rounded-md border border-sfds-grey-l2 bg-background p-3 shadow-md"
-									>
-										<label class="flex items-center justify-between gap-3 text-sm font-medium">
-											Show Karl fields
-											<Switch
-												checked={pageStore.karlOutline}
-												onCheckedChange={(on: boolean) => pageStore.setKarlOutline(on)}
-											/>
-										</label>
-										<p class="text-xs text-sfds-slate-l3">
-											Marks where each part of the page goes in Karl, and what won’t carry over.
-										</p>
-										<Separator />
-										<Button
-											variant="outline"
-											size="sm"
-											class="h-8 justify-start text-xs"
-											onclick={() => {
-												karlMenuOpen = false;
-												pageStore.showBlueprint();
-											}}
-										>
-											Show Blueprint
-										</Button>
-									</Popover.Content>
-								</Popover.Portal>
-							</Popover.Root>
-						{/if}
+						<!-- Canvas controls only. The Karl walkthrough, the Karl field
+						     outline and the Blueprint moved to the review panel's Karl strip
+						     (2026-11-26 layout review): the bar had two jobs, and the black
+						     walkthrough button was the heaviest thing on screen while the same
+						     entry sat in the panel. -->
 					</div>
 				</nav>
 			{/if}
 
-			<div class="flex min-h-0 flex-1 overflow-hidden">
+			<div class="relative flex min-h-0 flex-1 overflow-hidden">
+				{#if outlinePlacements}
+					<!-- The outline paints the canvas, but its switch lives in the review
+					     panel. With that panel collapsed (or off screen below 1024px) a
+					     reviewer would have to reopen it just to turn the outline off, so
+					     the canvas carries its own way out. CSS decides visibility: the
+					     narrow-viewport case is a media query, not state. -->
+					<div class="karl-outline-pill" data-panel-collapsed={panelCollapsed}>
+						<span>Karl fields shown</span>
+						<button type="button" onclick={() => pageStore.setKarlOutline(false)}>Hide</button>
+					</div>
+				{/if}
 				{#if pageStore.mode === 'walkthrough' && walkthrough && pageData}
 					<WalkthroughDrawer {walkthrough} pageId={pageData.id} />
 				{/if}
@@ -1092,6 +1028,7 @@
 				{pageData}
 				{livePageId}
 				{karlReadiness}
+				karlViews={!onDraft}
 				collapseLabel={pageStore.mobileSheet === 'panel'
 					? 'Close review panel'
 					: 'Collapse review panel'}
@@ -1206,6 +1143,43 @@
 		height: auto;
 		min-height: 3rem;
 		padding-block: 0.375rem;
+	}
+
+	.karl-outline-pill {
+		position: absolute;
+		right: 1rem;
+		bottom: 1rem;
+		z-index: 20;
+		display: none;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.25rem 0.25rem 0.25rem 0.75rem;
+		border: 1px solid var(--color-sfds-grey-l2, #d3d3d3);
+		border-radius: 9999px;
+		background: var(--background, #fff);
+		box-shadow: 0 2px 8px rgb(0 0 0 / 0.12);
+		font-size: 0.8125rem;
+		font-weight: 600;
+	}
+
+	.karl-outline-pill[data-panel-collapsed='true'] {
+		display: flex;
+	}
+
+	.karl-outline-pill button {
+		min-height: 24px;
+		padding: 0.125rem 0.625rem;
+		border: 1px solid currentColor;
+		border-radius: 9999px;
+		background: transparent;
+		color: var(--color-sfds-action, #005ea2);
+		cursor: pointer;
+	}
+
+	@media (max-width: 1024px) {
+		.karl-outline-pill {
+			display: flex;
+		}
 	}
 
 	@media (max-width: 1024px) {

@@ -74,9 +74,9 @@ for (const path of PAGES) {
  * what those two features render.
  */
 for (const view of [
-	// The walkthrough has its own toolbar button again, outside the Karl views
-	// disclosure, so it needs no trigger first.
-	{ name: 'Karl walkthrough', via: null, open: 'Open Karl walkthrough', ready: '.drawer' },
+	// The walkthrough's one entry is the Decision tab's "Move it into Karl"
+	// card (the toolbar button went on 2026-11-26), so it needs no trigger first.
+	{ name: 'Karl walkthrough', via: null, open: 'Start the Karl walkthrough', ready: '.drawer' },
 	{ name: 'site map', via: null, open: 'Site map', ready: '.sitemap' }
 ]) {
 	test(`no WCAG 2.1 AA violations in the ${view.name}`, async ({ page }) => {

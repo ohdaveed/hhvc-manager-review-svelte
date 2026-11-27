@@ -19,13 +19,13 @@ test('the deep link opens the walkthrough, and Exit takes the parameter away', a
 	await expect(page).toHaveURL(new RegExp(`${PAGE}$`));
 
 	await page.reload();
-	await expect(page.getByRole('button', { name: 'Open Karl walkthrough' })).toBeVisible();
+	await expect(page.getByRole('button', { name: 'Start the Karl walkthrough' })).toBeVisible();
 	await expect(page.locator('.drawer')).toHaveCount(0);
 });
 
 test('opening the walkthrough puts it in the URL, and a reload keeps it', async ({ page }) => {
 	await page.goto(PAGE);
-	await page.getByRole('button', { name: 'Open Karl walkthrough' }).click();
+	await page.getByRole('button', { name: 'Start the Karl walkthrough' }).click();
 	await expect(page.locator('.drawer')).toBeVisible();
 	await expect(page).toHaveURL(new RegExp(`${PAGE}\\?view=walkthrough$`));
 
@@ -35,7 +35,7 @@ test('opening the walkthrough puts it in the URL, and a reload keeps it', async 
 
 test('any other view value is ignored', async ({ page }) => {
 	await page.goto(`${PAGE}?view=nonsense`);
-	await expect(page.getByRole('button', { name: 'Open Karl walkthrough' })).toBeVisible();
+	await expect(page.getByRole('button', { name: 'Start the Karl walkthrough' })).toBeVisible();
 	await expect(page.locator('.drawer')).toHaveCount(0);
 });
 
