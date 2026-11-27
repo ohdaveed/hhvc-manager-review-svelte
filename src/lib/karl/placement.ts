@@ -273,20 +273,19 @@ export function plainReason(reason: string): string {
 /**
  * The placements for one page.
  *
+ * The wording judged is `page`'s own, exactly as given. The review workspace
+ * hands in the copy as shown (`CONTEXT.md`) -- saved edits and, on top of
+ * them, the reviewer's unsaved changes -- and the outline sits over that text,
+ * so its badges describe the wording under them. To judge a pristine corpus
+ * page with its saved edits, apply them to the page before calling.
+ *
  * @param pages the corpus KEYED BY PAGE KEY (`pagesByKey`), which the
  *   transcript needs to resolve link targets -- not the `allPages` array.
- * @param options.copy which wording is judged. `'recorded'` (the default)
- *   overlays the record's saved edits on `page`, for a pristine corpus page.
- *   `'as-shown'` judges `page` exactly as it is: the review layout's page
- *   object already carries saved edits and, on top of them, the reviewer's
- *   unsaved changes, and the outline sits over that text -- so its badges
- *   must describe the wording under them, not a saved edit hidden beneath.
  */
 export function placementsFor(
 	page: Page,
 	record: ReviewRecord | null,
-	pages: object,
-	options: { copy?: 'recorded' | 'as-shown' } = {}
+	pages: object
 ): PagePlacements {
 	// The app renders `pageStore` pages, which `toStorePage` gives a routable
 	// `id`. It is not copy, but the transcript's sweep reports any page key it
@@ -302,13 +301,7 @@ export function placementsFor(
 	const idOf = (path: string) =>
 		path.replace(/^sections\.(\d+)/, (_, i: string) => `sections.${keyOf(Number(i))}`);
 
-	// The copy judged: the page as shown, or the base corpus plus saved edits.
 	const copy: Record<string, string> = { ...extractCopy(page) };
-	if (options.copy !== 'as-shown') {
-		for (const [id, value] of Object.entries(record?.section_edits ?? {})) copy[id] = value;
-		if (record?.edited_title) copy.title = record.edited_title;
-		if (record?.edited_summary) copy.summary = record.edited_summary;
-	}
 
 	const claims = Object.entries(transcript.claims ?? {}).map(([path, raw]) => [idOf(path), raw]);
 	const unmapped = (transcript.unmapped ?? []).map((u) => ({ ...u, id: idOf(u.path) }));

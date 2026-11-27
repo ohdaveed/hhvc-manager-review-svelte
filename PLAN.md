@@ -132,11 +132,16 @@ are committed on `refactor/overlay-views` (`05e5371`, unpushed) and ride with A2
       still follow status order. One function returns the rendered order and all four read it; the
       membership-snapshot rule for Prev/Next stays. `QUEUE_STATUS_ORDER` survives only for status
       labels and progress counts. Done = a test asserting sidebar order equals Next order, PR green.
-- [ ] **A2. Overlay module.** `$lib/corpus/overlay.ts` exports `copyAsRecorded` / `copyAsShown`. The
+- [x] **A2. Overlay module.** `$lib/corpus/overlay.ts` exports `copyAsRecorded` / `copyAsShown`. The
       Analysis panel judges copy as shown (today it re-overlays saved edits onto a hydrated page and
       judges stale wording while the reviewer types). Delete `recordFromEdits`, the `pageCopy` fold and
       `placementsFor`'s `copy:` option; `reviewRecordFor` becomes the recorded view's record form,
       field-id keyed. Renderer still reads mutated page objects; a parity test pins agreement.
+      **Built (2026-11-27), narrower than planned:** `overlay.ts` holds the one fold (`latestBy`,
+      `latestByField` — `reviewRecordFor` and `applySavedEdits` use it) and `copyAsRecorded`. No
+      `copyAsShown`: the page object already IS the copy as shown, so it had no caller — it arrives
+      with A5, which is where the parity test belongs too. Analysis takes the same `reviewRecordFor`
+      record as the outline (for the slug), not `null`.
 - [ ] **A3. Typed transcript adapter.** `$lib/karl/transcript.ts` owns the call into `buildTranscript`:
       field id → positional path translation, `pagesByKey`, id strip, types. `karl-transcript.js`
       untouched. `reviewRecord.test.ts:65` rewritten to field-id keys.
