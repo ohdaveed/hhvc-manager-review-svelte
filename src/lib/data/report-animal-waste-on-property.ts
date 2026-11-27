@@ -64,8 +64,7 @@ export const animalWasteReport = {
 							unverifiedReason:
 								'Decided: send public-property reports to the right 311 service, and confirm the agency, likely Public Works street cleaning. Confirm the 311 service name before publication.'
 						},
-						'Pigeon droppings have their own page: [Report pigeon droppings, nesting, or feeding](pigeonReport).',
-						'Live in an SRO or residential hotel? Report the same way. Senior inspectors handle SRO cases.'
+						'Pigeon droppings have their own page: [Report pigeon droppings, nesting, or feeding](pigeonReport).'
 					],
 					button: 'Report through 311',
 					after: [
@@ -77,7 +76,7 @@ export const animalWasteReport = {
 						'Download our mobile app to report a problem and track your request. Available on Android or iOS.',
 						'[Learn more about the SF311 mobile app](https://www.sf.gov/sf311-mobile-app)'
 					],
-					karl: 'what_to_do -> Section. Section title: "Start your report". Section specifics: Text block (these 4 paragraphs: the action, the public-property routing, the pigeon page, and the one-line SRO note every report page carries, Decided) + Button link block ("Report through 311").'
+					karl: 'what_to_do -> Section. Section title: "Start your report". Section specifics: Text block (these 3 paragraphs: the action, the public-property routing, and the pigeon page) + Button link block ("Report through 311") + Text block ("Other ways to report", the `after` lines). The one-line SRO note every report page carried was removed on 2026-11-26 (owner).'
 				}
 			]
 		},

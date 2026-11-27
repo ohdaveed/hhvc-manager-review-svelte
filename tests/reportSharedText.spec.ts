@@ -53,9 +53,6 @@ describe('shared report text', () => {
 		expect(copy).not.toMatch(/City Attorney/);
 	});
 
-	// Decided: no separate SRO page; each report page carries a one-line note.
-	it.each(CONDITION_PAGES)('%s carries the SRO note', (key) => {
-		const copy = Object.values(extractCopy(pages[key])).join('\n');
-		expect(copy).toMatch(/Live in an SRO or residential hotel\?/);
-	});
+	// The one-line SRO note each report page carried was removed by the owner
+	// on 2026-11-26, overriding the earlier decision that required it.
 });
