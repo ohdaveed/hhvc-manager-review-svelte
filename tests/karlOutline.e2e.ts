@@ -49,10 +49,11 @@ const PILOTS = [
 		// Services can create a Topic page, which the summary says first.
 		slug: 'topics--healthy-housing-conditions',
 		// 8 sections since the Topic merge folded both hubs in (2026-11-25), plus
-		// the prevention Resources block for the ported education pages.
-		summary: '9 sections: 9 go into Karl. 1 detail is unconfirmed.',
+		// the prevention Resources block for the ported education pages; 10 since
+		// Programs and workshops split out of Learn more (2026-11-26).
+		summary: '10 sections: 10 go into Karl. 1 detail is unconfirmed.',
 		caveat: 'Only SF.gov Digital Services can create a new Topic page.',
-		sections: { placed: 9, unplaced: 0 }
+		sections: { placed: 10, unplaced: 0 }
 	},
 	{
 		// Rollout step 3: Campaign. A 26-character spotlight button and About

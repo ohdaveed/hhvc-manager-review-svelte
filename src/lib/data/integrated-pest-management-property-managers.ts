@@ -19,12 +19,11 @@ export const ownerGuidance = {
 		{
 			heading: 'Protect residents’ health',
 			fieldKey: 'why-it-matters',
-			karl: 'Maps to an "Information section" → Title and text block: Title = this heading, Text = the three paragraphs plus the bulleted list below (cross-vector health-harm framing for owners/managers, placed first to motivate prevention). Verify disease-risk specifics with SFDPH vector program before publication. Split 2026-11-26: the two 4- and 5-sentence paragraphs passed SF.gov\'s 3-sentence limit, and the four health risks are now a list.',
+			karl: 'Maps to an "Information section" → Title and text block: Title = this heading, Text = the three paragraphs plus the bulleted list below (cross-vector health-harm framing for owners/managers, placed first to motivate prevention). Verify disease-risk specifics with SFDPH vector program before publication. Split 2026-11-26: the two 4- and 5-sentence paragraphs passed SF.gov\'s 3-sentence limit, and the four health risks are now a list. Cut to two paragraphs on 2026-11-26 (page review): the Article 11 sentence repeated step 1.',
 			kind: 'body',
 			paragraphs: [
-				"Unmanaged pests do not just damage a building. They put residents' health at risk, and the risks compound the longer they go unaddressed.",
-				'A small rodent problem can turn into a mite outbreak. Untreated moisture or clutter can support several pests at once.',
-				"Prevention protects both residents' health and the owner's ability to meet Article 11 requirements. Common pests cause these health problems:"
+				"Pests put residents' health at risk, and the risk grows the longer they go untreated. A small rodent problem can turn into a mite outbreak, and moisture or clutter can support several pests at once.",
+				'Common pests cause these health problems:'
 			],
 			bullets: [
 				'Rodents can spread Hantavirus and Leptospirosis',
@@ -40,21 +39,13 @@ export const ownerGuidance = {
 		},
 		{
 			heading: 'Use IPM to prevent pests',
-			karl: 'Maps to a second Title and text block: Title = this heading, Text = the paragraph below. On 2026-11-26 the legal-duty paragraph (stated again in step 1) and four bullets previewing steps 1 to 5 were removed, leaving the definition.',
-			kind: 'body',
-			paragraphs: [
-				'Integrated Pest Management (IPM) is a prevention-first approach. It uses inspection, maintenance, sanitation, exclusion, monitoring, and targeted treatment to reduce pests and limit heavy pesticide use. This sits under Article 11 of the San Francisco Health Code.'
-			]
-		},
-		{
-			heading: 'Use the UC IPM guide for property managers',
 			fieldKey: 'primary-source-uc-ipm-guide-for-property-managers',
 			component: 'resources',
-			karl: 'Maps to a third Title and text block: Title = this heading, Text = the two paragraphs below.',
+			karl: 'Maps to a second Title and text block: Title = this heading, Text = the two paragraphs below. On 2026-11-26 (page review) the one-paragraph "Use IPM to prevent pests" section merged in here as the first paragraph, and the callout that described the sections below left: its one rule (follow San Francisco rules where UC IPM differs) is now the last sentence. The fieldKey keeps the ids of "Use the UC IPM guide for property managers".',
 			kind: 'placement',
 			paragraphs: [
-				'The University of California Statewide IPM Program (UC IPM) publishes the main reference guide used on this page. Use it for policies, checklists, monitoring forms, and resident handouts.',
-				'HHVC recommends UC IPM as a practical source for property owners and managers operating multi-unit housing in San Francisco.'
+				'Integrated pest management (IPM) prevents pests first. It uses inspection, maintenance, sanitation, sealing entry points, monitoring, and targeted treatment, and limits heavy pesticide use.',
+				'HHVC recommends the University of California IPM program (UC IPM) guide for multi-unit housing. It has policies, checklists, monitoring forms, and resident handouts. Where it differs from the San Francisco Health Code or SFDPH Director’s Rules, follow the San Francisco rules.'
 			],
 			cards: [
 				{
@@ -75,11 +66,7 @@ export const ownerGuidance = {
 					url: 'https://sfenvironment.org/article/integrated-pest-management-ipm-guidelines-for-multifamily-housing',
 					karl: 'Body external link: SF Environment Pestec multifamily IPM guidelines (supplemental)'
 				}
-			],
-			callout: {
-				karl: 'Maps to its own Callout stream item (a second Callout sibling, alongside the "Why it matters" Callout above — not nested inside any Title and text block). Single rich text field, no title field; this callout has none, so no mismatch.',
-				text: 'Sections below summarize HHVC expectations and point to specific UC IPM chapters. When details differ, follow San Francisco Health Code requirements and SFDPH Director’s Rules.'
-			}
+			]
 		},
 		{
 			heading: 'Conditions inside the building that attract pests',
@@ -113,7 +100,7 @@ export const ownerGuidance = {
 				'The legal requirements, including the 72-hour response, recordkeeping and licensed pest control, are on [Article 11 compliance for property owners](article11Compliance). Two more practices keep a building ready:'
 			],
 			bullets: [
-				'**Garbage management:** Provide enough rigid plastic or metal containers with tight-fitting lids. Ensure the garbage area is clean and serviced regularly to prevent overflow.',
+				'**Garbage management:** Provide enough rigid plastic or metal containers with tight-fitting lids. Keep the garbage area clean and serviced often enough that it never overflows.',
 				'**Staff training:** Train building staff on pest recognition, sanitation, exclusion, and safe disposal of infested items.'
 			],
 			cards: [
@@ -161,13 +148,13 @@ export const ownerGuidance = {
 			karl: 'Maps to an eighth Title and text block: Title = this heading, Text = the paragraph plus the bulleted list below.',
 			kind: 'placement',
 			paragraphs: [
-				'Track pest activity so you can see patterns and respond before problems spread. Coordinated pest control services are required to handle infestations effectively.',
+				'Track pest activity so you can see patterns and respond before problems spread.',
 				'[UC IPM: Pest monitoring and recordkeeping](https://ipm.ucanr.edu/home-and-landscape/guide-for-property-managers/pest-monitoring-and-recordkeeping/)'
 			],
 			bullets: [
 				'Use one system to log complaints, repairs, sanitation work, and contractor visits. A written log of vermin reports is required, not just good practice. See [Article 11 compliance for property owners](article11Compliance).',
-				'Ensure the PCO conducts a complete inspection and identifies the type and level of infestation.',
-				"Inspect adjacent units: When an infestation is reported, the PCO must inspect every adjacent unit. Treat them if needed (Director's Rules §VI.6).",
+				'Make sure your pest control company inspects fully and names the pest and how bad the infestation is.',
+				"Inspect adjacent units: When an infestation is reported, the pest control company must inspect every adjacent unit. Treat them if needed (Director's Rules §VI.6).",
 				'Use least-toxic methods: Prioritize non-chemical methods (vacuuming, heat, steam, freezing) and gel baits over chemical sprays.',
 				'Review records regularly to find repeated or building-wide problems.'
 			]
