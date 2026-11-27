@@ -57,7 +57,7 @@ export const animalWasteReport = {
 				{
 					title: 'Start your report',
 					text: [
-						'Use 311 to report animal waste on private property. The [Health Code](https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890) requires property owners to keep animal waste from building up.',
+						'Use 311 to report animal waste on private property. The [Health Code](https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890) requires property owners to keep animal waste from building up. Build-up that shelters pests or creates a health hazard is a violation.',
 						{
 							text: 'For dog waste on a sidewalk or street, ask 311 for street cleaning instead.',
 							unverified: true,

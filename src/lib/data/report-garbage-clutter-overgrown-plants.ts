@@ -59,7 +59,7 @@ export const garbageReport = {
 				{
 					title: 'Start your report',
 					text: [
-						'Use 311 to report garbage, clutter, or overgrown plants to the City. The [Health Code](https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890) requires property owners to keep trash, filth, and overgrown plants from building up.'
+						'Use 311 to report garbage, clutter, or overgrown plants to the City. The [Health Code](https://codelibrary.amlegal.com/codes/san_francisco/latest/sf_health/0-0-0-1890) requires property owners to keep trash, filth, and overgrown plants from building up. Build-up that shelters pests or creates a health hazard is a violation.'
 					],
 					button: 'Report through 311',
 					after: [
