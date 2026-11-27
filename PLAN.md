@@ -14,8 +14,9 @@ What is still open, measured 2026-11-26 against `main`:
 Leg 1 is the work that needs no product decision, plus one list that gets the decisions made. Leg 2
 builds whatever that list settles.
 
-- [ ] **L1. Land #247.** Merge `origin/main` in if `BEHIND`, wait for CI, **ask before merging** (it
-      publishes production). Done when `verify:live` reports the merged SHA as published.
+- [x] **L1. Land #247.** Nothing to land: #251 (`9789a0a`) had carried all eight of its commits, and
+      merging `origin/main` into it gave a tree identical to `main`. Closed as superseded 2026-11-26;
+      branch and worktree deleted.
 - [ ] **L2. Site structure PR 5: flag proposed pages in data.** `proposed: true` on the proposed modules,
       replacing the comment in `index.ts`. That comment says ten; 9 modules carry "PROPOSED PAGE" today —
       find the tenth (merged or retired?) before writing the count down; a corpus test pins that the
@@ -54,9 +55,8 @@ reach the UI (`src/routes/api/**`, `$lib/ai/generate`).
 - `src/lib/server/ai/vendor/**` — kept diffable against upstream.
 - `src/routes/demo/**`, `src/routes/sfgov-components` — developer pages.
 
-**Overlap:** `fix/workspace-review-findings` (`../wt-workspace-review`, unmerged) already rewrites
-toolbar, queue, walkthrough and analysis copy. Review against `main` _after_ it merges, or the findings
-will describe text that is already gone.
+**Overlap:** none left. `fix/workspace-review-findings` (#247) turned out to be in `main` already via
+#251, so `main` is the baseline.
 
 ## What counts as a finding
 
@@ -74,8 +74,7 @@ PLAN in git history).
 
 ## Tasks
 
-- [ ] **1. Baseline.** `fix/workspace-review-findings` merged (or explicitly included); note the SHA
-      reviewed here.
+- [ ] **1. Baseline.** Note the `main` SHA reviewed here.
 - [ ] **2. String inventory.** A script (scratchpad, not committed) extracts every in-scope text node and
       `placeholder` / `title` / `aria-label` / message literal with `file:line` into a CSV. Done when the
       row count is recorded here and every in-scope file appears at least once.
