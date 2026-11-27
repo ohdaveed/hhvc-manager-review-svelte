@@ -99,7 +99,7 @@ export const bedBugsInfo = {
 			],
 			bullets: [
 				{
-					text: '**Owners must act fast.** Your landlord must hire a licensed pest control company within 2 working days of your report. The company inspects your unit and the units next to it.',
+					text: '**Your landlord must act within 2 working days of your report.** They must hire a licensed pest control company to inspect your unit and the units next to it.',
 					unverified: true,
 					unverifiedReason:
 						"From the SFDPH bed bug Director's Rules, Owner 2.4-2.6 (docs/source/hhvc-policy/2026-07-02-bed-bug-directors-rules-tenant-guidelines.md): within two working days of the tenant's complaint, contract a PCO to inspect the unit and adjacent units. This is the bed bug timeline, distinct from the general 72-hour owner investigation (see the v4 gap analysis, 'Three distinct timelines'). Confirm it still reads the same in the v4 Director's Rules draft before publication."
@@ -135,7 +135,7 @@ export const bedBugsInfo = {
 			karl: "Maps to a seventh Title and text block: Title = this heading, Text = the paragraph plus the bulleted list below. On 2026-11-26 the advance-notice bullet was removed: it applies to every treatment and the treatment page owns it; the paragraph links there. Paraphrases Director's Rules Owner 3.3-3.5 as quoted in the SFDPH tenant guidelines. The 4-week monitoring bullet is an HHVC decision 2026-11-26, and matches bed bug Director's Rules Owner 6.1 (monitoring devices used for at least four weeks to confirm effective treatment).",
 			kind: 'body',
 			paragraphs: [
-				'Bed bugs need more from owners than other pests. The duties for every treatment, like notice before pesticides, are on [What to expect when your building is treated for pests](pestTreatmentInfo).'
+				'Owners have more to do for bed bugs than for other pests. The duties for every treatment, like notice before pesticides, are on [What to expect when your building is treated for pests](pestTreatmentInfo).'
 			],
 			bullets: [
 				'**Give tenants sealable plastic bags** for clothing before and after it is washed.',
@@ -154,7 +154,7 @@ export const bedBugsInfo = {
 			karl: "Maps to an eighth Title and text block: Title = this heading, Text = the paragraph plus the bulleted list below. Each bullet carries a Link-tool External link folded into this block's rich text — the verified Information schema has no external-URL card, so links are kept inline rather than as cards.",
 			kind: 'placement',
 			paragraphs: [
-				'The University of California Statewide Integrated Pest Management Program (UC IPM) publishes detailed, science-based guides.'
+				'These guides come from the University of California Statewide Integrated Pest Management Program (UC IPM), the CDC, the EPA, and SF Environment.'
 			],
 			bullets: [
 				'[UC IPM: Bed bugs](https://ipm.ucanr.edu/home-and-landscape/bed-bugs/). How to identify, find, and control bed bugs.',

@@ -86,9 +86,7 @@ export const pigeonReport = {
 			karl: 'Maps to supporting_information (Accordions), collapsed by default as the real accordion renders. Contents: one Text block (lead paragraph + tips). Cut on 2026-11-26 (page review, as on Report rats or mice) to the tips a resident can act on now. No external links: UC IPM no longer publishes a pigeon Pest Note.',
 			kind: 'body',
 			component: 'supporting',
-			paragraphs: [
-				'It may take us a few weekdays to get back to you. In the meantime, here are a few things you can do to help with the problem.'
-			],
+			paragraphs: ['It may take us a few weekdays to get back to you.'],
 			bullets: [
 				'**Do not feed pigeons:** Feeding attracts droppings, roosting, and other pests.',
 				'**Clean up droppings safely:** Wet down droppings with a disinfectant and wear gloves. Never dry-sweep them.'

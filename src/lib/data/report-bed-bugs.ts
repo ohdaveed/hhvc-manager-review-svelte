@@ -87,9 +87,7 @@ export const bedBugReport = {
 			karl: 'Maps to supporting_information (Accordions), collapsed by default as the real accordion renders. Contents: one Text block (lead paragraph + 2 tips + the prep link to the Information page). Cut on 2026-11-26 (page review, as on Report rats or mice) to the tips a resident can act on now. The UC IPM and EPA links live on Bed bugs: prevent them, find them, and get ready for treatment.',
 			kind: 'body',
 			component: 'supporting',
-			paragraphs: [
-				'It may take us a few weekdays to get back to you. In the meantime, here are a few things you can do to help with the problem.'
-			],
+			paragraphs: ['It may take us a few weekdays to get back to you.'],
 			bullets: [
 				'**Keep your furniture:** Do not throw out furniture before treatment. Moving it can spread the bugs.',
 				'**Wash on high heat:** Wash and dry bedding and clothes on the hottest setting they can take.',

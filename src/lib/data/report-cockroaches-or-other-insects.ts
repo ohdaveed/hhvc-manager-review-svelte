@@ -88,9 +88,7 @@ export const insectsReport = {
 			karl: "Maps to supporting_information (Accordions), collapsed by default as the real accordion renders. Contents: one Text block (lead paragraph + tips per insect). Cut on 2026-11-26 (page review, as on Report rats or mice) to the tips a resident can act on now: the sealing tip and the UC IPM links are left to Get rid of cockroaches without heavy pesticides, and the flea and wasp links, which had no other home, were dropped. The drain fly and fruit fly tips are the Decided education for flies. The fly, drain fly and fruit fly tips became one Flies bullet on 2026-11-26, so the page's main pest is not outweighed.",
 			kind: 'body',
 			component: 'supporting',
-			paragraphs: [
-				'It may take us a few weekdays to get back to you. In the meantime, here are a few things you can do to help with the problem.'
-			],
+			paragraphs: ['It may take us a few weekdays to get back to you.'],
 			bullets: [
 				'**Cockroaches:** Clean up crumbs and grease, and fix dripping faucets and leaks. Use bait stations instead of sprays.',
 				'**Flies:** Bag garbage tightly and keep bin lids closed so flies cannot breed in it. For drain flies, scrub slow or unused drains with a brush and flush them with hot water. For fruit flies, throw out overripe fruit and rinse cans and bottles before you recycle them.'

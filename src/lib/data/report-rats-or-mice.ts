@@ -77,9 +77,7 @@ export const rodentsReport = {
 			karl: 'Maps to supporting_information (Accordions), collapsed by default as the real accordion renders. Contents: one Text block (lead paragraph + bullets). Cut on 2026-11-26 (page review) to the tips a resident can act on right away, so the accordion does not turn a report page into a prevention guide: "Close off entry points and hiding places" and the four external links (UC IPM Rats, UC IPM House mouse, CDC, NEHA) were removed, because Keep rats and mice out of your home, linked from Related pages, already covers sealing and hiding places and carries its own UC IPM and CDC links. The pet waste tip is the Decided cross-link line ("Pick up pet waste daily. It feeds rats."), linked to the animal waste page.',
 			kind: 'body',
 			component: 'supporting',
-			paragraphs: [
-				'It may take us a few weekdays to get back to you. In the meantime, here are a few things you can do to help with the problem.'
-			],
+			paragraphs: ['It may take us a few weekdays to get back to you.'],
 			bullets: [
 				'**Cut off food:** Store food and garbage in bins with tight-fitting lids. Do not leave pet food out overnight.',
 				'**Pick up pet waste daily:** It feeds rats. [Report animal waste on a property](animalWasteReport)',

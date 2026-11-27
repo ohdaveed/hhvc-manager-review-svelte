@@ -97,7 +97,7 @@ export const ownerGuidance = {
 			karl: "Maps to a fifth Title and text block: Title = this heading, Text = the paragraph plus the bulleted list below (SFDPH Director's Rules and Regulations requirements). On 2026-11-26 the 72-hour, recordkeeping and licensed-PCO bullets were removed: Article 11 compliance for property owners owns them, and the paragraph now links there.",
 			kind: 'body',
 			paragraphs: [
-				'The legal requirements, including the 72-hour response, recordkeeping and licensed pest control, are on [Article 11 compliance for property owners](article11Compliance). Two more practices keep a building ready:'
+				'The legal requirements, including the 72-hour response, recordkeeping and licensed pest control, are on [Article 11 compliance for property owners](article11Compliance). Two more practices help keep pests out:'
 			],
 			bullets: [
 				'**Garbage management:** Provide enough rigid plastic or metal containers with tight-fitting lids. Keep the garbage area clean and serviced often enough that it never overflows.',

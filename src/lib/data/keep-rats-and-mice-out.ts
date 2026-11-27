@@ -143,7 +143,7 @@ export const rodentsPrevention = {
 			karl: "Maps to a seventh Title and text block: Title = this heading, Text = the paragraph plus the bulleted list below. Each bullet carries a Link-tool External link folded into this block's rich text — the verified Information schema has no external-URL card, so links are kept inline rather than as cards.",
 			kind: 'placement',
 			paragraphs: [
-				'The University of California Statewide Integrated Pest Management Program (UC IPM) publishes detailed, science-based guides.'
+				'These guides come from the University of California Statewide Integrated Pest Management Program (UC IPM), the CDC, and SF Environment.'
 			],
 			bullets: [
 				'[UC IPM: Rats](https://ipm.ucanr.edu/home-and-landscape/rats/). Signs, prevention, and trapping.',
