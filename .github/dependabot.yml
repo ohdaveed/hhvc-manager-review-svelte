@@ -1,0 +1,22 @@
+version: 2
+
+# Every action in .github/ is pinned to a commit SHA, which is right for supply
+# chain but means nothing moves unless something bumps it. Nothing did:
+# upload-artifact sat on v4 until runners started warning that its Node 20
+# runtime was deprecated. This bumps the SHA and the `# vX` comment together.
+#
+# The composite action is listed explicitly: Dependabot reads only
+# .github/workflows/ from `/`, so .github/actions/setup would otherwise be
+# skipped. .bun-version is not covered by any ecosystem and is raised by hand.
+updates:
+  - package-ecosystem: github-actions
+    directories:
+      - /
+      - /.github/actions/*
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ['*']
+    commit-message:
+      prefix: ci

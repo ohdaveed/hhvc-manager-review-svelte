@@ -1,0 +1,42 @@
+name: PR title
+
+# PRs are squash-merged, so the PR title becomes the commit on `main`, and the
+# commit-msg hook never sees it. "Update pr.ymlchznge (#291)" and "Workspace:
+# Karl Readiness in Fields, … (#290)" both landed that way. This applies the
+# same commitlint.config.js to the title.
+#
+# A separate workflow rather than a step in pr.yml, for two reasons: retitling
+# a PR fires `edited`, which should not re-run the whole test and e2e matrix;
+# and it is NOT one of the checks ruleset `main: require CI` requires, so it
+# reports without blocking until the ruleset is changed to add
+# `conventional PR title`.
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  title:
+    name: conventional PR title
+    # `edited` also fires for a body or base change; only a title change, or
+    # any other event, needs a check.
+    if: github.event.action != 'edited' || github.event.changes.title != null
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+
+      - uses: ./.github/actions/setup
+
+      # The title goes through env, never ${{ }} inside `run:`, because a PR
+      # title is attacker-controlled text and would be spliced into the script.
+      - name: commitlint
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: printf '%s\n' "$PR_TITLE" | bunx commitlint

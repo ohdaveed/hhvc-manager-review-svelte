@@ -23,6 +23,14 @@ export default defineConfig({
 	// from whoever is writing the test.
 	retries: process.env.CI ? 1 : 0,
 
+	// CI: `github` turns each failure into an annotation on the PR naming the
+	// spec and assertion, where the run summary otherwise said only "exit code
+	// 1". `html` is what writes playwright-report/ -- the default CI reporter
+	// writes nothing there, so the failure upload in pr.yml had been empty
+	// (run 46124489150: "No files were found with the provided path"). Locally
+	// `list` stays, since an html report opening on every failure is noise.
+	reporter: process.env.CI ? [['github'], ['html', { open: 'never' }]] : 'list',
+
 	// The workflow uploads playwright-report/ on failure, but with tracing off
 	// that artifact carries little beyond a stack. Recording on the retry costs
 	// nothing on a green run and makes the upload worth having.

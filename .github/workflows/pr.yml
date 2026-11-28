@@ -38,23 +38,9 @@ jobs:
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
 
-      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
-        with:
-          bun-version: latest
+      - uses: ./.github/actions/setup
 
-      - name: Cache Bun dependencies
-        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
-        with:
-          path: ~/.bun/install/cache
-          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-bun-
-
-      - name: Install
-        run: bun install --frozen-lockfile
-
-      # Blocking, and deliberately inside this job rather than the non-blocking
-      # `review` one. Unlike prettier/eslint/svelte-check it has no baseline --
+      # Blocking. Unlike prettier/eslint/svelte-check it has no baseline --
       # it reported zero problems when added -- so there is nothing to ratchet
       # down from. It also guards a failure mode nothing else here catches: a
       # broken or renamed workflow silently stops reporting the status checks
@@ -63,8 +49,8 @@ jobs:
       #
       # Installed from the upstream release with its published checksum: the
       # only actionlint GitHub Action is third-party (51 stars) and the npm
-      # package is published by an unaffiliated account, neither of which
-      # belongs in a workflow holding `pull-requests: write`.
+      # package is published by an unaffiliated account, and neither belongs in
+      # the job that gates `main`.
       #
       # NOTE: actionlint shells out to shellcheck for `run:` blocks when it is
       # on PATH. The runner has it; a dev machine usually does not, so a clean
@@ -86,9 +72,9 @@ jobs:
           rm -f actionlint "actionlint_${ACTIONLINT_VERSION}_"*
 
       # Blocking for the same reason actionlint is, and for the reason PLAN.md
-      # D1 gives: eslint reports in the non-blocking `review` job, so before
-      # this step the error count could grow and nothing failed. This does not
-      # make eslint blocking -- the five pre-existing errors stay -- it asserts
+      # D1 gives: eslint itself does not block (the tree is not clean), so
+      # before this step the error count could grow and nothing failed. This
+      # does not make eslint blocking -- the pre-existing errors stay -- it asserts
       # the count cannot rise. It calls eslint directly, never `bun run lint`,
       # whose prettier half is red tree-wide and short-circuits eslint away.
       - name: eslint ratchet
@@ -96,9 +82,9 @@ jobs:
 
       # Same gate for the other baseline. `check` reported without blocking for
       # months, so its documented figure (24) and the measured one (27) drifted
-      # apart unnoticed, three of them in app code. Blocking here rather than in
-      # `review` for the same reason the eslint ratchet is: a ratchet that
-      # cannot fail the merge is a report.
+      # apart unnoticed, three of them in app code. Blocking for the same
+      # reason the eslint ratchet is: a ratchet that cannot fail the merge is a
+      # report.
       - name: svelte-check ratchet
         run: bun run check:ratchet
 
@@ -112,6 +98,15 @@ jobs:
       # depends on which agent tooling has run locally.
       - name: prettier ratchet
         run: bun run format:ratchet
+
+      # Until now this ran only in lefthook's pre-commit, which --no-verify, a
+      # non-shell git client and a GitHub web edit all skip -- "Update
+      # pr.ymlchznge (#291)" reached `main` that way. The app exists to review
+      # copy, so a misspelling in src/lib/data/ ships looking deliberate.
+      # local-tool.sh pins the release and checks its SHA-256, the same
+      # reasoning as the actionlint step above.
+      - name: Spelling (typos)
+        run: bash scripts/local-tool.sh typos
 
       - name: Check corpus lock
         run: bun run corpus:check
@@ -152,20 +147,7 @@ jobs:
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
 
-      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
-        with:
-          bun-version: latest
-
-      - name: Cache Bun dependencies
-        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
-        with:
-          path: ~/.bun/install/cache
-          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-bun-
-
-      - name: Install
-        run: bun install --frozen-lockfile
+      - uses: ./.github/actions/setup
 
       # Cache the browser binary across runs and only re-install OS apt deps on a cache hit.
       - name: Cache Playwright browsers
@@ -190,7 +172,10 @@ jobs:
           SHARD: ${{ matrix.shard }}
         run: bunx playwright test --shard="${SHARD}/4"
 
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+      # playwright.config.ts writes this folder only because CI now adds the
+      # html reporter. Before that every failed shard logged "No files were
+      # found with the provided path" and uploaded nothing, traces included.
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: failure()
         with:
           name: playwright-report-shard-${{ matrix.shard }}
