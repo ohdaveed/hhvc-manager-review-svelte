@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import { resolve } from '$app/paths';
 	import * as Alert from '$lib/components/ui/alert/index.js';
 
 	// The message `+page.ts` passed to `error()`, or a plain fallback for any
@@ -34,5 +35,15 @@
 	<Alert.Title>
 		{$page.status === 404 ? 'Page not found' : `Error ${$page.status}`}
 	</Alert.Title>
-	<Alert.Description>{detail}</Alert.Description>
+	<Alert.Description>
+		<p>{detail}</p>
+		<p class="mt-3">
+			<a
+				href={resolve('/')}
+				class="font-semibold text-sfds-action underline underline-offset-2 hover:text-sfds-blue-dark"
+			>
+				Back to all pages
+			</a>
+		</p>
+	</Alert.Description>
 </Alert.Root>

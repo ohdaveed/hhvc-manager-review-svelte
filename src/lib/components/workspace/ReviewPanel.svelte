@@ -24,15 +24,25 @@
 		type PageCheck
 	} from '$lib/stores/reviewState';
 
-	let { pageData, karlReadiness = null } = $props();
+	let {
+		pageData,
+		karlReadiness = null,
+		onOpenFields
+	}: {
+		pageData?: unknown;
+		karlReadiness?: string | null;
+		onOpenFields?: () => void;
+	} = $props();
+
+	const pageId = $derived((pageData as { id?: string } | undefined)?.id);
 
 	// What a decision is being made over. PRODUCT.md: a review succeeds when
 	// the Karl builder never has to go back to the manager, so Approve should
 	// not be pressed blind to the page's Karl outline or to edits still in
 	// flight. Shown, not enforced -- the decision stays the reviewer's.
-	const unsavedHere = $derived(pageData?.id ? pageStore.unsavedChangesOn(pageData.id).length : 0);
+	const unsavedHere = $derived(pageId ? pageStore.unsavedChangesOn(pageId).length : 0);
 	const expiredHere = $derived(
-		pageData?.id ? Object.keys(pageStore.staleEditsOn(pageData.id).expired).length : 0
+		pageId ? Object.keys(pageStore.staleEditsOn(pageId).expired).length : 0
 	);
 	const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
 
@@ -40,19 +50,19 @@
 	// with no live rows (signed out) there is nothing to move on to. Searched
 	// over the rows the queue lists (`review`), so it never names a retired
 	// page's row, whose link would 404.
-	const nextPath = $derived(pageData?.id ? review.nextUndecided(pageData.id) : undefined);
+	const nextPath = $derived(pageId ? review.nextUndecided(pageId) : undefined);
 	const nextTitle = $derived(
 		nextPath ? pageTitleFor(nextPath, pageStore.pages, $draftsStore, 'empty') : ''
 	);
 
 	// Find the live record in the store matching the static corpus id
-	let liveRecord = $derived($pagesStore.find((p) => p.path === pageData?.id));
+	let liveRecord = $derived($pagesStore.find((p) => p.path === pageId));
 	const checks = $derived(Object.entries(liveRecord?.page_checks ?? {}));
 
 	// Steps already ticked off in the walkthrough, on this device. A count, not
 	// "N of M": the total needs the walkthrough built, and the panel is not the
 	// place to walk the page against the whole Karl inventory just to say it.
-	const copiedHere = $derived(pageData?.id ? (pageStore.copiedSteps[pageData.id]?.length ?? 0) : 0);
+	const copiedHere = $derived(pageId ? (pageStore.copiedSteps[pageId]?.length ?? 0) : 0);
 
 	let notesValue = $state('');
 	let debounceTimeout: ReturnType<typeof setTimeout> | undefined;
@@ -176,18 +186,18 @@
 	// the queue's "Not in the review yet" list. `review.unreviewed` is exactly
 	// those pages: never a draft (its row is made with it) and never a retired
 	// row. The decision controls come alive once the row lands in the store.
-	const addable = $derived(pageData?.id ? review.unreviewed.includes(pageData.id) : false);
+	const addable = $derived(pageId ? review.unreviewed.includes(pageId) : false);
 	let adding = $state(false);
 	let addFailed = $state(false);
 	$effect(() => {
-		void pageData?.id;
+		void pageId;
 		addFailed = false;
 	});
 	async function addToReview() {
-		if (adding || !pageData?.id) return;
+		if (adding || !pageId) return;
 		adding = true;
 		addFailed = false;
-		addFailed = !(await addPageToReview(pageData.id));
+		addFailed = !(await addPageToReview(pageId));
 		adding = false;
 	}
 	// Proof the write landed. Before this the only signs were the fill
@@ -302,7 +312,7 @@
 					     is still loading, and saying "no record" then is a false alarm.
 
 					     `pageData` is required because `liveRecord` is looked up by
-					     `pageData?.id`. On a drafting, stale or failed draft there is no
+					     `pageId`. On a drafting, stale or failed draft there is no
 					     corpus entry, so the lookup misses even though a `pages` row for
 					     that `draft:<uuid>` does exist -- and claiming otherwise would be
 					     false. With no page to name, say nothing: the draft banner above
@@ -351,7 +361,15 @@
 						<li>
 							<span class="font-semibold text-sfds-black"
 								>{plural(unsavedHere, 'unsaved change', 'unsaved changes')}</span
-							> on this page. Save or discard in Fields first.
+							>
+							on this page. Save or discard in Fields first.
+							{#if onOpenFields}
+								<button
+									type="button"
+									class="ml-1 font-semibold text-sfds-action underline underline-offset-2 hover:text-sfds-blue-dark"
+									onclick={onOpenFields}>Open Fields</button
+								>
+							{/if}
 						</li>
 					{/if}
 					{#if expiredHere}
@@ -359,6 +377,13 @@
 							<span class="font-semibold text-sfds-black"
 								>{plural(expiredHere, 'saved edit has', 'saved edits have')} expired</span
 							>: the page copy changed under them. Resolve in Fields.
+							{#if onOpenFields}
+								<button
+									type="button"
+									class="ml-1 font-semibold text-sfds-action underline underline-offset-2 hover:text-sfds-blue-dark"
+									onclick={onOpenFields}>Open Fields</button
+								>
+							{/if}
 						</li>
 					{/if}
 				</ul>
@@ -496,7 +521,12 @@
 					{@const check = raw as PageCheck}
 					<Card.Root size="sm">
 						<Card.Content class="flex items-start gap-3">
-							<Badge variant={check.status === 'pass' ? 'secondary' : 'outline'}>
+							<Badge
+								variant="secondary"
+								class={check.status === 'pass'
+									? 'border-transparent bg-sfds-green-l1 text-sfds-green'
+									: 'border-transparent bg-sfds-amber-l1 text-sfds-amber'}
+							>
 								{check.status === 'pass' ? 'Pass' : 'Check'}
 							</Badge>
 							<div>

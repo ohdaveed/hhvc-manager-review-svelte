@@ -110,12 +110,14 @@
 	 * pointed at a signed-in panel. It had never been scanned before.
 	 */
 	const ISSUE_BADGE = 'border-transparent bg-sfds-red-l1 text-sfds-red';
+	const PASS_BADGE = 'border-transparent bg-sfds-green-l1 text-sfds-green';
 
 	const statusBadge = (status: Finding['status']) =>
 		status === 'issue' ? 'secondary' : status === 'pass' ? 'secondary' : 'outline';
 
-	/** Extra classes for the issue tone, which `statusBadge` cannot express. */
-	const statusClass = (status: Finding['status']) => (status === 'issue' ? ISSUE_BADGE : '');
+	/** Extra classes for the issue/pass tones, which `statusBadge` cannot express. */
+	const statusClass = (status: Finding['status']) =>
+		status === 'issue' ? ISSUE_BADGE : status === 'pass' ? PASS_BADGE : '';
 
 	const statusLabel = (status: Finding['status']) =>
 		status === 'issue' ? 'Check' : status === 'pass' ? 'Pass' : 'No data';
@@ -221,7 +223,7 @@
 						{#if analysis.target !== null}
 							<Badge
 								variant="secondary"
-								class={analysis.targetStatus === 'pass' ? '' : ISSUE_BADGE}
+								class={analysis.targetStatus === 'pass' ? PASS_BADGE : ISSUE_BADGE}
 							>
 								{analysis.targetStatus === 'pass' ? 'Meets' : 'Over'} this page's target of grade {analysis.target}
 							</Badge>
@@ -269,6 +271,18 @@
 		</Card.Root>
 
 		<Separator />
+
+		<div class="flex flex-wrap items-center gap-2 text-xs tabular-nums" aria-label="Checks summary">
+			{#if issues.length > 0}
+				<Badge variant="secondary" class={ISSUE_BADGE}>{issues.length} to check</Badge>
+			{/if}
+			{#if passes.length > 0}
+				<Badge variant="secondary" class={PASS_BADGE}>{passes.length} passing</Badge>
+			{/if}
+			{#if unavailable.length > 0}
+				<Badge variant="outline">{unavailable.length} no data</Badge>
+			{/if}
+		</div>
 
 		{#if issues.length > 0}
 			<div class="space-y-2">

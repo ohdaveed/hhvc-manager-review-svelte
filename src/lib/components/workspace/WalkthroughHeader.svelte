@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onDestroy } from 'svelte';
 	import type { Walkthrough } from '$lib/karl/walkthrough';
 
 	/**
@@ -28,21 +29,28 @@
 	 * Built in `buildWalkthrough` from the same transcript the steps come from,
 	 * so the file and the drawer cannot disagree.
 	 */
-	let copyState = $state<'idle' | 'done'>('idle');
+	let copyState = $state<'idle' | 'done' | 'failed'>('idle');
+	let announcement = $state('');
 	let copyTimer: ReturnType<typeof setTimeout> | undefined;
+
+	onDestroy(() => clearTimeout(copyTimer));
 
 	async function copyMarkdown() {
 		try {
 			await navigator.clipboard.writeText(walkthrough.markdown);
 			copyState = 'done';
+			announcement = 'Markdown transcript copied to clipboard.';
 			clearTimeout(copyTimer);
-			copyTimer = setTimeout(() => (copyState = 'idle'), 1400);
+			copyTimer = setTimeout(() => (copyState = 'idle'), 1600);
 		} catch {
 			// Clipboard is permission-gated and unavailable over plain http. The
 			// Download button is the fallback and is right beside it, so a failure
 			// here is not a dead end -- and throwing would take the header down
 			// mid-rebuild, the same reasoning as the drawer's Copy.
-			copyState = 'idle';
+			copyState = 'failed';
+			announcement = 'Could not copy markdown. Use Download .md instead.';
+			clearTimeout(copyTimer);
+			copyTimer = setTimeout(() => (copyState = 'idle'), 3000);
 		}
 	}
 
@@ -85,22 +93,28 @@
 			Open Karl add-page form ↗
 		</a>
 		<button type="button" class="wt-export" onclick={copyMarkdown}>
-			{copyState === 'done' ? 'Copied' : 'Copy markdown'}
+			{copyState === 'done'
+				? 'Copied'
+				: copyState === 'failed'
+					? 'Copy failed — download'
+					: 'Copy markdown'}
 		</button>
 		<button type="button" class="wt-export" onclick={downloadMarkdown}>Download .md</button>
 		<button type="button" class="wt-exit" onclick={onExit}>Exit walkthrough</button>
 	</div>
+	<span class="sr-only" aria-live="polite">{announcement}</span>
 </nav>
 
 <style>
 	.wt-header {
-		height: 48px;
+		min-height: 48px;
 		flex: none;
 		display: flex;
+		flex-wrap: wrap;
 		align-items: center;
 		justify-content: space-between;
-		gap: 16px;
-		padding: 0 20px;
+		gap: 8px 16px;
+		padding: 8px 20px;
 		background: var(--sfds-color-blue-dark, #0c1464);
 		color: #ffffff;
 	}
@@ -129,9 +143,10 @@
 
 	.wt-right {
 		display: flex;
+		flex-wrap: wrap;
 		align-items: center;
-		gap: 16px;
-		flex: none;
+		gap: 8px 12px;
+		flex: 0 1 auto;
 		font-size: 0.8125rem;
 	}
 
@@ -163,6 +178,7 @@
 		font-weight: 600;
 		white-space: nowrap;
 		cursor: pointer;
+		transition: background-color 150ms ease;
 	}
 
 	.wt-export:hover {
@@ -181,6 +197,7 @@
 		font-weight: 600;
 		white-space: nowrap;
 		cursor: pointer;
+		transition: background-color 150ms ease;
 	}
 
 	.wt-exit:hover {

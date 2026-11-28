@@ -125,6 +125,14 @@
 		pageStore.cancelChange(pageId, fieldId);
 	}
 
+	function onRewriteKeydown(e: KeyboardEvent) {
+		if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+			e.preventDefault();
+			const trimmed = pageStore.rewriteInstruction.trim();
+			if (!rewriting && trimmed !== '') rewrite(trimmed);
+		}
+	}
+
 	function onChangeKeydown(e: KeyboardEvent, fieldId: string) {
 		if (e.isComposing) return;
 		if (e.key === 'Enter') {
@@ -722,7 +730,14 @@
 					maxlength={MAX_INSTRUCTION_CHARS}
 					aria-label="Rewrite instruction"
 					placeholder="Or describe the change in your own words…"
+					onkeydown={onRewriteKeydown}
 				/>
+				{#if pageStore.rewriteInstruction.length >= MAX_INSTRUCTION_CHARS - 200}
+					<p class="mt-1 text-right text-[0.6875rem] text-sfds-slate-l3 tabular-nums">
+						{(MAX_INSTRUCTION_CHARS - pageStore.rewriteInstruction.length).toLocaleString()} characters
+						left
+					</p>
+				{/if}
 				{#if instructionError}
 					<p class="mt-1.5 text-xs leading-[1.0625rem] text-sfds-red" role="alert">
 						{instructionError}

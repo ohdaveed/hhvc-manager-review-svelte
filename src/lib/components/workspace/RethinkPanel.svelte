@@ -161,13 +161,20 @@
 	function cancel() {
 		controller?.abort();
 	}
+
+	function onInstructionKeydown(event: KeyboardEvent) {
+		if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) {
+			event.preventDefault();
+			run();
+		}
+	}
 </script>
 
 <div class="flex h-full min-h-0 flex-col">
 	<div class="min-h-0 flex-1 overflow-y-auto">
 		{#if !sectionKey}
-			<div class="px-5 py-6 text-sm">
-				<p class="font-semibold">Choose a section to rethink</p>
+			<div class="px-5 py-6 text-sm text-sfds-slate-l3">
+				<p class="font-semibold text-sfds-black">Choose a section to rethink</p>
 				<p class="mt-1.5 leading-5">
 					The assistant will reconsider how the section is written and structured, and say what it
 					thinks is missing.
@@ -176,8 +183,9 @@
 					<!-- The request carries the reviewer's session; without one it is
 					     refused, so the list would only lead to an error. -->
 					<p class="mt-4 leading-5">
-						<a href={resolve('/login')} class="font-semibold underline underline-offset-2"
-							>Sign in</a
+						<a
+							href={resolve('/login')}
+							class="font-semibold text-sfds-action underline underline-offset-2">Sign in</a
 						> to rethink a section.
 					</p>
 				{:else if sections.length === 0}
@@ -188,7 +196,7 @@
 							<li>
 								<Button
 									variant="outline"
-									class="h-auto min-h-10 w-full justify-start px-3 py-2 text-left text-[0.8125rem] whitespace-normal"
+									class="h-auto min-h-10 w-full justify-start px-3 py-2 text-left text-[0.8125rem] whitespace-normal text-sfds-black hover:bg-sfds-blue-l1/60"
 									onclick={() => pageStore.selectSection(section.key)}
 								>
 									{section.label}
@@ -196,9 +204,10 @@
 							</li>
 						{/each}
 					</ul>
-					<p class="mt-4 text-xs leading-[1.0625rem]">
-						Each section in the mockup also has a <strong>Rethink section</strong> button, shown while
-						this tab is open.
+					<p class="mt-4 text-xs leading-[1.0625rem] text-sfds-slate-l3">
+						Each section in the mockup also has a <strong class="text-sfds-black"
+							>Rethink section</strong
+						> button, shown while this tab is open.
 					</p>
 				{/if}
 			</div>
@@ -222,6 +231,7 @@
 					class="text-[0.8125rem]"
 					aria-label="What should this section accomplish?"
 					placeholder="Optional: what should this section accomplish?"
+					onkeydown={onInstructionKeydown}
 				/>
 				<div class="mt-2 flex gap-2">
 					<Button
@@ -237,7 +247,11 @@
 					{/if}
 				</div>
 				{#if pageStore.rethink.state === 'loading'}
-					<p class="mt-2 text-xs" role="status">
+					<p class="mt-2 flex items-center gap-2 text-xs text-sfds-slate-l3" role="status">
+						<span
+							class="inline-block size-2 flex-none rounded-full bg-sfds-action motion-safe:animate-pulse"
+							aria-hidden="true"
+						></span>
 						Reading the whole section. This usually takes about 30 seconds.
 					</p>
 				{/if}
@@ -245,7 +259,12 @@
 
 			{#if pageStore.rethink.state === 'error'}
 				{@const cancelled = pageStore.rethink.message === 'Cancelled.'}
-				<p class="mx-5 mt-4 text-xs leading-[1.0625rem]" role={cancelled ? 'status' : 'alert'}>
+				<p
+					class="mx-5 mt-4 text-xs leading-[1.0625rem] {cancelled
+						? 'text-sfds-slate-l3'
+						: 'rounded-[4px] border-l-2 border-sfds-red bg-sfds-red-l1 px-3 py-2 font-medium text-sfds-red'}"
+					role={cancelled ? 'status' : 'alert'}
+				>
 					{pageStore.rethink.message}
 				</p>
 			{/if}
@@ -265,12 +284,23 @@
 					     ops list rather than being one more line inside it. Gated on the
 					     normalized `karlChanged` flag, not a raw string compare here --
 					     see request.ts's `normalizeKarl` for why. -->
-					<section class="mx-5 mt-4 rounded-[4px] border-2 p-3" aria-label="Karl mapping changed">
-						<span class="text-xs font-bold tracking-[0.06em] uppercase">Karl mapping changed</span>
-						<p class="mt-1.5 text-[0.8125rem] leading-[1.1875rem] line-through">
+					<section
+						class="mx-5 mt-4 rounded-[4px] border border-sfds-amber bg-sfds-amber-l1 p-3"
+						aria-label="Karl mapping changed"
+					>
+						<span class="text-xs font-bold tracking-[0.06em] text-sfds-amber uppercase"
+							>Karl mapping changed</span
+						>
+						<p
+							class="mt-1.5 rounded-[3px] bg-sfds-red-l1 px-2 py-1 text-[0.8125rem] leading-[1.1875rem] text-sfds-black line-through decoration-1"
+						>
 							{result.karlBefore}
 						</p>
-						<p class="mt-1.5 text-[0.8125rem] leading-[1.1875rem]">{result.karlAfter}</p>
+						<p
+							class="mt-1.5 rounded-[3px] bg-white px-2 py-1 text-[0.8125rem] leading-[1.1875rem] text-sfds-black"
+						>
+							{result.karlAfter}
+						</p>
 					</section>
 				{/if}
 
@@ -280,13 +310,13 @@
 					     steps or cards has changes with no op to accept or reject. Saying
 					     so beats a rationale describing edits the list below cannot show. -->
 					<section
-						class="mx-5 mt-4 rounded-[4px] border-2 p-3"
+						class="mx-5 mt-4 rounded-[4px] border border-sfds-amber bg-sfds-amber-l1 p-3"
 						aria-label="Steps and cards not shown"
 					>
-						<span class="text-xs font-bold tracking-[0.06em] uppercase"
+						<span class="text-xs font-bold tracking-[0.06em] text-sfds-amber uppercase"
 							>Steps and cards not shown</span
 						>
-						<p class="mt-1.5 text-[0.8125rem] leading-[1.1875rem]">
+						<p class="mt-1.5 text-[0.8125rem] leading-[1.1875rem] text-sfds-black">
 							The assistant also changed this section's steps or cards. This tool cannot review
 							those yet, so they are not in the list below and will not be applied.
 						</p>
@@ -295,39 +325,53 @@
 
 				<ul class="mt-4 space-y-2 px-5 pb-4" aria-label="Proposed changes">
 					{#each result.ops.filter((op) => op.type !== 'keep') as op (op.id)}
-						<li class="rounded-[4px] border p-3">
-							<label class="flex items-start gap-2 text-xs">
+						<li class="rounded-[4px] border border-sfds-grey-l2 p-3">
+							<label class="flex cursor-pointer items-start gap-2 text-xs">
 								<input
 									type="checkbox"
-									class="mt-0.5"
+									class="mt-0.5 accent-sfds-action"
 									aria-label={opName(op)}
 									checked={pageStore.isOpAccepted(op)}
 									onchange={(event) => pageStore.setOpAccepted(op.id, event.currentTarget.checked)}
 								/>
-								<span class="font-bold tracking-[0.06em] uppercase">{opLabel(op)}</span>
+								<span class="font-bold tracking-[0.06em] text-sfds-black uppercase"
+									>{opLabel(op)}</span
+								>
 							</label>
 
 							{#if op.type === 'rewrite'}
 								<p
-									class="mt-2 rounded-[3px] px-2 py-1.5 text-[0.8125rem] leading-[1.1875rem] line-through"
+									class="mt-2 rounded-[3px] bg-sfds-red-l1 px-2 py-1.5 text-[0.8125rem] leading-[1.1875rem] text-sfds-black line-through decoration-1"
 								>
 									{op.from}
 								</p>
-								<p class="mt-1.5 rounded-[3px] px-2 py-1.5 text-[0.8125rem] leading-[1.1875rem]">
+								<p
+									class="mt-1.5 rounded-[3px] bg-sfds-green-l1 px-2 py-1.5 text-[0.8125rem] leading-[1.1875rem] text-sfds-black"
+								>
 									{op.to}
 								</p>
 								{#if op.moved}
-									<p class="mt-1 text-xs">Also moves position.</p>
+									<p class="mt-1 text-xs text-sfds-slate-l3">Also moves position.</p>
 								{/if}
 							{:else if op.type === 'add'}
-								<p class="mt-2 rounded-[3px] px-2 py-1.5 text-[0.8125rem] leading-[1.1875rem]">
+								<p
+									class="mt-2 rounded-[3px] bg-sfds-green-l1 px-2 py-1.5 text-[0.8125rem] leading-[1.1875rem] text-sfds-black"
+								>
 									{op.text}
 								</p>
-								<p class="mt-1 text-xs">
+								<p class="mt-1.5 text-xs font-medium text-sfds-amber">
 									Unverified — proposed by the assistant, with no confirmed source.
 								</p>
+							{:else if op.type === 'drop'}
+								<p
+									class="mt-2 rounded-[3px] bg-sfds-red-l1 px-2 py-1.5 text-[0.8125rem] leading-[1.1875rem] text-sfds-black line-through decoration-1"
+								>
+									{op.text}
+								</p>
 							{:else}
-								<p class="mt-2 rounded-[3px] px-2 py-1.5 text-[0.8125rem] leading-[1.1875rem]">
+								<p
+									class="mt-2 rounded-[3px] bg-sfds-blue-l1 px-2 py-1.5 text-[0.8125rem] leading-[1.1875rem] text-sfds-black"
+								>
 									{op.text}
 								</p>
 							{/if}
@@ -336,13 +380,13 @@
 				</ul>
 
 				{#if result.otherSections.length > 0}
-					<p class="mx-5 mb-4 text-xs leading-[1.0625rem]" role="status">
+					<p class="mx-5 mb-4 text-xs leading-[1.0625rem] text-sfds-slate-l3" role="status">
 						The assistant also proposed changes to {result.otherSections.join(', ')}. Those are not
 						applied here — rethink that section to see them.
 					</p>
 				{/if}
 
-				<p class="mx-5 mb-4 text-xs leading-[1.0625rem]">
+				<p class="mx-5 mb-4 text-xs leading-[1.0625rem] text-sfds-slate-l3">
 					{result.disclosure}
 					{result.model ? ` (${result.model})` : ''}
 				</p>

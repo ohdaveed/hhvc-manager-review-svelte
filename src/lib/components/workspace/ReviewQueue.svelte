@@ -13,6 +13,8 @@
 	import { STATUS_LABELS } from '$lib/review/statusLabels';
 	import StatusBar from '$lib/components/review/StatusBar.svelte';
 	import PageRow from '$lib/components/review/PageRow.svelte';
+	import { tick } from 'svelte';
+	import Search from '@lucide/svelte/icons/search';
 	import { Button } from '$lib/components/ui/button/index.js';
 
 	let {
@@ -72,6 +74,15 @@
 			path.toLowerCase().includes(needle));
 	const shown = $derived(review.rows.filter((p) => matches(p.path)));
 	const unreviewedShown = $derived(review.unreviewed.filter(matches));
+	const filtering = $derived(needle !== '' || proposedOnly);
+	let filterInput = $state<HTMLInputElement | undefined>();
+
+	async function clearFilters() {
+		query = '';
+		proposedOnly = false;
+		await tick();
+		filterInput?.focus();
+	}
 
 	// Signed out, the review data is unreadable but the corpus is not, so the
 	// queue lists the mockups in corpus order. No status, notes or progress:
@@ -246,28 +257,49 @@
 			{/if}
 			<div>
 				<label for="queue-filter" class="sr-only">Filter pages</label>
-				<input
-					id="queue-filter"
-					type="search"
-					bind:value={query}
-					placeholder="Filter by title or path"
-					autocomplete="off"
-					class="w-full rounded-[3px] border border-sfds-grey-l2 bg-white px-2.5 py-1.5 text-[0.8125rem] text-sfds-black placeholder:text-sfds-slate-l3 focus:border-sfds-action focus:ring-1 focus:ring-sfds-action focus:outline-none"
-				/>
-				<label class="mt-2 flex items-center gap-2 text-[0.8125rem] text-sfds-black">
-					<input type="checkbox" bind:checked={proposedOnly} class="accent-sfds-action" />
-					Proposed pages only
-				</label>
+				<div class="relative">
+					<Search
+						class="pointer-events-none absolute top-1/2 left-2.5 size-3.5 -translate-y-1/2 text-sfds-slate-l3"
+						aria-hidden="true"
+					/>
+					<input
+						id="queue-filter"
+						type="search"
+						bind:this={filterInput}
+						bind:value={query}
+						placeholder="Filter by title or path"
+						autocomplete="off"
+						class="w-full rounded-[4px] border border-sfds-grey-l2 bg-white py-1.5 pr-2.5 pl-8 text-[0.8125rem] text-sfds-black placeholder:text-sfds-slate-l3 focus:border-sfds-action focus:ring-1 focus:ring-sfds-action focus:outline-none"
+					/>
+				</div>
+				<div class="mt-2 flex items-center justify-between gap-2">
+					<label class="flex cursor-pointer items-center gap-2 text-[0.8125rem] text-sfds-black">
+						<input type="checkbox" bind:checked={proposedOnly} class="accent-sfds-action" />
+						Proposed pages only
+					</label>
+					{#if filtering}
+						<span class="text-[0.6875rem] font-semibold text-sfds-slate-l3 tabular-nums">
+							{browsing ? corpusShown.length : shown.length + unreviewedShown.length} of {browsing
+								? pageStore.pages.length
+								: total}
+						</span>
+					{/if}
+				</div>
 			</div>
 		</div>
 		{#if (browsing ? corpusShown.length : shown.length + unreviewedShown.length) === 0}
-			<p role="status" class="text-sm text-sfds-slate-l3">
-				{#if proposedOnly && query.trim() === ''}
-					No proposed pages.
-				{:else}
-					No {proposedOnly ? 'proposed ' : ''}pages match “{query.trim()}”.
+			<div class="space-y-2">
+				<p role="status" class="text-sm text-sfds-slate-l3">
+					{#if proposedOnly && query.trim() === ''}
+						No proposed pages.
+					{:else}
+						No {proposedOnly ? 'proposed ' : ''}pages match “{query.trim()}”.
+					{/if}
+				</p>
+				{#if filtering}
+					<Button variant="outline" size="xs" onclick={clearFilters}>Clear filters</Button>
 				{/if}
-			</p>
+			</div>
 		{/if}
 	{/if}
 

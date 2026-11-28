@@ -220,6 +220,7 @@
 				bind:this={() => stepEls[step.id] ?? null, (el) => el && (stepEls[step.id] = el)}
 			>
 				{#if isActive}
+					{@const isLast = index >= steps.length - 1}
 					<div
 						bind:this={cardEl}
 						class="step-card"
@@ -354,16 +355,31 @@
 						     Title + Text, image file/alt/credit and the like go into
 						     separate Wagtail fields, so those keep a Copy per value. -->
 						<div class="step-actions">
+							{#if index > 0}
+								<button
+									type="button"
+									class="btn-ghost"
+									aria-label="Previous step"
+									onclick={() => goTo(index - 1)}>← Back</button
+								>
+							{/if}
 							{#if step.values.length === 1}
 								<button type="button" class="btn-primary" onclick={() => copyAndNext(step)}>
-									Copy &amp; next →
+									{isLast ? 'Copy & finish' : 'Copy & next →'}
 								</button>
 							{:else}
 								<button type="button" class="btn-primary" onclick={() => advance(step)}>
-									{step.values.length > 1 ? 'Done · next →' : 'Mark done · next →'}
+									{isLast
+										? 'Mark done'
+										: step.values.length > 1
+											? 'Done · next →'
+											: 'Mark done · next →'}
 								</button>
 							{/if}
-							<button type="button" class="btn-ghost" onclick={() => goTo(index + 1)}>Skip</button>
+							{#if !isLast}
+								<button type="button" class="btn-ghost" onclick={() => goTo(index + 1)}>Skip</button
+								>
+							{/if}
 						</div>
 						{#if copyFailed === step.id}
 							<p class="copy-failed" role="alert">
@@ -443,7 +459,7 @@
 <style>
 	.drawer {
 		flex: none;
-		width: 440px;
+		width: min(100%, 440px);
 		background: #ffffff;
 		border-right: 1px solid var(--sfds-color-grey-l2);
 		box-shadow: 4px 0 12px rgba(12, 20, 100, 0.06);

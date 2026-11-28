@@ -185,7 +185,7 @@
 		<RethinkPanel {pageData} />
 	</Tabs.Content>
 	<Tabs.Content value="overview" class="min-h-0 flex-1 overflow-y-auto bg-background">
-		<ReviewPanel {pageData} {karlReadiness} />
+		<ReviewPanel {pageData} {karlReadiness} onOpenFields={() => (activeTab = 'fields')} />
 	</Tabs.Content>
 	<!-- Karl Jr.'s accessibility tests and readability score, computed here.
 	     These are NOT the Page Checks shown under the decision: those are

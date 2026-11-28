@@ -1,4 +1,6 @@
 <script lang="ts">
+	import ArrowLeft from '@lucide/svelte/icons/arrow-left';
+	import { resolve } from '$app/paths';
 	import { supabase } from '$lib/supabase';
 	import { sessionStore } from '$lib/stores/session.svelte';
 	import PageAlert from '$lib/components/sfgov/ds/PageAlert.svelte';
@@ -191,6 +193,13 @@
 	<SiteHeader />
 
 	<main class="mx-auto w-full max-w-[560px] flex-1 px-4 py-12">
+		<a
+			href={resolve('/')}
+			class="mb-4 inline-flex items-center gap-1.5 text-sm font-semibold text-site-action underline-offset-2 hover:text-site-action-dark hover:underline"
+		>
+			<ArrowLeft class="size-4" aria-hidden="true" />
+			Back to all pages
+		</a>
 		<h1 class="mb-2 text-3xl font-bold text-foreground">Sign in</h1>
 
 		{#if sessionStore.signedIn}

@@ -346,8 +346,10 @@
 	const onWindowKeydown = (event: KeyboardEvent) => {
 		// `defaultPrevented`: an Escape a popover or menu inside the sheet
 		// already handled closes that, not the sheet around it.
-		if (event.key === 'Escape' && !event.defaultPrevented && pageStore.mobileSheet !== 'none')
-			closeSheet();
+		if (event.key !== 'Escape' || event.defaultPrevented) return;
+		if (pageStore.mobileSheet !== 'none') closeSheet();
+		else if (pageStore.presenting) pageStore.togglePresent();
+		else if (pageStore.mode === 'sitemap') pageStore.showReview();
 	};
 
 	// A sheet exists only below 1024px. Widened past it (a tablet rotating, a
@@ -874,7 +876,7 @@
 								aria-pressed={pageStore.presenting}
 								aria-label="Present"
 								title={pageStore.presenting
-									? 'Stop presenting: show the review controls again'
+									? 'Stop presenting (Esc): show the review controls again'
 									: 'Present: hide the review controls and show the page full size'}
 								data-testid="present-toggle"
 								onclick={() => pageStore.togglePresent()}
