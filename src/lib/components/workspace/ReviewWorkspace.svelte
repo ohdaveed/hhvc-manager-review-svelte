@@ -118,8 +118,11 @@
 			<Tabs.Trigger value="fields" class="flex-none px-2 py-2 leading-5">
 				Fields
 				{#if pageStore.selectedFieldIds.length > 0}
+					<!-- No margin: the trigger's own `gap-1.5` spaces the badge. A second
+					     `ml-1.5` on top added ~7px, which pushed Analysis onto a second
+					     row the moment copy was selected and dropped the whole panel. -->
 					<span
-						class="ml-1.5 inline-flex size-[1.0625rem] items-center justify-center rounded-full bg-sfds-action text-[0.625rem] font-bold text-white"
+						class="inline-flex size-[1.0625rem] items-center justify-center rounded-full bg-sfds-action text-[0.625rem] font-bold text-white"
 					>
 						{pageStore.selectedFieldIds.length}
 					</span>

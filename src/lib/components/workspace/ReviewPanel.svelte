@@ -285,7 +285,7 @@
 
 <div class="flex h-full flex-col">
 	<!-- Top: the decision itself -->
-	<div class="space-y-4 p-6">
+	<div class="space-y-4 p-5">
 		<!-- Screen-reader only: the tab above already says "Decision", and a
 		     visible "Manager Review" under it was the same thing twice. The
 		     heading stays in the outline for heading navigation. -->
@@ -294,7 +294,11 @@
 		<!-- A container, so the decisions can drop to a 2x2 grid when four
 		     buttons no longer fit one row. Font size decides that, not the
 		     viewport: at a 20px root, "Approved" can't fit a quarter of the
-		     panel. Labels also wrap inside their button. The `!` utilities beat
+		     panel. Labels also wrap inside their button.
+		     The row needs ~22rem once each label has its `px-2`. It used to
+		     switch at 18rem with `px-0!`, which kept four in a row at the default
+		     panel width only by letting every label touch its border and the
+		     Undecided ring sit on its text. The `!` utilities beat
 		     the toggle group's `data-[spacing=0]` padding, border and radius
 		     rules, which outrank a plain class. -->
 		<div class="@container/decision space-y-2">
@@ -393,7 +397,7 @@
 				variant="outline"
 				size="sm"
 				spacing={0}
-				class="grid w-full grid-cols-2 items-stretch gap-1 @min-[18rem]/decision:flex @min-[18rem]/decision:gap-0"
+				class="grid w-full grid-cols-2 items-stretch gap-1 @min-[22.5rem]/decision:flex @min-[22.5rem]/decision:gap-0"
 				aria-labelledby="decision-label"
 				aria-describedby={liveRecord && (karlReadiness || unsavedHere || expiredHere)
 					? 'decision-readiness'
@@ -406,7 +410,7 @@
 					<ToggleGroup.Item
 						value={decision.value}
 						aria-label={decision.label}
-						class="h-auto min-h-7 min-w-0 flex-auto shrink px-0! py-1 leading-tight whitespace-normal disabled:text-sfds-slate-l2 disabled:opacity-100 data-[state=on]:text-white data-[state=on]:hover:text-white @max-[18rem]/decision:rounded-md! @max-[18rem]/decision:border-l! {decision.tone}"
+						class="h-auto min-h-7 min-w-0 flex-auto shrink px-2! py-1 leading-tight whitespace-normal disabled:text-sfds-slate-l2 disabled:opacity-100 data-[state=on]:text-white data-[state=on]:hover:text-white @max-[22.5rem]/decision:rounded-md! @max-[22.5rem]/decision:border-l! {decision.tone}"
 					>
 						{decision.label}
 					</ToggleGroup.Item>
@@ -473,7 +477,7 @@
 	     what it is for, because a button name alone did not tell anyone the
 	     transfer step existed. -->
 	<Separator />
-	<section class="space-y-3 p-6" aria-labelledby="karl-handoff">
+	<section class="space-y-3 p-5" aria-labelledby="karl-handoff">
 		<div class="flex items-baseline justify-between gap-2">
 			<h3 id="karl-handoff" class="text-sm font-bold">Move it into Karl</h3>
 			{#if liveRecord?.status === 'approved'}
@@ -513,7 +517,7 @@
 		     focusable. Nested, this box became a scroll region whenever the panel
 		     was short (the Karl strip took 48px at 1280x720), holding nothing
 		     focusable -- axe's scrollable-region-focusable. -->
-		<div class="flex-1 bg-muted/40 p-6">
+		<div class="flex-1 bg-muted/40 p-5">
 			<h3 class="mb-4 text-sm font-bold">Page checks</h3>
 
 			<div class="space-y-3">
