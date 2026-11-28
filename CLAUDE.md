@@ -84,7 +84,9 @@ a drive-by edit.
   extension — not just the directory — decides. A node-only test that needs `fs`
   belongs here (`tests/seedHosted.spec.ts`); a `.test.ts` alongside it gets jsdom.
 
-A test placed in the wrong directory gets the wrong environment. E2E is separate: `**/*.e2e.{ts,js}`, matched by `playwright.config.ts`.
+A test placed in the wrong directory gets the wrong environment.
+
+**The client project loads `tests/setup/jsdomStorage.ts`, and on Node 25+ it is load-bearing.** Node now defines its own global `localStorage`, which without `--localstorage-file` evaluates to `undefined` and hides jsdom's — so every test touching storage fails in `beforeEach` (`Cannot read properties of undefined (reading 'clear')`), measured as the 11 `rails`/`present` tests in `tests/pageData.test.ts` on Node 26. The setup file restores jsdom's `localStorage`/`sessionStorage` only when the global is unusable, so on older Node it does nothing. If a storage test fails only on one machine, `NODE_OPTIONS=--no-experimental-webstorage` is the quick confirmation. CI doesn't pin Node, so it can be green while a developer is red. E2E is separate: `**/*.e2e.{ts,js}`, matched by `playwright.config.ts`.
 
 ### Landing page and AI-drafted pages
 
