@@ -13,7 +13,9 @@ import { gotoSignedIn } from './signedIn';
 const PAGE = '/review/report-garbage-clutter-or-overgrown-plants';
 
 const badge = (page: Page) => page.getByTestId('toolbar-status');
-const chosen = (page: Page) => page.locator('#reviewPanel [role="radio"][aria-checked="true"]');
+// Scoped to the pinned decision: the Fix tab's tool switch is a radio group too.
+const chosen = (page: Page) =>
+	page.locator('#reviewPanel footer [role="radio"][aria-checked="true"]');
 /** Put focus on the page itself, where a reviewer's keys land after a click. */
 const blur = (page: Page) =>
 	page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
@@ -29,19 +31,25 @@ test('A, R, B and U record the decision, shown in the panel and the toolbar', as
 	for (const [key, label] of [
 		['a', 'Approved'],
 		['r', 'Needs revision'],
-		['b', 'Blocked'],
-		['u', 'Undecided']
+		['b', 'Blocked']
 	] as const) {
 		await page.keyboard.press(key);
 		await expect(chosen(page)).toHaveText(label);
 		await expect(badge(page)).toHaveText(label);
 	}
+
+	// Undecided presses nothing: the control has three options, not four.
+	await page.keyboard.press('u');
+	await expect(chosen(page)).toHaveCount(0);
+	await expect(badge(page)).toHaveText('Undecided');
 });
 
 test('typing, and keys meant for the browser, never record a decision', async ({ page }) => {
-	await page.getByLabel('Decision notes').click();
+	await page.getByRole('tab', { name: /^Notes/ }).click();
+	const notes = page.getByRole('textbox', { name: 'Feedback' });
+	await notes.click();
 	await page.keyboard.type('a bar');
-	await expect(page.getByLabel('Decision notes')).toHaveValue('a bar');
+	await expect(notes).toHaveValue('a bar');
 	await expect(badge(page)).toHaveText('Undecided');
 
 	await blur(page);
@@ -49,13 +57,15 @@ test('typing, and keys meant for the browser, never record a decision', async ({
 	await expect(badge(page)).toHaveText('Undecided');
 });
 
+// The decision is pinned under every tab, so it leaves the screen only when
+// the panel's rail is collapsed.
 test('the keys work only while the decision is on screen', async ({ page }) => {
-	await page.getByRole('tab', { name: 'Analysis' }).click();
+	await page.getByRole('button', { name: 'Collapse review panel' }).click();
 	await blur(page);
 	await page.keyboard.press('a');
 	await expect(badge(page)).toHaveText('Undecided');
 
-	await page.getByRole('tab', { name: 'Decision' }).click();
+	await page.getByRole('button', { name: 'Expand review panel' }).click();
 	await blur(page);
 	await page.keyboard.press('a');
 	await expect(badge(page)).toHaveText('Approved');
@@ -76,7 +86,8 @@ test('the keys can be turned off, and stay off after a reload', async ({ page })
 });
 
 test('] opens the next undecided page', async ({ page }) => {
-	const next = page.getByRole('link', { name: /^Next undecided page/ });
+	// Undecided, the link to the next undecided page reads "Skip for now".
+	const next = page.getByRole('link', { name: /^Skip for now:/ });
 	const href = await next.getAttribute('href');
 	expect(href).toBeTruthy();
 	await page.keyboard.press(']');
