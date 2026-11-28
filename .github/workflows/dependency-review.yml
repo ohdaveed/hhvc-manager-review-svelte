@@ -29,7 +29,29 @@ jobs:
       # Fails only on high/critical advisories in dependencies the PR adds or
       # changes; existing ones are Dependabot's job. No comment-summary-in-pr:
       # that needs pull-requests: write, and the job summary carries the same
-      # table.
+      # table. All three scopes are listed so devDependencies count too: the
+      # build tooling produces the bundle that ships.
       - uses: actions/dependency-review-action@bbc44d14a204704ccc493733616cd1e93a0321ec # v5.0.1
         with:
           fail-on-severity: high
+          fail-on-scopes: runtime, development, unknown
+
+      # The step above cannot see bun.lock (the dependency graph does not parse
+      # it), so transitive dependencies are audited here instead, head against
+      # base. Only the two files bun audit reads are checked out.
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: .audit-base
+          persist-credentials: false
+          sparse-checkout: |
+            package.json
+            bun.lock
+          sparse-checkout-cone-mode: false
+
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version-file: .bun-version
+
+      - name: bun audit (new high/critical only)
+        run: bun run scripts/audit-diff.ts .audit-base
