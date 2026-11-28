@@ -2,7 +2,6 @@
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { ChevronsRight } from '@lucide/svelte';
-	import { Switch } from '$lib/components/ui/switch/index.js';
 	import ReviewPanel from './ReviewPanel.svelte';
 	import FieldsPanel from './FieldsPanel.svelte';
 	import RethinkPanel from './RethinkPanel.svelte';
@@ -23,7 +22,8 @@
 		livePageId?: string;
 		/** The Karl outline's summary for this page, for the decision panel. */
 		karlReadiness?: string | null;
-		/** Show the Karl strip (outline switch, Blueprint). Off on drafts (decision 12). */
+		/** Offer the Karl views (outline switch, Build in Karl) in the Decision tab.
+		 *  Off on drafts (decision 12). */
 		karlViews?: boolean;
 		onCollapse?: () => void;
 	} = $props();
@@ -143,41 +143,6 @@
 		{/if}
 	</div>
 
-	<!-- The Karl views, under the tabs. They were in the canvas toolbar beside a
-	     black walkthrough button; the toolbar now holds canvas controls only
-	     (2026-11-26 layout review). The walkthrough's one entry is the Decision
-	     tab's "Move it into Karl".
-	     Shown on Decision and Fields only (2026-11-27 design review): those are
-	     where a reviewer asks "where does this go in Karl". On Rethink and
-	     Analysis the strip was a second header above content about something
-	     else. Turning the outline off is never stranded: with it on, the canvas
-	     carries its own "Karl fields shown · Hide" pill. -->
-	{#if karlViews && (activeTab === 'overview' || activeTab === 'fields')}
-		<div
-			class="flex flex-none items-center gap-3 border-b border-sfds-grey-l2 bg-background px-3 py-2"
-			role="group"
-			aria-label="Karl views"
-		>
-			<label class="flex items-center gap-2 text-xs font-medium">
-				<Switch
-					checked={pageStore.karlOutline}
-					onCheckedChange={(on: boolean) => pageStore.setKarlOutline(on)}
-				/>
-				Show Karl fields
-			</label>
-			<Button
-				variant="outline"
-				size="sm"
-				class="ml-auto h-7 text-xs"
-				aria-pressed={pageStore.mode === 'blueprint'}
-				onclick={() =>
-					pageStore.mode === 'blueprint' ? pageStore.showReview() : pageStore.showBlueprint()}
-			>
-				Build in Karl
-			</Button>
-		</div>
-	{/if}
-
 	<Tabs.Content value="fields" class="min-h-0 flex-1 overflow-hidden bg-background">
 		<FieldsPanel {pageData} {livePageId} />
 	</Tabs.Content>
@@ -185,7 +150,7 @@
 		<RethinkPanel {pageData} />
 	</Tabs.Content>
 	<Tabs.Content value="overview" class="min-h-0 flex-1 overflow-y-auto bg-background">
-		<ReviewPanel {pageData} {karlReadiness} />
+		<ReviewPanel {pageData} {karlReadiness} {karlViews} />
 	</Tabs.Content>
 	<!-- Karl Jr.'s accessibility tests and readability score, computed here.
 	     These are NOT the Page Checks shown under the decision: those are

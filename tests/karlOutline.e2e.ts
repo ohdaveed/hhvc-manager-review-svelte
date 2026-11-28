@@ -108,7 +108,7 @@ const noViolations = async (page: Page) => {
 	).toEqual([]);
 };
 
-/** Turn the outline on the way a keyboard user would, from the panel's Karl strip. */
+/** Turn the outline on the way a keyboard user would, from the Decision tab's Karl section. */
 async function switchOnByKeyboard(page: Page) {
 	const toggle = page
 		.getByRole('group', { name: 'Karl views' })

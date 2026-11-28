@@ -186,7 +186,7 @@ The chrome is dense and small (mostly 11–15px), with light surfaces and few ac
 
 **Key Characteristics:**
 
-- Two palettes, split by layer: `site-*` inside the mockup, `sfds-*` plus shadcn neutrals in the chrome.
+- Two palettes, split by layer: `site-*` inside the mockup, `sfds-*` plus shadcn neutrals in the chrome. The landing page and `/login` are the exception: they show no mockup and wear the site palette (see the Site-Skin Exception).
 - Neutral, compact, low-ornament chrome. The mockup is the visual centerpiece.
 - Review marks carry the strongest color in the chrome, always as color plus a label.
 - Roboto Slab headings and Roboto Flex body text in both layers. Size and density tell them apart.
@@ -222,7 +222,9 @@ The mockup uses SF.gov's cool civic blues on near-white. The chrome uses quiet n
 
 ### Named Rules
 
-**The Layer Boundary Rule.** A `site-*` color appears only inside the mockup frame, and an `sfds-*` color only outside it. Where the two disagree (`site-action` #1B519E against `sfds-action` #495ED4), both are correct, each in its own layer.
+**The Layer Boundary Rule.** On any screen that shows a mockup, a `site-*` color appears only inside the mockup frame, and an `sfds-*` color only outside it. Where the two disagree (`site-action` #1B519E against `sfds-action` #495ED4), both are correct, each in its own layer.
+
+**The Site-Skin Exception.** Two tool surfaces show no mockup and wear the site palette on purpose: `/login`, built from the site's own button, field and alert, and the landing page (`/`), wrapped in `.site-skin` (decided 2026-11-27). `.site-skin` re-points the chrome tokens at the site palette inside itself, so the shared queue components follow without being edited. It is the only place the two palettes are aliased. Never put it on or around the review workspace, where the reviewer has to tell the tool from the page. Review-status colors are not remapped; they are review marks on every surface.
 
 **The Figma Decides Rule.** When a `site-*` value disagrees with Figma, Figma wins and the CSS is fixed. This overrides the design-system export's older "theme.css wins" rule.
 
@@ -242,7 +244,7 @@ The mockup uses SF.gov's cool civic blues on near-white. The chrome uses quiet n
 - **Lede** (20px / 30px): the mockup's opening summary.
 - **Site title ladder** (Slab, 2rem → 1.75rem → 1.25rem): mockup section headings. The mobile step lives in `@theme` and the desktop step in a scoped media block.
 - **Site body** (400, 16px / 24px): mockup paragraphs and bullets.
-- **Chrome title** (Slab 600, about 18px): panel and landing-page headings, set with `font-display`.
+- **Chrome title** (Slab 600, about 18px): panel and landing-page headings. In markup use the `font-heading` utility; in a stylesheet use `var(--font-display)`. There is no `font-display` utility, so that class sets nothing.
 - **Chrome body** (14px / 20px): panel copy and form text.
 - **Chrome label** (600, 12px): field labels, status pills, toolbar labels.
 - **Karl chip** (400, 12px / 16px, no letter-spacing or text-transform): annotations on the page.
@@ -334,7 +336,8 @@ Every addressable field in the mockup is a real `<button>` (the `edit-target` ut
 
 ### Don't:
 
-- **Don't** use an `sfds-*` or shadcn color inside the mockup, or a `site-*` color in the chrome.
+- **Don't** use an `sfds-*` or shadcn color inside the mockup, or a `site-*` color in the chrome around a mockup. The landing page and `/login` are the two exceptions.
+- **Don't** put `.site-skin` on or around the review workspace.
 - **Don't** load SFDS's Tailwind scale (spacing, radius, border width, breakpoints) into the default namespaces.
 - **Don't** make mockup furniture interactive when it is inert on purpose (header nav, search).
 - **Don't** remove `tabindex="0"` from the mockup scroll container to quiet Svelte's a11y warning; axe needs it.

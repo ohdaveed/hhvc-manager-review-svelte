@@ -1075,6 +1075,11 @@ body {
 	outline: none;
 	box-shadow: var(--site-focus-ring);
 }
+/* On the landing page's blue header the ring's first stop is white: the focus
+   blue is 1.53:1 against the action fill, so the white carries the contrast. */
+.site-skin [data-on-dark] [data-slot='button']:focus-visible {
+	box-shadow: var(--site-focus-ring-dark);
+}
 
 /* ---------------------------------------------------------------------------
    Karl outline: where each part of the mockup lands in Karl.

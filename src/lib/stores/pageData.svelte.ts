@@ -109,6 +109,7 @@ export type RethinkState =
 	  };
 
 const RAIL_KEY = 'hhvc:railCollapsed';
+const SHORTCUTS_KEY = 'hhvc:shortcuts';
 
 /**
  * How the workspace opens: the page queue collapsed, the review panel open.
@@ -849,6 +850,33 @@ class PageStore {
 			localStorage.setItem(RAIL_KEY, JSON.stringify(next));
 		} catch {
 			// As above: the toggle still works for this session.
+		}
+	}
+
+	// ---- keyboard shortcuts ------------------------------------------------
+
+	/**
+	 * Whether the workspace's single-key shortcuts are on (`$lib/review/shortcuts`).
+	 * On by default; the off switch is the one WCAG 2.1.4 asks for, and the
+	 * choice is kept per device, like the rails.
+	 */
+	shortcutsOn = $state(true);
+
+	loadShortcuts() {
+		try {
+			this.shortcutsOn = localStorage.getItem(SHORTCUTS_KEY) !== 'off';
+		} catch {
+			// Storage unavailable: the default stands.
+		}
+	}
+
+	setShortcuts(on: boolean) {
+		this.shortcutsOn = on;
+		try {
+			if (on) localStorage.removeItem(SHORTCUTS_KEY);
+			else localStorage.setItem(SHORTCUTS_KEY, 'off');
+		} catch {
+			// The switch still works for this session.
 		}
 	}
 
