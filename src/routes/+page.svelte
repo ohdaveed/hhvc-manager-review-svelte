@@ -161,24 +161,28 @@
      far left and its status 1,100px away at the far right. -->
 <svelte:window onkeydown={onWindowKeydown} />
 
-<!-- The page's anchor: a full-width white bar across the top, the same
-     surface the review workspace's toolbar sits on, with the title on the left
-     and the page's two actions on the right. A `<header>` outside `<main>` is
-     the page's banner landmark. -->
-<div class="site-skin min-h-screen">
-	<header class="border-b border-sfds-grey-l2 bg-white">
+<!-- The page's anchor: a full-width band across the top in the site's dark
+     action blue, the colour sf.gov's own header wears, with the title on the
+     left and the page's two actions on the right. It was a white bar until the
+     page took the site palette; white on the #fcfcfc ground no longer read as
+     a bar at all. The page under it sits on the site's blue tint, so the white
+     cards read as cards. A `<header>` outside `<main>` is the page's banner
+     landmark. `data-on-dark` switches its buttons to the white-first focus
+     ring (app.css). -->
+<div class="site-skin min-h-screen bg-site-tint!">
+	<header data-on-dark class="bg-site-action-dark text-white">
 		<div
-			class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-6 gap-y-3 px-4 py-4"
+			class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-6 gap-y-4 px-4 py-6"
 		>
 			<!-- Grows and wraps its own text, so the actions stay on the right of a
 		     wide screen rather than dropping under a long subtitle. -->
 			<div class="min-w-0 flex-[1_1_28rem] space-y-1">
-				<h1 class="font-heading text-[1.75rem] leading-9 font-semibold text-slate-900">
+				<h1 class="font-heading text-[2rem] leading-10 font-semibold text-white">
 					HHVC mockup review
 				</h1>
 				<!-- What the pages ARE, for anyone opening this to look at them -- the
 			     manager first. Everything else on the page is about the review. -->
-				<p class="text-slate-700">
+				<p class="text-white">
 					Proposed SF.gov pages for Healthy Housing and Vector Control, shown the way they would
 					appear on SF.gov.
 				</p>
@@ -196,9 +200,9 @@
 							aria-expanded={proposeOpen}
 							aria-controls="propose-panel"
 							onclick={() => (proposeOpen ? closePropose() : openPropose())}
-							class="h-11 bg-white px-4 {proposeOpen
-								? 'border-sfds-action bg-sfds-blue-l1 text-sfds-blue-dark'
-								: ''}"
+							class="h-11 px-4 {proposeOpen
+								? 'border-site-action-soft bg-site-action-soft text-site-action-dark hover:bg-site-action-soft-strong hover:text-site-action-dark'
+								: 'border-white bg-transparent text-white hover:bg-white/15 hover:text-white'}"
 						>
 							<Plus aria-hidden="true" data-icon="inline-start" />
 							Propose a page
@@ -210,7 +214,7 @@
 						<Button
 							href={resolve(progress.nextHref)}
 							size="lg"
-							class="h-11 max-w-full min-w-0 px-4 font-semibold"
+							class="h-11 max-w-full min-w-0 bg-site-surface px-4 font-semibold text-site-action-dark hover:bg-site-action-soft"
 						>
 							<span class="truncate">{verb}: {nextTitle}</span>
 						</Button>

@@ -22,7 +22,8 @@
 		livePageId?: string;
 		/** The Karl outline's summary for this page, for the decision panel. */
 		karlReadiness?: string | null;
-		/** Show the Karl strip (outline switch, Blueprint). Off on drafts (decision 12). */
+		/** Offer the Karl views (outline switch, Build in Karl) in the Decision tab.
+		 *  Off on drafts (decision 12). */
 		karlViews?: boolean;
 		onCollapse?: () => void;
 	} = $props();
@@ -157,7 +158,7 @@
 		/>
 	</Tabs.Content>
 	<Tabs.Content value="overview" class="min-h-0 flex-1 overflow-y-auto bg-background">
-		<ReviewPanel {pageData} {karlReadiness} />
+		<ReviewPanel {pageData} {karlReadiness} {karlViews} />
 	</Tabs.Content>
 	<!-- Karl Jr.'s accessibility tests and readability score, computed here.
 	     These are NOT the Page Checks shown under the decision: those are

@@ -5,14 +5,17 @@
 	import { Badge } from '$lib/components/ui/badge/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { Separator } from '$lib/components/ui/separator/index.js';
+	import { Switch } from '$lib/components/ui/switch/index.js';
 	import * as ToggleGroup from '$lib/components/ui/toggle-group/index.js';
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
 	import { onDestroy } from 'svelte';
+	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
+	import { DECISION_KEYS, NEXT_UNDECIDED_KEY, isPlainKey } from '$lib/review/shortcuts';
 	import { reviewHrefFor } from '$lib/corpus/draftPath';
 	import { draftsStore } from '$lib/stores/draftPages';
 	import { pageTitleFor } from '$lib/corpus/pageTitle';
-	import { ArrowRight, Check, CircleAlert, ClipboardList } from '@lucide/svelte';
+	import { ArrowRight, Check, CircleAlert, ClipboardList, Columns2 } from '@lucide/svelte';
 	import { pageStore } from '$lib/stores/pageData.svelte';
 	import { sessionStore } from '$lib/stores/session.svelte';
 	import { STATUS_LABELS } from '$lib/review/statusLabels';
@@ -24,7 +27,7 @@
 		type PageCheck
 	} from '$lib/stores/reviewState';
 
-	let { pageData, karlReadiness = null } = $props();
+	let { pageData, karlReadiness = null, karlViews = false } = $props();
 
 	// What a decision is being made over. PRODUCT.md: a review succeeds when
 	// the Karl builder never has to go back to the manager, so Approve should
@@ -237,6 +240,39 @@
 			};
 	};
 
+	// ---- keyboard shortcuts (see `$lib/review/shortcuts`) ------------------
+
+	let root = $state<HTMLElement>();
+
+	/**
+	 * A, R, B and U record a decision; ] opens the next undecided page.
+	 *
+	 * Handled HERE, not in the layout, and only while this panel is laid out
+	 * (`offsetParent`): the panel is unmounted when its rail is collapsed or
+	 * another tab is open, and hidden below 1024px until its sheet opens. So a
+	 * key can only make a decision where the control and its receipt are on
+	 * screen to show it.
+	 */
+	function onShortcut(event: KeyboardEvent) {
+		if (!pageStore.shortcutsOn || !isPlainKey(event)) return;
+		if (!root || root.offsetParent === null) return;
+		const key = event.key.toLowerCase();
+
+		if (key === NEXT_UNDECIDED_KEY && nextPath) {
+			event.preventDefault();
+			goto(resolve(reviewHrefFor(nextPath)));
+			return;
+		}
+
+		const status = DECISION_KEYS[key];
+		// No row to decide (signed out, or the page is not in the review): the
+		// buttons are disabled, and a key must not do what they cannot.
+		if (!status || !liveRecord) return;
+		event.preventDefault();
+		decision = status;
+		handleDecision(status);
+	}
+
 	/** Re-send the note the debounce already gave up on. */
 	const retryNotes = async () => {
 		const id = liveRecord?.id;
@@ -284,7 +320,9 @@
 	};
 </script>
 
-<div class="flex h-full flex-col">
+<svelte:window onkeydown={onShortcut} />
+
+<div class="flex h-full flex-col" bind:this={root}>
 	<!-- Top: the decision itself -->
 	<div class="space-y-4 p-6">
 		<!-- Screen-reader only: the tab above already says "Decision", and a
@@ -319,6 +357,28 @@
 					     false. With no page to name, say nothing: the draft banner above
 					     already explains the state. -->
 					<span class="text-xs text-sfds-slate-l3">No review record exists for this page</span>
+				{:else if liveRecord}
+					<!-- The keys, and their off switch in one control: the label is the
+					     hint. A checkbox, not a line of text, because a single-key
+					     shortcut has to be something a reviewer can turn off (WCAG
+					     2.1.4): dictation types characters. -->
+					<label
+						class="flex items-center gap-1.5 text-xs text-sfds-slate-l3"
+						title="Keyboard shortcuts: A approved, R needs revision, B blocked, U undecided, ] next undecided page, \ page queue"
+					>
+						<input
+							type="checkbox"
+							class="size-3.5 accent-sfds-action"
+							checked={pageStore.shortcutsOn}
+							aria-describedby="decision-keys-help"
+							onchange={(e) => pageStore.setShortcuts(e.currentTarget.checked)}
+						/>
+						Keys: A · R · B · U
+					</label>
+					<span id="decision-keys-help" class="sr-only">
+						Keyboard shortcuts. A approved, R needs revision, B blocked, U undecided, right bracket
+						for the next undecided page, backslash for the page queue.
+					</span>
 				{/if}
 				{#if decisionError}
 					<span class="text-xs text-destructive" role="alert">Not saved — try again</span>
@@ -443,6 +503,14 @@
 						>{nextTitle}</span
 					>
 				</span>
+				{#if pageStore.shortcutsOn}
+					<!-- The key that does the same. Decorative: the link's name is the
+					     words beside it, and the keys are described at the decision. -->
+					<kbd
+						class="ml-auto flex-none rounded border border-sfds-grey-l2 bg-background px-1.5 font-mono text-xs font-semibold text-sfds-slate-l3"
+						aria-hidden="true">]</kbd
+					>
+				{/if}
 				<ArrowRight class="size-4 shrink-0" aria-hidden="true" />
 			</a>
 		{:else if liveRecord}
@@ -487,6 +555,35 @@
 				{copiedHere === 1 ? 'field' : 'fields'} copied so far on this device.
 			</p>
 		{/if}
+
+		<!-- The other two Karl views. They were a strip of their own under the
+		     tabs, which read as a second tab bar ("the Karl tab"); they are now
+		     buttons here, beside the walkthrough they belong with (2026-11-27).
+		     Not offered on a draft (decision 12). Turning the outline off is
+		     never stranded on another tab: with it on, the canvas carries its
+		     own "Karl fields shown · Hide" pill. -->
+		{#if karlViews}
+			<div class="space-y-3" role="group" aria-label="Karl views">
+				<Button
+					variant="outline"
+					size="sm"
+					class="w-full gap-1.5"
+					aria-pressed={pageStore.mode === 'blueprint'}
+					onclick={() =>
+						pageStore.mode === 'blueprint' ? pageStore.showReview() : pageStore.showBlueprint()}
+				>
+					<Columns2 class="size-4" aria-hidden="true" />
+					Build in Karl
+				</Button>
+				<label class="flex items-center justify-between gap-2 text-sm font-medium">
+					Show Karl fields on the page
+					<Switch
+						checked={pageStore.karlOutline}
+						onCheckedChange={(on: boolean) => pageStore.setKarlOutline(on)}
+					/>
+				</label>
+			</div>
+		{/if}
 	</section>
 
 	{#if checks.length > 0}
@@ -499,7 +596,7 @@
 	     decision they bear on. -->
 		<!-- No scroller of its own: the tab panel around it already scrolls and is
 		     focusable. Nested, this box became a scroll region whenever the panel
-		     was short (the Karl strip took 48px at 1280x720), holding nothing
+		     was short (a Karl strip then took 48px at 1280x720), holding nothing
 		     focusable -- axe's scrollable-region-focusable. -->
 		<div class="flex-1 bg-muted/40 p-6">
 			<h3 class="mb-4 text-sm font-bold">Page checks</h3>

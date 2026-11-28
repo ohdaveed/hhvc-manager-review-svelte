@@ -364,11 +364,12 @@ export async function gotoSignedIn(
 		return;
 	}
 	// The queue is collapsed when the workspace opens, and a collapsed rail
-	// renders no rows, so the guard opens it to count them: the rail's own
-	// button from 1024px, where that closes the review panel, and the toolbar's
-	// Queue sheet below it.
-	const narrow = (page.viewportSize()?.width ?? 1280) < 1024;
-	await page.getByRole('button', { name: narrow ? 'Queue' : 'Expand queue', exact: true }).click();
+	// renders no rows, so the guard opens it to count them with the toolbar's
+	// Queue button: the rail above 1024px, where that closes the review panel,
+	// and the sheet up to it. Its name starts "Queue" and, signed in, goes on
+	// to say how many pages are decided.
+	const narrow = (page.viewportSize()?.width ?? 1280) <= 1024;
+	await page.getByRole('button', { name: /^Queue/ }).click();
 
 	// Rows only: the stub holds six review rows over a 40-odd page corpus, so
 	// the queue also lists the rest under "Not in the review yet", which is

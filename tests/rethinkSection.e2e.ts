@@ -79,5 +79,5 @@ test('"Rethink section" on the mockup opens a collapsed review panel on the Reth
 		page.getByRole('tabpanel').getByText('Plain language', { exact: true })
 	).toBeVisible();
 	await expect(page.locator('#mockPage .rethink-section[aria-pressed="true"]')).toHaveCount(1);
-	await expect(page.getByRole('button', { name: 'Expand queue' })).toBeVisible();
+	await expect(page.getByRole('button', { name: /^Queue/ })).toBeVisible();
 });

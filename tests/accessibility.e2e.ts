@@ -78,8 +78,8 @@ for (const view of [
 	// card (the toolbar button went on 2026-11-26), so it needs no trigger first.
 	{ name: 'Karl walkthrough', via: null, open: 'Start the Karl walkthrough', ready: '.drawer' },
 	// The site map's button is in the queue's footer, and the queue is collapsed
-	// when the workspace opens.
-	{ name: 'site map', via: 'Expand queue', open: 'Site map', ready: '.sitemap' }
+	// when the workspace opens: the toolbar's Queue button opens it.
+	{ name: 'site map', via: /^Queue/, open: 'Site map', ready: '.sitemap' }
 ]) {
 	test(`no WCAG 2.1 AA violations in the ${view.name}`, async ({ page }) => {
 		await page.goto('/review/report-garbage-clutter-or-overgrown-plants');

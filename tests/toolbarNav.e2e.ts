@@ -16,7 +16,7 @@ const FIRST = '/review/report-garbage-clutter-or-overgrown-plants';
 test('links back to the landing page from the queue', async ({ page }) => {
 	await page.goto(FIRST);
 	// Collapsed when the workspace opens; the labelled link is in the open rail.
-	await page.getByRole('button', { name: 'Expand queue' }).click();
+	await page.getByRole('button', { name: /^Queue/ }).click();
 	const home = page.getByTestId('all-pages-link');
 	await expect(home).toHaveText('All pages');
 	await home.click();
@@ -89,7 +89,7 @@ test('keeps stepping from where the reviewer was after a decision', async ({ pag
 
 test('renders the export review data button in the queue footer', async ({ page }) => {
 	await page.goto(FIRST);
-	await page.getByRole('button', { name: 'Expand queue' }).click();
+	await page.getByRole('button', { name: /^Queue/ }).click();
 	const exportBtn = page.getByTestId('export-review-data');
 	await expect(exportBtn).toBeVisible();
 	await expect(exportBtn).toHaveText('Export review data');

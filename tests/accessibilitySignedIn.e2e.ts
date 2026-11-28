@@ -66,10 +66,12 @@ test('no WCAG 2.1 AA violations in the signed-in queue and decision panel', asyn
 
 	// The two rails are exclusive, so the queue is scanned on its own: opening
 	// it closes the panel just scanned.
-	await page.getByRole('button', { name: 'Expand queue' }).click();
+	await page.getByRole('button', { name: /^Queue/ }).click();
 	// The stub's four decided rows. Not a percentage: the denominator is every
 	// corpus page now, not the six rows, so it moves whenever the corpus does.
-	await expect(page.getByText(/^4 of \d+ decided$/)).toBeVisible();
+	// Scoped to the queue's progress block: the toolbar's Queue button says the
+	// same count to a screen reader.
+	await expect(page.getByLabel('Review progress').getByText(/^4 of \d+ decided$/)).toBeVisible();
 
 	await noViolations(page);
 });
