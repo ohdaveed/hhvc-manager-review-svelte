@@ -1,0 +1,35 @@
+name: Dependency review
+
+# PR-only, so it lives outside pr.yml: the action diffs the dependency graph
+# between the PR's base and head, and pr.yml also runs on push to main and
+# workflow_dispatch, where there is nothing to diff. No paths filter on
+# purpose -- this job is a required check, and a filtered-out required check
+# never reports, which leaves the PR stuck as "expected".
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  dependency-review:
+    name: dependency review
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+
+      # Fails only on high/critical advisories in dependencies the PR adds or
+      # changes; existing ones are Dependabot's job. No comment-summary-in-pr:
+      # that needs pull-requests: write, and the job summary carries the same
+      # table.
+      - uses: actions/dependency-review-action@bbc44d14a204704ccc493733616cd1e93a0321ec # v5.0.1
+        with:
+          fail-on-severity: high

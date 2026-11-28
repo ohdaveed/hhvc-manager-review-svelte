@@ -20,3 +20,21 @@ updates:
         patterns: ['*']
     commit-message:
       prefix: ci
+
+  # App dependencies. Security updates already run from repo settings; this adds
+  # routine version updates so bun.lock doesn't drift until a CVE forces a jump.
+  # Majors stay as separate PRs (they need a real look); minor + patch are
+  # grouped into one. The 7-day cooldown skips releases too fresh to have been
+  # yanked or flagged -- it does not delay security updates.
+  - package-ecosystem: bun
+    directory: /
+    schedule:
+      interval: monthly
+    cooldown:
+      default-days: 7
+    groups:
+      minor-and-patch:
+        update-types: [minor, patch]
+    commit-message:
+      prefix: chore
+      include: scope
