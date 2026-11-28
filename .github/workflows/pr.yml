@@ -139,7 +139,8 @@ jobs:
             echo "server-only value(s) in the published bundle:"; echo "$leaked"; exit 1
           fi
           echo "clean"
-        # Sharded E2E: splits Playwright tests across 4 parallel runners.
+
+  # Sharded E2E: splits Playwright tests across 4 parallel runners.
   e2e-shard:
     name: e2e (${{ matrix.shard }}/4)
     runs-on: ubuntu-latest
@@ -185,7 +186,9 @@ jobs:
       # Calls Playwright directly to skip the redundant `playwright install` inside
       # `bun run test:e2e`. playwright.config.ts webServer builds & previews on :4173.
       - name: Run e2e (shard ${{ matrix.shard }}/4)
-        run: bunx playwright test --shard=${{ matrix.shard }}/4
+        env:
+          SHARD: ${{ matrix.shard }}
+        run: bunx playwright test --shard="${SHARD}/4"
 
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: failure()
@@ -198,8 +201,9 @@ jobs:
   e2e:
     name: e2e
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     needs: e2e-shard
-    if: always()
+    if: always() && !cancelled()
     steps:
       - name: Check e2e shard results
         env:
