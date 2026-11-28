@@ -97,7 +97,14 @@
 		{#if filteredEntries.length === 0}
 			<div class="sm-empty">
 				<p role="status">No pages match “{query.trim()}”.</p>
-				<button type="button" class="sm-exit" onclick={() => (query = '')}>Clear search</button>
+				<button
+					type="button"
+					class="sm-exit"
+					onclick={() => {
+						query = '';
+						document.getElementById('sitemap-filter')?.focus();
+					}}>Clear search</button
+				>
 			</div>
 		{:else}
 			<div class="sm-grid">
