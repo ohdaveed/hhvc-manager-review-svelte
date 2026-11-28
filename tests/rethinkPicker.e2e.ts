@@ -59,5 +59,5 @@ test('"Rethink section" on the mockup opens a collapsed review panel', async ({ 
 	await section.first().locator('.rethink-section').click();
 
 	await expect(page.getByRole('button', { name: 'Rethink this section' })).toBeVisible();
-	await expect(page.getByRole('button', { name: 'Expand queue' })).toBeVisible();
+	await expect(page.getByRole('button', { name: /^Queue/ })).toBeVisible();
 });

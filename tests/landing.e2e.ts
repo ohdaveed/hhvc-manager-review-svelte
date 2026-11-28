@@ -35,7 +35,7 @@ test.describe('signed in', () => {
 		await expect(page).toHaveURL(/\/review\/report-garbage-clutter-or-overgrown-plants$/);
 		// The workspace opens on the decision, with the queue one click away.
 		await expect(page.getByRole('heading', { name: 'Decision' })).toBeVisible();
-		await page.getByRole('button', { name: 'Expand queue' }).click();
+		await page.getByRole('button', { name: /^Queue/ }).click();
 		await expect(page.locator('nav[aria-label="Pages in this review"] a').first()).toBeVisible();
 	});
 
