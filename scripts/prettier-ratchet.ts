@@ -53,7 +53,7 @@ import { spawnSync } from 'node:child_process';
  * Lowered 42 -> 41 when the card classifier's negation fix left
  * src/lib/legacy-core/card-inheritance.js formatted.
  */
-const BASELINE = 40;
+const BASELINE = 39;
 
 const tracked = spawnSync('git', ['ls-files'], {
 	encoding: 'utf-8',
