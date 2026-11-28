@@ -312,6 +312,12 @@ input[type='checkbox'] {
 		0 0 0 6px var(--color-sfds-blue-l1),
 		0 0 0 8px var(--color-sfds-action);
 }
+#mockPage [data-sidebar-highlight='true'] {
+	border-radius: 4px;
+	box-shadow:
+		0 0 0 6px var(--color-sfds-blue-l1),
+		0 0 0 8px var(--color-sfds-action);
+}
 /* A light stop first, so the dark ring reads against any ground. A focused,
    selected field keeps its tint under the dark ring: still obviously both. */
 #mockPage .edit-target:focus-visible {

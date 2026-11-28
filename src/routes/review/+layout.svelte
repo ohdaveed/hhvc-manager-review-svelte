@@ -462,6 +462,38 @@
 		// eslint-disable-next-line svelte/no-navigation-without-resolve
 		replaceState(withWalkthrough(here, on), $page.state);
 	});
+
+	$effect(() => {
+		const target = pageStore.highlight;
+		if (!target) return;
+		if (pageStore.mode !== 'review') pageStore.showReview();
+		let cancelled = false;
+		tick().then(() => {
+			if (cancelled) return;
+			const root = document.getElementById('mockPage');
+			if (!root) return;
+			for (const prev of root.querySelectorAll('[data-sidebar-highlight]')) {
+				prev.removeAttribute('data-sidebar-highlight');
+			}
+			let match: Element | null = null;
+			if (target.kind === 'field' || target.kind === 'link') {
+				match = root.querySelector(`[data-rewrite-field="${CSS.escape(target.target)}"]`);
+			} else if (target.kind === 'section') {
+				match = root.querySelector(`[data-section-key="${CSS.escape(target.target)}"]`);
+			} else if (target.kind === 'whatToKnow') {
+				match = root.querySelector('.what-to-know');
+			} else if (target.kind === 'readability') {
+				match = root.querySelector('.page-summary') ?? root.querySelector('.page-content');
+			}
+			if (match) {
+				match.setAttribute('data-sidebar-highlight', 'true');
+				match.scrollIntoView({ behavior: 'smooth', block: 'center' });
+			}
+		});
+		return () => {
+			cancelled = true;
+		};
+	});
 </script>
 
 <!-- 280 / 1fr / 380, up from 250 / 1fr / 300. The review panel needs the extra

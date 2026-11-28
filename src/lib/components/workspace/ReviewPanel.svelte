@@ -78,12 +78,18 @@
 		if (pendingNote) updatePageNotes(pendingNote.pageId, pendingNote.value);
 	});
 
-	// Sync local notesValue unconditionally whenever the live record identity changes
+	let lastSyncedNotes = $state('');
+
+	// Sync local notesValue when the live record identity changes, or when
+	// manager_notes updates externally (e.g. from Rethink) while no local edit
+	// debounce is pending.
 	$effect(() => {
 		const id = liveRecord?.id;
+		const remoteNotes = liveRecord?.manager_notes ?? '';
 		if (id !== lastRecordId) {
 			lastRecordId = id;
-			notesValue = liveRecord?.manager_notes ?? '';
+			lastSyncedNotes = remoteNotes;
+			notesValue = remoteNotes;
 			notesError = false;
 			pendingNote = null;
 			receipt = null;
@@ -91,6 +97,11 @@
 			// "Saved" here; the guards below also check `lastRecordId`.
 			clearTimeout(savedTimeout);
 			notesStatus = 'idle';
+		} else if (remoteNotes !== lastSyncedNotes) {
+			lastSyncedNotes = remoteNotes;
+			if (!pendingNote && notesStatus !== 'saving') {
+				notesValue = remoteNotes;
+			}
 		}
 	});
 

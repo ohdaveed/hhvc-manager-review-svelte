@@ -2,7 +2,12 @@ import { SVELTE_PUBLIC_SUPABASE_ANON_KEY, SVELTE_PUBLIC_SUPABASE_URL } from '$en
 import { error, json } from '@sveltejs/kit';
 import { createClient } from '@supabase/supabase-js';
 import { isConfigured, ModelOutputError, ProviderHttpError } from '$lib/server/ai/gemini';
-import { generateContent, generateRewrite } from '$lib/server/ai/generate';
+import {
+	generateContent,
+	generatePageSuggestions,
+	generateRewrite,
+	pageSuggestionsRequestSchema
+} from '$lib/server/ai/generate';
 import { ProviderTimeoutError, RefusalError } from '$lib/server/ai/vendor/errors.js';
 import { generateRequestSchema } from '$lib/server/ai/vendor/schemas.js';
 
@@ -79,6 +84,26 @@ export async function POST({ request }) {
 		body = JSON.parse(raw);
 	} catch {
 		throw error(400, 'Invalid JSON body');
+	}
+
+	if ((body as { task?: unknown } | null)?.task === 'page-suggestions') {
+		const suggestionsParsed = pageSuggestionsRequestSchema.safeParse(body);
+		if (!suggestionsParsed.success) {
+			throw error(400, describeIssue(suggestionsParsed.error.issues[0]));
+		}
+		if (!isConfigured()) throw error(501, 'AI assistance is not configured on this server.');
+		const signal = request.signal;
+		try {
+			return json(
+				await generatePageSuggestions({
+					page: suggestionsParsed.data.page,
+					sectionKey: suggestionsParsed.data.sectionKey,
+					signal
+				})
+			);
+		} catch (err) {
+			generationError(err, signal);
+		}
 	}
 
 	const parsed = generateRequestSchema.safeParse(body);
