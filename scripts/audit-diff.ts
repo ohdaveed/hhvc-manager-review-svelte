@@ -41,19 +41,41 @@ function audit(cwd: string): Report {
 		console.error(`FAIL  could not run bun audit in ${cwd}: ${run.error.message}`);
 		process.exit(2);
 	}
-	// bun audit exits 1 whenever it finds anything, so the status says nothing
-	// here; only a parseable report does.
+	// bun audit exits 0 when it finds nothing and 1 when it finds anything, so a
+	// report is accepted only when its shape AND that status agree. An object
+	// that merely parses -- `{"error":"registry unavailable"}`, or an advisory
+	// with no readable severity -- would otherwise be read as zero findings and
+	// pass against a clean base.
+	let report: unknown;
 	try {
-		const report: unknown = JSON.parse(run.stdout);
-		if (report && typeof report === 'object' && !Array.isArray(report)) {
-			return report as Report;
-		}
+		report = JSON.parse(run.stdout);
 	} catch {
-		// fall through
+		report = undefined;
 	}
-	console.error(`FAIL  bun audit in ${cwd} did not return an advisory report.`);
+	if (isReport(report)) {
+		const empty = Object.keys(report).length === 0;
+		if ((empty && run.status === 0) || (!empty && run.status === 1)) return report;
+	}
+	console.error(`FAIL  bun audit in ${cwd} did not return a valid advisory report.`);
+	console.error(`      exit status ${run.status}; stdout: ${run.stdout.slice(0, 500)}`);
 	console.error(run.stderr.slice(0, 2000));
 	process.exit(2);
+}
+
+function isReport(value: unknown): value is Report {
+	if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+	return Object.values(value).every(
+		(advisories) =>
+			Array.isArray(advisories) &&
+			advisories.length > 0 &&
+			advisories.every(
+				(a: unknown) =>
+					!!a &&
+					typeof a === 'object' &&
+					typeof (a as Advisory).severity === 'string' &&
+					(typeof (a as Advisory).url === 'string' || typeof (a as Advisory).id === 'number')
+			)
+	);
 }
 
 function failing(report: Report): Map<string, string> {
