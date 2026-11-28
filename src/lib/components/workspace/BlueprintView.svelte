@@ -625,13 +625,23 @@
 			{/if}
 		</p>
 		{#if built}
-			<button
-				type="button"
-				class="bp-mark bp-mark-undo"
-				onclick={() => pageStore.setPageBuilt(pageId, false)}
-			>
-				Unmark as built
-			</button>
+			<div class="flex flex-wrap items-center gap-2">
+				<button
+					type="button"
+					class="bp-mark bp-mark-undo"
+					onclick={() => pageStore.setPageBuilt(pageId, false)}
+				>
+					Unmark as built
+				</button>
+				{#if next}
+					<a
+						href={resolve(reviewHrefFor(next.path))}
+						class="bp-mark inline-flex items-center gap-1.5 no-underline"
+					>
+						Next page <ArrowRight class="size-3.5" aria-hidden="true" />
+					</a>
+				{/if}
+			</div>
 		{:else}
 			<button
 				type="button"

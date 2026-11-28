@@ -347,8 +347,12 @@
 	const onWindowKeydown = (event: KeyboardEvent) => {
 		// `defaultPrevented`: an Escape a popover or menu inside the sheet
 		// already handled closes that, not the sheet around it.
-		if (event.key === 'Escape' && !event.defaultPrevented && pageStore.mobileSheet !== 'none')
-			closeSheet();
+		if (event.key === 'Escape' && !event.defaultPrevented) {
+			if (pageStore.mobileSheet !== 'none') closeSheet();
+			else if (pageStore.presenting) pageStore.togglePresent();
+			else if (pageStore.mode === 'sitemap') pageStore.showReview();
+			return;
+		}
 
 		// Backslash opens or closes the page queue: the rail from 1024px, the
 		// sheet below it. Only where the toolbar's Queue button is on screen to
@@ -963,7 +967,7 @@
 								aria-pressed={pageStore.presenting}
 								aria-label="Present"
 								title={pageStore.presenting
-									? 'Stop presenting: show the review controls again'
+									? 'Stop presenting (Esc): show the review controls again'
 									: 'Present: hide the review controls and show the page full size'}
 								data-testid="present-toggle"
 								onclick={() => pageStore.togglePresent()}

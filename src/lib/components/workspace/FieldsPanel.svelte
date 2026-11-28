@@ -146,6 +146,14 @@
 		pageStore.cancelChange(pageId, fieldId);
 	}
 
+	function onRewriteKeydown(e: KeyboardEvent) {
+		if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+			e.preventDefault();
+			const trimmed = pageStore.rewriteInstruction.trim();
+			if (!rewriting && trimmed !== '') rewrite(trimmed);
+		}
+	}
+
 	function onChangeKeydown(e: KeyboardEvent, fieldId: string) {
 		if (e.isComposing) return;
 		if (e.key === 'Enter') {
@@ -553,10 +561,7 @@
 				class="mx-5 mt-4 rounded-[4px] border-l-2 border-sfds-amber bg-sfds-amber-l1 px-3 py-2"
 				aria-labelledby="{uid}-waiting"
 			>
-				<h3
-					id="{uid}-waiting"
-					class="text-xs font-bold tracking-[0.06em] text-sfds-black uppercase"
-				>
+				<h3 id="{uid}-waiting" class="text-sm font-semibold text-sfds-black">
 					{otherUnsavedChanges.length} unsaved {otherUnsavedChanges.length === 1
 						? 'change'
 						: 'changes'}
@@ -753,9 +758,7 @@
 				<div
 					class="mx-5 mt-3 rounded-[4px] border-l-2 border-sfds-amber bg-sfds-amber-l1 px-3 py-2"
 				>
-					<p class="text-xs font-bold tracking-[0.06em] text-sfds-amber uppercase">
-						Unverified copy
-					</p>
+					<p class="text-sm font-semibold text-sfds-amber">Unverified copy</p>
 					<p class="mt-1 text-xs leading-[1.0625rem] text-sfds-black">
 						{unverified.length}
 						{unverified.length === 1 ? 'field has' : 'fields have'} no confirmed source. HHVC has to confirm
@@ -772,9 +775,7 @@
 			<!-- Agent recommendation -->
 			<section class="mx-5 mt-4 rounded-[4px] border p-3" aria-label="Assistant recommendation">
 				<div class="flex items-center justify-between gap-2">
-					<span class="text-xs font-bold tracking-[0.06em] text-sfds-black uppercase">
-						What to change
-					</span>
+					<span class="text-sm font-semibold text-sfds-black"> What to change </span>
 					<Button
 						variant="outline"
 						size="sm"
@@ -826,7 +827,14 @@
 					maxlength={MAX_INSTRUCTION_CHARS}
 					aria-label="Rewrite instruction"
 					placeholder="Or describe the change in your own words…"
+					onkeydown={onRewriteKeydown}
 				/>
+				{#if pageStore.rewriteInstruction.length >= MAX_INSTRUCTION_CHARS - 200}
+					<p class="mt-1 text-right text-[0.6875rem] text-sfds-slate-l3 tabular-nums">
+						{(MAX_INSTRUCTION_CHARS - pageStore.rewriteInstruction.length).toLocaleString()} characters
+						left
+					</p>
+				{/if}
 				{#if instructionError}
 					<p class="mt-1.5 text-xs leading-[1.0625rem] text-sfds-red" role="alert">
 						{instructionError}
@@ -853,9 +861,7 @@
 			{#if cards.length > 0}
 				<section class="mt-5" aria-label="Suggestions">
 					<div class="flex items-center justify-between px-5">
-						<span class="text-xs font-bold tracking-[0.06em] text-sfds-black uppercase">
-							Suggestions
-						</span>
+						<span class="text-sm font-semibold text-sfds-black"> Suggestions </span>
 						<span class="flex gap-1">
 							<!-- Shown whenever anything is decided, including when NOTHING is
 							     pending: `Accept all` is one click that decides every card, and

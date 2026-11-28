@@ -10,15 +10,17 @@
 		pageData,
 		karlReadiness = null,
 		onDecided,
-		onWriteFeedback
+		onWriteFeedback,
+		onOpenFields
 	}: {
 		pageData?: { id?: string };
 		karlReadiness?: string | null;
 		onDecided?: (status: string) => void;
 		onWriteFeedback?: () => void;
+		onOpenFields?: () => void;
 	} = $props();
 </script>
 
 <NotesPanel {pageData} />
 <PageChecks pageId={pageData?.id} />
-<DecisionFooter {pageData} {karlReadiness} {onDecided} {onWriteFeedback} />
+<DecisionFooter {pageData} {karlReadiness} {onDecided} {onWriteFeedback} {onOpenFields} />

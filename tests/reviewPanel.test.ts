@@ -421,4 +421,23 @@ describe('ReviewPanel decision moment', () => {
 		render(ReviewPanel, { pageData: { id: PATH } });
 		expect(document.getElementById('decision-readiness')).toBeNull();
 	});
+
+	it('opens Fields from the decision when this page has unsaved edits', async () => {
+		const previousChanges = pageStore.unsavedChanges;
+		pageStore.unsavedChanges = {
+			[`${PATH}\u0000title`]: {
+				pageId: PATH,
+				fieldId: 'title',
+				original: 'Old title',
+				value: 'New title'
+			}
+		};
+		const onOpenFields = vi.fn();
+		render(ReviewPanel, { pageData: { id: PATH }, onOpenFields });
+
+		await fireEvent.click(screen.getByRole('button', { name: 'Open Fields' }));
+		expect(onOpenFields).toHaveBeenCalledOnce();
+		expect(document.getElementById('decision-readiness')?.querySelector('button')).toBeNull();
+		pageStore.unsavedChanges = previousChanges;
+	});
 });

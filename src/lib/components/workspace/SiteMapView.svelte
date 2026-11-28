@@ -27,6 +27,19 @@
 	const entries = $derived(buildSitemap(corpusPages));
 	const breakdown = $derived(typeBreakdown(corpusPages));
 
+	let query = $state('');
+	const needle = $derived(query.trim().toLowerCase());
+	const filteredEntries = $derived(
+		needle === ''
+			? entries
+			: entries.filter(
+					(e) =>
+						e.title.toLowerCase().includes(needle) ||
+						e.slug.toLowerCase().includes(needle) ||
+						e.type.toLowerCase().includes(needle)
+				)
+	);
+
 	/** What Karl does with the card text the referring page wrote. */
 	const PUBLISHES: Record<Publishes, string> = {
 		authored: 'Your card text publishes',
@@ -34,6 +47,15 @@
 		inherits: "Karl prints the destination's title and summary; your card text is dropped",
 		unknown: 'Undecided — resolve before typing anything from these cards'
 	};
+
+	/** Escape clears a non-empty filter and stops there; the layout closes the
+	 *  site map on any Escape left unhandled. Preventing the default also stops
+	 *  Chromium and Safari clearing `type="search"` themselves. */
+	function onFilterKeydown(event: KeyboardEvent) {
+		if (event.key !== 'Escape' || query === '') return;
+		query = '';
+		event.preventDefault();
+	}
 
 	function open(id: string | undefined) {
 		if (!id) return;
@@ -55,48 +77,79 @@
 	</nav>
 
 	<div class="sm-body">
-		<div class="sm-grid">
-			{#each entries as entry (entry.id)}
-				<section class="card">
-					<header class="card-head">
-						<div class="card-head-row">
-							<span class="chip">{entry.type}</span>
-							<span class="card-count">
-								{entry.outgoing.length} out · {entry.incoming} in
-							</span>
-						</div>
-						<h3 class="card-title">
-							<button type="button" class="card-open" onclick={() => open(entry.id)}>
-								{entry.title}
-							</button>
-						</h3>
-						<p class="card-slug">{entry.slug}</p>
-					</header>
-
-					{#if entry.outgoing.length > 0}
-						<ul class="links">
-							{#each entry.outgoing as link, i (i)}
-								<li>
-									<button
-										type="button"
-										class="link"
-										disabled={!link.live}
-										onclick={() => open(link.id)}
-									>
-										<span class="link-title" class:link-dead={!link.live}>{link.title}</span>
-										<span class="link-meta">
-											{link.sectionHeading} — {PUBLISHES[link.publishes]}
-										</span>
-									</button>
-								</li>
-							{/each}
-						</ul>
-					{:else}
-						<p class="links-empty">Links to nothing in this corpus.</p>
-					{/if}
-				</section>
-			{/each}
+		<div class="sm-filter-bar">
+			<label for="sitemap-filter" class="sr-only">Filter site map</label>
+			<input
+				id="sitemap-filter"
+				type="search"
+				bind:value={query}
+				onkeydown={onFilterKeydown}
+				placeholder="Filter by title, slug, or template"
+				autocomplete="off"
+				class="sm-filter-input"
+			/>
+			{#if needle !== ''}
+				<span class="sm-filter-count" role="status">
+					{filteredEntries.length} of {entries.length} pages
+				</span>
+			{/if}
 		</div>
+		{#if filteredEntries.length === 0}
+			<div class="sm-empty">
+				<p role="status">No pages match “{query.trim()}”.</p>
+				<button
+					type="button"
+					class="sm-exit"
+					onclick={() => {
+						query = '';
+						document.getElementById('sitemap-filter')?.focus();
+					}}>Clear search</button
+				>
+			</div>
+		{:else}
+			<div class="sm-grid">
+				{#each filteredEntries as entry (entry.id)}
+					<section class="card">
+						<header class="card-head">
+							<div class="card-head-row">
+								<span class="chip">{entry.type}</span>
+								<span class="card-count">
+									{entry.outgoing.length} out · {entry.incoming} in
+								</span>
+							</div>
+							<h3 class="card-title">
+								<button type="button" class="card-open" onclick={() => open(entry.id)}>
+									{entry.title}
+								</button>
+							</h3>
+							<p class="card-slug">{entry.slug}</p>
+						</header>
+
+						{#if entry.outgoing.length > 0}
+							<ul class="links">
+								{#each entry.outgoing as link, i (i)}
+									<li>
+										<button
+											type="button"
+											class="link"
+											disabled={!link.live}
+											onclick={() => open(link.id)}
+										>
+											<span class="link-title" class:link-dead={!link.live}>{link.title}</span>
+											<span class="link-meta">
+												{link.sectionHeading} — {PUBLISHES[link.publishes]}
+											</span>
+										</button>
+									</li>
+								{/each}
+							</ul>
+						{:else}
+							<p class="links-empty">Links to nothing in this corpus.</p>
+						{/if}
+					</section>
+				{/each}
+			</div>
+		{/if}
 	</div>
 </div>
 
@@ -109,13 +162,14 @@
 	}
 
 	.sm-header {
-		height: 48px;
+		min-height: 48px;
 		flex: none;
 		display: flex;
+		flex-wrap: wrap;
 		align-items: center;
 		justify-content: space-between;
-		gap: 16px;
-		padding: 0 20px;
+		gap: 8px 16px;
+		padding: 8px 20px;
 		background: #ffffff;
 		border-bottom: 1px solid var(--sfds-color-grey-l2);
 	}
@@ -155,22 +209,74 @@
 		padding: 0 12px;
 		border: 1px solid var(--sfds-color-grey-l2);
 		border-radius: 6px;
-		background: #f7f7f7;
+		background: #ffffff;
+		color: var(--color-sfds-black, #212123);
 		font-size: 0.75rem;
 		font-weight: 600;
 		cursor: pointer;
+		transition:
+			background-color 150ms ease,
+			border-color 150ms ease;
+	}
+
+	.sm-exit:hover {
+		background: var(--color-sfds-blue-l1, #edf4f7);
+		border-color: var(--color-sfds-action, #495ed4);
 	}
 
 	.sm-body {
 		flex: 1;
 		min-height: 0;
 		overflow-y: auto;
-		padding: 24px 28px 80px;
+		padding: 20px 20px 80px;
+	}
+
+	.sm-filter-bar {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 10px 14px;
+		max-width: 1100px;
+		margin-bottom: 16px;
+	}
+
+	.sm-filter-input {
+		width: min(100%, 340px);
+		height: 34px;
+		padding: 0 12px;
+		border: 1px solid var(--sfds-color-grey-l2);
+		border-radius: 4px;
+		background: #ffffff;
+		color: var(--color-sfds-black, #212123);
+		font-size: 0.8125rem;
+	}
+
+	.sm-filter-input::placeholder {
+		color: var(--color-sfds-slate-l3);
+	}
+
+	.sm-filter-count {
+		font-size: 0.8125rem;
+		color: var(--color-sfds-slate-l3);
+		font-variant-numeric: tabular-nums;
+	}
+
+	.sm-empty {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 12px;
+		font-size: 0.875rem;
+		color: var(--color-sfds-slate-l3);
+	}
+
+	.sm-empty p {
+		margin: 0;
 	}
 
 	.sm-grid {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+		grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
 		gap: 20px;
 		align-items: start;
 		max-width: 1100px;

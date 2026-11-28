@@ -285,5 +285,9 @@
 			if (status === 'approved') activeTab = 'karl';
 		}}
 		onWriteFeedback={writeFeedback}
+		onOpenFields={() => {
+			activeTab = 'fix';
+			tool = 'fields';
+		}}
 	/>
 </Tabs.Root>

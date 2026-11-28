@@ -19,7 +19,8 @@
 		pageData,
 		karlReadiness = null,
 		onDecided,
-		onWriteFeedback
+		onWriteFeedback,
+		onOpenFields
 	}: {
 		pageData?: { id?: string } | null;
 		/** The Karl outline's summary for this page. */
@@ -28,6 +29,8 @@
 		onDecided?: (status: Decision) => void;
 		/** Open the Notes tab: the page is being sent back with no feedback yet. */
 		onWriteFeedback?: () => void;
+		/** Open the Fields tool when the decision needs unresolved edits. */
+		onOpenFields?: () => void;
 	} = $props();
 
 	// What a decision is being made over. PRODUCT.md: a review succeeds when
@@ -343,6 +346,15 @@
 				</li>
 			{/if}
 		</ul>
+	{/if}
+	{#if liveRecord && (unsavedHere || expiredHere) && onOpenFields}
+		<button
+			type="button"
+			class="text-xs font-semibold text-sfds-action underline underline-offset-2 hover:text-sfds-blue-dark"
+			onclick={onOpenFields}
+		>
+			Open Fields
+		</button>
 	{/if}
 
 	<!-- A segmented control: three equal cells on a grey track, the selected one

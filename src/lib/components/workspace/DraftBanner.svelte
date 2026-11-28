@@ -62,9 +62,13 @@
 	{/if}
 
 	<!-- Persistent live region: one inserted already populated is announced
-	     unreliably, so the element stays and only its text changes. -->
-	<p role="status" class="font-semibold">
-		{#if inProgress}Drafting this page…{/if}
+	     unreliably, so the element stays and only its text changes. `empty:sr-only`
+	     keeps it in the accessibility tree without leaving a phantom vertical gap. -->
+	<p role="status" class="flex items-center gap-2 font-semibold empty:sr-only">
+		{#if inProgress}<span
+				class="inline-block size-2 flex-none rounded-full bg-sfds-action motion-safe:animate-pulse"
+				aria-hidden="true"
+			></span>Drafting this page…{/if}
 	</p>
 	{#if !inProgress}
 		{#if draft.state === 'failed'}
