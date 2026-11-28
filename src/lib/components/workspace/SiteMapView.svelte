@@ -48,6 +48,15 @@
 		unknown: 'Undecided — resolve before typing anything from these cards'
 	};
 
+	/** Escape clears a non-empty filter and stops there; the layout closes the
+	 *  site map on any Escape left unhandled. Preventing the default also stops
+	 *  Chromium and Safari clearing `type="search"` themselves. */
+	function onFilterKeydown(event: KeyboardEvent) {
+		if (event.key !== 'Escape' || query === '') return;
+		query = '';
+		event.preventDefault();
+	}
+
 	function open(id: string | undefined) {
 		if (!id) return;
 		// The layout renders this view while mode is 'sitemap', whatever the URL.
@@ -74,6 +83,7 @@
 				id="sitemap-filter"
 				type="search"
 				bind:value={query}
+				onkeydown={onFilterKeydown}
 				placeholder="Filter by title, slug, or template"
 				autocomplete="off"
 				class="sm-filter-input"
