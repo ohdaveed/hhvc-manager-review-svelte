@@ -3,11 +3,11 @@
  *
  * | Key | Does                                     | Where it is handled |
  * | --- | ---------------------------------------- | ------------------- |
- * | A   | Approved                                 | `ReviewPanel`       |
- * | R   | Needs revision                           | `ReviewPanel`       |
- * | B   | Blocked                                  | `ReviewPanel`       |
- * | U   | Undecided                                | `ReviewPanel`       |
- * | ]   | Next undecided page                      | `ReviewPanel`       |
+ * | A   | Approved                                 | `DecisionFooter`    |
+ * | R   | Needs revision                           | `DecisionFooter`    |
+ * | B   | Blocked                                  | `DecisionFooter`    |
+ * | U   | Undecided                                | `DecisionFooter`    |
+ * | ]   | Next undecided page                      | `DecisionFooter`    |
  * | \   | Open or close the page queue             | review layout       |
  *
  * A decision is the one thing this tool exists to record, so a key that makes

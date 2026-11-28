@@ -79,12 +79,9 @@ test('no WCAG 2.1 AA violations in the signed-in queue and decision panel', asyn
 test('no WCAG 2.1 AA violations in the page checks under the decision', async ({ page }) => {
 	await gotoSignedIn(page, PAGE);
 
-	// No tab click: the page checks live under the decision, on the default
-	// tab. The separate "Checks" tab this test used to open rendered the SAME
-	// component with `showOnlyChecks`, which is why the note here used to warn
-	// about an unscoped locator matching a hidden second copy. One tab was a
-	// strict subset of another; it is gone, and so is the duplicate.
-	await expect(page.getByRole('tab', { name: 'Decision' })).toHaveAttribute('data-state', 'active');
+	// No click: the page checks sit under the analysis findings, in the Checks
+	// tool of the Fix tab, which is what the panel opens on.
+	await expect(page.getByRole('tab', { name: /^Fix/ })).toHaveAttribute('data-state', 'active');
 
 	// `page_checks` rows, which exist on this page only in the fixture.
 	await expect(page.getByRole('tabpanel')).toContainText('2 images have no alt text.');
@@ -98,14 +95,14 @@ test('no WCAG 2.1 AA violations in the Fields panel with a field selected', asyn
 	// Selecting copy in the mockup is what opens this panel; signed out the
 	// same click yields a panel that cannot offer to save anything.
 	await page.locator('[data-rewrite-field]').first().click();
-	await expect(page.getByRole('tab', { name: /Fields/ })).toHaveAttribute('data-state', 'active');
+	await expect(page.getByRole('radio', { name: /Fields/ })).toHaveAttribute('data-state', 'on');
 
 	await noViolations(page);
 });
 
 test('no WCAG 2.1 AA violations in the Analysis panel', async ({ page }) => {
 	await gotoSignedIn(page, PAGE);
-	await page.getByRole('tab', { name: 'Analysis' }).click();
+	await page.getByRole('radio', { name: 'Checks' }).click();
 	await expect(page.getByRole('tabpanel')).toContainText(/Reading Level/i);
 	await expect(page.getByRole('tabpanel')).toContainText(/Link Targets/i);
 
@@ -130,17 +127,17 @@ test('no WCAG 2.1 AA violations in the Rethink panel', async ({ page }) => {
 		})
 	);
 	await gotoSignedIn(page, PAGE);
-	await page.getByRole('tab', { name: 'Rethink' }).click();
+	await page.getByRole('radio', { name: 'Rethink' }).click();
 	await expect(
 		page.getByRole('tabpanel').getByText('Plain language', { exact: true })
 	).toBeVisible();
-	await expect(page.getByRole('button', { name: /Go to Decision/i })).toBeVisible();
 
 	await noViolations(page);
 });
 
 test('no WCAG 2.1 AA violations in the signed-in Karl walkthrough', async ({ page }) => {
 	await gotoSignedIn(page, PAGE);
+	await page.getByRole('tab', { name: 'Karl' }).click();
 	await page.getByRole('button', { name: /^(Start|Resume) the Karl walkthrough$/ }).click();
 	await page.waitForSelector('.drawer');
 

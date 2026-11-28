@@ -1,18 +1,29 @@
 <script lang="ts">
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
+	import * as ToggleGroup from '$lib/components/ui/toggle-group/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import { ChevronsRight } from '@lucide/svelte';
-	import ReviewPanel from './ReviewPanel.svelte';
+	import { ChevronLeft, ChevronRight, ChevronsRight } from '@lucide/svelte';
+	import { tick } from 'svelte';
+	import { resolve } from '$app/paths';
+	import { reviewHrefFor } from '$lib/corpus/draftPath';
+	import DecisionFooter from './DecisionFooter.svelte';
+	import NotesPanel from './NotesPanel.svelte';
+	import KarlPanel from './KarlPanel.svelte';
+	import PageChecks from './PageChecks.svelte';
 	import FieldsPanel from './FieldsPanel.svelte';
 	import RethinkPanel from './RethinkPanel.svelte';
 	import AnalysisPanel from './AnalysisPanel.svelte';
 	import { pageStore } from '$lib/stores/pageData.svelte';
+	import { pagesStore, type PageCheck } from '$lib/stores/reviewState';
 
 	let {
 		pageData,
 		livePageId,
 		karlReadiness = null,
 		karlViews = false,
+		prevPath,
+		nextPath,
+		titleOf = (path: string) => path,
 		collapseLabel = 'Collapse review panel',
 		onCollapse
 	}: {
@@ -20,154 +31,259 @@
 		collapseLabel?: string;
 		pageData: unknown;
 		livePageId?: string;
-		/** The Karl outline's summary for this page, for the decision panel. */
+		/** The Karl outline's summary for this page, for the decision. */
 		karlReadiness?: string | null;
-		/** Offer the Karl views (outline switch, Build in Karl) in the Decision tab.
-		 *  Off on drafts (decision 12). */
+		/** Offer the Karl tab's canvas views. Off on drafts (decision 12). */
 		karlViews?: boolean;
+		/** The pages either side of this one in queue order, for the header's arrows. */
+		prevPath?: string;
+		nextPath?: string;
+		titleOf?: (path: string) => string;
 		onCollapse?: () => void;
 	} = $props();
 
-	let activeTab = $state('overview');
+	const page = $derived(
+		pageData && typeof pageData === 'object' ? (pageData as { id?: string; title?: unknown }) : null
+	);
+	const title = $derived(typeof page?.title === 'string' ? page.title : '');
+
+	// Three tabs, in the order of the job: put the page right, say what is
+	// left, move it into Karl. The decision is not a tab -- it is pinned under
+	// them, on screen throughout.
+	let activeTab = $state<'fix' | 'notes' | 'karl'>('fix');
+
+	// Fix holds three tools. Checks is what is wrong; Fields and Rethink are the
+	// two ways to change the copy (a field at a time, or a whole section).
+	let tool = $state<'checks' | 'fields' | 'rethink'>('checks');
 
 	// Selecting copy in the mockup is a request to work on it, so the panel
-	// follows. Deliberately one-way: a reviewer who then opens Page checks stays
+	// follows. Deliberately one-way: a reviewer who then opens Checks stays
 	// there, and only a NEW selection pulls them back.
 	let lastSelection = $state('');
 	$effect(() => {
 		const key = pageStore.selectedFieldIds.join('|');
 		if (key !== lastSelection) {
 			lastSelection = key;
-			if (key !== '') activeTab = 'fields';
+			if (key !== '') {
+				activeTab = 'fix';
+				tool = 'fields';
+			}
 		}
 	});
 
 	// Selecting a section is a request to work on it, so the panel follows.
-	// One-way, like the field effect above: a reviewer who then opens another
-	// tab stays there.
+	// One-way, like the field effect above.
 	let lastSection = $state<string | undefined>(undefined);
 	$effect(() => {
 		const key = pageStore.selectedSectionKey;
 		if (key !== lastSection) {
 			lastSection = key;
-			if (key) activeTab = 'rethink';
+			if (key) {
+				activeTab = 'fix';
+				tool = 'rethink';
+			}
 		}
 	});
 
-	// The mockup shows its "Rethink section" buttons at rest while this tab is
-	// the one open; on any other tab they wait for the pointer.
+	// The mockup shows its "Rethink section" buttons at rest while Rethink is
+	// the tool open; otherwise they wait for the pointer.
 	$effect(() => {
-		pageStore.rethinkTabOpen = activeTab === 'rethink';
+		pageStore.rethinkTabOpen = activeTab === 'fix' && tool === 'rethink';
 		return () => (pageStore.rethinkTabOpen = false);
 	});
+
+	const liveRecord = $derived($pagesStore.find((p) => p.path === page?.id));
+
+	// The Fix badge: the synced page checks that have not passed. It counted
+	// the Checks tool's own findings until that tool became Reading Level and
+	// Link Targets, which measure and list rather than pass or fail. `null`
+	// with no row to read, so nothing is claimed about a page not in the review.
+	const openIssues = $derived(
+		liveRecord
+			? Object.values(liveRecord.page_checks ?? {}).filter(
+					(check) => (check as PageCheck).status !== 'pass'
+				).length
+			: null
+	);
+
+	// The Notes badge: a tick once there is feedback, a warning while a page is
+	// being sent back without any.
+	const hasNotes = $derived((liveRecord?.manager_notes ?? '').trim() !== '');
+	const missingNote = $derived(
+		!hasNotes && (liveRecord?.status === 'revise' || liveRecord?.status === 'blocked')
+	);
+
+	async function writeFeedback() {
+		activeTab = 'notes';
+		await tick();
+		document.getElementById('notes')?.focus();
+	}
+
+	const BADGE =
+		'inline-flex min-w-5 items-center justify-center rounded-full px-1.5 py-px text-xs font-semibold';
+	// A warning badge is amber on its tint (5.15:1); a neutral one, black on grey.
+	const WARN = 'bg-sfds-amber-l1 text-sfds-amber';
+	const NEUTRAL = 'bg-sfds-grey-l2 text-sfds-black';
+	const TRIGGER =
+		'min-h-11 flex-1 px-2 text-sm data-active:font-semibold data-active:text-sfds-blue-dark after:h-[3px]! after:bg-sfds-action!';
+	const ARROW =
+		'flex size-10 flex-none items-center justify-center rounded-full bg-muted text-slate-700 hover:bg-sfds-blue-l1 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sfds-black';
 </script>
 
 <Tabs.Root
 	bind:value={activeTab}
 	id="reviewWorkspace"
-	class="review-workspace flex h-full min-h-0 flex-col gap-0"
+	class="review-workspace flex h-full min-h-0 flex-col gap-0 bg-slate-50"
 	aria-label="Review workspace"
 >
-	<!-- FOUR triggers now, and they fit on one row.
-	     History, because the count has been wrong twice: six tabs totalled
-	     428px, removing Help left five at 352.47px, and the strip is 339px --
-	     so five still wrapped, with "Analysis" alone on a second row and the
-	     collapse button stranded beside the first. Re-measured in Chromium at
-	     1440x1000 before this change: 353px of triggers in a 339px strip.
+	<header class="flex-none border-b border-sfds-grey-l2 bg-background">
+		<!-- The page on review, and the pages either side of it in queue order.
+		     An end of the queue renders an inert placeholder of the same size,
+		     so the title beside the arrows does not shift from page to page. -->
+		<div class="flex min-h-12 items-center gap-1.5 pt-2 pr-2 pb-1 pl-4">
+			<h2 class="min-w-0 flex-1 truncate text-[1.0625rem] font-bold tracking-[-0.01em]" {title}>
+				{title || 'Review'}
+			</h2>
+			{#if prevPath}
+				<a
+					href={resolve(reviewHrefFor(prevPath))}
+					class={ARROW}
+					aria-label="Previous page: {titleOf(prevPath)}"
+					title="Previous page: {titleOf(prevPath)}"
+				>
+					<ChevronLeft class="size-[1.125rem]" aria-hidden="true" />
+				</a>
+			{:else}
+				<span class="flex size-10 flex-none items-center justify-center text-sfds-grey-l2">
+					<ChevronLeft class="size-[1.125rem]" aria-hidden="true" />
+				</span>
+			{/if}
+			{#if nextPath}
+				<a
+					href={resolve(reviewHrefFor(nextPath))}
+					class={ARROW}
+					aria-label="Next page: {titleOf(nextPath)}"
+					title="Next page: {titleOf(nextPath)}"
+				>
+					<ChevronRight class="size-[1.125rem]" aria-hidden="true" />
+				</a>
+			{:else}
+				<span class="flex size-10 flex-none items-center justify-center text-sfds-grey-l2">
+					<ChevronRight class="size-[1.125rem]" aria-hidden="true" />
+				</span>
+			{/if}
+			{#if onCollapse}
+				<Button
+					variant="outline"
+					size="icon"
+					class="size-7 flex-none"
+					title={collapseLabel}
+					aria-label={collapseLabel}
+					onclick={onCollapse}
+				>
+					<ChevronsRight class="size-3.5" />
+				</Button>
+			{/if}
+		</div>
 
-	     Four at 16px still do NOT fit for a reviewer whose browser font size
-	     is "Large" (20px root): text, padding and the Fields badge are all
-	     rem, so they scale by 1.25 together and no padding trim can win
-	     (measured: a 371px list in a 329px space at 1440 wide). The row
-	     therefore wraps to a second row -- see below.
-
-	     The fifth tab was removable because it was a DUPLICATE, not because
-	     space was tight. "Checks" rendered the same `ReviewPanel` as
-	     "Overview" with `showOnlyChecks`, and Overview already renders Page
-	     Checks below the decision -- so one tab was a strict subset of
-	     another, and the subset was the one with its own name. Checks stay
-	     where they are most useful: under the decision they inform. Overview
-	     is now called "Decision", which is what it holds.
-
-	     The list is `flex-wrap`. It used to be `flex-nowrap overflow-x-auto`
-	     with a hidden scrollbar, which left "Analysis" or "Decision" cut off
-	     behind a scroller nobody could see. Wrapping keeps every tab visible
-	     and needs no script to reveal the active one. `gap-y-2` is there
-	     because the line variant's active underline sits 5px below its
-	     trigger (`after:bottom-[-5px]`): a smaller row gap would draw a
-	     first-row underline on top of the second row. `pb-[5px]` keeps the
-	     last row's underline inside the band. The strip is `min-h-12` and
-	     `items-start`, so a second row grows the band instead of clipping,
-	     and the collapse button stays level with the FIRST row rather than
-	     centring itself between two.
-	     `h-auto!` is still needed: the `line` variant pins the list to `h-8`
-	     via `group-data-horizontal/tabs:h-8`, which outranks a plain `h-auto`. -->
-	<!-- `min-h-12`, white, `border-sfds-grey-l2`: the strip is the panel's slice of
-	     the workspace's one 48px header band, level with the queue's top row and
-	     the canvas toolbar. It used to sit on a grey tint at its own height.
-	     Decision comes FIRST: it is what the panel opens on and what the tool
-	     exists to record, and it was third. -->
-	<div class="flex min-h-12 flex-none items-start gap-1 border-b border-border bg-background pr-2">
-		<Tabs.List
-			variant="line"
-			class="h-auto! min-w-0 flex-1 flex-wrap justify-start gap-x-0 gap-y-2 border-0 bg-transparent px-1 pb-[5px]"
-		>
-			<Tabs.Trigger value="overview" class="flex-none px-2 py-2 leading-5 max-lg:min-h-11"
-				>Decision</Tabs.Trigger
-			>
-			<Tabs.Trigger value="fields" class="flex-none px-2 py-2 leading-5 max-lg:min-h-11">
-				Fields
-				{#if pageStore.selectedFieldIds.length > 0}
-					<span
-						class="ml-1.5 inline-flex size-[1.0625rem] items-center justify-center rounded-full bg-sfds-action text-[0.625rem] font-bold text-white"
-					>
-						{pageStore.selectedFieldIds.length}
+		<!-- Three equal triggers, so they fit one row at any root font size --
+		     the four before them wrapped at a 20px root. `h-auto!` because the
+		     `line` variant pins the list to `h-8`, and `pb-[5px]` keeps the
+		     active underline, which sits 5px below its trigger, inside the band. -->
+		<Tabs.List variant="line" class="h-auto! w-full gap-0 border-0 bg-transparent px-2 pb-[5px]">
+			<Tabs.Trigger value="fix" class={TRIGGER}>
+				Fix
+				{#if openIssues}
+					<span class="{BADGE} {WARN}">
+						{openIssues}<span class="sr-only"> to fix</span>
 					</span>
 				{/if}
 			</Tabs.Trigger>
-			<Tabs.Trigger value="rethink" class="flex-none px-2 py-2 leading-5 max-lg:min-h-11"
-				>Rethink</Tabs.Trigger
-			>
-			<Tabs.Trigger value="analysis" class="flex-none px-2 py-2 leading-5 max-lg:min-h-11"
-				>Analysis</Tabs.Trigger
-			>
+			<Tabs.Trigger value="notes" class={TRIGGER}>
+				Notes
+				{#if hasNotes}
+					<span class="{BADGE} {NEUTRAL}">
+						<span aria-hidden="true">✓</span><span class="sr-only">written</span>
+					</span>
+				{:else if missingNote}
+					<span class="{BADGE} {WARN}">
+						<span aria-hidden="true">!</span><span class="sr-only">needed</span>
+					</span>
+				{/if}
+			</Tabs.Trigger>
+			<Tabs.Trigger value="karl" class={TRIGGER}>Karl</Tabs.Trigger>
 		</Tabs.List>
+	</header>
 
-		{#if onCollapse}
-			<Button
+	<!-- The tab panel is the scroller for Checks, so it is the focusable scroll
+	     region axe asks for. Fields and Rethink scroll themselves and pin their
+	     own action bar, so for them the panel only lays out. -->
+	<Tabs.Content
+		value="fix"
+		class="min-h-0 flex-1 {tool === 'checks' ? 'overflow-y-auto' : 'flex flex-col overflow-hidden'}"
+	>
+		<div class="flex-none px-3 pt-3">
+			<ToggleGroup.Root
+				type="single"
 				variant="outline"
-				size="icon"
-				class="mt-[calc(0.25rem+4px)] size-7 flex-none max-lg:mt-0.5 max-lg:size-11"
-				title={collapseLabel}
-				aria-label={collapseLabel}
-				onclick={onCollapse}
+				size="sm"
+				spacing={0}
+				class="grid w-full grid-cols-3 gap-1 rounded-xl bg-muted p-1"
+				aria-label="Fix tools"
+				value={tool}
+				onValueChange={(next: string) => {
+					// '' is the active item toggled off. There is always a tool.
+					if (next) tool = next as typeof tool;
+				}}
 			>
-				<ChevronsRight class="size-3.5" />
-			</Button>
+				{#each [['checks', 'Checks'], ['fields', 'Fields'], ['rethink', 'Rethink']] as [value, label] (value)}
+					<ToggleGroup.Item
+						{value}
+						class="h-9 rounded-[9px]! border-0! bg-transparent text-sm font-medium text-slate-700 data-[state=on]:bg-white data-[state=on]:font-semibold data-[state=on]:text-sfds-black data-[state=on]:shadow-sm"
+					>
+						{label}
+						{#if value === 'fields' && pageStore.selectedFieldIds.length > 0}
+							<span
+								class="ml-1.5 inline-flex size-[1.0625rem] items-center justify-center rounded-full bg-sfds-action text-[0.625rem] font-bold text-white"
+							>
+								{pageStore.selectedFieldIds.length}
+							</span>
+						{/if}
+					</ToggleGroup.Item>
+				{/each}
+			</ToggleGroup.Root>
+		</div>
+		{#if tool === 'checks'}
+			<!-- Reading level and link targets, measured here, then the
+			     `page_checks` rows synced into Supabase. Two sources with two
+			     owners -- a synced check is someone's recorded judgement, the rest
+			     is this session's measurement -- in one place to read. -->
+			<AnalysisPanel {pageData} embedded />
+			<PageChecks pageId={page?.id} />
+		{:else if tool === 'fields'}
+			<div class="mt-3 min-h-0 flex-1 overflow-hidden border-t border-sfds-grey-l2 bg-background">
+				<FieldsPanel {pageData} {livePageId} {karlViews} />
+			</div>
+		{:else}
+			<div class="mt-3 min-h-0 flex-1 overflow-hidden border-t border-sfds-grey-l2 bg-background">
+				<RethinkPanel {pageData} active={activeTab === 'fix' && tool === 'rethink'} />
+			</div>
 		{/if}
-	</div>
+	</Tabs.Content>
+	<Tabs.Content value="notes" class="min-h-0 flex-1 overflow-y-auto">
+		<NotesPanel pageData={page} {openIssues} />
+	</Tabs.Content>
+	<Tabs.Content value="karl" class="min-h-0 flex-1 overflow-y-auto">
+		<KarlPanel pageId={page?.id} views={karlViews} />
+	</Tabs.Content>
 
-	<Tabs.Content value="fields" class="min-h-0 flex-1 overflow-hidden bg-background">
-		<FieldsPanel {pageData} {livePageId} {karlViews} />
-	</Tabs.Content>
-	<Tabs.Content value="rethink" class="min-h-0 flex-1 overflow-hidden bg-background">
-		<RethinkPanel
-			{pageData}
-			active={activeTab === 'rethink'}
-			onGoToDecision={() => (activeTab = 'overview')}
-		/>
-	</Tabs.Content>
-	<Tabs.Content value="overview" class="min-h-0 flex-1 overflow-y-auto bg-background">
-		<ReviewPanel {pageData} {karlReadiness} {karlViews} />
-	</Tabs.Content>
-	<!-- Karl Jr.'s accessibility tests and readability score, computed here.
-	     These are NOT the Page Checks shown under the decision: those are
-	     `page_checks` rows synced into Supabase by `scripts/sync-checks.ts`,
-	     while these are derived from the corpus and the rendered page every
-	     time the panel opens. Still two surfaces because they answer to
-	     different owners -- a synced check is someone's recorded judgement, an
-	     analysis finding is this session's measurement. -->
-	<Tabs.Content value="analysis" class="min-h-0 flex-1 overflow-y-auto bg-background">
-		<AnalysisPanel {pageData} />
-	</Tabs.Content>
+	<DecisionFooter
+		pageData={page}
+		{karlReadiness}
+		onDecided={(status) => {
+			// An approved page's next step is Karl, so the panel goes there.
+			if (status === 'approved') activeTab = 'karl';
+		}}
+		onWriteFeedback={writeFeedback}
+	/>
 </Tabs.Root>

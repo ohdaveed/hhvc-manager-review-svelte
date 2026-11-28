@@ -51,8 +51,9 @@ test('the mockup shows its "Rethink section" buttons while the Rethink tab is op
 	await page.mouse.move(1300, 700);
 	expect(await opacities(onPage)).toEqual(Array(count).fill('0'));
 
-	await page.getByRole('tab', { name: 'Rethink' }).click();
-	// ...and show at rest while this tab is open.
+	// Rethink is one of the Fix tab's three tools, and Fix is the tab open.
+	await page.getByRole('radio', { name: 'Rethink' }).click();
+	// ...and show at rest while Rethink is open.
 	await expect.poll(() => opacities(onPage)).toEqual(Array(count).fill('1'));
 	await expect(
 		page.getByRole('tabpanel').getByText('Plain language', { exact: true })
@@ -74,7 +75,11 @@ test('"Rethink section" on the mockup opens a collapsed review panel on the Reth
 	await section.first().hover();
 	await section.first().locator('.rethink-section').click();
 
-	await expect(page.getByRole('tab', { name: 'Rethink' })).toHaveAttribute('aria-selected', 'true');
+	await expect(page.getByRole('tab', { name: /^Fix/ })).toHaveAttribute('aria-selected', 'true');
+	await expect(page.getByRole('radio', { name: 'Rethink' })).toHaveAttribute(
+		'aria-checked',
+		'true'
+	);
 	await expect(
 		page.getByRole('tabpanel').getByText('Plain language', { exact: true })
 	).toBeVisible();

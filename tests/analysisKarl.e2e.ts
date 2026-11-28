@@ -12,7 +12,7 @@ test('the Analysis panel shows Reading Level, Link Targets filters, and passes a
 }) => {
 	await page.setViewportSize({ width: 1280, height: 900 });
 	await gotoSignedIn(page, '/review/report-rats-or-mice');
-	await page.getByRole('tab', { name: 'Analysis' }).click();
+	await page.getByRole('radio', { name: 'Checks' }).click();
 
 	const panel = page.getByRole('tabpanel');
 	await expect(panel.getByRole('heading', { name: 'Reading Level' })).toBeVisible();

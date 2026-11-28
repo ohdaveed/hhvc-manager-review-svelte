@@ -15,7 +15,15 @@
 	import { pageStore } from '$lib/stores/pageData.svelte';
 	import { editsStore, pagesStore } from '$lib/stores/reviewState';
 
-	let { pageData }: { pageData?: unknown } = $props();
+	let {
+		pageData,
+		embedded = false
+	}: {
+		pageData?: unknown;
+		/** Inside the Fix tab: the tab scrolls, and the decision pinned under it
+		 *  already offers the next undecided page, so the panel does neither. */
+		embedded?: boolean;
+	} = $props();
 
 	const page = $derived(
 		pageData && typeof pageData === 'object' ? (pageData as Record<string, unknown>) : undefined
@@ -65,8 +73,8 @@
 	);
 </script>
 
-<div class="flex h-full min-h-0 flex-col">
-	<div class="min-h-0 flex-1 space-y-4 overflow-y-auto p-4">
+<div class={embedded ? '' : 'flex h-full min-h-0 flex-col'}>
+	<div class="space-y-4 p-4 {embedded ? '' : 'min-h-0 flex-1 overflow-y-auto'}">
 		{#if !analysis}
 			<p class="text-sm text-sfds-slate-l3">No page selected.</p>
 		{:else}
@@ -188,7 +196,7 @@
 		{/if}
 	</div>
 
-	{#if nextPath || liveRecord}
+	{#if !embedded && (nextPath || liveRecord)}
 		<div class="flex-none border-t border-border bg-background px-4 py-3">
 			{#if nextPath}
 				<a

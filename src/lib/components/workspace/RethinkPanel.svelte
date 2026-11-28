@@ -241,14 +241,18 @@
 		{/if}
 	</div>
 
-	<div class="flex-none border-t border-border bg-background px-4 py-3">
-		<button
-			type="button"
-			class="flex w-full items-center justify-between gap-2 text-sm font-semibold text-sfds-black hover:text-sfds-action"
-			onclick={() => onGoToDecision?.()}
-		>
-			<span>Go to Decision</span>
-			<ArrowRight class="size-4 shrink-0" aria-hidden="true" />
-		</button>
-	</div>
+	<!-- Only where the decision is somewhere else to go to. In the workspace it
+	     is pinned under the tabs, so there the panel is handed no callback. -->
+	{#if onGoToDecision}
+		<div class="flex-none border-t border-border bg-background px-4 py-3">
+			<button
+				type="button"
+				class="flex w-full items-center justify-between gap-2 text-sm font-semibold text-sfds-black hover:text-sfds-action"
+				onclick={onGoToDecision}
+			>
+				<span>Go to Decision</span>
+				<ArrowRight class="size-4 shrink-0" aria-hidden="true" />
+			</button>
+		</div>
+	{/if}
 </div>
