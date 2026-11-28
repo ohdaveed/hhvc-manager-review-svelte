@@ -154,4 +154,45 @@ describe('WalkthroughDrawer', () => {
 			/Empty|Choose|Blocking/
 		);
 	});
+
+	it('names the Back button by its visible label (WCAG 2.5.3) on a step after the first', () => {
+		pageStore.stepIndex = 1;
+		render(WalkthroughDrawer, { walkthrough, pageId });
+		expect(screen.getByRole('button', { name: 'Back' })).toBeTruthy();
+		expect(screen.queryByRole('button', { name: 'Previous step' })).toBeNull();
+	});
+
+	it('offers no Back on the first step', () => {
+		render(WalkthroughDrawer, { walkthrough, pageId });
+		expect(screen.queryByRole('button', { name: 'Back' })).toBeNull();
+	});
+
+	it('finishes on the last step: Copy & finish for one value, no Skip', () => {
+		const last = step(5, {
+			uiLabel: 'Contact',
+			rawName: 'contact',
+			values: [{ label: 'Phone', value: '311' }]
+		});
+		pageStore.stepIndex = 1;
+		render(WalkthroughDrawer, {
+			walkthrough: { ...walkthrough, steps: [steps[0], last] },
+			pageId
+		});
+		expect(screen.getByRole('button', { name: 'Copy & finish' })).toBeTruthy();
+		expect(screen.queryByRole('button', { name: 'Skip' })).toBeNull();
+		expect(screen.queryByRole('button', { name: 'Copy & next →' })).toBeNull();
+	});
+
+	it('finishes on the last step: Mark done for a step with nothing to copy, no Skip', () => {
+		pageStore.stepIndex = 3;
+		render(WalkthroughDrawer, { walkthrough, pageId });
+		expect(screen.getByRole('button', { name: 'Mark done' })).toBeTruthy();
+		expect(screen.queryByRole('button', { name: 'Skip' })).toBeNull();
+	});
+
+	it('still offers Skip before the last step', () => {
+		pageStore.stepIndex = 2;
+		render(WalkthroughDrawer, { walkthrough, pageId });
+		expect(screen.getByRole('button', { name: 'Skip' })).toBeTruthy();
+	});
 });

@@ -356,11 +356,8 @@
 						     separate Wagtail fields, so those keep a Copy per value. -->
 						<div class="step-actions">
 							{#if index > 0}
-								<button
-									type="button"
-									class="btn-ghost"
-									aria-label="Previous step"
-									onclick={() => goTo(index - 1)}>← Back</button
+								<button type="button" class="btn-ghost" onclick={() => goTo(index - 1)}
+									><span aria-hidden="true">←</span> Back</button
 								>
 							{/if}
 							{#if step.values.length === 1}
