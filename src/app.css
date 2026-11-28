@@ -38,13 +38,24 @@
 	--card-foreground: oklch(0.145 0 0);
 	--popover: oklch(1 0 0);
 	--popover-foreground: oklch(0.145 0 0);
-	--primary: oklch(0.205 0 0);
-	--primary-foreground: oklch(0.985 0 0);
-	--secondary: oklch(0.945 0 0);
+	/* SF blue, not shadcn's near-black: every default Button, the default Badge
+	   and a Switch's on state read this one token, so the primary action looks
+	   like SF.gov's everywhere at once. Set HERE, as `--ring` is below, so a
+	   regenerated components/ui leaves it alone. It is SFDS's action blue
+	   (`--color-sfds-action`); white on it measures 5.48:1. The hover the
+	   vendored Button gives an anchor (`bg-primary/80`) would lighten it to
+	   3.70:1 under white text, which is why a darker hover is set at the end
+	   of this file. */
+	--primary: #495ed4;
+	--primary-foreground: #ffffff;
+	--secondary: oklch(0.97 0 0);
 	--secondary-foreground: oklch(0.205 0 0);
-	--muted: oklch(0.945 0 0);
-	--muted-foreground: oklch(0.36 0 0);
-	--accent: oklch(0.93 0 0);
+	--muted: oklch(0.97 0 0);
+	/* shadcn's default was oklch(0.556 0 0), #737373: 4.74:1 on white, the
+	   lowest text pair measured in the app (the Analysis tab's explanatory
+	   lines). It is the same job as `sfds-slate-l3`, so it takes that grey. */
+	--muted-foreground: #3f3f46;
+	--accent: oklch(0.97 0 0);
 	--accent-foreground: oklch(0.205 0 0);
 	--destructive: oklch(0.577 0.245 27.325);
 	--border: oklch(0.67 0 0);
@@ -412,8 +423,12 @@ input[type='checkbox'] {
 	   review). That navy sat beside the link colour (#495ed4) on every queue
 	   row, help line and readability tip, so metadata read as clickable and
 	   the panels had no hierarchy between "go here" and "for reference".
-	   #52525b keeps AA everywhere the tool puts it: 7.73:1 on white, 6.95 on
-	   blue-l1 (the selected queue row), 6.76 on red-l1, 5.97 on grey-l2. */
+	   #52525b kept AA everywhere the tool puts it (7.73:1 on white), but most
+	   of that text is 11-13px, where a pass on paper still reads as faint.
+	   Darkened to #3f3f46 by request (2026-11-27). MEASURED in the rendered
+	   app: 10.44:1 on white, 9.58 on the Fields footer's #f5f5f5 and 9.39 on
+	   blue-l1 (the selected queue row). Still a clear step lighter than body
+	   copy, so "for reference" keeps reading as secondary. */
 	--color-sfds-slate-l2: #5a7a92;
 	--color-sfds-slate-l3: #3f3f46;
 	--color-sfds-grey-l2: #e2e2e2;
@@ -528,6 +543,46 @@ input[type='checkbox'] {
    pages, at 554px and 1280px). This surface used to read the review tool's
    `--color-sfds-*` palette, which the `--color-site-*` comment further down
    says a mockup must not do: links rendered #495ed4 where sf.gov uses #1B519E. */
+/* The mockup frame and its gutters, shared by the review canvas and the
+   Blueprint's mockup column, so the two draw one page. Moved here from the
+   review layout's scoped styles when the Blueprint began drawing the mockup. */
+/* The mockup frame is the container every SF.gov component inside it
+   queries. `inline-size` rather than `size`: only width drives SF.gov's
+   reflow, and `size` would require the frame to carry an explicit height,
+   which it does not -- it grows with its content so the footer stays
+   reachable by scrolling. */
+.mockup-frame {
+	container: mockup / inline-size;
+	max-width: 1440px;
+}
+
+/* sf.gov's gutters step rather than scale: 20px on a phone, 28px from a
+   768px viewport (measured on `dph-leaves-absence` 2026-11-26), 96px from
+   1024 (below). SiteHeader and SiteFooter use the same steps, so the page
+   title, the header seal and the footer lockup share one left edge. 760
+   rather than 768 because the frame's border makes the Tablet preset a
+   766px box. */
+.mock-page {
+	padding-block: clamp(1.25rem, 4cqi, 2.5rem);
+	padding-inline: 20px;
+}
+@container mockup (min-width: 760px) {
+	.mock-page {
+		padding-inline: 28px;
+	}
+}
+
+/* sf.gov's desktop gutter is 96px (`lg:mx-96`) from a 1024px viewport, the
+   same step as its header and type. The frame's 1px border makes the
+   "Desktop 1024px" preset a 1022px box, hence 1000. That leaves #mockPage an
+   830px content box at that preset -- live's 832 -- which is what the
+   column and type rules in app.css query. */
+@container mockup (min-width: 1000px) {
+	.mock-page {
+		padding-inline: 96px;
+	}
+}
+
 #mockPage {
 	container: mockup / inline-size;
 	color: var(--color-site-ink);
@@ -828,10 +883,14 @@ input[type='checkbox'] {
    of 12 grid columns with 28px gutters -- 473px at 1024, 616px at 1280 --
    while the title and summary span the whole grid. Below that, body copy runs
    the full width. `min(100cqi, 1076px)` is the grid: the container, capped
-   where the page wrapper caps it. */
+   where the page wrapper caps it.
+
+   The mockup widens that measure by 25% (591px at 1024, 770px at 1280), a
+   deliberate departure from live sf.gov asked for on 2026-11-27 so the body
+   copy reads larger in review. Drop the `* 1.25` to return to live's 7 of 12. */
 @container mockup (min-width: 800px) {
 	#mockPage :is(.what-to-know, .page-content) {
-		max-width: calc((min(100cqi, 1076px) + 28px) * 7 / 12 - 28px);
+		max-width: calc(((min(100cqi, 1076px) + 28px) * 7 / 12 - 28px) * 1.25);
 	}
 	#mockPage h1 {
 		font-size: 2.875rem;
@@ -999,6 +1058,62 @@ input[type='checkbox'] {
 }
 
 /* ---------------------------------------------------------------------------
+   `.site-skin`: an sf.gov-styled TOOL surface. The landing page (`/`) wears
+   it, as `/login` already wears the site's button, field and alert.
+
+   The landing page is built from the same shared pieces as the review
+   workspace (`PageRow`, `StatusBar`, the shadcn `Button` and `ToggleGroup`),
+   which read the chrome palette. Editing them would restyle the workspace
+   too, where the tool must stay visibly apart from the mockup. So the chrome
+   tokens are re-pointed at the site palette INSIDE this class only, and every
+   utility that reads them follows.
+
+   This is the one sanctioned alias between the two palettes, and it is scoped:
+   never put `.site-skin` on or around the review workspace.
+
+   Review-status colours (`sfds-green`, `-amber`, `-red`) are not remapped. They
+   are review marks, not sf.gov, and they mean the same thing here as in the
+   queue.
+   --------------------------------------------------------------------------- */
+.site-skin {
+	--color-sfds-action: var(--color-site-action);
+	--color-sfds-blue-dark: var(--color-site-action-dark);
+	--color-sfds-blue-l1: var(--color-site-action-soft);
+	--color-sfds-black: var(--color-site-ink);
+	--color-sfds-slate-l2: var(--color-site-ink-muted);
+	--color-sfds-slate-l3: var(--color-site-ink-secondary);
+	--color-sfds-grey-l2: var(--color-site-border);
+	--color-slate-900: var(--color-site-ink);
+	--color-slate-800: var(--color-site-ink);
+	--color-slate-700: var(--color-site-ink-secondary);
+	--color-slate-500: var(--color-site-ink-muted);
+	--color-slate-300: var(--color-site-ink-muted);
+	--color-slate-50: var(--color-site-tint);
+
+	--foreground: var(--color-site-ink);
+	--primary: var(--color-site-action);
+	--primary-foreground: var(--color-site-surface);
+	--border: var(--color-site-border);
+	--input: var(--color-site-ink-muted);
+	--ring: var(--color-site-focus);
+
+	background: var(--color-site-surface);
+	color: var(--color-site-ink);
+	font-family: var(--site-font-body);
+}
+/* The site's 4px corner and two-stop ring on the page's buttons. Unlayered, so
+   it outranks the shadcn utilities without editing the generated component.
+   The shared rows keep their inset outline: a ring outside a row would be
+   clipped by the list. */
+.site-skin [data-slot='button'] {
+	border-radius: var(--site-radius);
+}
+.site-skin [data-slot='button']:focus-visible {
+	outline: none;
+	box-shadow: var(--site-focus-ring);
+}
+
+/* ---------------------------------------------------------------------------
    Karl outline: where each part of the mockup lands in Karl.
 
    Review-tool chrome, drawn only while `.karl-outline-on` is set on #mockPage.
@@ -1089,6 +1204,12 @@ input[type='checkbox'] {
    tall (below WCAG 2.5.8's 24px), measured 2026-11-26 at 1280px with both
    rails open. `zoom` compounds, so the inverse here renders them at true
    size. The mockup copy itself keeps the preview scale: it is the page. */
+/* Present: the page as it would appear on SF.gov, so the review controls that
+   sit inside the mockup go. The edit targets stay -- they draw nothing at rest. */
+#mockPage[data-presenting] .page-section-chrome {
+	display: none;
+}
+
 #mockPage :is(.karl-chip, .karl-outline-summary, .rethink-section, [data-edit-expired]) {
 	zoom: calc(1 / var(--fit-scale, 1));
 }
@@ -1441,4 +1562,13 @@ input[type='checkbox'] {
 		font-size: 20px;
 		line-height: 28px;
 	}
+}
+
+/* The default Button's hover. The vendored base lightens an anchor to
+   `bg-primary/80`, which over white makes SF blue 3.70:1 against its white
+   label -- below WCAG AA. Darken instead, and for a <button> too, which had no
+   hover at all. Unlayered, so it outranks the utility in `@layer utilities`
+   without touching the generated component. */
+[data-slot='button'].bg-primary:not([aria-disabled='true']):not(:disabled):hover {
+	background-color: color-mix(in oklab, var(--primary) 82%, black);
 }

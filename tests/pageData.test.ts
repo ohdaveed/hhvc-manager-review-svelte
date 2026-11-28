@@ -194,46 +194,112 @@ describe('fitFrame', () => {
 	});
 });
 
-describe('rail default', () => {
-	it('opens the queue on a fresh load at 1440 -- no viewport-based default', () => {
+describe('rails', () => {
+	beforeEach(() => {
 		localStorage.clear();
-		window.innerWidth = 1440;
-		pageStore.railCollapsed = { queue: false, panel: false };
-		pageStore.loadRailState();
-		expect(pageStore.railCollapsed).toEqual({ queue: false, panel: false });
+		if (pageStore.presenting) pageStore.togglePresent();
 	});
+	afterEach(() => localStorage.clear());
 
-	// A laptop-width window: both rails open left the canvas too narrow for the
-	// desktop layout, so with no recorded choice the queue starts collapsed.
-	// jsdom has no matchMedia, so it is assigned rather than spied on.
-	const laptop = (matches: boolean) => {
-		const original = window.matchMedia;
-		window.matchMedia = ((query: string) => ({
-			matches,
-			media: query
-		})) as typeof window.matchMedia;
-		return { mockRestore: () => (window.matchMedia = original) };
-	};
-
-	it('collapses the queue on a fresh load at laptop width', () => {
-		localStorage.clear();
-		const spy = laptop(true);
-		pageStore.railCollapsed = { queue: false, panel: false };
+	// The page and its decision are the work, so the workspace opens on them:
+	// the queue collapsed, the review panel open, at every desktop width.
+	it('opens with the queue collapsed and the review panel open', () => {
+		pageStore.railCollapsed = { queue: false, panel: true };
 		pageStore.loadRailState();
 		expect(pageStore.railCollapsed).toEqual({ queue: true, panel: false });
 		// A default, not a choice: nothing is written until the reviewer toggles.
 		expect(localStorage.getItem('hhvc:railCollapsed')).toBeNull();
-		spy.mockRestore();
 	});
 
-	it("keeps the reviewer's recorded choice over the laptop default", () => {
+	it('opening the queue closes the review panel, and the choice is recorded', () => {
+		pageStore.railCollapsed = { queue: true, panel: false };
+		pageStore.toggleRail('queue');
+		expect(pageStore.railCollapsed).toEqual({ queue: false, panel: true });
+		expect(JSON.parse(localStorage.getItem('hhvc:railCollapsed') ?? '')).toEqual({
+			queue: false,
+			panel: true
+		});
+	});
+
+	it('opening the review panel closes the queue', () => {
+		pageStore.railCollapsed = { queue: false, panel: true };
+		pageStore.toggleRail('panel');
+		expect(pageStore.railCollapsed).toEqual({ queue: true, panel: false });
+	});
+
+	// Exclusive is about opening. Closing the open rail leaves both collapsed,
+	// for a wide look at the page, and never springs the other one open.
+	it('closing a rail leaves the other as it was', () => {
+		pageStore.railCollapsed = { queue: true, panel: false };
+		pageStore.toggleRail('panel');
+		expect(pageStore.railCollapsed).toEqual({ queue: true, panel: true });
+	});
+
+	it("keeps the reviewer's recorded choice over the default", () => {
+		localStorage.setItem('hhvc:railCollapsed', JSON.stringify({ queue: false, panel: true }));
+		pageStore.loadRailState();
+		expect(pageStore.railCollapsed).toEqual({ queue: false, panel: true });
+	});
+
+	// "Rethink section" does its work in the panel. With the panel collapsed the
+	// click selected the section and showed nothing at all.
+	it('choosing a section to rethink opens the review panel', () => {
+		pageStore.railCollapsed = { queue: false, panel: true };
+		pageStore.selectSection('what-to-do');
+		expect(pageStore.railCollapsed).toEqual({ queue: true, panel: false });
+		pageStore.clearSectionSelection();
+	});
+
+	// Saved before the rails were exclusive: a layout that can no longer be
+	// reached by hand loads as the default.
+	it('loads a saved "both open" as the default', () => {
 		localStorage.setItem('hhvc:railCollapsed', JSON.stringify({ queue: false, panel: false }));
-		const spy = laptop(true);
 		pageStore.railCollapsed = { queue: true, panel: true };
 		pageStore.loadRailState();
-		expect(pageStore.railCollapsed).toEqual({ queue: false, panel: false });
-		spy.mockRestore();
+		expect(pageStore.railCollapsed).toEqual({ queue: true, panel: false });
+	});
+});
+
+describe('present', () => {
+	beforeEach(() => {
 		localStorage.clear();
+		if (pageStore.presenting) pageStore.togglePresent();
+		if (pageStore.mode === 'walkthrough') pageStore.exitWalkthrough();
+		pageStore.railCollapsed = { queue: false, panel: true };
+	});
+
+	// Both rails collapsed is what gives Fit a pane wider than the 1024px
+	// desktop layout, so the page renders at 100% instead of ~70% at 1440.
+	it('collapses both rails, and restores them as they were on the way out', () => {
+		pageStore.togglePresent();
+		expect(pageStore.presenting).toBe(true);
+		expect(pageStore.railCollapsed).toEqual({ queue: true, panel: true });
+
+		pageStore.togglePresent();
+		expect(pageStore.presenting).toBe(false);
+		expect(pageStore.railCollapsed).toEqual({ queue: false, panel: true });
+	});
+
+	it('is not persisted as a rail choice', () => {
+		pageStore.togglePresent();
+		expect(localStorage.getItem('hhvc:railCollapsed')).toBeNull();
+	});
+
+	it('ends when the reviewer opens a rail by hand, keeping that rail open', () => {
+		pageStore.togglePresent();
+		pageStore.toggleRail('queue');
+		expect(pageStore.presenting).toBe(false);
+		expect(pageStore.railCollapsed).toEqual({ queue: false, panel: true });
+	});
+
+	it('hands over to the walkthrough, which restores the pre-Present rails on exit', () => {
+		pageStore.togglePresent();
+		pageStore.enterWalkthrough();
+		expect(pageStore.presenting).toBe(false);
+		expect(pageStore.railCollapsed).toEqual({ queue: true, panel: true });
+
+		pageStore.exitWalkthrough();
+		expect(pageStore.railCollapsed).toEqual({ queue: false, panel: true });
 	});
 });
 

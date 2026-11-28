@@ -1,11 +1,9 @@
 <script lang="ts">
 	import { review } from '$lib/review/review.svelte';
 	import { onMount, tick, untrack } from 'svelte';
-	import { hydrateMockup } from '$lib/stores/applySavedEdits';
-	import { classifyLatestEdits } from '$lib/stores/editStatus';
 	import { warnBeforeLeaving } from '$lib/stores/leaveGuard';
 	import { page } from '$app/stores';
-	import { afterNavigate, replaceState } from '$app/navigation';
+	import { afterNavigate, goto, replaceState } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
 	import { ScrollArea } from '$lib/components/ui/scroll-area/index.js';
@@ -34,6 +32,7 @@
 		Download,
 		Maximize2,
 		Monitor,
+		Presentation,
 		Smartphone,
 		Tablet
 	} from '@lucide/svelte';
@@ -58,6 +57,7 @@
 	import { outlineSummary, placementsFor } from '$lib/karl/placement';
 	import { setOutlineContext } from '$lib/karl/outlineContext';
 	import { pagesByKey } from '$lib/data';
+	import { groupPaths } from '$lib/landing/groups';
 	import { triggerReviewExportDownload } from '$lib/data/exportReview';
 
 	let { children } = $props();
@@ -74,6 +74,14 @@
 	const currentPath = $derived(routePathFor($page.params));
 	const pageData = $derived(pageStore.pages.find((p) => p.id === currentPath));
 
+	// This page's review record: its decision, edited slug and stale-edit flags.
+	// The Karl outline, the Blueprint and the walkthrough all take this one.
+	const recordHere = $derived(
+		pageData
+			? reviewRecordFor(pageData.id, $pagesStore, $editsStore, pageStore.staleEditsOn(pageData.id))
+			: null
+	);
+
 	// Built on demand rather than eagerly: it walks the page against the whole
 	// Karl panel inventory, and 28 of the 29 pages are not the one on screen.
 	//
@@ -82,21 +90,15 @@
 	// - `pagesByKey`, NOT `pageStore.pages`. The transcript resolves card and
 	//   link destinations by TARGET KEY; handed the array it resolved none, and
 	//   130 chooser labels across the corpus degraded to raw keys.
-	// - the review record, NOT `null`. The walkthrough rebuilds the page the
-	//   reviewer APPROVED, so it has to transcribe their edits; without it the
-	//   drawer walked an editor through the original mockup copy while the
-	//   Help tab's markdown showed the edited version of the same field.
+	// - the copy as RECORDED, not the page on screen. The walkthrough rebuilds
+	//   the page the reviewer approved: their saved edits, and none of the typing
+	//   still unsaved on the mockup. `pageData` is the copy as shown.
 	const walkthrough = $derived(
 		pageStore.mode === 'walkthrough' && pageData
 			? buildWalkthrough(
-					pageData,
+					pageStore.recordedPage(pageData.id, $pagesStore, $editsStore) ?? pageData,
 					pagesByKey,
-					reviewRecordFor(
-						pageData.id,
-						$pagesStore,
-						$editsStore,
-						pageStore.staleEditsOn(pageData.id)
-					)
+					recordHere
 				)
 			: null
 	);
@@ -113,18 +115,16 @@
 		pageData && !onDraft
 			? placementsFor(
 					pageData as unknown as Parameters<typeof placementsFor>[0],
-					reviewRecordFor(
-						pageData.id,
-						$pagesStore,
-						$editsStore,
-						pageStore.staleEditsOn(pageData.id)
-					),
+					recordHere,
 					pagesByKey
 				)
 			: null
 	);
 	const outlinePlacements = $derived(pageStore.karlOutline ? placementsHere : null);
 	const blueprintPlacements = $derived(pageStore.mode === 'blueprint' ? placementsHere : null);
+	// The Build in Karl view is on screen: not merely the mode, which stays set
+	// on a page that has no Karl view and falls back to the review.
+	const building = $derived(Boolean(blueprintPlacements && pageData));
 	// The outline's own one-line summary, so the decision panel and the outline
 	// bar can never describe the same page two ways.
 	const karlReadiness = $derived(placementsHere ? outlineSummary(placementsHere) : null);
@@ -185,22 +185,14 @@
 		pageStore.enterPage(pageData?.id);
 	});
 
-	// Which saved edits no longer answer their base copy (ADR 0001). Hashing is
-	// async (WebCrypto), so a slow pass is dropped if a newer one has started --
-	// otherwise an old result could land last and mark a field that has since
-	// been re-saved. Tracks the page list shallowly, since a re-merged draft
-	// page is a new base.
-	let statusPass = 0;
+	// Which saved edits no longer answer their base copy (ADR 0001); the store
+	// drops a slow pass a newer one has overtaken. Tracks the page list
+	// shallowly, since a re-merged draft page is a new base.
 	$effect(() => {
 		const edits = $editsStore;
 		const live = $pagesStore;
 		void [...pageStore.pages];
-		const pass = ++statusPass;
-		classifyLatestEdits(live, edits, (path, fieldId) => pageStore.baseCopyOf(path, fieldId)).then(
-			(status) => {
-				if (pass === statusPass) pageStore.editStatus = status;
-			}
-		);
+		void pageStore.syncEditStatus(live, edits);
 	});
 
 	// Saved edits onto the mockup: after `loadReview`, on every realtime insert,
@@ -211,18 +203,9 @@
 		const edits = $editsStore;
 		const loaded = $editsLoaded;
 		const live = $pagesStore;
-		const pages = [...pageStore.pages];
+		void [...pageStore.pages];
 		void Object.keys(pageStore.unsavedChanges);
-		untrack(() =>
-			hydrateMockup({
-				pages,
-				livePages: live,
-				edits,
-				editsLoaded: loaded,
-				isOwnEdit,
-				changes: pageStore
-			})
-		);
+		untrack(() => pageStore.hydrate({ livePages: live, edits, editsLoaded: loaded, isOwnEdit }));
 	});
 
 	// Unsaved changes on EVERY page, typed or accepted -- work does not follow the
@@ -260,6 +243,25 @@
 	const prevPath = $derived(at > 0 ? order[at - 1] : undefined);
 	const nextPath = $derived(at >= 0 && at < order.length - 1 ? order[at + 1] : undefined);
 	const titleOf = (path: string) => pageTitleFor(path, pageStore.pages, $draftsStore, 'empty');
+
+	/**
+	 * Build in Karl hides both rails, so the queue becomes a stepper in its top
+	 * bar: every page in the queue's own order, named by its section and its
+	 * place in it ("Report a problem · 3 of 12"). Drafts are left out: a draft
+	 * has no Karl view (decision 12), so stepping onto one would drop out of the
+	 * mode with no rail to get back by.
+	 */
+	const buildPages = $derived(
+		groupPaths(order.filter((path) => !isDraftPath(path))).flatMap((section) =>
+			section.paths.map((path, i) => ({
+				path,
+				title: titleOf(path),
+				section: section.heading,
+				n: i + 1,
+				of: section.paths.length
+			}))
+		)
+	);
 
 	/**
 	 * This page's recorded decision, for the toolbar badge, the collapsed panel's
@@ -382,6 +384,7 @@
 		pageStore.loadPreviewWidth();
 		pageStore.loadKarlOutline();
 		pageStore.loadCopiedSteps();
+		pageStore.loadBlueprintProgress();
 
 		loadQueue();
 
@@ -534,10 +537,12 @@
 <div
 	class="review-shell grid h-screen w-full grid-rows-[minmax(0,1fr)] overflow-hidden bg-muted/40"
 	data-sheet={pageStore.mobileSheet}
-	style="grid-template-columns: {pageStore.railCollapsed.queue ? '52px' : '280px'} 1fr {pageStore
-		.railCollapsed.panel
-		? '52px'
-		: '380px'}"
+	data-build={building ? '' : undefined}
+	style="grid-template-columns: {building
+		? 'minmax(0, 1fr)'
+		: `${pageStore.railCollapsed.queue ? '52px' : '280px'} 1fr ${
+				pageStore.railCollapsed.panel ? '52px' : '380px'
+			}`}"
 >
 	<!-- Backdrop for the narrow-viewport sheets. A real element rather than a
 	     giant box-shadow, because it has to take the click that closes the
@@ -727,7 +732,12 @@
 		{:else if pageStore.mode === 'blueprint' && blueprintPlacements && pageData}
 			<BlueprintView
 				placements={blueprintPlacements}
-				title={String(pageData.title ?? '')}
+				page={pageData}
+				pageId={pageData.id}
+				{status}
+				pages={buildPages}
+				onGo={(path) => goto(resolve(reviewHrefFor(path)))}
+				onExport={() => triggerReviewExportDownload(pageStore.pages, $pagesStore, $editsStore)}
 				onExit={() => pageStore.showReview()}
 				onShow={showOnPage}
 			/>
@@ -891,6 +901,24 @@
 									</ToggleGroup.Item>
 								{/each}
 							</ToggleGroup.Root>
+							<!-- Present: both rails away and the review controls hidden, so
+							     the page is shown the way it would look on SF.gov and at
+							     full size. Icon-only for the same reason as the width
+							     control beside it. -->
+							<Button
+								variant={pageStore.presenting ? 'default' : 'outline'}
+								size="icon-sm"
+								class="size-7"
+								aria-pressed={pageStore.presenting}
+								aria-label="Present"
+								title={pageStore.presenting
+									? 'Stop presenting: show the review controls again'
+									: 'Present: hide the review controls and show the page full size'}
+								data-testid="present-toggle"
+								onclick={() => pageStore.togglePresent()}
+							>
+								<Presentation class="size-3.5" aria-hidden="true" />
+							</Button>
 						</div>
 						<!-- Canvas controls only. The Karl walkthrough, the Karl field
 						     outline and the Blueprint moved to the review panel's Karl strip
@@ -984,7 +1012,13 @@
 					     (`max-w-xl`, measured 2026-11-22). Title and summary span it;
 					     body copy sits in 7 of its 12 columns (app.css). The chrome
 					     above and below is full-bleed, which is why it sits outside. -->
-						<div id="mockPage" class="mock-page" class:karl-outline-on={outlinePlacements}>
+						<div
+							id="mockPage"
+							class="mock-page"
+							class:karl-outline-on={outlinePlacements}
+							data-presenting={pageStore.presenting ? '' : undefined}
+							data-rethink={pageStore.rethinkTabOpen ? '' : undefined}
+						>
 							{#if outlinePlacements}
 								<!-- Review-tool chrome, like the Karl notices inside sections: the
 								     one-line count a reviewer reads before the chips. -->
@@ -1077,6 +1111,16 @@
 <style>
 	/* Visible only while focused. Off-screen rather than `display: none`, which
 	   would take it out of the focus order and defeat the purpose. */
+	/* Build in Karl takes the whole window: the queue is the stepper in its top
+	   bar and the review is one tab away, so neither rail is drawn -- not even
+	   collapsed. The grid template drops their tracks (inline, above); this
+	   stops them painting. The skip link goes too: its target is the panel. */
+	.review-shell[data-build] > .queue-rail,
+	.review-shell[data-build] > .panel-rail,
+	.review-shell[data-build] > .skip-to-panel {
+		display: none;
+	}
+
 	.skip-to-panel {
 		position: absolute;
 		left: -9999px;
@@ -1094,16 +1138,6 @@
 		top: 0;
 	}
 
-	/* The mockup frame is the container every SF.gov component inside it
-	   queries. `inline-size` rather than `size`: only width drives SF.gov's
-	   reflow, and `size` would require the frame to carry an explicit height,
-	   which it does not -- it grows with its content so the footer stays
-	   reachable by scrolling. */
-	.mockup-frame {
-		container: mockup / inline-size;
-		max-width: 1440px;
-	}
-
 	/* Unpainted until the pane is measured. Before then `fit` has no width to
 	   work from, so the frame took the pane's width unzoomed -- sf.gov's tablet
 	   layout -- and then jumped to the zoomed desktop one. Measured on a
@@ -1112,33 +1146,6 @@
 	   after hydration; `noscript` in <svelte:head> shows it without JS. */
 	.mockup-frame[data-measured='false'] {
 		visibility: hidden;
-	}
-
-	/* sf.gov's gutters step rather than scale: 20px on a phone, 28px from a
-	   768px viewport (measured on `dph-leaves-absence` 2026-11-26), 96px from
-	   1024 (below). SiteHeader and SiteFooter use the same steps, so the page
-	   title, the header seal and the footer lockup share one left edge. 760
-	   rather than 768 because the frame's border makes the Tablet preset a
-	   766px box. */
-	.mock-page {
-		padding-block: clamp(1.25rem, 4cqi, 2.5rem);
-		padding-inline: 20px;
-	}
-	@container mockup (min-width: 760px) {
-		.mock-page {
-			padding-inline: 28px;
-		}
-	}
-
-	/* sf.gov's desktop gutter is 96px (`lg:mx-96`) from a 1024px viewport, the
-	   same step as its header and type. The frame's 1px border makes the
-	   "Desktop 1024px" preset a 1022px box, hence 1000. That leaves #mockPage an
-	   830px content box at that preset -- live's 832 -- which is what the
-	   column and type rules in app.css query. */
-	@container mockup (min-width: 1000px) {
-		.mock-page {
-			padding-inline: 96px;
-		}
 	}
 
 	/* The rails are viewport business, not container business, and this is the

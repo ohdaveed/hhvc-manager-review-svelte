@@ -52,6 +52,13 @@
 			if (key) activeTab = 'rethink';
 		}
 	});
+
+	// The mockup shows its "Rethink section" buttons at rest while this tab is
+	// the one open; on any other tab they wait for the pointer.
+	$effect(() => {
+		pageStore.rethinkTabOpen = activeTab === 'rethink';
+		return () => (pageStore.rethinkTabOpen = false);
+	});
 </script>
 
 <Tabs.Root

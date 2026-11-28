@@ -33,7 +33,7 @@
 		onRetry?: () => void;
 	} = $props();
 
-	const shell = 'rounded-[3px] border p-4 sm:p-5';
+	const shell = 'rounded-[4px] border p-4 sm:p-5';
 </script>
 
 {#if kind === 'loading'}

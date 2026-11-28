@@ -20,10 +20,12 @@ test.describe('signed in', () => {
 	test('the landing page resumes the review in one click', async ({ page }) => {
 		await gotoSignedIn(page, '/', { decidedFirst: true });
 
-		await expect(page.getByText(/\d+ of \d+ decided/)).toBeVisible();
+		await expect(
+			page.getByRole('region', { name: 'Your progress' }).getByText(/\d+ of \d+ decided/)
+		).toBeVisible();
 		// The first `needs-review` row in queue order. `decidedFirst` puts decided
 		// rows ahead of it in store order, which Continue must not follow.
-		const next = page.getByRole('link', { name: /^Continue to / });
+		const next = page.getByRole('link', { name: /^Continue: / });
 		await expect(next).toHaveAttribute(
 			'href',
 			'/review/report-garbage-clutter-or-overgrown-plants'
@@ -31,6 +33,9 @@ test.describe('signed in', () => {
 		await next.click();
 
 		await expect(page).toHaveURL(/\/review\/report-garbage-clutter-or-overgrown-plants$/);
+		// The workspace opens on the decision, with the queue one click away.
+		await expect(page.getByRole('heading', { name: 'Decision' })).toBeVisible();
+		await page.getByRole('button', { name: 'Expand queue' }).click();
 		await expect(page.locator('nav[aria-label="Pages in this review"] a').first()).toBeVisible();
 	});
 
@@ -39,7 +44,7 @@ test.describe('signed in', () => {
 		// `pages.path` is `draft:<uuid>`, which `/review/[slug]` would hard-404.
 		await gotoSignedIn(page, '/', { corpusDecided: true });
 
-		const next = page.getByRole('link', { name: /^Continue to / });
+		const next = page.getByRole('link', { name: /^Continue: / });
 		await expect(next).toHaveAttribute('href', draftUrl(DRAFT_IDS.ready));
 		await next.click();
 
@@ -87,7 +92,7 @@ test.describe('signed in', () => {
 
 test.describe('the draft route', () => {
 	test('a draft in the queue links to the draft route and is marked current', async ({ page }) => {
-		await gotoSignedIn(page, draftUrl(DRAFT_IDS.drafting), { drafts: true });
+		await gotoSignedIn(page, draftUrl(DRAFT_IDS.drafting), { drafts: true, rail: 'queue' });
 
 		const row = page.locator(
 			`nav[aria-label="Pages in this review"] a[href="${draftUrl(DRAFT_IDS.drafting)}"]`
@@ -166,12 +171,14 @@ test.describe('signed out', () => {
 		await expect(page.getByRole('link', { name: 'Sign in', exact: true })).toBeVisible();
 		await expect(page.getByText(/to record decisions and track your progress/)).toBeVisible();
 		await expect(page.getByText(/\d+ of \d+ decided/)).toHaveCount(0);
-		await expect(page.getByRole('link', { name: /^Continue to / })).toHaveCount(0);
+		await expect(page.getByRole('link', { name: /^Continue: / })).toHaveCount(0);
 		await expect(page.getByText('Checking your session…')).toHaveCount(0);
 		// The review's own furniture is for signed-in reviewers; a visitor gets
 		// the sign-in card and then the pages.
-		await expect(page.getByRole('heading', { name: 'How it works' })).toHaveCount(0);
-		await expect(page.getByRole('heading', { name: 'Propose a page' })).toHaveCount(0);
+		await expect(
+			page.getByRole('heading', { name: 'Review guide and moving pages into Karl' })
+		).toHaveCount(0);
+		await expect(page.getByRole('button', { name: 'Propose a page' })).toHaveCount(0);
 		await expect(page.getByRole('heading', { name: 'All pages' })).toBeVisible();
 	});
 });
@@ -181,9 +188,10 @@ test.describe('status card', () => {
 		await page.setViewportSize({ width: 375, height: 812 });
 		await gotoSignedIn(page, '/', { drafts: true, decidedFirst: true });
 
-		await expect(page.getByRole('link', { name: /^Continue to / })).toBeVisible();
-		// The Continue button used to carry the page title and `nowrap`, measured
-		// at 437px inside a 343px card: the whole page scrolled 97px sideways.
+		await expect(page.getByRole('link', { name: /^Continue: / })).toBeVisible();
+		// The Continue button carries the page title. It once did so with
+		// `nowrap`, measured at 437px inside a 343px card: the whole page scrolled
+		// 97px sideways. It truncates now; this holds it to that.
 		const overflow = await page.evaluate(
 			() => document.documentElement.scrollWidth - document.documentElement.clientWidth
 		);
@@ -205,7 +213,9 @@ test.describe('status card', () => {
 		// card said "Loading your progress…" forever.
 		await expect(page.getByText("Your progress didn't load")).toBeVisible();
 		await page.getByRole('button', { name: 'Try again' }).click();
-		await expect(page.getByText(/^\d+ of \d+ decided$/)).toBeVisible();
+		await expect(
+			page.getByRole('region', { name: 'Your progress' }).getByText(/^\d+ of \d+ decided$/)
+		).toBeVisible();
 		await expect(page.getByText("Your progress didn't load")).toHaveCount(0);
 	});
 });

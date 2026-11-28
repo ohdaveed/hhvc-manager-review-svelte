@@ -20,7 +20,11 @@
  * no entry returns `null` from `schemaFor`, and the Karl outline judges its
  * pages on placement alone.
  */
-import { KARL_FLAGS, panelsFor } from '$lib/legacy-core/karl-blocks.js';
+import {
+	KARL_FLAGS,
+	formLabel as legacyFormLabel,
+	panelsFor
+} from '$lib/legacy-core/karl-blocks.js';
 import { COMPONENT_SUPPORT } from './componentSupport';
 import { RELATED_PERMITTED_TYPES } from './sitemap';
 import { CONTENT_TYPE_RULES, STEP_LIMIT, STEP_TARGET } from './contentTypeRules';
@@ -131,8 +135,12 @@ export const SCHEMA_TYPES = [
 	'About us'
 ] as const;
 
-/** A panel's label as Karl's form shows it: the inventory's label without its trailing note. */
-export const formLabel = (uiLabel: string): string => uiLabel.replace(/\s*\(.*\)\s*$/, '');
+/**
+ * A panel's label as Karl's form shows it: the inventory's label without its
+ * trailing note. The rule is karl-blocks' own, so a breadcrumb and a panel
+ * label cannot strip differently.
+ */
+export const formLabel = (uiLabel: string): string => legacyFormLabel(uiLabel);
 export type SchemaType = (typeof SCHEMA_TYPES)[number];
 
 const TITLE: FieldRule = {
@@ -705,6 +713,26 @@ type InventoryPanel = {
 	blockTypesDoc?: string;
 	subPanelOf?: string;
 };
+/**
+ * Whether Karl refuses to save a page without this panel filled.
+ *
+ * `requiredDoc` is the field map's own required column, carried through the
+ * inventory verbatim, so this reads the documentation rather than second-
+ * guessing it: only a plain `yes` blocks saving. `yes (radio)` is a requirement
+ * inside an optional block (Cost, field map E3), and `"Page " required per
+ * entry` one within each entry of a block the page need not have -- Karl saves
+ * the page without either block. The schema's `required` and the walkthrough's
+ * blocking steps both read this; they used to hold two predicates that
+ * disagreed on exactly that second case.
+ */
+export function requiredToSave(
+	panel: { required?: unknown; requiredDoc?: unknown } | null | undefined
+): boolean {
+	if (!panel?.required) return false;
+	const doc = String(panel.requiredDoc ?? '');
+	return doc.startsWith('yes') && !doc.includes('radio');
+}
+
 const inventory = (type: string): InventoryPanel[] =>
 	(panelsFor as unknown as (t: string) => InventoryPanel[])(type);
 
@@ -729,14 +757,11 @@ export function schemaFor(type: unknown): ContentTypeSchema | null {
 			rawName: panel.rawName,
 			// The inventory keeps the field map's disambiguating parenthetical
 			// ("Child topics (outer StreamField; ...)"); the form shows the part
-			// before it. Same rule as karl-blocks' `crumbLabel`.
+			// before it.
 			label: formLabel(panel.uiLabel),
 			...(spec.helpLabels?.[panel.rawName] ? { helpLabel: spec.helpLabels[panel.rawName] } : {}),
 			order: panel.order,
-			// `yes (radio)` is a requirement inside an optional block (Cost, field
-			// map E3): Karl saves the page without the block. Same reading as
-			// `blocksSave` in `$lib/karl/walkthrough`.
-			required: Boolean(panel.required) && !String(panel.requiredDoc ?? '').includes('radio'),
+			required: requiredToSave(panel),
 			repeatable: Boolean(panel.repeatable),
 			blockTypes: panel.blockTypesDoc ?? '',
 			...(panel.subPanelOf ? { subPanelOf: panel.subPanelOf } : {}),

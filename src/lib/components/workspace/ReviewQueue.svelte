@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page as routePage } from '$app/stores';
 	import { resolve } from '$app/paths';
-	import { pagesStore, editsStore } from '$lib/stores/reviewState';
+	import { pagesStore, editsStore, addPageToReview } from '$lib/stores/reviewState';
 	import { groupPaths } from '$lib/landing/groups';
 	import { review } from '$lib/review/review.svelte';
 	import { pageStore } from '$lib/stores/pageData.svelte';
@@ -102,6 +102,20 @@
 	};
 
 	const counts = $derived(review.counts);
+
+	// "Add to review" on a page with no row. Per page, so adding one does not
+	// lock the others; a failure is named on that page's row and the page stays
+	// listed here, so the reviewer can try again.
+	let adding = $state<Record<string, boolean>>({});
+	let addFailed = $state<Record<string, boolean>>({});
+	async function addToReview(path: string) {
+		if (adding[path]) return;
+		adding[path] = true;
+		addFailed[path] = false;
+		const ok = await addPageToReview(path);
+		adding[path] = false;
+		addFailed[path] = !ok;
+	}
 
 	// Under the landing page's headings and in its order (`groupPaths`), so the
 	// two lists of the same pages read the same way. Signed out there are no
@@ -287,9 +301,12 @@
 	{/each}
 
 	<!-- Corpus pages with no review row. They open like any other page, but the
-	     decision control has no row to write to and the app cannot create one
-	     (the table has no INSERT policy), so they are listed apart rather than
-	     mixed into Undecided, where they would look decidable. -->
+	     decision control has no row to write to, so they are listed apart rather
+	     than mixed into Undecided, where they would look decidable. "Add to
+	     review" creates the row through `PUT /api/pages` (the table has no
+	     INSERT policy) and the page moves into its group above. The button sits
+	     beside the row's link, never inside it: PageRow's anchor must hold
+	     nothing focusable. -->
 	{#if loaded && unreviewedShown.length > 0}
 		<section data-testid="queue-unreviewed">
 			<h3 class="mb-1 flex items-center justify-between">
@@ -303,11 +320,27 @@
 				</span>
 			</h3>
 			<p class="mb-2 text-xs text-sfds-slate-l3">
-				These pages have no review record, so they can't be decided until one is added.
+				These pages have no review record yet. Add one to a page to decide it.
 			</p>
-			<ul class="space-y-0.5">
+			<ul class="space-y-1.5">
 				{#each unreviewedShown as id (id)}
-					<li>{@render queueLink(id, titleFor(id), joinMeta(pageFacts(id)))}</li>
+					<li>
+						{@render queueLink(id, titleFor(id), joinMeta(pageFacts(id)))}
+						<div class="mt-1 flex flex-wrap items-center gap-2 pl-3">
+							<Button
+								variant="outline"
+								size="xs"
+								aria-busy={adding[id] === true}
+								aria-label={`Add “${titleFor(id)}” to the review`}
+								onclick={() => addToReview(id)}
+							>
+								{adding[id] ? 'Adding…' : 'Add to review'}
+							</Button>
+							{#if addFailed[id]}
+								<span role="alert" class="text-xs text-sfds-red">Couldn't add it. Try again.</span>
+							{/if}
+						</div>
+					</li>
 				{/each}
 			</ul>
 		</section>

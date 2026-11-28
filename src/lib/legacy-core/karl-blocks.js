@@ -129,7 +129,13 @@ function panelByRawName(type, rawName) {
  *  adds to disambiguate Topic's outer StreamField from the block choice of the
  *  same name — useful in the record, noise in a path an editor follows. */
 function crumbLabel(panel) {
-	return panel.uiLabel.replace(/\s*\(.*\)\s*$/, '');
+	return formLabel(panel.uiLabel);
+}
+
+/** A uiLabel as Karl's form shows it: without the field map's trailing note.
+ *  The one copy of this rule; `$lib/karl/schema`'s `formLabel` is this. */
+function formLabel(uiLabel) {
+	return uiLabel.replace(/\s*\(.*\)\s*$/, '');
 }
 
 /**
@@ -2239,6 +2245,7 @@ export {
 	PROMOTE_PANEL,
 	UNRESOLVED,
 	breadcrumbFor,
+	formLabel,
 	matchesSection,
 	panelByRawName,
 	panelsFor

@@ -2,6 +2,7 @@
 	import type { Snippet } from 'svelte';
 	import { resolve } from '$app/paths';
 	import { reviewHrefFor } from '$lib/corpus/draftPath';
+	import ChevronRight from '@lucide/svelte/icons/chevron-right';
 
 	let {
 		path,
@@ -39,9 +40,13 @@
 </script>
 
 {#snippet titleLine()}
+	<!-- Comfortable rows underline the title on hover and keyboard focus: in the
+	     landing list a black title over a grey type line read as plain text, with
+	     nothing saying the row opens a page. The queue sidebar's rows are
+	     already read as navigation, so they are left alone. -->
 	<span
 		class="block text-sfds-black {comfortable
-			? 'text-[0.9375rem] leading-[1.375rem]'
+			? 'text-[0.9375rem] leading-[1.375rem] underline-offset-2 group-hover/row:underline group-focus-visible/row:underline'
 			: 'text-[0.8125rem] leading-[1.125rem]'} {current ? 'font-semibold' : ''}"
 	>
 		{title}
@@ -88,7 +93,7 @@
 <a
 	href={resolve(reviewHrefFor(path))}
 	aria-current={current ? 'page' : undefined}
-	class="rounded-[3px] border-l-2 transition-colors hover:bg-sfds-blue-l1/60 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-sfds-black {comfortable
+	class="group/row rounded-[3px] border-l-2 transition-colors hover:bg-sfds-blue-l1/60 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-sfds-black {comfortable
 		? 'flex items-start gap-3 py-2.5 pr-3 pl-3'
 		: 'block py-1.5 pr-2 pl-2.5'} {current
 		? 'border-sfds-action bg-sfds-blue-l1'
@@ -106,7 +111,11 @@
 		     further from its title than a row without one, and the list's rhythm
 		     changed row to row. Spanning both lines and centred, the badge no
 		     longer touches the text's spacing. DOM order is unchanged. -->
-		<span class="grid min-w-0 flex-1 grid-cols-[minmax(0,1fr)_auto] gap-x-3">
+		<!-- The trailing chevron is the row's resting "this opens a page" cue, for
+		     the eye that has not hovered yet and for touch, which never does. It
+		     takes its own column spanning both lines, beside the badge, so it sits
+		     in the same place on every row whether or not a badge is shown. -->
+		<span class="grid min-w-0 flex-1 grid-cols-[minmax(0,1fr)_auto_auto] gap-x-3">
 			<span class="col-start-1 row-start-1 block min-w-0">{@render titleLine()}</span>
 			{#if badge}
 				<span data-slot="page-row-badge" class="col-start-2 row-span-2 row-start-1 self-center"
@@ -114,6 +123,11 @@
 				>
 			{/if}
 			<span class="col-start-1 row-start-2 block min-w-0">{@render metaLine()}</span>
+			<ChevronRight
+				data-slot="page-row-chevron"
+				aria-hidden="true"
+				class="col-start-3 row-span-2 row-start-1 size-4 self-center text-sfds-slate-l3 transition-transform group-hover/row:translate-x-0.5 group-hover/row:text-sfds-black motion-reduce:transition-none"
+			/>
 		</span>
 	{:else}
 		<!-- Stacked: the sidebar is too narrow to spare a column for it. -->

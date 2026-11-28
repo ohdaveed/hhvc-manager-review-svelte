@@ -77,7 +77,9 @@ for (const view of [
 	// The walkthrough's one entry is the Decision tab's "Move it into Karl"
 	// card (the toolbar button went on 2026-11-26), so it needs no trigger first.
 	{ name: 'Karl walkthrough', via: null, open: 'Start the Karl walkthrough', ready: '.drawer' },
-	{ name: 'site map', via: null, open: 'Site map', ready: '.sitemap' }
+	// The site map's button is in the queue's footer, and the queue is collapsed
+	// when the workspace opens.
+	{ name: 'site map', via: 'Expand queue', open: 'Site map', ready: '.sitemap' }
 ]) {
 	test(`no WCAG 2.1 AA violations in the ${view.name}`, async ({ page }) => {
 		await page.goto('/review/report-garbage-clutter-or-overgrown-plants');

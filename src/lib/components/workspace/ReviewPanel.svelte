@@ -19,6 +19,7 @@
 	import {
 		updatePageStatus,
 		updatePageNotes,
+		addPageToReview,
 		pagesStore,
 		type PageCheck
 	} from '$lib/stores/reviewState';
@@ -181,6 +182,25 @@
 	});
 
 	let decisionError = $state(false);
+
+	// A corpus page with no row can be added to the review from here, as from
+	// the queue's "Not in the review yet" list. `review.unreviewed` is exactly
+	// those pages: never a draft (its row is made with it) and never a retired
+	// row. The decision controls come alive once the row lands in the store.
+	const addable = $derived(pageData?.id ? review.unreviewed.includes(pageData.id) : false);
+	let adding = $state(false);
+	let addFailed = $state(false);
+	$effect(() => {
+		void pageData?.id;
+		addFailed = false;
+	});
+	async function addToReview() {
+		if (adding || !pageData?.id) return;
+		adding = true;
+		addFailed = false;
+		addFailed = !(await addPageToReview(pageData.id));
+		adding = false;
+	}
 	// Proof the write landed. Before this the only signs were the fill
 	// changing and the queue row moving -- possibly out of view -- for the
 	// one action whose output is which pages may publish. Cleared on page
@@ -318,6 +338,18 @@
 					{/if}
 				</span>
 			</div>
+			{#if addable && sessionStore.signedIn && $pagesStore.length > 0}
+				<!-- Same condition as the "No review record" line above, narrowed to
+				     corpus pages: the button creates the row through PUT /api/pages. -->
+				<div class="flex flex-wrap items-center gap-2">
+					<Button variant="outline" size="sm" aria-busy={adding} onclick={addToReview}>
+						{adding ? 'Adding…' : 'Add to review'}
+					</Button>
+					{#if addFailed}
+						<span role="alert" class="text-xs text-destructive">Couldn't add it. Try again.</span>
+					{/if}
+				</div>
+			{/if}
 			{#if liveRecord && (karlReadiness || unsavedHere || expiredHere)}
 				<!-- Read before the buttons, and tied to them by aria-describedby, so
 				     a screen reader hears it with the choice. Words only; nothing

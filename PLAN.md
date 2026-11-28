@@ -142,14 +142,34 @@ are committed on `refactor/overlay-views` (`05e5371`, unpushed) and ride with A2
       `copyAsShown`: the page object already IS the copy as shown, so it had no caller — it arrives
       with A5, which is where the parity test belongs too. Analysis takes the same `reviewRecordFor`
       record as the outline (for the slug), not `null`.
-- [ ] **A3. Typed transcript adapter.** `$lib/karl/transcript.ts` owns the call into `buildTranscript`:
+- [x] **A3. Typed transcript adapter.** `$lib/karl/transcript.ts` owns the call into `buildTranscript`:
       field id → positional path translation, `pagesByKey`, id strip, types. `karl-transcript.js`
       untouched. `reviewRecord.test.ts:65` rewritten to field-id keys.
-- [ ] **A4. Karl rules in one place.** One `required` predicate in `schema.ts` with `blocksSave`'s
+      **Built (2026-11-27) with a different mechanism:** translation was impossible -- the transcript
+      reads whole containers (`sections.2.paragraphs`), not leaves. Instead the PAGE carries the copy
+      and the record carries only metadata (decision, `url_slug`, stale flags); `transcriptFor` strips
+      copy from the record. The walkthrough now gets the copy as recorded
+      (`pageStore.recordedPage`, base page + confirmed saved edits), so unsaved typing no longer
+      leaks into the drawer / Help markdown -- a visible change. Placement still gets the copy as shown.
+- [x] **A4. Karl rules in one place.** One `required` predicate in `schema.ts` with `blocksSave`'s
       reading (the Transaction panel with `"Page " required per entry` stops counting as required);
       one label-stripping regex; one field-id parser behind `extractCopy`, `resolveField`, `subLabel`.
-- [ ] **A5. `pageStore.sync(livePages, edits)`.** Owns hydration, edit-status classification (ADR 0001)
+      **Built (2026-11-27) without the parser:** `requiredToSave` in `schema.ts` (schema `required`
+      and the walkthrough's blocking steps both read it; a test pins agreement on every panel), and
+      karl-blocks' `formLabel` is the one label rule. **Skipped, deliberately:** `subLabel` does not
+      parse field ids into fields -- it names Karl sub-panels from an id's tail and returns `''` for
+      tails with no sub-panel, so folding it into `resolveField` would couple Karl naming to field
+      resolution, and a coverage test would need a hand-kept allowlist. `fieldResolver.test.ts`'s
+      parity test already guards `extractCopy` ↔ `resolveField`.
+- [x] **A5. `pageStore.sync(livePages, edits)`.** Owns hydration, edit-status classification (ADR 0001)
       and the `statusPass` race guard, moved out of `review/+layout.svelte`; the renderer reads
       `copyAsShown`, so nothing mutates page objects with edits. Node tests with plain edit rows.
-- [ ] **A6. Card classifier header.** `card-inheritance.js` header names its two real callers
+      **Sync built (2026-11-27):** `pageStore.syncEditStatus` (classification + the race guard) and
+      `pageStore.hydrate`; the layout's two effects only track their inputs and call them;
+      `tests/pageSync.test.ts` covers both, including a slow pass overtaken by a newer one.
+      **Dropped by the user (2026-11-27):** the renderer switch to a derived `copyAsShown`. Every
+      edit path (typing, accepted suggestions, Rethink ops) writes through `resolveField` into the
+      page objects, so it would rewrite the edit flow rather than refactor it; the page objects stay
+      the copy as shown, and `copyAsShown` is not built.
+- [x] **A6. Card classifier header.** `card-inheritance.js` header names its two real callers
       (transcript, sitemap). The mockup marking dropped card text is a separate Figma question.

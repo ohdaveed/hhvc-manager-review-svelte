@@ -25,7 +25,8 @@ vi.mock('$lib/supabase', () => ({
 vi.mock('$lib/stores/reviewState', async (importOriginal) => ({
 	...(await importOriginal<typeof import('$lib/stores/reviewState')>()),
 	updatePageNotes: vi.fn(),
-	updatePageStatus: vi.fn()
+	updatePageStatus: vi.fn(),
+	addPageToReview: vi.fn()
 }));
 
 const session = vi.hoisted(() => ({
@@ -34,7 +35,10 @@ const session = vi.hoisted(() => ({
 }));
 vi.mock('$lib/stores/session.svelte', () => ({ sessionStore: session }));
 
-const { pagesStore, updatePageNotes, updatePageStatus } = await import('$lib/stores/reviewState');
+const { pagesStore, updatePageNotes, updatePageStatus, addPageToReview } =
+	await import('$lib/stores/reviewState');
+const { pageStore } = await import('$lib/stores/pageData.svelte');
+const addPage = vi.mocked(addPageToReview);
 const saveNotes = vi.mocked(updatePageNotes);
 const saveStatus = vi.mocked(updatePageStatus);
 
@@ -186,6 +190,69 @@ describe('ReviewPanel', () => {
 			for (const r of radios()) expect(r.disabled).toBe(true);
 			expect(screen.getByText('No review record exists for this page')).toBeTruthy();
 			expect(screen.queryByRole('link', { name: 'Sign in' })).toBeNull();
+		});
+
+		describe('Add to review', () => {
+			const otherRow = {
+				id: 'row-9',
+				review_id: 'r1',
+				path: 'some-other-page',
+				status: 'needs-review' as const,
+				manager_notes: null,
+				page_checks: null
+			};
+			let corpus: typeof pageStore.pages;
+			beforeEach(() => {
+				corpus = pageStore.pages;
+				// `review.unreviewed` squares rows with the corpus, so the page has
+				// to be a corpus page for the button to be offered.
+				pageStore.pages = [{ id: PATH, title: 'About', sections: [] }];
+				addPage.mockReset();
+				pagesStore.set([otherRow]);
+			});
+			afterEach(() => {
+				pageStore.pages = corpus;
+			});
+
+			it('is offered on a corpus page with no row, and adds it', async () => {
+				addPage.mockImplementation(async () => {
+					pagesStore.set([otherRow, { ...otherRow, id: 'row-new', path: PATH }]);
+					return true;
+				});
+				render(ReviewPanel, { pageData: { id: PATH } });
+
+				await fireEvent.click(screen.getByRole('button', { name: 'Add to review' }));
+				await vi.advanceTimersByTimeAsync(0);
+
+				expect(addPage).toHaveBeenCalledWith(PATH);
+				expect(screen.queryByRole('button', { name: 'Add to review' })).toBeNull();
+				expect(screen.queryByText('No review record exists for this page')).toBeNull();
+				for (const r of radios()) expect(r.disabled).toBe(false);
+			});
+
+			it('says so when it cannot add the page, and keeps the button', async () => {
+				addPage.mockResolvedValue(false);
+				render(ReviewPanel, { pageData: { id: PATH } });
+
+				await fireEvent.click(screen.getByRole('button', { name: 'Add to review' }));
+				await vi.advanceTimersByTimeAsync(0);
+
+				expect(screen.getByRole('alert').textContent).toMatch(/Couldn't add it/);
+				expect(screen.getByRole('button', { name: 'Add to review' })).toBeTruthy();
+				for (const r of radios()) expect(r.disabled).toBe(true);
+			});
+
+			it('is not offered on a page outside the corpus, or while signed out', () => {
+				pageStore.pages = [];
+				const { unmount } = render(ReviewPanel, { pageData: { id: PATH } });
+				expect(screen.queryByRole('button', { name: 'Add to review' })).toBeNull();
+				unmount();
+
+				pageStore.pages = [{ id: PATH, title: 'About', sections: [] }];
+				Object.assign(session, { signedIn: false, knownSignedOut: true });
+				render(ReviewPanel, { pageData: { id: PATH } });
+				expect(screen.queryByRole('button', { name: 'Add to review' })).toBeNull();
+			});
 		});
 
 		it('signed in on a non-ready draft: disabled, but claims no missing record', () => {
