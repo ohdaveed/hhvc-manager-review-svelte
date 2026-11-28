@@ -108,11 +108,10 @@ const noViolations = async (page: Page) => {
 	).toEqual([]);
 };
 
-/** Turn the outline on the way a keyboard user would, from the Decision tab's Karl section. */
+/** Turn the outline on the way a keyboard user would, from the Fields tab's Karl Readiness card. */
 async function switchOnByKeyboard(page: Page) {
-	const toggle = page
-		.getByRole('group', { name: 'Karl views' })
-		.getByRole('switch', { name: 'Show Karl fields' });
+	await page.getByRole('tab', { name: /Fields/ }).click();
+	const toggle = page.getByRole('switch', { name: 'Show Karl fields' });
 	await expect(toggle).toBeVisible();
 	await toggle.focus();
 	await page.keyboard.press('Space');
@@ -206,10 +205,11 @@ test.describe('Karl outline', () => {
 
 	test('is not offered on an AI-drafted page', async ({ page }) => {
 		await gotoSignedIn(page, `/review/draft/${DRAFT_IDS.ready}`, { drafts: true });
-		await expect(page.getByRole('group', { name: 'Karl views' })).toHaveCount(0);
 		await expect(
 			page.getByRole('button', { name: /^(Start|Resume) the Karl walkthrough$/ })
 		).toBeVisible();
+		await page.getByRole('tab', { name: /Fields/ }).click();
+		await expect(page.getByRole('switch', { name: 'Show Karl fields' })).toHaveCount(0);
 		await expect(page.locator('[data-karl-status]')).toHaveCount(0);
 	});
 });

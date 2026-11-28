@@ -107,15 +107,15 @@
 	     the canvas toolbar. It used to sit on a grey tint at its own height.
 	     Decision comes FIRST: it is what the panel opens on and what the tool
 	     exists to record, and it was third. -->
-	<div
-		class="flex min-h-12 flex-none items-start gap-1 border-b border-sfds-grey-l2 bg-background pr-2"
-	>
+	<div class="flex min-h-12 flex-none items-start gap-1 border-b border-border bg-background pr-2">
 		<Tabs.List
 			variant="line"
 			class="h-auto! min-w-0 flex-1 flex-wrap justify-start gap-x-0 gap-y-2 border-0 bg-transparent px-1 pb-[5px]"
 		>
-			<Tabs.Trigger value="overview" class="flex-none px-2 py-2 leading-5">Decision</Tabs.Trigger>
-			<Tabs.Trigger value="fields" class="flex-none px-2 py-2 leading-5">
+			<Tabs.Trigger value="overview" class="flex-none px-2 py-2 leading-5 max-lg:min-h-11"
+				>Decision</Tabs.Trigger
+			>
+			<Tabs.Trigger value="fields" class="flex-none px-2 py-2 leading-5 max-lg:min-h-11">
 				Fields
 				{#if pageStore.selectedFieldIds.length > 0}
 					<span
@@ -125,15 +125,19 @@
 					</span>
 				{/if}
 			</Tabs.Trigger>
-			<Tabs.Trigger value="rethink" class="flex-none px-2 py-2 leading-5">Rethink</Tabs.Trigger>
-			<Tabs.Trigger value="analysis" class="flex-none px-2 py-2 leading-5">Analysis</Tabs.Trigger>
+			<Tabs.Trigger value="rethink" class="flex-none px-2 py-2 leading-5 max-lg:min-h-11"
+				>Rethink</Tabs.Trigger
+			>
+			<Tabs.Trigger value="analysis" class="flex-none px-2 py-2 leading-5 max-lg:min-h-11"
+				>Analysis</Tabs.Trigger
+			>
 		</Tabs.List>
 
 		{#if onCollapse}
 			<Button
 				variant="outline"
 				size="icon"
-				class="mt-[calc(0.25rem+4px)] size-7 flex-none"
+				class="mt-[calc(0.25rem+4px)] size-7 flex-none max-lg:mt-0.5 max-lg:size-11"
 				title={collapseLabel}
 				aria-label={collapseLabel}
 				onclick={onCollapse}
@@ -144,10 +148,14 @@
 	</div>
 
 	<Tabs.Content value="fields" class="min-h-0 flex-1 overflow-hidden bg-background">
-		<FieldsPanel {pageData} {livePageId} />
+		<FieldsPanel {pageData} {livePageId} {karlViews} />
 	</Tabs.Content>
 	<Tabs.Content value="rethink" class="min-h-0 flex-1 overflow-hidden bg-background">
-		<RethinkPanel {pageData} />
+		<RethinkPanel
+			{pageData}
+			active={activeTab === 'rethink'}
+			onGoToDecision={() => (activeTab = 'overview')}
+		/>
 	</Tabs.Content>
 	<Tabs.Content value="overview" class="min-h-0 flex-1 overflow-y-auto bg-background">
 		<ReviewPanel {pageData} {karlReadiness} {karlViews} />

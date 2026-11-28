@@ -98,6 +98,32 @@ describe('POST /api/ai/generate', () => {
 		expect(res.body?.message).toMatch(/provider/);
 	});
 
+	it('generates categorized page suggestions for Rethink through Gemini', async () => {
+		fetchMock.mockResolvedValueOnce(
+			geminiReply({
+				plainLanguage: 'Shorten sentences in the opening summary to grade 6.',
+				structure: 'Move emergency 311 steps above background details.',
+				codeAndScope: 'Use a Transaction What to do section instead of plain body bullets.'
+			})
+		);
+
+		const res = await call({
+			task: 'page-suggestions',
+			page: { title: 'Report rats', sections: [] }
+		});
+
+		expect(res.status).toBe(200);
+		expect(res.body).toMatchObject({
+			task: 'page-suggestions',
+			valid: true,
+			result: {
+				plainLanguage: expect.stringContaining('Shorten sentences'),
+				structure: expect.stringContaining('Move emergency'),
+				codeAndScope: expect.stringContaining('Transaction')
+			}
+		});
+	});
+
 	it('501s when no Gemini key is configured', async () => {
 		delete env.GEMINI_API_KEY;
 		const res = await call({ task: 'rewrite-field', fieldText: 'Report rats.' });

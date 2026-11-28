@@ -58,8 +58,8 @@
 	--accent: oklch(0.97 0 0);
 	--accent-foreground: oklch(0.205 0 0);
 	--destructive: oklch(0.577 0.245 27.325);
-	--border: oklch(0.922 0 0);
-	--input: oklch(0.922 0 0);
+	--border: oklch(0.67 0 0);
+	--input: oklch(0.54 0 0);
 	/* Focus ring, retargeted for WCAG 2.1 AA SC 1.4.11 (3:1 non-text contrast).
 	   shadcn's default `oklch(0.708 0 0)` is a mid neutral grey, and every
 	   vendored base in components/ui applies it at 50% alpha
@@ -155,6 +155,37 @@ body {
 	html {
 		@apply font-sans;
 	}
+}
+
+/* ---------------------------------------------------------------------------
+   Chrome contrast refinements, applied outside vendored components/ui/ so
+   regenerating shadcn primitives never reverts them. Replaces faint 10% rings,
+   60%-alpha inactive tabs, and washed-out disabled textareas with crisp,
+   high-contrast chrome surfaces while keeping #mockPage untouched.
+   --------------------------------------------------------------------------- */
+[data-slot='card'] {
+	border: 1px solid var(--border);
+	--tw-ring-shadow: 0 0 #0000;
+}
+
+#reviewWorkspace [data-slot='tabs-trigger'] {
+	color: var(--muted-foreground);
+}
+#reviewWorkspace [data-slot='tabs-trigger']:hover {
+	color: var(--foreground);
+}
+#reviewWorkspace [data-slot='tabs-trigger']:is([data-active], [aria-selected='true']) {
+	color: var(--foreground);
+	font-weight: 600;
+}
+
+#reviewWorkspace textarea:disabled {
+	background-color: var(--muted);
+	opacity: 0.9;
+}
+
+input[type='checkbox'] {
+	border-color: var(--input);
 }
 
 /* ---------------------------------------------------------------------------
@@ -288,6 +319,12 @@ body {
 }
 #mockPage .edit-target-selected,
 #mockPage .edit-target-selected:hover {
+	box-shadow:
+		0 0 0 6px var(--color-sfds-blue-l1),
+		0 0 0 8px var(--color-sfds-action);
+}
+#mockPage [data-sidebar-highlight='true'] {
+	border-radius: 4px;
 	box-shadow:
 		0 0 0 6px var(--color-sfds-blue-l1),
 		0 0 0 8px var(--color-sfds-action);

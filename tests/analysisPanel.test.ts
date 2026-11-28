@@ -1,17 +1,10 @@
 /**
  * @vitest-environment jsdom
- *
- * The Analysis panel judges the copy as shown: what the mockup beside it
- * displays, the reviewer's unsaved changes included. It used to lay the saved
- * edits back over the page it was handed -- a page that already carried them,
- * and the typing on top -- so while a reviewer typed into a field with a saved
- * edit, Analysis judged the saved wording and the Karl outline judged the
- * typing.
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/svelte';
+import { render, fireEvent, screen } from '@testing-library/svelte';
 import AnalysisPanel from '../src/lib/components/workspace/AnalysisPanel.svelte';
-import { extractCopy } from '../src/lib/corpus/fields';
+import { pageStore } from '../src/lib/stores/pageData.svelte.js';
 
 vi.mock('$lib/supabase', () => ({ ensureDevSession: async () => {}, supabase: {} }));
 
@@ -19,28 +12,30 @@ const { pagesStore, editsStore } = await import('../src/lib/stores/reviewState.j
 
 const PAGE_ID = 'report-rats-or-mice';
 
-/** A page as the mockup shows it: the reviewer has typed a vague button label. */
 const shownPage = () => ({
 	id: PAGE_ID,
 	slug: 'sf.gov/report-rats-or-mice',
 	type: 'Information',
 	title: 'Report rats or mice',
-	summary: 'Tell us about rats or mice in your building.',
+	summary:
+		'See [CDC guidance](https://www.cdc.gov/rodents/index.html) or [SF.gov housing](https://sf.gov/housing).',
 	sections: [
 		{
+			fieldKey: 'report-online',
 			heading: 'Report online',
-			paragraphs: ['Use the online form to tell us where you saw them.'],
-			button: 'Click here',
-			buttonUrl: 'https://sf.gov/report'
+			paragraphs: [
+				'Use the online form to tell us where you saw the infestation in your building.'
+			],
+			button: 'Report online',
+			buttonUrl: 'https://sf311.org/report'
 		}
 	]
 });
 
 describe('AnalysisPanel', () => {
 	beforeEach(() => {
-		const buttonField = Object.keys(extractCopy(shownPage() as never)).find((k) =>
-			k.endsWith('.button')
-		)!;
+		pageStore.highlight = null;
+		editsStore.set([]);
 		pagesStore.set([
 			{
 				id: 'row-1',
@@ -49,28 +44,47 @@ describe('AnalysisPanel', () => {
 				status: 'needs-review',
 				manager_notes: null,
 				page_checks: null
-			}
-		]);
-		// The saved wording, which the unsaved typing replaces on screen.
-		editsStore.set([
+			},
 			{
-				id: 'e1',
-				page_id: 'row-1',
-				field_id: buttonField,
-				new_content: 'Report rats online',
-				created_at: '2026-11-26T00:00:00Z'
+				id: 'row-2',
+				review_id: 'r1',
+				path: 'pay-your-annual-healthy-housing-fee-apartment-buildings',
+				status: 'needs-review',
+				manager_notes: null,
+				page_checks: null
 			}
 		]);
 	});
 
-	it('flags a vague button label (control: no saved edit on the field)', () => {
-		editsStore.set([]);
+	it('renders Reading Level with Highlight on page trigger', async () => {
 		render(AnalysisPanel, { pageData: shownPage() });
-		expect(screen.getAllByText(/Click here/).length).toBeGreaterThan(0);
+		expect(screen.getByRole('heading', { name: 'Reading Level' })).toBeTruthy();
+		expect(screen.getByText(/^Grade \d/)).toBeTruthy();
+
+		await fireEvent.click(screen.getByRole('button', { name: 'Highlight on page' }));
+		expect(pageStore.highlight).toMatchObject({ kind: 'readability', target: 'page' });
 	});
 
-	it('judges the copy as shown, not the saved edit under the typing', () => {
+	it('lists Link Targets, filters by All / External / Internal, and inspects a link', async () => {
 		render(AnalysisPanel, { pageData: shownPage() });
-		expect(screen.getAllByText(/Click here/).length).toBeGreaterThan(0);
+		expect(screen.getByRole('heading', { name: 'Link Targets' })).toBeTruthy();
+		expect(screen.getByText('3 checked · 2 external')).toBeTruthy();
+
+		await fireEvent.click(screen.getByRole('button', { name: /External/i }));
+		expect(screen.getByText('cdc.gov/rodents/index.html')).toBeTruthy();
+		expect(screen.queryByText('sf.gov/housing')).toBeNull();
+
+		await fireEvent.click(screen.getByRole('button', { name: /Internal/i }));
+		expect(screen.getByText('sf.gov/housing')).toBeTruthy();
+		expect(screen.queryByText('cdc.gov/rodents/index.html')).toBeNull();
+
+		await fireEvent.click(screen.getByRole('button', { name: 'Inspect sf.gov/housing' }));
+		expect(pageStore.highlight).toMatchObject({ kind: 'link', target: 'summary' });
+	});
+
+	it('renders the Next undecided page footer link when another undecided page exists', () => {
+		render(AnalysisPanel, { pageData: shownPage() });
+		const link = screen.getByRole('link', { name: /Next undecided page/i });
+		expect(link.getAttribute('href')).toContain('/review/');
 	});
 });

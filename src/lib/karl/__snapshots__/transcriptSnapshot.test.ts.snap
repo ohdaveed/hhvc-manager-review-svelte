@@ -314,11 +314,11 @@ Raccoon droppings
 
 **Block 2 — Text:**
 
-Do not clean up raccoon droppings yourself. They can carry roundworm eggs that make people very sick. Report them instead. [CDC: Preventing raccoon roundworm](https://www.cdc.gov/baylisascaris/prevention/index.html)
+Raccoon feces can carry roundworm eggs that cause severe brain, eye, or organ damage. Report them to 311 instead of cleaning them up without safety gear. [CDC: About raccoon roundworm](https://www.cdc.gov/baylisascaris/about/index.html)
 
 **Links in this text — recreate each with the Link tool, do not paste them:**
 
-- "CDC: Preventing raccoon roundworm" → shape 5 — rich text Link tool → External link
+- "CDC: About raccoon roundworm" → shape 5 — rich text Link tool → External link
 
 ### What to Do — \`what_to_do\` [TYPE] — page not approved
 
@@ -398,6 +398,30 @@ It may take us a few weekdays to get back to you.
 
 - **Pick up pet waste daily:** It feeds rats.
 - **Bag it:** Put pet waste in a bag, then in a bin with a tight lid.
+
+### Accordion title and text — \`supporting_information\` [TYPE] — page not approved
+
+**Title:**
+
+Dangers of raccoon feces and safe cleanup
+
+**Text:**
+
+Raccoon feces often carry tiny roundworm eggs. People can swallow or breathe in eggs from soil, hands, or objects. Young children face the highest risk.
+
+The eggs take 2 to 4 weeks to become harmful and can live in soil for years. Once inside the body, the worms can harm the brain, eyes, and organs, causing blindness or death. Bleach and common cleaners do not kill the eggs.
+
+- **Keep people and pets away:** Block off raccoon waste areas and cover sandboxes.
+- **Do not dry-sweep:** Sweeping or blowing dry droppings puts roundworm eggs into the air.
+- **Follow CDC cleanup steps:** Wear gloves, rubber boots, and an N95 mask in tight spaces, and use boiling water to kill eggs. [CDC: Preventing raccoon roundworm](https://www.cdc.gov/baylisascaris/prevention/index.html)
+- **Read the CDC latrine guide:** Learn how to spot raccoon latrines and throw away waste safely. [CDC: Raccoon latrines identification and clean-up (PDF)](https://www.cdc.gov/parasites/baylisascaris/resources/raccoonlatrines.pdf)
+- **Learn the health risks:** Read how roundworm spreads and what signs to watch for. [CDC: About raccoon roundworm](https://www.cdc.gov/baylisascaris/about/index.html)
+
+**Links in this text — recreate each with the Link tool, do not paste them:**
+
+- "CDC: Preventing raccoon roundworm" → shape 5 — rich text Link tool → External link
+- "CDC: Raccoon latrines identification and clean-up (PDF)" → shape 5 — rich text Link tool → External link
+- "CDC: About raccoon roundworm" → shape 5 — rich text Link tool → External link
 
 ### Related — \`related\` [CHOOSE] — page not approved
 

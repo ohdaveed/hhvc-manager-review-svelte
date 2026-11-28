@@ -106,7 +106,35 @@ test('no WCAG 2.1 AA violations in the Fields panel with a field selected', asyn
 test('no WCAG 2.1 AA violations in the Analysis panel', async ({ page }) => {
 	await gotoSignedIn(page, PAGE);
 	await page.getByRole('tab', { name: 'Analysis' }).click();
-	await expect(page.getByRole('tabpanel')).toContainText(/Readability|Findings|accessibility/i);
+	await expect(page.getByRole('tabpanel')).toContainText(/Reading Level/i);
+	await expect(page.getByRole('tabpanel')).toContainText(/Link Targets/i);
+
+	await noViolations(page);
+});
+
+test('no WCAG 2.1 AA violations in the Rethink panel', async ({ page }) => {
+	await page.route('**/api/ai/generate', (route) =>
+		route.fulfill({
+			status: 200,
+			contentType: 'application/json',
+			body: JSON.stringify({
+				task: 'page-suggestions',
+				model: 'gemini-3.1-flash-lite',
+				disclosure: 'AI-assisted draft.',
+				result: {
+					plainLanguage: 'Shorten sentences in the opening summary.',
+					structure: 'Move steps above background details.',
+					codeAndScope: 'Map this section to an Information block in Karl.'
+				}
+			})
+		})
+	);
+	await gotoSignedIn(page, PAGE);
+	await page.getByRole('tab', { name: 'Rethink' }).click();
+	await expect(
+		page.getByRole('tabpanel').getByText('Plain language', { exact: true })
+	).toBeVisible();
+	await expect(page.getByRole('button', { name: /Go to Decision/i })).toBeVisible();
 
 	await noViolations(page);
 });
