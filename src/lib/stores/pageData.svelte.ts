@@ -108,7 +108,30 @@ export type RethinkState =
 			decisions: Record<string, boolean>;
 	  };
 
+export type HighlightTarget = {
+	kind: 'field' | 'section' | 'whatToKnow' | 'readability' | 'link';
+	target: string;
+	nonce: number;
+};
+
+export type SuggestionCategory = 'plainLanguage' | 'structure' | 'codeAndScope';
+
+export type PageSuggestionsState =
+	| { status: 'idle' }
+	| { status: 'loading' }
+	| { status: 'error'; message: string }
+	| {
+			status: 'ready';
+			plainLanguage: string;
+			structure: string;
+			codeAndScope: string;
+			disclosure: string;
+			model: string;
+			sent: Record<SuggestionCategory, boolean>;
+	  };
+
 const RAIL_KEY = 'hhvc:railCollapsed';
+const SHORTCUTS_KEY = 'hhvc:shortcuts';
 
 /**
  * How the workspace opens: the page queue collapsed, the review panel open.
@@ -258,6 +281,13 @@ class PageStore {
 	selectedSectionKey = $state<string | undefined>(undefined);
 
 	rethink = $state<RethinkState>({ state: 'idle' });
+
+	/** Ephemeral highlight target inside `#mockPage` triggered from sidebar panels. */
+	highlight = $state<HighlightTarget | null>(null);
+	#highlightNonce = 0;
+
+	/** Cached page-level AI suggestions for the Rethink tab, keyed by `pageId`. */
+	pageSuggestions = $state<Record<string, PageSuggestionsState>>({});
 
 	/** Pending/decided rewrites, keyed by field id. */
 	suggestions = $state<Record<string, Suggestion>>({});
@@ -621,6 +651,36 @@ class PageStore {
 		this.suggestions = this.pruneSuggestions([]);
 		this.selectedSectionKey = undefined;
 		this.rethink = { state: 'idle' };
+		this.highlight = null;
+	}
+
+	highlightTarget(kind: HighlightTarget['kind'], target: string) {
+		this.highlight = { kind, target, nonce: ++this.#highlightNonce };
+	}
+
+	clearHighlight() {
+		this.highlight = null;
+	}
+
+	getPageSuggestions(pageId: string | undefined): PageSuggestionsState {
+		if (!pageId) return { status: 'idle' };
+		return this.pageSuggestions[pageId] ?? { status: 'idle' };
+	}
+
+	setPageSuggestions(pageId: string, next: PageSuggestionsState) {
+		this.pageSuggestions = { ...this.pageSuggestions, [pageId]: next };
+	}
+
+	markSuggestionSent(pageId: string, category: SuggestionCategory) {
+		const current = this.pageSuggestions[pageId];
+		if (!current || current.status !== 'ready') return;
+		this.pageSuggestions = {
+			...this.pageSuggestions,
+			[pageId]: {
+				...current,
+				sent: { ...current.sent, [category]: true }
+			}
+		};
 	}
 
 	/** The suggestions belonging to `pageId`, which are the only ones it may show. */
@@ -849,6 +909,33 @@ class PageStore {
 			localStorage.setItem(RAIL_KEY, JSON.stringify(next));
 		} catch {
 			// As above: the toggle still works for this session.
+		}
+	}
+
+	// ---- keyboard shortcuts ------------------------------------------------
+
+	/**
+	 * Whether the workspace's single-key shortcuts are on (`$lib/review/shortcuts`).
+	 * On by default; the off switch is the one WCAG 2.1.4 asks for, and the
+	 * choice is kept per device, like the rails.
+	 */
+	shortcutsOn = $state(true);
+
+	loadShortcuts() {
+		try {
+			this.shortcutsOn = localStorage.getItem(SHORTCUTS_KEY) !== 'off';
+		} catch {
+			// Storage unavailable: the default stands.
+		}
+	}
+
+	setShortcuts(on: boolean) {
+		this.shortcutsOn = on;
+		try {
+			if (on) localStorage.removeItem(SHORTCUTS_KEY);
+			else localStorage.setItem(SHORTCUTS_KEY, 'off');
+		} catch {
+			// The switch still works for this session.
 		}
 	}
 

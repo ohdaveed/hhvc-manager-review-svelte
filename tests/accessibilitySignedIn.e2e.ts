@@ -66,10 +66,12 @@ test('no WCAG 2.1 AA violations in the signed-in queue and decision panel', asyn
 
 	// The two rails are exclusive, so the queue is scanned on its own: opening
 	// it closes the panel just scanned.
-	await page.getByRole('button', { name: 'Expand queue' }).click();
+	await page.getByRole('button', { name: /^Queue/ }).click();
 	// The stub's four decided rows. Not a percentage: the denominator is every
 	// corpus page now, not the six rows, so it moves whenever the corpus does.
-	await expect(page.getByText(/^4 of \d+ decided$/)).toBeVisible();
+	// Scoped to the queue's progress block: the toolbar's Queue button says the
+	// same count to a screen reader.
+	await expect(page.getByLabel('Review progress').getByText(/^4 of \d+ decided$/)).toBeVisible();
 
 	await noViolations(page);
 });
@@ -101,7 +103,34 @@ test('no WCAG 2.1 AA violations in the Fields panel with a field selected', asyn
 test('no WCAG 2.1 AA violations in the Analysis panel', async ({ page }) => {
 	await gotoSignedIn(page, PAGE);
 	await page.getByRole('radio', { name: 'Checks' }).click();
-	await expect(page.getByRole('tabpanel')).toContainText(/Readability|Findings|accessibility/i);
+	await expect(page.getByRole('tabpanel')).toContainText(/Reading Level/i);
+	await expect(page.getByRole('tabpanel')).toContainText(/Link Targets/i);
+
+	await noViolations(page);
+});
+
+test('no WCAG 2.1 AA violations in the Rethink panel', async ({ page }) => {
+	await page.route('**/api/ai/generate', (route) =>
+		route.fulfill({
+			status: 200,
+			contentType: 'application/json',
+			body: JSON.stringify({
+				task: 'page-suggestions',
+				model: 'gemini-3.1-flash-lite',
+				disclosure: 'AI-assisted draft.',
+				result: {
+					plainLanguage: 'Shorten sentences in the opening summary.',
+					structure: 'Move steps above background details.',
+					codeAndScope: 'Map this section to an Information block in Karl.'
+				}
+			})
+		})
+	);
+	await gotoSignedIn(page, PAGE);
+	await page.getByRole('radio', { name: 'Rethink' }).click();
+	await expect(
+		page.getByRole('tabpanel').getByText('Plain language', { exact: true })
+	).toBeVisible();
 
 	await noViolations(page);
 });

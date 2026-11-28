@@ -14,7 +14,7 @@
 	import RethinkPanel from './RethinkPanel.svelte';
 	import AnalysisPanel from './AnalysisPanel.svelte';
 	import { pageStore } from '$lib/stores/pageData.svelte';
-	import { pagesStore } from '$lib/stores/reviewState';
+	import { pagesStore, type PageCheck } from '$lib/stores/reviewState';
 
 	let {
 		pageData,
@@ -92,22 +92,22 @@
 		return () => (pageStore.rethinkTabOpen = false);
 	});
 
-	// The Fix badge: findings still open, as the Checks tool last measured them.
-	// `null` until it has, and again on a new page, so a count from the page
-	// just left is never shown over this one.
-	let openIssues = $state<number | null>(null);
-	let countedFor: string | undefined;
-	$effect(() => {
-		const id = page?.id;
-		if (id !== countedFor) {
-			countedFor = id;
-			openIssues = null;
-		}
-	});
+	const liveRecord = $derived($pagesStore.find((p) => p.path === page?.id));
+
+	// The Fix badge: the synced page checks that have not passed. It counted
+	// the Checks tool's own findings until that tool became Reading Level and
+	// Link Targets, which measure and list rather than pass or fail. `null`
+	// with no row to read, so nothing is claimed about a page not in the review.
+	const openIssues = $derived(
+		liveRecord
+			? Object.values(liveRecord.page_checks ?? {}).filter(
+					(check) => (check as PageCheck).status !== 'pass'
+				).length
+			: null
+	);
 
 	// The Notes badge: a tick once there is feedback, a warning while a page is
 	// being sent back without any.
-	const liveRecord = $derived($pagesStore.find((p) => p.path === page?.id));
 	const hasNotes = $derived((liveRecord?.manager_notes ?? '').trim() !== '');
 	const missingNote = $derived(
 		!hasNotes && (liveRecord?.status === 'revise' || liveRecord?.status === 'blocked')
@@ -254,19 +254,19 @@
 			</ToggleGroup.Root>
 		</div>
 		{#if tool === 'checks'}
-			<!-- Karl Jr.'s accessibility tests and readability score, computed here,
-			     then the `page_checks` rows synced into Supabase. Two sources with
-			     two owners -- a synced check is someone's recorded judgement, a
-			     finding is this session's measurement -- in one place to read. -->
-			<AnalysisPanel {pageData} onIssues={(n) => (openIssues = n)} />
+			<!-- Reading level and link targets, measured here, then the
+			     `page_checks` rows synced into Supabase. Two sources with two
+			     owners -- a synced check is someone's recorded judgement, the rest
+			     is this session's measurement -- in one place to read. -->
+			<AnalysisPanel {pageData} embedded />
 			<PageChecks pageId={page?.id} />
 		{:else if tool === 'fields'}
 			<div class="mt-3 min-h-0 flex-1 overflow-hidden border-t border-sfds-grey-l2 bg-background">
-				<FieldsPanel {pageData} {livePageId} />
+				<FieldsPanel {pageData} {livePageId} {karlViews} />
 			</div>
 		{:else}
 			<div class="mt-3 min-h-0 flex-1 overflow-hidden border-t border-sfds-grey-l2 bg-background">
-				<RethinkPanel {pageData} />
+				<RethinkPanel {pageData} active={activeTab === 'fix' && tool === 'rethink'} />
 			</div>
 		{/if}
 	</Tabs.Content>

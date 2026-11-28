@@ -1,158 +1,96 @@
 <!-- src/lib/components/workspace/RethinkPanel.svelte -->
 <script lang="ts">
 	/**
-	 * The Rethink tab: reconsider a whole section, block by block.
-	 *
-	 * Slice 1 is READ-ONLY. There is deliberately no Apply control here: the
-	 * structural half of a proposal cannot survive a reload until the
-	 * accepted-edit overlay exists, and a button that silently loses added
-	 * copy is worse than no button.
+	 * The Rethink tab: AI-generated page suggestions grouped into Plain language,
+	 * Structure, and Code & scope cards, each sendable to Decision notes.
 	 */
+	import { ArrowRight, RotateCw } from '@lucide/svelte';
+	import { untrack } from 'svelte';
 	import { resolve } from '$app/paths';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import { Textarea } from '$lib/components/ui/textarea/index.js';
-	import { sectionDisplayLabel } from '$lib/corpus/fieldResolver';
-	import { pageStore } from '$lib/stores/pageData.svelte';
+	import { requestGeneration } from '$lib/ai/generate';
+	import { pageStore, type SuggestionCategory } from '$lib/stores/pageData.svelte';
+	import { pagesStore, updatePageNotes } from '$lib/stores/reviewState';
 	import { sessionStore } from '$lib/stores/session.svelte';
-	import { requestRethink } from '$lib/rethink/request';
-	import type { Op } from '$lib/rethink/diff';
 
-	let { pageData }: { pageData: unknown } = $props();
+	let {
+		pageData,
+		active = true,
+		onGoToDecision
+	}: {
+		pageData: unknown;
+		active?: boolean;
+		onGoToDecision?: () => void;
+	} = $props();
 
 	const pageId = $derived((pageData as { id?: string } | undefined)?.id);
 	const sectionKey = $derived(pageStore.selectedSectionKey);
+	const suggestionState = $derived(pageStore.getPageSuggestions(pageId));
+	const liveRecord = $derived($pagesStore.find((p) => p.path === pageId));
 
-	const heading = $derived.by(() => {
-		const sections = (pageData as { sections?: { fieldKey?: string; heading?: string }[] })
-			?.sections;
-		return (sections ?? []).find((s) => s.fieldKey === sectionKey)?.heading ?? sectionKey;
-	});
+	const CATEGORIES: { key: SuggestionCategory; label: string }[] = [
+		{ key: 'plainLanguage', label: 'Plain language' },
+		{ key: 'structure', label: 'Structure' },
+		{ key: 'codeAndScope', label: 'Code & scope' }
+	];
 
-	/**
-	 * Every section of the page, to choose from in the panel itself.
-	 *
-	 * The tab used to send the reviewer to the mockup: "Choose Rethink section
-	 * on any section". Measured 2026-11-27 on "Report animal waste on a
-	 * property": the first screen (title, summary, What to know) has no such
-	 * button, and the three further down were hidden until hovered, so the tab
-	 * pointed at a control that was nowhere on screen. Keys and names are the
-	 * ones `Section.svelte` uses, so a pick here and a click there select the
-	 * same thing.
-	 */
-	const sections = $derived(
-		((pageData as { sections?: { fieldKey?: string; heading?: unknown }[] })?.sections ?? []).map(
-			(section, index) => ({
-				key: section.fieldKey ?? `section-${index}`,
-				label: sectionDisplayLabel(section.heading, index)
-			})
-		)
-	);
-
-	let instruction = $state('');
 	let controller: AbortController | undefined;
+	let sendingCategory = $state<SuggestionCategory | null>(null);
+	let sendError = $state('');
 
-	// `pageStore.selectSection` resets `rethink` to idle without touching an
-	// AbortController -- the store holds none today, deliberately, so this is
-	// the panel's job. Without it, a slow request for the section the
-	// reviewer just left would run to completion unseen, and worse: it would
-	// still own `controller` until its own `finally` runs, so switching to a
-	// new section and clicking ITS Cancel could abort nothing.
-	$effect(() => {
-		// Read (not used) purely to register as a dependency: the cleanup below
-		// must re-run whenever the selection changes, not just on unmount.
-		void sectionKey;
+	async function generate(force = false) {
+		if (!pageId || !pageData || typeof pageData !== 'object') return;
+		if (sessionStore.knownSignedOut) return;
+		const currentState = pageStore.getPageSuggestions(pageId);
+		if (!force && currentState.status !== 'idle') return;
+		if (currentState.status === 'loading') return;
 
-		// The instruction is guidance for ONE section -- "lead with what a
-		// tenant does first" means nothing transplanted onto the next one. It
-		// lives in component state, so without this it survived the switch and
-		// went out with the following section's request, unseen unless the
-		// reviewer thought to scroll back up to the textarea.
-		instruction = '';
-
-		return () => controller?.abort();
-	});
-
-	const KIND_LABEL: Record<string, string> = {
-		heading: 'heading',
-		paragraph: 'paragraph',
-		bullet: 'bullet',
-		calloutTitle: 'callout title',
-		calloutText: 'callout text'
-	};
-
-	const opLabel = (op: Op) => `${op.type} ${KIND_LABEL[op.kind] ?? op.kind}`;
-
-	/**
-	 * The accessible name for an op's checkbox needs to be more than `opLabel`:
-	 * two `add` bullets, or two `rewrite` paragraphs, in one section are an
-	 * ordinary result, and `aria-label` overrides the wrapping `<label>`'s text
-	 * rather than supplementing it -- so an unqualified label makes two
-	 * checkboxes indistinguishable to a screen reader. Append a snippet of the
-	 * op's own copy so each name is unique.
-	 *
-	 * `rewrite` carries its new text as `to`, not `text`; every other type that
-	 * reaches this list (`add`, `move`, `drop` -- `keep` is filtered out before
-	 * rendering) carries `text`. Narrowed explicitly rather than cast.
-	 */
-	const opText = (op: Op) => (op.type === 'rewrite' ? op.to : op.text);
-
-	const opName = (op: Op) => {
-		const text = opText(op);
-		const snippet = text.length > 60 ? `${text.slice(0, 60)}…` : text;
-		return snippet ? `${opLabel(op)}: ${snippet}` : opLabel(op);
-	};
-
-	async function run() {
-		if (!sectionKey || !pageId) return;
-		if (pageStore.rethink.state === 'loading') return;
-
-		// Captured before the request. A slow answer must not land on a section
-		// the reviewer has since left -- the guard `recommend()` already uses.
 		const requestPageId = pageId;
-		const requestSectionKey = sectionKey;
-		const current = () =>
-			pageStore.selectedSectionKey === requestSectionKey &&
-			(pageData as { id?: string } | undefined)?.id === requestPageId;
-
-		// Captured locally so the `finally` below can tell whether it still owns
-		// `controller` -- a slow request for a section the reviewer has since
-		// left must not clear the controller a newer request just set.
 		const mine = new AbortController();
+		controller?.abort();
 		controller = mine;
-		pageStore.rethink = { state: 'loading', pageId: requestPageId, sectionKey: requestSectionKey };
+		sendError = '';
+		pageStore.setPageSuggestions(requestPageId, { status: 'loading' });
 
 		try {
-			const result = await requestRethink({
-				page: pageData,
-				pageId: requestPageId,
-				sectionKey: requestSectionKey,
-				instruction: instruction.trim() || undefined,
-				// `pageData` is the in-memory corpus object for this page, and it holds
-				// what the mockup shows: the base corpus, then saved edits (the review
-				// layout writes each field's newest `edits` row onto it, from any
-				// session or reviewer), then this reviewer's unsaved changes -- typed or
-				// accepted suggestions -- which sit on top of a saved edit until saved.
-				// So a Rethink is grounded on what the reviewer is looking at, which can
-				// include wording nobody has saved yet.
-				signal: mine.signal
+			const response = await requestGeneration(
+				{
+					task: 'page-suggestions',
+					page: pageData,
+					...(sectionKey ? { sectionKey } : {})
+				},
+				mine.signal
+			);
+			if (mine.signal.aborted) return;
+
+			const res = response?.result as Record<string, unknown> | undefined;
+			const plainLanguage = typeof res?.plainLanguage === 'string' ? res.plainLanguage.trim() : '';
+			const structure = typeof res?.structure === 'string' ? res.structure.trim() : '';
+			const codeAndScope = typeof res?.codeAndScope === 'string' ? res.codeAndScope.trim() : '';
+			if (!plainLanguage || !structure || !codeAndScope) {
+				throw new Error('The assistant returned incomplete suggestions.');
+			}
+
+			pageStore.setPageSuggestions(requestPageId, {
+				status: 'ready',
+				plainLanguage,
+				structure,
+				codeAndScope,
+				disclosure: typeof response?.disclosure === 'string' ? response.disclosure : '',
+				model: typeof response?.model === 'string' ? response.model : '',
+				sent: { plainLanguage: false, structure: false, codeAndScope: false }
 			});
-			if (!current()) return;
-			pageStore.rethink = {
-				state: 'ready',
-				pageId: requestPageId,
-				sectionKey: requestSectionKey,
-				result,
-				decisions: {}
-			};
-		} catch (e) {
-			if (!current()) return;
-			const message =
-				e instanceof Error && e.name === 'AbortError'
-					? 'Cancelled.'
-					: e instanceof Error
-						? e.message
-						: 'Could not reach the assistant.';
-			pageStore.rethink = { state: 'error', message };
+		} catch (err) {
+			if (mine.signal.aborted) {
+				if (pageStore.getPageSuggestions(requestPageId).status === 'loading') {
+					pageStore.setPageSuggestions(requestPageId, { status: 'idle' });
+				}
+				return;
+			}
+			pageStore.setPageSuggestions(requestPageId, {
+				status: 'error',
+				message: err instanceof Error ? err.message : 'Could not reach the assistant.'
+			});
 		} finally {
 			if (controller === mine) controller = undefined;
 		}
@@ -161,192 +99,160 @@
 	function cancel() {
 		controller?.abort();
 	}
+
+	$effect(() => {
+		const id = pageId;
+		const isActive = active;
+		const signedOut = sessionStore.knownSignedOut;
+		if (!isActive || !id || signedOut) return;
+		untrack(() => {
+			if (pageStore.getPageSuggestions(id).status === 'idle') {
+				void generate(false);
+			}
+		});
+		return () => {
+			controller?.abort();
+		};
+	});
+
+	async function sendToNotes(category: SuggestionCategory, label: string, text: string) {
+		if (!pageId || !liveRecord || sendingCategory) return;
+		sendError = '';
+		sendingCategory = category;
+		const existing = (liveRecord.manager_notes ?? '').trim();
+		const entry = `[${label}] ${text}`;
+		const nextNotes = existing ? `${existing}\n\n${entry}` : entry;
+		const saved = await updatePageNotes(liveRecord.id, nextNotes);
+		sendingCategory = null;
+		if (saved) {
+			pageStore.markSuggestionSent(pageId, category);
+		} else {
+			sendError = 'Could not save to Decision notes. Try again.';
+		}
+	}
 </script>
 
 <div class="flex h-full min-h-0 flex-col">
-	<div class="min-h-0 flex-1 overflow-y-auto">
-		{#if !sectionKey}
-			<div class="px-5 py-6 text-sm">
-				<p class="font-semibold">Choose a section to rethink</p>
-				<p class="mt-1.5 leading-5">
-					The assistant will reconsider how the section is written and structured, and say what it
-					thinks is missing.
+	<div class="min-h-0 flex-1 space-y-3 overflow-y-auto p-4">
+		{#if sessionStore.knownSignedOut}
+			<div class="rounded-lg border border-border bg-background p-4 text-sm text-sfds-slate-l3">
+				<p class="font-semibold text-sfds-black">Sign in for AI Rethink suggestions</p>
+				<p class="mt-1.5 text-xs leading-5">
+					<a
+						href={resolve('/login')}
+						class="font-semibold text-sfds-action underline underline-offset-2">Sign in</a
+					> to generate plain-language, structure, and Karl scope suggestions for this page.
 				</p>
-				{#if sessionStore.knownSignedOut}
-					<!-- The request carries the reviewer's session; without one it is
-					     refused, so the list would only lead to an error. -->
-					<p class="mt-4 leading-5">
-						<a href={resolve('/login')} class="font-semibold underline underline-offset-2"
-							>Sign in</a
-						> to rethink a section.
-					</p>
-				{:else if sections.length === 0}
-					<p class="mt-4 leading-5">This page has no sections to rethink.</p>
-				{:else}
-					<ul class="mt-4 space-y-2" aria-label="Sections on this page">
-						{#each sections as section (section.key)}
-							<li>
-								<Button
-									variant="outline"
-									class="h-auto min-h-10 w-full justify-start px-3 py-2 text-left text-[0.8125rem] whitespace-normal"
-									onclick={() => pageStore.selectSection(section.key)}
-								>
-									{section.label}
-								</Button>
-							</li>
-						{/each}
-					</ul>
-					<p class="mt-4 text-xs leading-[1.0625rem]">
-						Each section in the mockup also has a <strong>Rethink section</strong> button, shown while
-						this tab is open.
-					</p>
-				{/if}
+			</div>
+		{:else if suggestionState.status === 'loading'}
+			<div class="rounded-lg border border-border bg-background p-4">
+				<p class="text-sm font-medium text-sfds-black" role="status">
+					Reviewing this page for Rethink suggestions…
+				</p>
+				<p class="mt-1 text-xs text-sfds-slate-l3">
+					Checking plain language, structure, and Karl scope.
+				</p>
+				<Button variant="outline" size="sm" class="mt-3 h-7 text-xs" onclick={cancel}>
+					Cancel
+				</Button>
+			</div>
+		{:else if suggestionState.status === 'error'}
+			<div class="rounded-lg border border-sfds-red bg-sfds-red-l1 p-4">
+				<p class="text-xs leading-5 text-sfds-red" role="alert">{suggestionState.message}</p>
+				<Button
+					variant="outline"
+					size="sm"
+					class="mt-3 h-7 bg-background text-xs"
+					onclick={() => generate(true)}
+				>
+					Try again
+				</Button>
+			</div>
+		{:else if suggestionState.status === 'idle'}
+			<div class="rounded-lg border border-border bg-background p-4">
+				<p class="text-sm font-medium text-sfds-black">No suggestions generated yet</p>
+				<Button size="sm" class="mt-3 h-8 text-xs" onclick={() => generate(true)}>
+					Generate suggestions
+				</Button>
 			</div>
 		{:else}
-			<div class="flex items-center justify-between gap-3 border-b px-5 py-3">
-				<span class="text-[0.8125rem] font-semibold">{heading}</span>
+			<div class="flex items-center justify-between gap-2">
+				<span class="text-xs font-medium text-sfds-slate-l3">AI suggestions for this page</span>
 				<Button
 					variant="ghost"
 					size="sm"
-					class="h-7 flex-none px-2 text-xs"
-					onclick={() => pageStore.clearSectionSelection()}
+					class="h-7 gap-1 px-2 text-xs text-sfds-slate-l3"
+					onclick={() => generate(true)}
 				>
-					Change section
+					<RotateCw class="size-3" aria-hidden="true" />
+					Regenerate
 				</Button>
 			</div>
 
-			<section class="mx-5 mt-4" aria-label="Rethink">
-				<Textarea
-					bind:value={instruction}
-					rows={2}
-					class="text-[0.8125rem]"
-					aria-label="What should this section accomplish?"
-					placeholder="Optional: what should this section accomplish?"
-				/>
-				<div class="mt-2 flex gap-2">
-					<Button
-						size="sm"
-						class="h-8 flex-1 text-xs"
-						disabled={pageStore.rethink.state === 'loading'}
-						onclick={run}
-					>
-						{pageStore.rethink.state === 'loading' ? 'Rethinking…' : 'Rethink this section'}
-					</Button>
-					{#if pageStore.rethink.state === 'loading'}
-						<Button variant="outline" size="sm" class="h-8 text-xs" onclick={cancel}>Cancel</Button>
-					{/if}
-				</div>
-				{#if pageStore.rethink.state === 'loading'}
-					<p class="mt-2 text-xs" role="status">
-						Reading the whole section. This usually takes about 30 seconds.
-					</p>
-				{/if}
-			</section>
-
-			{#if pageStore.rethink.state === 'error'}
-				{@const cancelled = pageStore.rethink.message === 'Cancelled.'}
-				<p class="mx-5 mt-4 text-xs leading-[1.0625rem]" role={cancelled ? 'status' : 'alert'}>
-					{pageStore.rethink.message}
+			{#if sendError}
+				<p class="rounded-md bg-sfds-red-l1 px-3 py-2 text-xs text-sfds-red" role="alert">
+					{sendError}
 				</p>
 			{/if}
 
-			{#if pageStore.rethink.state === 'ready'}
-				{@const result = pageStore.rethink.result}
-				{#if result.rationale}
-					<section class="mx-5 mt-4 rounded-[4px] border p-3" aria-label="Why">
-						<span class="text-xs font-bold tracking-[0.06em] uppercase">Why</span>
-						<p class="mt-1.5 text-[0.8125rem] leading-[1.1875rem]">{result.rationale}</p>
-					</section>
-				{/if}
-
-				{#if result.karlChanged}
-					<!-- decision 9: a proposal that changes the section's Karl mapping
-					     changes what someone must build in Wagtail, so it goes above the
-					     ops list rather than being one more line inside it. Gated on the
-					     normalized `karlChanged` flag, not a raw string compare here --
-					     see request.ts's `normalizeKarl` for why. -->
-					<section class="mx-5 mt-4 rounded-[4px] border-2 p-3" aria-label="Karl mapping changed">
-						<span class="text-xs font-bold tracking-[0.06em] uppercase">Karl mapping changed</span>
-						<p class="mt-1.5 text-[0.8125rem] leading-[1.1875rem] line-through">
-							{result.karlBefore}
-						</p>
-						<p class="mt-1.5 text-[0.8125rem] leading-[1.1875rem]">{result.karlAfter}</p>
-					</section>
-				{/if}
-
-				{#if result.structureChanged}
-					<!-- decision 16: the diff covers heading, paragraphs, bullets and
-					     callout only, so a proposal that also reworked this section's
-					     steps or cards has changes with no op to accept or reject. Saying
-					     so beats a rationale describing edits the list below cannot show. -->
-					<section
-						class="mx-5 mt-4 rounded-[4px] border-2 p-3"
-						aria-label="Steps and cards not shown"
+			{#each CATEGORIES as cat (cat.key)}
+				{@const suggestionText = suggestionState[cat.key]}
+				{@const sent = suggestionState.sent[cat.key]}
+				<section class="rounded-lg border border-border bg-background p-3.5" aria-label={cat.label}>
+					<span
+						class="inline-flex items-center rounded-full border border-border bg-muted/60 px-2.5 py-0.5 text-[0.6875rem] font-semibold text-sfds-black"
 					>
-						<span class="text-xs font-bold tracking-[0.06em] uppercase"
-							>Steps and cards not shown</span
-						>
-						<p class="mt-1.5 text-[0.8125rem] leading-[1.1875rem]">
-							The assistant also changed this section's steps or cards. This tool cannot review
-							those yet, so they are not in the list below and will not be applied.
-						</p>
-					</section>
-				{/if}
-
-				<ul class="mt-4 space-y-2 px-5 pb-4" aria-label="Proposed changes">
-					{#each result.ops.filter((op) => op.type !== 'keep') as op (op.id)}
-						<li class="rounded-[4px] border p-3">
-							<label class="flex items-start gap-2 text-xs">
-								<input
-									type="checkbox"
-									class="mt-0.5"
-									aria-label={opName(op)}
-									checked={pageStore.isOpAccepted(op)}
-									onchange={(event) => pageStore.setOpAccepted(op.id, event.currentTarget.checked)}
-								/>
-								<span class="font-bold tracking-[0.06em] uppercase">{opLabel(op)}</span>
-							</label>
-
-							{#if op.type === 'rewrite'}
-								<p
-									class="mt-2 rounded-[3px] px-2 py-1.5 text-[0.8125rem] leading-[1.1875rem] line-through"
-								>
-									{op.from}
-								</p>
-								<p class="mt-1.5 rounded-[3px] px-2 py-1.5 text-[0.8125rem] leading-[1.1875rem]">
-									{op.to}
-								</p>
-								{#if op.moved}
-									<p class="mt-1 text-xs">Also moves position.</p>
-								{/if}
-							{:else if op.type === 'add'}
-								<p class="mt-2 rounded-[3px] px-2 py-1.5 text-[0.8125rem] leading-[1.1875rem]">
-									{op.text}
-								</p>
-								<p class="mt-1 text-xs">
-									Unverified — proposed by the assistant, with no confirmed source.
-								</p>
-							{:else}
-								<p class="mt-2 rounded-[3px] px-2 py-1.5 text-[0.8125rem] leading-[1.1875rem]">
-									{op.text}
-								</p>
-							{/if}
-						</li>
-					{/each}
-				</ul>
-
-				{#if result.otherSections.length > 0}
-					<p class="mx-5 mb-4 text-xs leading-[1.0625rem]" role="status">
-						The assistant also proposed changes to {result.otherSections.join(', ')}. Those are not
-						applied here — rethink that section to see them.
+						{cat.label}
+					</span>
+					<p class="mt-2.5 text-[0.8125rem] leading-5 text-sfds-black">
+						{suggestionText}
 					</p>
-				{/if}
+					<div class="mt-3 flex justify-end">
+						<Button
+							variant="outline"
+							size="sm"
+							class="h-7 px-2.5 text-xs"
+							disabled={!liveRecord || sendingCategory === cat.key || sent}
+							onclick={() => sendToNotes(cat.key, cat.label, suggestionText)}
+						>
+							{#if sendingCategory === cat.key}
+								Sending…
+							{:else if sent}
+								Sent to Decision notes
+							{:else}
+								Send to Decision notes
+							{/if}
+						</Button>
+					</div>
+				</section>
+			{/each}
 
-				<p class="mx-5 mb-4 text-xs leading-[1.0625rem]">
-					{result.disclosure}
-					{result.model ? ` (${result.model})` : ''}
+			{#if !liveRecord}
+				<p class="text-xs text-sfds-slate-l3">
+					No review record loaded — open a review session to send suggestions to Decision notes.
+				</p>
+			{/if}
+
+			{#if suggestionState.disclosure}
+				<p class="text-[0.6875rem] leading-4 text-sfds-slate-l3">
+					{suggestionState.disclosure}{suggestionState.model ? ` (${suggestionState.model})` : ''}
 				</p>
 			{/if}
 		{/if}
 	</div>
+
+	<!-- Only where the decision is somewhere else to go to. In the workspace it
+	     is pinned under the tabs, so there the panel is handed no callback. -->
+	{#if onGoToDecision}
+		<div class="flex-none border-t border-border bg-background px-4 py-3">
+			<button
+				type="button"
+				class="flex w-full items-center justify-between gap-2 text-sm font-semibold text-sfds-black hover:text-sfds-action"
+				onclick={onGoToDecision}
+			>
+				<span>Go to Decision</span>
+				<ArrowRight class="size-4 shrink-0" aria-hidden="true" />
+			</button>
+		</div>
+	{/if}
 </div>

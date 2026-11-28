@@ -2,6 +2,8 @@
 	import { review } from '$lib/review/review.svelte';
 	import * as ToggleGroup from '$lib/components/ui/toggle-group/index.js';
 	import { resolve } from '$app/paths';
+	import { goto } from '$app/navigation';
+	import { DECISION_KEYS, NEXT_UNDECIDED_KEY, isPlainKey } from '$lib/review/shortcuts';
 	import { reviewHrefFor } from '$lib/corpus/draftPath';
 	import { draftsStore } from '$lib/stores/draftPages';
 	import { pageTitleFor } from '$lib/corpus/pageTitle';
@@ -178,6 +180,39 @@
 		}
 	};
 
+	// ---- keyboard shortcuts (see `$lib/review/shortcuts`) ------------------
+
+	let root = $state<HTMLElement>();
+
+	/**
+	 * A, R, B and U record a decision; ] opens the next undecided page.
+	 *
+	 * Handled HERE, not in the layout, and only while this footer is laid out
+	 * (`offsetParent`): it is unmounted when the panel's rail is collapsed, and
+	 * hidden below 1024px until its sheet opens. So a key can only make a
+	 * decision where the control and its receipt are on screen to show it.
+	 */
+	function onShortcut(event: KeyboardEvent) {
+		if (!pageStore.shortcutsOn || !isPlainKey(event)) return;
+		if (!root || root.offsetParent === null) return;
+		const key = event.key.toLowerCase();
+
+		if (key === NEXT_UNDECIDED_KEY && nextPath) {
+			event.preventDefault();
+			goto(resolve(reviewHrefFor(nextPath)));
+			return;
+		}
+
+		const status = DECISION_KEYS[key];
+		// No row to decide (signed out, or the page is not in the review): the
+		// buttons are disabled, and a key must not do what they cannot.
+		if (!status || !liveRecord) return;
+		event.preventDefault();
+		// Undecided presses nothing: the control has three options, not four.
+		decision = status === 'needs-review' ? '' : status;
+		handleDecision(status);
+	}
+
 	// The one button under the decision: where to go now. A decision saves the
 	// moment it is pressed, so this never submits anything -- it moves on, or,
 	// for a page being sent back with nothing written, opens the feedback box.
@@ -205,7 +240,12 @@
 
 <!-- Pinned under the tabs: the decision is what the tool exists to record, so
      it is on screen whichever tab is open. -->
-<footer class="flex flex-none flex-col gap-2.5 border-t border-sfds-grey-l2 bg-white p-3">
+<svelte:window onkeydown={onShortcut} />
+
+<footer
+	class="flex flex-none flex-col gap-2.5 border-t border-sfds-grey-l2 bg-white p-3"
+	bind:this={root}
+>
 	<h2 id="decision-label" class="sr-only">Decision</h2>
 
 	<div class="flex flex-wrap items-baseline justify-between gap-x-2 text-xs text-sfds-slate-l3">
@@ -227,6 +267,28 @@
 			     false. With no page to name, say nothing: the draft banner above
 			     already explains the state. -->
 			<span>No review record exists for this page</span>
+		{:else if liveRecord}
+			<!-- The keys, and their off switch in one control: the label is the
+			     hint. A checkbox, not a line of text, because a single-key
+			     shortcut has to be something a reviewer can turn off (WCAG
+			     2.1.4): dictation types characters. -->
+			<label
+				class="flex items-center gap-1.5"
+				title="Keyboard shortcuts: A approved, R needs revision, B blocked, U undecided, ] next undecided page, \ page queue"
+			>
+				<input
+					type="checkbox"
+					class="size-3.5 accent-sfds-action"
+					checked={pageStore.shortcutsOn}
+					aria-describedby="decision-keys-help"
+					onchange={(e) => pageStore.setShortcuts(e.currentTarget.checked)}
+				/>
+				Keys: A · R · B · U
+			</label>
+			<span id="decision-keys-help" class="sr-only">
+				Keyboard shortcuts. A approved, R needs revision, B blocked, U undecided, right bracket for
+				the next undecided page, backslash for the page queue.
+			</span>
 		{/if}
 		{#if decisionError}
 			<span class="text-destructive" role="alert">Not saved — try again</span>
@@ -330,6 +392,14 @@
 			class="{PRIMARY} {nextTone}"
 		>
 			{nextLabel}
+			{#if pageStore.shortcutsOn}
+				<!-- The key that does the same. Decorative: the link's name is the
+				     words beside it, and the keys are described at the decision. -->
+				<kbd
+					class="ml-2 flex-none rounded border border-current/40 px-1.5 font-mono text-xs font-semibold"
+					aria-hidden="true">]</kbd
+				>
+			{/if}
 		</a>
 	{:else if liveRecord}
 		<p class="text-sm text-sfds-slate-l3">

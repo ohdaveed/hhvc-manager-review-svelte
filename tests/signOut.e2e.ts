@@ -14,7 +14,7 @@ test('shows the signed-in address and signs out in place', async ({ page }) => {
 	await page.goto(PAGE);
 	// The address and Sign out live in the queue's footer, and the queue is
 	// collapsed when the workspace opens.
-	await page.getByRole('button', { name: 'Expand queue' }).click();
+	await page.getByRole('button', { name: /^Queue/ }).click();
 
 	const email = page.getByTestId('signed-in-email');
 	await expect(email).toHaveText('e2e@hhvc.test');
@@ -33,7 +33,7 @@ test('the queue sheet carries the sign-out control on a phone', async ({ page })
 	await page.setViewportSize({ width: 375, height: 812 });
 	await signedIn(page);
 	await page.goto(PAGE);
-	await page.getByRole('button', { name: 'Queue', exact: true }).click();
+	await page.getByRole('button', { name: /^Queue/ }).click();
 	await expect(page.getByRole('button', { name: 'Sign out' })).toBeVisible();
 });
 
@@ -53,7 +53,7 @@ test('a long address truncates instead of widening the rail', async ({ page }) =
 		};
 	}, long);
 	await page.goto(PAGE);
-	await page.getByRole('button', { name: 'Expand queue' }).click();
+	await page.getByRole('button', { name: /^Queue/ }).click();
 
 	const email = page.getByTestId('signed-in-email');
 	await expect(email).toHaveAttribute('title', long);

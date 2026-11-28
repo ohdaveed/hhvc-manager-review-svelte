@@ -16,7 +16,7 @@ export const animalWasteReport = {
 	},
 	reading: 'Grade 6',
 	editorNote:
-		"Report regroup (Decided, Nov 24, 2026), built 2026-11-25. New page, one of the 9 condition pages, and one of HHVC's largest complaint areas, so it is listed high in the Topic and Agency report groups (Decided). The description is the Decided search-words example. Private property only, said at the top (Decided): HHVC does not respond to dog waste on sidewalks or streets. Raccoon droppings are cited here because of the roundworm egg risk (Decided): the page says to report them rather than clean them, links the CDC raccoon roundworm guidance, and gives no cleanup steps. Pigeon droppings moved to their own page, which this one links. TO CONFIRM: which 311 service takes dog waste on public property (likely Public Works street cleaning), so that line is flagged unverified; and whether HHVC cites the owner in every raccoon latrine case (§596 also allows a manager or whoever created the condition), so the page does not say who is cited.",
+		"Report regroup (Decided, Nov 24, 2026), built 2026-11-25. New page, one of the 9 condition pages, and one of HHVC's largest complaint areas, so it is listed high in the Topic and Agency report groups (Decided). The description is the Decided search-words example. Private property only, said at the top (Decided): HHVC does not respond to dog waste on sidewalks or streets. Raccoon droppings are cited here because of the roundworm egg risk: What to know warns of the hazard, and a dedicated supporting section explains the dangers of raccoon feces and links CDC pages for safe cleanup. Pigeon droppings moved to their own page, which this one links. TO CONFIRM: which 311 service takes dog waste on public property (likely Public Works street cleaning), so that line is flagged unverified; and whether HHVC cites the owner in every raccoon latrine case (§596 also allows a manager or whoever created the condition), so the page does not say who is cited.",
 	whatToKnow: {
 		thingsToKnow: [
 			{
@@ -25,7 +25,7 @@ export const animalWasteReport = {
 			},
 			{
 				label: 'Raccoon droppings',
-				text: 'Do not clean up raccoon droppings yourself. They can carry roundworm eggs that make people very sick. Report them instead. [CDC: Preventing raccoon roundworm](https://www.cdc.gov/baylisascaris/prevention/index.html)'
+				text: 'Raccoon feces can carry roundworm eggs that cause severe brain, eye, or organ damage. Report them to 311 instead of cleaning them up without safety gear. [CDC: About raccoon roundworm](https://www.cdc.gov/baylisascaris/about/index.html)'
 			}
 		]
 	},
@@ -82,13 +82,30 @@ export const animalWasteReport = {
 		},
 		{
 			heading: 'While you wait: tips to help with the problem',
-			karl: 'Maps to supporting_information (Accordions), collapsed by default as the real accordion renders. Contents: one Text block (lead paragraph + tips). Cut on 2026-11-26 (page review, as on Report rats or mice) to the tips a resident can act on now. The pet waste tip is the Decided cross-link line. No raccoon cleanup steps (Decided). The CDC raccoon roundworm link moved inline into the Raccoon droppings item in What to know, beside the warning it backs.',
+			karl: 'Maps to supporting_information (Accordions), collapsed by default as the real accordion renders. Contents: one Text block (lead paragraph + tips). Cut on 2026-11-26 (page review, as on Report rats or mice) to the tips a resident can act on now. The pet waste tip is the Decided cross-link line.',
 			kind: 'body',
 			component: 'supporting',
 			paragraphs: ['It may take us a few weekdays to get back to you.'],
 			bullets: [
 				'**Pick up pet waste daily:** It feeds rats.',
 				'**Bag it:** Put pet waste in a bag, then in a bin with a tight lid.'
+			]
+		},
+		{
+			heading: 'Dangers of raccoon feces and safe cleanup',
+			karl: 'Maps to supporting_information (Accordions), collapsed by default as the real accordion renders. Contents: one Text block explaining the health dangers of raccoon feces (Baylisascaris procyonis) and linking CDC pages for safe cleanup.',
+			kind: 'body',
+			component: 'supporting',
+			paragraphs: [
+				'Raccoon feces often carry tiny roundworm eggs. People can swallow or breathe in eggs from soil, hands, or objects. Young children face the highest risk.',
+				'The eggs take 2 to 4 weeks to become harmful and can live in soil for years. Once inside the body, the worms can harm the brain, eyes, and organs, causing blindness or death. Bleach and common cleaners do not kill the eggs.'
+			],
+			bullets: [
+				'**Keep people and pets away:** Block off raccoon waste areas and cover sandboxes.',
+				'**Do not dry-sweep:** Sweeping or blowing dry droppings puts roundworm eggs into the air.',
+				'**Follow CDC cleanup steps:** Wear gloves, rubber boots, and an N95 mask in tight spaces, and use boiling water to kill eggs. [CDC: Preventing raccoon roundworm](https://www.cdc.gov/baylisascaris/prevention/index.html)',
+				'**Read the CDC latrine guide:** Learn how to spot raccoon latrines and throw away waste safely. [CDC: Raccoon latrines identification and clean-up (PDF)](https://www.cdc.gov/parasites/baylisascaris/resources/raccoonlatrines.pdf)',
+				'**Learn the health risks:** Read how roundworm spreads and what signs to watch for. [CDC: About raccoon roundworm](https://www.cdc.gov/baylisascaris/about/index.html)'
 			]
 		},
 		{

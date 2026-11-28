@@ -212,6 +212,8 @@ test.describe('Karl outline', () => {
 		await expect(
 			page.getByRole('button', { name: /^(Start|Resume) the Karl walkthrough$/ })
 		).toBeVisible();
+		await page.getByRole('tab', { name: /Fields/ }).click();
+		await expect(page.getByRole('switch', { name: 'Show Karl fields' })).toHaveCount(0);
 		await expect(page.locator('[data-karl-status]')).toHaveCount(0);
 	});
 });

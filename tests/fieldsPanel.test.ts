@@ -97,9 +97,28 @@ describe('FieldsPanel', () => {
 		expect(screen.getByText(/to save changes/)).toBeTruthy();
 	});
 
-	it('says what to do when nothing is selected', () => {
+	it('renders the Karl Readiness card and selection guidance when nothing is selected', () => {
 		render(FieldsPanel, { props: { pageData: fixture() } });
-		expect(screen.getByText('No field selected')).toBeTruthy();
+		expect(screen.getByRole('heading', { name: 'Karl Readiness' })).toBeTruthy();
+		expect(screen.getByText(/Click any piece of copy on the mockup/i)).toBeTruthy();
+	});
+
+	it('highlights a field/section on the mockup and triggers walkthrough or blueprint', async () => {
+		pageStore.highlight = null;
+		pageStore.mode = 'review';
+		render(FieldsPanel, { props: { pageData: fixture() } });
+
+		await fireEvent.click(screen.getByRole('button', { name: 'Highlight Title / H1 on page' }));
+		expect(pageStore.highlight).toMatchObject({ kind: 'field', target: 'title' });
+
+		await fireEvent.click(screen.getByRole('button', { name: 'Highlight How to report on page' }));
+		expect(pageStore.highlight).toMatchObject({ kind: 'section', target: 'how-to-report' });
+
+		await fireEvent.click(screen.getByRole('button', { name: 'Build in Karl' }));
+		expect(pageStore.mode).toBe('blueprint');
+
+		await fireEvent.click(screen.getByRole('button', { name: 'Start walkthrough' }));
+		expect(pageStore.mode).toBe('walkthrough');
 	});
 
 	it('numbers the selection in the order it was picked', () => {

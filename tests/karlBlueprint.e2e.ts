@@ -203,6 +203,46 @@ test.describe('Blueprint', () => {
 		});
 	}
 
+	// The Karl views were a strip of their own under the tabs, which read as a
+	// second tab bar. They are buttons in the Decision tab now, beside the
+	// walkthrough -- so no other tab carries that group (Fields has its own
+	// pair in the Karl Readiness card), and nothing sits between the tab strip
+	// and the tab's content.
+	test('the Karl views are buttons in the Decision tab, not a strip under the tabs', async ({
+		page
+	}) => {
+		await page.setViewportSize({ width: 1440, height: 900 });
+		// The Rethink tab asks for suggestions as soon as it opens, and the
+		// endpoint refuses this stubbed session. Unanswered here, that is a 401
+		// in the console whenever the request beats the next tab click.
+		await page.route('**/api/ai/generate', (route) =>
+			route.fulfill({
+				status: 200,
+				contentType: 'application/json',
+				body: JSON.stringify({
+					task: 'page-suggestions',
+					result: { plainLanguage: 'a', structure: 'b', codeAndScope: 'c' }
+				})
+			})
+		);
+		await gotoSignedIn(page, '/review/report-rats-or-mice');
+
+		const views = page.getByRole('group', { name: 'Karl views' });
+		const decision = page.getByRole('tabpanel', { name: 'Decision' });
+		await expect(decision.getByRole('button', { name: 'Build in Karl' })).toBeVisible();
+		await expect(decision.getByRole('switch', { name: 'Show Karl fields' })).toBeVisible();
+		await expect(
+			decision.getByRole('button', { name: /^(Start|Resume) the Karl walkthrough$/ })
+		).toBeVisible();
+		await expect(views).toHaveCount(1);
+
+		for (const tab of ['Fields', 'Rethink', 'Analysis']) {
+			await page.getByRole('tab', { name: tab }).click();
+			await expect(page.getByRole('tabpanel', { name: tab })).toBeVisible();
+			await expect(views).toBeHidden();
+		}
+	});
+
 	test('the top bar steps between pages without leaving the view, and Review leaves it', async ({
 		page
 	}) => {
@@ -378,14 +418,14 @@ test.describe('Blueprint', () => {
 		await page.setViewportSize({ width: 1440, height: 900 });
 		await gotoSignedIn(page, '/review/report-rats-or-mice');
 		await openBlueprint(page);
-		// Gone, not collapsed: there is no "Expand queue" strip to reopen.
-		await expect(page.getByRole('button', { name: 'Expand queue' })).toHaveCount(0);
+		// Gone with the toolbar that carries it: no Queue button to reopen.
+		await expect(page.getByRole('button', { name: /^Queue/ })).toHaveCount(0);
 		await expect(page.locator('#reviewQueueRail')).toBeHidden();
 		await reviewTab(page).click();
 		// As the helper left them, which is as the workspace opens: the review
 		// panel open, the queue collapsed.
 		await expect(page.getByRole('button', { name: 'Collapse review panel' })).toBeVisible();
-		await expect(page.getByRole('button', { name: 'Expand queue' })).toBeVisible();
+		await expect(page.getByRole('button', { name: /^Queue/ })).toBeVisible();
 	});
 
 	test('Review returns to the mockup', async ({ page }) => {

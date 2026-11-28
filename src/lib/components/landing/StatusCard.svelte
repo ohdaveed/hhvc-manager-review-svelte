@@ -37,7 +37,7 @@
 </script>
 
 {#if kind === 'loading'}
-	<section aria-label="Your progress" aria-busy="true" class="{shell} border-sfds-grey-l2 bg-white">
+	<section aria-label="Your progress" aria-busy="true" class="{shell} border-border bg-white">
 		<p role="status" class="text-lg font-semibold text-slate-700">{loadingLabel}</p>
 		<div class="mt-2 h-3 rounded-full bg-sfds-grey-l2" aria-hidden="true"></div>
 		<div class="mt-3 flex gap-2" aria-hidden="true">
@@ -45,7 +45,7 @@
 			<span class="h-7 w-24 rounded-full bg-sfds-grey-l2/70"></span>
 		</div>
 		<div
-			class="mt-4 flex flex-col gap-3 border-t border-sfds-grey-l2 pt-4 sm:flex-row sm:items-center sm:justify-between"
+			class="mt-4 flex flex-col gap-3 border-t border-border pt-4 sm:flex-row sm:items-center sm:justify-between"
 			aria-hidden="true"
 		>
 			<div class="space-y-2">
@@ -56,7 +56,7 @@
 		</div>
 	</section>
 {:else if kind === 'signed-out'}
-	<section aria-label="Sign in" class="{shell} border-sfds-grey-l2 bg-white">
+	<section aria-label="Sign in" class="{shell} border-border bg-white">
 		<div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
 			<div>
 				<p class="text-lg font-semibold text-slate-900">
@@ -64,7 +64,9 @@
 				</p>
 				<p class="mt-1 text-slate-700">You can read every page without an account.</p>
 			</div>
-			<Button href={resolve('/login')} size="lg" class="w-full px-6 sm:w-auto">Sign in</Button>
+			<Button href={resolve('/login')} size="lg" class="w-full px-6 max-sm:min-h-11 sm:w-auto">
+				Sign in
+			</Button>
 		</div>
 	</section>
 {:else if kind === 'failed'}
@@ -88,7 +90,7 @@
 			<Button
 				variant="outline"
 				size="lg"
-				class="w-full bg-white px-6 sm:w-auto"
+				class="w-full bg-white px-6 max-sm:min-h-11 sm:w-auto"
 				aria-busy={retrying}
 				onclick={() => {
 					if (!retrying) onRetry?.();
@@ -99,7 +101,7 @@
 		</div>
 	</section>
 {:else}
-	<section aria-label="Your progress" class="{shell} border-sfds-grey-l2 bg-white">
+	<section aria-label="Your progress" class="{shell} border-border bg-white">
 		<p class="text-lg font-semibold text-slate-900">There's no review to work through yet</p>
 		<p class="mt-1 text-slate-700">Every page below is still readable.</p>
 	</section>

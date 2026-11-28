@@ -1,6 +1,7 @@
 <script lang="ts">
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Badge } from '$lib/components/ui/badge/index.js';
+	import { Check, CircleAlert } from '@lucide/svelte';
 	import { pagesStore, type PageCheck } from '$lib/stores/reviewState';
 
 	let { pageId }: { pageId?: string } = $props();
@@ -21,7 +22,17 @@
 			{@const check = raw as PageCheck}
 			<Card.Root size="sm">
 				<Card.Content class="flex items-start gap-3">
-					<Badge variant={check.status === 'pass' ? 'secondary' : 'outline'}>
+					<Badge
+						variant="outline"
+						class="gap-1 border-transparent {check.status === 'pass'
+							? 'bg-sfds-green-l1 text-sfds-green'
+							: 'bg-sfds-amber-l1 text-sfds-amber'}"
+					>
+						{#if check.status === 'pass'}
+							<Check class="size-3" aria-hidden="true" />
+						{:else}
+							<CircleAlert class="size-3" aria-hidden="true" />
+						{/if}
 						{check.status === 'pass' ? 'Pass' : 'Check'}
 					</Badge>
 					<div>

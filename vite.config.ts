@@ -143,7 +143,9 @@ export default defineConfig({
 				test: {
 					name: 'client',
 					environment: 'jsdom',
-					include: ['tests/**/*.test.ts']
+					include: ['tests/**/*.test.ts'],
+					// Node 25+'s own `localStorage` hides jsdom's; this puts it back.
+					setupFiles: ['tests/setup/jsdomStorage.ts']
 				}
 			}
 		]

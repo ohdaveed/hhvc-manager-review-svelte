@@ -140,11 +140,15 @@ jobs:
           fi
           echo "clean"
 
-  # Separate job so a browser download never delays the unit-test signal.
-  e2e:
-    name: e2e
+  # Sharded E2E: splits Playwright tests across 4 parallel runners.
+  e2e-shard:
+    name: e2e (${{ matrix.shard }}/4)
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
 
@@ -163,9 +167,7 @@ jobs:
       - name: Install
         run: bun install --frozen-lockfile
 
-      # The test:e2e script runs `playwright install` itself, but without the
-      # system libraries Chromium needs on a bare runner. Cache the browser
-      # binary across runs and only re-install OS apt deps on a cache hit.
+      # Cache the browser binary across runs and only re-install OS apt deps on a cache hit.
       - name: Cache Playwright browsers
         id: playwright-cache
         uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
@@ -181,13 +183,33 @@ jobs:
         if: steps.playwright-cache.outputs.cache-hit == 'true'
         run: bunx playwright install-deps chromium
 
-      # playwright.config.ts webServer builds and previews on :4173 itself.
-      - name: Run e2e
-        run: bun run test:e2e
+      # Calls Playwright directly to skip the redundant `playwright install` inside
+      # `bun run test:e2e`. playwright.config.ts webServer builds & previews on :4173.
+      - name: Run e2e (shard ${{ matrix.shard }}/4)
+        env:
+          SHARD: ${{ matrix.shard }}
+        run: bunx playwright test --shard="${SHARD}/4"
 
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: failure()
         with:
-          name: playwright-report
+          name: playwright-report-shard-${{ matrix.shard }}
           path: playwright-report/
           retention-days: 7
+
+  # Aggregator job so ruleset `main: require CI` still sees a single `e2e` check.
+  e2e:
+    name: e2e
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: e2e-shard
+    if: always() && !cancelled()
+    steps:
+      - name: Check e2e shard results
+        env:
+          SHARD_RESULT: ${{ needs.e2e-shard.result }}
+        run: |
+          if [ "$SHARD_RESULT" != "success" ]; then
+            echo "One or more e2e shards failed ($SHARD_RESULT)."
+            exit 1
+          fi

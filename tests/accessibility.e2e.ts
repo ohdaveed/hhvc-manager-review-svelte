@@ -84,8 +84,8 @@ for (const view of [
 		ready: '.drawer'
 	},
 	// The site map's button is in the queue's footer, and the queue is collapsed
-	// when the workspace opens.
-	{ name: 'site map', via: 'Expand queue', tab: null, open: 'Site map', ready: '.sitemap' }
+	// when the workspace opens: the toolbar's Queue button opens it.
+	{ name: 'site map', via: /^Queue/, tab: null, open: 'Site map', ready: '.sitemap' }
 ]) {
 	test(`no WCAG 2.1 AA violations in the ${view.name}`, async ({ page }) => {
 		await page.goto('/review/report-garbage-clutter-or-overgrown-plants');

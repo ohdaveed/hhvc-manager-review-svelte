@@ -9,8 +9,12 @@
 	 * `null` and is reported as stale rather than written to.
 	 */
 	import { Button } from '$lib/components/ui/button/index.js';
+	import { Separator } from '$lib/components/ui/separator/index.js';
+	import { Switch } from '$lib/components/ui/switch/index.js';
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
 	import { requestGeneration } from '$lib/ai/generate';
+	import { pagesByKey } from '$lib/data';
+	import { buildReadinessSummary, type ReadinessBadge } from '$lib/karl/readinessRows';
 	import { resolveFields } from '$lib/corpus/fieldResolver';
 	import { hashTextBrowser } from '$lib/corpus/hashBrowser';
 	import { changeKey, isChanged, pageStore, type Suggestion } from '$lib/stores/pageData.svelte';
@@ -18,8 +22,25 @@
 	import { sessionStore } from '$lib/stores/session.svelte';
 	import { resolve } from '$app/paths';
 
-	let { pageData, livePageId }: { pageData: unknown; livePageId?: string } = $props();
+	let {
+		pageData,
+		livePageId,
+		karlViews = true
+	}: { pageData: unknown; livePageId?: string; karlViews?: boolean } = $props();
 	const uid = $props.id();
+
+	const readiness = $derived(
+		buildReadinessSummary(pageData as never, null, pagesByKey, { isDraft: !karlViews })
+	);
+
+	const BADGE_CLASSES: Record<ReadinessBadge, string> = {
+		populated: 'bg-sfds-green-l1 text-sfds-green',
+		'ai-drafted': 'bg-sfds-blue-l1 text-sfds-action',
+		mapped: 'bg-sfds-blue-l1 text-sfds-slate-l3',
+		'needs-fix': 'bg-sfds-amber-l1 text-sfds-amber',
+		unconfirmed: 'bg-muted text-sfds-slate-l3',
+		unmapped: 'bg-muted text-sfds-slate-l3'
+	};
 
 	/**
 	 * The BACKEND's caps, not the proxy's.
@@ -438,6 +459,92 @@
 
 <div class="flex h-full min-h-0 flex-col">
 	<div class="min-h-0 flex-1 overflow-y-auto">
+		<!-- Karl Readiness card -->
+		<section class="p-4" aria-labelledby="{uid}-karl-readiness">
+			<div class="overflow-hidden rounded-lg border border-border bg-background">
+				<div class="px-4 pt-3.5 pb-3">
+					<h2 id="{uid}-karl-readiness" class="text-sm font-semibold text-sfds-black">
+						Karl Readiness
+					</h2>
+					{#if karlViews}
+						<label
+							class="mt-2.5 flex items-center gap-2.5 text-xs font-medium text-sfds-black max-lg:min-h-11"
+						>
+							<Switch
+								checked={pageStore.karlOutline}
+								onCheckedChange={(on: boolean) => pageStore.setKarlOutline(on)}
+							/>
+							Show Karl fields
+						</label>
+					{:else}
+						<p class="mt-1.5 text-xs text-sfds-slate-l3">
+							Draft page — Karl mapping applies once saved to the corpus.
+						</p>
+					{/if}
+				</div>
+
+				<div
+					class="border-y border-border bg-muted/40 px-4 py-2 text-xs font-medium text-sfds-slate-l3"
+				>
+					{readiness.inKarlCount} of {readiness.totalCount}
+					{readiness.unit} in Karl
+				</div>
+
+				{#if readiness.rows.length > 0}
+					<ul class="divide-y divide-border" aria-label="Karl readiness items">
+						{#each readiness.rows as row (row.id)}
+							<li class="flex items-center justify-between gap-3 px-4 py-2.5">
+								<div class="min-w-0">
+									<p class="truncate text-[0.8125rem] font-medium text-sfds-black">
+										{row.label}
+									</p>
+									<span
+										class="mt-1 inline-flex items-center rounded-full px-2 py-0.5 text-[0.6875rem] font-semibold {BADGE_CLASSES[
+											row.badge
+										]}"
+									>
+										{row.badgeLabel}
+									</span>
+								</div>
+								<Button
+									variant="outline"
+									size="sm"
+									class="h-7 flex-none px-2.5 text-xs"
+									aria-label="Highlight {row.label} on page"
+									onclick={() => pageStore.highlightTarget(row.highlightKind, row.highlightTarget)}
+								>
+									Highlight
+								</Button>
+							</li>
+						{/each}
+					</ul>
+				{/if}
+			</div>
+
+			{#if karlViews}
+				<div class="mt-3 grid grid-cols-2 gap-2">
+					<Button
+						variant="outline"
+						size="sm"
+						class="h-8 text-xs max-lg:min-h-11"
+						onclick={() => pageStore.enterWalkthrough()}
+					>
+						Start walkthrough
+					</Button>
+					<Button
+						variant="outline"
+						size="sm"
+						class="h-8 text-xs max-lg:min-h-11"
+						aria-pressed={pageStore.mode === 'blueprint'}
+						onclick={() =>
+							pageStore.mode === 'blueprint' ? pageStore.showReview() : pageStore.showBlueprint()}
+					>
+						Build in Karl
+					</Button>
+				</div>
+			{/if}
+		</section>
+
 		<!-- Typing is never thrown away by moving the selection. Edits whose field
 		     is no longer selected wait here, still on the mockup, until they are
 		     saved or discarded. -->
@@ -507,14 +614,11 @@
 			</p>
 		{/if}
 		{#if selected.length === 0}
-			<div class="px-5 py-6 text-sm text-sfds-slate-l3">
-				<p class="font-semibold text-sfds-black">No field selected</p>
-				<p class="mt-1.5 leading-5">
-					Click any piece of copy in the mockup to select it. Shift-click to add more, and the
-					assistant will rewrite them together.
-				</p>
-			</div>
+			<p class="px-4 pb-4 text-xs leading-5 text-sfds-slate-l3">
+				Click any piece of copy on the mockup to edit or rewrite it.
+			</p>
 		{:else}
+			<Separator />
 			<!-- Selection header -->
 			<div class="flex items-center justify-between gap-2 border-b px-5 py-3">
 				<span class="text-[0.8125rem] font-semibold text-sfds-black">
