@@ -236,7 +236,7 @@
 		     (measured at 1440x900), so the review's progress was off screen on
 		     the page a reviewer had just opened. -->
 		<div
-			class="sticky top-0 z-10 -mx-5 space-y-4 border-b border-sfds-grey-l2 bg-background px-5 pt-4 pb-3"
+			class="sticky top-0 z-10 -mx-5 space-y-4 border-b border-border bg-background px-5 pt-4 pb-3"
 			data-queue-pinned
 		>
 			{#if loaded}
@@ -269,12 +269,18 @@
 						bind:value={query}
 						placeholder="Filter by title or path"
 						autocomplete="off"
-						class="w-full rounded-[4px] border border-sfds-grey-l2 bg-white py-1.5 pr-2.5 pl-8 text-[0.8125rem] text-sfds-black placeholder:text-sfds-slate-l3 focus:border-sfds-action focus:ring-1 focus:ring-sfds-action focus:outline-none"
+						class="w-full rounded-[3px] border border-input bg-white py-1.5 pr-2.5 pl-8 text-[0.8125rem] text-sfds-black placeholder:text-sfds-slate-l3 focus:border-sfds-action focus:ring-1 focus:ring-sfds-action focus:outline-none max-lg:min-h-11"
 					/>
 				</div>
 				<div class="mt-2 flex items-center justify-between gap-2">
-					<label class="flex cursor-pointer items-center gap-2 text-[0.8125rem] text-sfds-black">
-						<input type="checkbox" bind:checked={proposedOnly} class="accent-sfds-action" />
+					<label
+						class="flex cursor-pointer items-center gap-2 text-[0.8125rem] text-sfds-black max-lg:min-h-11"
+					>
+						<input
+							type="checkbox"
+							bind:checked={proposedOnly}
+							class="accent-sfds-action max-lg:size-5"
+						/>
 						Proposed pages only
 					</label>
 					{#if filtering}

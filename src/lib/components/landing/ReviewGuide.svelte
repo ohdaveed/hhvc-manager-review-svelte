@@ -105,8 +105,8 @@
 				<ol class="mt-3 list-decimal space-y-2 pl-5 text-sm text-slate-800">
 					<li>Open a page, ideally an approved one.</li>
 					<li>
-						Select <strong class="font-semibold">Start the Karl walkthrough</strong> in the review panel,
-						under the decision.
+						Select <strong class="font-semibold">Start the Karl walkthrough</strong> on the review panel’s
+						Karl tab.
 					</li>
 					<li>
 						Use <strong class="font-semibold">Open Karl add-page form</strong> to start the page in Karl,

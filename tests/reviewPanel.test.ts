@@ -8,7 +8,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/svelte';
 import type { PageCheck } from '$lib/stores/reviewState';
-import ReviewPanel from '../src/lib/components/workspace/ReviewPanel.svelte';
+import ReviewPanel from './ReviewPanelHarness.svelte';
 
 vi.mock('$lib/supabase', () => ({
 	ensureDevSession: async () => {},
@@ -56,7 +56,7 @@ const setRow = (page_checks: Record<string, PageCheck> | null = null) =>
 	]);
 
 const typeNote = (value: string) =>
-	fireEvent.input(screen.getByLabelText('Decision notes'), { target: { value } });
+	fireEvent.input(screen.getByLabelText('Feedback'), { target: { value } });
 
 describe('ReviewPanel', () => {
 	beforeEach(() => {
@@ -146,9 +146,9 @@ describe('ReviewPanel', () => {
 			pagesStore.set([]);
 			render(ReviewPanel, { pageData: { id: PATH } });
 
-			expect(radios()).toHaveLength(4);
+			expect(radios()).toHaveLength(3);
 			for (const r of radios()) expect(r.disabled).toBe(true);
-			expect((screen.getByLabelText('Decision notes') as HTMLTextAreaElement).disabled).toBe(true);
+			expect((screen.getByLabelText('Feedback') as HTMLTextAreaElement).disabled).toBe(true);
 			expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/login');
 			expect(screen.getByText(/to record a decision/)).toBeTruthy();
 
@@ -281,12 +281,84 @@ describe('ReviewPanel', () => {
 		render(ReviewPanel, { pageData: { id: PATH } });
 		const radios = screen.getAllByRole('radio') as HTMLButtonElement[];
 		for (const r of radios) expect(r.disabled).toBe(false);
-		expect((screen.getByLabelText('Decision notes') as HTMLTextAreaElement).disabled).toBe(false);
+		expect((screen.getByLabelText('Feedback') as HTMLTextAreaElement).disabled).toBe(false);
 		expect(screen.queryByText(/to record a decision/)).toBeNull();
 
 		await fireEvent.click(screen.getByRole('radio', { name: 'Approved' }));
 		await vi.advanceTimersByTimeAsync(0);
 		expect(saveStatus).toHaveBeenCalledWith('row-1', 'approved');
+	});
+});
+
+describe('ReviewPanel after a decision', () => {
+	beforeEach(() => {
+		vi.useFakeTimers();
+		saveStatus.mockReset();
+		Object.assign(session, { signedIn: true, knownSignedOut: false });
+	});
+	afterEach(() => vi.useRealTimers());
+
+	const rowWith = (status: 'approved' | 'revise', manager_notes: string | null = null) =>
+		pagesStore.set([
+			{ id: 'row-1', review_id: 'r1', path: PATH, status, manager_notes, page_checks: null },
+			{
+				id: 'row-2',
+				review_id: 'r1',
+				path: 'topic-x--report',
+				status: 'needs-review',
+				manager_notes: null,
+				page_checks: null
+			}
+		]);
+
+	// Three options and no "Undecided" pill, so pressing the selected one is
+	// the way back. It has to be a write: the control showing nothing over a
+	// row that still says approved is the desync this control once had.
+	it('clears the decision, as a write, when the selected option is pressed again', async () => {
+		rowWith('approved');
+		saveStatus.mockResolvedValue(true);
+		render(ReviewPanel, { pageData: { id: PATH } });
+		const approved = screen.getByRole('radio', { name: 'Approved' });
+		expect(approved.getAttribute('data-state')).toBe('on');
+
+		await fireEvent.click(approved);
+		await vi.advanceTimersByTimeAsync(0);
+		expect(saveStatus).toHaveBeenCalledWith('row-1', 'needs-review');
+	});
+
+	it('asks for feedback before a page is sent back without any', async () => {
+		rowWith('revise');
+		const onWriteFeedback = vi.fn();
+		render(ReviewPanel, { pageData: { id: PATH }, onWriteFeedback });
+		expect(screen.getByText('Required to send back')).toBeTruthy();
+		await fireEvent.click(screen.getByRole('button', { name: 'Write feedback to send back' }));
+		expect(onWriteFeedback).toHaveBeenCalledOnce();
+	});
+
+	it('stops asking once a sent-back page has its feedback', () => {
+		rowWith('revise', 'Add the phone number');
+		render(ReviewPanel, { pageData: { id: PATH }, onWriteFeedback: () => {} });
+		expect(screen.queryByText('Required to send back')).toBeNull();
+		expect(screen.queryByRole('button', { name: 'Write feedback to send back' })).toBeNull();
+	});
+
+	it('tells the workspace about a saved decision, so it can open Karl', async () => {
+		pagesStore.set([
+			{
+				id: 'row-1',
+				review_id: 'r1',
+				path: PATH,
+				status: 'needs-review',
+				manager_notes: null,
+				page_checks: null
+			}
+		]);
+		saveStatus.mockResolvedValue(true);
+		const onDecided = vi.fn();
+		render(ReviewPanel, { pageData: { id: PATH }, onDecided });
+		await fireEvent.click(screen.getByRole('radio', { name: 'Approved' }));
+		await vi.advanceTimersByTimeAsync(0);
+		expect(onDecided).toHaveBeenCalledWith('approved');
 	});
 });
 
@@ -348,5 +420,24 @@ describe('ReviewPanel decision moment', () => {
 	it('shows no readiness line when there is nothing to report', () => {
 		render(ReviewPanel, { pageData: { id: PATH } });
 		expect(document.getElementById('decision-readiness')).toBeNull();
+	});
+
+	it('opens Fields from the decision when this page has unsaved edits', async () => {
+		const previousChanges = pageStore.unsavedChanges;
+		pageStore.unsavedChanges = {
+			[`${PATH}\u0000title`]: {
+				pageId: PATH,
+				fieldId: 'title',
+				original: 'Old title',
+				value: 'New title'
+			}
+		};
+		const onOpenFields = vi.fn();
+		render(ReviewPanel, { pageData: { id: PATH }, onOpenFields });
+
+		await fireEvent.click(screen.getByRole('button', { name: 'Open Fields' }));
+		expect(onOpenFields).toHaveBeenCalledOnce();
+		expect(document.getElementById('decision-readiness')?.querySelector('button')).toBeNull();
+		pageStore.unsavedChanges = previousChanges;
 	});
 });

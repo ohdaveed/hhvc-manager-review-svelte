@@ -6,11 +6,19 @@ import {
 	buildRewriteSystemPrompt,
 	buildRewriteUserPrompt
 } from './vendor/prompts.js';
-import { PAGE_OUTPUT_SCHEMA, REWRITE_OUTPUT_SCHEMA } from './vendor/schemas.js';
+import {
+	MAX_PAGE_DEPTH,
+	MAX_PAGE_JSON_BYTES,
+	PAGE_OUTPUT_SCHEMA,
+	REWRITE_OUTPUT_SCHEMA,
+	measureDepth,
+	serializePageForPrompt
+} from './vendor/schemas.js';
 import { validateGeneratedPage, validateRewrite } from './vendor/validate-output.js';
 import { numberFromEnv } from './vendor/env.js';
 import { ProviderTimeoutError } from './vendor/errors.js';
 import { FACTS_DOCUMENT_NAME, factsPromptBlock } from '$lib/facts/prompt';
+import { z } from 'zod';
 
 /**
  * Append HHVC's verified facts and open questions to a vendor system prompt.
@@ -89,7 +97,7 @@ async function generateValidated({
 	previous,
 	signal
 }: {
-	task: 'content' | 'rewrite-field';
+	task: 'content' | 'rewrite-field' | 'page-suggestions';
 	system: string;
 	groundedBy: string[];
 	jsonSchema: object;
@@ -205,6 +213,105 @@ export function generateRewrite({
 		validate: (object) => validateRewrite(object as object, fieldText, page?.type),
 		// The retry turn corrects the rewrite STRING, not the whole object.
 		previous: (object) => (object as { rewrittenText?: unknown } | null)?.rewrittenText,
+		signal
+	});
+}
+
+const PAGE_SUGGESTIONS_OUTPUT_SCHEMA = {
+	type: 'object',
+	additionalProperties: false,
+	required: ['plainLanguage', 'structure', 'codeAndScope'],
+	properties: {
+		plainLanguage: {
+			type: 'string',
+			description:
+				'One concise, actionable plain-language suggestion (1–2 sentences) for reading level, clarity, or active voice on this page.'
+		},
+		structure: {
+			type: 'string',
+			description:
+				'One concise, actionable structure suggestion (1–2 sentences) for heading clarity, section order, or scannability.'
+		},
+		codeAndScope: {
+			type: 'string',
+			description:
+				'One concise, actionable suggestion (1–2 sentences) for Karl CMS mapping, content-type rules, or scope.'
+		}
+	}
+};
+
+export const pageSuggestionsRequestSchema = z.object({
+	task: z.literal('page-suggestions'),
+	provider: z.enum(['gemini']).optional(),
+	sectionKey: z.string().max(200).optional(),
+	page: z
+		.record(z.unknown())
+		.refine(
+			(page) => {
+				try {
+					return Buffer.byteLength(serializePageForPrompt(page), 'utf8') <= MAX_PAGE_JSON_BYTES;
+				} catch {
+					return false;
+				}
+			},
+			{ message: `page must serialize to ${MAX_PAGE_JSON_BYTES} bytes or fewer` }
+		)
+		.refine((page) => measureDepth(page, MAX_PAGE_DEPTH) <= MAX_PAGE_DEPTH, {
+			message: `page must not nest deeper than ${MAX_PAGE_DEPTH} levels`
+		})
+});
+
+function validatePageSuggestions(object: unknown): { valid: boolean; issues: string[] } {
+	const issues: string[] = [];
+	if (!object || typeof object !== 'object') {
+		return { valid: false, issues: ['Expected a JSON object with three suggestion fields.'] };
+	}
+	const record = object as Record<string, unknown>;
+	for (const key of ['plainLanguage', 'structure', 'codeAndScope'] as const) {
+		const value = record[key];
+		if (typeof value !== 'string' || value.trim().length === 0) {
+			issues.push(`${key} must be a non-empty string.`);
+		} else if (value.trim().length > 600) {
+			issues.push(`${key} must be 600 characters or fewer.`);
+		}
+	}
+	return { valid: issues.length === 0, issues };
+}
+
+export function generatePageSuggestions({
+	page,
+	sectionKey,
+	signal
+}: {
+	page: Record<string, unknown>;
+	sectionKey?: string;
+	signal?: AbortSignal;
+}) {
+	const { system, groundedBy } = withFacts(buildRewriteSystemPrompt());
+	const serialized = serializePageForPrompt(page);
+	return generateValidated({
+		task: 'page-suggestions',
+		system,
+		groundedBy,
+		jsonSchema: PAGE_SUGGESTIONS_OUTPUT_SCHEMA,
+		userPrompt: (retry) => {
+			const focus = sectionKey
+				? `Focus especially on section "${sectionKey}" while keeping the whole page in mind.\n\n`
+				: '';
+			const retryNote = retry
+				? `\n\nPrevious draft failed validation:\n- ${retry.issues.join('\n- ')}\nFix those issues and stay concise (1–2 sentences per field).`
+				: '';
+			return (
+				`Review this SF.gov HHVC mockup page and provide three concise, concrete suggestions (1–2 sentences each):\n` +
+				`1. plainLanguage: simplify vocabulary, sentence length, or passive voice.\n` +
+				`2. structure: improve headings, section hierarchy, or layout flow.\n` +
+				`3. codeAndScope: address Karl CMS mapping, content-type rules, or page scope.\n\n` +
+				focus +
+				`Page JSON:\n${serialized}${retryNote}`
+			);
+		},
+		validate: validatePageSuggestions,
+		previous: (object) => object,
 		signal
 	});
 }

@@ -359,7 +359,7 @@ export async function updatePageStatus(
 	// optimistic update already moved the queue row into another group, so a
 	// silent rollback reads as "the click did nothing" on a control whose
 	// whole output is which pages are approved. `updatePageNotes` already
-	// reports this way and ReviewPanel surfaces it; status now matches.
+	// reports this way and the Notes panel surfaces it; status now matches.
 	if (error) {
 		console.error('Failed to update status:', error);
 		pagesStore.set(previousPages);

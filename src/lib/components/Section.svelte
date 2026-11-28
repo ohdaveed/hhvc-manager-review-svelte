@@ -70,6 +70,7 @@
 <div
 	class="page-section {section.kind || 'body'}"
 	data-component={section.component}
+	data-section-key={key}
 	data-karl-section={karl ? (karl.rawName ?? 'unplaced') : undefined}
 	data-karl-status={karl?.status}
 	data-section-index={index}

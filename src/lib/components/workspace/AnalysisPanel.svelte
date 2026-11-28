@@ -1,50 +1,44 @@
 <script lang="ts">
-	import * as Card from '$lib/components/ui/card/index.js';
-	import { Badge } from '$lib/components/ui/badge/index.js';
-	import { Separator } from '$lib/components/ui/separator/index.js';
-	import { ExternalLink } from '@lucide/svelte';
+	import { ArrowRight } from '@lucide/svelte';
 	import { tick } from 'svelte';
-	import {
-		analyzePage,
-		karlHelp,
-		SFGOV_READING_GUIDELINE,
-		type ComponentFinding,
-		type Finding,
-		type KarlHelpKey,
-		type KarlHelpLink
-	} from '$lib/analysis';
+	import { resolve } from '$app/paths';
+	import { Button } from '$lib/components/ui/button/index.js';
+	import { analyzePage, SFGOV_READING_GUIDELINE } from '$lib/analysis';
 	import { MOCKUP_ROOT_SELECTOR } from '$lib/analysis/domChecks';
+	import { extractLinkTargets } from '$lib/analysis/linkTargets';
+	import { reviewHrefFor } from '$lib/corpus/draftPath';
+	import { pageTitleFor } from '$lib/corpus/pageTitle';
+	import { pagesByKey } from '$lib/data';
 	import { reviewRecordFor } from '$lib/karl/reviewRecord';
+	import { review } from '$lib/review/review.svelte';
+	import { draftsStore } from '$lib/stores/draftPages';
 	import { pageStore } from '$lib/stores/pageData.svelte';
 	import { editsStore, pagesStore } from '$lib/stores/reviewState';
 
-	// `ReviewWorkspace` declares `pageData` as `unknown` and every sibling panel
-	// takes it untyped, so it is accepted as `unknown` and narrowed here rather
-	// than widening the call site's type for one consumer.
-	let { pageData }: { pageData?: unknown } = $props();
+	let {
+		pageData,
+		embedded = false
+	}: {
+		pageData?: unknown;
+		/** Inside the Fix tab: the tab scrolls, and the decision pinned under it
+		 *  already offers the next undecided page, so the panel does neither. */
+		embedded?: boolean;
+	} = $props();
 
 	const page = $derived(
 		pageData && typeof pageData === 'object' ? (pageData as Record<string, unknown>) : undefined
 	);
+	const pageId = $derived(typeof page?.id === 'string' ? page.id : undefined);
 
-	/**
-	 * The rendered mockup, for the markup checks.
-	 *
-	 * Held in state and refreshed after a tick rather than read inside the
-	 * derived analysis: `#mockPage` lives in the review layout, so on a slug
-	 * change the panel and the mockup re-render together and a synchronous read
-	 * would measure the OUTGOING page's headings against the incoming page's
-	 * copy. The copy checks need no such wait — they read the corpus.
-	 */
 	let mockupRoot = $state<ParentNode | null>(null);
+	let linkFilter = $state<'all' | 'external' | 'internal'>('all');
 
 	$effect(() => {
 		const id = page?.id;
+		linkFilter = 'all';
 		let cancelled = false;
 		tick().then(() => {
 			if (cancelled) return;
-			// `id` is read above so this effect re-runs per page; referenced here
-			// so it is not mistaken for a dead subscription.
 			void id;
 			mockupRoot = document.querySelector(MOCKUP_ROOT_SELECTOR);
 		});
@@ -53,13 +47,9 @@
 		};
 	});
 
-	// `pageData` is the copy as shown -- saved edits and unsaved changes are
-	// already on it -- so it is judged as it is. The record is the same one the
-	// review layout hands the Karl outline, for what the page object cannot
-	// carry (an edited slug), so the panel and the outline cannot disagree.
 	const record = $derived(
-		typeof page?.id === 'string'
-			? reviewRecordFor(page.id, $pagesStore, $editsStore, pageStore.staleEditsOn(page.id))
+		pageId
+			? reviewRecordFor(pageId, $pagesStore, $editsStore, pageStore.staleEditsOn(pageId))
 			: null
 	);
 
@@ -67,262 +57,159 @@
 		page ? analyzePage({ page: page as never, record, root: mockupRoot }) : null
 	);
 
-	// Karl component findings sit beside the Karl Jr. ones, sorted into the same
-	// three groups. They carry their help link inline rather than as a key.
-	const allFindings = $derived<(Finding | ComponentFinding)[]>(
-		analysis
-			? [
-					...analysis.findings,
-					...analysis.placementFindings,
-					...analysis.componentFindings,
-					...analysis.contentTypeFindings
-				]
-			: []
+	const links = $derived(
+		extractLinkTargets(page, pagesByKey as unknown as Record<string, Record<string, unknown>>)
 	);
-	const issues = $derived(allFindings.filter((f) => f.status === 'issue'));
-	const passes = $derived(allFindings.filter((f) => f.status === 'pass'));
-	const unavailable = $derived(allFindings.filter((f) => f.status === 'unavailable'));
-
-	/**
-	 * Where the score sits on a 0-14 track. Clamped, because Post-graduate is an
-	 * open-ended bucket and a 17 would otherwise run off the end of the bar.
-	 */
-	const scorePercent = $derived(
-		Math.min(100, Math.max(0, ((analysis?.readability.score ?? 0) / 14) * 100))
+	const externalCount = $derived(links.filter((l) => l.kind === 'external').length);
+	const internalCount = $derived(links.filter((l) => l.kind === 'internal').length);
+	const filteredLinks = $derived(
+		linkFilter === 'all' ? links : links.filter((l) => l.kind === linkFilter)
 	);
 
-	const scoreTone = $derived.by(() => {
-		const a = analysis;
-		if (!a || !a.readability.hasContent) return 'bg-muted-foreground';
-		if (a.targetStatus === 'pass') return 'bg-sfds-green';
-		if (a.readability.score <= SFGOV_READING_GUIDELINE + 3) return 'bg-sfds-amber';
-		return 'bg-destructive';
-	});
-
-	/**
-	 * shadcn's `destructive` badge is `bg-destructive/10 text-destructive`, which
-	 * MEASURES 3.98:1 (#e7000b on #fde5e7 at 12px) -- below WCAG AA's 4.5 floor,
-	 * on a badge whose whole job is to say something failed. SFDS's own red pair
-	 * is 5.64:1 and is already the palette this app states findings in, so the
-	 * issue badge carries those tokens instead of the shadcn default.
-	 *
-	 * Caught by `tests/accessibilitySignedIn.e2e.ts` the first time axe was
-	 * pointed at a signed-in panel. It had never been scanned before.
-	 */
-	const ISSUE_BADGE = 'border-transparent bg-sfds-red-l1 text-sfds-red';
-	const PASS_BADGE = 'border-transparent bg-sfds-green-l1 text-sfds-green';
-
-	const statusBadge = (status: Finding['status']) =>
-		status === 'issue' ? 'secondary' : status === 'pass' ? 'secondary' : 'outline';
-
-	/** Extra classes for the issue/pass tones, which `statusBadge` cannot express. */
-	const statusClass = (status: Finding['status']) =>
-		status === 'issue' ? ISSUE_BADGE : status === 'pass' ? PASS_BADGE : '';
-
-	const statusLabel = (status: Finding['status']) =>
-		status === 'issue' ? 'Check' : status === 'pass' ? 'Pass' : 'No data';
+	const liveRecord = $derived(pageId ? $pagesStore.find((p) => p.path === pageId) : undefined);
+	const nextPath = $derived(pageId ? review.nextUndecided(pageId) : undefined);
+	const nextTitle = $derived(
+		nextPath ? pageTitleFor(nextPath, pageStore.pages, $draftsStore, 'empty') : ''
+	);
 </script>
 
-<!-- Every anchor in this file is a citation: an absolute URL into the Karl
-     Editor Help Center, opened in a new tab. `resolve()` exists to turn this
-     app's own route ids into paths and has nothing to say about an external
-     host, and the next-line form of this directive is not honoured inside a
-     `{#snippet}` fragment, so the rule is turned off for the file. If an
-     internal link is ever added here, re-scope this. -->
-<!-- eslint-disable svelte/no-navigation-without-resolve -->
-
-{#snippet helpLink(key: KarlHelpKey | KarlHelpLink)}
-	{@const help = typeof key === 'string' ? karlHelp(key) : key}
-	<a
-		class="inline-flex items-start gap-1 text-xs leading-snug font-semibold text-sfds-action hover:underline"
-		href={help.url}
-		target="_blank"
-		rel="noopener noreferrer"
-	>
-		<ExternalLink class="mt-[1px] size-3 flex-none" aria-hidden="true" />
-		<span>
-			{help.title}<span class="font-normal text-sfds-slate-l3">{` — ${help.why}`}</span>
-		</span>
-	</a>
-{/snippet}
-
-{#snippet findingCard(finding: Finding | ComponentFinding)}
-	<Card.Root size="sm">
-		<Card.Content class="space-y-2">
-			<div class="flex items-start gap-2">
-				<Badge
-					variant={statusBadge(finding.status)}
-					class="mt-[2px] flex-none {statusClass(finding.status)}"
-				>
-					{statusLabel(finding.status)}
-				</Badge>
-				<div class="min-w-0 flex-1">
-					<p class="text-sm font-semibold">{finding.title}</p>
-					<p class="mt-0.5 text-xs text-sfds-slate-l3">{finding.summary}</p>
-				</div>
-			</div>
-
-			{#if finding.items.length > 0}
-				<ul class="space-y-1.5 border-l-2 border-sfds-amber pl-3">
-					{#each finding.items as item, i (i)}
-						<li class="text-xs">
-							<span class="rounded bg-muted px-1 py-0.5 font-mono break-all">{item.text}</span>
-							{#if item.detail}
-								<span class="block text-sfds-slate-l3">{item.detail}</span>
-							{/if}
-							{#if item.key}
-								<span class="block font-mono text-[0.625rem] break-all text-sfds-slate-l3">
-									{item.key}
+<div class={embedded ? '' : 'flex h-full min-h-0 flex-col'}>
+	<div class="space-y-4 p-4 {embedded ? '' : 'min-h-0 flex-1 overflow-y-auto'}">
+		{#if !analysis}
+			<p class="text-sm text-sfds-slate-l3">No page selected.</p>
+		{:else}
+			<!-- Reading Level card -->
+			<section
+				class="overflow-hidden rounded-lg border border-border bg-background"
+				aria-labelledby="analysis-reading-level"
+			>
+				<div class="p-4">
+					<h2 id="analysis-reading-level" class="text-sm font-semibold text-sfds-black">
+						Reading Level
+					</h2>
+					{#if !analysis.readability.hasContent}
+						<p class="mt-2 text-xs text-sfds-slate-l3">Not enough text on this page to score.</p>
+					{:else}
+						<div class="mt-2.5 flex flex-wrap items-center gap-2">
+							<span class="text-lg font-semibold text-sfds-black">
+								Grade {analysis.readability.score}
+							</span>
+							{#if analysis.target !== null}
+								<span
+									class="inline-flex items-center rounded-full px-2.5 py-0.5 text-[0.6875rem] font-semibold {analysis.targetStatus ===
+									'pass'
+										? 'bg-sfds-green-l1 text-sfds-green'
+										: 'bg-sfds-amber-l1 text-sfds-amber'}"
+								>
+									{analysis.targetStatus === 'pass'
+										? `Meets target: Grade ${analysis.target}`
+										: `Above target: Grade ${analysis.target}`}
+								</span>
+							{:else}
+								<span
+									class="inline-flex items-center rounded-full bg-muted px-2.5 py-0.5 text-[0.6875rem] font-semibold text-sfds-slate-l3"
+								>
+									SF.gov guideline: Grade {SFGOV_READING_GUIDELINE}
 								</span>
 							{/if}
-						</li>
-					{/each}
-				</ul>
-			{/if}
-
-			{@render helpLink(finding.help)}
-		</Card.Content>
-	</Card.Root>
-{/snippet}
-
-<div class="space-y-4 p-4">
-	{#if !analysis}
-		<p class="text-sm text-muted-foreground">No page selected.</p>
-	{:else}
-		<!-- Readability -->
-		<Card.Root size="sm">
-			<Card.Header>
-				<Card.Title>Readability</Card.Title>
-				<Card.Description>
-					Automated Readability Index, the same calculation Karl Jr. uses — not Hemingway.
-				</Card.Description>
-			</Card.Header>
-			<Card.Content class="space-y-3">
-				{#if !analysis.readability.hasContent}
-					<p class="text-sm text-muted-foreground">Not enough text on this page to score.</p>
-				{:else}
-					<div class="flex items-baseline gap-3">
-						<span class="font-heading text-4xl leading-none font-bold">
-							{analysis.readability.score}
-						</span>
-						<div class="min-w-0">
-							<p class="text-sm font-semibold">{analysis.readability.gradeLevel}</p>
-							<p class="text-xs text-sfds-slate-l3">{analysis.readability.interpretation}</p>
 						</div>
-					</div>
-
-					<div class="h-2 w-full overflow-hidden rounded-full bg-muted">
-						<div
-							class="h-full rounded-full {scoreTone}"
-							style="width: {scorePercent}%"
-							role="presentation"
-						></div>
-					</div>
-
-					<div class="flex flex-wrap items-center gap-2">
-						{#if analysis.target !== null}
-							<Badge
-								variant="secondary"
-								class={analysis.targetStatus === 'pass' ? PASS_BADGE : ISSUE_BADGE}
-							>
-								{analysis.targetStatus === 'pass' ? 'Meets' : 'Over'} this page's target of grade {analysis.target}
-							</Badge>
-						{:else}
-							<Badge variant="outline">No target declared in this page's corpus module</Badge>
-							<Badge variant="outline">SF.gov guideline: grade {SFGOV_READING_GUIDELINE}</Badge>
-						{/if}
-					</div>
-					<!-- One number to judge by. The target and the guideline used to sit
-					     side by side as two badges ("Over this page's target of grade 6",
-					     "SF.gov guideline: grade 5"), which read as two rules that
-					     disagree. The target is the one the verdict uses; the guideline
-					     is context for why it differs. -->
-					{#if analysis.target !== null && analysis.target !== SFGOV_READING_GUIDELINE}
-						<p class="text-xs text-muted-foreground" data-testid="readability-target-note">
-							The target is set for this page. SF.gov’s general guideline is grade {SFGOV_READING_GUIDELINE}.
-						</p>
 					{/if}
+				</div>
+				{#if analysis.readability.hasContent}
+					<div class="border-t border-border px-4 py-2.5">
+						<button
+							type="button"
+							class="text-xs font-medium text-sfds-action underline underline-offset-2 hover:text-sfds-blue-dark"
+							onclick={() => pageStore.highlightTarget('readability', 'page')}
+						>
+							Highlight on page
+						</button>
+					</div>
+				{/if}
+			</section>
 
-					<p class="text-sm">{analysis.readability.recommendation}</p>
-
-					<ul class="list-disc space-y-1 pl-4 text-xs text-sfds-slate-l3">
-						{#each analysis.readability.factors as factor, i (i)}
-							<li>{factor}</li>
-						{/each}
-					</ul>
-
-					<p class="text-[0.6875rem] leading-relaxed text-sfds-slate-l3">
-						Measured over {analysis.measuredFields} copy fields —
-						{analysis.readability.wordCount} words, {analysis.readability.sentenceCount} sentences,
-						{analysis.readability.wordsPerSentence.toFixed(1)} words per sentence.
-						{#if analysis.readability.resplitApplied}
-							Scored on the instructional path, with steps and bullets re-split, so this is not
-							directly comparable to a page scored as prose.
-						{:else if analysis.readability.instructional}
-							Scored on the instructional path — cues detected, but the re-split was rejected as too
-							fragmenting, so sentences stand as written. Not directly comparable to a page scored
-							as prose.
-						{/if}
+			<!-- Link Targets card -->
+			<section
+				class="overflow-hidden rounded-lg border border-border bg-background"
+				aria-labelledby="analysis-link-targets"
+			>
+				<div class="p-4 pb-3">
+					<h2 id="analysis-link-targets" class="text-sm font-semibold text-sfds-black">
+						Link Targets
+					</h2>
+					<p class="mt-0.5 text-xs text-sfds-slate-l3">
+						{links.length} checked · {externalCount} external
 					</p>
 
-					{@render helpLink(analysis.readabilityHelp)}
+					<div class="mt-3 flex flex-wrap gap-1.5" role="group" aria-label="Filter link targets">
+						{#each [{ key: 'all', label: 'All', count: links.length }, { key: 'external', label: 'External', count: externalCount }, { key: 'internal', label: 'Internal', count: internalCount }] as const as tab (tab.key)}
+							{@const active = linkFilter === tab.key}
+							<button
+								type="button"
+								aria-pressed={active}
+								class="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium transition-colors {active
+									? 'border-sfds-action bg-sfds-blue-l1 text-sfds-action'
+									: 'border-border bg-background text-sfds-black hover:bg-muted/50'}"
+								onclick={() => (linkFilter = tab.key)}
+							>
+								<span>{tab.label}</span>
+								<span
+									class="inline-flex min-w-4 items-center justify-center rounded-full px-1 text-[0.6875rem] font-semibold {active
+										? 'bg-background text-sfds-action'
+										: 'bg-muted text-sfds-slate-l3'}"
+								>
+									{tab.count}
+								</span>
+							</button>
+						{/each}
+					</div>
+				</div>
+
+				{#if filteredLinks.length === 0}
+					<p class="border-t border-border px-4 py-3 text-xs text-sfds-slate-l3">
+						No {linkFilter === 'all' ? '' : `${linkFilter} `}links on this page.
+					</p>
+				{:else}
+					<ul class="divide-y divide-border border-t border-border" aria-label="Link targets">
+						{#each filteredLinks as link (link.id)}
+							<li class="flex items-center justify-between gap-2 px-4 py-2.5">
+								<span
+									class="min-w-0 flex-1 truncate font-mono text-xs text-sfds-black"
+									title={link.rawTarget}
+								>
+									{link.displayUrl}
+								</span>
+								<Button
+									variant="outline"
+									size="sm"
+									class="h-7 flex-none px-2.5 text-xs"
+									aria-label="Inspect {link.displayUrl}"
+									onclick={() => pageStore.highlightTarget('link', link.fieldId)}
+								>
+									Inspect
+								</Button>
+							</li>
+						{/each}
+					</ul>
 				{/if}
-			</Card.Content>
-		</Card.Root>
+			</section>
+		{/if}
+	</div>
 
-		<Separator />
-
-		<div class="flex flex-wrap items-center gap-2 text-xs tabular-nums" aria-label="Checks summary">
-			{#if issues.length > 0}
-				<Badge variant="secondary" class={ISSUE_BADGE}>{issues.length} to check</Badge>
-			{/if}
-			{#if passes.length > 0}
-				<Badge variant="secondary" class={PASS_BADGE}>{passes.length} passing</Badge>
-			{/if}
-			{#if unavailable.length > 0}
-				<Badge variant="outline">{unavailable.length} no data</Badge>
+	{#if !embedded && (nextPath || liveRecord)}
+		<div class="flex-none border-t border-border bg-background px-4 py-3">
+			{#if nextPath}
+				<a
+					href={resolve(reviewHrefFor(nextPath))}
+					title={nextTitle}
+					class="flex items-center justify-between gap-2 text-sm font-semibold text-sfds-black hover:text-sfds-action"
+				>
+					<span>Next undecided page</span>
+					<ArrowRight class="size-4 shrink-0" aria-hidden="true" />
+				</a>
+			{:else if liveRecord}
+				<p class="text-xs text-sfds-slate-l3">Every page in the review has a decision.</p>
 			{/if}
 		</div>
-
-		{#if issues.length > 0}
-			<div class="space-y-2">
-				<h3 class="text-sm font-bold">Needs a look ({issues.length})</h3>
-				{#each issues as finding (finding.id)}
-					{@render findingCard(finding)}
-				{/each}
-			</div>
-		{/if}
-
-		{#if passes.length > 0}
-			<div class="space-y-2">
-				<h3 class="text-sm font-bold">Passing ({passes.length})</h3>
-				{#each passes as finding (finding.id)}
-					{@render findingCard(finding)}
-				{/each}
-			</div>
-		{/if}
-
-		{#if unavailable.length > 0}
-			<div class="space-y-2">
-				<h3 class="text-sm font-bold">Nothing to check ({unavailable.length})</h3>
-				<p class="text-xs text-sfds-slate-l3">
-					These report no data rather than a pass — this mockup has nothing for them to look at, or
-					Karl’s help center does not settle the rule.
-				</p>
-				{#each unavailable as finding (finding.id)}
-					{@render findingCard(finding)}
-				{/each}
-			</div>
-		{/if}
-
-		<Separator />
-
-		<p class="text-[0.6875rem] leading-relaxed text-sfds-slate-l3">
-			Copy checks read the corpus module, so they cover <strong
-				>steps and cards the mockup does not render</strong
-			>. Markup checks read the rendered page. Ported from the Karl Jr. browser extension, which
-			cannot run on this app — its host permissions cover sf.gov only.
-		</p>
-		{@render helpLink('karlJr')}
 	{/if}
 </div>

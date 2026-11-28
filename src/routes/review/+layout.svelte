@@ -488,6 +488,38 @@
 		// eslint-disable-next-line svelte/no-navigation-without-resolve
 		replaceState(withWalkthrough(here, on), $page.state);
 	});
+
+	$effect(() => {
+		const target = pageStore.highlight;
+		if (!target) return;
+		if (pageStore.mode !== 'review') pageStore.showReview();
+		let cancelled = false;
+		tick().then(() => {
+			if (cancelled) return;
+			const root = document.getElementById('mockPage');
+			if (!root) return;
+			for (const prev of root.querySelectorAll('[data-sidebar-highlight]')) {
+				prev.removeAttribute('data-sidebar-highlight');
+			}
+			let match: Element | null = null;
+			if (target.kind === 'field' || target.kind === 'link') {
+				match = root.querySelector(`[data-rewrite-field="${CSS.escape(target.target)}"]`);
+			} else if (target.kind === 'section') {
+				match = root.querySelector(`[data-section-key="${CSS.escape(target.target)}"]`);
+			} else if (target.kind === 'whatToKnow') {
+				match = root.querySelector('.what-to-know');
+			} else if (target.kind === 'readability') {
+				match = root.querySelector('.page-summary') ?? root.querySelector('.page-content');
+			}
+			if (match) {
+				match.setAttribute('data-sidebar-highlight', 'true');
+				match.scrollIntoView({ behavior: 'smooth', block: 'center' });
+			}
+		});
+		return () => {
+			cancelled = true;
+		};
+	});
 </script>
 
 <!-- 280 / 1fr / 380, up from 250 / 1fr / 300. The review panel needs the extra
@@ -604,10 +636,10 @@
 			     end once a reviewer left it. The app name and the account moved
 			     out of this row -- the name to the link's destination, the account
 			     to the rail footer -- so the queue starts 35px higher. -->
-			<div class="flex h-12 flex-none items-center gap-2 border-b border-sfds-grey-l2 pr-3 pl-5">
+			<div class="flex h-12 flex-none items-center gap-2 border-b border-border pr-3 pl-5">
 				<a
 					href={resolve('/')}
-					class="flex min-w-0 flex-1 items-center gap-1.5 text-[0.8125rem] font-semibold text-sfds-action hover:underline"
+					class="flex min-w-0 flex-1 items-center gap-1.5 text-[0.8125rem] font-semibold text-sfds-action hover:underline max-lg:min-h-11"
 					data-testid="all-pages-link"
 				>
 					<ArrowLeft class="size-3.5 flex-none" aria-hidden="true" />
@@ -616,7 +648,7 @@
 				<Button
 					variant="outline"
 					size="icon"
-					class="size-7 flex-none"
+					class="size-7 flex-none max-lg:size-11"
 					title={pageStore.mobileSheet === 'queue' ? 'Close queue' : 'Collapse queue'}
 					aria-label={pageStore.mobileSheet === 'queue' ? 'Close queue' : 'Collapse queue'}
 					onclick={() =>
@@ -641,7 +673,7 @@
 					>
 					<button
 						type="button"
-						class="min-h-6 flex-none font-semibold text-sfds-action underline-offset-2 hover:underline"
+						class="min-h-6 flex-none font-semibold text-sfds-action underline-offset-2 hover:underline max-lg:min-h-11 max-lg:px-2"
 						onclick={signOut}>Sign out</button
 					>
 				</div>
@@ -657,7 +689,7 @@
 				     button, since it switches a mode rather than loading a URL. -->
 				<button
 					type="button"
-					class="shrink-0 text-[0.8125rem] font-semibold whitespace-nowrap text-sfds-action underline-offset-2 hover:underline"
+					class="shrink-0 text-[0.8125rem] font-semibold whitespace-nowrap text-sfds-action underline-offset-2 hover:underline max-lg:min-h-11 max-lg:px-1"
 					onclick={() => pageStore.showSitemap()}>Site map</button
 				>
 				<!-- Client-side export of live review statuses, checks, notes, and
@@ -667,7 +699,7 @@
 				<Button
 					variant="outline"
 					size="sm"
-					class="h-7 gap-1.5 px-2.5 text-xs"
+					class="h-7 gap-1.5 px-2.5 text-xs max-lg:h-11"
 					data-testid="export-review-data"
 					onclick={() => triggerReviewExportDownload(pageStore.pages, $pagesStore, $editsStore)}
 				>
@@ -690,7 +722,7 @@
 	     the root layout stopped wrapping every page in its own <main>, the role
 	     left review pages with NO main landmark, so it is gone too. -->
 	<main
-		class="relative flex h-full cursor-default flex-col overflow-hidden bg-muted"
+		class="relative flex h-full cursor-default flex-col overflow-hidden bg-[#e2e7ef]"
 		inert={pageStore.mobileSheet !== 'none'}
 	>
 		{#if sessionStore.knownSignedOut}
@@ -739,12 +771,12 @@
 			{:else}
 				<nav
 					aria-label="Page toolbar"
-					class="review-toolbar @container/toolbar flex h-12 flex-none items-center justify-between border-b border-sfds-grey-l2 bg-background px-3 sm:px-5"
+					class="review-toolbar @container/toolbar flex h-12 flex-none items-center justify-between border-b border-border bg-background px-3 sm:px-5"
 				>
 					<!-- `grow` with no `min-w-0`: the group never shrinks below its
 					     fixed controls, so a narrow bar wraps the right-hand group
 					     onto a second row instead of overlapping it. -->
-					<div class="flex min-w-0 grow items-center gap-2">
+					<div class="flex min-w-0 grow flex-wrap items-center gap-2">
 						<!-- The only way to the queue and the panel below 1024px, where
 						     both rails leave the grid. Hidden above it, where the rails
 						     are on screen and these would be a second way to do nothing
@@ -801,7 +833,7 @@
 						<Button
 							variant="outline"
 							size="sm"
-							class="narrow-only h-7 flex-none gap-1.5 px-2.5 text-xs font-semibold"
+							class="narrow-only h-11 flex-none gap-1.5 px-3.5 text-xs font-semibold"
 							onclick={(e: MouseEvent) => openSheet('panel', e)}
 						>
 							Review{#if status}<span class="sr-only">({statusLabel})</span>
@@ -814,7 +846,10 @@
 							{#if prevPath}
 								<a
 									href={resolve(reviewHrefFor(prevPath))}
-									class="{buttonVariants({ variant: 'outline', size: 'icon' })} size-7"
+									class="{buttonVariants({
+										variant: 'outline',
+										size: 'icon'
+									})} size-7 max-lg:size-11"
 									aria-label="Previous page: {titleOf(prevPath)}"
 									title="Previous page: {titleOf(prevPath)}"
 									data-testid="prev-page"
@@ -823,14 +858,17 @@
 								</a>
 							{:else}
 								<span
-									class="flex size-7 items-center justify-center text-sfds-grey-l2"
+									class="flex size-7 items-center justify-center text-slate-400 max-lg:size-11"
 									aria-hidden="true"><ChevronLeft class="size-3.5" /></span
 								>
 							{/if}
 							{#if nextPath}
 								<a
 									href={resolve(reviewHrefFor(nextPath))}
-									class="{buttonVariants({ variant: 'outline', size: 'icon' })} size-7"
+									class="{buttonVariants({
+										variant: 'outline',
+										size: 'icon'
+									})} size-7 max-lg:size-11"
 									aria-label="Next page: {titleOf(nextPath)}"
 									title="Next page: {titleOf(nextPath)}"
 									data-testid="next-page"
@@ -839,7 +877,7 @@
 								</a>
 							{:else}
 								<span
-									class="flex size-7 items-center justify-center text-sfds-grey-l2"
+									class="flex size-7 items-center justify-center text-slate-400 max-lg:size-11"
 									aria-hidden="true"><ChevronRight class="size-3.5" /></span
 								>
 							{/if}
@@ -881,7 +919,7 @@
 						     Icon-only because the toolbar had zero slack to spend:
 						     four labelled buttons would not fit beside the walkthrough
 						     button at 1280px. Each carries an aria-label and a title. -->
-						<div class="flex flex-none items-center gap-2">
+						<div class="flex min-w-0 flex-wrap items-center gap-2">
 							<span
 								class="text-[0.6875rem] font-semibold text-sfds-slate-l3 tabular-nums"
 								data-testid="preview-width"
@@ -912,7 +950,7 @@
 										value={option.value}
 										aria-label={option.label}
 										title={option.label}
-										class="size-7"
+										class="size-7 max-lg:size-11"
 									>
 										<option.icon class="size-3.5" />
 									</ToggleGroup.Item>
@@ -1021,7 +1059,7 @@
 						bind:clientWidth={frameWidth}
 						style={frameStyle}
 						data-measured={paneBox ? 'true' : 'false'}
-						class="mockup-frame mx-auto w-full self-start overflow-hidden rounded-[4px] border border-sfds-grey-l2 bg-site-surface shadow-[0_2px_4px_rgba(12,20,100,.06),0_4px_12px_rgba(12,20,100,.1)]"
+						class="mockup-frame mx-auto w-full self-start overflow-hidden rounded-[4px] border border-border bg-site-surface shadow-[0_2px_8px_rgba(12,20,100,.12),0_8px_24px_rgba(12,20,100,.14)]"
 					>
 						<SiteHeader />
 
@@ -1073,7 +1111,7 @@
 	>
 		{#if panelCollapsed}
 			<div class="flex flex-col items-center gap-4">
-				<div class="flex h-12 w-full items-center justify-center border-b border-sfds-grey-l2">
+				<div class="flex h-12 w-full items-center justify-center border-b border-border">
 					<Button
 						variant="outline"
 						size="icon"
@@ -1115,6 +1153,9 @@
 				{livePageId}
 				{karlReadiness}
 				karlViews={!onDraft}
+				{prevPath}
+				{nextPath}
+				{titleOf}
 				collapseLabel={pageStore.mobileSheet === 'panel'
 					? 'Close review panel'
 					: 'Collapse review panel'}
@@ -1282,8 +1323,15 @@
 			z-index: 40;
 			display: flex;
 			inset-block: 0;
-			width: min(88vw, 360px);
+			width: min(100vw, 360px);
 			box-shadow: 0 0 24px rgb(0 0 0 / 0.25);
+		}
+
+		@media (max-width: 420px) {
+			.review-shell[data-sheet='queue'] .queue-rail,
+			.review-shell[data-sheet='panel'] .panel-rail {
+				width: 100vw;
+			}
 		}
 
 		.review-shell[data-sheet='queue'] .queue-rail {
