@@ -356,9 +356,17 @@
 						     separate Wagtail fields, so those keep a Copy per value. -->
 						<div class="step-actions">
 							{#if index > 0}
-								<button type="button" class="btn-ghost" onclick={() => goTo(index - 1)}
-									><span aria-hidden="true">←</span> Back</button
+								<button
+									type="button"
+									class="btn-ghost"
+									onclick={async () => {
+										goTo(index - 1);
+										await tick();
+										cardEl?.focus({ preventScroll: true });
+									}}
 								>
+									<span aria-hidden="true">←</span> Back
+								</button>
 							{/if}
 							{#if step.values.length === 1}
 								<button type="button" class="btn-primary" onclick={() => copyAndNext(step)}>
